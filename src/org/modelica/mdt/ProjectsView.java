@@ -4,6 +4,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuListener;
@@ -25,14 +28,20 @@ public class ProjectsView extends ViewPart
 {
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
+	private IResourceChangeListener resourceListener;
+
+
+	public class ProjectsLabelProvider extends WorkbenchLabelProvider
+	{
+
+	}
 
 	public class ProjectsTreeContentProvider implements ITreeContentProvider 
 	{
 
 		public Object[] getElements(Object inputElement)
-		{		
+		{
 			return getChildren(inputElement);
-			//return ((IWorkspaceRoot)inputElement).getProjects();
 		}
 		
 		public void dispose()
@@ -41,8 +50,6 @@ public class ProjectsView extends ViewPart
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 		{
-			//TODO figure out what the heck this method is doing 
-			System.out.println("input changed !!!");
 		}
 
 		public Object[] getChildren(Object parent)
@@ -90,15 +97,41 @@ public class ProjectsView extends ViewPart
 	@Override
 	public void createPartControl(Composite parent)
 	{
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		viewer =
 			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		viewer.setContentProvider(new ProjectsTreeContentProvider());
-		viewer.setLabelProvider(new WorkbenchLabelProvider());
-		viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		viewer.setLabelProvider(new ProjectsLabelProvider());
+		viewer.setInput(workspace.getRoot());
+
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		
 		hookContextMenu();
+		
+		resourceListener = new IResourceChangeListener()
+		{
+		    public void resourceChanged(IResourceChangeEvent event)
+		    {
+		        if (event.getType() != IResourceChangeEvent.POST_CHANGE)
+		        {
+		             return;
+		        }
+
+		        //TODO this must be made more selective
+		    	// a list of objects (tree-nodes) need to be made
+		    	// from resource delta and posted to UI thread
+		    	// se http://www.eclipse.org/articles/Article-Resource-deltas/resource-deltas.html
+   			    getViewSite().getShell().getDisplay().asyncExec(new Runnable()
+		        {
+		    		 public void run()
+		    		 {
+		    			 viewer.refresh(true);
+		    		 }
+		    	});
+		    }
+		};
+		workspace.addResourceChangeListener(resourceListener);
 	}
 
 	@Override
@@ -107,11 +140,14 @@ public class ProjectsView extends ViewPart
 		viewer.getTree().setFocus();
 	}
 	
-	private void hookContextMenu() {
+	private void hookContextMenu()
+	{
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
+		menuMgr.addMenuListener(new IMenuListener()
+		{
+			public void menuAboutToShow(IMenuManager manager)
+			{
 				ProjectsView.this.fillContextMenu(manager);
 			}
 		});
@@ -126,6 +162,13 @@ public class ProjectsView extends ViewPart
 		drillDownAdapter.addNavigationActions(manager);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	@Override
+	public void dispose()
+	{
+		super.dispose();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
 	}
 
 }
