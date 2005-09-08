@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.modelica.mdt.ModelicaCategory"
+            name="Modelica"/>
+      <view
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ProjectsView"
+            icon="icons/modelicaProject.gif"
+            id="org.modelica.mdt.ProjectsView"
+            name="Modelica Projects"/>
+   </extension>
+
+</plugin>
