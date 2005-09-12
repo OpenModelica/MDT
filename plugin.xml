@@ -30,5 +30,17 @@
          </description>
       </wizard>
    </extension>
-
+   <extension
+         id="org.modelica.mdt.editor"
+         name="Modelica Editor"
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.modelica.mdt.editor.ModelicaEditor"
+            icon="icons/modelicaFile.gif"
+            default="false"
+            name="org.modelica.mdt.editor"
+            contributorClass="org.modelica.mdt.editor.BasicTextEditorActionContributor"
+            id="org.modelica.mdt.editor"
+            extensions="mo"/>
+   </extension>
 </plugin>
