@@ -13,5 +13,22 @@
             id="org.modelica.mdt.ProjectsView"
             name="Modelica Projects"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.modelica.mdt.ModelicaCategory"
+            name="Modelica"/>
+      <wizard
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.NewProjectWizard"
+            icon="icons/modelicaProject.gif"
+            id="org.modelica.mdt.NewProjectWizard"
+            name="Modelica Project"
+            project="true">
+         <description>
+            Create a new Modelica project.
+         </description>
+      </wizard>
+   </extension>
 
 </plugin>
