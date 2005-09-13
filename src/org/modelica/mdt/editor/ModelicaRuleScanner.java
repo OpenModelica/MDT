@@ -19,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import java.lang.String;
 
 /**
  * @author Peter Bunus
@@ -57,8 +56,7 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 		rules[0]=wordRule;
 		
 //		 this will match single line Modelica comments given between quotes "this is a comment"
-		String begging = "this if \\u0022" ;
-		System.out.println(begging);
+
 		rules[1] = (new SingleLineRule( "\"", "\"", commentToken,'\\'));
 		// this will match sinle line Modelica comments precceded by double backslash
 		rules[2] = (new EndOfLineRule("//", commentToken,'\\'));

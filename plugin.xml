@@ -38,9 +38,17 @@
             class="org.modelica.mdt.editor.ModelicaEditor"
             icon="icons/modelicaFile.gif"
             default="false"
-            name="org.modelica.mdt.editor"
+            name="Modelica Editor"
             contributorClass="org.modelica.mdt.editor.BasicTextEditorActionContributor"
             id="org.modelica.mdt.editor"
             extensions="mo"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.modelica.mdt.PerspectiveFactory"
+            icon="icons/modelicaProject.gif"
+            id="org.eclipse.mdt.perspective"
+            name="Modelica"/>
    </extension>
 </plugin>

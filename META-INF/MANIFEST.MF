@@ -11,4 +11,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors,
  org.eclipse.ui.workbench.texteditor,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ org.eclipse.ui.console
