@@ -24,12 +24,20 @@ public class NewProjectWizard extends BasicNewResourceWizard
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException
 		{
-			monitor.beginTask("creating project " + newProject.getName(), 2);
+			monitor.beginTask("creating project " + newProject.getName(), 3);
 			try
 			{
+				/* create the project */
 				newProject.create(monitor);
 				monitor.worked(1);
+
+				/* open project */
 				newProject.open(monitor);
+				monitor.worked(2);
+
+				/* add modelica nature to the project */
+				MdtPlugin.addModelicaNature(newProject);
+				
 			}
 			catch (CoreException e)
 			{

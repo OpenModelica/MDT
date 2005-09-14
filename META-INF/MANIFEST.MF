@@ -13,3 +13,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.jface.text,
  org.eclipse.ui.console
+Bundle-ClassPath: mdt.jar,
+ bin/,
+ src/
+Export-Package: org.modelica.mdt,
+ org.modelica.mdt.editor
+Bundle-Activator: MdtPlugin

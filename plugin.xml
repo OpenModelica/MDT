@@ -51,4 +51,19 @@
             id="org.eclipse.mdt.perspective"
             name="Modelica"/>
    </extension>
+   <extension
+         id="ModelicaNature"
+         name="Modelica"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="org.modelica.mdt.ModelicaNature"/>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/modelica_ovr.gif"
+            id="org.modelica.mdt.modelicaNatureImage"
+            natureId="org.modelica.mdt.ModelicaNature"/>
+   </extension>
 </plugin>
