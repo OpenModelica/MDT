@@ -5,7 +5,8 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 
-public class PerspectiveFactory implements IPerspectiveFactory {
+public class PerspectiveFactory implements IPerspectiveFactory
+{
 
 	public void createInitialLayout(IPageLayout layout)
 	{
@@ -23,8 +24,9 @@ public class PerspectiveFactory implements IPerspectiveFactory {
 		consoleArea.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);
 		
 		
-		/* add modelica specific new wizards */
+		/* add new wizards */
 		layout.addNewWizardShortcut("org.modelica.mdt.NewProjectWizard");
-		
+		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
+		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");
 	}
 }
