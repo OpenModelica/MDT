@@ -135,7 +135,7 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 		IToken errorToken = new Token(new TextAttribute(ERROR_COLOR,null,SWT.BOLD));
 
 		setDefaultReturnToken(errorToken);
-		List rules = new ArrayList();
+		List<IRule> rules = new ArrayList<IRule>();
 		
 		rules.add(new WhitespaceRule(new WhiteSpace()));
 		
