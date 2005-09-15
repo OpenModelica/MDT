@@ -1,0 +1,58 @@
+1. Overview
+
+Modelica Development Tooling (MDT) Plug-In extends Eclipse to provide an environment
+for working with Modelica projects. These features are provided:
+o Modelica Projects management
+o Modelica Sourcecode Editing support
+
+Planned features:
+o Debugging support
+o Refactoring support
+
+1.1 Background
+
+MDT is created by <a href="">PELAB</a> at Linköping University as part of a <a href="">Open Modelica</a> effort.
+Open Modelica aims at creating a complete development environment for Modelica development.
+
+1.2 Requirements
+
+To be able to use this package of fine software you will need a number of other packages of fine software.
+These are:
+* <a href="">Open Modelica</a>
+* <a href="">Cygwin</a>
+* <a href="">C/C++ Development Tooling</a>
+Happy compiling! (and Hacking to get the %¤#%#¤! MICO to compile)
+
+2. Getting started
+
+The most convenient way to work with Modelica projects is to switch to the Modelica perspective.
+To switch to the Modelica perspective, choose the Window menu item, pick Open Perspective followed by Other...
+Select Modelica option from the dialog presented and click "OK". Not "Cancel". Or any other button.
+
+2.1 Making a project
+
+To start a new project, use the New Modelica Project Wizard. It is accesible through
+File->New->Modelica Project.
+After creating a project you can add files and folders to the project by selecting
+the corresponding wizard found in File->New menu subsection.
+Files having an extension of .mo will be treated as Modelica source code files by MDT.
+
+2.2 Importing a project
+
+To import an existing modelica project you need to create an empty modelica project. Use the import 
+file system wizard to copy the files to the project's folder. The import wizard is available by right
+clicking on the project in the Modelica Projects view. 
+
+
+
+3. Building modelica projects
+
+<h4 align="right">
+<i>This is tricky.</i> -- Adrian Pop
+</h4>
+
+Building modelica projects is not supported out of the box right now. However it is possible to 
+configure a regular eclipse builder for that purpose.
+
+
+3.1 Creating a builder
