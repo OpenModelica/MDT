@@ -66,4 +66,13 @@
             id="org.modelica.mdt.modelicaNatureImage"
             natureId="org.modelica.mdt.ModelicaNature"/>
    </extension>
+   <extension
+         id="ModelicaHelp"
+         name="Modelica Help"
+         point="org.eclipse.help.toc">
+	  <toc
+         extradir="doc"
+         file="toc.xml"
+         primary="true"/>
+   </extension>
 </plugin>

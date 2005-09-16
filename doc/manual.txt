@@ -20,7 +20,7 @@ To be able to use this package of fine software you will need a number of other 
 These are:
 * <a href="">Open Modelica</a>
 * <a href="">Cygwin</a>
-* <a href="">C/C++ Development Tooling</a>
+* <a href="">C/C++ Development Tooling Eclipse plug-in</a>
 Happy compiling! (and Hacking to get the %¤#%#¤! MICO to compile)
 
 2. Getting started
@@ -52,7 +52,23 @@ clicking on the project in the Modelica Projects view.
 </h4>
 
 Building modelica projects is not supported out of the box right now. However it is possible to 
-configure a regular eclipse builder for that purpose.
+configure Eclipse to use an external program for building.
 
 
 3.1 Creating a builder
+
+To create a builder, right click a project and select Properties. Select the Builders option
+and then click New... Choose Program as configuration type. On the next screen, enter the path
+to the make binary in Location. To select the Working Directory, click Browse Workspace... and select
+your project from the list. 
+<picture!!>
+If you're building Open Modelica you'll also need to set up some environment variables.
+Click on the Environment tab to view the current variables. To add a new variable, simply
+click New... The variables that are needed for building Open Modelica are ANTLRHOME, CLASSPATH
+and RMLHOME. Refer to the Open Modelica README file for details.
+<picture!!>
+When you're finished, click OK and close the Properties dialog. Now you have to disable the automatic
+build feature by deselecting Build Automatically in the Project menu item.
+<picture!!>
+Now you can build the project by selecting Build Project from the project context menu which you reach
+by right clicking on the project in the Modelica Projects view.
