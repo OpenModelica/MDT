@@ -2,9 +2,9 @@ package org.modelica.mdt;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
 
-public class MdtPlugin extends AbstractUIPlugin
+public class MdtPlugin extends Plugin
 {
 
 	public static final String MODELICA_NATURE = 
