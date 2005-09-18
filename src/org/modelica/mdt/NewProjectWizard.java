@@ -53,6 +53,7 @@ public class NewProjectWizard extends BasicNewResourceWizard
 	public void init(IWorkbench workbench,IStructuredSelection selection)
 	{
 		super.init(workbench, selection);
+		setNeedsProgressMonitor(true);
 		setWindowTitle("New Modelica Project");
     }
 	

@@ -21,6 +21,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.NewProjectWizard"
+            descriptionImage="icons/modelicaProjectDest.gif"
             icon="icons/modelicaProject.gif"
             id="org.modelica.mdt.NewProjectWizard"
             name="Modelica Project"
@@ -28,6 +29,16 @@
          <description>
             Create a new Modelica project.
          </description>
+      </wizard>
+      <wizard
+            class="org.modelica.mdt.NewClassWizard"
+            icon="icons/modelicaFile.gif"
+            id="org.modelica.mdt.NewClassWizard"
+            name="Modelica Class">
+         <description>
+            Create a new Modelica class.
+         </description>
+         <selection class="org.eclipse.core.resources.IResource"/>  
       </wizard>
    </extension>
    <extension
@@ -72,7 +83,7 @@
          point="org.eclipse.help.toc">
 	  <toc
          extradir="doc"
-         file="toc.xml"
+         file="doc/toc.xml"
          primary="true"/>
    </extension>
 </plugin>
