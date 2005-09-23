@@ -27,6 +27,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -49,7 +50,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 		private Text sourceFolder;
 		private Text className;
 		private Combo classType;
-		
+		private Button initialEquation;
 	
 		private IPath selection = null;
 		
@@ -169,14 +170,41 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        classType = new Combo(composite, SWT.READ_ONLY);
-	        classType.setItems(new String [] {"class", "model", "connector", "record",
+	        classType.setItems(new String [] {"model", "class", "connector", "record",
 	        		"block", "type", "function"});
 	        classType.setVisibleItemCount(7);
-	        classType.select(0);
+	        classType.select(0);	        
 	        		
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        classType.setLayoutData(gd);
+	        
+	        classType.addSelectionListener(new SelectionListener()
+	        {
+
+				public void widgetSelected(SelectionEvent e)
+				{
+					initialEquation.setEnabled
+					(NewClassWizard.classTypeHaveEquations(classType.getText()));					
+				}
+
+				public void widgetDefaultSelected(SelectionEvent e)
+				{}
+	        	
+	        });
+	        
+	        
+	        /* fill upp 'empty' space */
+	        new Label(composite, SWT.NONE);
+	        new Label(composite, SWT.NONE);
+	        
+	        /* initial equation block */
+	        initialEquation = new Button(composite, SWT.CHECK);
+	        initialEquation.setText("include initial equation block");
+	        
+	        gd = new GridData();
+	        gd.horizontalAlignment = GridData.BEGINNING;
+	        initialEquation.setLayoutData(gd);
 
 		}
 
@@ -210,7 +238,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 		{
 			return classNamePattern.matcher(name).matches();
 		}
-
+		
 		public void init(IStructuredSelection selection)
 		{
 			if (selection == null || selection.size() != 1)
@@ -278,12 +306,25 @@ public class NewClassWizard extends Wizard implements INewWizard
 		super();
 	}
 
+	/**
+	 * @param classType
+	 * @return false if class type can't have equations, e.g.
+	 * false is returned for record and connector
+	 */
+	public static boolean classTypeHaveEquations(String classType)
+	{
+		return 	
+		!(classType.equals("record") || classType.equals("connector"));
+	}
+	
 	@Override
 	public boolean performFinish()
 	{
 		final String sourceFolder = classPage.sourceFolder.getText();
 		final String className = classPage.className.getText();
 		final String classType = classPage.classType.getText();
+		final boolean initialEquationBlock = 
+			classPage.initialEquation.getSelection();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) 
@@ -291,7 +332,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 			 {
 				try 
 				{
-					doFinish(sourceFolder, className, classType, monitor);
+					doFinish(sourceFolder, className, classType, 
+							initialEquationBlock, monitor);
 				} 
 				catch (CoreException e)
 				{
@@ -316,7 +358,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	}
 
 	protected void doFinish(String sourceFolder, String className, 
-			String classType, IProgressMonitor monitor)
+			String classType, boolean initialEquationBlock, IProgressMonitor monitor)
 	throws CoreException
 	{
 		// create a sample file
@@ -328,10 +370,18 @@ public class NewClassWizard extends Wizard implements INewWizard
 		IContainer container = (IContainer) resource;
 		
 		final IFile file = container.getFile(new Path(className+".mo"));
+		
+		boolean haveEquationBlock = 
+			classTypeHaveEquations(classType);
+		
 		String contents = 
 			classType + " " + className + "\n\n" +
-			(classType.equals("record") ? "" : "equation\n\n" ) + 
+			( haveEquationBlock ? "equation\n\n" : ""  ) + 
+			( (haveEquationBlock && initialEquationBlock) 
+					? "initial equation\n\n" : "" ) +
 			"end " + className + ";";
+		
+		System.out.println(haveEquationBlock +" "+ initialEquationBlock);
 		
 		try {
 			InputStream stream = new ByteArrayInputStream(contents.getBytes());
