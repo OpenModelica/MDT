@@ -59,7 +59,7 @@
       <perspective
             class="org.modelica.mdt.PerspectiveFactory"
             icon="icons/modelicaProject.gif"
-            id="org.eclipse.mdt.perspective"
+            id="org.modelica.mdt.perspective"
             name="Modelica"/>
    </extension>
    <extension

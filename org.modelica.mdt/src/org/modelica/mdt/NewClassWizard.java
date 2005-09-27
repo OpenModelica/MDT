@@ -15,8 +15,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -345,11 +348,16 @@ public class NewClassWizard extends Wizard implements INewWizard
 				}
 			}
 		};
-		try {
+		try
+		{
 			getContainer().run(true, false, op);
-		} catch (InterruptedException e) {
+		}
+		catch (InterruptedException e)
+		{
 			return false;
-		} catch (InvocationTargetException e) {
+		}
+		catch (InvocationTargetException e)
+		{
 			Throwable realException = e.getTargetException();
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
@@ -381,27 +389,42 @@ public class NewClassWizard extends Wizard implements INewWizard
 					? "initial equation\n\n" : "" ) +
 			"end " + className + ";";
 		
-		System.out.println(haveEquationBlock +" "+ initialEquationBlock);
-		
-		try {
+	
+		try
+		{
 			InputStream stream = new ByteArrayInputStream(contents.getBytes());
-			if (file.exists()) {
+			if (file.exists())
+			{
 				file.appendContents(stream, true, true, monitor);
-			} else {
+			}
+			else
+			{
 				file.create(stream, true, monitor);
 			}
 			stream.close();
-		} catch (IOException e) {
+		} 
+		catch (IOException e)
+		{
+			/* ignored */
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
-		getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+		getShell().getDisplay().asyncExec(new Runnable() 
+		{
+			public void run()
+			{
 				IWorkbenchPage page =
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
+				try 
+				{
 					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
+				}
+				catch (PartInitException e) 
+				{
+					ErrorDialog.openError(null, "Error", 
+							"Could not open class filer in an editor.",(new Status(IStatus.ERROR, 
+							MdtPlugin.getSymbolicName(), 0, 
+							"error starting editor for " + file.getName(), e)));
 				}
 			}
 		});

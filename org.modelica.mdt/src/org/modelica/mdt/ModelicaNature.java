@@ -6,29 +6,23 @@ import org.eclipse.core.runtime.CoreException;
 
 public class ModelicaNature implements IProjectNature
 {
-
+	private IProject project;
+	
 	public void configure() throws CoreException 
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public void deconfigure() throws CoreException 
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public IProject getProject()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return project;
 	}
 
 	public void setProject(IProject project)
 	{
-		// TODO Auto-generated method stub
-
+		this.project = project;
 	}
-
 }

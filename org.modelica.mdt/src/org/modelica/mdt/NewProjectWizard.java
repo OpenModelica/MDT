@@ -4,6 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
@@ -41,8 +44,7 @@ public class NewProjectWizard extends BasicNewResourceWizard
 			}
 			catch (CoreException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				showProjectCreationError(e.getStatus());
 			}			
 			monitor.done();
 		}
@@ -55,8 +57,22 @@ public class NewProjectWizard extends BasicNewResourceWizard
 		super.init(workbench, selection);
 		setNeedsProgressMonitor(true);
 		setWindowTitle("New Modelica Project");
+		
     }
 	
+
+	public void showProjectCreationError(String message, Exception e)
+	{
+		showProjectCreationError(new Status(IStatus.ERROR, 
+				MdtPlugin.getSymbolicName(), 0, message, e));
+	}
+	
+	
+	public void showProjectCreationError(IStatus status)
+	{
+		ErrorDialog.openError(null, "Error", "Could not create project", status);	
+	}
+
 	@Override
 	public boolean performFinish()
 	{
@@ -67,13 +83,13 @@ public class NewProjectWizard extends BasicNewResourceWizard
 					new CreateNewProjectRunnable(project));
 
 			selectAndReveal(project);
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} 
+		catch (InvocationTargetException e)
+		{
+			showProjectCreationError("internal error during project creation", e);
+		}
+		catch (InterruptedException e)
+		{
 			return false;
 		}
 		return true;

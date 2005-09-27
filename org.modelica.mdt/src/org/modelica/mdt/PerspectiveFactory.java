@@ -21,8 +21,7 @@ public class PerspectiveFactory implements IPerspectiveFactory
 			layout.createFolder("org.modelica.mdt.consoleArea", 
 					IPageLayout.BOTTOM, 0.75f, IPageLayout.ID_EDITOR_AREA);
 		consoleArea.addView(IConsoleConstants.ID_CONSOLE_VIEW);
-		consoleArea.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);
-		
+		consoleArea.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);		
 		
 		/* add new wizards */
 		layout.addNewWizardShortcut("org.modelica.mdt.NewProjectWizard");
