@@ -48,12 +48,15 @@ import org.eclipse.ui.ide.IDE;
 
 public class NewClassWizard extends Wizard implements INewWizard
 {
+	
 	public class NewClassPage extends WizardPage
 	{
 		private Text sourceFolder;
 		private Text className;
 		private Combo classType;
 		private Button initialEquation;
+		private Button partialClass;
+		private Button externalBody;
 	
 		private IPath selection = null;
 		
@@ -187,8 +190,17 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 				public void widgetSelected(SelectionEvent e)
 				{
+					/*
+					 * update state of the modifiers checkboxes
+					 */
 					initialEquation.setEnabled
-					(NewClassWizard.classTypeHaveEquations(classType.getText()));					
+					(NewClassWizard.classTypeHaveEquations(classType.getText()));
+					
+					partialClass.setEnabled
+					(NewClassWizard.canBePartial(classType.getText()));
+					
+					externalBody.setEnabled(classType.getText().equals("function"));
+
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e)
@@ -196,10 +208,20 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        	
 	        });
 	        
-	        
 	        /* fill upp 'empty' space */
 	        new Label(composite, SWT.NONE);
-	        new Label(composite, SWT.NONE);
+
+	        
+	        /* create separator */
+	        l = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	        gd.horizontalSpan = 3;
+	        l.setLayoutData(gd);
+	        
+	        
+	        /* modifiers section */
+	        l = new Label(composite, SWT.NONE);
+	        l.setText("Modifiers:");
 	        
 	        /* initial equation block */
 	        initialEquation = new Button(composite, SWT.CHECK);
@@ -207,7 +229,30 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
+	        gd.horizontalSpan = 2;
 	        initialEquation.setLayoutData(gd);
+	        
+	        /* partial class */
+	        new Label(composite, SWT.NONE); /* empty label for padding */
+	        partialClass = new Button(composite, SWT.CHECK);
+	        partialClass.setText("is partial class");
+	        
+	        gd = new GridData();
+	        gd.horizontalAlignment = GridData.BEGINNING;
+	        gd.horizontalSpan = 2;
+	        partialClass.setLayoutData(gd);
+
+	        /* external body */
+	        new Label(composite, SWT.NONE); /* empty label for padding */
+	        externalBody = new Button(composite, SWT.CHECK);
+	        externalBody.setText("have external body");
+	        externalBody.setEnabled(false);
+	        
+	        gd = new GridData();
+	        gd.horizontalAlignment = GridData.BEGINNING;
+	        gd.horizontalSpan = 2;
+	        externalBody.setLayoutData(gd);
+	        
 
 		}
 
@@ -310,15 +355,31 @@ public class NewClassWizard extends Wizard implements INewWizard
 	}
 
 	/**
-	 * @param classType
+	 * @param classType name of the class type, e.g. 'record'
 	 * @return false if class type can't have equations, e.g.
-	 * false is returned for record and connector
+	 * false is returned for record
 	 */
 	public static boolean classTypeHaveEquations(String classType)
 	{
 		return 	
-		!(classType.equals("record") || classType.equals("connector"));
+		!(classType.equals("record") 
+				|| classType.equals("type")
+				|| classType.equals("connector") 
+				|| classType.equals("function"));
 	}
+	
+	/**
+	 * @param classType name of the class type, e.g. 'record'
+	 * @return false if class type can't have equations, e.g.
+	 * false is returned for type
+	 */
+	public static boolean canBePartial(String classType)
+	{
+		return 	
+		(!(classType.equals("type") 
+				|| classType.equals("function"))); 
+	}
+
 	
 	@Override
 	public boolean performFinish()
@@ -328,6 +389,11 @@ public class NewClassWizard extends Wizard implements INewWizard
 		final String classType = classPage.classType.getText();
 		final boolean initialEquationBlock = 
 			classPage.initialEquation.getSelection();
+		final boolean partialClass = 
+			classPage.partialClass.getSelection();
+		final boolean externalBody = 
+			classPage.externalBody.getSelection();
+
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) 
@@ -336,7 +402,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 				try 
 				{
 					doFinish(sourceFolder, className, classType, 
-							initialEquationBlock, monitor);
+							initialEquationBlock, partialClass, externalBody, monitor);
 				} 
 				catch (CoreException e)
 				{
@@ -366,7 +432,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 	}
 
 	protected void doFinish(String sourceFolder, String className, 
-			String classType, boolean initialEquationBlock, IProgressMonitor monitor)
+			String classType, boolean initialEquationBlock, boolean partialClass, 
+			boolean haveExternalBody, IProgressMonitor monitor)
 	throws CoreException
 	{
 		// create a sample file
@@ -379,20 +446,12 @@ public class NewClassWizard extends Wizard implements INewWizard
 		
 		final IFile file = container.getFile(new Path(className+".mo"));
 		
-		boolean haveEquationBlock = 
-			classTypeHaveEquations(classType);
-		
-		String contents = 
-			classType + " " + className + "\n\n" +
-			( haveEquationBlock ? "equation\n\n" : ""  ) + 
-			( (haveEquationBlock && initialEquationBlock) 
-					? "initial equation\n\n" : "" ) +
-			"end " + className + ";";
-		
-	
 		try
 		{
-			InputStream stream = new ByteArrayInputStream(contents.getBytes());
+			String contents = generateClassContentes(className, classType, 
+					initialEquationBlock, partialClass, haveExternalBody);
+			InputStream stream = 
+				new ByteArrayInputStream(contents.getBytes());
 			if (file.exists())
 			{
 				file.appendContents(stream, true, true, monitor);
@@ -430,6 +489,51 @@ public class NewClassWizard extends Wizard implements INewWizard
 		});
 		monitor.worked(1);
 
+	}
+
+	private String generateClassContentes(String className, String classType, 
+			boolean initialEquationBlock, boolean partialClass, boolean haveExternalBody) 
+	{
+		/*
+		 * the gory logic of generating a skeleton for a modelica class
+		 */
+		String contents = "";
+
+		if (canBePartial(classType) && partialClass)
+		{
+			contents += "partial ";
+		}
+		
+		contents += classType + " " + className;
+		
+		if (classTypeHaveEquations(classType))
+		{
+			contents += "\n\nequation\n";
+			if (initialEquationBlock)
+			{
+				contents += "\ninitial equation\n";
+			}
+		}
+		
+		if (classType.equals("function"))
+		{
+			if (haveExternalBody)
+			{
+				contents += "\nexternal";
+			}
+			else
+			{	
+				contents += "\nalgorithm\n";
+			}
+		}
+
+		if (!classType.equals("type"))
+		{
+			contents += "\nend " + className;
+		}
+
+		contents += ";";
+		return contents ;
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection)
