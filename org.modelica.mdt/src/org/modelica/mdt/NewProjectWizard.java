@@ -61,14 +61,14 @@ public class NewProjectWizard extends BasicNewResourceWizard
     }
 	
 
-	public void showProjectCreationError(String message, Exception e)
+	private void showProjectCreationError(String message, Exception e)
 	{
 		showProjectCreationError(new Status(IStatus.ERROR, 
 				MdtPlugin.getSymbolicName(), 0, message, e));
 	}
 	
 	
-	public void showProjectCreationError(IStatus status)
+	private void showProjectCreationError(IStatus status)
 	{
 		ErrorDialog.openError(null, "Error", "Could not create project", status);	
 	}

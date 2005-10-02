@@ -28,5 +28,9 @@ public class PerspectiveFactory implements IPerspectiveFactory
 		layout.addNewWizardShortcut("org.modelica.mdt.NewClassWizard");
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");
+		
+		/* add view shortcuts */
+		layout.addShowViewShortcut("org.modelica.mdt.ProjectsView");
+		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 	}
 }
