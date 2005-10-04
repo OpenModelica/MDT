@@ -107,7 +107,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        l.setLayoutData(gd);
 	        
-	        sourceFolder = new Text(composite,  SWT.SINGLE | SWT.BORDER);
+	        sourceFolder = new Text(composite, SWT.SINGLE | SWT.BORDER);
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	        sourceFolder.setLayoutData(gd);
 	        setSourceFolder(selection);
