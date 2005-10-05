@@ -9,6 +9,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.wizards.IWizardCategory;
 
 import junit.framework.TestCase;
 
@@ -43,6 +44,10 @@ public class TestPerspective extends TestCase
 				IConsoleConstants.ID_CONSOLE_VIEW));
 	}
 	
+	/**
+	 * perform tests on modelica perspective
+	 * @throws WorkbenchException
+	 */
 	public void testModelicaPerspective() throws WorkbenchException
 	{
 		IWorkbench workbench = PlatformUI.getWorkbench(); 
@@ -81,6 +86,28 @@ public class TestPerspective extends TestCase
 		 */
 		assertNotNull(page.findView("org.modelica.mdt.ProjectsView"));
 		assertNotNull(page.findView(IConsoleConstants.ID_CONSOLE_VIEW));
+
+	}
+	/**
+	 * perform tests on modelica new wizards catagory
+	 * @throws WorkbenchException
+	 */
+	
+	public void testModelicaNewWizardsCatagory()
+	{
+		IWizardCategory category = 
+			PlatformUI.getWorkbench().getNewWizardRegistry().
+			  findCategory("org.modelica.mdt.ModelicaCategory");
+				
+		assertNotNull("Modelica New Wizards catagory not found",  category);
+		assertEquals("Modelica New Wizards catagory labeled unexpectedly",
+				"Modelica", category.getLabel());
+		
+		assertNotNull("New Project Wizard not found", 
+				category.findWizard("org.modelica.mdt.NewProjectWizard"));
+		
+		assertNotNull("New Class Wizard not found", 
+				category.findWizard("org.modelica.mdt.NewClassWizard"));
 
 	}
 
