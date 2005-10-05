@@ -31,6 +31,7 @@
          </description>
       </wizard>
       <wizard
+            category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.NewClassWizard"
             icon="icons/modelicaFile.gif"
             id="org.modelica.mdt.NewClassWizard"

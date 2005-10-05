@@ -2,6 +2,7 @@ package org.modelica.mdt;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -70,5 +71,8 @@ public class MdtPlugin extends AbstractUIPlugin
 		return getDefault().getBundle().getSymbolicName();
 	}
 
-	
+	public static void tag(Widget widget, String tag)
+	{
+		widget.setData("name", tag);
+	}
 }

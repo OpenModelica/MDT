@@ -28,6 +28,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 public class NewProjectWizard extends Wizard implements INewWizard
 {
+	public static final String PROJECT_NAME_TAG = "projectNameTag";
+	
 	public class NewProjectPage extends WizardPage 
 	{
 		private Text projectName;		
@@ -72,6 +74,7 @@ public class NewProjectWizard extends Wizard implements INewWizard
 	        projectName = new Text(composite, SWT.SINGLE | SWT.BORDER);
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	        projectName.setLayoutData(gd);
+	        MdtPlugin.tag(projectName, PROJECT_NAME_TAG);
 	        
 	        projectName.addModifyListener(new ModifyListener()
 	    	{
