@@ -41,44 +41,79 @@
 
 package org.modelica.mdt.test;
 
-import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.BundleContext;
+import java.util.concurrent.Semaphore;
+
+import junit.framework.Assert;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
- * The main plugin class to be used in the desktop.
+ * @author Elmir Jagudin
+ *
+ * This class contains some utility code for assisting the testcases
  */
-public class TestPlugin extends Plugin {
+public class Utility 
+{
 
-	//The shared instance.
-	private static TestPlugin plugin;
-	
-	/**
-	 * The constructor.
+	/** 
+	 * opens (runs dialog.open() method ) a dialog in UI thread and waits until it 
+	 * is open before returning
+	 * 
+	 * @param dialog the dialog to open, it is assumed that dialog is fully initialized
+	 * 
 	 */
-	public TestPlugin() {
-		plugin = this;
-	}
+	public static IWorkbenchWizard openWizard(String wizardID)
+	{
+		
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWizardDescriptor wizDesc = 
+			workbench.getNewWizardRegistry().findWizard(wizardID);	
+		Assert.assertNotNull("wizard " + wizardID + " not found", wizDesc);
+		
+		IWorkbenchWizard wizard = null;
+		try
+		{
+			wizard = wizDesc.createWizard();
+		}
+		catch (CoreException e)
+		{
+			Assert.fail("Could not create " + wizardID + 
+					" wizard, CoreException thrown\n" + e.getMessage());
+		}
+		Assert.assertNotNull(wizard);
+		
+		wizard.init(workbench, StructuredSelection.EMPTY);
+		final WizardDialog dialog = 
+			new WizardDialog(workbench.getActiveWorkbenchWindow().getShell(), wizard);
+		dialog.create();
 
-	/**
-	 * This method is called upon plug-in activation
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-	}
-
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		plugin = null;
-	}
-
-	/**
-	 * Returns the shared instance.
-	 */
-	public static TestPlugin getDefault() {
-		return plugin;
-	}
-
+		final Semaphore sem = new Semaphore(0);
+		
+		dialog.getShell().getDisplay().syncExec(new Runnable()
+		{
+			public void run()
+			{
+				dialog.setBlockOnOpen(false);
+				dialog.open();
+				sem.release();
+			}
+		});
+		
+		try
+		{
+			sem.acquire();
+		} 
+		catch (InterruptedException e)
+		{
+			Assert.fail("interruped while waiting for dialog to open");
+		}
+		
+		return wizard;
+	} 	
 }

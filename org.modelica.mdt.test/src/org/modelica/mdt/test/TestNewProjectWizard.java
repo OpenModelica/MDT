@@ -41,20 +41,21 @@
 
 package org.modelica.mdt.test;
 
-import java.util.concurrent.Semaphore;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.modelica.mdt.NewProjectWizard;
 
+import abbot.finder.matchers.swt.TextMatcher;
+import abbot.finder.swt.BasicFinder;
+import abbot.finder.swt.MultipleWidgetsFoundException;
+import abbot.finder.swt.TestHierarchy;
+import abbot.finder.swt.WidgetNotFoundException;
+import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.TextTester;
 
 import junit.framework.TestCase;
@@ -69,30 +70,7 @@ public class TestNewProjectWizard extends TestCase
 		/*
 		 * init and display wizard
 		 */
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWizardDescriptor wizDesc = 
-			workbench.getNewWizardRegistry().findWizard("org.modelica.mdt.NewProjectWizard");		
-		assertNotNull("new project wizard not found", wizDesc);
-		
-		IWorkbenchWizard wizard = null;
-		try
-		{
-			wizard = wizDesc.createWizard();
-		}
-		catch (CoreException e)
-		{
-			fail("Could not create new project wizard, CoreException thrown\n" 
-					+ e.getMessage());
-		}
-		assertNotNull(wizard);
-		
-		wizard.init(workbench, StructuredSelection.EMPTY);
-		final WizardDialog dialog = 
-			new WizardDialog(workbench.getActiveWorkbenchWindow().getShell(), wizard);
-		dialog.create();
-
-		openDialog(dialog);
-		
+		IWorkbenchWizard wizard = Utility.openWizard("org.modelica.mdt.NewProjectWizard");
 		assertFalse(wizard.canFinish());
 
 		/* fetch project name text field */
@@ -102,14 +80,38 @@ public class TestNewProjectWizard extends TestCase
 		
 		assertTrue(wizard.canFinish());
 
-		/* create project */
-		boolean finishRes = wizard.performFinish();
-		assertTrue("New wizard dialog failed to finish", finishRes);
+		/* 
+		 * create project 
+		 */
+		BasicFinder finder =  /* find finish button */
+			new BasicFinder(new TestHierarchy(PlatformUI.getWorkbench().getDisplay()));
+
+		Button finish = null;
+		try
+		{
+			finish = (Button) finder.find(new TextMatcher("&Finish"));
+		}
+		catch (WidgetNotFoundException e)
+		{
+			fail("Finish button not found.");
+		} 
+		catch (MultipleWidgetsFoundException e) 
+		{
+			fail("Multiple finish buttons found.");
+		}
+		
+		/* create project by clicking finish button */
+		while (!finish.getEnabled())
+		{
+			/* wait for the name changed to propogate to enable the finish button */
+		}		
+		ButtonTester.getButtonTester().actionClick(finish);
+		
 		
 		/* check that project was created */
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 				
-		assertTrue("new wizard fail to create project", project.exists());
+		assertTrue("new wizard failed to create project", project.exists());
 		assertTrue("new wizard didnt open the created project", project.isOpen());
 		
 		/* check that it have modelica nature */
@@ -125,41 +127,7 @@ public class TestNewProjectWizard extends TestCase
 		{
 			fail("CoreException thrown while probing for modelica nature " + e.getMessage());
 		}
-		
-		
-		/* clean up */
-		dialog.close();
-	}
 
-	/** 
-	 * opens (runs dialog.open() method ) a dialog in UI thread and waits until it 
-	 * is open before returning
-	 * 
-	 * @param dialog the dialog to open, it is assumed that dialog is fully initialized
-	 * 
-	 */
-	private void openDialog(final WizardDialog dialog)
-	{
-		final Semaphore sem = new Semaphore(0);
-		
-		dialog.getShell().getDisplay().syncExec(new Runnable()
-		{
-			public void run()
-			{
-				dialog.setBlockOnOpen(false);
-				dialog.open();
-				sem.release();
-			}
-		});
-		
-		try
-		{
-			sem.acquire();
-		} 
-		catch (InterruptedException e)
-		{
-			fail("interruped while waiting for dialog to open");
-		}
-	} 
+	}
 
 }
