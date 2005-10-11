@@ -89,6 +89,13 @@ import org.eclipse.ui.ide.IDE;
 
 public class NewClassWizard extends Wizard implements INewWizard
 {
+	/* key widgets' tags for abbot */
+	public static final String SOURCE_FOLDER_TAG = "sourceFolderTag";
+	public static final String CLASS_NAME_TAG = "classNameTag";
+	public static final String CLASS_TYPE_TAG = "classTypeTag";
+	public static final String INITIAL_EQUATION_TAG = "initEqTag";
+	public static final String PARTIAL_CLASS_TAG = "partialTypeTag";
+	public static final String EXTERNAL_BODY_TAG = "extBodyTag";
 	
 	public class NewClassPage extends WizardPage
 	{
@@ -151,6 +158,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        sourceFolder = new Text(composite, SWT.SINGLE | SWT.BORDER);
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	        sourceFolder.setLayoutData(gd);
+	        MdtPlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
 	        setSourceFolder(selection);
 	        
 	        sourceFolder.addModifyListener(new ModifyListener()
@@ -188,6 +196,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        className.setLayoutData(gd);
+	        MdtPlugin.tag(className, CLASS_NAME_TAG);
 
 	        className.addModifyListener(new ModifyListener()
 	        {
@@ -221,7 +230,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        		"block", "type", "function"});
 	        classType.setVisibleItemCount(7);
 	        classType.select(0);	        
-	        		
+	        MdtPlugin.tag(classType, CLASS_TYPE_TAG);
+	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        classType.setLayoutData(gd);
@@ -267,6 +277,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        /* initial equation block */
 	        initialEquation = new Button(composite, SWT.CHECK);
 	        initialEquation.setText("include initial equation block");
+	        MdtPlugin.tag(initialEquation, INITIAL_EQUATION_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -282,12 +293,14 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        gd.horizontalSpan = 2;
 	        partialClass.setLayoutData(gd);
+	        MdtPlugin.tag(partialClass, PARTIAL_CLASS_TAG);
 
 	        /* external body */
 	        new Label(composite, SWT.NONE); /* empty label for padding */
 	        externalBody = new Button(composite, SWT.CHECK);
 	        externalBody.setText("have external body");
 	        externalBody.setEnabled(false);
+	        MdtPlugin.tag(externalBody, EXTERNAL_BODY_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;

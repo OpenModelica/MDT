@@ -43,6 +43,7 @@ package org.modelica.mdt;
 
 import org.modelica.mdt.core.Utility;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -152,8 +153,10 @@ public class NewProjectWizard extends Wizard implements INewWizard
 	@Override
 	public boolean performFinish()
 	{
-		return Utility.createProject(projectPage.projectName.getText(), 
-				this.getContainer());
+		IProject proj = 
+			Utility.createProject(projectPage.projectName.getText(), this.getContainer());
+		
+		return proj != null;
 	}
 	
 	@Override

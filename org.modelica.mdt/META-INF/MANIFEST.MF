@@ -17,6 +17,7 @@ Bundle-ClassPath: mdt.jar,
  bin/,
  src/
 Export-Package: org.modelica.mdt,
+ org.modelica.mdt.core,
  org.modelica.mdt.editor
 Bundle-Activator: org.modelica.mdt.MdtPlugin
 Eclipse-AutoStart: true

@@ -64,13 +64,16 @@ public class Utility
 
 	/**
 	 * creates a modelica project in the workspace
+	 * 
+	 * @return the handle to the created project or null if there were errors during 
+	 * creation of the project
 	 */
-	public static boolean createProject(String name, IRunnableContext context)
+	public static IProject createProject(String name, IRunnableContext context)
 	{
+		IProject project = null;		
 		try 
 		{
-			IProject project = 
-				ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			
 			context.run(false, false, 
 					new CreateNewProjectRunnable(project));
@@ -84,9 +87,10 @@ public class Utility
 		}
 		catch (InterruptedException e)
 		{
-			return false;
+			/* NOP */
 		}
-		return true;
+		
+		return project;
 		
 	}
 }
