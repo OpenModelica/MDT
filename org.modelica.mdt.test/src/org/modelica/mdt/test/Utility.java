@@ -46,12 +46,20 @@ import java.util.concurrent.Semaphore;
 import junit.framework.Assert;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
+
+import abbot.finder.matchers.swt.TextMatcher;
+import abbot.finder.swt.BasicFinder;
+import abbot.finder.swt.MultipleWidgetsFoundException;
+import abbot.finder.swt.TestHierarchy;
+import abbot.finder.swt.WidgetNotFoundException;
 
 /**
  * @author Elmir Jagudin
@@ -61,14 +69,14 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 public class Utility 
 {
 
-	/** 
-	 * opens (runs dialog.open() method ) a dialog in UI thread and waits until it 
-	 * is open before returning
-	 * 
-	 * @param dialog the dialog to open, it is assumed that dialog is fully initialized
-	 * 
+	/**
+	 * creates and opens a wizard
+	 *  
+	 * @param wizardID the ID of the wizard to create and open
+	 * @param selection the selection which is used to initialize the wizard
 	 */
-	public static IWorkbenchWizard openWizard(String wizardID)
+	public static IWorkbenchWizard openWizard(String wizardID, 
+			IStructuredSelection selection)
 	{
 		
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -88,7 +96,7 @@ public class Utility
 		}
 		Assert.assertNotNull(wizard);
 		
-		wizard.init(workbench, StructuredSelection.EMPTY);
+		wizard.init(workbench, selection);
 		final WizardDialog dialog = 
 			new WizardDialog(workbench.getActiveWorkbenchWindow().getShell(), wizard);
 		dialog.create();
@@ -115,5 +123,60 @@ public class Utility
 		}
 		
 		return wizard;
-	} 	
+	}
+	/**
+	 * creates and opens a wizard initialized with empty selection
+	 *  
+	 * @param wizardID the ID of the wizard to create and open
+	 */
+	public static IWorkbenchWizard openWizard(String wizardID)
+	{
+		return openWizard(wizardID, StructuredSelection.EMPTY);
+	}
+	
+	/**
+	 * 
+	 * @return currently displayed button with text '&Finish'
+	 * this function will fail if not exactly one finish button is
+	 * on the screen
+	 */
+	public static Button findFinishButton()
+	{
+		BasicFinder finder =  /* find finish button */
+			new BasicFinder(new TestHierarchy(PlatformUI.getWorkbench().getDisplay()));
+
+		try
+		{
+			return (Button) finder.find(new TextMatcher("&Finish"));
+		}
+		catch (WidgetNotFoundException e)
+		{
+			Assert.fail("Finish button not found.");
+		} 
+		catch (MultipleWidgetsFoundException e) 
+		{
+			Assert.fail("Multiple finish buttons found.");
+		}
+		
+		Assert.fail("this is not happening");
+		return null;
+	}
+	/*
+	 * sleeps for approx time seconds
+	 * this method does not garantee that it will sleep any particular time
+	 */
+	public static void sleep(Object mutex, long time)
+	{
+		try 
+		{
+			synchronized (mutex)
+			{
+				mutex.wait(time);
+			}
+		} 
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
