@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.modelica.internal.core.ModelicaRoot;
+import org.modelica.mdt.internal.core.ModelicaRoot;
 import org.modelica.mdt.MdtPlugin;
 
 public class ModelicaCore 
