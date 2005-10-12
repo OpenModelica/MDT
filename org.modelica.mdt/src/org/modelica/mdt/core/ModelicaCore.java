@@ -11,10 +11,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.modelica.internal.core.ModelicaRoot;
 import org.modelica.mdt.MdtPlugin;
 
-public class Utility 
+public class ModelicaCore 
 {
+	private static IModelicaRoot modelicaRoot = null;
+	
 	public static class CreateNewProjectRunnable implements IRunnableWithProgress
 	{
 		IProject newProject;
@@ -92,5 +95,14 @@ public class Utility
 		
 		return project;
 		
+	}
+	
+	public static IModelicaRoot getModelicaRoot()
+	{
+		if (modelicaRoot == null)
+		{
+			modelicaRoot = new ModelicaRoot();
+		}
+		return modelicaRoot;
 	}
 }

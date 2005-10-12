@@ -1,76 +1,113 @@
-/*
- * This file is part of Modelica Development Tooling.
- *
- * Copyright (c) 2005, Linköpings universitet, Department of
- * Computer and Information Science, PELAB
- *
- * All rights reserved.
- *
- * (The new BSD license, see also
- * http://www.opensource.org/licenses/bsd-license.php)
- *
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *
- * * Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in
- *   the documentation and/or other materials provided with the
- *   distribution.
- *
- * * Neither the name of Linköpings universitet nor the names of its
- *   contributors may be used to endorse or promote products derived from
- *   this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.modelica.mdt;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.TreeViewer;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.views.navigator.ResourceNavigator;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.ViewPart;
+import org.modelica.mdt.core.ModelicaCore;
 
-public class ProjectsView extends ResourceNavigator
+public class ProjectsView extends ViewPart
 {
-	public class ViewFilter extends ViewerFilter {
+	private TreeViewer viewer;
+	private DrillDownAdapter drillDownAdapter;
+	private IResourceChangeListener resourceListener;
 
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element)
-		{
-			if ((element instanceof IFile) ||
-				(element instanceof IFolder))
-			{
-				return !((IResource)element).getName().startsWith("."); 
-			}
-			return true;
-		}
 
+	public class ProjectsLabelProvider extends WorkbenchLabelProvider
+	{
 
 	}
 
+
+	@Override
 	public void createPartControl(Composite parent)
 	{
-		super.createPartControl(parent);
-		this.getViewer().addFilter(new ViewFilter());
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		viewer =
+			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+
+		viewer.setContentProvider(new ModelicaElementContentProvider());
+		viewer.setLabelProvider(new ProjectsLabelProvider());
+		viewer.setInput(ModelicaCore.getModelicaRoot());
+
+		drillDownAdapter = new DrillDownAdapter(viewer);
+		
+		hookContextMenu();
+		
+		resourceListener = new IResourceChangeListener()
+		{
+		    public void resourceChanged(IResourceChangeEvent event)
+		    {
+		        if (event.getType() != IResourceChangeEvent.POST_CHANGE)
+		        {
+		             return;
+		        }
+
+		        //TODO this must be made more selective
+		    	// a list of objects (tree-nodes) need to be made
+		    	// from resource delta and posted to UI thread
+		    	// se http://www.eclipse.org/articles/Article-Resource-deltas/resource-deltas.html
+   			    getViewSite().getShell().getDisplay().asyncExec(new Runnable()
+		        {
+		    		 public void run()
+		    		 {
+		    			 viewer.refresh(true);
+		    		 }
+		    	});
+		    }
+		};
+		workspace.addResourceChangeListener(resourceListener);
 	}
+
+	@Override
+	public void setFocus()
+	{
+		viewer.getTree().setFocus();
+	}
+	
+	private void hookContextMenu()
+	{
+		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener()
+		{
+			public void menuAboutToShow(IMenuManager manager)
+			{
+				ProjectsView.this.fillContextMenu(manager);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
+	}
+
+	private void fillContextMenu(IMenuManager manager) 
+	{
+		manager.add(new Separator());
+		drillDownAdapter.addNavigationActions(manager);
+		// Other plug-ins can contribute there actions here
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	@Override
+	public void dispose()
+	{
+		super.dispose();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+	}
+
 }
