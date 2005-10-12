@@ -55,10 +55,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.modelica.mdt.NewClassWizard;
+import org.modelica.mdt.core.ModelicaCore;
 
-import abbot.finder.swt.MultipleWidgetsFoundException;
-import abbot.finder.swt.WidgetNotFoundException;
-import abbot.script.swt.WidgetReference;
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.ComboTester;
 import abbot.tester.swt.TextTester;
@@ -95,7 +93,7 @@ public class TestNewClassWizard extends TestCase
 		 * setup project
 		 */
 		project = 
-			org.modelica.mdt.core.Utility.createProject(PROJECT_NAME,
+			ModelicaCore.createProject(PROJECT_NAME,
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 		assertNotNull("failed to create project", project);
 		
