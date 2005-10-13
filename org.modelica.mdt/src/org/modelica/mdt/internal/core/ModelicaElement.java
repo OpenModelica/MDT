@@ -38,21 +38,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt.core;
+package org.modelica.mdt.internal.core;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.ModelicaCore;
 
 /**
- * @author Elmir Jagudin
+ * @author x05elmja
  *
  */
-public interface IModelicaRoot
+abstract public class ModelicaElement extends PlatformObject implements IModelicaElement 
 {
-	/**
-	 * Presents projects in Modelica specific view, that is
-	 * All modelica projects are wrapped into IModelicaProject
-	 *  
-	 * @return Projects in the workspace
-	 */
-	public Object[] getProjects() throws CoreException;
+
+	@Override
+	public Object getAdapter(Class adapter)
+	{
+		if (IWorkbenchAdapter.class.equals(adapter))
+		{
+			return ModelicaCore.getWorkbenchAdapter();
+		}
+		return super.getAdapter(adapter);
+	}
+	
 }

@@ -48,9 +48,10 @@ import org.modelica.mdt.core.IModelicaProject;
  * Wrappper around IProject to provide Modelica specific view 
  * @author Elmir Jagudin
  */
-public class ModelicaProject implements IModelicaProject 
+public class ModelicaProject extends ModelicaElement implements IModelicaProject 
 {
 	private IProject project;
+	
 	
 	protected ModelicaProject(IProject project)
 	{
@@ -66,11 +67,30 @@ public class ModelicaProject implements IModelicaProject
 		return project;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaProject#getPackages()
 	 */
 	public IModelicaPackage[] getPackages() 
 	{
 		return null;
+	}
+	
+//	/**
+//	 * 
+//	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+//	 */
+//	public Object getAdapter(Class adapter) 
+//	{
+//		if (adapter == IWorkbenchAdapter.class)
+//		{
+//			System.out.println(this + " wrapped proj " + project + " workbench adaptor " +project.getAdapter(IWorkbenchAdapter.class));
+//			return project.getAdapter(IWorkbenchAdapter.class);
+//		}
+//		return null;
+//	}
+
+	public String getElementName() 
+	{
+		return project.getName();
 	}
 }

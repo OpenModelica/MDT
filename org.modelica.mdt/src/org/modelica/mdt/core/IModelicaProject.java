@@ -46,7 +46,7 @@ import org.eclipse.core.resources.IProject;
  * @author Elmir Jagudin
  *
  */
-public interface IModelicaProject 
+public interface IModelicaProject extends IModelicaElement
 {
 	public IModelicaPackage[] getPackages();
 	public IProject getProject();

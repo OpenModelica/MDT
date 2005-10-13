@@ -40,19 +40,17 @@
  */
 package org.modelica.mdt.core;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
+ * Common protocol for all elements provided by the Modelica root.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * @author Elmir Jagudin
  *
  */
-public interface IModelicaRoot
+public interface IModelicaElement extends IAdaptable 
 {
-	/**
-	 * Presents projects in Modelica specific view, that is
-	 * All modelica projects are wrapped into IModelicaProject
-	 *  
-	 * @return Projects in the workspace
-	 */
-	public Object[] getProjects() throws CoreException;
+	public String getElementName();
 }

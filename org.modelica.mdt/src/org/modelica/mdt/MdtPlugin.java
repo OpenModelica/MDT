@@ -116,4 +116,13 @@ public class MdtPlugin extends AbstractUIPlugin
 	{
 		widget.setData("name", tag);
 	}
+	
+	/**
+	 * convinience wrapper method for loggin to plugin logger
+	 * @param exception the exception to log
+	 */
+	public static void log(CoreException exception)
+	{
+		plugin.getLog().log(exception.getStatus());
+	}
 }

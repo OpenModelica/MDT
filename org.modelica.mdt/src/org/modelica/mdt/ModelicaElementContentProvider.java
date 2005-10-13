@@ -47,6 +47,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.modelica.mdt.core.IModelicaRoot;
 
 /**
  * @author Elmir Jagudin
@@ -57,7 +58,20 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 
 	public Object[] getElements(Object inputElement)
 	{
-		return getChildren(inputElement);
+		try
+		{
+			if (inputElement instanceof IModelicaRoot)
+			{
+				return ((IModelicaRoot)inputElement).getProjects();
+			}
+			
+		}
+		catch (CoreException e)
+		{
+			System.out.println("ajaj " + e);
+			MdtPlugin.log(e);
+		}
+		return new Object[] {};
 	}
 	
 	public void dispose()
@@ -78,8 +92,7 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 			}
 			catch (CoreException e)
 			{
-				//TODO should we do something here ?
-				e.printStackTrace();
+				MdtPlugin.log(e);
 			}
 		}
 		else if (parent instanceof IResource)

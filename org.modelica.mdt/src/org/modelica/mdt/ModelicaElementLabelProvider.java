@@ -38,21 +38,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt.core;
+package org.modelica.mdt;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * @author Elmir Jagudin
  *
  */
-public interface IModelicaRoot
+public class ModelicaElementLabelProvider extends LabelProvider 
 {
-	/**
-	 * Presents projects in Modelica specific view, that is
-	 * All modelica projects are wrapped into IModelicaProject
-	 *  
-	 * @return Projects in the workspace
-	 */
-	public Object[] getProjects() throws CoreException;
+
+	@Override
+	public String getText(Object element)
+	{
+		if (element instanceof IAdaptable)
+		{
+			IWorkbenchAdapter wbadapter = 
+				(IWorkbenchAdapter) ((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
+			if (wbadapter != null) {
+				return wbadapter.getLabel(element);
+			}
+
+		}
+		return "";
+	}
+
+	@Override
+	public Image getImage(Object element) 
+	{
+		if (element instanceof IAdaptable)
+		{
+			IWorkbenchAdapter wbadapter = 
+				(IWorkbenchAdapter) ((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
+			if (wbadapter != null) 
+			{
+				/* TODO these images should pehaps be chached or something ? */
+				ImageDescriptor imDesc = wbadapter.getImageDescriptor(element);
+				if (imDesc != null)
+				{
+					return imDesc.createImage();
+				}
+			}
+
+		}
+		return null;
+
+	}
 }

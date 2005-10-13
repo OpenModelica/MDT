@@ -27,12 +27,6 @@ public class ProjectsView extends ViewPart
 	private IResourceChangeListener resourceListener;
 
 
-	public class ProjectsLabelProvider extends WorkbenchLabelProvider
-	{
-
-	}
-
-
 	@Override
 	public void createPartControl(Composite parent)
 	{
@@ -41,7 +35,8 @@ public class ProjectsView extends ViewPart
 			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		viewer.setContentProvider(new ModelicaElementContentProvider());
-		viewer.setLabelProvider(new ProjectsLabelProvider());
+		//viewer.setLabelProvider(new ModelicaElementLabelProvider());
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ModelicaCore.getModelicaRoot());
 
 		drillDownAdapter = new DrillDownAdapter(viewer);

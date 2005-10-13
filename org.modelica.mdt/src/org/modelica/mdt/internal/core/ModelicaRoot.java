@@ -73,7 +73,8 @@ public class ModelicaRoot implements IModelicaRoot
 		 */
 		for (int i = 0; i < projects.length; i++)
 		{
-			if ((projects[i]).hasNature(MdtPlugin.MODELICA_NATURE))
+			if ((projects[i]).isOpen() &&
+				(projects[i]).hasNature(MdtPlugin.MODELICA_NATURE))
 			{
 				resProjs[i] = new ModelicaProject((IProject)projects[i]);
 			}
@@ -85,5 +86,7 @@ public class ModelicaRoot implements IModelicaRoot
 
 		return resProjs;
 	}
+
+
 
 }
