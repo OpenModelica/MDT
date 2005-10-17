@@ -38,90 +38,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt;
+package org.modelica.mdt.internal.core;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.IModelicaRoot;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaPackage;
 
 /**
  * @author Elmir Jagudin
  *
  */
-public class ModelicaElementContentProvider implements ITreeContentProvider 
+public class ModelicaPackage extends ModelicaElement implements
+		IModelicaPackage 
 {
 
-	public Object[] getElements(Object inputElement)
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.core.IModelicaPackage#getPackages()
+	 */
+	public IModelicaPackage[] getPackages() 
 	{
-		try
-		{
-			if (inputElement instanceof IModelicaRoot)
-			{
-				return ((IModelicaRoot)inputElement).getProjects();
-			}
-			
-		}
-		catch (CoreException e)
-		{
-			MdtPlugin.log(e);
-		}
-		return new Object[] {};
-	}
-	
-	public void dispose()
-	{
-	}
-
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-	{
-	}
-
-	public Object[] getChildren(Object parent)
-	{
-		if (parent instanceof IContainer)
-		{
-			try
-			{
-				return ((IContainer)parent).members();
-			}
-			catch (CoreException e)
-			{
-				MdtPlugin.log(e);
-			}
-		}
-		else if (parent instanceof IModelicaProject)
-		{
-			return ((IModelicaProject)parent).getPackages();
-		}
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Object getParent(Object element)
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.core.IModelicaPackage#getClasses()
+	 */
+	public IModelicaClass[] getClasses() 
 	{
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public boolean hasChildren(Object element)
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
+	 */
+	public String getElementName() 
 	{
-		if (element instanceof IProject)
-		{
-			return ((IProject)element).isOpen();
-		}
-		else if (element instanceof IFolder)
-		{
-			return true;
-		}
-		else if (element instanceof IModelicaProject)
-		{
-			return ((IModelicaProject)element).getProject().isOpen();
-		}
-		return false;
+		//dummy implementation
+		return "modelica";
 	}
-
 
 }

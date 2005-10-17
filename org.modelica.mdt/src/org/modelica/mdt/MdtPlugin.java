@@ -43,6 +43,9 @@ package org.modelica.mdt;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -52,6 +55,8 @@ public class MdtPlugin extends AbstractUIPlugin
 
 	public static final String MODELICA_NATURE = 
 		"org.modelica.mdt.ModelicaNature";
+
+	private static final int INTERNAL_ERROR = 0;
 	
 	//The shared instance.
 	private static MdtPlugin plugin;
@@ -117,12 +122,47 @@ public class MdtPlugin extends AbstractUIPlugin
 		widget.setData("name", tag);
 	}
 	
+//	/**
+//	 * convinience wrapper method for loggin to plugin logger
+//	 * @param exception the exception to log
+//	 */
+//	public static void log(CoreException exception)
+//	{
+//		plugin.getLog().log(exception.getStatus());
+//	}
+	
 	/**
 	 * convinience wrapper method for loggin to plugin logger
-	 * @param exception the exception to log
 	 */
-	public static void log(CoreException exception)
+	public static void log(IStatus stat)
 	{
-		plugin.getLog().log(exception.getStatus());
+		plugin.getLog().log(stat);
+	}
+
+
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() 
+	{
+		Display display;
+		display= Display.getCurrent();
+		if (display == null)
+			display= Display.getDefault();
+		return display;		
+	}
+	
+	/**
+	 * Logs an internal error with the specified throwable
+	 * 
+	 * @param e the exception to be logged
+	 */	
+	public static void log(Throwable e) 
+	{
+		log(new Status(IStatus.ERROR, getSymbolicName(), 
+				INTERNAL_ERROR,
+				"Internal Error", e));
 	}
 }

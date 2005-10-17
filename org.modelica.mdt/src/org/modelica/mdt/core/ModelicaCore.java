@@ -14,6 +14,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
+import org.modelica.mdt.internal.core.ModelicaImages;
 import org.modelica.mdt.internal.core.ModelicaRoot;
 import org.modelica.mdt.MdtPlugin;
 
@@ -41,6 +42,10 @@ public class ModelicaCore
 					(IWorkbenchAdapter) mproj.getProject().getAdapter(IWorkbenchAdapter.class);
 				return wadap.getImageDescriptor(mproj.getProject());
 				
+			}
+			else if (object instanceof IModelicaPackage)
+			{
+				return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_PACKAGE);
 			}
 			return super.getImageDescriptor(object);
 		}
