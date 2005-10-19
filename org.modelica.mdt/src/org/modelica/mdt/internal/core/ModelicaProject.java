@@ -71,7 +71,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	 * @see org.modelica.mdt.core.IModelicaProject#getPackages()
 	 */
 	// dummy implementation
-	ModelicaPackage[] dummyPackages = { new ModelicaPackage() };
+	ModelicaPackage[] dummyPackages = { new ModelicaPackage(null, "Modelica") };
 	public IModelicaPackage[] getPackages() 
 	{		
 		return dummyPackages;
