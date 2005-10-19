@@ -14,9 +14,8 @@ public class ModeqCommunicationImplementation
 		try
 		{
 			orb = ORB.init(args, null);
-			org.omg.CORBA.Object obj = orb.string_to_object("IOR:010000001b00000049444c3a4d6f646571436f6d6d756e69636174696f6e3a312e30000002000000000000002b000000010100000a0000003132372e302e302e31000f05130000002f323135362f313132393633363632392f5f30000100000024000000010000000100000001000000140000000100000001000100000000000901010000000000");
+			org.omg.CORBA.Object obj = orb.string_to_object("IOR:010000001b00000049444c3a4d6f646571436f6d6d756e69636174696f6e3a312e30000002000000000000002b000000010100000a0000003132372e302e302e3100cf05130000002f323137322f313132393732353635312f5f30000100000024000000010000000100000001000000140000000100000001000100000000000901010000000000");
 			omcc = ModeqCommunicationHelper.narrow(obj);
-			sendExpression("loadModel(Modelica");
 		} 
 		catch(Exception e)
 		{
@@ -28,6 +27,14 @@ public class ModeqCommunicationImplementation
 	public static String sendExpression(String exp)
 	{
 		String retval = null;
+
+		if(hasInitialized == false)
+		{
+			// System.out.println("Initializing CORBA interface");
+			init(null);
+			sendExpression("loadModel(Modelica)");
+		}
+		
 		try
 		{
 			retval = omcc.sendExpression(exp);
@@ -36,12 +43,20 @@ public class ModeqCommunicationImplementation
 		{
 			MdtPlugin.log(e);
 		}
+
 		return retval;
 	}
 
 	public static String sendClass(String exp)
 	{
 		String retval = null;
+
+		if(hasInitialized == false)
+		{
+			init(null);
+			sendExpression("loadModel(Modelica");
+		}
+		
 		try {
 			retval = omcc.sendClass(exp);
 		} catch(Exception e) {
