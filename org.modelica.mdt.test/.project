@@ -3,6 +3,7 @@
 	<name>org.modelica.mdt.test</name>
 	<comment></comment>
 	<projects>
+		<project>Open Modelica Tooling</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
