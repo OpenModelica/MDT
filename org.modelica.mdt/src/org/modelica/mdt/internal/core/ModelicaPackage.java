@@ -40,6 +40,9 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.Vector;
+
+import org.modelica.mdt.corba.ModeqCommunicationImplementation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaPackage;
 
@@ -50,14 +53,74 @@ import org.modelica.mdt.core.IModelicaPackage;
 public class ModelicaPackage extends ModelicaElement implements
 		IModelicaPackage 
 {
+	String baseName;
+	String elementName;
+	
+	Vector<IModelicaPackage> packages;
+	Vector<IModelicaClass> classes;
 
+	boolean hasReceivedPackages = false;
+	
+	ModelicaPackage(String baseName, String elementName)
+	{
+		this.baseName = baseName;
+		this.elementName = elementName;
+		
+		packages = new Vector<IModelicaPackage>();
+		classes = new Vector<IModelicaClass>();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.modelica.mdt.core.IModelicaPackage#getPackages()
 	 */
 	public IModelicaPackage[] getPackages() 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if(hasReceivedPackages == true)
+		{
+			return (IModelicaPackage[]) packages.toArray();
+		}
+		
+		String retval = null;
+		if(baseName == null)
+		{
+			//System.out.println("getPackages("+elementName+")");
+			retval = ModeqCommunicationImplementation.sendExpression("getPackages("+elementName+")");
+		}
+		else
+		{
+			//System.out.println("getPackages("+baseName+"."+elementName+")");
+			retval = ModeqCommunicationImplementation.sendExpression("getPackages("+baseName+"."+elementName+")");			
+		}
+		
+		/* check that a list is returned, otherwise this is probably an error */
+		if(retval.charAt(0) != '{' || retval.charAt(retval.length()) != '}')
+			return null;
+
+		retval = retval.substring(1, retval.length() - 2);
+		String[] retvals = retval.split(",");
+		
+		for(String s : retvals)
+		{
+			if(s.equals("") == false)
+			{
+				if(baseName == null && s != null)
+					addPackage(new ModelicaPackage(elementName, s));
+				else if(s != null)
+					addPackage(new ModelicaPackage(baseName+"."+elementName, s));
+			}
+		}
+
+		hasReceivedPackages = true;
+		
+		if(packages.size() != 0)
+		{
+			IModelicaPackage impPackages[] = new IModelicaPackage[packages.size()];
+			return packages.toArray(impPackages);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +128,7 @@ public class ModelicaPackage extends ModelicaElement implements
 	 */
 	public IModelicaClass[] getClasses() 
 	{
-		// TODO Auto-generated method stub
+		// TODO Call getClassNames, then compare list with list of packages, and remove matches
 		return null;
 	}
 
@@ -74,8 +137,11 @@ public class ModelicaPackage extends ModelicaElement implements
 	 */
 	public String getElementName() 
 	{
-		//dummy implementation
-		return "modelica";
+		return elementName;
 	}
 
+	public void addPackage(IModelicaPackage modelicaPackage)
+	{
+		packages.add(modelicaPackage);
+	}
 }
