@@ -57,4 +57,9 @@ public interface IModelicaPackage
 	 * @return classes contained in this package
 	 */
 	public IModelicaClass[] getClasses();
+
+	/**
+	 * @return the name of this package
+	 */
+	public String getElementName();
 }
