@@ -47,4 +47,5 @@ package org.modelica.mdt.core;
 public interface IModelicaClass 
 {
 	String getName();
+	String getPackage();
 }
