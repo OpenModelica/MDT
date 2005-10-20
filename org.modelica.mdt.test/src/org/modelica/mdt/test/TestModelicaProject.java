@@ -4,12 +4,18 @@ package org.modelica.mdt.test;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
 
 import junit.framework.TestCase;
 
+/**
+ * 
+ * @author Andreas Remar
+ *
+ */
 public class TestModelicaProject extends TestCase {
 	
 	private static final String PROJECT_NAME = "testModelicaProject";
@@ -40,13 +46,8 @@ public class TestModelicaProject extends TestCase {
 					IModelicaPackage[] packages = ((IModelicaProject)p).getPackages();
 					for(IModelicaPackage imp : packages)
 					{
-						System.out.println(imp.getElementName());
-						traverse(imp, 1);
-//						IModelicaPackage[] paket = imp.getPackages();
-//						for(IModelicaPackage imp2 : paket)
-//						{
-//							System.out.println("* " + imp2.getElementName());
-//						}
+						//System.out.println(imp.getElementName());
+						traverse(imp, 0);
 					}
 				}
 				else
@@ -57,19 +58,40 @@ public class TestModelicaProject extends TestCase {
 		}
 		catch(CoreException e)
 		{
-			
+			fail(e.getMessage());
+		}
+		catch(Exception e)
+		{
+			fail(e.getMessage());
 		}
 	}
 	
 	public void traverse(IModelicaPackage pkg, int level)
 	{
 		IModelicaPackage[] packages = pkg.getPackages();
-		for(IModelicaPackage imp : packages)
+		packages = pkg.getPackages();
+		IModelicaClass[] classes = pkg.getClasses();
+		
+		for(int i = 0;i < level;i++)
+			System.out.print("--");
+		System.out.println(pkg.getElementName() + "  P");		
+
+		if(packages != null)
 		{
-			for(int i = 0;i < level;i++)
-				System.out.print("-");
-			System.out.println(imp.getElementName());
-			traverse(imp, level+1);
+			for(IModelicaPackage imp : packages)
+			{
+				traverse(imp, level+1);
+			}
+		}
+		
+		if(classes != null)
+		{
+			for(IModelicaClass imc : classes)
+			{
+				for(int i = 0; i < level;i++)
+					System.out.print("  ");
+				System.out.println(imc.getName() + "  C ("+pkg.getElementName()+")");
+			}
 		}
 	}
 }
