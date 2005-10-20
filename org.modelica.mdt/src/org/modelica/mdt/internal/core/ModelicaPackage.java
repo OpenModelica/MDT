@@ -48,23 +48,34 @@ import org.modelica.mdt.core.IModelicaPackage;
 
 /**
  * @author Elmir Jagudin
- *
+ * @author Andreas Remar
  */
 public class ModelicaPackage extends ModelicaElement implements
 		IModelicaPackage 
 {
 	String baseName;
 	String elementName;
+	String fullName;
 	
 	Vector<IModelicaPackage> packages;
 	Vector<IModelicaClass> classes;
 
 	boolean hasReceivedPackages = false;
+	boolean hasReceivedClasses = false;
 	
 	ModelicaPackage(String baseName, String elementName)
 	{
 		this.baseName = baseName;
 		this.elementName = elementName;
+		
+		if(baseName == null)
+		{
+			fullName = elementName;
+		}
+		else
+		{
+			fullName = baseName + "." + elementName;
+		}
 		
 		packages = new Vector<IModelicaPackage>();
 		classes = new Vector<IModelicaClass>();
@@ -77,36 +88,33 @@ public class ModelicaPackage extends ModelicaElement implements
 	{
 		if(hasReceivedPackages == true)
 		{
-			return (IModelicaPackage[]) packages.toArray();
+			if(packages.size() != 0)
+			{
+				IModelicaPackage impPackages[] = new IModelicaPackage[packages.size()];
+				return packages.toArray(impPackages);
+			}
+			else
+			{
+				return null;
+			}
 		}
 		
 		String retval = null;
-		if(baseName == null)
-		{
-			//System.out.println("getPackages("+elementName+")");
-			retval = ModeqCommunicationImplementation.sendExpression("getPackages("+elementName+")");
-		}
-		else
-		{
-			//System.out.println("getPackages("+baseName+"."+elementName+")");
-			retval = ModeqCommunicationImplementation.sendExpression("getPackages("+baseName+"."+elementName+")");			
-		}
+		retval = ModeqCommunicationImplementation.sendExpression("getPackages("+fullName+")");
 		
-		/* check that a list is returned, otherwise this is probably an error */
-		if(retval.charAt(0) != '{' || retval.charAt(retval.length()) != '}')
-			return null;
+		String[] tokens = parseList(retval);
 
-		retval = retval.substring(1, retval.length() - 2);
-		String[] retvals = retval.split(",");
+		if(tokens == null)
+		{
+			hasReceivedPackages = true;
+			return null;
+		}
 		
-		for(String s : retvals)
+		for(String s : tokens)
 		{
 			if(s.equals("") == false)
 			{
-				if(baseName == null && s != null)
-					addPackage(new ModelicaPackage(elementName, s));
-				else if(s != null)
-					addPackage(new ModelicaPackage(baseName+"."+elementName, s));
+				addPackage(new ModelicaPackage(fullName, s));
 			}
 		}
 
@@ -128,8 +136,56 @@ public class ModelicaPackage extends ModelicaElement implements
 	 */
 	public IModelicaClass[] getClasses() 
 	{
-		// TODO Call getClassNames, then compare list with list of packages, and remove matches
-		return null;
+		if(hasReceivedClasses == true)
+		{
+			if(classes.size() != 0)
+			{
+				IModelicaClass modelicaClasses[] = new IModelicaClass[classes.size()];
+				return classes.toArray(modelicaClasses);
+			}
+			else
+			{
+				return null;
+			}
+		}
+		
+		String retval = null;
+		retval = ModeqCommunicationImplementation.sendExpression("getClassNames("+fullName+")");
+
+		
+	
+		String[] tokens = parseList(retval);
+		
+		if(tokens == null)
+		{
+			hasReceivedClasses = true;
+			return null;
+		}
+		
+		for(String str : tokens)
+		{
+			if(str.equals(""))
+				continue;
+			retval = ModeqCommunicationImplementation.sendExpression("isPackage("+fullName+"."+str+")");
+
+			if(retval.contains("false"))
+			{
+				/* fullName.str is NOT a package, add it to the list of classes */
+				addClass(new ModelicaClass(str, fullName));
+			}
+		}
+
+		hasReceivedClasses = true;
+
+		if(classes.size() != 0)
+		{
+			IModelicaClass modelicaClasses[] = new IModelicaClass[classes.size()];
+			return classes.toArray(modelicaClasses);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -143,5 +199,26 @@ public class ModelicaPackage extends ModelicaElement implements
 	public void addPackage(IModelicaPackage modelicaPackage)
 	{
 		packages.add(modelicaPackage);
+	}
+	
+	public void addClass(IModelicaClass modelicaClass)
+	{
+		classes.add(modelicaClass);
+	}
+
+	public String[] parseList(String str)
+	{
+		/* remove whitespace before and after */
+		str = str.trim();
+		
+		/* check that a list is parsed, otherwise this is probably an error */
+		if(str.charAt(0) != '{' || str.charAt(str.length() - 1) != '}')
+			return null;
+
+		/* remove {} and split into tokens */
+		str = str.substring(1, str.length() - 1);
+		String[] retvals = str.split(",");
+		
+		return retvals;
 	}
 }
