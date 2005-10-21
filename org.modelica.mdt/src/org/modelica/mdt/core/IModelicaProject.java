@@ -49,5 +49,7 @@ import org.eclipse.core.resources.IProject;
 public interface IModelicaProject extends IModelicaElement
 {
 	public IModelicaPackage[] getPackages();
+	public IModelicaClass[] getClasses();
 	public IProject getProject();
+	
 }

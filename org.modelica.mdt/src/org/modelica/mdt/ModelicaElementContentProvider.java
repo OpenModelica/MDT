@@ -38,6 +38,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt;
 
 import org.eclipse.core.resources.IContainer;
@@ -96,7 +97,8 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		}
 		else if (parent instanceof IModelicaProject)
 		{
-			return ((IModelicaProject)parent).getPackages();
+			IModelicaProject mp = (IModelicaProject)parent; 
+			return concatenate(mp.getPackages(), mp.getClasses());
 		}
 		return null;
 	}
@@ -123,5 +125,16 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		return false;
 	}
 
+	/**
+	 * Note: This method is for internal use only. Clients should not call this method.
+	 */
+	protected static Object[] concatenate(Object[] a1, Object[] a2) {
+		int a1Len= a1.length;
+		int a2Len= a2.length;
+		Object[] res= new Object[a1Len + a2Len];
+		System.arraycopy(a1, 0, res, 0, a1Len);
+		System.arraycopy(a2, 0, res, a1Len, a2Len); 
+		return res;
+	}
 
 }

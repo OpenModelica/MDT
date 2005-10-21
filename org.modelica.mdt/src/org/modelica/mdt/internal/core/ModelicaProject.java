@@ -41,6 +41,7 @@
 package org.modelica.mdt.internal.core;
 
 import org.eclipse.core.resources.IProject;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 
@@ -77,22 +78,26 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		return dummyPackages;
 	}
 	
-//	/**
-//	 * 
-//	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-//	 */
-//	public Object getAdapter(Class adapter) 
-//	{
-//		if (adapter == IWorkbenchAdapter.class)
-//		{
-//			System.out.println(this + " wrapped proj " + project + " workbench adaptor " +project.getAdapter(IWorkbenchAdapter.class));
-//			return project.getAdapter(IWorkbenchAdapter.class);
-//		}
-//		return null;
-//	}
 
 	public String getElementName() 
 	{
 		return project.getName();
+	}
+
+	// dummy implementation
+	ModelicaClass[] dummyClasses = 
+		{ new ModelicaClass(ModelicaClass.Type.CLASS),
+			new ModelicaClass(ModelicaClass.Type.MODEL),
+			new ModelicaClass(ModelicaClass.Type.FUNCTION),
+			new ModelicaClass(ModelicaClass.Type.RECORD),
+			new ModelicaClass(ModelicaClass.Type.CONNECTOR),
+			new ModelicaClass(ModelicaClass.Type.BLOCK),
+			new ModelicaClass(ModelicaClass.Type.TYPE)
+			};
+
+	public IModelicaClass[] getClasses() 
+	{
+		System.out.println("ad");
+		return dummyClasses;
 	}
 }

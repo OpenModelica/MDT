@@ -44,8 +44,9 @@ package org.modelica.mdt.core;
  * @author x05elmja
  *
  */
-public interface IModelicaClass 
+public interface IModelicaClass extends IModelicaElement
 {
-	String getName();
+	public enum Type { CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE };
+	public Type getType();
 	String getPackage();
 }

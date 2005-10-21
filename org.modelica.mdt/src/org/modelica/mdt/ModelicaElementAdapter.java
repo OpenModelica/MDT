@@ -40,53 +40,75 @@
  */
 package org.modelica.mdt;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.internal.core.ModelicaImages;
 
-/**
- * @author Elmir Jagudin
- *
- */
-public class ModelicaElementLabelProvider extends LabelProvider 
+public class ModelicaElementAdapter extends WorkbenchAdapter 
 {
 
 	@Override
-	public String getText(Object element)
+	public String getLabel(Object object)
 	{
-		if (element instanceof IAdaptable)
-		{
-			IWorkbenchAdapter wbadapter = 
-				(IWorkbenchAdapter) ((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
-			if (wbadapter != null) {
-				return wbadapter.getLabel(element);
-			}
-
-		}
-		return "";
+		return ((IModelicaElement)object).getElementName();
 	}
 
 	@Override
-	public Image getImage(Object element) 
+	public ImageDescriptor getImageDescriptor(Object object)
 	{
-		if (element instanceof IAdaptable)
+		if (object instanceof IModelicaProject)
 		{
-			IWorkbenchAdapter wbadapter = 
-				(IWorkbenchAdapter) ((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
-			if (wbadapter != null) 
-			{
-				/* TODO these images should pehaps be chached or something ? */
-				ImageDescriptor imDesc = wbadapter.getImageDescriptor(element);
-				if (imDesc != null)
-				{
-					return imDesc.createImage();
-				}
-			}
-
+			/*
+			 * Isn't patterns beautifull ?
+			 */
+			IModelicaProject mproj = (IModelicaProject) object;
+			IWorkbenchAdapter wadap = 
+				(IWorkbenchAdapter) mproj.getProject().getAdapter(IWorkbenchAdapter.class);
+			return wadap.getImageDescriptor(mproj.getProject());
+			
 		}
-		return null;
-
+		else if (object instanceof IModelicaPackage)
+		{
+			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_PACKAGE);
+		}
+		else if (object instanceof IModelicaClass)
+		{
+			String imgTag;
+			switch (((IModelicaClass)object).getType())
+			{
+			case CLASS:
+				imgTag = ModelicaImages.IMG_OBJS_CLASS;
+				break;
+			case MODEL:
+				imgTag = ModelicaImages.IMG_OBJS_MODEL;
+				break;
+			case FUNCTION:
+				imgTag = ModelicaImages.IMG_OBJS_FUNCTION;
+				break;
+			case RECORD:
+				imgTag = ModelicaImages.IMG_OBJS_RECORD;
+				break;
+			case CONNECTOR:
+				imgTag = ModelicaImages.IMG_OBJS_CONNECTOR;
+				break;
+			case BLOCK:
+				imgTag = ModelicaImages.IMG_OBJS_BLOCK;
+				break;
+			case TYPE:
+				imgTag = ModelicaImages.IMG_OBJS_TYPE;
+				break;
+			default:
+				imgTag = "";
+			}
+			return ModelicaImages.getImageDescriptor(imgTag);
+		}
+		System.out.println("weee!");
+		return super.getImageDescriptor(object);
 	}
+
 }

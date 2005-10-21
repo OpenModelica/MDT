@@ -11,48 +11,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.WorkbenchAdapter;
-import org.modelica.mdt.internal.core.ModelicaImages;
 import org.modelica.mdt.internal.core.ModelicaRoot;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.ModelicaElementAdapter;
 
 public class ModelicaCore 
 {
-	public static class ModelicaElementAdapter extends WorkbenchAdapter 
-	{
-
-		@Override
-		public String getLabel(Object object)
-		{
-			return ((IModelicaElement)object).getElementName();
-		}
-
-		@Override
-		public ImageDescriptor getImageDescriptor(Object object)
-		{
-			if (object instanceof IModelicaProject)
-			{
-				/*
-				 * Isn't patterns beautifull ?
-				 */
-				IModelicaProject mproj = (IModelicaProject) object;
-				IWorkbenchAdapter wadap = 
-					(IWorkbenchAdapter) mproj.getProject().getAdapter(IWorkbenchAdapter.class);
-				return wadap.getImageDescriptor(mproj.getProject());
-				
-			}
-			else if (object instanceof IModelicaPackage)
-			{
-				return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_PACKAGE);
-			}
-			return super.getImageDescriptor(object);
-		}
-
-	}
-
-
 	private static IModelicaRoot modelicaRoot = null;
 	private static IWorkbenchAdapter modelicaElementAdapter = null;
 	
@@ -147,6 +112,7 @@ public class ModelicaCore
 
 	public static Object getWorkbenchAdapter() 
 	{
+		System.out.println("asdasd getWorkbenchAda");
 		if (modelicaElementAdapter == null)
 		{
 			modelicaElementAdapter = new ModelicaElementAdapter();
