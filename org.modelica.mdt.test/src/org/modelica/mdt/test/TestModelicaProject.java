@@ -90,7 +90,7 @@ public class TestModelicaProject extends TestCase {
 			{
 				for(int i = 0; i < level;i++)
 					System.out.print("  ");
-				System.out.println(imc.getName() + "  C ("+pkg.getElementName()+")");
+				System.out.println(imc.getElementName() + "  C ("+pkg.getElementName()+")");
 			}
 		}
 	}

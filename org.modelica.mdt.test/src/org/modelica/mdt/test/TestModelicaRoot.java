@@ -63,7 +63,7 @@ public class TestModelicaRoot extends TestCase
 
 	private static final String PROJECT_NAME = "TestModelicaRoot";
 	private static final String PROJECT_NAME2 = "TestModelicaRoot2";
-	private static final String PROJECT_NAME3 = "TestModelicaRoot3wee";
+	private static final String PROJECT_NAME3 = "TestModelicaRoot3Closed";
 
 	@Override
 	protected void setUp() throws Exception 
@@ -86,12 +86,10 @@ public class TestModelicaRoot extends TestCase
 		project.open(null);
 		
 		/*
-		 * create a regular projects
+		 * create a regular projects which remains closed
 		 */
 		project = workspaceRoot.getProject(PROJECT_NAME3);
 		project.create(null);
-		project.open(null);
-
 
 	}
 	
@@ -108,26 +106,29 @@ public class TestModelicaRoot extends TestCase
 			{
 				if (p instanceof IModelicaProject)
 				{
-					assertTrue("project without modelica nature wrapped",
+					if (((IModelicaProject)p).getProject().isOpen())
+					{
+						assertTrue("project without modelica nature wrapped",
 							((IModelicaProject)p).getProject().hasNature(MdtPlugin.MODELICA_NATURE));
-					System.out.println("vanilla");
+					}
 				}
 				else if (p instanceof IProject)
 				{
-					assertFalse("project with modelica nature not wrapped",
+					if (((IProject)p).isOpen())
+					{
+						assertFalse("project with modelica nature not wrapped",
 							((IProject)p).hasNature(MdtPlugin.MODELICA_NATURE));
-					System.out.println("modelica");
+					}
 				}
 				else
 				{
 					fail("unexpected type of project");
 				}
-				System.out.println(p + " £ " + p.getClass().getName());
 			}
 		}
 		catch (CoreException e) 
 		{
-			fail("could not get projects list");
+			fail("could not get projects list, exception thrown:" + e);
 		}
 	}
 }
