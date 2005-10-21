@@ -18,6 +18,8 @@ public class ModeqCommunicationImplementation
 	static ModeqCommunication omcc;
 	static boolean hasInitialized = false;
 	
+	static String pathToModeq = "c:\\OpenModelica122\\modeq.exe";
+	
 	public static void init(String args[]) throws Exception
 	{
 		try
@@ -26,19 +28,22 @@ public class ModeqCommunicationImplementation
 			fileName += "\\openmodelica.objid";
 			File f = new File(fileName);
 			String stringifiedObjectReference = null;
-			if(f.exists())
+
+			if(!f.exists())
 			{
-				FileReader fr = new FileReader(f);
-				BufferedReader br = new BufferedReader(fr);
+				System.out.println("Starting modeq server.");
+				String[] command = {pathToModeq, "+d=interactiveCorba"};
+				Runtime.getRuntime().exec(command);
+				while(!f.exists())
+				{
+					Thread.sleep(100);
+				}
+			}
+			
+			FileReader fr = new FileReader(f);
+			BufferedReader br = new BufferedReader(fr);
 				
-				stringifiedObjectReference = br.readLine();
-			}
-			else
-			{
-				/* this is the ugly stuff, fix it */
-				System.out.println("Filen existerar ju inte!");
-				throw new Exception("Herrejävlar");
-			}
+			stringifiedObjectReference = br.readLine();
 			
 			orb = ORB.init(args, null);
 			org.omg.CORBA.Object obj = orb.string_to_object(stringifiedObjectReference);
@@ -46,6 +51,8 @@ public class ModeqCommunicationImplementation
 		} 
 		catch(Exception e)
 		{
+			e.printStackTrace();
+			System.out.println(e.getMessage());
 			MdtPlugin.log(e);
 			throw new Exception("Unable to initialize communication with OMC");
 		}
