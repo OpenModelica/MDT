@@ -1,37 +1,72 @@
 package org.modelica.mdt.corba;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import org.modelica.mdt.MdtPlugin;
 import org.omg.CORBA.ORB;
 
+/**
+ * 
+ * @author Andreas Remar
+ *
+ */
 public class ModeqCommunicationImplementation
 {
 	static ORB orb;
 	static ModeqCommunication omcc;
 	static boolean hasInitialized = false;
 	
-	public static void init(String args[])
+	public static void init(String args[]) throws Exception
 	{
 		try
 		{
+			String fileName = System.getenv("TEMP");
+			fileName += "\\openmodelica.objid";
+			File f = new File(fileName);
+			String stringifiedObjectReference = null;
+			if(f.exists())
+			{
+				FileReader fr = new FileReader(f);
+				BufferedReader br = new BufferedReader(fr);
+				
+				stringifiedObjectReference = br.readLine();
+			}
+			else
+			{
+				/* this is the ugly stuff, fix it */
+				System.out.println("Filen existerar ju inte!");
+				throw new Exception("Herrejävlar");
+			}
+			
 			orb = ORB.init(args, null);
-			org.omg.CORBA.Object obj = orb.string_to_object("IOR:010000001b00000049444c3a4d6f646571436f6d6d756e69636174696f6e3a312e30000002000000000000002b000000010100000a0000003132372e302e302e3100cf05130000002f323137322f313132393732353635312f5f30000100000024000000010000000100000001000000140000000100000001000100000000000901010000000000");
+			org.omg.CORBA.Object obj = orb.string_to_object(stringifiedObjectReference);
 			omcc = ModeqCommunicationHelper.narrow(obj);
 		} 
 		catch(Exception e)
 		{
 			MdtPlugin.log(e);
+			throw new Exception("Unable to initialize communication with OMC");
 		}
 		hasInitialized = true;
 	}
 
-	public static String sendExpression(String exp)
+	public static String sendExpression(String exp) throws Exception
 	{
 		String retval = null;
 
 		if(hasInitialized == false)
 		{
 			// System.out.println("Initializing CORBA interface");
-			init(null);
+			try
+			{
+				init(null);
+			}
+			catch(Exception e)
+			{
+				throw new Exception("Unable to initialize communication with OMC");
+			}
 			sendExpression("loadModel(Modelica)");
 		}
 		
@@ -47,14 +82,21 @@ public class ModeqCommunicationImplementation
 		return retval;
 	}
 
-	public static String sendClass(String exp)
+	public static String sendClass(String exp) throws Exception
 	{
 		String retval = null;
 
 		if(hasInitialized == false)
 		{
-			init(null);
-			sendExpression("loadModel(Modelica");
+			try
+			{
+				init(null);
+			}
+			catch(Exception e)
+			{
+				throw new Exception("Unable to initialize communication with OMC");
+			}
+			sendExpression("loadModel(Modelica)");
 		}
 		
 		try {
