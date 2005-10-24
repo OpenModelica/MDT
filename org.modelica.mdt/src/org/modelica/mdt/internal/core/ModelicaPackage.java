@@ -100,7 +100,15 @@ public class ModelicaPackage extends ModelicaElement implements
 		}
 		
 		String retval = null;
-		retval = ModeqCommunicationImplementation.sendExpression("getPackages("+fullName+")");
+		try 
+		{
+			retval = ModeqCommunicationImplementation.sendExpression("getPackages("+fullName+")");
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+			return null;
+		}
 		
 		String[] tokens = parseList(retval);
 
@@ -150,7 +158,15 @@ public class ModelicaPackage extends ModelicaElement implements
 		}
 		
 		String retval = null;
-		retval = ModeqCommunicationImplementation.sendExpression("getClassNames("+fullName+")");
+		try
+		{
+			retval = ModeqCommunicationImplementation.sendExpression("getClassNames("+fullName+")");
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+			return null;
+		}
 
 		
 	
@@ -166,7 +182,15 @@ public class ModelicaPackage extends ModelicaElement implements
 		{
 			if(str.equals(""))
 				continue;
-			retval = ModeqCommunicationImplementation.sendExpression("isPackage("+fullName+"."+str+")");
+			try
+			{
+				retval = ModeqCommunicationImplementation.sendExpression("isPackage("+fullName+"."+str+")");
+			}
+			catch(Exception e)
+			{
+				System.out.println(e.getMessage());
+				return null;
+			}
 
 			if(retval.contains("false"))
 			{
