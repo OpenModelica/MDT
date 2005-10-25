@@ -54,8 +54,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.modelica.mdt.NewClassWizard;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.ui.NewClassWizard;
 
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.ComboTester;

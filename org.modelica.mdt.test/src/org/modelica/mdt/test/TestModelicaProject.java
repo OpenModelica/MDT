@@ -38,7 +38,7 @@ public class TestModelicaProject extends TestCase {
 		try
 		{
 			Object[] objs = ModelicaCore.getModelicaRoot().getProjects();
-			assertTrue("The number of projects != 1", objs.length == 1);
+
 			for(Object p : objs)
 			{
 				if(p instanceof IModelicaProject)
