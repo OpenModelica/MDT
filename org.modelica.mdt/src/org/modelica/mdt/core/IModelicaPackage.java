@@ -41,7 +41,7 @@
 package org.modelica.mdt.core;
 
 /**
- * @author x05elmja
+ * @author Elmir Jagudin
  *
  */
 public interface IModelicaPackage extends IParent, IModelicaElement

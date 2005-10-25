@@ -40,18 +40,12 @@
  */
 package org.modelica.mdt.core;
 
-import org.eclipse.core.resources.IProject;
-
 /**
  * @author Elmir Jagudin
- *
+ * 
+ * Represents a modelica file (.mo file basicly)
  */
-public interface IModelicaProject extends IModelicaElement
+public interface IModelicaFile extends IModelicaElement
 {
-	public IModelicaPackage[] getPackages();
-	public IModelicaClass[] getClasses();
-	public IModelicaFile[] getModelicaFiles();
-	public IProject getProject();
-	
 	
 }

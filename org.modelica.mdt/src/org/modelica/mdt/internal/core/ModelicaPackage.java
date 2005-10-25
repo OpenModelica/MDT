@@ -44,6 +44,7 @@ import java.util.Vector;
 
 import org.modelica.mdt.corba.ModeqCommunicationImplementation;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaPackage;
 
 /**
@@ -81,8 +82,9 @@ public class ModelicaPackage extends ModelicaElement implements
 		classes = new Vector<IModelicaClass>();
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaPackage#getPackages()
+	  * @return the subpackages, or null if there is no subpackages in this package
 	 */
 	public IModelicaPackage[] getPackages() 
 	{
@@ -139,8 +141,9 @@ public class ModelicaPackage extends ModelicaElement implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaPackage#getClasses()
+	 * @return the classes contained in this package, or null if there is no classes in this package
 	 */
 	public IModelicaClass[] getClasses() 
 	{
@@ -244,5 +247,33 @@ public class ModelicaPackage extends ModelicaElement implements
 		String[] retvals = str.split(",");
 		
 		return retvals;
+	}
+
+	public IModelicaElement[] getChildren()
+	{
+		IModelicaElement[] pkgs = getPackages();
+		IModelicaElement[] cls  = getClasses();
+		
+		if (pkgs == null)
+		{
+			return cls;
+		}
+		if (cls == null)
+		{
+			return pkgs;
+		}
+		
+		/* if both packages and classes are available, concatenate them to one array */
+		IModelicaElement[] children = new IModelicaElement[pkgs.length + cls.length];
+		
+		System.arraycopy(pkgs, 0, children, 0, pkgs.length);
+		System.arraycopy(cls, 0, children, pkgs.length, cls.length);
+		
+		return children;
+	}
+
+	public boolean hasChildren() 
+	{
+		return (getPackages() != null) || (getClasses() != null);
 	}
 }
