@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.modelica.mdt.core;
 
+import java.util.List;
+
 
 /**
  * Common protocol for Modelica elements that contain other Modelica elements.
@@ -26,7 +28,7 @@ public interface IParent
 	 *
 	 * @return the immediate children of this element
 	 */
-	IModelicaElement[] getChildren();
+	List<? extends IModelicaElement> getChildren();
 	
 	/**
 	 * Returns whether this element has one or more immediate children.

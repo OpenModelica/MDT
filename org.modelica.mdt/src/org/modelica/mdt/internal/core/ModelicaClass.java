@@ -34,17 +34,4 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	{
 		return type;
 	}
-
-	
-	//
-	// dummy implementations below
-	// TODO impelemnt me 4-real !
-	//
-	public ModelicaClass(Type type) 
-	{
-		className = "qweaasghasf";
-		this.type = type;
-	}
-
-
 }

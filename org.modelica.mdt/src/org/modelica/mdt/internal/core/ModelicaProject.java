@@ -41,9 +41,8 @@
 package org.modelica.mdt.internal.core;
 
 import org.eclipse.core.resources.IProject;
-import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.core.IModelicaPackage;
+
+import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 
 /**
@@ -53,6 +52,7 @@ import org.modelica.mdt.core.IModelicaProject;
 public class ModelicaProject extends ModelicaElement implements IModelicaProject 
 {
 	private IProject project;
+	private ModelicaFolder rootFolder = null;
 	
 	
 	protected ModelicaProject(IProject project)
@@ -69,35 +69,20 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		return project;
 	}
 
-	/**
-	 * @see org.modelica.mdt.core.IModelicaProject#getPackages()
-	 */
-	// dummy implementation
-	ModelicaPackage[] dummyPackages = { new ModelicaPackage(null, "Modelica") };
-	public IModelicaPackage[] getPackages() 
-	{		
-		return dummyPackages;
-	}
-	
 
 	public String getElementName() 
 	{
 		return project.getName();
 	}
 
-	// dummy implementation
-	ModelicaClass[] dummyClasses = 
-		{ new ModelicaClass("hej", "hop"),
-			};
 
-	public IModelicaClass[] getClasses() 
+	public IModelicaFolder getRootFolder()
 	{
-		return dummyClasses;
-	}
-
-	public IModelicaFile[] getModelicaFiles()
-	{
-		// TODO Auto-generated method stub
-		return null;
+		if (rootFolder == null)
+		{
+			rootFolder = new ModelicaFolder(project);
+		}
+		
+		return rootFolder;
 	}
 }

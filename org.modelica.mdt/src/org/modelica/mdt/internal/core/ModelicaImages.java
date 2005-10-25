@@ -47,7 +47,8 @@ public class ModelicaImages
 	public static final String IMG_OBJS_RECORD = "IMG_OBJS_RECORD";
 	public static final String IMG_OBJS_CONNECTOR = "IMG_OBJS_CONNECTOR";
 	public static final String IMG_OBJS_BLOCK = "IMG_OBJS_BLOCK";	
-	public static final String IMG_OBJS_TYPE = "IMG_OBJS_TYPE";		
+	public static final String IMG_OBJS_TYPE = "IMG_OBJS_TYPE";
+	public static final String IMG_OBJS_MO_FILE = "IMG_OBJS_MO_FILE";		
 	
 	
 	/*
@@ -111,6 +112,7 @@ public class ModelicaImages
 		declareRegistryImage(IMG_OBJS_CONNECTOR, T_OBJ + "connector_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_BLOCK, T_OBJ + "block_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_TYPE, T_OBJ + "type_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_MO_FILE, T_OBJ + "mo_file.png"); //$NON-NLS-1$
 				
 	}
 	

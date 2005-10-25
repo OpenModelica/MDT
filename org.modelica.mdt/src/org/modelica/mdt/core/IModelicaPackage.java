@@ -40,6 +40,8 @@
  */
 package org.modelica.mdt.core;
 
+import java.util.List;
+
 /**
  * @author Elmir Jagudin
  *
@@ -50,13 +52,13 @@ public interface IModelicaPackage extends IParent, IModelicaElement
 	 * 
 	 * @return all subpackages contained in this package
 	 */
-	public IModelicaPackage[] getPackages();
+	public List<IModelicaPackage> getPackages();
 	
 	/**
 	 * 
 	 * @return classes contained in this package
 	 */
-	public IModelicaClass[] getClasses();
+	public List<IModelicaClass> getClasses();
 
 	/**
 	 * @return the name of this package

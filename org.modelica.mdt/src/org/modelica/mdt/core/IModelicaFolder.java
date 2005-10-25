@@ -40,14 +40,23 @@
  */
 package org.modelica.mdt.core;
 
-import org.eclipse.core.resources.IProject;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Elmir Jagudin
  *
+ * Modelica wrapper for modelica view on folders
  */
-public interface IModelicaProject extends IModelicaElement
+public interface IModelicaFolder extends IModelicaElement, IParent
 {
-	public IModelicaFolder getRootFolder();
-	public IProject getProject();
+	public List<IModelicaFolder> getFolders() throws CoreException;
+	public List<IModelicaPackage> getPackages(); 
+	public List<IModelicaFile> getModelicaFiles() throws CoreException;
+	/**
+	 * @return all non modelica files in this folder
+	 */
+	public List<IFile> getFiles();
 }

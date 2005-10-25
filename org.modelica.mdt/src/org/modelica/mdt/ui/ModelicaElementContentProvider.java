@@ -99,12 +99,11 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		}
 		else if (parent instanceof IModelicaProject)
 		{
-			IModelicaProject mp = (IModelicaProject)parent; 
-			return MdtPlugin.concatenate(mp.getPackages(), mp.getClasses());
+			return ((IModelicaProject)parent).getRootFolder().getChildren().toArray(); 
 		}
 		else if (parent instanceof IParent)
 		{
-			return ((IParent)parent).getChildren();
+			return ((IParent)parent).getChildren().toArray();
 		}
 		return null;
 	}

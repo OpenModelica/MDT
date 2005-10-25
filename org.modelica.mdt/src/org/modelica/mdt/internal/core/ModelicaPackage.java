@@ -40,6 +40,8 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 import org.modelica.mdt.corba.ModeqCommunicationImplementation;
@@ -58,8 +60,8 @@ public class ModelicaPackage extends ModelicaElement implements
 	String elementName;
 	String fullName;
 	
-	Vector<IModelicaPackage> packages;
-	Vector<IModelicaClass> classes;
+	List<IModelicaPackage> packages;
+	List<IModelicaClass> classes;
 
 	boolean hasReceivedPackages = false;
 	boolean hasReceivedClasses = false;
@@ -86,14 +88,13 @@ public class ModelicaPackage extends ModelicaElement implements
 	 * @see org.modelica.mdt.core.IModelicaPackage#getPackages()
 	  * @return the subpackages, or null if there is no subpackages in this package
 	 */
-	public IModelicaPackage[] getPackages() 
+	public List<IModelicaPackage> getPackages() 
 	{
 		if(hasReceivedPackages == true)
 		{
 			if(packages.size() != 0)
 			{
-				IModelicaPackage impPackages[] = new IModelicaPackage[packages.size()];
-				return packages.toArray(impPackages);
+				return packages;
 			}
 			else
 			{
@@ -108,6 +109,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		}
 		catch(Exception e)
 		{
+			//TODO add proper error handling
 			System.out.println(e.getMessage());
 			return null;
 		}
@@ -132,8 +134,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		
 		if(packages.size() != 0)
 		{
-			IModelicaPackage impPackages[] = new IModelicaPackage[packages.size()];
-			return packages.toArray(impPackages);
+			return packages;
 		}
 		else
 		{
@@ -145,14 +146,13 @@ public class ModelicaPackage extends ModelicaElement implements
 	 * @see org.modelica.mdt.core.IModelicaPackage#getClasses()
 	 * @return the classes contained in this package, or null if there is no classes in this package
 	 */
-	public IModelicaClass[] getClasses() 
+	public List<IModelicaClass> getClasses() 
 	{
 		if(hasReceivedClasses == true)
 		{
 			if(classes.size() != 0)
 			{
-				IModelicaClass modelicaClasses[] = new IModelicaClass[classes.size()];
-				return classes.toArray(modelicaClasses);
+				return classes;
 			}
 			else
 			{
@@ -206,8 +206,7 @@ public class ModelicaPackage extends ModelicaElement implements
 
 		if(classes.size() != 0)
 		{
-			IModelicaClass modelicaClasses[] = new IModelicaClass[classes.size()];
-			return classes.toArray(modelicaClasses);
+			return classes;
 		}
 		else
 		{
@@ -249,25 +248,15 @@ public class ModelicaPackage extends ModelicaElement implements
 		return retvals;
 	}
 
-	public IModelicaElement[] getChildren()
+	public List<IModelicaElement> getChildren()
 	{
-		IModelicaElement[] pkgs = getPackages();
-		IModelicaElement[] cls  = getClasses();
+		List<IModelicaPackage> pkgs = getPackages();
+		List<IModelicaClass> cls  = getClasses();
 		
-		if (pkgs == null)
-		{
-			return cls;
-		}
-		if (cls == null)
-		{
-			return pkgs;
-		}
+		List<IModelicaElement> children = new LinkedList<IModelicaElement>();
 		
-		/* if both packages and classes are available, concatenate them to one array */
-		IModelicaElement[] children = new IModelicaElement[pkgs.length + cls.length];
-		
-		System.arraycopy(pkgs, 0, children, 0, pkgs.length);
-		System.arraycopy(cls, 0, children, pkgs.length, cls.length);
+		children.addAll(pkgs);
+		children.addAll(cls);
 		
 		return children;
 	}

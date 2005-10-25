@@ -38,16 +38,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt.core;
+package org.modelica.mdt.internal.core;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IFile;
+import org.modelica.mdt.core.IModelicaFile;
 
 /**
  * @author Elmir Jagudin
  *
  */
-public interface IModelicaProject extends IModelicaElement
+public class ModelicaFile extends ModelicaElement implements IModelicaFile 
 {
-	public IModelicaFolder getRootFolder();
-	public IProject getProject();
+
+	private IFile file;
+	
+	public ModelicaFile(IFile file) 
+	{
+		this.file = file;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
+	 */
+	public String getElementName()
+	{
+		return file.getName();
+	}
+
 }

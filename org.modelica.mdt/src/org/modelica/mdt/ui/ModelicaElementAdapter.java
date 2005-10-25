@@ -41,10 +41,14 @@
 package org.modelica.mdt.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.internal.core.ModelicaImages;
@@ -106,6 +110,15 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 				imgTag = "";
 			}
 			return ModelicaImages.getImageDescriptor(imgTag);
+		}
+		else if (object instanceof IModelicaFile)
+		{
+			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_MO_FILE);
+		}
+		else if (object instanceof IModelicaFolder)
+		{
+			return PlatformUI.getWorkbench().getSharedImages().
+			getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		}
 		return super.getImageDescriptor(object);
 	}
