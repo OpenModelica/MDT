@@ -38,78 +38,100 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.WorkbenchAdapter;
-import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.IModelicaPackage;
+package org.modelica.mdt.ui;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.internal.core.ModelicaImages;
+import org.modelica.mdt.core.IModelicaRoot;
+import org.modelica.mdt.core.IParent;
 
-public class ModelicaElementAdapter extends WorkbenchAdapter 
+/**
+ * @author Elmir Jagudin
+ *
+ */
+public class ModelicaElementContentProvider implements ITreeContentProvider 
 {
 
-	@Override
-	public String getLabel(Object object)
+	public Object[] getElements(Object inputElement)
 	{
-		System.out.println("get label for " + object);
-		return ((IModelicaElement)object).getElementName();
-	}
-
-	@Override
-	public ImageDescriptor getImageDescriptor(Object object)
-	{
-		if (object instanceof IModelicaProject)
+		try
 		{
-			/*
-			 * Isn't patterns beautifull ?
-			 */
-			IModelicaProject mproj = (IModelicaProject) object;
-			IWorkbenchAdapter wadap = 
-				(IWorkbenchAdapter) mproj.getProject().getAdapter(IWorkbenchAdapter.class);
-			return wadap.getImageDescriptor(mproj.getProject());
+			if (inputElement instanceof IModelicaRoot)
+			{
+				return ((IModelicaRoot)inputElement).getProjects();
+			}
 			
 		}
-		else if (object instanceof IModelicaPackage)
+		catch (CoreException e)
 		{
-			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_PACKAGE);
+			MdtPlugin.log(e);
 		}
-		else if (object instanceof IModelicaClass)
-		{
-			String imgTag;
-			switch (((IModelicaClass)object).getType())
-			{
-			case CLASS:
-				imgTag = ModelicaImages.IMG_OBJS_CLASS;
-				break;
-			case MODEL:
-				imgTag = ModelicaImages.IMG_OBJS_MODEL;
-				break;
-			case FUNCTION:
-				imgTag = ModelicaImages.IMG_OBJS_FUNCTION;
-				break;
-			case RECORD:
-				imgTag = ModelicaImages.IMG_OBJS_RECORD;
-				break;
-			case CONNECTOR:
-				imgTag = ModelicaImages.IMG_OBJS_CONNECTOR;
-				break;
-			case BLOCK:
-				imgTag = ModelicaImages.IMG_OBJS_BLOCK;
-				break;
-			case TYPE:
-				imgTag = ModelicaImages.IMG_OBJS_TYPE;
-				break;
-			default:
-				imgTag = "";
-			}
-			return ModelicaImages.getImageDescriptor(imgTag);
-		}
-		System.out.println("get img for " + object);
-		return super.getImageDescriptor(object);
+		return new Object[] {};
+	}
+	
+	public void dispose()
+	{
 	}
 
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+	{
+	}
+
+	public Object[] getChildren(Object parent)
+	{
+		if (parent instanceof IContainer)
+		{
+			try
+			{
+				return ((IContainer)parent).members();
+			}
+			catch (CoreException e)
+			{
+				MdtPlugin.log(e);
+			}
+		}
+		else if (parent instanceof IModelicaProject)
+		{
+			IModelicaProject mp = (IModelicaProject)parent; 
+			return MdtPlugin.concatenate(mp.getPackages(), mp.getClasses());
+		}
+		else if (parent instanceof IParent)
+		{
+			return ((IParent)parent).getChildren();
+		}
+		return null;
+	}
+
+	public Object getParent(Object element)
+	{
+		return null;
+	}
+
+	public boolean hasChildren(Object element)
+	{
+		if (element instanceof IProject)
+		{
+			return ((IProject)element).isOpen();
+		}
+		else if (element instanceof IFolder)
+		{
+			return true;
+		}
+		else if (element instanceof IModelicaProject)
+		{
+			return ((IModelicaProject)element).getProject().isOpen();
+		}
+		else if (element instanceof IParent)
+		{
+			return true;
+		}
+		return false;
+	}
 }

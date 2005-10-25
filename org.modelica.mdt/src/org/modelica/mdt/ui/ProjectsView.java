@@ -1,4 +1,4 @@
-package org.modelica.mdt;
+package org.modelica.mdt.ui;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;

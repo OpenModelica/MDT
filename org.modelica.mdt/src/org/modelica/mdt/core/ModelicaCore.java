@@ -13,8 +13,8 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.internal.core.ModelicaRoot;
+import org.modelica.mdt.ui.ModelicaElementAdapter;
 import org.modelica.mdt.MdtPlugin;
-import org.modelica.mdt.ModelicaElementAdapter;
 
 public class ModelicaCore 
 {

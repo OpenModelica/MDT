@@ -39,8 +39,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt;
+package org.modelica.mdt.ui;
 
+import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 
 import org.eclipse.core.resources.IProject;

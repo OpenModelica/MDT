@@ -8,7 +8,7 @@
             name="Modelica"/>
       <view
             category="org.modelica.mdt.ModelicaCategory"
-            class="org.modelica.mdt.ProjectsView"
+            class="org.modelica.mdt.ui.ProjectsView"
             icon="icons/modelicaProject.gif"
             id="org.modelica.mdt.ProjectsView"
             name="Modelica Projects"/>
@@ -20,7 +20,7 @@
             name="Modelica"/>
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
-            class="org.modelica.mdt.NewProjectWizard"
+            class="org.modelica.mdt.ui.NewProjectWizard"
             descriptionImage="icons/modelicaProjectDest.gif"
             icon="icons/modelicaProject.gif"
             id="org.modelica.mdt.NewProjectWizard"
@@ -32,7 +32,7 @@
       </wizard>
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
-            class="org.modelica.mdt.NewClassWizard"
+            class="org.modelica.mdt.ui.NewClassWizard"
             icon="icons/modelicaFile.gif"
             id="org.modelica.mdt.NewClassWizard"
             name="Modelica Class">
@@ -58,7 +58,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="org.modelica.mdt.PerspectiveFactory"
+            class="org.modelica.mdt.ui.PerspectiveFactory"
             icon="icons/modelicaProject.gif"
             id="org.modelica.mdt.perspective"
             name="Modelica"/>
@@ -68,7 +68,7 @@
          name="Modelica"
          point="org.eclipse.core.resources.natures">
       <runtime>
-         <run class="org.modelica.mdt.ModelicaNature"/>
+         <run class="org.modelica.mdt.ui.ModelicaNature"/>
       </runtime>
    </extension>
    <extension

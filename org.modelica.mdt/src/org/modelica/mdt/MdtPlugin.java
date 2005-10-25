@@ -184,7 +184,6 @@ public class MdtPlugin extends AbstractUIPlugin
 		}
 		
 		Object[] res=  new Object[a1Len + a2Len];
-		System.out.println(res.getClass());
 		
 		if (a1 != null)
 		{

@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt;
+package org.modelica.mdt.ui;
 
 
 import java.io.ByteArrayInputStream;
@@ -86,6 +86,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.ide.IDE;
+import org.modelica.mdt.MdtPlugin;
 
 public class NewClassWizard extends Wizard implements INewWizard
 {
