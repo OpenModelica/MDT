@@ -49,6 +49,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
+import org.modelica.mdt.core.IParent;
 
 /**
  * @author Elmir Jagudin
@@ -76,10 +77,12 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 	
 	public void dispose()
 	{
+		System.out.println("disposed " + ModelicaElementContentProvider.class);
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
+		System.out.println("input changed " + ModelicaElementContentProvider.class);
 	}
 
 	public Object[] getChildren(Object parent)
@@ -98,13 +101,26 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		else if (parent instanceof IModelicaProject)
 		{
 			IModelicaProject mp = (IModelicaProject)parent; 
-			return concatenate(mp.getPackages(), mp.getClasses());
+			return MdtPlugin.concatenate(mp.getPackages(), mp.getClasses());
+		}
+		else if (parent instanceof IParent)
+		{
+			System.out.println("get children of " + parent);
+			Object[] ch = ((IParent)parent).getChildren();
+			for (Object ob : ch)
+			{
+				System.out.println("got " + ob.getClass());
+			}
+			
+			return ch;
+			//return ((IParent)parent).getChildren();
 		}
 		return null;
 	}
 
 	public Object getParent(Object element)
 	{
+		System.out.println("get parent " + ModelicaElementContentProvider.class);
 		return null;
 	}
 
@@ -122,19 +138,10 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		{
 			return ((IModelicaProject)element).getProject().isOpen();
 		}
+		else if (element instanceof IParent)
+		{
+			return true;
+		}
 		return false;
 	}
-
-	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
-	 */
-	protected static Object[] concatenate(Object[] a1, Object[] a2) {
-		int a1Len= a1.length;
-		int a2Len= a2.length;
-		Object[] res= new Object[a1Len + a2Len];
-		System.arraycopy(a1, 0, res, 0, a1Len);
-		System.arraycopy(a2, 0, res, a1Len, a2Len); 
-		return res;
-	}
-
 }

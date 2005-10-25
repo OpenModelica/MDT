@@ -9,6 +9,7 @@ package org.modelica.mdt.corba;
 
 
 // As simple as can be modeq communication, sending and recieving of strings.
+@SuppressWarnings("serial")
 public class _ModeqCommunicationStub extends org.omg.CORBA.portable.ObjectImpl implements ModeqCommunication
 {
 

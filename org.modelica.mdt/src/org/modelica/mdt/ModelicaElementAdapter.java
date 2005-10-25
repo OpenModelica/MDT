@@ -55,6 +55,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 	@Override
 	public String getLabel(Object object)
 	{
+		System.out.println("get label for " + object);
 		return ((IModelicaElement)object).getElementName();
 	}
 
@@ -107,7 +108,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			}
 			return ModelicaImages.getImageDescriptor(imgTag);
 		}
-		System.out.println("weee!");
+		System.out.println("get img for " + object);
 		return super.getImageDescriptor(object);
 	}
 

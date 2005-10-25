@@ -40,6 +40,7 @@
  */
 
 package org.modelica.mdt;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -164,5 +165,35 @@ public class MdtPlugin extends AbstractUIPlugin
 		log(new Status(IStatus.ERROR, getSymbolicName(), 
 				INTERNAL_ERROR,
 				"Internal Error", e));
+	}
+	
+	/**
+	 * Note: This method is for internal use only. Clients should not call this method.
+	 */
+	public static Object[] concatenate(Object[] a1, Object[] a2) 
+	{
+		int a1Len = 0;
+		int a2Len = 0;
+		if (a1 != null)
+		{
+			a1Len= a1.length;			
+		}
+		if (a2 != null)
+		{
+			a2Len= a2.length;
+		}
+		
+		Object[] res=  new Object[a1Len + a2Len];
+		System.out.println(res.getClass());
+		
+		if (a1 != null)
+		{
+			System.arraycopy(a1, 0, res, 0, a1Len);
+		}
+		if (a2 != null)
+		{
+			System.arraycopy(a2, 0, res, a1Len, a2Len);
+		}
+		return res;
 	}
 }

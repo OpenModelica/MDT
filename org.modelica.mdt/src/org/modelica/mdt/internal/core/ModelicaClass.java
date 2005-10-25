@@ -17,6 +17,7 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	{
 		className = name;
 		hostPackage = pkg;
+		type = Type.CLASS;
 	}
 	
 	public String getElementName()

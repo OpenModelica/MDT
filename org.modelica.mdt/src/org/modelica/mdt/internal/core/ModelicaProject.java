@@ -86,18 +86,11 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 
 	// dummy implementation
 	ModelicaClass[] dummyClasses = 
-		{ new ModelicaClass(ModelicaClass.Type.CLASS),
-			new ModelicaClass(ModelicaClass.Type.MODEL),
-			new ModelicaClass(ModelicaClass.Type.FUNCTION),
-			new ModelicaClass(ModelicaClass.Type.RECORD),
-			new ModelicaClass(ModelicaClass.Type.CONNECTOR),
-			new ModelicaClass(ModelicaClass.Type.BLOCK),
-			new ModelicaClass(ModelicaClass.Type.TYPE)
+		{ new ModelicaClass("hej", "hop"),
 			};
 
 	public IModelicaClass[] getClasses() 
 	{
-		System.out.println("ad");
 		return dummyClasses;
 	}
 }

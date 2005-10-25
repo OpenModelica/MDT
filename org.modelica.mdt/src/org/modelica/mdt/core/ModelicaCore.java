@@ -112,7 +112,6 @@ public class ModelicaCore
 
 	public static Object getWorkbenchAdapter() 
 	{
-		System.out.println("asdasd getWorkbenchAda");
 		if (modelicaElementAdapter == null)
 		{
 			modelicaElementAdapter = new ModelicaElementAdapter();
