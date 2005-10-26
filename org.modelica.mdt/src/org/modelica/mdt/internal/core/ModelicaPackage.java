@@ -44,6 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFolder;
 import org.modelica.mdt.corba.ModeqCommunicationImplementation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -82,6 +83,12 @@ public class ModelicaPackage extends ModelicaElement implements
 		
 		packages = new Vector<IModelicaPackage>();
 		classes = new Vector<IModelicaClass>();
+	}
+	
+	ModelicaPackage(IFolder hej)
+	{
+		// dummy implementation
+		this("oh my", hej.getName());		
 	}
 	
 	/**
