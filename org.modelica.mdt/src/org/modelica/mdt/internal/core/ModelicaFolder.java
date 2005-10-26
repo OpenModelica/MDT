@@ -45,9 +45,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
@@ -66,6 +66,63 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 		this.cont = cont;
 	}
 	
+	private boolean isPackage(IResource res)
+	{
+		if (res.getType() == IResource.FOLDER)
+		{
+			/* if folder contains a package.mo file, then consider it a package */
+			IFolder fol = (IFolder) res;
+			if (fol.getFile("package.mo").exists())
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	private boolean isFolder(IResource res)
+	{
+		if (res.getType() == IResource.FOLDER)
+		{
+			IFolder fol = (IFolder) res;
+			if (!fol.getFile("package.mo").exists())
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean isModelicaFile(IResource res)
+	{
+		if (res.getType() == IResource.FILE)
+		{
+			String extension = res.getFileExtension(); 
+			if (extension != null && extension.equals("mo"))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	private boolean isFile(IResource res)
+	{
+		if (res.getType() == IResource.FILE)
+		{
+			String extension = res.getFileExtension(); 
+			if (extension == null || (!extension.equals("mo")))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.modelica.mdt.core.IModelicaFolder#getFolders()
 	 */
@@ -76,7 +133,7 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 
 		for (IResource res : members)
 		{
-			if (res.getType() == IResource.FOLDER)
+			if (isFolder(res))
 			{
 				folders.add(new ModelicaFolder((IContainer)res));
 			}
@@ -88,12 +145,23 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	/* (non-Javadoc)
 	 * @see org.modelica.mdt.core.IModelicaFolder#getPackages()
 	 */
-	public List<IModelicaPackage> getPackages()
+	public List<IModelicaPackage> getPackages() throws CoreException
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+		IResource[] members = cont.members();
+		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
 
+		for (IResource res : members)
+		{
+			if (isPackage(res))
+			{
+				pkgs.add(new ModelicaPackage((IFolder)res));
+			}
+		}
+
+		return pkgs;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.modelica.mdt.core.IModelicaFolder#getModelicaFiles()
 	 */
@@ -101,17 +169,12 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	{
 		IResource[] members = cont.members();
 		LinkedList<IModelicaFile> mofiles = new LinkedList<IModelicaFile>();
-		String extension;
 		
 		for (IResource res : members)
 		{
-			if (res.getType() == IResource.FILE)
+			if (isModelicaFile(res))
 			{
-				extension = res.getFileExtension(); 
-				if (extension != null && extension.equals("mo"))
-				{
-					mofiles.add(new ModelicaFile((IFile)res));
-				}
+				mofiles.add(new ModelicaFile((IFile)res));
 			}
 		}
 
@@ -121,10 +184,19 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	/* (non-Javadoc)
 	 * @see org.modelica.mdt.core.IModelicaFolder#getFiles()
 	 */
-	public List<IFile> getFiles()
+	public List<IFile> getFiles() throws CoreException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		IResource[] members = cont.members();
+		LinkedList<IFile> files = new LinkedList<IFile>();
+		
+		for (IResource res : members)
+		{
+			if (isFile(res))
+			{
+				files.add((IFile)res);
+			}
+		}
+		return files;
 	}
 
 	/* (non-Javadoc)
@@ -136,24 +208,16 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	}
 
 
-	public List<IModelicaElement> getChildren() 
+	public List<?> getChildren() 
 	{
 		try 
 		{
-			List<IModelicaElement> children = new LinkedList<IModelicaElement>();
-			List<IModelicaFolder> folders = getFolders();
+			List<Object> children = new LinkedList<Object>();
 			
-			List<IModelicaFile> files = getModelicaFiles();
-			
-			if (folders != null)
-			{
-				children.addAll(folders);
-			}
-			
-			if (files != null)
-			{
-				children.addAll(files);
-			}
+			children.addAll(getPackages());
+			children.addAll(getFolders());
+			children.addAll(getModelicaFiles());
+			children.addAll(getFiles());
 			
 			return children;
 		}
@@ -165,9 +229,9 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 		return null;
 	}
 
-	public boolean hasChildren() 
+	public boolean hasChildren() throws CoreException 
 	{
-		return true;
+		return !getChildren().isEmpty();
 	}
 
 }

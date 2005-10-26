@@ -12,6 +12,8 @@ package org.modelica.mdt.core;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+
 
 /**
  * Common protocol for Modelica elements that contain other Modelica elements.
@@ -28,7 +30,7 @@ public interface IParent
 	 *
 	 * @return the immediate children of this element
 	 */
-	List<? extends IModelicaElement> getChildren();
+	List<?> getChildren();
 	
 	/**
 	 * Returns whether this element has one or more immediate children.
@@ -36,6 +38,7 @@ public interface IParent
 	 * testing whether <code>getChildren</code> is an empty array.
 	 *
 	 * @return true if the immediate children of this element, false otherwise
+	 * @throws CoreException 
 	 */
-	boolean hasChildren();
+	boolean hasChildren() throws CoreException;
 }

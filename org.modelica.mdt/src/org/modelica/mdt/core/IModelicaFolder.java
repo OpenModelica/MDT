@@ -53,10 +53,12 @@ import org.eclipse.core.runtime.CoreException;
 public interface IModelicaFolder extends IModelicaElement, IParent
 {
 	public List<IModelicaFolder> getFolders() throws CoreException;
-	public List<IModelicaPackage> getPackages(); 
+	public List<IModelicaPackage> getPackages() throws CoreException; 
 	public List<IModelicaFile> getModelicaFiles() throws CoreException;
+	
 	/**
 	 * @return all non modelica files in this folder
+	 * @throws CoreException if there was an error compiling the file list 
 	 */
-	public List<IFile> getFiles();
+	public List<IFile> getFiles() throws CoreException;
 }

@@ -129,7 +129,15 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		}
 		else if (element instanceof IParent)
 		{
-			return true;
+			try 
+			{
+				return ((IParent)element).hasChildren();
+			} 
+			catch (CoreException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
