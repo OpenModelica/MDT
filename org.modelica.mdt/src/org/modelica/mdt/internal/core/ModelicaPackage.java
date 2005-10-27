@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
-import org.modelica.mdt.corba.ModeqCommunicationImplementation;
+import org.modelica.mdt.internal.corba.OmcCommunicationImplementation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaPackage;
@@ -89,7 +89,7 @@ public class ModelicaPackage extends ModelicaElement implements
 	 * @see org.modelica.mdt.core.IModelicaPackage#getPackages()
 	  * @return the subpackages, or null if there is no subpackages in this package
 	 */
-	public List<IModelicaPackage> getPackages() 
+	public List<IModelicaPackage> getPackages()
 	{
 		if(packages != null)
 		{
@@ -101,7 +101,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		String retval = null;
 		try 
 		{
-			retval = ModeqCommunicationImplementation.sendExpression("getPackages("+fullName+")");
+			retval = OmcCommunicationImplementation.sendExpression("getPackages("+fullName+")");
 		}
 		catch(Exception e)
 		{
@@ -144,7 +144,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		String retval = null;
 		try
 		{
-			retval = ModeqCommunicationImplementation.sendExpression("getClassNames("+fullName+")");
+			retval = OmcCommunicationImplementation.sendExpression("getClassNames("+fullName+")");
 		}
 		catch(Exception e)
 		{
@@ -168,7 +168,7 @@ public class ModelicaPackage extends ModelicaElement implements
 				continue;
 			try
 			{
-				retval = ModeqCommunicationImplementation.sendExpression("isPackage("+fullName+"."+str+")");
+				retval = OmcCommunicationImplementation.sendExpression("isPackage("+fullName+"."+str+")");
 			}
 			catch(Exception e)
 			{

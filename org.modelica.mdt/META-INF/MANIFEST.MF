@@ -20,6 +20,7 @@ Export-Package: org.modelica.mdt,
  org.modelica.mdt.corba,
  org.modelica.mdt.core,
  org.modelica.mdt.editor,
+ org.modelica.mdt.internal.core,
  org.modelica.mdt.ui
 Bundle-Activator: org.modelica.mdt.MdtPlugin
 Eclipse-AutoStart: true
