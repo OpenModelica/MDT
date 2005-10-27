@@ -41,6 +41,8 @@
 
 package org.modelica.mdt.ui;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -51,6 +53,7 @@ import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
+import org.modelica.mdt.internal.core.SystemLibrary;
 
 /**
  * @author Elmir Jagudin
@@ -99,7 +102,15 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		}
 		else if (parent instanceof IModelicaProject)
 		{
-			return ((IModelicaProject)parent).getRootFolder().getChildren().toArray(); 
+			List<?> list = ((IModelicaProject)parent).getRootFolder().getChildren();
+			
+			Object[] children = new Object[list.size()+1];
+			/*
+			 * add as last element system library
+			 */
+			list.toArray(children);
+			children[children.length-1] = new SystemLibrary();
+			return children; 
 		}
 		else if (parent instanceof IParent)
 		{

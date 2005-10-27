@@ -61,11 +61,8 @@ public class ModelicaPackage extends ModelicaElement implements
 	String elementName;
 	String fullName;
 	
-	List<IModelicaPackage> packages;
-	List<IModelicaClass> classes;
-
-	boolean hasReceivedPackages = false;
-	boolean hasReceivedClasses = false;
+	List<IModelicaPackage> packages = null;
+	List<IModelicaClass> classes = null;
 	
 	ModelicaPackage(String baseName, String elementName)
 	{
@@ -80,15 +77,12 @@ public class ModelicaPackage extends ModelicaElement implements
 		{
 			fullName = baseName + "." + elementName;
 		}
-		
-		packages = new Vector<IModelicaPackage>();
-		classes = new Vector<IModelicaClass>();
 	}
 	
 	ModelicaPackage(IFolder hej)
 	{
 		// dummy implementation
-		this("oh my", hej.getName());		
+		this(null, hej.getName());		
 	}
 	
 	/**
@@ -97,18 +91,13 @@ public class ModelicaPackage extends ModelicaElement implements
 	 */
 	public List<IModelicaPackage> getPackages() 
 	{
-		if(hasReceivedPackages == true)
+		if(packages != null)
 		{
-			if(packages.size() != 0)
-			{
-				return packages;
-			}
-			else
-			{
-				return null;
-			}
+			/* packages allready loaded */
+			return packages;
 		}
-		
+		packages = new Vector<IModelicaPackage>();
+			
 		String retval = null;
 		try 
 		{
@@ -125,8 +114,7 @@ public class ModelicaPackage extends ModelicaElement implements
 
 		if(tokens == null)
 		{
-			hasReceivedPackages = true;
-			return null;
+			return packages;
 		}
 		
 		for(String s : tokens)
@@ -137,16 +125,7 @@ public class ModelicaPackage extends ModelicaElement implements
 			}
 		}
 
-		hasReceivedPackages = true;
-		
-		if(packages.size() != 0)
-		{
-			return packages;
-		}
-		else
-		{
-			return null;
-		}
+		return packages;
 	}
 
 	/**
@@ -155,17 +134,12 @@ public class ModelicaPackage extends ModelicaElement implements
 	 */
 	public List<IModelicaClass> getClasses() 
 	{
-		if(hasReceivedClasses == true)
+		if(classes != null)
 		{
-			if(classes.size() != 0)
-			{
-				return classes;
-			}
-			else
-			{
-				return null;
-			}
+			/* allready loaded classes */
+			return classes;
 		}
+		classes = new Vector<IModelicaClass>();
 		
 		String retval = null;
 		try
@@ -174,6 +148,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		}
 		catch(Exception e)
 		{
+			// TODO proper error handling
 			System.out.println(e.getMessage());
 			return null;
 		}
@@ -184,8 +159,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		
 		if(tokens == null)
 		{
-			hasReceivedClasses = true;
-			return null;
+			return classes;
 		}
 		
 		for(String str : tokens)
@@ -198,6 +172,7 @@ public class ModelicaPackage extends ModelicaElement implements
 			}
 			catch(Exception e)
 			{
+				// TODO proper error handling
 				System.out.println(e.getMessage());
 				return null;
 			}
@@ -208,17 +183,8 @@ public class ModelicaPackage extends ModelicaElement implements
 				addClass(new ModelicaClass(str, fullName));
 			}
 		}
-
-		hasReceivedClasses = true;
-
-		if(classes.size() != 0)
-		{
-			return classes;
-		}
-		else
-		{
-			return null;
-		}
+		
+		return classes;
 	}
 
 	/* (non-Javadoc)

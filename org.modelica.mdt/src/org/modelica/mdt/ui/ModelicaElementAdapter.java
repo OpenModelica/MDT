@@ -51,7 +51,16 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.internal.core.ModelicaImages;
+
+/**
+ * @author Elmir Jagudin
+ *
+ * This class mapps modelica objects (Modelica packages, classes, etc) to icons and labels
+ * via IWorkbenchAdapter interface. This icon and lables are used in for example Modelica 
+ * Projects view.
+ */
 
 public class ModelicaElementAdapter extends WorkbenchAdapter 
 {
@@ -120,6 +129,11 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			return PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		}
+		else if (object instanceof ISystemLibrary)
+		{
+			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_LIBRARY);
+		}
+		
 		return super.getImageDescriptor(object);
 	}
 
