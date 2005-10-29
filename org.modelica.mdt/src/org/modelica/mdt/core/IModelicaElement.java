@@ -40,8 +40,8 @@
  */
 package org.modelica.mdt.core;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * Common protocol for all elements provided by the Modelica root.
@@ -54,16 +54,11 @@ import org.eclipse.core.runtime.IPath;
 public interface IModelicaElement extends IAdaptable 
 {
 	public String getElementName();
-	
+
 	/**
-	 * Returns the path to the innermost resource enclosing this element. 
-	 * the path returned is the full, absolute path to the underlying resource, 
-	 * relative to the workbench. 
-	 * If this element is included in an external archive, 
-	 * the path returned is the absolute path to the archive in the file system.
-	 * This is a handle-only method.
 	 * 
-	 * @return the path to the innermost resource enclosing this element
+	 * @return file in which this element is contained, or null if the element is not
+	 * contained in a particular file
 	 */
-	IPath getPath();
+	IFile getContainer();
 }

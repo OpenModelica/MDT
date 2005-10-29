@@ -65,4 +65,10 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		return file.getName();
 	}
 
+	@Override
+	public IFile getContainer() 
+	{
+		return file;
+	}
+
 }

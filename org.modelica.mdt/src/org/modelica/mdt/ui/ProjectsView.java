@@ -9,6 +9,8 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.swt.SWT;
@@ -25,6 +27,7 @@ public class ProjectsView extends ViewPart
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
 	private IResourceChangeListener resourceListener;
+	private ProjectsViewDoubleClickAction doubleClickAction;
 
 
 	@Override
@@ -35,12 +38,13 @@ public class ProjectsView extends ViewPart
 			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		viewer.setContentProvider(new ModelicaElementContentProvider());
-		//viewer.setLabelProvider(new ModelicaElementLabelProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ModelicaCore.getModelicaRoot());
 
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		
+		makeActions();
+		hookDoubleClickAction();
 		hookContextMenu();
 		
 		resourceListener = new IResourceChangeListener()
@@ -89,7 +93,23 @@ public class ProjectsView extends ViewPart
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
+	
+	private void makeActions() 
+	{
+		doubleClickAction = new ProjectsViewDoubleClickAction(viewer); 
+	}
 
+	private void hookDoubleClickAction() 
+	{
+		viewer.addDoubleClickListener(new IDoubleClickListener() 
+		{
+			public void doubleClick(DoubleClickEvent event) 
+			{
+				doubleClickAction.run();
+			}
+		});
+	}
+	
 	private void fillContextMenu(IMenuManager manager) 
 	{
 		manager.add(new Separator());
@@ -102,7 +122,9 @@ public class ProjectsView extends ViewPart
 	public void dispose()
 	{
 		super.dispose();
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+
+		ResourcesPlugin.getWorkspace().
+			removeResourceChangeListener(resourceListener);
 	}
 
 }
