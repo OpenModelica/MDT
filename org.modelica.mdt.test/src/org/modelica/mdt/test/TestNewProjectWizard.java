@@ -44,7 +44,7 @@ package org.modelica.mdt.test;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.modelica.mdt.ui.NewProjectWizard;
+import org.modelica.mdt.ui.wizards.NewProjectWizard;
 
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.TextTester;
