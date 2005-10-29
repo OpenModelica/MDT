@@ -2,13 +2,11 @@ package org.modelica.mdt.internal.corba;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 import org.modelica.mdt.MdtPlugin;
-import org.modelica.mdt.corba.ModeqCommunication;
-import org.modelica.mdt.internal.core.InitializationException;
+import org.modelica.mdt.internal.corba.InitializationException;
 import org.omg.CORBA.ORB;
 
 /**
@@ -48,10 +46,6 @@ public class OmcCommunicationImplementation
 		try
 		{
 			fr = new FileReader(f);
-		}
-		catch(FileNotFoundException e)
-		{
-			throw new InitializationException("Unable to initialize Open Modelica Compiler");
 		}
 		catch(IOException e)
 		{

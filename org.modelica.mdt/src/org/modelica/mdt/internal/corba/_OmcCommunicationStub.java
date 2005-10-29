@@ -12,7 +12,12 @@ package org.modelica.mdt.internal.corba;
 public class _OmcCommunicationStub extends org.omg.CORBA.portable.ObjectImpl implements OmcCommunication
 {
 
-  public String sendExpression (String expr)
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2199076960265794510L;
+
+public String sendExpression (String expr)
   {
             org.omg.CORBA.portable.InputStream $in = null;
             try {

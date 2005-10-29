@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui;
+package org.modelica.mdt.ui.wizards;
 
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;

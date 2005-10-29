@@ -20,7 +20,7 @@
             name="Modelica"/>
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
-            class="org.modelica.mdt.ui.NewProjectWizard"
+            class="org.modelica.mdt.ui.wizards.NewProjectWizard"
             descriptionImage="icons/modelicaProjectDest.gif"
             icon="icons/modelicaProject.gif"
             id="org.modelica.mdt.NewProjectWizard"
@@ -32,7 +32,7 @@
       </wizard>
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
-            class="org.modelica.mdt.ui.NewClassWizard"
+            class="org.modelica.mdt.ui.wizards.NewClassWizard"
             icon="icons/modelicaFile.gif"
             id="org.modelica.mdt.NewClassWizard"
             name="Modelica Class">
