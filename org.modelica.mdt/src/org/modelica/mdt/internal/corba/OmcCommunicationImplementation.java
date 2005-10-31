@@ -246,7 +246,7 @@ public class OmcCommunicationImplementation
 			retval = sendExpression("loadModel(Modelica)");
 			if(retval.equals("false"))
 			{
-				
+				System.out.println("Unable to load Modelica Standard Library");
 			}
 		}
 		
