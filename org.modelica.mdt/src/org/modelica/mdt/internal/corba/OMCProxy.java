@@ -224,7 +224,6 @@ public class OMCProxy
 		try
 		{
 			
-			System.out.println("omcc is " + omcc._non_existent());
 			omcc.sendExpression("1+1");
 		}
 		catch(Exception e)

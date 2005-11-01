@@ -17,7 +17,6 @@ Bundle-ClassPath: mdt.jar,
  bin/,
  src/
 Export-Package: org.modelica.mdt,
- org.modelica.mdt.corba,
  org.modelica.mdt.core,
  org.modelica.mdt.editor,
  org.modelica.mdt.internal.core,
