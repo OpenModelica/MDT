@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.internal.corba.InitializationException;
 import org.omg.CORBA.ORB;
 
@@ -17,13 +16,10 @@ import org.omg.CORBA.ORB;
 public class OMCProxy
 {
 	private static OmcCommunication omcc;
-	private static String os;
-	@SuppressWarnings("unused")
-	private static Process OmcProcess;
-
-	// TODO Do not do lazy initialization
+	private static String os; /* what Operating System we're running on */
 	private static boolean hasInitialized = false;
 
+	/* Reads in the OMC object reference from a file on disk. */
 	private static String readObjectFromFile() throws InitializationException
 	{
 		File f = new File(getPathToObject());
@@ -55,11 +51,13 @@ public class OMCProxy
 		return stringifiedObjectReference;
 	}
 	
+	/* Returns the path to the OMC CORBA object that is stored on disk. */
 	private static String getPathToObject()
 	{
 		String fileName = null;
 		if(os.equals("Linux"))
 		{
+			/* This mirrors the way OMC creates the object file. */
 			String username = System.getenv("USER");
 			if(username == null)
 			{
@@ -76,75 +74,52 @@ public class OMCProxy
 		return fileName;
 	}
 	
-	private static void startServer()
+	/* Start a new OMC server. */
+	private static void startServer() throws InitializationException
 	{
 		String pathToOmc = null;
-		String argToOmc = null;
-		String modelicaPath = null;
-		String user = null;
 
-		System.out.println("Starting Open Modelica Compiler");
+		/* Path to omc (or omc.exe) can be found in the OPENMODELICAHOME
+		 * variable. */
+		String omHome = System.getenv("OPENMODELICAHOME");
+		if(omHome == null)
+		{
+			final String m = "Environment variable OPENMODELICAPATH not set";
+			throw new InitializationException(m);
+		}
 		
 		if(os.equals("Linux"))
 		{
-			pathToOmc = "/home/x05andre/ex/omc-build/OpenModelica/Compiler/omc";
-			modelicaPath = "MODELICAPATH=/home/x05andre/ex/Modelica Library";
+			pathToOmc = omHome + "/omc";
 		}
 		else if(os.equals("Windows"))
 		{
-			pathToOmc = "c:\\OpenModelica13\\omc.exe";
-			modelicaPath = "MODELICAPATH=c:\\OpenModelica13\\ModelicaLibrary";
+			pathToOmc = omHome + "\\omc.exe";
 		}
 
-		argToOmc = "+d=interactiveCorba";
-		String userName = System.getenv("USER");
-		if(userName == null)
-			userName = "nobody";
-		user = "USER=" + userName;
-		
+		/* Delete old object reference file. We need to do this because we're
+		 * checking if the file exists to determine if the server has started
+		 * or not (further down). */
 		File f = new File(getPathToObject());
-
 		if(f.exists())
 		{
-			System.out.println("Delete " + f);
-			if(f.delete())
-			{
-				System.out.println(f + " deleted");
-			}
-			else
-			{
-				System.out.println("Couldn't delete " + f);
-			}
+			f.delete();
 		}
-
-		System.out.flush();
-		String command[] = {pathToOmc, argToOmc};
-		String env[] = {modelicaPath, user};
+		
+		String command[] = {pathToOmc, "+d=interactiveCorba"};
 		try
 		{
-			OmcProcess = Runtime.getRuntime().exec(command);
-			//OmcProcess = Runtime.getRuntime().exec(command, env);
-			System.out.println(command[0] + command[1] + " mod path " + modelicaPath);
+			Runtime.getRuntime().exec(command);
 		}
 		catch(IOException e)
 		{
-			// TODO Handle this exception
-			System.out.println("Couldn't start Open Modelica Compiler");
-			System.out.println(e);
+			throw new InitializationException
+				("Unable to start Open Modelica Compiler");
 		}
-		
-		try
-		{
-			System.out.println("Sleep 1 second");
-			Thread.sleep(1000);
-			System.out.println("done Sleeping 1 second");
-		}
-		catch(InterruptedException e)
-		{
-			// Ignore
-			System.out.println("mrrp" + e);
-		}
-		
+
+		/* Wait until the object exists on disk, but if it takes longer than
+		 * 5 seconds, abort. (Very arbitrary 5 seconds..) */
+		int ticks = 0;
 		while(!f.exists())
 		{
 			try
@@ -155,40 +130,39 @@ public class OMCProxy
 			{
 				// Ignore
 			}
+			ticks++;
+			
+			/* If we've waited for 5 seconds, abort wait for OMC */
+			if(ticks > 50)
+			{
+				throw new InitializationException
+					("Unable to start Open Modelica Compiler");
+			}
 		}
 	}
 	
+	/* Initializes an ORB, converts the stringified OMC object to a real
+	 * CORBA object, and then narrows that object to an OmcCommunication
+	 * object. */
 	private static void setupOmcc(String stringifiedObjectReference)
+		throws InitializationException
 	{
+		/* Can't remember why this is needed. But it is. */
 		String args[] = {null};
 		
 		ORB orb;
 		orb = ORB.init(args, null);
 		
-		org.omg.CORBA.Object obj = null;
-		try
-		{
-			obj = orb.string_to_object(stringifiedObjectReference);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Va <cencur>");
-			System.out.println(e);
-		}
+		/* Convert string to object. */
+		org.omg.CORBA.Object obj
+			= orb.string_to_object(stringifiedObjectReference);
 		
-		try
-		{
-			omcc = OmcCommunicationHelper.narrow(obj);
-		}
-		catch(Exception e)
-		{
-			System.out.println("<cencur> Va?");
-			System.out.flush();
-			System.out.println(e);
-		}
-
+		/* Convert object to OmcCommunication object. */
+		omcc = OmcCommunicationHelper.narrow(obj);
 	}
 	
+	/* Returns the name of the operating system. If an unknown os is found,
+	 * the default is Linux. */
 	private static String getOs()
 	{
 		String osName = System.getProperty("os.name");
@@ -209,26 +183,37 @@ public class OMCProxy
 	
 	public static void init(String args[]) throws InitializationException
 	{
+		/* Get type of operating system, used for finding object
+		 * reference and starting OMC if the reference is faulty */
 		os = getOs();
 		
+		/* See if an OMC server is already running */
 		File f = new File(getPathToObject());
 		String stringifiedObjectReference = null;
 		if(!f.exists())
 		{
+			/* If a server isn't running, start it */
 			startServer();
 		}
+		
+		/* Read in the CORBA OMC object from a file on disk */
 		stringifiedObjectReference = readObjectFromFile();
 
+		/* Setup up OMC object reference by initializing ORB and then
+		 * converting the string object to a real CORBA object. */
 		setupOmcc(stringifiedObjectReference);
 
 		try
 		{
-			
+			/* Test the server by trying to send an expression to it. 
+			 * This might fail if the object reference found on disk didn't
+			 * have a corresponding server running. If a server is missing,
+			 * catch an exception and try starting a server. */
 			omcc.sendExpression("1+1");
 		}
-		catch(Exception e)
+		catch(org.omg.CORBA.COMM_FAILURE e)
 		{
-			System.out.println("exception couth");
+			/* Start server and set up omcc */
 			startServer();
 			stringifiedObjectReference = readObjectFromFile();
 			setupOmcc(stringifiedObjectReference);
@@ -236,9 +221,12 @@ public class OMCProxy
 
 		try
 		{
+			/* Once again try to send an expression to OMC. If it fails this
+			 * time it's time to send back an exception to the caller of this
+			 * function. */
 			omcc.sendExpression("1+1");
 		}
-		catch(Exception e)
+		catch(org.omg.CORBA.COMM_FAILURE e)
 		{
 			throw new InitializationException("Unable to start server");
 		}
@@ -246,6 +234,9 @@ public class OMCProxy
 		hasInitialized = true;
 	}
 	
+	/* Send expression to OMC. If communication is not initialized, it
+	 * is initialized here. After initialization it loads the Modelica
+	 * Standard Library. */
 	public static String sendExpression(String exp) throws InitializationException
 	{
 		String retval = null;
@@ -253,7 +244,6 @@ public class OMCProxy
 		if(hasInitialized == false)
 		{
 			init(null);
-			System.out.println("Loading Modelica Standard Library");
 			retval = sendExpression("loadModel(Modelica)");
 			if(retval.equals("false"))
 			{
@@ -266,31 +256,20 @@ public class OMCProxy
 		return retval;
 	}
 
-	public static String sendClass(String exp) throws Exception
+	/* Send expression to OMC. If communication is not initialized, it
+	 * is initialized here. After initialization it loads the Modelica
+	 * Standard Library. */
+	public static String sendClass(String exp) throws InitializationException
 	{
 		String retval = null;
-
+		
 		if(hasInitialized == false)
 		{
-			try
-			{
-				init(null);
-			}
-			catch(Exception e)
-			{
-				throw new Exception("Unable to initialize communication with OMC");
-			}
-			sendExpression("loadModel(Modelica)");
+			init(null);
 		}
 		
-		try
-		{
-			retval = omcc.sendClass(exp);
-		}
-		catch(Exception e)
-		{
-			MdtPlugin.log(e);
-		}
+		retval = omcc.sendClass(exp);
+		
 		return retval;
 	}
 }
