@@ -51,13 +51,15 @@ public class ModelicaImages
 	public static final String IMG_OBJS_MO_FILE = "IMG_OBJS_MO_FILE";		
 	public static final String IMG_OBJS_LIBRARY = "IMG_OBJS_LIBRARY";
 	
+	public static final String IMG_WIZBAN_PACKAGE = "IMG_WIZBAN_PACKAGE";
+	
 	
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
 	private static final String T_OBJ= "obj16/"; 		//$NON-NLS-1$
 //	private static final String T_OVR= "ovr16/"; 		//$NON-NLS-1$
-//	private static final String T_WIZBAN= "wizban/"; 	//$NON-NLS-1$
+	private static final String T_WIZBAN= "wizban/"; 	//$NON-NLS-1$
 //	private static final String T_EVIEW= "eview16/"; 	//$NON-NLS-1$
 //	private static final String T_DLCL= "dtool16/"; 	//$NON-NLS-1$
 //	private static final String T_ELCL= "etool16/"; 	//$NON-NLS-1$
@@ -106,15 +108,17 @@ public class ModelicaImages
 	{
 		declareRegistryImage(IMG_OBJS_PACKAGE, T_OBJ + "package_obj.gif"); //$NON-NLS-1$
 		
-		declareRegistryImage(IMG_OBJS_CLASS, T_OBJ + "class_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_MODEL, T_OBJ + "model_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_FUNCTION, T_OBJ + "function_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_RECORD, T_OBJ + "record_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_CONNECTOR, T_OBJ + "connector_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_BLOCK, T_OBJ + "block_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_TYPE, T_OBJ + "type_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_MO_FILE, T_OBJ + "mo_file.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJS_LIBRARY, T_OBJ + "library_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_CLASS, T_OBJ + "class_obj.png");
+		declareRegistryImage(IMG_OBJS_MODEL, T_OBJ + "model_obj.png");
+		declareRegistryImage(IMG_OBJS_FUNCTION, T_OBJ + "function_obj.png");
+		declareRegistryImage(IMG_OBJS_RECORD, T_OBJ + "record_obj.png");
+		declareRegistryImage(IMG_OBJS_CONNECTOR, T_OBJ + "connector_obj.png");
+		declareRegistryImage(IMG_OBJS_BLOCK, T_OBJ + "block_obj.png");
+		declareRegistryImage(IMG_OBJS_TYPE, T_OBJ + "type_obj.png");
+		declareRegistryImage(IMG_OBJS_MO_FILE, T_OBJ + "mo_file.png");
+		declareRegistryImage(IMG_OBJS_LIBRARY, T_OBJ + "library_obj.gif");
+		
+		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.gif");
 				
 	}
 	

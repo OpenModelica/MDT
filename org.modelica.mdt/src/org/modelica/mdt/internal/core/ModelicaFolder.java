@@ -70,7 +70,10 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	{
 		if (res.getType() == IResource.FOLDER)
 		{
-			/* if folder contains a package.mo file, then consider it a package */
+			/* 
+			 * if folder contains a package.mo file, 
+			 * then consider it a package 
+			 */
 			IFolder fol = (IFolder) res;
 			if (fol.getFile("package.mo").exists())
 			{

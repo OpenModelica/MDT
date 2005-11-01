@@ -41,6 +41,16 @@
          </description>
          <selection class="org.eclipse.core.resources.IResource"/>  
       </wizard>
+      <wizard
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.wizards.NewPackageWizard"
+            icon="icons/obj16/package_obj.gif"
+            id="org.modelica.mdt.NewPackageWizard"
+            name="Modelica Package">
+         <description>
+            Create a new Modelica package.
+         </description>
+      </wizard>        
    </extension>
    <extension
          id="org.modelica.mdt.editor"

@@ -97,6 +97,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 	public static final String INITIAL_EQUATION_TAG = "initEqTag";
 	public static final String PARTIAL_CLASS_TAG = "partialTypeTag";
 	public static final String EXTERNAL_BODY_TAG = "extBodyTag";
+
+	private NewClassPage classPage = new NewClassPage();
 	
 	public class NewClassPage extends WizardPage
 	{
@@ -408,8 +410,6 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 	}
 
-
-	private NewClassPage classPage = new NewClassPage();
 
 	public NewClassWizard()
 	{
