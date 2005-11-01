@@ -14,10 +14,12 @@ import org.omg.CORBA.ORB;
  * @author Andreas Remar
  *
  */
-public class OmcCommunicationImplementation
+public class OMCProxy
 {
 	private static OmcCommunication omcc;
 	private static String os;
+	@SuppressWarnings("unused")
+	private static Process OmcProcess;
 
 	// TODO Do not do lazy initialization
 	private static boolean hasInitialized = false;
@@ -68,7 +70,7 @@ public class OmcCommunicationImplementation
 		else if(os.equals("Windows"))
 		{
 			String temp = System.getenv("TEMP");
-			fileName = temp + "openmodelica.objid";
+			fileName = temp + "\\openmodelica.objid";
 		}
 		
 		return fileName;
@@ -92,9 +94,8 @@ public class OmcCommunicationImplementation
 		{
 			pathToOmc = "c:\\OpenModelica13\\omc.exe";
 			modelicaPath = "MODELICAPATH=c:\\OpenModelica13\\ModelicaLibrary";
-			/* don't connect anywhre in windows for now */
-			return; 
 		}
+
 		argToOmc = "+d=interactiveCorba";
 		String userName = System.getenv("USER");
 		if(userName == null)
@@ -121,8 +122,9 @@ public class OmcCommunicationImplementation
 		String env[] = {modelicaPath, user};
 		try
 		{
-			Runtime.getRuntime().exec(command, env);
-			System.out.println(command[0] + command[1]);
+			OmcProcess = Runtime.getRuntime().exec(command);
+			//OmcProcess = Runtime.getRuntime().exec(command, env);
+			System.out.println(command[0] + command[1] + " mod path " + modelicaPath);
 		}
 		catch(IOException e)
 		{
@@ -170,7 +172,7 @@ public class OmcCommunicationImplementation
 		}
 		catch(Exception e)
 		{
-			System.out.println("Va Fan");
+			System.out.println("Va <cencur>");
 			System.out.println(e);
 		}
 		
@@ -180,7 +182,7 @@ public class OmcCommunicationImplementation
 		}
 		catch(Exception e)
 		{
-			System.out.println("Fan Va?");
+			System.out.println("<cencur> Va?");
 			System.out.flush();
 			System.out.println(e);
 		}
@@ -221,10 +223,13 @@ public class OmcCommunicationImplementation
 
 		try
 		{
+			
+			System.out.println("omcc is " + omcc._non_existent());
 			omcc.sendExpression("1+1");
 		}
 		catch(Exception e)
 		{
+			System.out.println("exception couth");
 			startServer();
 			stringifiedObjectReference = readObjectFromFile();
 			setupOmcc(stringifiedObjectReference);

@@ -46,7 +46,7 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.modelica.mdt.internal.corba.OmcCommunicationImplementation;
+import org.modelica.mdt.internal.corba.OMCProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaPackage;
@@ -105,7 +105,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		try 
 		{
 			retval = 
-				OmcCommunicationImplementation.sendExpression("getPackages("+
+				OMCProxy.sendExpression("getPackages("+
 						fullName+")");
 		}
 		catch(Exception e)
@@ -149,7 +149,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		String retval = null;
 		try
 		{
-			retval = OmcCommunicationImplementation.sendExpression("getClassNames("+fullName+")");
+			retval = OMCProxy.sendExpression("getClassNames("+fullName+")");
 		}
 		catch(Exception e)
 		{
@@ -173,7 +173,7 @@ public class ModelicaPackage extends ModelicaElement implements
 				continue;
 			try
 			{
-				retval = OmcCommunicationImplementation.sendExpression("isPackage("+fullName+"."+str+")");
+				retval = OMCProxy.sendExpression("isPackage("+fullName+"."+str+")");
 			}
 			catch(Exception e)
 			{
