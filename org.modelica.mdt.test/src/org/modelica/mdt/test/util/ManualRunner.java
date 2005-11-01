@@ -4,8 +4,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.modelica.mdt.test.TestSourceFolderSelection;
 
 /**
  * Our sample action implements workbench action delegate.
@@ -17,7 +15,6 @@ import org.modelica.mdt.test.TestSourceFolderSelection;
  */
 public class ManualRunner implements IWorkbenchWindowActionDelegate 
 {
-	private IWorkbenchWindow window;
 	
 	/**
 	 * The constructor.
@@ -26,18 +23,7 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	{
 	}
 
-	class Muu extends TestSourceFolderSelection
-	{
-		public void hej()
-		{
-			try {
-				setUp();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+
 	
 	/**
 	 * The action has been activated. The argument of the
@@ -47,7 +33,7 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 */
 	public void run(IAction action) 
 	{
-		(new Muu()).hej();
+		/* do stuff */
 	}
 
 	/**
@@ -57,7 +43,8 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 * the delegate has been created.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(IAction action, ISelection selection) 
+	{
 	}
 
 	/**
@@ -65,7 +52,8 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 * resources we previously allocated.
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
-	public void dispose() {
+	public void dispose() 
+	{
 	}
 
 	/**
@@ -73,7 +61,7 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 * be able to provide parent shell for the message dialog.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
+	public void init(IWorkbenchWindow window) 
+	{
 	}
 }
