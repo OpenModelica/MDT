@@ -70,6 +70,7 @@ public class TestPerspective extends TestCase
 				/* modelica wizards */
 				"org.modelica.mdt.NewProjectWizard",
 				"org.modelica.mdt.NewClassWizard",
+				"org.modelica.mdt.NewPackageWizard",
 				/* generic wizards */
 				"org.eclipse.ui.wizards.new.folder",
 				"org.eclipse.ui.wizards.new.file"));
