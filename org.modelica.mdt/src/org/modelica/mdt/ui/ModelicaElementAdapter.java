@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -52,6 +52,7 @@ import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
+import org.modelica.mdt.internal.corba.InitializationException;
 import org.modelica.mdt.internal.core.ModelicaImages;
 
 /**
@@ -91,32 +92,39 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 		}
 		else if (object instanceof IModelicaClass)
 		{
-			String imgTag;
-			switch (((IModelicaClass)object).getType())
-			{
-			case CLASS:
-				imgTag = ModelicaImages.IMG_OBJS_CLASS;
-				break;
-			case MODEL:
-				imgTag = ModelicaImages.IMG_OBJS_MODEL;
-				break;
-			case FUNCTION:
-				imgTag = ModelicaImages.IMG_OBJS_FUNCTION;
-				break;
-			case RECORD:
-				imgTag = ModelicaImages.IMG_OBJS_RECORD;
-				break;
-			case CONNECTOR:
-				imgTag = ModelicaImages.IMG_OBJS_CONNECTOR;
-				break;
-			case BLOCK:
-				imgTag = ModelicaImages.IMG_OBJS_BLOCK;
-				break;
-			case TYPE:
-				imgTag = ModelicaImages.IMG_OBJS_TYPE;
-				break;
-			default:
-				imgTag = "";
+			String imgTag = null;
+			
+			
+			try {
+				switch (((IModelicaClass)object).getType())
+				{
+				case CLASS:
+					imgTag = ModelicaImages.IMG_OBJS_CLASS;
+					break;
+				case MODEL:
+					imgTag = ModelicaImages.IMG_OBJS_MODEL;
+					break;
+				case FUNCTION:
+					imgTag = ModelicaImages.IMG_OBJS_FUNCTION;
+					break;
+				case RECORD:
+					imgTag = ModelicaImages.IMG_OBJS_RECORD;
+					break;
+				case CONNECTOR:
+					imgTag = ModelicaImages.IMG_OBJS_CONNECTOR;
+					break;
+				case BLOCK:
+					imgTag = ModelicaImages.IMG_OBJS_BLOCK;
+					break;
+				case TYPE:
+					imgTag = ModelicaImages.IMG_OBJS_TYPE;
+					break;
+				default:
+					imgTag = "";
+				}
+			} catch (InitializationException e) {
+				// TODO Proper error handling here!
+				e.printStackTrace();
 			}
 			return ModelicaImages.getImageDescriptor(imgTag);
 		}
