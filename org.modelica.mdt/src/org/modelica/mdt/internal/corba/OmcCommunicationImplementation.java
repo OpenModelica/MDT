@@ -35,7 +35,8 @@ public class OmcCommunicationImplementation
 		}
 		catch(IOException e)
 		{
-			throw new InitializationException("Unable to initialize Open Modelica Compiler");
+			throw new InitializationException
+				("Unable to initialize Open Modelica Compiler");
 		}
 
 		br = new BufferedReader(fr);
@@ -46,7 +47,8 @@ public class OmcCommunicationImplementation
 		}
 		catch(IOException e)
 		{
-			throw new InitializationException("Unable to read from " + getPathToObject());
+			throw new InitializationException("Unable to read from " + 
+					getPathToObject());
 		}
 		return stringifiedObjectReference;
 	}
@@ -90,6 +92,8 @@ public class OmcCommunicationImplementation
 		{
 			pathToOmc = "c:\\OpenModelica13\\omc.exe";
 			modelicaPath = "MODELICAPATH=c:\\OpenModelica13\\ModelicaLibrary";
+			/* don't connect anywhre in windows for now */
+			return; 
 		}
 		argToOmc = "+d=interactiveCorba";
 		String userName = System.getenv("USER");
@@ -118,6 +122,7 @@ public class OmcCommunicationImplementation
 		try
 		{
 			Runtime.getRuntime().exec(command, env);
+			System.out.println(command[0] + command[1]);
 		}
 		catch(IOException e)
 		{
@@ -130,10 +135,12 @@ public class OmcCommunicationImplementation
 		{
 			System.out.println("Sleep 1 second");
 			Thread.sleep(1000);
+			System.out.println("done Sleeping 1 second");
 		}
 		catch(InterruptedException e)
 		{
 			// Ignore
+			System.out.println("mrrp" + e);
 		}
 		
 		while(!f.exists())

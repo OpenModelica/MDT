@@ -66,7 +66,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	}
 
 	@Override
-	public IFile getContainer() 
+	public IFile getResource() 
 	{
 		return file;
 	}

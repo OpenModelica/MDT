@@ -20,10 +20,14 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 
 public class ProjectsView extends ViewPart
 {
+	/* key widgets' tags for abbot */
+	public static final String TREE_TAG = "treeParentTag";
+
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
 	private IResourceChangeListener resourceListener;
@@ -33,6 +37,7 @@ public class ProjectsView extends ViewPart
 	@Override
 	public void createPartControl(Composite parent)
 	{
+
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		viewer =
 			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -41,6 +46,7 @@ public class ProjectsView extends ViewPart
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ModelicaCore.getModelicaRoot());
 
+		MdtPlugin.tag(viewer.getTree(), TREE_TAG);
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		
 		makeActions();
@@ -92,6 +98,7 @@ public class ProjectsView extends ViewPart
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
+		getSite().setSelectionProvider(viewer);
 	}
 	
 	private void makeActions() 

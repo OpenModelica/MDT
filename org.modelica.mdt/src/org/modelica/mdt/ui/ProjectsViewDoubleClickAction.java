@@ -36,7 +36,7 @@ public class ProjectsViewDoubleClickAction extends Action
 		/* open modelica files in an editor on double click */
 		if (obj instanceof IModelicaFile)
 		{
-			openFile(((IModelicaFile)obj).getContainer());
+			openFile((IFile)((IModelicaFile)obj).getResource());
 		}
 		/* open files in an editor on double click */
 		else if (obj instanceof IFile)

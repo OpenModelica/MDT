@@ -41,6 +41,7 @@
 package org.modelica.mdt.internal.core;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
@@ -84,5 +85,11 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		}
 		
 		return rootFolder;
+	}
+
+	@Override
+	public IResource getResource() 
+	{
+		return getRootFolder().getResource();
 	}
 }

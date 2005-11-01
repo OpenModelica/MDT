@@ -84,12 +84,16 @@ public class ModelicaCore
 			context.run(false, false, 
 					new CreateNewProjectRunnable(project));
 
-			/* this should be done after we know for certain that the project have been created */
-			//BasicNewResourceWizard.selectAndReveal(project, workbench.getActiveWorkbenchWindow());
+			/* this should be done after we know for certain that the project 
+			 * have been created */
+			//TODO implement select and reveal
+			//BasicNewResourceWizard.selectAndReveal(project, 
+			//workbench.getActiveWorkbenchWindow());
 		} 
 		catch (InvocationTargetException e)
 		{
-			showProjectCreationError("internal error during project creation", e);
+			showProjectCreationError("internal error during project creation", 
+									 e);
 		}
 		catch (InterruptedException e)
 		{

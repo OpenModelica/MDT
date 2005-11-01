@@ -59,11 +59,11 @@ import org.modelica.mdt.core.IModelicaPackage;
 public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 {
 
-	private IContainer cont;
+	private IContainer container;
 	
 	protected ModelicaFolder(IContainer cont)
 	{
-		this.cont = cont;
+		this.container = cont;
 	}
 	
 	private boolean isPackage(IResource res)
@@ -128,7 +128,7 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	 */
 	public List<IModelicaFolder> getFolders() throws CoreException
 	{
-		IResource[] members = cont.members();
+		IResource[] members = container.members();
 		LinkedList<IModelicaFolder> folders = new LinkedList<IModelicaFolder>();
 
 		for (IResource res : members)
@@ -147,7 +147,7 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	 */
 	public List<IModelicaPackage> getPackages() throws CoreException
 	{
-		IResource[] members = cont.members();
+		IResource[] members = container.members();
 		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
 
 		for (IResource res : members)
@@ -167,7 +167,7 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	 */
 	public List<IModelicaFile> getModelicaFiles() throws CoreException
 	{
-		IResource[] members = cont.members();
+		IResource[] members = container.members();
 		LinkedList<IModelicaFile> mofiles = new LinkedList<IModelicaFile>();
 		
 		for (IResource res : members)
@@ -186,7 +186,7 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	 */
 	public List<IFile> getFiles() throws CoreException
 	{
-		IResource[] members = cont.members();
+		IResource[] members = container.members();
 		LinkedList<IFile> files = new LinkedList<IFile>();
 		
 		for (IResource res : members)
@@ -204,7 +204,7 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	 */
 	public String getElementName() 
 	{
-		return cont.getName();
+		return container.getName();
 	}
 
 
@@ -232,6 +232,12 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 	public boolean hasChildren() throws CoreException 
 	{
 		return !getChildren().isEmpty();
+	}
+
+	@Override
+	public IResource getResource()
+	{
+		return container;
 	}
 
 }

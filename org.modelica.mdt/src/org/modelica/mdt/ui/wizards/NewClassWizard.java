@@ -112,7 +112,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 		
 		/* regexp pattern of a valid modelica class name */
 		//TODO add complete regexp for modelcia class name 
-		// see modelica specification page 9 (and perhaps some other pages as well)
+		// see modelica specification page 9 (and perhaps some other pages as
+		// well)
 		// http://www.modelica.org/documents/ModelicaSpec22.pdf
         Pattern classNamePattern = Pattern.compile("[a-zA-Z]\\w*");
         
@@ -227,8 +228,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        classType = new Combo(composite, SWT.READ_ONLY);
-	        classType.setItems(new String [] {"model", "class", "connector", "record",
-	        		"block", "type", "function"});
+	        classType.setItems(new String [] {"model", "class", "connector", 
+	        		"record", "block", "type", "function"});
 	        classType.setVisibleItemCount(7);
 	        classType.select(0);	        
 	        MdtPlugin.tag(classType, CLASS_TYPE_TAG);
@@ -246,12 +247,14 @@ public class NewClassWizard extends Wizard implements INewWizard
 					 * update state of the modifiers checkboxes
 					 */
 					initialEquation.setEnabled
-					(NewClassWizard.classTypeHaveEquations(classType.getText()));
+					(NewClassWizard.classTypeHaveEquations
+							(classType.getText()));
 					
 					partialClass.setEnabled
 					(NewClassWizard.canBePartial(classType.getText()));
 					
-					externalBody.setEnabled(classType.getText().equals("function"));
+					externalBody.setEnabled
+						(classType.getText().equals("function"));
 
 				}
 
@@ -266,7 +269,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        
 	        /* create separator */
 	        l = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | 
+	        				  GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 3;
 	        l.setLayoutData(gd);
 	        
@@ -318,11 +322,14 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 			sourceFolderValid = false;
 			if (sourceFolder.getText().length() == 0) {
-				updateStatus("File container must be specified", DialogPage.ERROR);
+				updateStatus("File container must be specified", 
+						DialogPage.ERROR);
 				return;
 			}
-			if (container == null
-					|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
+			if (container == null ||
+			    (container.getType() & 
+			      (IResource.PROJECT | IResource.FOLDER)) == 0) 
+			{
 				updateStatus("File container must exist", DialogPage.ERROR);
 				return;
 			}
@@ -457,7 +464,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 				try 
 				{
 					doFinish(sourceFolder, className, classType, 
-							initialEquationBlock, partialClass, externalBody, monitor);
+							 initialEquationBlock, partialClass, externalBody,
+							 monitor);
 				} 
 				catch (CoreException e)
 				{
@@ -480,15 +488,17 @@ public class NewClassWizard extends Wizard implements INewWizard
 		catch (InvocationTargetException e)
 		{
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
+			MessageDialog.openError(getShell(), "Error", 
+					realException.getMessage());
 			return false;
 		}
 		return true;
 	}
 
 	protected void doFinish(String sourceFolder, String className, 
-			String classType, boolean initialEquationBlock, boolean partialClass, 
-			boolean haveExternalBody, IProgressMonitor monitor)
+			String classType, boolean initialEquationBlock, 
+			boolean partialClass, boolean haveExternalBody,
+			IProgressMonitor monitor)
 	throws CoreException
 	{
 		// create a sample file

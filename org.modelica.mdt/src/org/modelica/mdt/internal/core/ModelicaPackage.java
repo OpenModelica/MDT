@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.modelica.mdt.internal.corba.OmcCommunicationImplementation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -81,13 +82,15 @@ public class ModelicaPackage extends ModelicaElement implements
 	
 	ModelicaPackage(IFolder hej)
 	{
+		// TODO implement me
 		// dummy implementation
 		this(null, hej.getName());		
 	}
 	
 	/**
 	 * @see org.modelica.mdt.core.IModelicaPackage#getPackages()
-	  * @return the subpackages, or null if there is no subpackages in this package
+	 * @return the subpackages, or null if there is no subpackages 
+	 * in this package
 	 */
 	public List<IModelicaPackage> getPackages()
 	{
@@ -101,7 +104,9 @@ public class ModelicaPackage extends ModelicaElement implements
 		String retval = null;
 		try 
 		{
-			retval = OmcCommunicationImplementation.sendExpression("getPackages("+fullName+")");
+			retval = 
+				OmcCommunicationImplementation.sendExpression("getPackages("+
+						fullName+")");
 		}
 		catch(Exception e)
 		{
@@ -237,5 +242,12 @@ public class ModelicaPackage extends ModelicaElement implements
 	public boolean hasChildren() 
 	{
 		return (getPackages() != null) || (getClasses() != null);
+	}
+
+	@Override
+	public IResource getResource() 
+	{
+		// TODO implement me
+		return super.getResource();
 	}
 }

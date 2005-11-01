@@ -40,7 +40,7 @@
  */
 package org.modelica.mdt.internal.core;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
@@ -60,10 +60,19 @@ abstract public class ModelicaElement extends PlatformObject implements IModelic
 		{
 			return ModelicaCore.getWorkbenchAdapter();
 		}
+		else if (IResource.class.equals(adapter))
+		{
+			IResource resource = getResource();
+			if (resource != null)
+			{
+				return resource;
+			}
+		}
+
 		return super.getAdapter(adapter);
 	}
 
-	public IFile getContainer() 
+	public IResource getResource()
 	{
 		return null;
 	}

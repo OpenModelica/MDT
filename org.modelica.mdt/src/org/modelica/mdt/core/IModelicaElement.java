@@ -40,7 +40,7 @@
  */
 package org.modelica.mdt.core;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -56,9 +56,18 @@ public interface IModelicaElement extends IAdaptable
 	public String getElementName();
 
 	/**
+	 * Returns the innermost resource enclosing this element. 
+	 * If this element is included in an archive and this archive is not external, 
+	 * this is the underlying resource corresponding to the archive. 
+	 * If this element is included in an external archive, <code>null</code>
+	 * is returned.
+	 * This is a handle-only method.
 	 * 
-	 * @return file in which this element is contained, or null if the element is not
-	 * contained in a particular file
+	 * @return the innermost resource enclosing this element, <code>null</code> if this 
+	 * element is included in an external archive
+	 * @since 2.0
 	 */
-	IFile getContainer();
+	IResource getResource();
+	
+	
 }
