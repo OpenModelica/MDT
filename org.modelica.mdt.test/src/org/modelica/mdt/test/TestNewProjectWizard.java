@@ -44,6 +44,7 @@ package org.modelica.mdt.test;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.wizards.NewProjectWizard;
 
 import abbot.tester.swt.ButtonTester;
@@ -54,20 +55,23 @@ import junit.framework.TestCase;
 public class TestNewProjectWizard extends TestCase 
 {
 	/* name of the project that test creates */
-	public static final String PROJECT_NAME = "test";
+	public static final String PROJECT_NAME_1 = 
+		TestNewProjectWizard.class.getName() + "1";
 	
 	public void testWizard()
 	{
 		/*
 		 * init and display wizard
 		 */
-		IWorkbenchWizard wizard = Utility.openWizard("org.modelica.mdt.NewProjectWizard");
+		IWorkbenchWizard wizard = 
+			Utility.openWizard("org.modelica.mdt.NewProjectWizard");
 		assertFalse(wizard.canFinish());
 
 		/* fetch project name text field */
-		Text name = TextTester.getInstrumentedText(NewProjectWizard.PROJECT_NAME_TAG);		
+		Text name = 
+			TextTester.getInstrumentedText(NewProjectWizard.PROJECT_NAME_TAG);		
 		/* enter project name */
-		TextTester.getTextTester().actionEnterText(name, PROJECT_NAME);
+		TextTester.getTextTester().actionEnterText(name, PROJECT_NAME_1);
 		
 		assertTrue(wizard.canFinish());
 
@@ -81,10 +85,7 @@ public class TestNewProjectWizard extends TestCase
 		
 		ButtonTester.getButtonTester().actionClick(finish);
 	
-		/*
-		 * check that project was created
-		 */
-		
+		//TODO check that project was created
 	}
 
 }

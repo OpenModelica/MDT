@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.test;
+package org.modelica.mdt.test.util;
 
 import java.util.concurrent.Semaphore;
 

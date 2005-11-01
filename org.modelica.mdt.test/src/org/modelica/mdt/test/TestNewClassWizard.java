@@ -55,7 +55,9 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.wizards.NewClassWizard;
+
 
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.ComboTester;
@@ -70,7 +72,8 @@ import junit.framework.TestCase;
  */
 public class TestNewClassWizard extends TestCase 
 {
-	private static final String PROJECT_NAME = "testNewCLassWizard";
+	private static final String PROJECT_NAME_1 = 
+			TestNewClassWizard.class.getName() + "1";
 	private StructuredSelection fileDestination; 
 	
 	private IProject project;
@@ -93,7 +96,7 @@ public class TestNewClassWizard extends TestCase
 		 * setup project
 		 */
 		project = 
-			ModelicaCore.createProject(PROJECT_NAME,
+			ModelicaCore.createProject(PROJECT_NAME_1,
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 		assertNotNull("failed to create project", project);
 		
@@ -101,16 +104,24 @@ public class TestNewClassWizard extends TestCase
 		 * create the selection that points at the root of the created project 
 		 */
 		fileDestination = 
-			new StructuredSelection(ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME));
+			new StructuredSelection(ResourcesPlugin.getWorkspace().getRoot().
+					getProject(PROJECT_NAME_1));
 		
 		/*
-		 * setup some testing support objects
+		 * setup testing support objects
 		 */
 		ttester = TextTester.getTextTester();
 		btester = ButtonTester.getButtonTester();
 				
 	}
 	
+	/**
+	 * Compares the content of a file with a provided string
+	 * @param file
+	 * @param expectedContent
+	 * @return true if file's content exactly matches the expectedContent 
+	 * string
+	 */
 	private boolean compareContent(IFile file, String expectedContent)
 	{
 		InputStream fileContent = null;
@@ -148,23 +159,33 @@ public class TestNewClassWizard extends TestCase
 		 * pop-up the wizard
 		 */
 		IWizard wizard = 
-			Utility.openWizard("org.modelica.mdt.NewClassWizard", fileDestination);
+			Utility.openWizard("org.modelica.mdt.NewClassWizard",
+					fileDestination);
 		assertFalse(wizard.canFinish());
 
 		/* fetch widgets */
-		className = TextTester.getInstrumentedText(NewClassWizard.CLASS_NAME_TAG);
-		sourceFolder = TextTester.getInstrumentedText(NewClassWizard.SOURCE_FOLDER_TAG);
-		initialEquation = ButtonTester.getInstrumentedButton(NewClassWizard.INITIAL_EQUATION_TAG);				
-		partialClass =  ButtonTester.getInstrumentedButton(NewClassWizard.PARTIAL_CLASS_TAG);
-		finish = Utility.findFinishButton();
+		className = 
+			TextTester.getInstrumentedText(NewClassWizard.CLASS_NAME_TAG);
+		sourceFolder = 
+			TextTester.getInstrumentedText(NewClassWizard.SOURCE_FOLDER_TAG);
+		initialEquation = 
+			ButtonTester.getInstrumentedButton(NewClassWizard.INITIAL_EQUATION_TAG);				
+		partialClass =  
+			ButtonTester.getInstrumentedButton(NewClassWizard.PARTIAL_CLASS_TAG);
+		finish = 
+			Utility.findFinishButton();
 		
 		/* make some checks on the state of the wizards */
 		assertEquals("Wrong source folder selected", 
-				sourceFolder.getText(), PROJECT_NAME);		
-		assertEquals("Junk present in class name field", className.getText(), "");
-		assertFalse("initial equation unexpectedly selected", initialEquation.getSelection());
-		assertFalse("partial class unexpectedly selected", partialClass.getSelection());
-		assertFalse("Finish button not disabled", finish.getEnabled());
+				sourceFolder.getText(), PROJECT_NAME_1);		
+		assertEquals("Junk present in class name field", 
+				className.getText(), "");
+		assertFalse("initial equation unexpectedly selected",
+				initialEquation.getSelection());
+		assertFalse("partial class unexpectedly selected",
+				partialClass.getSelection());
+		assertFalse("Finish button not disabled", 
+				finish.getEnabled());
 		
 
 	}

@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  */
 //TODO clean me up !
 // all warnings and System.out.println() must be removed 
-public class TestModelicaProject extends TestCase 
+public class TestSystemLibraryListing extends TestCase 
 {
 	
 	IProject project;

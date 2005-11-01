@@ -61,9 +61,12 @@ import junit.framework.TestCase;
 public class TestModelicaRoot extends TestCase 
 {
 
-	private static final String PROJECT_NAME = "TestModelicaRoot";
-	private static final String PROJECT_NAME2 = "TestModelicaRoot2";
-	private static final String PROJECT_NAME3 = "TestModelicaRoot3Closed";
+	private static final String PROJECT_NAME_1 = 
+		TestModelicaRoot.class.getName() + "1";
+	private static final String PROJECT_NAME_2 = 
+		TestModelicaRoot.class.getName() + "2";
+	private static final String PROJECT_NAME_3 = 
+		TestModelicaRoot.class.getName() + "3";
 
 	@Override
 	protected void setUp() throws Exception 
@@ -74,21 +77,21 @@ public class TestModelicaRoot extends TestCase
 		 * create a modelica project
 		 */
 		IProject project = 
-			ModelicaCore.createProject(PROJECT_NAME, 
+			ModelicaCore.createProject(PROJECT_NAME_1, 
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 		assertNotNull("failed to create project", project);
 		
 		/*
 		 * create a regular projects
 		 */
-		project = workspaceRoot.getProject(PROJECT_NAME2);
+		project = workspaceRoot.getProject(PROJECT_NAME_2);
 		project.create(null);
 		project.open(null);
 		
 		/*
 		 * create a regular projects which remains closed
 		 */
-		project = workspaceRoot.getProject(PROJECT_NAME3);
+		project = workspaceRoot.getProject(PROJECT_NAME_3);
 		project.create(null);
 
 	}
@@ -98,8 +101,9 @@ public class TestModelicaRoot extends TestCase
 		try 
 		{
 			/*
-			 * check that all wrapped (with IModelicaProject) projects have modelica nature
-			 * and check that non of the unwrapped projects have modelica nature
+			 * check that all wrapped (with IModelicaProject) projects have 
+			 * modelica nature and check that non of the unwrapped projects 
+			 * have modelica nature
 			 */
 			Object[] projs = ModelicaCore.getModelicaRoot().getProjects();
 			for (Object p : projs)
@@ -109,7 +113,8 @@ public class TestModelicaRoot extends TestCase
 					if (((IModelicaProject)p).getProject().isOpen())
 					{
 						assertTrue("project without modelica nature wrapped",
-							((IModelicaProject)p).getProject().hasNature(MdtPlugin.MODELICA_NATURE));
+							((IModelicaProject)p).getProject().
+							hasNature(MdtPlugin.MODELICA_NATURE));
 					}
 				}
 				else if (p instanceof IProject)
