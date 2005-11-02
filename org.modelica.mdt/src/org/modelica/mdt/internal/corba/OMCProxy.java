@@ -113,8 +113,27 @@ public class OMCProxy
 		}
 		catch(IOException e)
 		{
-			throw new InitializationException
-				("Unable to start Open Modelica Compiler");
+			String secondaryPathToOmc = null;
+			try
+			{
+				if(os.equals("Linux"))
+				{
+					secondaryPathToOmc = omHome + "/Compiler/omc";
+				}
+				else if(os.equals("Windows"))
+				{
+					secondaryPathToOmc = omHome + "\\Compiler\\omc.exe";
+				}
+				command = new String[]{secondaryPathToOmc, "+d=interactiveCorba"};
+				Runtime.getRuntime().exec(command);
+			}
+			catch(IOException ex)
+			{
+				throw new InitializationException
+					("Unable to start Open Modelica Compiler\n"
+					 + "Tried starting " + pathToOmc
+					 + " and " + secondaryPathToOmc);
+			}
 		}
 
 		/* Wait until the object exists on disk, but if it takes longer than
