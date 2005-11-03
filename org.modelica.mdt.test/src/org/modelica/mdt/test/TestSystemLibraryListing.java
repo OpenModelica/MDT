@@ -3,6 +3,7 @@ package org.modelica.mdt.test;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
@@ -34,7 +35,15 @@ public class TestSystemLibraryListing extends TestCase
 			
 			System.out.println(i.getElementName());
 			
-			List<IModelicaPackage> imps2 = i.getPackages();
+			List<IModelicaPackage> imps2 = null;
+			try 
+			{
+				imps2 = i.getPackages();
+			}
+			catch (CoreException e)
+			{
+				fail("Exception thrown while fetching " + e);
+			}
 			String[] names = {"UsersGuide", "Media", "Utilities", "Mechanics", 
 							  "Electrical", "Math",  "Blocks", "Thermal", 
 							  "Icons", "Constants", "SIunits", "StateGraph"};
@@ -46,19 +55,5 @@ public class TestSystemLibraryListing extends TestCase
 				System.out.println(" " + imps2.get(j).getElementName());
 			}
 		}
-	}
-	
-	private void traverse(IModelicaPackage imp, int depth)
-	{
-		System.out.println(imp.getElementName());
-
-		if(depth <= 0)
-			return;
-		
-		List<IModelicaPackage> imps = imp.getPackages();
-		for(IModelicaPackage i : imps)
-		{
-			traverse(i, depth-1);
-		}
-	}
+	}	
 }
