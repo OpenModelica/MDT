@@ -63,7 +63,7 @@ public class SystemLibrary extends ModelicaElement implements ISystemLibrary
 		if (packages == null)
 		{
 			packages = new LinkedList<IModelicaPackage>();
-			packages.add(new ModelicaPackage(null, "Modelica"));
+			packages.add(new ModelicaLibraryPackage(null, "Modelica"));
 		}
 		
 		return packages;

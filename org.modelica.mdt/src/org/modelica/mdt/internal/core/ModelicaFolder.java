@@ -53,8 +53,8 @@ import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 
 /**
+ * 
  * @author Elmir Jagudin
- *
  */
 public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 {

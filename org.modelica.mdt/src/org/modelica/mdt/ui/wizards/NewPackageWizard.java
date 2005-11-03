@@ -40,7 +40,6 @@
  */
 package org.modelica.mdt.ui.wizards;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;

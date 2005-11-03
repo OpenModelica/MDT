@@ -42,6 +42,8 @@ package org.modelica.mdt.core;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * @author Elmir Jagudin
  *
@@ -52,7 +54,7 @@ public interface IModelicaPackage extends IParent, IModelicaElement
 	 * 
 	 * @return all subpackages contained in this package
 	 */
-	public List<IModelicaPackage> getPackages();
+	public List<IModelicaPackage> getPackages() throws CoreException;
 	
 	/**
 	 * 

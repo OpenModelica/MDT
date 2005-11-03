@@ -44,7 +44,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.modelica.mdt.internal.corba.OMCProxy;
 import org.modelica.mdt.core.IModelicaClass;
@@ -52,10 +51,13 @@ import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaPackage;
 
 /**
+ * Represents a modelica package from the standart library. Used to
+ * display package/class hierarchy in Libraries node.
+ * 
  * @author Elmir Jagudin
  * @author Andreas Remar
  */
-public class ModelicaPackage extends ModelicaElement implements
+public class ModelicaLibraryPackage extends ModelicaElement implements
 		IModelicaPackage 
 {
 	String baseName;
@@ -65,7 +67,7 @@ public class ModelicaPackage extends ModelicaElement implements
 	List<IModelicaPackage> packages = null;
 	List<IModelicaClass> classes = null;
 	
-	ModelicaPackage(String baseName, String elementName)
+	ModelicaLibraryPackage(String baseName, String elementName)
 	{
 		this.baseName = baseName;
 		this.elementName = elementName;
@@ -78,13 +80,6 @@ public class ModelicaPackage extends ModelicaElement implements
 		{
 			fullName = baseName + "." + elementName;
 		}
-	}
-	
-	ModelicaPackage(IFolder hej)
-	{
-		// TODO implement me
-		// dummy implementation
-		this(null, hej.getName());		
 	}
 	
 	/**
@@ -126,7 +121,7 @@ public class ModelicaPackage extends ModelicaElement implements
 		{
 			if(s.equals("") == false)
 			{
-				addPackage(new ModelicaPackage(fullName, s));
+				addPackage(new ModelicaLibraryPackage(fullName, s));
 			}
 		}
 
