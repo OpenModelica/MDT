@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -38,34 +38,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt.core;
+package org.modelica.mdt.internal.core;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 /**
+ * A modelica element that can have children.
+ * 
  * @author Elmir Jagudin
- *
- * Modelica wrapper for modelica view on folders
  */
-public interface IModelicaFolder extends IModelicaElement, IParent
+abstract public class ModelicaParent extends ModelicaElement 
 {
-	public List<IModelicaFolder> getFolders() throws CoreException;
-	
-	/**
-	 * @return all subpackages contained in this package
-	 */
-	public List<IModelicaPackage> getPackages() 
-		throws CoreException, InitializationException;
+	abstract public List<?> getChildren(); 
 
-	public List<IModelicaFile> getModelicaFiles() throws CoreException;
-	
-	/**
-	 * @return all non modelica files in this folder
-	 * @throws CoreException if there was an error compiling the file list 
-	 */
-	public List<IFile> getFiles() throws CoreException;
+	public boolean hasChildren() throws CoreException 
+	{
+		return !getChildren().isEmpty();
+	}
+
+
 }

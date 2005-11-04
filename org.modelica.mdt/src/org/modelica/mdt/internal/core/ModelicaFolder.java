@@ -56,7 +56,7 @@ import org.modelica.mdt.core.IModelicaPackage;
  * 
  * @author Elmir Jagudin
  */
-public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
+public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 {
 
 	private IContainer container;
@@ -66,25 +66,8 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 		this.container = cont;
 	}
 	
-	private boolean isPackage(IResource res)
-	{
-		if (res.getType() == IResource.FOLDER)
-		{
-			/* 
-			 * if folder contains a package.mo file, 
-			 * then consider it a package 
-			 */
-			IFolder fol = (IFolder) res;
-			if (fol.getFile("package.mo").exists())
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
 	
-	private boolean isFolder(IResource res)
+	public static boolean isFolder(IResource res)
 	{
 		if (res.getType() == IResource.FOLDER)
 		{
@@ -155,9 +138,9 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 
 		for (IResource res : members)
 		{
-			if (isPackage(res))
+			if (ModelicaPackage.isPackage(res))
 			{
-				pkgs.add(new ModelicaPackage((IFolder)res));
+				pkgs.add(new ModelicaPackage(new ModelicaFolder((IContainer)res)));
 			}
 		}
 
@@ -232,13 +215,8 @@ public class ModelicaFolder extends ModelicaElement implements IModelicaFolder
 		return null;
 	}
 
-	public boolean hasChildren() throws CoreException 
-	{
-		return !getChildren().isEmpty();
-	}
-
 	@Override
-	public IResource getResource()
+	public IContainer getResource()
 	{
 		return container;
 	}

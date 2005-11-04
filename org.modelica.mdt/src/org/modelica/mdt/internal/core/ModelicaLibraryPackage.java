@@ -44,11 +44,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 
 /**
@@ -117,7 +121,8 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 
 	/**
 	 * @see org.modelica.mdt.core.IModelicaPackage#getClasses()
-	 * @return the classes contained in this package, or null if there is no classes in this package
+	 * @return the classes contained in this package, or null if there is no
+	 *  classes in this package
 	 */
 	public List<IModelicaClass> getClasses() throws InitializationException
 	{
@@ -200,5 +205,28 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 	{
 		// TODO implement me
 		return super.getResource();
+	}
+
+	public String getBaseName() 
+	{
+		return baseName;
+	}
+
+	public List<IModelicaFolder> getFolders() throws CoreException 
+	{
+		/* return empty list, can't be any folder in a library package */
+		return new LinkedList<IModelicaFolder>();
+	}
+
+	public List<IModelicaFile> getModelicaFiles() throws CoreException 
+	{
+		/* return empty list, can't be any files in a library package */
+		return new LinkedList<IModelicaFile>();
+	}
+
+	public List<IFile> getFiles() throws CoreException 
+	{
+		/* return empty list, can't be any files in a library package */
+		return new LinkedList<IFile>();
 	}
 }

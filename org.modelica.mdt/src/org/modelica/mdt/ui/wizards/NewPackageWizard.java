@@ -40,6 +40,7 @@
  */
 package org.modelica.mdt.ui.wizards;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -56,7 +57,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.modelica.mdt.internal.core.ModelicaImages;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaFolder;
+import org.modelica.mdt.internal.core.ModelicaPackage;
+import org.modelica.mdt.ui.ModelicaImages;
 
 public class NewPackageWizard extends Wizard implements INewWizard
 {
@@ -194,7 +200,8 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        packageName = new Text(composite,  SWT.SINGLE | SWT.BORDER);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
+	        		          GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        packageName.setLayoutData(gd);
 
@@ -215,7 +222,8 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        packageDesc = new Text(composite,  SWT.SINGLE | SWT.BORDER);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
+	        		          GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        packageDesc.setLayoutData(gd);
 	        
@@ -228,6 +236,48 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        gd.horizontalSpan = 2;
 	        isEncapsulated.setLayoutData(gd);
+	        
+	        setSelection();
+		}
+
+		private void setSelection() 
+		{
+			if (selection instanceof ModelicaPackage)
+			{
+				setParentPackage((ModelicaPackage)selection);
+				System.out.println("filesystem package");
+			}
+			else if (selection instanceof IModelicaFolder || 
+					 selection instanceof IModelicaClass  ||
+					 selection instanceof IModelicaFile)
+			{	
+				System.out.println("modelica element " +
+						(IModelicaElement)selection);
+			}
+			else if (selection instanceof IResource)
+			{
+				/* a file or a folder is selected */
+				System.out.println("resource ");
+			}
+			/* ignore all other types of selections */
+		}
+
+		/**
+		 * set parent package field in the dialog
+		 * 
+		 * @param parentPkg the parent package to set or null to set
+		 * empty parent package 
+		 */
+		private void setParentPackage(ModelicaPackage parentPkg) 
+		{
+			if (parentPkg == null)
+			{
+				parentPackage.setText("");
+			}
+			else
+			{
+			//	parentPgk;
+			}
 		}
 
 		public void init(IStructuredSelection selection)

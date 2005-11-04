@@ -22,7 +22,9 @@ public class OMCProxy
 	private static String os; /* what Operating System we're running on */
 	private static boolean hasInitialized = false;
 
-	/* Reads in the OMC object reference from a file on disk. */
+	/**
+	 * Reads in the OMC object reference from a file on disk. 
+	 */
 	private static String readObjectFromFile() throws InitializationException
 	{
 		File f = new File(getPathToObject());
@@ -77,13 +79,19 @@ public class OMCProxy
 		return fileName;
 	}
 	
-	/* Start a new OMC server. */
+	/**
+	 * Start a new OMC server.
+	 * 
+	 *  @throws InitializationException
+	 */
 	private static void startServer() throws InitializationException
 	{
 		String pathToOmc = null;
 
-		/* Path to omc (or omc.exe) can be found in the OPENMODELICAHOME
-		 * variable. */
+		/* 
+		 * Path to omc (or omc.exe) can be found in the OPENMODELICAHOME
+		 * variable. 
+		 */
 		String omHome = System.getenv("OPENMODELICAHOME");
 		if(omHome == null)
 		{
@@ -100,9 +108,11 @@ public class OMCProxy
 			pathToOmc = omHome + "\\omc.exe";
 		}
 
-		/* Delete old object reference file. We need to do this because we're
+		/* 
+		 * Delete old object reference file. We need to do this because we're
 		 * checking if the file exists to determine if the server has started
-		 * or not (further down). */
+		 * or not (further down). 
+		 */
 		File f = new File(getPathToObject());
 		if(f.exists())
 		{
@@ -139,8 +149,10 @@ public class OMCProxy
 			}
 		}
 
-		/* Wait until the object exists on disk, but if it takes longer than
-		 * 5 seconds, abort. (Very arbitrary 5 seconds..) */
+		/*
+		 * Wait until the object exists on disk, but if it takes longer than
+		 * 5 seconds, abort. (Very arbitrary 5 seconds..) 
+		 */
 		int ticks = 0;
 		while(!f.exists())
 		{
@@ -163,9 +175,11 @@ public class OMCProxy
 		}
 	}
 	
-	/* Initializes an ORB, converts the stringified OMC object to a real
+	/**
+	 * Initializes an ORB, converts the stringified OMC object to a real
 	 * CORBA object, and then narrows that object to an OmcCommunication
-	 * object. */
+	 * object. 
+	 */
 	private static void setupOmcc(String stringifiedObjectReference)
 		throws InitializationException
 	{
@@ -183,8 +197,10 @@ public class OMCProxy
 		omcc = OmcCommunicationHelper.narrow(obj);
 	}
 	
-	/* Returns the name of the operating system. If an unknown os is found,
-	 * the default is Linux. */
+	/**
+	 * @return the name of the operating system. If an unknown os is found,
+	 * the default is Linux. 
+	 */
 	private static String getOs()
 	{
 		String osName = System.getProperty("os.name");
@@ -256,9 +272,11 @@ public class OMCProxy
 		hasInitialized = true;
 	}
 	
-	/* Send expression to OMC. If communication is not initialized, it
+	/**
+	 * Send expression to OMC. If communication is not initialized, it
 	 * is initialized here. After initialization it loads the Modelica
-	 * Standard Library. */
+	 * Standard Library. 
+	 */
 	private static String sendExpression(String exp) throws InitializationException
 	{
 		String retval = null;

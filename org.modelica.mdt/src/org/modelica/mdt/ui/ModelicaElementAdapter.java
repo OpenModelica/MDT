@@ -52,7 +52,6 @@ import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
-import org.modelica.mdt.internal.core.ModelicaImages;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 /**

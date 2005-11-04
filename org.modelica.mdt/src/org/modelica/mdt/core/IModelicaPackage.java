@@ -43,29 +43,24 @@ package org.modelica.mdt.core;
 import java.util.List;
 
 import org.modelica.mdt.internal.omcproxy.InitializationException;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Elmir Jagudin
- *
  */
-public interface IModelicaPackage extends IParent, IModelicaElement
+public interface IModelicaPackage extends IModelicaFolder
 {
-	/**
-	 * 
-	 * @return all subpackages contained in this package
-	 */
-	public List<IModelicaPackage> getPackages() throws InitializationException,
-													   CoreException;
 	
 	/**
-	 * 
 	 * @return classes contained in this package
 	 */
 	public List<IModelicaClass> getClasses() throws InitializationException;
 
 	/**
-	 * @return the name of this package
+	 * return the package's base name, that is if package's full name is
+	 * foo.bar.hej then the base name is foo.bar and short name is hej
+	 * 
+	 * @return the prefix of this package
 	 */
-	public String getElementName();
+	public String getBaseName();
+	
 }

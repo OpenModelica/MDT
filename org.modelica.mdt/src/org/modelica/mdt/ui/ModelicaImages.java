@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.modelica.mdt.internal.core;
+package org.modelica.mdt.ui;
 
 
 import java.net.MalformedURLException;
