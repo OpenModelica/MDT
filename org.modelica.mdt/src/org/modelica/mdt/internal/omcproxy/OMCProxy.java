@@ -1,11 +1,14 @@
-package org.modelica.mdt.internal.corba;
+package org.modelica.mdt.internal.omcproxy;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Vector;
 
-import org.modelica.mdt.internal.corba.InitializationException;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaClass.Type;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.omg.CORBA.ORB;
 
 /**
@@ -200,7 +203,7 @@ public class OMCProxy
 		}
 	}
 	
-	public static void init(String args[]) throws InitializationException
+	private static void init(String args[]) throws InitializationException
 	{
 		/* Get type of operating system, used for finding object
 		 * reference and starting OMC if the reference is faulty */
@@ -256,7 +259,7 @@ public class OMCProxy
 	/* Send expression to OMC. If communication is not initialized, it
 	 * is initialized here. After initialization it loads the Modelica
 	 * Standard Library. */
-	public static String sendExpression(String exp) throws InitializationException
+	private static String sendExpression(String exp) throws InitializationException
 	{
 		String retval = null;
 		
@@ -278,17 +281,81 @@ public class OMCProxy
 	/* Send expression to OMC. If communication is not initialized, it
 	 * is initialized here. After initialization it loads the Modelica
 	 * Standard Library. */
-	public static String sendClass(String exp) throws InitializationException
+//	private static String sendClass(String exp) throws InitializationException
+//	{
+//		String retval = null;
+//		
+//		if(hasInitialized == false)
+//		{
+//			init(null);
+//		}
+//		
+//		retval = omcc.sendClass(exp);
+//		
+//		return retval;
+//	}
+	
+	public static String[] getPackages(String className)
+		throws InitializationException
 	{
-		String retval = null;
+		String retval;
+		retval = sendExpression("getPackages("+className+")");
 		
-		if(hasInitialized == false)
+		String[] tokens = ProxyParser.parseList(retval);
+		
+		return tokens;
+	}
+	
+	public static String[] getClassNames(String className)
+		throws InitializationException
+	{
+		String retval;
+		retval = sendExpression("getClassNames("+className+")");
+		
+		String[] tokens = ProxyParser.parseList(retval);
+
+		if(tokens == null)
+			return null;
+		
+		Vector<String> v = new Vector<String>();
+		
+		for(String str : tokens)
 		{
-			init(null);
+			if(str.equals(""))
+				continue;
+
+			retval = sendExpression("isPackage("+className+"."+str+")");
+
+			if(retval.contains("false"))
+			{
+				v.add(str);
+			}
 		}
+
+		String[] t = new String[v.size()];
+		t = v.toArray(t);
 		
-		retval = omcc.sendClass(exp);
+		return t;
+	}
+	
+	public static IModelicaClass.Type getType(String className)
+		throws InitializationException
+	{
+		IModelicaClass.Type type = null;
 		
-		return retval;
+		if(OMCProxy.sendExpression("isType(" + className + ")").contains("true"))
+			type = Type.TYPE;
+		else if(OMCProxy.sendExpression("isConnector(" + className + ")").contains("true"))
+			type = Type.CONNECTOR;
+		else if(OMCProxy.sendExpression("isModel(" + className + ")").contains("true"))
+			type = Type.MODEL;
+		else if(OMCProxy.sendExpression("isRecord(" + className + ")").contains("true"))
+			type = Type.RECORD;
+		else if(OMCProxy.sendExpression("isBlock(" + className + ")").contains("true"))
+			type = Type.BLOCK;
+		else if(OMCProxy.sendExpression("isFunction(" + className + ")").contains("true"))
+			type = Type.FUNCTION;
+		
+		return type;
 	}
 }

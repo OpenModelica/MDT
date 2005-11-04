@@ -1,8 +1,8 @@
 package org.modelica.mdt.internal.core;
 
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.internal.corba.InitializationException;
-import org.modelica.mdt.internal.corba.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
  * 
@@ -36,7 +36,6 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	
 	public Type getType() throws InitializationException
 	{
-		System.out.println("Trying to fetch type");
 		if(typeKnown == false)
 		{
 			String fullName = null;
@@ -45,23 +44,11 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 			else
 				fullName = parentPackage + "." + className;
 			
-			if(OMCProxy.sendExpression("isType(" + fullName + ")").contains("true"))
-				type = Type.TYPE;
-			else if(OMCProxy.sendExpression("isConnector(" + fullName + ")").contains("true"))
-				type = Type.CONNECTOR;
-			else if(OMCProxy.sendExpression("isModel(" + fullName + ")").contains("true"))
-				type = Type.MODEL;
-			else if(OMCProxy.sendExpression("isRecord(" + fullName + ")").contains("true"))
-				type = Type.RECORD;
-			else if(OMCProxy.sendExpression("isBlock(" + fullName + ")").contains("true"))
-				type = Type.BLOCK;
-			else if(OMCProxy.sendExpression("isFunction(" + fullName + ")").contains("true"))
-				type = Type.FUNCTION;
+			type = OMCProxy.getType(fullName);
 			
 			typeKnown = true;
 		}
-		
-		System.out.println("Type is" + type);
+
 		return type;
 	}
 }

@@ -20,6 +20,7 @@ Export-Package: org.modelica.mdt,
  org.modelica.mdt.core,
  org.modelica.mdt.editor,
  org.modelica.mdt.internal.core,
+ org.modelica.mdt.internal.omcproxy,
  org.modelica.mdt.ui,
  org.modelica.mdt.ui.wizards
 Bundle-Activator: org.modelica.mdt.MdtPlugin

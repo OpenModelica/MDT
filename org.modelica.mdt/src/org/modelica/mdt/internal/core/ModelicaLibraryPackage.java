@@ -45,7 +45,8 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
-import org.modelica.mdt.internal.corba.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaPackage;
@@ -87,7 +88,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 	 * @return the subpackages, or null if there is no subpackages 
 	 * in this package
 	 */
-	public List<IModelicaPackage> getPackages()
+	public List<IModelicaPackage> getPackages() throws InitializationException
 	{
 		if(packages != null)
 		{
@@ -95,22 +96,8 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 			return packages;
 		}
 		packages = new Vector<IModelicaPackage>();
-			
-		String retval = null;
-		try 
-		{
-			retval = 
-				OMCProxy.sendExpression("getPackages("+
-						fullName+")");
-		}
-		catch(Exception e)
-		{
-			//TODO add proper error handling
-			System.out.println(e.getMessage());
-			return null;
-		}
-		
-		String[] tokens = parseList(retval);
+
+		String[] tokens = OMCProxy.getPackages(fullName); 
 
 		if(tokens == null)
 		{
@@ -132,7 +119,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 	 * @see org.modelica.mdt.core.IModelicaPackage#getClasses()
 	 * @return the classes contained in this package, or null if there is no classes in this package
 	 */
-	public List<IModelicaClass> getClasses() 
+	public List<IModelicaClass> getClasses() throws InitializationException
 	{
 		if(classes != null)
 		{
@@ -141,21 +128,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		}
 		classes = new Vector<IModelicaClass>();
 		
-		String retval = null;
-		try
-		{
-			retval = OMCProxy.sendExpression("getClassNames("+fullName+")");
-		}
-		catch(Exception e)
-		{
-			// TODO proper error handling
-			System.out.println(e.getMessage());
-			return null;
-		}
-
-		
-	
-		String[] tokens = parseList(retval);
+		String[] tokens = OMCProxy.getClassNames(fullName);
 		
 		if(tokens == null)
 		{
@@ -164,24 +137,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		
 		for(String str : tokens)
 		{
-			if(str.equals(""))
-				continue;
-			try
-			{
-				retval = OMCProxy.sendExpression("isPackage("+fullName+"."+str+")");
-			}
-			catch(Exception e)
-			{
-				// TODO proper error handling
-				System.out.println(e.getMessage());
-				return null;
-			}
-
-			if(retval.contains("false"))
-			{
-				/* fullName.str is NOT a package, add it to the list of classes */
-				addClass(new ModelicaClass(str, fullName));
-			}
+			addClass(new ModelicaClass(str, fullName));
 		}
 		
 		return classes;
@@ -221,7 +177,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		return retvals;
 	}
 
-	public List<IModelicaElement> getChildren()
+	public List<IModelicaElement> getChildren() throws InitializationException
 	{
 		List<IModelicaPackage> pkgs = getPackages();
 		List<IModelicaClass> cls  = getClasses();
@@ -234,7 +190,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		return children;
 	}
 
-	public boolean hasChildren() 
+	public boolean hasChildren() throws InitializationException
 	{
 		return (getPackages() != null) || (getClasses() != null);
 	}

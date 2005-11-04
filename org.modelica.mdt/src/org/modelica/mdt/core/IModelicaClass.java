@@ -40,7 +40,7 @@
  */
 package org.modelica.mdt.core;
 
-import org.modelica.mdt.internal.corba.InitializationException;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 /**
  * @author x05elmja

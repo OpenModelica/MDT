@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.modelica.mdt.internal.corba;
+package org.modelica.mdt.internal.omcproxy;
 
 /**
  * @author Elmir Jagudin

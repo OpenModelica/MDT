@@ -1,4 +1,4 @@
-package org.modelica.mdt.internal.corba;
+package org.modelica.mdt.internal.omcproxy;
 
 /**
 * _OmcCommunicationStub.java .

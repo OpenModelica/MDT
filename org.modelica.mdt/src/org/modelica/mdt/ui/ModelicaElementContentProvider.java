@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -54,6 +54,7 @@ import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.internal.core.SystemLibrary;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 /**
  * @author Elmir Jagudin
@@ -102,8 +103,17 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		}
 		else if (parent instanceof IModelicaProject)
 		{
-			List<?> list = ((IModelicaProject)parent).getRootFolder().getChildren();
-			
+			List<?> list = null;
+			try
+			{
+				list = ((IModelicaProject)parent).getRootFolder().getChildren();
+			}
+			catch (InitializationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			Object[] children = new Object[list.size()+1];
 			/*
 			 * add as last element system library
@@ -114,7 +124,15 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		}
 		else if (parent instanceof IParent)
 		{
-			return ((IParent)parent).getChildren().toArray();
+			try
+			{
+				return ((IParent)parent).getChildren().toArray();
+			}
+			catch (InitializationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -145,6 +163,10 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 				return ((IParent)element).hasChildren();
 			} 
 			catch (CoreException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InitializationException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -13,6 +13,7 @@ package org.modelica.mdt.core;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 
 /**
@@ -30,7 +31,7 @@ public interface IParent
 	 *
 	 * @return the immediate children of this element
 	 */
-	List<?> getChildren();
+	List<?> getChildren() throws InitializationException;
 	
 	/**
 	 * Returns whether this element has one or more immediate children.
@@ -40,5 +41,5 @@ public interface IParent
 	 * @return true if the immediate children of this element, false otherwise
 	 * @throws CoreException 
 	 */
-	boolean hasChildren() throws CoreException;
+	boolean hasChildren() throws CoreException, InitializationException;
 }
