@@ -8,6 +8,7 @@ import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.internal.core.SystemLibrary;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 import junit.framework.TestCase;
 
@@ -16,8 +17,6 @@ import junit.framework.TestCase;
  * @author Andreas Remar
  *
  */
-//TODO clean me up !
-// all warnings and System.out.println() must be removed 
 public class TestSystemLibraryListing extends TestCase 
 {
 	
@@ -33,16 +32,20 @@ public class TestSystemLibraryListing extends TestCase
 			assertTrue("System library doesn't contain Modelica", 
 						i.getElementName().equals("Modelica"));
 			
-			System.out.println(i.getElementName());
-			
 			List<IModelicaPackage> imps2 = null;
-			try 
+			try
 			{
 				imps2 = i.getPackages();
 			}
+			catch (InitializationException e)
+			{
+				// TODO Auto-generated catch block
+				fail("Exception when getting packages" + e.getMessage());
+			}
 			catch (CoreException e)
 			{
-				fail("Exception thrown while fetching " + e);
+				// TODO Auto-generated catch block
+				fail("Exception when getting packages" + e.getMessage());
 			}
 			String[] names = {"UsersGuide", "Media", "Utilities", "Mechanics", 
 							  "Electrical", "Math",  "Blocks", "Thermal", 
@@ -52,8 +55,7 @@ public class TestSystemLibraryListing extends TestCase
 				assertTrue("Name doesn't match: " + names[j] + " != " + 
 						imps2.get(j).getElementName(),
 						names[j].equals(imps2.get(j).getElementName()));
-				System.out.println(" " + imps2.get(j).getElementName());
 			}
 		}
-	}	
+	}
 }
