@@ -39,12 +39,10 @@ public class TestSystemLibraryListing extends TestCase
 			}
 			catch (InitializationException e)
 			{
-				// TODO Auto-generated catch block
 				fail("Exception when getting packages" + e.getMessage());
 			}
 			catch (CoreException e)
 			{
-				// TODO Auto-generated catch block
 				fail("Exception when getting packages" + e.getMessage());
 			}
 			String[] names = {"UsersGuide", "Media", "Utilities", "Mechanics", 

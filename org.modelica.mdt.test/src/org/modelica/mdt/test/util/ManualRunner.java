@@ -33,7 +33,7 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 */
 	public void run(IAction action) 
 	{
-		/* do stuff */
+		Area51Project.createProblemMarker();
 	}
 
 	/**

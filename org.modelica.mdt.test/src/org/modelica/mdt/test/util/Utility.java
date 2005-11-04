@@ -54,6 +54,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.ModelicaCore;
 
 import abbot.finder.matchers.swt.TextMatcher;
 import abbot.finder.swt.BasicFinder;
@@ -178,5 +180,39 @@ public class Utility
 		{
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Tries to find a project by name, this method fails (Assert.fail)
+	 * if a modelica project by that name is not found. This method also
+	 *  fails if any exception is thrown while searching for the project.
+	 * 
+	 * @param name name of the project to find
+	 * @return the modelica project handle named name
+	 */
+	public static IModelicaProject getProject(String name)
+	{
+		try 
+		{
+		
+			for (Object proj : ModelicaCore.getModelicaRoot().getProjects())
+			{
+				if (proj instanceof IModelicaProject)
+				{
+					if (((IModelicaProject)proj).getElementName().equals(name))
+					{
+						return (IModelicaProject)proj;
+					}
+				}
+			}
+		} 
+		catch (CoreException e) 
+		{
+			Assert.fail("CoreException thrown while searching for project " +
+					name + " " + e.getMessage());
+		}
+		
+		Assert.fail("No modelica project named '" + name + "' found.");
+		return null; /* this is not happening */
 	}
 }
