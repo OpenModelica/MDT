@@ -513,7 +513,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 		
 		try
 		{
-			String contents = generateClassContentes(className, classType, 
+			String contents = generateClassContents(className, classType, 
 					initialEquationBlock, partialClass, haveExternalBody);
 			InputStream stream = 
 				new ByteArrayInputStream(contents.getBytes());
@@ -556,7 +556,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 	}
 
-	private String generateClassContentes(String className, String classType, 
+	private String generateClassContents(String className, String classType, 
 			boolean initialEquationBlock, boolean partialClass, boolean haveExternalBody) 
 	{
 		/*
@@ -578,6 +578,10 @@ public class NewClassWizard extends Wizard implements INewWizard
 			{
 				contents += "\ninitial equation\n";
 			}
+		}
+		else
+		{
+			contents += "\n";
 		}
 		
 		if (classType.equals("function"))
