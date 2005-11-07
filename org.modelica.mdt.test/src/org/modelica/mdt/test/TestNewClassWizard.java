@@ -53,12 +53,17 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.wizards.NewClassWizard;
 
-
+import abbot.finder.swt.BasicFinder;
+import abbot.finder.swt.Matcher;
+import abbot.finder.swt.MultipleWidgetsFoundException;
+import abbot.finder.swt.TestHierarchy;
+import abbot.finder.swt.WidgetNotFoundException;
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.ComboTester;
 import abbot.tester.swt.TextTester;
@@ -79,18 +84,21 @@ public class TestNewClassWizard extends TestCase
 	private IProject project;
 	private TextTester ttester;
 	private ButtonTester btester;
-	
+	private ComboTester ctester;
+
 	private Text sourceFolder;
 	private Text className;
 	private Combo classType;
 	private Button initialEquation;
 	private Button partialClass;
-	private Button finish;
+	private Button externalBody;
 	
+	private Button finish;
 	
 
 	@Override
-	protected void setUp() throws Exception
+	//protected void setUp() throws Exception
+	public void setUp() throws Exception
 	{
 		/*
 		 * setup project
@@ -112,6 +120,7 @@ public class TestNewClassWizard extends TestCase
 		 */
 		ttester = TextTester.getTextTester();
 		btester = ButtonTester.getButtonTester();
+		ctester = new ComboTester();
 				
 	}
 	
@@ -161,19 +170,57 @@ public class TestNewClassWizard extends TestCase
 		IWizard wizard = 
 			Utility.openWizard("org.modelica.mdt.NewClassWizard",
 					fileDestination);
+		
 		assertFalse(wizard.canFinish());
 
+		
+		
 		/* fetch widgets */
 		className = 
 			TextTester.getInstrumentedText(NewClassWizard.CLASS_NAME_TAG);
 		sourceFolder = 
 			TextTester.getInstrumentedText(NewClassWizard.SOURCE_FOLDER_TAG);
 		initialEquation = 
-			ButtonTester.getInstrumentedButton(NewClassWizard.INITIAL_EQUATION_TAG);				
+			ButtonTester.getInstrumentedButton(NewClassWizard.INITIAL_EQUATION_TAG);
+		externalBody =
+			ButtonTester.getInstrumentedButton(NewClassWizard.EXTERNAL_BODY_TAG);
 		partialClass =  
 			ButtonTester.getInstrumentedButton(NewClassWizard.PARTIAL_CLASS_TAG);
 		finish = 
 			Utility.findFinishButton();
+		
+	
+		/*
+		 * find classType combo by tag
+		 */
+		BasicFinder finder = new BasicFinder(new TestHierarchy
+				(PlatformUI.getWorkbench().getDisplay()));
+		
+		try 
+		{			
+			classType = (Combo)finder.find(new Matcher()
+			{
+				public boolean matches(Widget w) 
+			    {
+					Object tag = w.getData("name");
+			        if (tag == null || !(tag instanceof String))
+			        {
+			        	return false;
+			        }
+			                        
+			        return ((String)tag).equals(NewClassWizard.CLASS_TYPE_TAG);
+			    }
+			                
+			});
+		} 
+		catch (WidgetNotFoundException e) 
+		{
+			fail("multiple classType combos found " + e.getMessage());
+		} 
+		catch (MultipleWidgetsFoundException e) 
+		{
+			fail("classType combo widget not found " + e.getMessage());
+		}
 		
 		/* make some checks on the state of the wizards */
 		assertEquals("Wrong source folder selected", 
@@ -330,71 +377,462 @@ public class TestNewClassWizard extends TestCase
 				"\n"+
 				"end "+ name + ";");
 		assertTrue("unexpected conted created in the source file", same);
-	
-		
 	}
 
 	public void testCreateClass()
 	{
-	
+		openWizardAndFetchWidgets();		
+		
+		String name = "c1";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "class");
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"class "+ name +"\n"+
+				"\n"+
+				"equation\n"+
+				"\n"+
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 	}
 
 	public void testCreateClassWithInitBlock()
 	{
+		openWizardAndFetchWidgets();
+		
+		String name = "c2";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "class");
+		btester.actionClick(initialEquation);
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"class "+ name +"\n"+
+				"\n"+
+				"equation\n"+
+				"\n"+
+				"initial equation\n"+
+				"\n"+
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 		
 	}
 
 	public void testCreatePartialClass()
 	{
+		openWizardAndFetchWidgets();
 		
+		String name = "c3";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "class");
+		btester.actionClick(partialClass);
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"partial class "+ name +"\n"+
+				"\n"+
+				"equation\n"+
+				"\n"+
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 	}
 
 	public void testCreatePartialClassWithInitBlock()
 	{
+		openWizardAndFetchWidgets();
+		
+		String name = "c4";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "class");
+		btester.actionClick(partialClass);
+		btester.actionClick(initialEquation);
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"partial class "+ name +"\n"+
+				"\n"+
+				"equation\n"+
+				"\n"+
+				"initial equation\n"+
+				"\n"+				
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 		
 	}
 	
 	
 	public void testCreateConnector()
 	{
+		openWizardAndFetchWidgets();
 		
+		String name = "con1";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "connector");
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"connector "+ name +"\n" +
+				"\n" +
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 	}
 
 	public void testCreatePartialConnector()
 	{
+		openWizardAndFetchWidgets();
+		
+		String name = "con2";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "connector");
+		btester.actionClick(partialClass);		
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"partial connector "+ name +"\n" +
+				"\n" +
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 		
 	}
 
 	public void testCreateBlock()
 	{
+		openWizardAndFetchWidgets();
+		
+		String name = "b1";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "block");
+
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"block "+ name +"\n" +
+				"\n" +
+				"equation\n"+
+				"\n"+
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 		
 	}
 	public void testCreateBlockWithInitBlock()
 	{
+		openWizardAndFetchWidgets();
+		
+		String name = "b2";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "block");
+		btester.actionClick(initialEquation);		
+
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"block "+ name +"\n" +
+				"\n" +
+				"equation\n"+
+				"\n"+
+				"initial equation\n"+
+				"\n"+								
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 		
 	}
 
 	public void testCreatePartialBlock()
 	{
+		openWizardAndFetchWidgets();
 		
+		String name = "b3";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "block");
+		btester.actionClick(partialClass);		
+
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"partial block "+ name +"\n" +
+				"\n" +
+				"equation\n"+
+				"\n"+								
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
+	
 	}
 	public void testCreatePartialBlockWithInitBlock()
 	{
+		openWizardAndFetchWidgets();
 		
+		String name = "b4";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "block");
+		btester.actionClick(partialClass);
+		btester.actionClick(initialEquation);		
+
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"partial block "+ name +"\n" +
+				"\n" +
+				"equation\n"+
+				"\n"+
+				"initial equation\n"+
+				"\n"+				
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 	}
 
 	public void testCreateType()
 	{
+		openWizardAndFetchWidgets();
+		
+		String name = "t1";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "type");
+
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"type "+ name +"\n" +
+				";");
+		assertTrue("unexpected conted created in the source file", same);
 		
 	}
 
 	public void testCreateFunction()
 	{
+		openWizardAndFetchWidgets();
 		
+		String name = "f1";
+		
+		/*
+		 * create class
+		 */
+		ctester.actionSelectItem(classType, "function");
+		ttester.actionEnterText(className, name);
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"function "+ name +"\n" +
+				"\n" +
+				"algorithm\n"+
+				"\n"+				
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 	}
 
 	public void testCreateFunctionWithExternalBody()
 	{
+		openWizardAndFetchWidgets();
+		
+		String name = "f2";
+		
+		/*
+		 * create class
+		 */
+		ctester.actionSelectItem(classType, "function");
+		ttester.actionEnterText(className, name);
+
+		/*
+		 * wait for the class type change to propogate to the
+		 * external body  checkboc
+		 */
+		while (!externalBody.getEnabled()) { Utility.sleep(this, 100); }
+
+		btester.actionClick(externalBody);		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			compareContent(project.getFile(name + ".mo"), 
+				"function "+ name +"\n" +
+				"\n" +
+				"external\n"+
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
 		
 	}
 
