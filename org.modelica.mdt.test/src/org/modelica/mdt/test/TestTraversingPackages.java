@@ -41,16 +41,13 @@
 
 package org.modelica.mdt.test;
 
-import java.util.Collections;
-import java.util.Vector;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
-import org.modelica.mdt.test.util.Area51Project;
+import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
 import junit.framework.TestCase;
@@ -63,7 +60,6 @@ import junit.framework.TestCase;
 public class TestTraversingPackages extends TestCase 
 {
 	private IModelicaFolder project_root = null;
-	private Vector<String> root_package_names = new Vector<String>(2);
 	
 	@Override
 	protected void setUp() throws Exception 
@@ -71,19 +67,11 @@ public class TestTraversingPackages extends TestCase
 		/*
 		 * create the project and fetch the reference to the root folder
 		 */
-		Area51Project.createProject();
+		Area51Projects.createProjects();
 		
 		project_root = 
-			Utility.getProject(Area51Project.PROJECT_NAME).getRootFolder();
+			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME).getRootFolder();
 		
-		/*
-		 * init vector with expected root packages
-		 * modelica prespective
-		 */				
-		assertTrue(Collections.addAll(root_package_names,
-				"root_package",
-				"childless_root_package"));
-	
 	}
 	
 	public void testTraverse() throws CoreException, InitializationException

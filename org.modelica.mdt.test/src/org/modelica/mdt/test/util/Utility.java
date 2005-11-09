@@ -41,15 +41,19 @@
 
 package org.modelica.mdt.test.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.Semaphore;
 
 import junit.framework.Assert;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
@@ -59,6 +63,7 @@ import org.modelica.mdt.core.ModelicaCore;
 
 import abbot.finder.matchers.swt.TextMatcher;
 import abbot.finder.swt.BasicFinder;
+import abbot.finder.swt.Matcher;
 import abbot.finder.swt.MultipleWidgetsFoundException;
 import abbot.finder.swt.TestHierarchy;
 import abbot.finder.swt.WidgetNotFoundException;
@@ -215,4 +220,82 @@ public class Utility
 		Assert.fail("No modelica project named '" + name + "' found.");
 		return null; /* this is not happening */
 	}
+	
+	public static Widget getInstrumentedWidget(final String tag)
+	{
+		/*
+		 * find classType combo by tag
+		 */
+		Widget widget;
+		BasicFinder finder = new BasicFinder(new TestHierarchy
+				(PlatformUI.getWorkbench().getDisplay()));
+		
+		try 
+		{			
+			widget = finder.find(new Matcher()
+			{
+				public boolean matches(Widget w) 
+			    {
+					Object widgetTag = w.getData("name");
+
+			        if (widgetTag == null || !(widgetTag instanceof String))
+			        {
+			        	return false;
+			        }
+			        return ((String)widgetTag).equals(tag);
+			    }
+			                
+			});
+			
+			return widget;
+		} 
+		catch (WidgetNotFoundException e) 
+		{
+			/* fall through */
+		} 
+		catch (MultipleWidgetsFoundException e) 
+		{
+			/* fall through */
+		}
+		
+		/* exception thrown, no/more than one widgets found */
+		return null;
+	}
+	
+	/**
+	 * Compares the content of a file with a provided string
+	 * @param file
+	 * @param expectedContent
+	 * @return true if file's content exactly matches the expectedContent 
+	 * string
+	 */
+	public static boolean compareContent(IFile file, String expectedContent)
+	{
+		InputStream fileContent = null;
+		
+		try
+		{
+			fileContent = file.getContents();
+		}
+		catch (CoreException e) 
+		{
+			Assert.fail("could not fetch contents of the created class");
+		}
+
+		byte[] buf = new byte[expectedContent.length()];
+		
+		try
+		{
+			fileContent.read(buf);
+			int i = fileContent.read();
+
+			Assert.assertEquals("file is to long", -1, i);
+		}
+		catch (IOException e)
+		{
+			Assert.fail("could not read contents of the file");
+		}
+		return expectedContent.equals(new String(buf));
+	}
+
 }

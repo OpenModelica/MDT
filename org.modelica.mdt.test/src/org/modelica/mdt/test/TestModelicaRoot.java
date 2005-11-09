@@ -50,7 +50,9 @@ import org.eclipse.ui.PlatformUI;
 
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.test.util.Area51Projects;
 
 import junit.framework.TestCase;
 
@@ -67,10 +69,13 @@ public class TestModelicaRoot extends TestCase
 		TestModelicaRoot.class.getName() + "2";
 	private static final String PROJECT_NAME_3 = 
 		TestModelicaRoot.class.getName() + "3";
-
+	
+	private IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
+	
 	@Override
 	protected void setUp() throws Exception 
 	{
+		Area51Projects.createProjects();
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		  
 		/*
@@ -105,7 +110,7 @@ public class TestModelicaRoot extends TestCase
 			 * modelica nature and check that non of the unwrapped projects 
 			 * have modelica nature
 			 */
-			Object[] projs = ModelicaCore.getModelicaRoot().getProjects();
+			Object[] projs = modelicaRoot.getProjects();
 			for (Object p : projs)
 			{
 				if (p instanceof IModelicaProject)
@@ -136,4 +141,13 @@ public class TestModelicaRoot extends TestCase
 			fail("could not get projects list, exception thrown:" + e);
 		}
 	}
+	
+//	/**
+//	 * check that IModelicaRoot.getPackage(IPath) works as expected.
+//	 */
+//	public void testGetPackage()
+//	{
+//		IModelicaPackage pkg = 
+//			modelicaRoot.getPackage(null);
+//	}
 }

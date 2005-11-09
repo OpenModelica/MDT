@@ -41,29 +41,18 @@
 
 package org.modelica.mdt.test;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.wizards.NewClassWizard;
 
-import abbot.finder.swt.BasicFinder;
-import abbot.finder.swt.Matcher;
-import abbot.finder.swt.MultipleWidgetsFoundException;
-import abbot.finder.swt.TestHierarchy;
-import abbot.finder.swt.WidgetNotFoundException;
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.ComboTester;
 import abbot.tester.swt.TextTester;
@@ -82,6 +71,7 @@ public class TestNewClassWizard extends TestCase
 	private StructuredSelection fileDestination; 
 	
 	private IProject project;
+	
 	private TextTester ttester;
 	private ButtonTester btester;
 	private ComboTester ctester;
@@ -124,42 +114,6 @@ public class TestNewClassWizard extends TestCase
 				
 	}
 	
-	/**
-	 * Compares the content of a file with a provided string
-	 * @param file
-	 * @param expectedContent
-	 * @return true if file's content exactly matches the expectedContent 
-	 * string
-	 */
-	private boolean compareContent(IFile file, String expectedContent)
-	{
-		InputStream fileContent = null;
-		
-		try
-		{
-			fileContent = file.getContents();
-		}
-		catch (CoreException e) 
-		{
-			fail("could not fetch contents of the created class");
-		}
-
-		byte[] buf = new byte[expectedContent.length()];
-		
-		try
-		{
-			fileContent.read(buf);
-			int i = fileContent.read();
-			
-			assertEquals("file is to long", i, -1);
-		}
-		catch (IOException e)
-		{
-			fail("could not read contents of the file");
-		}
-		
-		return expectedContent.equals(new String(buf));
-	}
 
 	
 	public void openWizardAndFetchWidgets()
@@ -169,8 +123,7 @@ public class TestNewClassWizard extends TestCase
 		 */
 		IWizard wizard = 
 			Utility.openWizard("org.modelica.mdt.NewClassWizard",
-					fileDestination);
-		
+					fileDestination);		
 		assertFalse(wizard.canFinish());
 
 		
@@ -188,39 +141,13 @@ public class TestNewClassWizard extends TestCase
 			ButtonTester.getInstrumentedButton(NewClassWizard.PARTIAL_CLASS_TAG);
 		finish = 
 			Utility.findFinishButton();
+
+		/* find classType combo by tag */
+		classType = 
+			(Combo)
+				Utility.getInstrumentedWidget(NewClassWizard.CLASS_TYPE_TAG);
+		assertNotNull("Problems finding classType widget", classType);
 		
-	
-		/*
-		 * find classType combo by tag
-		 */
-		BasicFinder finder = new BasicFinder(new TestHierarchy
-				(PlatformUI.getWorkbench().getDisplay()));
-		
-		try 
-		{			
-			classType = (Combo)finder.find(new Matcher()
-			{
-				public boolean matches(Widget w) 
-			    {
-					Object tag = w.getData("name");
-			        if (tag == null || !(tag instanceof String))
-			        {
-			        	return false;
-			        }
-			                        
-			        return ((String)tag).equals(NewClassWizard.CLASS_TYPE_TAG);
-			    }
-			                
-			});
-		} 
-		catch (WidgetNotFoundException e) 
-		{
-			fail("multiple classType combos found " + e.getMessage());
-		} 
-		catch (MultipleWidgetsFoundException e) 
-		{
-			fail("classType combo widget not found " + e.getMessage());
-		}
 		
 		/* make some checks on the state of the wizards */
 		assertEquals("Wrong source folder selected", 
@@ -241,10 +168,11 @@ public class TestNewClassWizard extends TestCase
 	{
 		openWizardAndFetchWidgets();		
 		
+		String name = "m1";
 		/*
 		 * create model
 		 */
-		ttester.actionEnterText(className, "m1");
+		ttester.actionEnterText(className, name);
 		assertTrue(finish.getEnabled());
 
 		/* wait for the name change to propogate to enable the finish button */
@@ -257,24 +185,26 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile("m1.mo"), 
-				"model m1\n"+
+			Utility.compareContent(project.getFile(name + ".mo"), 
+				"model " + name + "\n"+
 				"\n"+
 				"equation\n"+
 				"\n"+
-				"end m1;");
+				"end " + name + ";");
 		assertTrue("unexpected conted created in the source file", same);
 	
 	}
 		
 	public void testCreateModelWithInitEquation()
 	{
-		openWizardAndFetchWidgets();		
+		openWizardAndFetchWidgets();
+		
+		String name = "m2";	
 		
 		/*
 		 * create model
 		 */
-		ttester.actionEnterText(className, "m2");
+		ttester.actionEnterText(className, name);
 		assertTrue(finish.getEnabled());
 		
 		btester.actionClick(initialEquation);
@@ -292,14 +222,14 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile("m2.mo"), 
-				"model m2\n"+
+			Utility.compareContent(project.getFile(name + ".mo"), 
+				"model "+ name +"\n"+
 				"\n"+
 				"equation\n"+
 				"\n"+
 				"initial equation\n"+
 				"\n"+
-				"end m2;");
+				"end " + name + ";");
 		assertTrue("unexpected conted created in the source file", same);
 	}
 
@@ -329,7 +259,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"partial model "+ name +"\n"+
 				"\n"+
 				"equation\n"+
@@ -368,7 +298,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"partial model "+ name +"\n"+
 				"\n"+
 				"equation\n"+
@@ -403,7 +333,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"class "+ name +"\n"+
 				"\n"+
 				"equation\n"+
@@ -437,7 +367,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"class "+ name +"\n"+
 				"\n"+
 				"equation\n"+
@@ -474,7 +404,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"partial class "+ name +"\n"+
 				"\n"+
 				"equation\n"+
@@ -509,7 +439,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"partial class "+ name +"\n"+
 				"\n"+
 				"equation\n"+
@@ -546,7 +476,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"connector "+ name +"\n" +
 				"\n" +
 				"end "+ name + ";");
@@ -578,7 +508,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"partial connector "+ name +"\n" +
 				"\n" +
 				"end "+ name + ";");
@@ -611,7 +541,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"block "+ name +"\n" +
 				"\n" +
 				"equation\n"+
@@ -646,7 +576,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"block "+ name +"\n" +
 				"\n" +
 				"equation\n"+
@@ -684,7 +614,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"partial block "+ name +"\n" +
 				"\n" +
 				"equation\n"+
@@ -720,7 +650,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"partial block "+ name +"\n" +
 				"\n" +
 				"equation\n"+
@@ -756,7 +686,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"type "+ name +"\n" +
 				";");
 		assertTrue("unexpected conted created in the source file", same);
@@ -787,7 +717,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"function "+ name +"\n" +
 				"\n" +
 				"algorithm\n"+
@@ -827,7 +757,7 @@ public class TestNewClassWizard extends TestCase
 		 * check that the generated source code is sane
 		 */
 		boolean same = 
-			compareContent(project.getFile(name + ".mo"), 
+			Utility.compareContent(project.getFile(name + ".mo"), 
 				"function "+ name +"\n" +
 				"\n" +
 				"external\n"+
