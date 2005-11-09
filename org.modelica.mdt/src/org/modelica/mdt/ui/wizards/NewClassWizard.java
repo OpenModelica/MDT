@@ -46,7 +46,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -87,6 +86,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.internal.core.ModelicaElement;
 
 public class NewClassWizard extends Wizard implements INewWizard
 {
@@ -110,15 +110,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 		private Button externalBody;
 	
 		private IPath selection = null;
-		
-		
-		/* regexp pattern of a valid modelica class name */
-		//TODO add complete regexp for modelcia class name 
-		// see modelica specification page 9 (and perhaps some other pages as
-		// well)
-		// http://www.modelica.org/documents/ModelicaSpec22.pdf
-        Pattern classNamePattern = Pattern.compile("[a-zA-Z]\\w*");
-        
+		        
 		private boolean classNameValid = false;
 		private boolean sourceFolderValid = false;		
 		
@@ -207,7 +199,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        	/* check if entered classname is valid */
 	        	public void modifyText(ModifyEvent e)
 	        	{
-	        		if (!isLegalClassName(className.getText()))
+	        		if (!ModelicaElement.isLegalIdentifierName(className.getText()))
 	        		{
 	        			classNameValid  = false;
 	        			updateStatus("Class name is not valid. Illegal identifier.",
@@ -342,16 +334,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 			sourceFolderValid = true;
 			updateStatus(null, DialogPage.NONE);
 		}
-
-		/**
-		 * @return true if name is a valid modelica class name
-		 */
-		protected boolean isLegalClassName(String name)
-		{
-			return classNamePattern.matcher(name).matches();
-		}
 		
-		public void init(IStructuredSelection selection)
+		public void setSelection(IStructuredSelection selection)
 		{
 			if (selection == null || selection.size() != 1)
 			{
@@ -607,7 +591,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 	public void init(IWorkbench workbench, IStructuredSelection selection)
 	{
-		classPage.init(selection);
+		classPage.setSelection(selection);
 		setWindowTitle("New Modelica Class");
 	}
 

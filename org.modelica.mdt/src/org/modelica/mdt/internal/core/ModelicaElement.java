@@ -40,6 +40,8 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -50,8 +52,18 @@ import org.modelica.mdt.core.ModelicaCore;
  * @author Elmir Jagudin
  *
  */
-abstract public class ModelicaElement extends PlatformObject implements IModelicaElement 
+abstract public class ModelicaElement extends PlatformObject 
+	implements IModelicaElement 
 {
+	
+	/* regexp pattern of a valid modelica class name */
+	//TODO add complete regexp for modelcia class name 
+	// see modelica specification page 9 (and perhaps some other pages as
+	// well)
+	// http://www.modelica.org/documents/ModelicaSpec22.pdf
+    private static Pattern classNamePattern = Pattern.compile("[a-zA-Z]\\w*");
+
+
 
 	@Override
 	public Object getAdapter(Class adapter)
@@ -75,6 +87,14 @@ abstract public class ModelicaElement extends PlatformObject implements IModelic
 	public IResource getResource()
 	{
 		return null;
+	}
+
+	/**
+	 * @return true if name is a valid modelica identifier name
+	 */
+	public static boolean isLegalIdentifierName(String name)
+	{
+		return classNamePattern.matcher(name).matches();
 	}
 	
 	

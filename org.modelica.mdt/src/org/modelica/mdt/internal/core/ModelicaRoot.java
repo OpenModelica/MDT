@@ -55,7 +55,7 @@ public class ModelicaRoot implements IModelicaRoot
 {
 	private IWorkspaceRoot workspaceRoot = null;
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaRoot#getProjects()
 	 */
 	public Object[] getProjects() throws CoreException 
@@ -87,6 +87,11 @@ public class ModelicaRoot implements IModelicaRoot
 		return resProjs;
 	}
 
-
+//	public IModelicaPackage getPackage(IPath path)
+//	{
+//		return null;
+//	}
+//
+//	
 
 }

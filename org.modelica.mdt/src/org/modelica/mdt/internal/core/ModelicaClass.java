@@ -16,7 +16,7 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	private Type type;
 	
 	private boolean typeKnown = false;
-	
+		
 	protected ModelicaClass(String name, String pkg)
 	{
 		className = name;
@@ -51,4 +51,5 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 
 		return type;
 	}
+
 }

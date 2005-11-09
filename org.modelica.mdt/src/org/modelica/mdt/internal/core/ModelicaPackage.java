@@ -173,6 +173,16 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		return folder.getResource().getName();
 	}
 
+	public String getFullName() 
+	{
+		if (baseName.equals(""))
+		{
+			return getElementName();
+		}
+
+		return baseName + "." + getElementName();
+	}
+
 	public List<?> getChildren() 
 	{
 		try 
@@ -215,4 +225,6 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	{
 		return folder.getFiles();
 	}
+
+
 }
