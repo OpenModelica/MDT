@@ -48,7 +48,6 @@ import junit.framework.Assert;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -290,39 +289,6 @@ public class Area51Projects
 	private static InputStream getByteStream(String content) 
 	{
 		return new ByteArrayInputStream(content.getBytes());
-	}
-	
-	// TODO just toying around, remove me !
-	public static void createProblemMarker()
-	{
-		// THIS is how you do a problem marker
-		try
-		{
-			createProjects(); // we need a project to add problem marker to
-		
-			IFile file = modelica_project.getFile("problem_model.mo");
-			
-			String contents = 
-				"model problem_model\n" +
-				"\n" + 
-				"end problem_model;\n";
-	
-			file.create(getByteStream(contents), true, null);
-			
-			IMarker marker = file.createMarker(IMarker.PROBLEM);
-			marker.setAttribute(IMarker.CHAR_START, 10);
-			marker.setAttribute(IMarker.CHAR_END, 15);
-			marker.setAttribute(IMarker.MESSAGE, "ojoj");
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-			marker.setAttribute(IMarker.LINE_NUMBER, 3);
-			marker.setAttribute(IMarker.LOCATION, "ajsjklasdfsdf");
-		}
-
-		catch (Exception e)
-		{
-			Assert.fail("did not go all to well");
-		}
-		
-	}
+	}	
 }
 
