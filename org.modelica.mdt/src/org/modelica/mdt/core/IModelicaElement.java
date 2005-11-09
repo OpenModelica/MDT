@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -42,6 +42,7 @@ package org.modelica.mdt.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 /**
  * Common protocol for all elements provided by the Modelica root.
@@ -67,7 +68,7 @@ public interface IModelicaElement extends IAdaptable
 	 * element is included in an external archive
 	 * @since 2.0
 	 */
-	IResource getResource();
+	IResource getResource() throws InitializationException;
 	
 	
 }

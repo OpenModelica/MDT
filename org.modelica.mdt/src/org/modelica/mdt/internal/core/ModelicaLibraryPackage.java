@@ -101,7 +101,16 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		}
 		packages = new Vector<IModelicaPackage>();
 
-		String[] tokens = OMCProxy.getPackages(fullName); 
+		String[] tokens;
+		try
+		{
+			 tokens = OMCProxy.getPackages(fullName);
+		}
+		catch(InitializationException e)
+		{
+			OMCProxy.loadSystemLibrary();
+			tokens = OMCProxy.getPackages(fullName);
+		}
 
 		if(tokens == null)
 		{
@@ -201,9 +210,10 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 	}
 
 	@Override
-	public IResource getResource() 
+	public IResource getResource() throws InitializationException
 	{
 		// TODO implement me
+		OMCProxy.getCrefInfo(fullName);
 		return super.getResource();
 	}
 

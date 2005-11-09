@@ -80,6 +80,7 @@
       <runtime>
          <run class="org.modelica.mdt.ui.ModelicaNature"/>
       </runtime>
+      <builder id="org.modelica.mdt.modelicaBuilder"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
@@ -97,4 +98,15 @@
          file="doc/toc.xml"
          primary="true"/>
    </extension>
+   <extension
+   		id="modelicaBuilder"
+   		name="Modelica Builder"
+   		point="org.eclipse.core.resources.builders">
+   		<builder hasNature="true">
+   			<run
+   				class="org.modelica.mdt.builder.ModelicaBuilder">
+   				<parameter name="comment" value="Builder Comment" />
+   			</run>
+   		</builder>
+   	</extension>
 </plugin>

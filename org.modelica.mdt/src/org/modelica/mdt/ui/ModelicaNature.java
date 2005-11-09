@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -44,6 +44,11 @@ package org.modelica.mdt.ui;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.modelica.mdt.builder.ModelicaBuilder;
 
 public class ModelicaNature implements IProjectNature
 {
@@ -51,10 +56,33 @@ public class ModelicaNature implements IProjectNature
 	
 	public void configure() throws CoreException 
 	{
+		// TODO Install builder here
+		ModelicaBuilder.addBuilderToProject(project);
+		
+		new Job("Modelica Build")
+		{
+			protected IStatus run(IProgressMonitor monitor)
+			{
+				try
+				{
+					project.build(ModelicaBuilder.FULL_BUILD,
+								  ModelicaBuilder.BUILDER_ID,
+								  null,
+								  monitor);
+				}
+				catch(CoreException e)
+				{
+					
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
 	}
 
 	public void deconfigure() throws CoreException 
 	{
+		ModelicaBuilder.removeBuilderFromProject(project);
+		// ModelicaBuilder.deleteBuildMarkers(project);
 	}
 
 	public IProject getProject()

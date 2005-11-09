@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
@@ -284,11 +286,11 @@ public class OMCProxy
 		if(hasInitialized == false)
 		{
 			init(null);
-			retval = sendExpression("loadModel(Modelica)");
-			if(retval.equals("false"))
-			{
-				System.out.println("Unable to load Modelica Standard Library");
-			}
+//			retval = sendExpression("loadModel(Modelica)");
+//			if(retval.equals("false"))
+//			{
+//				System.out.println("Unable to load Modelica Standard Library");
+//			}
 		}
 		
 		retval = omcc.sendExpression(exp);
@@ -312,6 +314,11 @@ public class OMCProxy
 //		
 //		return retval;
 //	}
+	
+	public static void loadSystemLibrary() throws InitializationException
+	{
+		String retval = sendExpression("loadModel(Modelica)");
+	}
 	
 	public static String[] getPackages(String className)
 		throws InitializationException
@@ -361,19 +368,80 @@ public class OMCProxy
 	{
 		IModelicaClass.Type type = null;
 		
-		if(OMCProxy.sendExpression("isType(" + className + ")").contains("true"))
+		if(sendExpression("isType(" + className + ")").contains("true"))
 			type = Type.TYPE;
-		else if(OMCProxy.sendExpression("isConnector(" + className + ")").contains("true"))
+		else if(sendExpression("isConnector(" + className + ")").contains("true"))
 			type = Type.CONNECTOR;
-		else if(OMCProxy.sendExpression("isModel(" + className + ")").contains("true"))
+		else if(sendExpression("isModel(" + className + ")").contains("true"))
 			type = Type.MODEL;
-		else if(OMCProxy.sendExpression("isRecord(" + className + ")").contains("true"))
+		else if(sendExpression("isRecord(" + className + ")").contains("true"))
 			type = Type.RECORD;
-		else if(OMCProxy.sendExpression("isBlock(" + className + ")").contains("true"))
+		else if(sendExpression("isBlock(" + className + ")").contains("true"))
 			type = Type.BLOCK;
-		else if(OMCProxy.sendExpression("isFunction(" + className + ")").contains("true"))
+		else if(sendExpression("isFunction(" + className + ")").contains("true"))
 			type = Type.FUNCTION;
 		
 		return type;
+	}
+	
+	public static String getErrorString()
+		throws InitializationException
+	{
+		return sendExpression("getErrorString()");
+	}
+	
+	public static String[] loadFileInteractive(IFile file)
+		throws InitializationException
+	{
+		IPath path = file.getFullPath();
+		String p = path.toString();
+		String f = file.getName();
+		
+		String fullName = p + System.getProperty("file.separator") + f;
+		
+		String retval = sendExpression("loadFileInteractive(\"" + fullName 
+				+ "\")");
+		
+		String[] tokens = ProxyParser.parseList(retval);
+		
+		return tokens;
+	}
+	
+	public static String[] loadFileInteractive(String file)
+	throws InitializationException
+{
+	String retval = sendExpression("loadFileInteractive(\"" + file 
+			+ "\")");
+
+	String[] tokens = null;
+	
+	if(retval.contains("error"))
+	{
+		String errors = getErrorString();
+		tokens = ProxyParser.parseErrorList(errors);
+	}
+	else
+	{
+		tokens = ProxyParser.parseList(retval);
+	}
+	
+	return tokens;
+}
+
+	public static String[] getCrefInfo(String className) throws InitializationException
+	{
+		String retval = sendExpression("getCrefInfo(" + className + ")");
+		
+		if(retval.contains("Error"))
+		{
+			return null;
+		}
+		
+		/* For some reason, the list returned doesn't contain curly braces. */
+		retval = "{" + retval + "}"; 
+		
+		String[] tokens = ProxyParser.parseList(retval);
+		
+		return tokens; 
 	}
 }

@@ -13,8 +13,9 @@ public class ModelicaBuildVisitor implements IResourceVisitor
 {
 	public boolean visit(IResource resource) throws CoreException
 	{
-		System.out.println(resource.getFullPath());
-		// TODO Auto-generated method stub
+		// System.out.println(resource.getFullPath());
+		// TODO Implement me! See ModelicaBuildDeltaVisitor
+		
 		return true;
 	}
 }

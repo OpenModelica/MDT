@@ -11,11 +11,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 public class ProjectsViewDoubleClickAction extends Action 
 {
@@ -36,12 +38,33 @@ public class ProjectsViewDoubleClickAction extends Action
 		/* open modelica files in an editor on double click */
 		if (obj instanceof IModelicaFile)
 		{
-			openFile((IFile)((IModelicaFile)obj).getResource());
+			try
+			{
+				openFile((IFile)((IModelicaFile)obj).getResource());
+			} 
+			catch (InitializationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		/* open files in an editor on double click */
 		else if (obj instanceof IFile)
 		{
 			openFile((IFile)obj);
+		}
+		else if(obj instanceof IModelicaClass)
+		{
+			System.out.println("!");
+			try
+			{
+				openFile((IFile)((IModelicaClass)obj).getResource());
+			}
+			catch (InitializationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		/* expands a bunch of objects on double click */
 		else if (obj instanceof IModelicaProject ||

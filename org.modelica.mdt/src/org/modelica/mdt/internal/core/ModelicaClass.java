@@ -1,5 +1,6 @@
 package org.modelica.mdt.internal.core;
 
+import org.eclipse.core.resources.IResource;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
@@ -13,6 +14,7 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 {
 	private String parentPackage;
 	private String className;
+	private String fullName;
 	private Type type;
 	
 	private boolean typeKnown = false;
@@ -21,6 +23,12 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	{
 		className = name;
 		parentPackage = pkg;
+		
+		if(parentPackage == null)
+			fullName = className;
+		else
+			fullName = parentPackage + "." + className;
+
 		type = Type.CLASS;
 	}
 	
@@ -38,18 +46,21 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	{
 		if(typeKnown == false)
 		{
-			String fullName = null;
-			if(parentPackage == null)
-				fullName = className;
-			else
-				fullName = parentPackage + "." + className;
 			
-			type = OMCProxy.getType(fullName);
+			Type t = OMCProxy.getType(fullName);
+			if(t != null)
+				type = t;
 			
 			typeKnown = true;
 		}
 
 		return type;
 	}
-
+	
+	public IResource getResource() throws InitializationException
+	{
+		//String[] tokens = OMCProxy.getCrefInfo(fullName);
+		
+		return null;
+	}
 }

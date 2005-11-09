@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 /**
  * @author Elmir Jagudin
@@ -74,7 +75,16 @@ abstract public class ModelicaElement extends PlatformObject
 		}
 		else if (IResource.class.equals(adapter))
 		{
-			IResource resource = getResource();
+			IResource resource = null;
+			try
+			{
+				resource = getResource();
+			}
+			catch (InitializationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (resource != null)
 			{
 				return resource;
@@ -84,7 +94,7 @@ abstract public class ModelicaElement extends PlatformObject
 		return super.getAdapter(adapter);
 	}
 
-	public IResource getResource()
+	public IResource getResource() throws InitializationException
 	{
 		return null;
 	}

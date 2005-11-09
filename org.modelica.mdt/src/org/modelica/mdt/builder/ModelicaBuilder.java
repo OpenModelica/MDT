@@ -1,12 +1,26 @@
 package org.modelica.mdt.builder;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.modelica.mdt.MdtPlugin;
 
 /**
  * 
@@ -15,12 +29,26 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class ModelicaBuilder extends IncrementalProjectBuilder
 {
+	@SuppressWarnings("deprecation")
+	public static final String BUILDER_ID =
+		MdtPlugin.getDefault().getDescriptor()
+			.getUniqueIdentifier() + ".modelicaBuilder";
 
+
+	@SuppressWarnings("deprecation")
+	private static final String MARKER_ID =
+		MdtPlugin.getDefault().getDescriptor()
+			.getUniqueIdentifier() + ".problemmarker";
+	
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException
 	{
-		// TODO Auto-generated method stub
+		if(!deleteProblemMarkers(getProject()))
+		{
+			return null;
+		}
+		
 		switch(kind)
 		{
 		case IncrementalProjectBuilder.FULL_BUILD:
@@ -68,8 +96,183 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 			e.printStackTrace();
 		}
 	}
+	
+	public static void addBuilderToProject(IProject project)
+	{
+		if(!project.isOpen())
+		{
+			return;
+		}
+		
+		IProjectDescription description;
+		try
+		{
+			description = project.getDescription();
+		}
+		catch(CoreException e)
+		{
+			MdtPlugin.log(e);
+			return;
+		}
+		
+		/*
+		 * Check if builder is already associated with this
+		 * project.
+		 */
+		ICommand[] cmds = description.getBuildSpec();
+		for(int j = 0;j < cmds.length; j++)
+		{
+			if(cmds[j].getBuilderName().equals(BUILDER_ID))
+			{
+				return;
+			}
+		}
+		
+		/*
+		 * Associate builder with project.
+		 */
+		ICommand newCmd = description.newCommand();
+		newCmd.setBuilderName(BUILDER_ID);
+		List<ICommand> newCmds = new ArrayList<ICommand>();
+		newCmds.addAll(Arrays.asList(cmds));
+		newCmds.add(newCmd);
+		description.setBuildSpec(
+				(ICommand[])newCmds.toArray(
+						new ICommand[newCmds.size()]));
+		try
+		{
+			project.setDescription(description, null);
+		}
+		catch(CoreException e)
+		{
+			MdtPlugin.log(e);
+		}
+	}
+	
+	public static void removeBuilderFromProject(IProject project)
+	{
+		if(!project.isOpen())
+		{
+			return;
+		}
+		
+		IProjectDescription description;
+		try
+		{
+			description = project.getDescription();
+		}
+		catch(CoreException e)
+		{
+			MdtPlugin.log(e);
+			return;
+		}
+		
+		int index = -1;
+		ICommand[] cmds = description.getBuildSpec();
+		for(int j = 0;j < cmds.length;j++)
+		{
+			if(cmds[j].getBuilderName().equals(BUILDER_ID))
+			{
+				index = j;
+				break;
+			}
+		}
+		
+		if(index == -1)
+		{
+			return;
+		}
+		
+		List<ICommand> newCmds = new ArrayList<ICommand>();
+		newCmds.addAll(Arrays.asList(cmds));
+		newCmds.remove(index);
+		description.setBuildSpec(
+				(ICommand[])newCmds.toArray(new ICommand[newCmds.size()]));
+		try
+		{
+			project.setDescription(description, null);
+		}
+		catch(CoreException e)
+		{
+			MdtPlugin.log(e);
+		}
+	}
+	
+	public static boolean deleteProblemMarkers(IProject project)
+	{
+		try
+		{
+			project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
+			return true;
+		}
+		catch(CoreException e)
+		{
+			MdtPlugin.log(e);
+			return false;
+		}
+	}
+	
+	protected static void reportProblem(String msg, IFile file, int lineno)
+	{
+		try
+		{
+			IMarker marker = file.createMarker(IMarker.PROBLEM);
+			marker.setAttribute(IMarker.MESSAGE, msg);
+			marker.setAttribute(IMarker.LINE_NUMBER, lineno);
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+			marker.setAttribute(IMarker.LOCATION, Integer.toString(lineno));
+			
+			
+			/*
+			 * To find out where the error is in the file, we have to read it
+			 * in to a Document and then use getLineOffset to convert from a
+			 * line number to a character position.
+			 */
+			int start = 0; int end = 0;
+			InputStream is = file.getContents();
+			BufferedInputStream bis = new BufferedInputStream(is);
+			String contents = "";
+			while(true)
+			{
+				try
+				{
+					int avail = bis.available();
+					if(avail == 0)
+						break;
+					byte[] buf = new byte[avail];
+					bis.read(buf, 0, avail);
 
-	protected void startupOnInitializa()
+					contents += new String(buf);
+				}
+				catch(IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+			Document d = new Document(contents);
+			try
+			{
+				start = d.getLineOffset(lineno - 1);
+				end = start + d.getLineLength(lineno - 1);
+			}
+			catch(BadLocationException e)
+			{
+				MdtPlugin.log(e);
+			}
+
+			marker.setAttribute(IMarker.CHAR_START, start);
+			marker.setAttribute(IMarker.CHAR_END, end);
+		}
+		catch(CoreException e)
+		{
+			MdtPlugin.log(e);
+			System.out.println(e);
+		}
+		
+	}
+	
+	protected void startupOnInitialization()
 	{
 		// Add builder init here
 	}

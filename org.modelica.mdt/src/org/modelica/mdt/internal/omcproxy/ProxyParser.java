@@ -24,4 +24,21 @@ public class ProxyParser
 		
 		return retvals;
 	}
+	
+	public static String[] parseErrorList(String str)
+	{
+		str = str.trim();
+
+		if(str.charAt(0) != '\"' || str.charAt(str.length() - 1) != '\"')
+		{
+			return null;
+		}
+		
+		str = str.substring(1, str.length() - 1);
+		str = str.trim();
+		
+		String[] retvals = str.split(System.getProperty("line.separator")); 
+
+		return retvals;
+	}
 }

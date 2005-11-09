@@ -77,6 +77,7 @@ import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.internal.core.ModelicaPackage;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.ui.ModelicaImages;
 
 public class NewPackageWizard extends Wizard implements INewWizard
@@ -355,7 +356,16 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        isEncapsulated.setLayoutData(gd);
 	        MdtPlugin.tag(isEncapsulated, IS_ENCAPSULATED_TAG);
 	        
-	        setSelection(selection);
+	        try
+	        {
+				setSelection(selection);
+			}
+	        catch (InitializationException e1) 
+	        {
+				// TODO Proper error handling
+				e1.printStackTrace();
+				MdtPlugin.log(e1);
+			}
 		}
 		
 		private void sourceFolderChanged()
@@ -402,6 +412,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 		}
 
 		private void setSelection(Object selection) 
+			throws InitializationException
 		{
 			IResource res;
 			
@@ -418,8 +429,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 			}
 			else if (selection instanceof IModelicaElement)
 			{
-				res = 
-					((IModelicaElement)selection).getResource();
+				res = ((IModelicaElement)selection).getResource();
 			}
 			else if (selection instanceof IResource)
 			{
