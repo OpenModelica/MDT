@@ -33,6 +33,7 @@ public class TestOMCProxy extends TestCase
 	{
 		try
 		{
+			OMCProxy.loadSystemLibrary();
 			String[] str = OMCProxy.getPackages("Modelica");
 
 			assertNotNull("Could not fetch Modelica package", str);
