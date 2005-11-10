@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.DeleteResourceAction;
+import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -41,6 +42,10 @@ public class ProjectsView extends ViewPart
 	private IResourceChangeListener resourceListener;
 	private ProjectsViewDoubleClickAction doubleClickAction;
     private DeleteResourceAction deleteAction;
+    
+    /* handes the context menu in this view */ 
+    private MenuManager contextMenu;
+    private MenuManager newSubMenu;
 
 	@Override
 	public void createPartControl(Composite parent)
@@ -57,22 +62,11 @@ public class ProjectsView extends ViewPart
 
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		
-		MenuManager menuMgr= new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener()
-		{
-			public void menuAboutToShow(IMenuManager manager)
-			{
-				ProjectsView.this.fillContextMenu(manager);
-			}
-		});
-
-		Menu contextMenu = menuMgr.createContextMenu(viewer.getTree());
-		viewer.getTree().setMenu(contextMenu);
+		makeContextMenu();
 		
 		// Register viewer with site. This must be done before making the actions.
 		IWorkbenchPartSite site= getSite();
-		site.registerContextMenu(menuMgr, viewer);
+		site.registerContextMenu(contextMenu, viewer);
 		site.setSelectionProvider(viewer);
 		
 		makeActions(); // call before registering for selection changes
@@ -177,8 +171,30 @@ public class ProjectsView extends ViewPart
 		});
 	}
 	
+	private void makeContextMenu() 
+	{
+		newSubMenu = new MenuManager("New");
+		newSubMenu.add(new NewWizardMenu(getSite().getWorkbenchWindow()));
+
+		contextMenu = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		contextMenu.setRemoveAllWhenShown(true);
+		contextMenu.addMenuListener(new IMenuListener()
+		{
+			public void menuAboutToShow(IMenuManager manager)
+			{
+				ProjectsView.this.fillContextMenu(manager);
+			}
+		});
+
+		Menu menu = contextMenu.createContextMenu(viewer.getTree());
+		viewer.getTree().setMenu(menu);
+	
+	}
+	
 	private void fillContextMenu(IMenuManager manager) 
 	{
+		manager.add(newSubMenu);
+		manager.add(new Separator());
 		manager.add(deleteAction);
 		deleteAction.selectionChanged((IStructuredSelection) viewer.getSelection());
 		manager.add(new Separator());
