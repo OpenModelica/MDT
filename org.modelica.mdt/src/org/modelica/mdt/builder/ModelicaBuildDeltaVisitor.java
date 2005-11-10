@@ -16,7 +16,11 @@ public class ModelicaBuildDeltaVisitor implements IResourceDeltaVisitor {
 	{
 		String extension = delta.getResource().getFileExtension();
 		
-		if(extension != null && extension.equals("mo"))
+		int kind = delta.getKind();
+		
+		if(extension != null && extension.equals("mo")
+				&& (kind == IResourceDelta.ADDED
+						|| kind == IResourceDelta.CHANGED))
 		{
 			IPath path = delta.getProjectRelativePath();
 			IFile file = delta.getResource().getProject().getFile(path);

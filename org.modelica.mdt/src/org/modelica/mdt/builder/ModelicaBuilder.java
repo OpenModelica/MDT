@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -36,21 +35,10 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 		MdtPlugin.getDefault().getDescriptor()
 			.getUniqueIdentifier() + ".modelicaBuilder";
 
-
-	@SuppressWarnings("deprecation")
-	private static final String MARKER_ID =
-		MdtPlugin.getDefault().getDescriptor()
-			.getUniqueIdentifier() + ".problemmarker";
-	
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException
 	{
-		if(!deleteProblemMarkers(getProject()))
-		{
-			return null;
-		}
-		
 		switch(kind)
 		{
 		case IncrementalProjectBuilder.FULL_BUILD:
@@ -200,20 +188,6 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 		}
 	}
 	
-	public static boolean deleteProblemMarkers(IProject project)
-	{
-		try
-		{
-			project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
-			return true;
-		}
-		catch(CoreException e)
-		{
-			MdtPlugin.log(e);
-			return false;
-		}
-	}
-	
 	protected static void reportProblem(String msg, IFile file, int lineno)
 	{
 		try
@@ -297,6 +271,15 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 				{
 					String msg;
 					int lineno;
+					
+					/*
+					 * An error string looks something like:
+					 *    [/path/to/file.mo:20:1]: error: some error
+					 * So to parse line and column number, we first split
+					 * around ']' and then around ':'.
+					 * To get the error message, we split around ':' to get
+					 * rid of the 'error: ' stuff.
+					 */
 					
 					String[] s2 = s.split("]");
 					String[] s3 = s2[0].split(":");
