@@ -120,7 +120,10 @@ public class ProjectsView extends ViewPart
 		{
 		case SWT.DEL:
 			deleteAction.selectionChanged((IStructuredSelection) viewer.getSelection());
-			deleteAction.run();
+			if (deleteAction.isEnabled())
+			{
+				deleteAction.run();
+			}
 			break;
 		}
 	}
