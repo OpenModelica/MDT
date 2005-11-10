@@ -102,11 +102,14 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		packages = new Vector<IModelicaPackage>();
 
 		String[] tokens;
-		try
-		{
-			 tokens = OMCProxy.getPackages(fullName);
-		}
-		catch(InitializationException e)
+
+		tokens = OMCProxy.getPackages(fullName);
+
+		/* 
+		 * If we failed to get packages from the standard library, try loading
+		 * it.
+		 */
+		if(tokens == null)
 		{
 			OMCProxy.loadSystemLibrary();
 			tokens = OMCProxy.getPackages(fullName);
