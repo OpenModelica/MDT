@@ -530,9 +530,11 @@ public class NewClassWizard extends Wizard implements INewWizard
 				catch (PartInitException e) 
 				{
 					ErrorDialog.openError(null, "Error", 
-							"Could not open class filer in an editor.",(new Status(IStatus.ERROR, 
-							MdtPlugin.getSymbolicName(), 0, 
-							"error starting editor for " + file.getName(), e)));
+							"Could not open class file in an editor.",
+							(new Status(IStatus.ERROR,
+									MdtPlugin.getSymbolicName(), 0, 
+									"error starting editor for " + 
+									file.getName(), e)));
 				}
 			}
 		});

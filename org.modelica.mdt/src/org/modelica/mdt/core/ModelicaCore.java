@@ -97,7 +97,7 @@ public class ModelicaCore
 		}
 		catch (InterruptedException e)
 		{
-			/* NOP */
+			/* ignore this */
 		}
 		
 		return project;

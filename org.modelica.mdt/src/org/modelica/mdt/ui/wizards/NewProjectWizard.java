@@ -155,7 +155,8 @@ public class NewProjectWizard extends Wizard implements INewWizard
 	public boolean performFinish()
 	{
 		IProject proj = 
-			ModelicaCore.createProject(projectPage.projectName.getText(), this.getContainer());
+			ModelicaCore.createProject(projectPage.projectName.getText(),
+					this.getContainer());
 		
 		return proj != null;
 	}

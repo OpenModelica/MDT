@@ -77,10 +77,10 @@ public class MdtPlugin extends AbstractUIPlugin
 			return;
 
 		IProjectDescription description = project.getDescription();
-		String[] ids= description.getNatureIds();
-		String[] newIds= new String[ids.length + 1];
+		String[] ids = description.getNatureIds();
+		String[] newIds = new String[ids.length + 1];
 		System.arraycopy(ids, 0, newIds, 0, ids.length);
-		newIds[ids.length]= MODELICA_NATURE;
+		newIds[ids.length] = MODELICA_NATURE;
 		description.setNatureIds(newIds);
 		project.setDescription(description, null);
 	}
