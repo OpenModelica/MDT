@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
  * 
@@ -280,5 +282,32 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 	protected void clean(IProgressMonitor monitor)
 	{
 		// Add builder clean logic here
+	}
+
+	protected static void loadFileAndReportErrors(IFile file)
+		throws InitializationException
+	{
+		String[] retval = OMCProxy.loadFileInteractive(file);
+		
+		if(retval != null)
+		{
+			for(String s: retval)
+			{
+				if(s.contains("error"))
+				{
+					String msg;
+					int lineno;
+					
+					String[] s2 = s.split("]");
+					String[] s3 = s2[0].split(":");
+					String[] s4 = s2[1].split(":");
+					
+					msg = s4[2].trim();
+					lineno = Integer.parseInt(s3[1]);
+					
+					ModelicaBuilder.reportProblem(msg, file, lineno);
+				}
+			}
+		}
 	}
 }

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
@@ -317,13 +316,14 @@ public class OMCProxy
 	
 	public static void loadSystemLibrary() throws InitializationException
 	{
-		String retval = sendExpression("loadModel(Modelica)");
+		sendExpression("loadModel(Modelica)");
 	}
 	
 	public static String[] getPackages(String className)
 		throws InitializationException
 	{
 		String retval;
+		
 		retval = sendExpression("getPackages("+className+")");
 		
 		String[] tokens = ProxyParser.parseList(retval);
@@ -393,40 +393,25 @@ public class OMCProxy
 	public static String[] loadFileInteractive(IFile file)
 		throws InitializationException
 	{
-		IPath path = file.getFullPath();
-		String p = path.toString();
-		String f = file.getName();
-		
-		String fullName = p + System.getProperty("file.separator") + f;
+		String fullName = file.getLocation().toString();
 		
 		String retval = sendExpression("loadFileInteractive(\"" + fullName 
 				+ "\")");
 		
-		String[] tokens = ProxyParser.parseList(retval);
+		String[] tokens = null;
+		
+		if(retval.contains("error"))
+		{
+			String errors = getErrorString();
+			tokens = ProxyParser.parseErrorList(errors);
+		}
+		else
+		{
+			tokens = ProxyParser.parseList(retval);
+		}
 		
 		return tokens;
 	}
-	
-	public static String[] loadFileInteractive(String file)
-	throws InitializationException
-{
-	String retval = sendExpression("loadFileInteractive(\"" + file 
-			+ "\")");
-
-	String[] tokens = null;
-	
-	if(retval.contains("error"))
-	{
-		String errors = getErrorString();
-		tokens = ProxyParser.parseErrorList(errors);
-	}
-	else
-	{
-		tokens = ProxyParser.parseList(retval);
-	}
-	
-	return tokens;
-}
 
 	public static String[] getCrefInfo(String className) throws InitializationException
 	{
