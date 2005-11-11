@@ -44,6 +44,7 @@ package org.modelica.mdt.test;
 import java.util.Collections;
 import java.util.Vector;
 
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -83,6 +84,7 @@ public class TestPerspective extends TestCase
 				/* modelica views */
 				"org.modelica.mdt.ProjectsView",
 				/* generic views */
+				IPageLayout.ID_PROBLEM_VIEW,
 				IConsoleConstants.ID_CONSOLE_VIEW));
 	}
 	
@@ -128,6 +130,7 @@ public class TestPerspective extends TestCase
 		 */
 		assertNotNull(page.findView("org.modelica.mdt.ProjectsView"));
 		assertNotNull(page.findView(IConsoleConstants.ID_CONSOLE_VIEW));
+		assertNotNull(page.findView(IPageLayout.ID_PROBLEM_VIEW));
 
 	}
 	/**
