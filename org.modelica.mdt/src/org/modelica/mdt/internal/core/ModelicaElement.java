@@ -58,12 +58,27 @@ abstract public class ModelicaElement extends PlatformObject
 {
 	
 	/* regexp pattern of a valid modelica class name */
-	//TODO add complete regexp for modelcia class name 
 	// see modelica specification page 9 (and perhaps some other pages as
 	// well)
 	// http://www.modelica.org/documents/ModelicaSpec22.pdf
-    private static Pattern classNamePattern = Pattern.compile("[a-zA-Z]\\w*");
+	private static String getPattern()
+	{
 
+		String IDENT = "([_a-zA-Z]\\w*)";
+		/* \p{Graph} are all printable characters in the POSIX standard
+		 * Q-CHAR = [\p{Graph}&&[^'\]] */
+		String Q_CHAR = "[\\p{Graph}&&[^'\\\\]]";
+		/* S-ESCAPE = \'|\"|\?|\\|\a|\b|\f|\n|\r|\t|\v */
+		String S_ESCAPE = "((\\\\')|(\\\\\")|(\\\\\\?)|(\\\\\\\\)|(\\\\a)"
+			+"|(\\\\b)|(\\\\f)|(\\\\n)|(\\\\r)|(\\\\t)|(\\\\v))";
+		/* Q-IDENT = "'" (Q-CHAR | S-ESCAPE) {Q-CHAR | S-ESCAPE} "'" */
+		String Q_IDENT = "('(" + Q_CHAR + "|" + S_ESCAPE + ")+')";
+		
+		String pattern = IDENT + "|" + Q_IDENT;
+		
+		return pattern;
+	}
+    private static Pattern classNamePattern = Pattern.compile(getPattern());
 
 
 	@Override
@@ -106,6 +121,4 @@ abstract public class ModelicaElement extends PlatformObject
 	{
 		return classNamePattern.matcher(name).matches();
 	}
-	
-	
 }
