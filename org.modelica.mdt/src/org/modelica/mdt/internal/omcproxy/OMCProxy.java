@@ -390,6 +390,14 @@ public class OMCProxy
 		return sendExpression("getErrorString()");
 	}
 	
+	/**
+	 * Tries to load file into OMC which causes it to be parsed and the syntax
+	 * checked.
+	 * @param file
+	 * @return either returns the classes found in the file or the error
+	 * messages from OMC
+	 * @throws InitializationException
+	 */
 	public static String[] loadFileInteractive(IFile file)
 		throws InitializationException
 	{
@@ -400,7 +408,7 @@ public class OMCProxy
 		
 		String[] tokens = null;
 		
-		if(retval.contains("error"))
+		if(retval.toLowerCase().contains("error"))
 		{
 			String errors = getErrorString();
 			tokens = ProxyParser.parseErrorList(errors);

@@ -32,8 +32,7 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 {
 	@SuppressWarnings("deprecation")
 	public static final String BUILDER_ID =
-		MdtPlugin.getDefault().getDescriptor()
-			.getUniqueIdentifier() + ".modelicaBuilder";
+		MdtPlugin.getSymbolicName() + ".modelicaBuilder";
 
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
