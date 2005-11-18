@@ -390,6 +390,7 @@ public class OMCProxy
 		return sendExpression("getErrorString()");
 	}
 	
+
 	/**
 	 * Tries to load file into OMC which causes it to be parsed and the syntax
 	 * checked.
@@ -425,7 +426,7 @@ public class OMCProxy
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
 		
-		if(retval.contains("Error"))
+		if(retval.contains("Error") || retval.contains("error"))
 		{
 			return null;
 		}
@@ -436,5 +437,11 @@ public class OMCProxy
 		String[] tokens = ProxyParser.parseList(retval);
 		
 		return tokens; 
+	}
+	
+	public static boolean isPackage(String className) throws InitializationException
+	{
+		String retval = sendExpression("isPackage(" + className + ")");
+		return retval.contains("true");
 	}
 }

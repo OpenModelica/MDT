@@ -1,22 +1,40 @@
 package org.modelica.mdt.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.part.FileEditorInput;
+import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
+import org.modelica.mdt.editor.ModelicaFileEditorInput;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 public class ProjectsViewDoubleClickAction extends Action 
@@ -40,7 +58,7 @@ public class ProjectsViewDoubleClickAction extends Action
 		{
 			try
 			{
-				openFile((IFile)((IModelicaFile)obj).getResource());
+				openInternalFile((IFile)((IModelicaFile)obj).getResource());
 			} 
 			catch (InitializationException e)
 			{
@@ -51,14 +69,13 @@ public class ProjectsViewDoubleClickAction extends Action
 		/* open files in an editor on double click */
 		else if (obj instanceof IFile)
 		{
-			openFile((IFile)obj);
+			openInternalFile((IFile)obj);
 		}
 		else if(obj instanceof IModelicaClass)
 		{
-			System.out.println("!");
 			try
 			{
-				openFile((IFile)((IModelicaClass)obj).getResource());
+				openExternalFile(((IModelicaClass)obj).getFile());
 			}
 			catch (InitializationException e)
 			{
@@ -93,7 +110,7 @@ public class ProjectsViewDoubleClickAction extends Action
 	 * Opens file in the default editor
 	 * param file file to open
 	 */
-	private void openFile(IFile file)
+	private void openInternalFile(IFile file)
 	{
 	
 		IWorkbenchPage page = PlatformUI.getWorkbench().
@@ -101,10 +118,8 @@ public class ProjectsViewDoubleClickAction extends Action
 
 		if (page != null)
 		{
-		
 			try
 			{
-			
 				IDE.openEditor(page, file);
 			} 
 			catch (PartInitException e)  
@@ -113,7 +128,59 @@ public class ProjectsViewDoubleClickAction extends Action
 				e.printStackTrace();
 			}
 		}
-
 	}
 
+	private void openExternalFile(File file)
+	{
+		System.out.println("Open external file " + file);
+		
+		IEditorInput input = new ModelicaFileEditorInput(file);
+		
+		String editorId = getEditorId(file);
+		
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+			.getActiveWorkbenchWindow().getActivePage();
+		
+		
+		try
+		{
+			page.openEditor(input, editorId);
+		}
+		catch (PartInitException e)
+		{
+			MdtPlugin.log(e.getStatus());
+		}
+	}
+	
+	private String getEditorId(File file)
+	{
+		IWorkbench workbench= PlatformUI.getWorkbench(); 
+		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
+		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName(), getContentType(file));
+		if (descriptor != null)
+			return descriptor.getId();
+		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
+	}
+	
+	private IContentType getContentType (File file)
+	{
+		if (file == null)
+			return null;
+
+		InputStream stream= null;
+		try {
+			stream= new FileInputStream(file);
+			return Platform.getContentTypeManager().findContentTypeFor(stream, file.getName());
+		} catch (IOException x) {
+			MdtPlugin.log(x);
+			return null;
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException x) {
+				MdtPlugin.log(x);
+			}
+		}
+	}
 }

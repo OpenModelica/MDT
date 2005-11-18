@@ -106,7 +106,7 @@ public class ModelicaImages
 	
 	private static void declareImages() 
 	{
-		declareRegistryImage(IMG_OBJS_PACKAGE, T_OBJ + "package_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_PACKAGE, T_OBJ + "package_obj.png"); //$NON-NLS-1$
 		
 		declareRegistryImage(IMG_OBJS_CLASS, T_OBJ + "class_obj.png");
 		declareRegistryImage(IMG_OBJS_MODEL, T_OBJ + "model_obj.png");
@@ -116,9 +116,9 @@ public class ModelicaImages
 		declareRegistryImage(IMG_OBJS_BLOCK, T_OBJ + "block_obj.png");
 		declareRegistryImage(IMG_OBJS_TYPE, T_OBJ + "type_obj.png");
 		declareRegistryImage(IMG_OBJS_MO_FILE, T_OBJ + "mo_file.png");
-		declareRegistryImage(IMG_OBJS_LIBRARY, T_OBJ + "library_obj.gif");
+		declareRegistryImage(IMG_OBJS_LIBRARY, T_OBJ + "library_obj.png");
 		
-		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.gif");
+		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.png");
 				
 	}
 	

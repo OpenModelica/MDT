@@ -9,7 +9,7 @@
       <view
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.ProjectsView"
-            icon="icons/modelicaProject.gif"
+            icon="icons/modelicaProject.png"
             id="org.modelica.mdt.ProjectsView"
             name="Modelica Projects"/>
    </extension>
@@ -22,7 +22,7 @@
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewProjectWizard"
             descriptionImage="icons/modelicaProjectDest.gif"
-            icon="icons/modelicaProject.gif"
+            icon="icons/modelicaProject.png"
             id="org.modelica.mdt.NewProjectWizard"
             name="Modelica Project"
             project="true">
@@ -33,7 +33,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewClassWizard"
-            icon="icons/modelicaFile.gif"
+            icon="icons/modelicaFile.png"
             id="org.modelica.mdt.NewClassWizard"
             name="Modelica Class">
          <description>
@@ -44,7 +44,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewPackageWizard"
-            icon="icons/obj16/package_obj.gif"
+            icon="icons/obj16/package_obj.png"
             id="org.modelica.mdt.NewPackageWizard"
             name="Modelica Package">
          <description>
@@ -58,7 +58,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.modelica.mdt.editor.ModelicaEditor"
-            icon="icons/modelicaFile.gif"
+            icon="icons/modelicaFile.png"
             default="false"
             name="Modelica Editor"
             contributorClass="org.modelica.mdt.editor.BasicTextEditorActionContributor"
@@ -69,7 +69,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.modelica.mdt.ui.PerspectiveFactory"
-            icon="icons/modelicaProject.gif"
+            icon="icons/modelicaProject.png"
             id="org.modelica.mdt.perspective"
             name="Modelica"/>
    </extension>
@@ -85,7 +85,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/modelica_ovr.gif"
+            icon="icons/modelica_ovr.png"
             id="org.modelica.mdt.modelicaNatureImage"
             natureId="org.modelica.mdt.ModelicaNature"/>
    </extension>

@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.ModelicaCore;
@@ -58,8 +59,7 @@ abstract public class ModelicaElement extends PlatformObject
 {
 	
 	/* regexp pattern of a valid modelica class name */
-	// see modelica specification page 9 (and perhaps some other pages as
-	// well)
+	// see modelica specification page 9 (and perhaps some other pages as well)
 	// http://www.modelica.org/documents/ModelicaSpec22.pdf
 	private static String getPattern()
 	{

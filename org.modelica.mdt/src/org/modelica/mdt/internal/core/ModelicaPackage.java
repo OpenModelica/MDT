@@ -52,6 +52,8 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
  * Represent a file based package. That is a package that is either defined
@@ -102,7 +104,8 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		this.folder = containerFolder;
 	}
 
-	public List<IModelicaPackage> getPackages() throws CoreException 
+	public List<IModelicaPackage> getPackages()
+		throws CoreException, InitializationException
 	{
 		IResource[] members = folder.getResource().members();
 		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
@@ -122,23 +125,38 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	/**
 	 * Checks if the resource can represent a modelica package.
 	 * @param res
-	 * @return true if the res is a package false otherwise.
+	 * @return true if the res is a package, false otherwise.
 	 */
 	public static boolean isPackage(IResource res)
+		throws InitializationException
 	{
 		if (res.getType() == IResource.FOLDER)
 		{
-			/* 
-			 * if folder contains a package.mo file, 
-			 * then consider it a package 
+			/*
+			 * If a folder contains a package.mo file, and that file defines a
+			 * package, we can consider this folder a Modelica package.
 			 */
-
-			// TODO load the package.mo into the OMC and check
-			// that it defines a package and not something else
-
 			IFolder fol = (IFolder) res;
-			if (fol.getFile("package.mo").exists())
+			IFile file = fol.getFile("package.mo");
+			if(file.exists())
 			{
+				String tokens[] = OMCProxy.loadFileInteractive(file);
+				if(tokens == null)
+				{
+					return false;
+				}
+				
+				for(String s : tokens)
+				{
+					if(s.contains("Error") || s.contains("error"))
+					{
+						continue;
+					}
+					if(OMCProxy.isPackage(s))
+					{
+						return true;
+					}
+				}
 				return true;
 			}
 		}
@@ -183,7 +201,7 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		return baseName + "." + getElementName();
 	}
 
-	public List<?> getChildren() 
+	public List<?> getChildren() throws InitializationException
 	{
 		try 
 		{

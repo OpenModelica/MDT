@@ -56,7 +56,6 @@ public class ModelicaNature implements IProjectNature
 	
 	public void configure() throws CoreException 
 	{
-		// TODO Install builder here
 		ModelicaBuilder.addBuilderToProject(project);
 		
 		new Job("Modelica Build")

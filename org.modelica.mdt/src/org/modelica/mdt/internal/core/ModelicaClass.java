@@ -1,9 +1,24 @@
 package org.modelica.mdt.internal.core;
 
+import java.io.File;
+import java.io.InputStream;
+
+import org.eclipse.core.internal.resources.Resource;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.internal.editors.text.OpenExternalFileAction;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * 
@@ -59,8 +74,22 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	
 	public IResource getResource() throws InitializationException
 	{
-		//String[] tokens = OMCProxy.getCrefInfo(fullName);
+		String[] tokens = OMCProxy.getCrefInfo(fullName);
+
+		IPath filePath = new Path(tokens[0]);
 		
-		return null;
+		IFile f = IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFile(
+                filePath);
+		
+		return f;
+	}
+	
+	public File getFile() throws InitializationException
+	{
+		String[] tokens = OMCProxy.getCrefInfo(fullName);
+		
+		File file = new File(tokens[0]);
+		
+		return file;
 	}
 }
