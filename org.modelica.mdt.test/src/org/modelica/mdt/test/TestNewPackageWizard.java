@@ -80,10 +80,8 @@ public class TestNewPackageWizard extends TestCase
 	private IProject project;
 	private StructuredSelection fileDestination; 
 
-//	@Override
-//	protected void setUp() throws Exception
-	// TODO change back to protected
-	public void setUp() throws Exception
+	@Override
+	protected void setUp() throws Exception
 	{
 		/*
 		 * setup project

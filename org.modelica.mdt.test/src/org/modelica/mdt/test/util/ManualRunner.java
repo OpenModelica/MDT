@@ -4,7 +4,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.modelica.mdt.test.TestNewPackageWizard;
 
 /**
  * Our sample action implements workbench action delegate.
@@ -34,19 +33,6 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 */
 	public void run(IAction action) 
 	{
-		TestNewPackageWizard muu = 
-			new TestNewPackageWizard(); 
-		
-		try {
-			muu.setUp();
-			muu.testCreatePackge();
-			muu.testEncapsulatedCreatePackge();
-			muu.testCreatePackgeWithDesc();
-			muu.testEncapsulatedCreatePackgeWithDesc();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**

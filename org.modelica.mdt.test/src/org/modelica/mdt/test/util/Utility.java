@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.test.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Semaphore;
@@ -296,6 +297,16 @@ public class Utility
 			Assert.fail("could not read contents of the file");
 		}
 		return expectedContent.equals(new String(buf));
+	}
+	
+	/**
+	 * convinience method to 'convert' a string into a InputStream.
+	 * 
+	 * @return an input stream that have the same content as the provided string
+	 */
+	public static InputStream getByteStream(String content) 
+	{
+		return new ByteArrayInputStream(content.getBytes());
 	}
 
 }

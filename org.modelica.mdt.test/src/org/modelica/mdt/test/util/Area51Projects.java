@@ -41,8 +41,6 @@
 
 package org.modelica.mdt.test.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 import junit.framework.Assert;
 
@@ -166,7 +164,7 @@ public class Area51Projects
 		
 		/* plain file */
 		file = simple_project.getFile("plain_file");
-		file.create(getByteStream(""), true, null);
+		file.create(Utility.getByteStream(""), true, null);
 		
 		/* root_folder */
 		folder = simple_project.getFolder("root_folder");
@@ -174,7 +172,7 @@ public class Area51Projects
 
 		/* folder_file */
 		file = folder.getFile("folder_file");
-		file.create(getByteStream(""), true, null);
+		file.create(Utility.getByteStream(""), true, null);
 		
 		/* sub_folder */
 		folder = folder.getFolder("sub_folder");
@@ -214,11 +212,11 @@ public class Area51Projects
 			"package root_package\n" +
 			"\n" + 
 			"end root_package;\n";
-		file.create(getByteStream(contents), true, null);
+		file.create(Utility.getByteStream(contents), true, null);
 			
 		/* plain file inside root_package */
 		file = folder.getFile("plain_file");
-		file.create(getByteStream(""), true, null);
+		file.create(Utility.getByteStream(""), true, null);
 			
 		/* a model inside the root_package */
 		file = folder.getFile("root_package_model.mo");
@@ -226,7 +224,7 @@ public class Area51Projects
 			"model root_package_model\n" +
 			"\n" + 
 			"end root_package_model;\n";
-		file.create(getByteStream(contents), true, null);
+		file.create(Utility.getByteStream(contents), true, null);
 
 		/* a function inside the root_package */
 		file = folder.getFile("root_package_function.mo");
@@ -237,7 +235,7 @@ public class Area51Projects
 			"algorithm\n" +
 			"    y := 1 - x\n" +
 			"end root_package_function;\n";
-		file.create(getByteStream(contents), true, null);
+		file.create(Utility.getByteStream(contents), true, null);
 
 		/* a (non-package) folder inside the root_package */
 		sub_folder = folder.getFolder("root_package_folder");
@@ -252,7 +250,7 @@ public class Area51Projects
 			"package sub_package\n" +
 			"\n" + 
 			"end sub_package;\n";
-		file.create(getByteStream(contents), true, null);
+		file.create(Utility.getByteStream(contents), true, null);
 			
 		/* sub_package_model inside sub_package */
 		file = folder.getFile("sub_package_model.mo");
@@ -260,7 +258,7 @@ public class Area51Projects
 			"model sub_package_model\n" +
 			"\n" + 
 			"end sub_package_model;\n";
-		file.create(getByteStream(contents), true, null);
+		file.create(Utility.getByteStream(contents), true, null);
 
 
 		/* leaf_package */
@@ -272,7 +270,7 @@ public class Area51Projects
 			"package leaf_package\n" +
 			"\n" + 
 			"end leaf_package;\n";
-		file.create(getByteStream(contents), true, null);
+		file.create(Utility.getByteStream(contents), true, null);
 			
 		/* childless_root_package */
 		folder = modelica_project.getFolder("childless_package");
@@ -283,12 +281,7 @@ public class Area51Projects
 			"package childless_package\n" +
 			"\n" + 
 			"end childless_package;\n";
-		file.create(getByteStream(contents), true, null);
-	}
-
-	private static InputStream getByteStream(String content) 
-	{
-		return new ByteArrayInputStream(content.getBytes());
+		file.create(Utility.getByteStream(contents), true, null);
 	}	
 }
 

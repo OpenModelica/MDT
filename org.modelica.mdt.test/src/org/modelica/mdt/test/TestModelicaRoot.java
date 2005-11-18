@@ -141,13 +141,4 @@ public class TestModelicaRoot extends TestCase
 			fail("could not get projects list, exception thrown:" + e);
 		}
 	}
-	
-//	/**
-//	 * check that IModelicaRoot.getPackage(IPath) works as expected.
-//	 */
-//	public void testGetPackage()
-//	{
-//		IModelicaPackage pkg = 
-//			modelicaRoot.getPackage(null);
-//	}
 }
