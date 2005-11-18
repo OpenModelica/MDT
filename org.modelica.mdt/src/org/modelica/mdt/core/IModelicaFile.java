@@ -40,12 +40,23 @@
  */
 package org.modelica.mdt.core;
 
+import java.util.List;
+
 /**
  * @author Elmir Jagudin
  * 
  * Represents a modelica file (.mo file basicly)
  */
-public interface IModelicaFile extends IModelicaElement
+public interface IModelicaFile extends IModelicaElement, IParent
 {
-	
+	/**
+	 * @return all subpackages defined in this file
+	 */
+	public List<IModelicaPackage> getPackages();
+
+	/**
+	 * @return classes contained defined in this file
+	 */
+	public List<IModelicaClass> getClasses();
+
 }

@@ -85,13 +85,6 @@ public class ModelicaRoot implements IModelicaRoot
 		}
 
 		return resProjs;
-	}
-
-//	public IModelicaPackage getPackage(IPath path)
-//	{
-//		return null;
-//	}
-//
-//	
+	}	
 
 }

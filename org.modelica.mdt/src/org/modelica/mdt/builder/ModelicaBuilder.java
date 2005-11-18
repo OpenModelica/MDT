@@ -249,18 +249,19 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 	
 	protected void startupOnInitialization()
 	{
-		// Add builder init here
+		// TODO Add builder init here
 	}
 	
 	protected void clean(IProgressMonitor monitor)
 	{
-		// Add builder clean logic here
+		// TODO Add builder clean logic here
 	}
 
 	protected static void loadFileAndReportErrors(IFile file)
 		throws InitializationException
 	{
 		String[] retval = OMCProxy.loadFileInteractive(file);
+				
 		
 		if(retval != null)
 		{
@@ -269,7 +270,7 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 				if(s.contains("error"))
 				{
 					String msg;
-					int lineno;
+					int lineno = 1;
 					
 					/*
 					 * An error string looks something like:
@@ -280,12 +281,47 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 					 * rid of the 'error: ' stuff.
 					 */
 					
-					String[] s2 = s.split("]");
-					String[] s3 = s2[0].split(":");
-					String[] s4 = s2[1].split(":");
+					/* s2[0] is now error location and s2[1] is error message */
+					String[] errorParts = s.split("]");
+					String errorLocation = errorParts[0];
+					String errorMessage = errorParts[1];
 					
-					msg = s4[2].trim();
-					lineno = Integer.parseInt(s3[1]);
+					/* 
+					 * parse error location from
+					 *    "[/path/to/file.mo:20:1"
+					 * we are only interested in line number at this point
+					 * We allready know the file, and column number is just
+					 * broken (OMC allways returns 1) 
+					 */
+					int lastColon = errorLocation.lastIndexOf(":");
+					int beforeLastColon = 
+						errorLocation.substring(0, lastColon).lastIndexOf(":");
+					try
+					{
+						lineno = 
+							Integer.parseInt
+							(errorLocation.substring(beforeLastColon+1,
+							    lastColon));
+					}
+					catch (NumberFormatException e)
+					{
+						MdtPlugin.log(e);
+					}
+					
+					/*
+					 * parse error message from
+					 *   ": error: some error"
+					 * that is we are interested in rest of the string after
+					 * second colon
+					 */					
+					int firstColon = errorMessage.indexOf(":");
+					int secondColon = 
+							errorMessage.substring(firstColon+1).indexOf(":");
+					/* we need global position on errorMessage string */
+					secondColon += firstColon+1;
+					
+					msg = 
+						errorMessage.substring(secondColon+1).trim();
 					
 					ModelicaBuilder.reportProblem(msg, file, lineno);
 				}

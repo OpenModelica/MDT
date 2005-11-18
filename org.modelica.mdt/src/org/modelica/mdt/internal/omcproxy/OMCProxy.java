@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -387,7 +388,12 @@ public class OMCProxy
 	public static String getErrorString()
 		throws InitializationException
 	{
-		return sendExpression("getErrorString()");
+		/*
+		 * TODO add check that sendExpression really returned a string,
+		 * throw an exception otherwise
+		 */ 
+		String res = sendExpression("getErrorString()").trim();
+		return res.substring(1, res.length() - 1);
 	}
 	
 
@@ -412,7 +418,13 @@ public class OMCProxy
 		if(retval.toLowerCase().contains("error"))
 		{
 			String errors = getErrorString();
-			tokens = ProxyParser.parseErrorList(errors);
+			StringTokenizer strTok = new StringTokenizer(errors, "\r\n");
+			tokens = new String[strTok.countTokens()];
+			
+			for (int i = 0; strTok.hasMoreTokens(); i++)
+			{
+				tokens[i] = strTok.nextToken();
+			}			
 		}
 		else
 		{

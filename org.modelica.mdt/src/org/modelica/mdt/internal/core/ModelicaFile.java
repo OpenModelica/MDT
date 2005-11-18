@@ -40,8 +40,14 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.internal.omcproxy.InitializationException;
 
 /**
  * @author Elmir Jagudin
@@ -69,6 +75,30 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	public IFile getResource() 
 	{
 		return file;
+	}
+
+	public List<IModelicaPackage> getPackages() 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<IModelicaClass> getClasses() 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<?> getChildren() throws InitializationException 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasChildren() throws CoreException, InitializationException 
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
