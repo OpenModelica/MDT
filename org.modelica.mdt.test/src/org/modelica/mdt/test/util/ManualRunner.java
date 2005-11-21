@@ -1,9 +1,11 @@
 package org.modelica.mdt.test.util;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.modelica.mdt.test.TestProblemMarkersCreation;
 
 /**
  * Our sample action implements workbench action delegate.
@@ -15,6 +17,14 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  */
 public class ManualRunner implements IWorkbenchWindowActionDelegate 
 {
+
+	class foo extends TestProblemMarkersCreation
+	{
+		public void setUp() throws CoreException
+		{
+			super.setUp();
+		}
+	}
 	
 	/**
 	 * The constructor.
@@ -33,6 +43,18 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 */
 	public void run(IAction action) 
 	{
+		foo test = new foo();
+
+		try 
+		{
+			test.setUp();
+			test.testProblemMarkers();
+		} 
+		catch (CoreException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

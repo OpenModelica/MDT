@@ -164,7 +164,7 @@ public class TestProblemMarkersCreation extends TestCase
 	private IProject project = null;
 	
 	@Override
-	protected void setUp() throws Exception
+	protected void setUp() throws CoreException
 	{
 		/*
 		 * setup project
@@ -231,6 +231,8 @@ public class TestProblemMarkersCreation extends TestCase
 			 */
 			Utility.sleep(this, 104);
 		}
+		
+		project.getWorkspace().removeResourceChangeListener(resListener);
 
 	}
 }
