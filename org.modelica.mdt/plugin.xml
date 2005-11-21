@@ -80,7 +80,7 @@
       <runtime>
          <run class="org.modelica.mdt.ui.ModelicaNature"/>
       </runtime>
-      <builder id="org.modelica.mdt.modelicaBuilder"/>
+      <builder id="org.modelica.mdt.syntaxChecker"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
@@ -99,12 +99,12 @@
          primary="true"/>
    </extension>
    <extension
-   		id="modelicaBuilder"
+   		id="syntaxChecker"
    		name="Modelica Builder"
    		point="org.eclipse.core.resources.builders">
    		<builder hasNature="true">
    			<run
-   				class="org.modelica.mdt.builder.ModelicaBuilder">
+   				class="org.modelica.mdt.builder.SyntaxChecker">
    				<parameter name="comment" value="Builder Comment" />
    			</run>
    		</builder>

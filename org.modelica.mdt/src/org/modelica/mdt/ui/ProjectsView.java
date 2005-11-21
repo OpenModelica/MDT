@@ -65,7 +65,7 @@ public class ProjectsView extends ViewPart
 		makeContextMenu();
 		
 		// Register viewer with site. This must be done before making the actions.
-		IWorkbenchPartSite site= getSite();
+		IWorkbenchPartSite site = getSite();
 		site.registerContextMenu(contextMenu, viewer);
 		site.setSelectionProvider(viewer);
 		

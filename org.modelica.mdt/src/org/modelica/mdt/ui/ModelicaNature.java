@@ -48,7 +48,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.modelica.mdt.builder.ModelicaBuilder;
+import org.modelica.mdt.builder.SyntaxChecker;
 
 public class ModelicaNature implements IProjectNature
 {
@@ -56,7 +56,8 @@ public class ModelicaNature implements IProjectNature
 	
 	public void configure() throws CoreException 
 	{
-		ModelicaBuilder.addBuilderToProject(project);
+		
+		SyntaxChecker.addBuilderToProject(project);
 		
 		new Job("Modelica Build")
 		{
@@ -64,14 +65,14 @@ public class ModelicaNature implements IProjectNature
 			{
 				try
 				{
-					project.build(ModelicaBuilder.FULL_BUILD,
-								  ModelicaBuilder.BUILDER_ID,
+					project.build(SyntaxChecker.FULL_BUILD,
+								  SyntaxChecker.BUILDER_ID,
 								  null,
 								  monitor);
 				}
 				catch(CoreException e)
 				{
-					
+					System.out.println(e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -80,7 +81,7 @@ public class ModelicaNature implements IProjectNature
 
 	public void deconfigure() throws CoreException 
 	{
-		ModelicaBuilder.removeBuilderFromProject(project);
+		SyntaxChecker.removeBuilderFromProject(project);
 		// ModelicaBuilder.deleteBuildMarkers(project);
 	}
 

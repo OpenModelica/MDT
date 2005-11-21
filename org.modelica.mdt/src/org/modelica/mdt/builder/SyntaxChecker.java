@@ -1,3 +1,44 @@
+/*
+ * This file is part of Modelica Development Tooling.
+ *
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Computer and Information Science, PELAB
+ *
+ * All rights reserved.
+ *
+ * (The new BSD license, see also
+ * http://www.opensource.org/licenses/bsd-license.php)
+ *
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ * * Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ *
+ * * Neither the name of Linköpings universitet nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.modelica.mdt.builder;
 
 import java.io.BufferedInputStream;
@@ -24,20 +65,22 @@ import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
+ * This builder load all changed files into OMC in order to check for
+ * parse errors. If a loaded file have any parse error, then a problem 
+ * markers are set to communicate the problem to the user.
  * 
  * @author Andreas Remar
- *
  */
-public class ModelicaBuilder extends IncrementalProjectBuilder
+public class SyntaxChecker extends IncrementalProjectBuilder
 {
-	@SuppressWarnings("deprecation")
-	public static final String BUILDER_ID =
-		MdtPlugin.getSymbolicName() + ".modelicaBuilder";
+
+	public static final String BUILDER_ID = "org.modelica.mdt.syntaxChecker";
 
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException
 	{
+
 		switch(kind)
 		{
 		case IncrementalProjectBuilder.FULL_BUILD:
@@ -56,6 +99,7 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 			}
 			break;
 		}
+
 		return null;
 	}
 	
@@ -63,7 +107,7 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 	{
 		try
 		{
-			getProject().accept(new ModelicaBuildVisitor());
+			getProject().accept(new FullBuildVisitor());
 		}
 		catch(CoreException e)
 		{
@@ -77,7 +121,7 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 	{
 		try
 		{
-			delta.accept(new ModelicaBuildDeltaVisitor());
+			delta.accept(new PartialBuildVisitor());
 		}
 		catch(CoreException e)
 		{
@@ -109,9 +153,9 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 		 * project.
 		 */
 		ICommand[] cmds = description.getBuildSpec();
-		for(int j = 0;j < cmds.length; j++)
+		for(ICommand cmd : cmds)
 		{
-			if(cmds[j].getBuilderName().equals(BUILDER_ID))
+			if(cmd.getBuilderName().equals(BUILDER_ID))
 			{
 				return;
 			}
@@ -242,7 +286,6 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 		catch(CoreException e)
 		{
 			MdtPlugin.log(e);
-			System.out.println(e);
 		}
 		
 	}
@@ -323,7 +366,7 @@ public class ModelicaBuilder extends IncrementalProjectBuilder
 					msg = 
 						errorMessage.substring(secondColon+1).trim();
 					
-					ModelicaBuilder.reportProblem(msg, file, lineno);
+					SyntaxChecker.reportProblem(msg, file, lineno);
 				}
 			}
 		}
