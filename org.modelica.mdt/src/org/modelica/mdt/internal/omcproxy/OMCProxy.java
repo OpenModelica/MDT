@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -286,34 +285,12 @@ public class OMCProxy
 		if(hasInitialized == false)
 		{
 			init(null);
-//			retval = sendExpression("loadModel(Modelica)");
-//			if(retval.equals("false"))
-//			{
-//				System.out.println("Unable to load Modelica Standard Library");
-//			}
 		}
 		
 		retval = omcc.sendExpression(exp);
 		
 		return retval;
 	}
-
-	/* Send expression to OMC. If communication is not initialized, it
-	 * is initialized here. After initialization it loads the Modelica
-	 * Standard Library. */
-//	private static String sendClass(String exp) throws InitializationException
-//	{
-//		String retval = null;
-//		
-//		if(hasInitialized == false)
-//		{
-//			init(null);
-//		}
-//		
-//		retval = omcc.sendClass(exp);
-//		
-//		return retval;
-//	}
 	
 	public static void loadSystemLibrary() throws InitializationException
 	{
@@ -405,36 +382,48 @@ public class OMCProxy
 	 * messages from OMC
 	 * @throws InitializationException
 	 */
-	public static String[] loadFileInteractive(IFile file)
+	public static ParseResults loadFileInteractive(IFile file)
 		throws InitializationException
 	{
-		String fullName = file.getLocation().toString();
+		ParseResults res = new ParseResults();
 		
+		String fullName = file.getLocation().toString();
 		String retval = sendExpression("loadFileInteractive(\"" + fullName 
 				+ "\")");
 		
-		String[] tokens = null;
+		/*
+		 * at this point OMC (ver 1.3.1) 
+		 * does not support returning partial parsing
+		 * results if there was parsing errors in the file. nor does OMC
+		 * provide an interface to both query for file contents and
+		 * parsing errors (loadFileInteractive() either returns a class name
+		 * list or "error").
+		 * 
+		 *  so for now we either return parsing errors or class names defined
+		 *  in the file. Go PELAB ! 
+		 */
 		
+		/*
+		 * there were parse errors
+		 */
 		if(retval.toLowerCase().contains("error"))
 		{
-			String errors = getErrorString();
-			StringTokenizer strTok = new StringTokenizer(errors, "\r\n");
-			tokens = new String[strTok.countTokens()];
-			
-			for (int i = 0; strTok.hasMoreTokens(); i++)
-			{
-				tokens[i] = strTok.nextToken();
-			}			
+			res.setCompileErrors
+				(ProxyParser.parseErrorString(getErrorString()));
 		}
+		/*
+		 * file loaded and parse successsfully
+		 */
 		else
 		{
-			tokens = ProxyParser.parseList(retval);
+			res.setClassNames(ProxyParser.parseList(retval));
 		}
 		
-		return tokens;
+		return res;
 	}
 
-	public static String[] getCrefInfo(String className) throws InitializationException
+	public static String[] getCrefInfo(String className) 
+		throws InitializationException
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
 		
@@ -451,7 +440,8 @@ public class OMCProxy
 		return tokens; 
 	}
 	
-	public static boolean isPackage(String className) throws InitializationException
+	public static boolean isPackage(String className) 
+		throws InitializationException
 	{
 		String retval = sendExpression("isPackage(" + className + ")");
 		return retval.contains("true");

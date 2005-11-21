@@ -61,8 +61,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.internal.omcproxy.CompileError;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.ParseResults;
 
 /**
  * This builder load all changed files into OMC in order to check for
@@ -231,7 +233,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 	}
 	
-	protected static void reportProblem(String msg, IFile file, int lineno)
+	protected static void reportProblem(IFile file, int lineno, String msg)
 	{
 		try
 		{
@@ -303,72 +305,11 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	protected static void loadFileAndReportErrors(IFile file)
 		throws InitializationException
 	{
-		String[] retval = OMCProxy.loadFileInteractive(file);
-				
-		
-		if(retval != null)
+		ParseResults res = OMCProxy.loadFileInteractive(file);
+
+		for (CompileError error : res.getCompileErrors())
 		{
-			for(String s: retval)
-			{
-				if(s.contains("error"))
-				{
-					String msg;
-					int lineno = 1;
-					
-					/*
-					 * An error string looks something like:
-					 *    [/path/to/file.mo:20:1]: error: some error
-					 * So to parse line and column number, we first split
-					 * around ']' and then around ':'.
-					 * To get the error message, we split around ':' to get
-					 * rid of the 'error: ' stuff.
-					 */
-					
-					/* s2[0] is now error location and s2[1] is error message */
-					String[] errorParts = s.split("]");
-					String errorLocation = errorParts[0];
-					String errorMessage = errorParts[1];
-					
-					/* 
-					 * parse error location from
-					 *    "[/path/to/file.mo:20:1"
-					 * we are only interested in line number at this point
-					 * We allready know the file, and column number is just
-					 * broken (OMC allways returns 1) 
-					 */
-					int lastColon = errorLocation.lastIndexOf(":");
-					int beforeLastColon = 
-						errorLocation.substring(0, lastColon).lastIndexOf(":");
-					try
-					{
-						lineno = 
-							Integer.parseInt
-							(errorLocation.substring(beforeLastColon+1,
-							    lastColon));
-					}
-					catch (NumberFormatException e)
-					{
-						MdtPlugin.log(e);
-					}
-					
-					/*
-					 * parse error message from
-					 *   ": error: some error"
-					 * that is we are interested in rest of the string after
-					 * second colon
-					 */					
-					int firstColon = errorMessage.indexOf(":");
-					int secondColon = 
-							errorMessage.substring(firstColon+1).indexOf(":");
-					/* we need global position on errorMessage string */
-					secondColon += firstColon+1;
-					
-					msg = 
-						errorMessage.substring(secondColon+1).trim();
-					
-					SyntaxChecker.reportProblem(msg, file, lineno);
-				}
-			}
+			reportProblem(file, error.getLine(), error.getErrorDescription());
 		}
 	}
 }

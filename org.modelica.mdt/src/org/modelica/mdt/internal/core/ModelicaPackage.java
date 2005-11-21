@@ -53,7 +53,6 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
  * Represent a file based package. That is a package that is either defined
@@ -140,23 +139,24 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 			IFile file = fol.getFile("package.mo");
 			if(file.exists())
 			{
-				String tokens[] = OMCProxy.loadFileInteractive(file);
-				if(tokens == null)
-				{
-					return false;
-				}
-				
-				for(String s : tokens)
-				{
-					if(s.contains("Error") || s.contains("error"))
-					{
-						continue;
-					}
-					if(OMCProxy.isPackage(s))
-					{
-						return true;
-					}
-				}
+				//TODO update to the new interface to loadFileInteractive
+//				String tokens[] = OMCProxy.loadFileInteractive(file);
+//				if(tokens == null)
+//				{
+//					return false;
+//				}
+//				
+//				for(String s : tokens)
+//				{
+//					if(s.contains("Error") || s.contains("error"))
+//					{
+//						continue;
+//					}
+//					if(OMCProxy.isPackage(s))
+//					{
+//						return true;
+//					}
+//				}
 				return true;
 			}
 		}
