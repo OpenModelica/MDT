@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -62,7 +62,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.internal.omcproxy.CompileError;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
 
@@ -303,7 +303,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	}
 
 	protected static void loadFileAndReportErrors(IFile file)
-		throws InitializationException
+		throws CompilerException
 	{
 		ParseResults res = OMCProxy.loadFileInteractive(file);
 

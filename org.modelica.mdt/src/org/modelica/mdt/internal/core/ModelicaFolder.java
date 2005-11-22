@@ -51,7 +51,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * 
@@ -133,7 +133,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * @see org.modelica.mdt.core.IModelicaFolder#getPackages()
 	 */
 	public List<IModelicaPackage> getPackages()
-		throws CoreException, InitializationException
+		throws CoreException, CompilerException
 	{
 		IResource[] members = container.members();
 		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
@@ -196,7 +196,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 
-	public List<?> getChildren() throws InitializationException 
+	public List<?> getChildren() throws CompilerException 
 	{
 		try 
 		{

@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * @author Elmir Jagudin
@@ -89,13 +89,13 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		return null;
 	}
 
-	public List<?> getChildren() throws InitializationException 
+	public List<?> getChildren() throws CompilerException 
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public boolean hasChildren() throws CoreException, InitializationException 
+	public boolean hasChildren() throws CoreException, CompilerException 
 	{
 		// TODO Auto-generated method stub
 		return false;

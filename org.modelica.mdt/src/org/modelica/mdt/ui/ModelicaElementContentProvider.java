@@ -54,7 +54,7 @@ import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.internal.core.SystemLibrary;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * @author Elmir Jagudin
@@ -108,7 +108,7 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 			{
 				list = ((IModelicaProject)parent).getRootFolder().getChildren();
 			}
-			catch (InitializationException e)
+			catch (CompilerException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -128,7 +128,7 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 			{
 				return ((IParent)parent).getChildren().toArray();
 			}
-			catch (InitializationException e)
+			catch (CompilerException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -166,7 +166,7 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (InitializationException e)
+			} catch (CompilerException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();

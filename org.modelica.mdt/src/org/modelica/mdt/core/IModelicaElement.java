@@ -42,7 +42,7 @@ package org.modelica.mdt.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * Common protocol for all elements provided by the Modelica root.
@@ -68,7 +68,7 @@ public interface IModelicaElement extends IAdaptable
 	 * element is included in an external archive
 	 * @since 2.0
 	 */
-	IResource getResource() throws InitializationException;
+	IResource getResource() throws CompilerException;
 	
 	
 }

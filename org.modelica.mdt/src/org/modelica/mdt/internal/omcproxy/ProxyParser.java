@@ -1,6 +1,7 @@
 package org.modelica.mdt.internal.omcproxy;
 
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.modelica.mdt.MdtPlugin;
 
@@ -15,24 +16,116 @@ public class ProxyParser
 	 * This very simple parser just splits a flat modelica list into
 	 * substrings. Doesn't handle nested lists. 
 	 * 
-	 * an example of a modelica list is: '{hej,hop,hepp}' 
+	 * an example of a simple Modelica list is: '{hej,hopp,hepp}' 
 	 */
-	public static String[] parseList(String str)
+	public static String[] parseSimpleList(String str) throws CompilerException
 	{
-		/* remove whitespace before and after */
-		str = str.trim();
+		Vector v = parseList(str);
+		String[] retval = new String[v.size()];
+		for(int i = 0;i < v.size();i++)
+		{
+			Object o = v.get(i);
+			if(o instanceof String)
+			{
+				retval[i] = (String)o;
+			}
+			else
+			{
+				throw new UnexpectedReplyException("huh?");
+			}
+		}
 		
-		/* check that a list is parsed, otherwise this is probably an error */
-		if(str.charAt(0) != '{' || str.charAt(str.length() - 1) != '}')
-			return null;
-
-		/* remove {} and split into tokens */
-		str = str.substring(1, str.length() - 1);
-		String[] retvals = str.split(",");
-		
-		return retvals;
+		return retval;
 	}
 
+	/**
+	 * TODO Long comment
+	 */
+	public static Vector parseList(String str)
+	{
+		Vector<Object> elements = new Vector<Object>();
+		
+		/* Remove whitespace before and after */
+		str = str.trim();
+		
+		/* Make sure this string is not empty */
+		if(str == "" || str.length() < 2)
+		{
+			return null;
+		}
+		
+		/* Make sure this is a list */
+		if(str.charAt(0) != '{' || str.charAt(str.length() - 1) != '}')
+		{
+			return null;
+		}
+		/* Remove { and } */
+		str = str.substring(1, str.length() - 1);
+		
+		/*
+		 * { { hej, på } , dig } => [[hej,på],dig]
+		 */
+		
+		String subString = "";
+		int depth = 0;
+		boolean listFound = false;
+		for(int characterPosition = 0;characterPosition < str.length()
+			;characterPosition++)
+		{
+			//System.out.println("+> " + subString);
+			if(str.charAt(characterPosition) == '{')
+			{
+				listFound = true;
+				depth++;
+			}
+			if(str.charAt(characterPosition) == ',' && depth == 0)
+			{
+				// End of token
+				Object element = null;
+				if(listFound)
+					element = parseList(subString);
+				else
+					element = subString.trim();
+				
+				listFound = false;
+				if(element instanceof String && ((String)element).equals(""))
+				{
+					/* Don't add empty strings */
+					continue;
+				}
+				elements.add(element);
+				subString = "";
+ 			}
+			else
+			{
+				subString += str.charAt(characterPosition);
+			}
+			if(str.charAt(characterPosition) == '}')
+			{
+				depth--;
+				if(depth < 0)
+				{
+					return new Vector();
+				}
+			}
+		}
+		if(depth == 0)
+		{
+			Object element = null;
+			if(listFound)
+				element = parseList(subString);
+			else
+				element = subString.trim();
+			
+			if(element instanceof String && ((String)element).equals(""))
+				/* Don't add empty strings */;
+			else
+				elements.add(element);
+		}
+		
+		return elements;
+	}
+	
 	public static CompileError[] parseErrorString(String errorString)
 	{
 		StringTokenizer strTok = new StringTokenizer(errorString, "\r\n");

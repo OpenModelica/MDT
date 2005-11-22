@@ -7,8 +7,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.modelica.mdt.core.IClassComponent;
+import org.modelica.mdt.core.IClassExtend;
+import org.modelica.mdt.core.IClassImport;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
@@ -48,7 +51,7 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return parentPackage;
 	}
 	
-	public Type getType() throws InitializationException
+	public Type getType() throws CompilerException
 	{
 		if(typeKnown == false)
 		{
@@ -63,7 +66,7 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return type;
 	}
 	
-	public IResource getResource() throws InitializationException
+	public IResource getResource() throws CompilerException
 	{
 		String[] tokens = OMCProxy.getCrefInfo(fullName);
 
@@ -75,12 +78,49 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return f;
 	}
 	
-	public File getFile() throws InitializationException
+	public File getFile() throws CompilerException
 	{
 		String[] tokens = OMCProxy.getCrefInfo(fullName);
 		
 		File file = new File(tokens[0]);
 		
+		getImports();
+		
 		return file;
+	}
+
+	/*
+	 * Uses getElementInfo() to get all info about this class
+	 */
+	private void getElementsInfo() throws CompilerException
+	{
+		OMCProxy.getElementsInfo(fullName);
+	}
+	
+	public IClassImport[] getImports()
+	{
+		// TODO Auto-generated method stub
+		try
+		{
+			getElementsInfo();
+		}
+		catch(CompilerException e)
+		{
+			System.out.println(e);
+		}
+		
+		return null;
+	}
+
+	public IClassExtend[] getExtends()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IClassComponent[] getComponents()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

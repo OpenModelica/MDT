@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * @author Elmir Jagudin
@@ -94,7 +94,7 @@ abstract public class ModelicaElement extends PlatformObject
 			{
 				resource = getResource();
 			}
-			catch (InitializationException e)
+			catch (CompilerException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,7 +108,7 @@ abstract public class ModelicaElement extends PlatformObject
 		return super.getAdapter(adapter);
 	}
 
-	public IResource getResource() throws InitializationException
+	public IResource getResource() throws CompilerException
 	{
 		return null;
 	}

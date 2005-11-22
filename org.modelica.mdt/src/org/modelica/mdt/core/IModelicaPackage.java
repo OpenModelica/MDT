@@ -42,7 +42,7 @@ package org.modelica.mdt.core;
 
 import java.util.List;
 
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * @author Elmir Jagudin
@@ -53,7 +53,7 @@ public interface IModelicaPackage extends IModelicaFolder
 	/**
 	 * @return classes contained in this package
 	 */
-	public List<IModelicaClass> getClasses() throws InitializationException;
+	public List<IModelicaClass> getClasses() throws CompilerException;
 
 	/**
 	 * return the package's base name, that is if package's full name is

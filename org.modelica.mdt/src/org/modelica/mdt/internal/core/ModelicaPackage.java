@@ -52,7 +52,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * Represent a file based package. That is a package that is either defined
@@ -104,7 +104,7 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	}
 
 	public List<IModelicaPackage> getPackages()
-		throws CoreException, InitializationException
+		throws CoreException, CompilerException
 	{
 		IResource[] members = folder.getResource().members();
 		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
@@ -127,7 +127,7 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	 * @return true if the res is a package, false otherwise.
 	 */
 	public static boolean isPackage(IResource res)
-		throws InitializationException
+		throws CompilerException
 	{
 		if (res.getType() == IResource.FOLDER)
 		{
@@ -201,7 +201,7 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		return baseName + "." + getElementName();
 	}
 
-	public List<?> getChildren() throws InitializationException
+	public List<?> getChildren() throws CompilerException
 	{
 		try 
 		{

@@ -45,7 +45,7 @@ import org.eclipse.core.resources.IResource;
 
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * Wrappper around IProject to provide Modelica specific view 
@@ -89,7 +89,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	}
 
 	@Override
-	public IResource getResource() throws InitializationException
+	public IResource getResource() throws CompilerException
 	{
 		return getRootFolder().getResource();
 	}

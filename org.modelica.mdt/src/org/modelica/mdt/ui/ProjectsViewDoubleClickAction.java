@@ -31,7 +31,7 @@ import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.editor.ModelicaFileEditorInput;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 public class ProjectsViewDoubleClickAction extends Action 
 {
@@ -56,7 +56,7 @@ public class ProjectsViewDoubleClickAction extends Action
 			{
 				openInternalFile((IFile)((IModelicaFile)obj).getResource());
 			} 
-			catch (InitializationException e)
+			catch (CompilerException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -73,7 +73,7 @@ public class ProjectsViewDoubleClickAction extends Action
 			{
 				openExternalFile(((IModelicaClass)obj).getFile());
 			}
-			catch (InitializationException e)
+			catch (CompilerException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();

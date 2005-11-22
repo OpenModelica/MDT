@@ -52,7 +52,7 @@ import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * @author Elmir Jagudin
@@ -121,7 +121,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 				default:
 					imgTag = "";
 				}
-			} catch (InitializationException e) {
+			} catch (CompilerException e) {
 				// TODO Proper error handling here!
 				e.printStackTrace();
 			}

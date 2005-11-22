@@ -47,7 +47,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.modelica.mdt.MdtPlugin;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * Visitor used to load files into OMC when a full build is happening.
@@ -71,7 +71,7 @@ public class FullBuildVisitor implements IResourceVisitor
 			{
 				SyntaxChecker.loadFileAndReportErrors(file);
 			}
-			catch(InitializationException e)
+			catch(CompilerException e)
 			{
 				MdtPlugin.log(e);
 			}

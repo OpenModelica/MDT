@@ -42,7 +42,7 @@ package org.modelica.mdt.core;
 
 import java.io.File;
 
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 
 
@@ -53,7 +53,11 @@ import org.modelica.mdt.internal.omcproxy.InitializationException;
 public interface IModelicaClass extends IModelicaElement
 {
 	public enum Type { CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE };
-	public Type getType() throws InitializationException;
-	String getPackage();
-	File getFile() throws InitializationException;
+	public Type getType() throws CompilerException;
+	public String getPackage();
+	public File getFile() throws CompilerException;
+	
+	public IClassImport[] getImports();
+	public IClassExtend[] getExtends();
+	public IClassComponent[] getComponents();
 }

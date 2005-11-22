@@ -77,7 +77,7 @@ import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.internal.core.ModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.ui.ModelicaImages;
 
 public class NewPackageWizard extends Wizard implements INewWizard
@@ -360,7 +360,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        {
 				setSelection(selection);
 			}
-	        catch (InitializationException e1) 
+	        catch (CompilerException e1) 
 	        {
 				// TODO Proper error handling
 				e1.printStackTrace();
@@ -412,7 +412,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 		}
 
 		private void setSelection(Object selection) 
-			throws InitializationException
+			throws CompilerException
 		{
 			IResource res;
 			

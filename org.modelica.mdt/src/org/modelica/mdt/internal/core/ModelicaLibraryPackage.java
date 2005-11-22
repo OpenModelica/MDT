@@ -47,7 +47,7 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -92,7 +92,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 	 * @return the subpackages, or null if there is no subpackages 
 	 * in this package
 	 */
-	public List<IModelicaPackage> getPackages() throws InitializationException
+	public List<IModelicaPackage> getPackages() throws CompilerException
 	{
 		if(packages != null)
 		{
@@ -136,7 +136,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 	 * @return the classes contained in this package, or null if there is no
 	 *  classes in this package
 	 */
-	public List<IModelicaClass> getClasses() throws InitializationException
+	public List<IModelicaClass> getClasses() throws CompilerException
 	{
 		if(classes != null)
 		{
@@ -194,7 +194,7 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		return retvals;
 	}
 
-	public List<IModelicaElement> getChildren() throws InitializationException
+	public List<IModelicaElement> getChildren() throws CompilerException
 	{
 		List<IModelicaPackage> pkgs = getPackages();
 		List<IModelicaClass> cls  = getClasses();
@@ -207,13 +207,13 @@ public class ModelicaLibraryPackage extends ModelicaElement implements
 		return children;
 	}
 
-	public boolean hasChildren() throws InitializationException
+	public boolean hasChildren() throws CompilerException
 	{
 		return (getPackages() != null) || (getClasses() != null);
 	}
 
 	@Override
-	public IResource getResource() throws InitializationException
+	public IResource getResource() throws CompilerException
 	{
 		// TODO implement me
 		OMCProxy.getCrefInfo(fullName);

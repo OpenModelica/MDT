@@ -26,7 +26,7 @@ public class OMCProxy
 	/**
 	 * Reads in the OMC object reference from a file on disk. 
 	 */
-	private static String readObjectFromFile() throws InitializationException
+	private static String readObjectFromFile() throws CompilerException
 	{
 		File f = new File(getPathToObject());
 		String stringifiedObjectReference = null;
@@ -39,7 +39,7 @@ public class OMCProxy
 		}
 		catch(IOException e)
 		{
-			throw new InitializationException
+			throw new ConnectionException
 				("Unable to initialize Open Modelica Compiler");
 		}
 
@@ -51,7 +51,7 @@ public class OMCProxy
 		}
 		catch(IOException e)
 		{
-			throw new InitializationException("Unable to read from " + 
+			throw new ConnectionException("Unable to read from " + 
 					getPathToObject());
 		}
 		return stringifiedObjectReference;
@@ -85,7 +85,7 @@ public class OMCProxy
 	 * 
 	 *  @throws InitializationException
 	 */
-	private static void startServer() throws InitializationException
+	private static void startServer() throws CompilerException
 	{
 		String pathToOmc = null;
 
@@ -97,7 +97,7 @@ public class OMCProxy
 		if(omHome == null)
 		{
 			final String m = "Environment variable OPENMODELICAPATH not set";
-			throw new InitializationException(m);
+			throw new ConnectionException(m);
 		}
 		
 		if(os.equals("Linux"))
@@ -143,7 +143,7 @@ public class OMCProxy
 			}
 			catch(IOException ex)
 			{
-				throw new InitializationException
+				throw new ConnectionException
 					("Unable to start Open Modelica Compiler\n"
 					 + "Tried starting " + pathToOmc
 					 + " and " + secondaryPathToOmc);
@@ -170,7 +170,7 @@ public class OMCProxy
 			/* If we've waited for 5 seconds, abort wait for OMC */
 			if(ticks > 50)
 			{
-				throw new InitializationException
+				throw new ConnectionException
 					("Unable to start Open Modelica Compiler");
 			}
 		}
@@ -182,7 +182,7 @@ public class OMCProxy
 	 * object. 
 	 */
 	private static void setupOmcc(String stringifiedObjectReference)
-		throws InitializationException
+		throws CompilerException
 	{
 		/* Can't remember why this is needed. But it is. */
 		String args[] = {null};
@@ -220,7 +220,7 @@ public class OMCProxy
 		}
 	}
 	
-	private static void init(String args[]) throws InitializationException
+	private static void init(String args[]) throws CompilerException
 	{
 		/* Get type of operating system, used for finding object
 		 * reference and starting OMC if the reference is faulty */
@@ -267,7 +267,7 @@ public class OMCProxy
 		}
 		catch(org.omg.CORBA.COMM_FAILURE e)
 		{
-			throw new InitializationException("Unable to start server");
+			throw new ConnectionException("Unable to start server");
 		}
 
 		hasInitialized = true;
@@ -278,7 +278,7 @@ public class OMCProxy
 	 * is initialized here. After initialization it loads the Modelica
 	 * Standard Library. 
 	 */
-	private static String sendExpression(String exp) throws InitializationException
+	private static String sendExpression(String exp) throws CompilerException
 	{
 		String retval = null;
 		
@@ -292,30 +292,30 @@ public class OMCProxy
 		return retval;
 	}
 	
-	public static void loadSystemLibrary() throws InitializationException
+	public static void loadSystemLibrary() throws CompilerException
 	{
 		sendExpression("loadModel(Modelica)");
 	}
 	
 	public static String[] getPackages(String className)
-		throws InitializationException
+		throws CompilerException
 	{
 		String retval;
 		
 		retval = sendExpression("getPackages("+className+")");
 		
-		String[] tokens = ProxyParser.parseList(retval);
+		String[] tokens = ProxyParser.parseSimpleList(retval);
 		
 		return tokens;
 	}
 	
 	public static String[] getClassNames(String className)
-		throws InitializationException
+		throws CompilerException
 	{
 		String retval;
 		retval = sendExpression("getClassNames("+className+")");
 		
-		String[] tokens = ProxyParser.parseList(retval);
+		String[] tokens = ProxyParser.parseSimpleList(retval);
 
 		if(tokens == null)
 			return null;
@@ -342,7 +342,7 @@ public class OMCProxy
 	}
 	
 	public static IModelicaClass.Type getType(String className)
-		throws InitializationException
+		throws CompilerException
 	{
 		IModelicaClass.Type type = null;
 		
@@ -363,7 +363,7 @@ public class OMCProxy
 	}
 	
 	public static String getErrorString()
-		throws InitializationException
+		throws CompilerException
 	{
 		/*
 		 * TODO add check that sendExpression really returned a string,
@@ -383,7 +383,7 @@ public class OMCProxy
 	 * @throws InitializationException
 	 */
 	public static ParseResults loadFileInteractive(IFile file)
-		throws InitializationException
+		throws CompilerException
 	{
 		ParseResults res = new ParseResults();
 		
@@ -416,14 +416,14 @@ public class OMCProxy
 		 */
 		else
 		{
-			res.setClassNames(ProxyParser.parseList(retval));
+			res.setClassNames(ProxyParser.parseSimpleList(retval));
 		}
 		
 		return res;
 	}
 
 	public static String[] getCrefInfo(String className) 
-		throws InitializationException
+		throws CompilerException
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
 		
@@ -435,15 +435,24 @@ public class OMCProxy
 		/* For some reason, the list returned doesn't contain curly braces. */
 		retval = "{" + retval + "}"; 
 		
-		String[] tokens = ProxyParser.parseList(retval);
+		String[] tokens = ProxyParser.parseSimpleList(retval);
 		
 		return tokens; 
 	}
 	
 	public static boolean isPackage(String className) 
-		throws InitializationException
+		throws CompilerException
 	{
 		String retval = sendExpression("isPackage(" + className + ")");
 		return retval.contains("true");
+	}
+	
+	public static void getElementsInfo(String className)
+		throws CompilerException
+	{
+		// TODO actually return real elements info..
+		String retval = sendExpression("getElementsInfo("+ className +")");
+		
+		ProxyParser.parseList(retval);
 	}
 }
