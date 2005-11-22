@@ -4,7 +4,7 @@ package org.modelica.mdt.test;
 import java.util.Collections;
 import java.util.Vector;
 
-import org.modelica.mdt.internal.omcproxy.InitializationException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 import junit.framework.TestCase;
@@ -46,7 +46,7 @@ public class TestOMCProxy extends TestCase
 
 			assertTrue(packages.containsAll(modelicaLibraryPackages));
 		}
-		catch(InitializationException e)
+		catch(CompilerException e)
 		{
 			fail(e.getMessage());
 		}

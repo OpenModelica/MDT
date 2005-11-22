@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -46,6 +46,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
@@ -97,6 +98,8 @@ public class TestTraversingPackages extends TestCase
 		 */
 		
 		/* traverese packages */
+		try
+		{
 		for (IModelicaPackage pkg : project_root.getPackages())
 		{
 			
@@ -110,7 +113,11 @@ public class TestTraversingPackages extends TestCase
 				childless_package = pkg;
 			}
 		}
-		
+		}
+		catch(CompilerException e)
+		{
+			fail(e.getMessage());
+		}
 		assertNotNull("root_package not found", root_package);
 		assertEquals("Package base name", root_package.getBaseName(), "");
 		assertEquals("Package name", root_package.getElementName(), 
@@ -125,7 +132,9 @@ public class TestTraversingPackages extends TestCase
 		 * traverse children of root_package
 		 */
 		
-		/* traverse packages */		
+		/* traverse packages */
+		try
+		{
 		for (IModelicaPackage pkg : root_package.getPackages())
 		{
 			String name = pkg.getElementName();
@@ -134,6 +143,11 @@ public class TestTraversingPackages extends TestCase
 				sub_package = pkg;
 			}
 			
+		}
+		}
+		catch(CompilerException e)
+		{
+			fail(e.getMessage());
 		}
 		assertNotNull("sub_package not found", sub_package);
 		checkFullName(sub_package, "root_package.sub_package");
@@ -194,6 +208,8 @@ public class TestTraversingPackages extends TestCase
 		 */
 
 		/* traverse packages */		
+		try
+		{
 		for (IModelicaPackage pkg : sub_package.getPackages())
 		{
 			String name = pkg.getElementName();
@@ -202,6 +218,11 @@ public class TestTraversingPackages extends TestCase
 				leaf_package = pkg;
 			}
 			
+		}
+		}
+		catch(CompilerException e)
+		{
+			fail(e.getMessage());
 		}
 		assertNotNull("leaf_package not found", leaf_package);
 		checkFullName(leaf_package, "root_package.sub_package.leaf_package");
