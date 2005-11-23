@@ -53,21 +53,43 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.ParseResults;
 
 /**
  * Represent a file based package. That is a package that is either defined
  * in a file or a separate folder inside the project root.
  * 
  * @author Elmir Jagudin
+ * @author Andreas Remar
  */
 public class ModelicaPackage extends ModelicaParent implements IModelicaPackage 
 {
-
-	private String baseName;
+	/**
+	 * the full name of the parent package
+	 */
+	private String prefix;
+	
+	/**
+	 * the short name of this package
+	 */
+	private String name;
+	
+	/**
+	 * the fully qualified name of this package e.g. foo.bar.hej
+	 */
+	private String fullName;
+	
+	/**
+	 * folder where this package resides
+	 */
 	private ModelicaFolder folder = null;
+	
+	
+	private IModelicaFile file = null;
 
 	/**
-	 * Create a (root) package defined inside the folder.
+	 * create a (root) package defined inside a folder
 	 * 
 	 * @param folder the top folder (the one that contains package.mo)
 	 * of this project
@@ -75,50 +97,91 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	public ModelicaPackage(ModelicaFolder folder) 
 	{
 		this.folder = folder;
-		baseName = "";
+		prefix = "";
+		name = folder.getResource().getName();
+		setFullName();
 	}
 
+	/**
+	 * create a subpackage residing inside a folder
+	 *  
+	 * @param parentPackage the parent package
+	 * @param containerFolder folder where this package resides
+	 */
 	public ModelicaPackage(ModelicaPackage parentPackage, 
 							ModelicaFolder containerFolder)
 	{
-		String parentBaseName = parentPackage.getBaseName();
+		this.folder = containerFolder;
+		prefix = parentPackage.getFullName();
+		name = folder.getResource().getName();
+		setFullName();
+	}
+
+	public ModelicaPackage(String prefix, String elementName)
+	{
+		this.prefix = prefix;
+		this.name = elementName;
 		
-		/*
-		 * calculate the base name of this package
-		 */
-		if (parentBaseName.equals(""))
+		setFullName();
+	}		
+	
+	
+	public ModelicaPackage(IModelicaFile container, String name)
+	{
+		this.prefix = "";
+		this.name = name;
+		
+		setFullName();
+		
+		this.file = container;
+		
+	}
+	
+	
+	/**
+	 * calculate the base name of this package
+	 */
+	private void setFullName()
+	{
+		if(prefix.equals(""))
 		{
 			/*
 			 * special case for packages that are direct children of
 			 * the root package 
 			 */
-			baseName = parentPackage.getElementName();
+			fullName = name;
 		}
 		else /* general case */
 		{
-			baseName = 
-				parentPackage.getBaseName() + "." + 
-				parentPackage.getElementName();
+			fullName = prefix + "." + name;
 		}
-		this.folder = containerFolder;
 	}
 
 	public List<IModelicaPackage> getPackages()
 		throws CoreException, CompilerException
 	{
-		IResource[] members = folder.getResource().members();
-		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
-
-		for (IResource res : members)
+		LinkedList<IModelicaPackage> packages = new LinkedList<IModelicaPackage>();
+		
+		if (folder != null) /* package is contained in a folder */
 		{
-			if (isPackage(res))
+			IResource[] members = folder.getResource().members();
+		
+			for (IResource res : members)
 			{
-				pkgs.add(new ModelicaPackage(this,
+				if (isPackage(res))
+				{
+					packages.add(new ModelicaPackage(this,
 						                  new ModelicaFolder((IContainer)res)));
+				}
 			}
 		}
-
-		return pkgs;
+		
+		for(String s : OMCProxy.getPackages(fullName))
+		{
+			packages.add(new ModelicaPackage(fullName, s));
+		}
+			
+		return packages;
 	}
 	
 	/**
@@ -133,31 +196,28 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		{
 			/*
 			 * If a folder contains a package.mo file, and that file defines a
-			 * package, we can consider this folder a Modelica package.
+			 * top package with the same name as folder name,
+			 * we can consider this folder a Modelica package.
 			 */
 			IFolder fol = (IFolder) res;
+			String folderName = fol.getName();
 			IFile file = fol.getFile("package.mo");
+			
 			if(file.exists())
 			{
-				//TODO update to the new interface to loadFileInteractive
-//				String tokens[] = OMCProxy.loadFileInteractive(file);
-//				if(tokens == null)
-//				{
-//					return false;
-//				}
-//				
-//				for(String s : tokens)
-//				{
-//					if(s.contains("Error") || s.contains("error"))
-//					{
-//						continue;
-//					}
-//					if(OMCProxy.isPackage(s))
-//					{
-//						return true;
-//					}
-//				}
-				return true;
+				/*
+				 * check if package.mo defines a package (aka class) 
+				 * with the same name as the parent folder
+				 */
+				ParseResults results = OMCProxy.loadFileInteractive(file);
+				
+				for (String name : results.getClasses())
+				{
+					if (name.equals(folderName))
+					{
+						return true;
+					}
+				}
 			}
 		}
 
@@ -167,9 +227,9 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	/* (non-Javadoc)
 	 * @see org.modelica.mdt.core.IModelicaPackage#getClasses()
 	 */
-	public List<IModelicaClass> getClasses() 
+	public List<IModelicaClass> getClasses() throws CompilerException 
 	{
-		//TODO implement me
+		//TODO implement me correctly
 		//
 		// this method should return only classes 
 		// that are not defined in a separate mo files
@@ -178,27 +238,34 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		// 2) if this packages is a nested package inside a class
 		//   that is if this package is not defined in a separate folder
 		
-		return new LinkedList<IModelicaClass>(); // return an empty list for now
+		LinkedList<IModelicaClass> classes = new LinkedList<IModelicaClass>();
+		
+		for(String str : OMCProxy.getClassNames(fullName))
+		{
+			classes.add(new ModelicaClass(str, fullName));
+		}
+		
+		return classes;		
 	}
 
-	public String getBaseName()
+	public String getPrefix()
 	{
-		return baseName;
+		return prefix;
 	}
 
 	public String getElementName() 
 	{
-		return folder.getResource().getName();
+		return name;
 	}
 
 	public String getFullName() 
 	{
-		if (baseName.equals(""))
+		if (prefix.equals(""))
 		{
 			return getElementName();
 		}
 
-		return baseName + "." + getElementName();
+		return prefix + "." + getElementName();
 	}
 
 	public List<?> getChildren() throws CompilerException
@@ -208,6 +275,7 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 			List<Object> children = new LinkedList<Object>();
 			
 			children.addAll(getPackages());
+			children.addAll(getClasses());
 			children.addAll(getFolders());
 			children.addAll(getModelicaFiles());
 			children.addAll(getFiles());
@@ -224,25 +292,47 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 
 
 
-	public IResource getResource() 
+	public IResource getResource() throws CompilerException 
 	{
-		return folder.getResource();
+		if (folder != null)
+		{
+			return folder.getResource();
+		}
+		
+		if (file != null)
+		{
+			return file.getResource();
+		}
+		
+		/* uhh, not sure which resource we are contained in */
+		return null;
 	}
 
-	public List<IModelicaFolder> getFolders() throws CoreException 
+	public List<IModelicaFolder> getFolders() 
+		throws CoreException, CompilerException 
 	{
-		return folder.getFolders();
+		if (folder != null)
+		{
+			return folder.getFolders();
+		}
+		return new LinkedList<IModelicaFolder>();
 	}
 
 	public List<IModelicaFile> getModelicaFiles() throws CoreException 
 	{
-		return folder.getModelicaFiles();
+		if (folder != null)
+		{
+			return folder.getModelicaFiles();
+		}
+		return new LinkedList<IModelicaFile>();
 	}
 
 	public List<IFile> getFiles() throws CoreException 
 	{
-		return folder.getFiles();
+		if (folder != null)
+		{
+			return folder.getFiles();
+		}
+		return new LinkedList<IFile>();
 	}
-
-
 }

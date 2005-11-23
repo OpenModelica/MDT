@@ -38,6 +38,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.internal.core;
 
 import java.util.LinkedList;
@@ -45,7 +46,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaFile;
@@ -54,7 +54,6 @@ import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
- * 
  * @author Elmir Jagudin
  */
 public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
@@ -67,20 +66,6 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		this.container = cont;
 	}
 	
-	
-	public static boolean isFolder(IResource res)
-	{
-		if (res.getType() == IResource.FOLDER)
-		{
-			IFolder fol = (IFolder) res;
-			if (!fol.getFile("package.mo").exists())
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
 	
 	private boolean isModelicaFile(IResource res)
 	{
@@ -110,17 +95,21 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		return false;
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * @throws CompilerException 
+	 * @throws InitializationException 
 	 * @see org.modelica.mdt.core.IModelicaFolder#getFolders()
 	 */
-	public List<IModelicaFolder> getFolders() throws CoreException
+	public List<IModelicaFolder> getFolders() 
+		throws CoreException, CompilerException
 	{
 		IResource[] members = container.members();
 		LinkedList<IModelicaFolder> folders = new LinkedList<IModelicaFolder>();
 
 		for (IResource res : members)
 		{
-			if (isFolder(res))
+			if (res.getType() == IResource.FOLDER && 
+					!ModelicaPackage.isPackage(res))
 			{
 				folders.add(new ModelicaFolder((IContainer)res));
 			}
@@ -129,7 +118,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		return folders;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaFolder#getPackages()
 	 */
 	public List<IModelicaPackage> getPackages()
@@ -150,7 +139,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 	
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaFolder#getModelicaFiles()
 	 */
 	public List<IModelicaFile> getModelicaFiles() throws CoreException
@@ -169,7 +158,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		return mofiles;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaFolder#getFiles()
 	 */
 	public List<IFile> getFiles() throws CoreException
@@ -187,7 +176,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		return files;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
 	 */
 	public String getElementName() 

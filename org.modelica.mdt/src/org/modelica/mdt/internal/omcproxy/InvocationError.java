@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,68 +39,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.core;
-
-import java.io.File;
-import java.util.List;
-
-import org.modelica.mdt.internal.omcproxy.CompilerException;
-
-
+package org.modelica.mdt.internal.omcproxy;
 
 /**
+ * Thrown when compiler reports an unexpected error while invoking
+ * some command via the 'interactive api' interface.
+ * 
+ * Typicaly when compiler returns 'Error' string instead of the expected
+ * result of some command.
+ * 
  * @author Elmir Jagudin
  */
-public interface IModelicaClass extends IModelicaElement, IParent
+public class InvocationError extends CompilerException
 {
-	public enum Type { CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE };
+	private static final long serialVersionUID = 1437868457853593664L;
 	
-	/**
-	 * @return the restriction type of this class
-	 * @throws InitializationException
-	 */
-	public Type getType() throws CompilerException;
-	
-	/**
-	 * @return the container package for this class. Empty string if the
-	 * class in the default unnamed package.
-	 */
-	public String getPackage();
-	
-	/**
-	 * @return the file where this class is defined
-	 * @throws InitializationException
-	 */
-	public File getFile() throws CompilerException;
-	
-	/**
-	 * @return subclasses contained in this class
-	 * @throws CompilerException 
-	 */
-	public List<IModelicaClass> getClasses() throws CompilerException;
-	
-	/**
-	 * @return all subpackages contained in this class 
-	 * (yeah this is weird, i know)
-	 * 
-	 * @throws CompilerException 
-	 * @throws InitializationException 
-	 */
-	public List<IModelicaPackage> getPackages() throws CompilerException;
-
-	/**
-	 * @return all imports this class is making
-	 */
-	public IClassImport[] getImports();
-	
-	/**
-	 * @return list of extensions this class is making
-	 */
-	public IClassExtend[] getExtends();
-	
-	/**
-	 * @return list of components (variables and constans) of this class
-	 */
-	public IClassComponent[] getComponents();
-
+	public InvocationError(String error)
+	{
+		super(error);
+	}
 }

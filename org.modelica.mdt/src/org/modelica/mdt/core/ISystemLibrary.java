@@ -42,6 +42,9 @@ package org.modelica.mdt.core;
 
 import java.util.List;
 
+import org.modelica.mdt.internal.omcproxy.CompilerException;
+
+
 
 /**
  * @author Elmir Jagudin
@@ -50,5 +53,6 @@ import java.util.List;
  */
 public interface ISystemLibrary extends IModelicaElement, IParent
 {
-	public List<IModelicaPackage> getPackages();
+	public List<IModelicaPackage> getPackages() 
+		throws CompilerException;
 }

@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.omg.CORBA.ORB;
 
 /**
@@ -22,11 +22,13 @@ public class OMCProxy
 	private static OmcCommunication omcc;
 	private static String os; /* what Operating System we're running on */
 	private static boolean hasInitialized = false;
+	private static boolean systemLibraryLoaded = false;
 
 	/**
 	 * Reads in the OMC object reference from a file on disk. 
+	 * @throws ConnectionException 
 	 */
-	private static String readObjectFromFile() throws CompilerException
+	private static String readObjectFromFile() throws ConnectionException
 	{
 		File f = new File(getPathToObject());
 		String stringifiedObjectReference = null;
@@ -82,10 +84,11 @@ public class OMCProxy
 	
 	/**
 	 * Start a new OMC server.
+	 * @throws ConnectionException 
 	 * 
 	 *  @throws InitializationException
 	 */
-	private static void startServer() throws CompilerException
+	private static void startServer() throws ConnectionException
 	{
 		String pathToOmc = null;
 
@@ -182,7 +185,6 @@ public class OMCProxy
 	 * object. 
 	 */
 	private static void setupOmcc(String stringifiedObjectReference)
-		throws CompilerException
 	{
 		/* Can't remember why this is needed. But it is. */
 		String args[] = {null};
@@ -215,15 +217,17 @@ public class OMCProxy
 		}
 		else
 		{
-			System.out.println("Unsupported OS");
+			MdtPlugin.logWarning("Unsupported OS");
 			return "Linux";
 		}
 	}
 	
-	private static void init(String args[]) throws CompilerException
+	private static void init(String args[]) throws ConnectionException
 	{
-		/* Get type of operating system, used for finding object
-		 * reference and starting OMC if the reference is faulty */
+		/* 
+		 * Get type of operating system, used for finding object
+		 * reference and starting OMC if the reference is faulty 
+		 */
 		os = getOs();
 		
 		/* See if an OMC server is already running */
@@ -277,8 +281,9 @@ public class OMCProxy
 	 * Send expression to OMC. If communication is not initialized, it
 	 * is initialized here. After initialization it loads the Modelica
 	 * Standard Library. 
+	 * @throws ConnectionException 
 	 */
-	private static String sendExpression(String exp) throws CompilerException
+	private static String sendExpression(String exp) throws ConnectionException
 	{
 		String retval = null;
 		
@@ -294,21 +299,41 @@ public class OMCProxy
 	
 	public static void loadSystemLibrary() throws CompilerException
 	{
-		sendExpression("loadModel(Modelica)");
+		if (!systemLibraryLoaded)
+		{
+			sendExpression("loadModel(Modelica)");
+			systemLibraryLoaded = true;
+		}
 	}
 	
+	/**
+	 * @param className full class name where to look for packages
+	 * @return an array of subpackages defined (and loaded into OMC)
+	 *  inside the class named className
+	 * @throws InitializationException
+	 */
 	public static String[] getPackages(String className)
 		throws CompilerException
 	{
 		String retval;
 		
 		retval = sendExpression("getPackages("+className+")");
-		
-		String[] tokens = ProxyParser.parseSimpleList(retval);
-		
-		return tokens;
+
+		if (retval.trim().toLowerCase().equals("error"))
+		{
+			throw new InvocationError("getPackages("+className+")" +  
+					" replys 'error'");
+		}
+
+		return ProxyParser.parseSimpleList(retval);
 	}
 	
+	/**
+	 * @param className full class name where to look for packages
+	 * @return an array of subclasses defined (and loaded into OMC)
+	 *  inside the class named className
+	 * @throws InitializationException
+	 */	
 	public static String[] getClassNames(String className)
 		throws CompilerException
 	{
@@ -324,12 +349,7 @@ public class OMCProxy
 		
 		for(String str : tokens)
 		{
-			if(str.equals(""))
-				continue;
-
-			retval = sendExpression("isPackage("+className+"."+str+")");
-
-			if(retval.contains("false"))
+			if(!isPackage(className+"."+str))
 			{
 				v.add(str);
 			}
@@ -340,30 +360,49 @@ public class OMCProxy
 		
 		return t;
 	}
-	
+
+	/**
+	 * 
+	 * @param className fully qualified class name
+	 * @return the restriction type of the class or null if 
+	 *         type can't be determined
+	 * @throws CompilerException
+	 */
 	public static IModelicaClass.Type getType(String className)
 		throws CompilerException
 	{
 		IModelicaClass.Type type = null;
 		
 		if(sendExpression("isType(" + className + ")").contains("true"))
+		{
 			type = Type.TYPE;
+		}
 		else if(sendExpression("isConnector(" + className + ")").contains("true"))
+		{
 			type = Type.CONNECTOR;
+		}
 		else if(sendExpression("isModel(" + className + ")").contains("true"))
+		{
 			type = Type.MODEL;
+		}
 		else if(sendExpression("isRecord(" + className + ")").contains("true"))
+		{
 			type = Type.RECORD;
+		}
 		else if(sendExpression("isBlock(" + className + ")").contains("true"))
+		{	
 			type = Type.BLOCK;
+		}
 		else if(sendExpression("isFunction(" + className + ")").contains("true"))
+		{
 			type = Type.FUNCTION;
-		
+		}
+
 		return type;
 	}
 	
 	public static String getErrorString()
-		throws CompilerException
+		throws ConnectionException
 	{
 		/*
 		 * TODO add check that sendExpression really returned a string,
@@ -380,10 +419,12 @@ public class OMCProxy
 	 * @param file
 	 * @return either returns the classes found in the file or the error
 	 * messages from OMC
+	 * @throws ConnectionException 
+	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
 	 */
 	public static ParseResults loadFileInteractive(IFile file)
-		throws CompilerException
+		throws ConnectionException, UnexpectedReplyException
 	{
 		ParseResults res = new ParseResults();
 		
@@ -440,15 +481,22 @@ public class OMCProxy
 		return tokens; 
 	}
 	
-	public static boolean isPackage(String className) 
-		throws CompilerException
+	/**
+	 * Queries the compiler if a particular modelica class/package is a package.
+	 * 
+	 * @param className fully qualified name of the class/package
+	 * @return true if className is a package false otherwise
+	 * @throws ConnectionException 
+	 */
+	public static boolean isPackage(String className)
+		throws ConnectionException 
 	{
 		String retval = sendExpression("isPackage(" + className + ")");
 		return retval.contains("true");
 	}
 	
 	public static void getElementsInfo(String className)
-		throws CompilerException
+		throws ConnectionException
 	{
 		// TODO actually return real elements info..
 		String retval = sendExpression("getElementsInfo("+ className +")");

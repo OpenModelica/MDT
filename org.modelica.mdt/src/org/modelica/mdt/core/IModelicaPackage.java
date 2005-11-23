@@ -56,11 +56,19 @@ public interface IModelicaPackage extends IModelicaFolder
 	public List<IModelicaClass> getClasses() throws CompilerException;
 
 	/**
-	 * return the package's base name, that is if package's full name is
-	 * foo.bar.hej then the base name is foo.bar and short name is hej
+	 * return the package's prefix, that is if package's full name is
+	 * foo.bar.hej then the prefix is foo.bar and short name is hej
 	 * 
 	 * @return the prefix of this package
 	 */
-	public String getBaseName();
+	public String getPrefix();
+
+	/**
+	 * return the package's full name, that is if package's full name is
+	 * foo.bar.hej then the prefix is foo.bar and short name is hej
+	 * 
+	 * @return the full name of this package
+	 */
+	public String getFullName();
 	
 }

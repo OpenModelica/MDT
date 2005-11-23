@@ -40,6 +40,7 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -47,11 +48,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.ParseResults;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
- *
  */
 public class ModelicaFile extends ModelicaElement implements IModelicaFile 
 {
@@ -77,28 +80,58 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		return file;
 	}
 
-	public List<IModelicaPackage> getPackages() 
+	public List<IModelicaPackage> getPackages()
+		throws ConnectionException, UnexpectedReplyException 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		ParseResults res = OMCProxy.loadFileInteractive(file);
+		
+		LinkedList<IModelicaPackage> packages = 
+				new LinkedList<IModelicaPackage>();
+		
+		for (String name : res.getClasses())
+		{
+			if (OMCProxy.isPackage(name))
+			{
+				packages.add(new ModelicaPackage(this, name));
+			}
+		}
+
+		return packages;
 	}
 
-	public List<IModelicaClass> getClasses() 
+	public List<IModelicaClass> getClasses()
+		throws ConnectionException, UnexpectedReplyException 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		ParseResults res = OMCProxy.loadFileInteractive(file);
+		LinkedList<IModelicaClass> classes = new LinkedList<IModelicaClass>();
+		
+		for (String className : res.getClasses())
+		{
+			if (!OMCProxy.isPackage(className))
+			{
+				classes.add(new ModelicaClass(this, className));
+			}
+		}
+
+		return classes;
 	}
 
-	public List<?> getChildren() throws CompilerException 
+	public List<?> getChildren()
+		throws ConnectionException, UnexpectedReplyException 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		List<Object> children = new LinkedList<Object>();
+		
+		children.addAll(getPackages());
+		children.addAll(getClasses());
+		
+		return children;
 	}
 
-	public boolean hasChildren() throws CoreException, CompilerException 
+	public boolean hasChildren()
+		throws CoreException, ConnectionException, UnexpectedReplyException
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return !getChildren().isEmpty();
 	}
 
 }

@@ -46,6 +46,8 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.ISystemLibrary;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
  * @author Elmir Jagudin
@@ -59,17 +61,19 @@ public class SystemLibrary extends ModelicaElement implements ISystemLibrary
 	 * @see org.modelica.mdt.core.ISystemLibrary#getPackages()
 	 */
 	public List<IModelicaPackage> getPackages() 
+		throws CompilerException 
 	{
 		if (packages == null)
 		{
-			packages = new LinkedList<IModelicaPackage>();
-			packages.add(new ModelicaLibraryPackage(null, "Modelica"));
+			OMCProxy.loadSystemLibrary();
+			packages = new LinkedList<IModelicaPackage>();			
+			packages.add(new ModelicaPackage("", "Modelica"));
 		}
 		
 		return packages;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
 	 */
 	public String getElementName() 
@@ -77,7 +81,7 @@ public class SystemLibrary extends ModelicaElement implements ISystemLibrary
 		return "System Library";
 	}
 
-	public List<?> getChildren() 
+	public List<?> getChildren() throws CompilerException 
 	{
 		return getPackages();
 	}

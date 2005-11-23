@@ -1,16 +1,21 @@
 package org.modelica.mdt.internal.core;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.modelica.mdt.core.IClassComponent;
 import org.modelica.mdt.core.IClassExtend;
 import org.modelica.mdt.core.IClassImport;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
@@ -27,6 +32,18 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	private Type type;
 	
 	private boolean typeKnown = false;
+	
+	/**
+	 * Create a top class that is contained in a specific modelica file.
+	 * 
+	 * @param containerFile
+	 * @param name
+	 */
+	protected ModelicaClass(IModelicaFile containerFile, String name)
+	{
+		this.className = name;
+		this.fullName = name;
+	}
 		
 	protected ModelicaClass(String name, String pkg)
 	{
@@ -58,7 +75,9 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 			
 			Type t = OMCProxy.getType(fullName);
 			if(t != null)
+			{
 				type = t;
+			}
 			
 			typeKnown = true;
 		}
@@ -89,38 +108,58 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return file;
 	}
 
-	/*
-	 * Uses getElementInfo() to get all info about this class
-	 */
-	private void getElementsInfo() throws CompilerException
+	public List<?> getChildren() throws CompilerException
 	{
-		OMCProxy.getElementsInfo(fullName);
+		List<Object> children = new LinkedList<Object>();
+		
+		children.addAll(getPackages());
+		children.addAll(getClasses());
+
+		return children;
 	}
-	
+
+	public boolean hasChildren() throws CoreException, CompilerException
+	{
+		return !getChildren().isEmpty();
+	}
+
+	public List<IModelicaClass> getClasses() throws CompilerException
+	{
+		LinkedList<IModelicaClass> classes = new LinkedList<IModelicaClass>();
+		
+		for (String name : OMCProxy.getClassNames(fullName))
+		{
+			classes.add(new ModelicaClass(name, fullName));
+		}
+		return classes;
+	}
+
+	public List<IModelicaPackage> getPackages() throws CompilerException
+	{
+		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
+		
+		for (String name : OMCProxy.getPackages(fullName))
+		{
+			pkgs.add(new ModelicaPackage(name, fullName));
+		}
+		return pkgs;
+	}
+
 	public IClassImport[] getImports()
 	{
-		// TODO Auto-generated method stub
-		try
-		{
-			getElementsInfo();
-		}
-		catch(CompilerException e)
-		{
-			System.out.println(e);
-		}
-		
-		return null;
+		// TODO implement me
+		return new IClassImport[0];
 	}
 
 	public IClassExtend[] getExtends()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// TODO impelement me
+		return new IClassExtend[0];
 	}
 
 	public IClassComponent[] getComponents()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// TODO implement me
+		return new IClassComponent[0];
 	}
 }

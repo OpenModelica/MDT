@@ -108,7 +108,7 @@ public class ProjectsViewDoubleClickAction extends Action
 	 */
 	private void openInternalFile(IFile file)
 	{
-	
+			
 		IWorkbenchPage page = PlatformUI.getWorkbench().
 			getActiveWorkbenchWindow().getActivePage();
 

@@ -67,7 +67,7 @@ import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
 
 /**
- * This builder load all changed files into OMC in order to check for
+ * This builder loads all changed files into OMC in order to check for
  * parse errors. If a loaded file have any parse error, then a problem 
  * markers are set to communicate the problem to the user.
  * 

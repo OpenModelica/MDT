@@ -53,10 +53,13 @@ import org.modelica.mdt.internal.omcproxy.CompilerException;
  */
 public interface IModelicaFolder extends IModelicaElement, IParent
 {
-	public List<IModelicaFolder> getFolders() throws CoreException;
+	public List<IModelicaFolder> getFolders() 
+		throws CoreException, CompilerException;
 	
 	/**
-	 * @return all subpackages contained in this package
+	 * @return all subpackages contained in this package. If the
+	 * package does not contain any subpackages an empty list should be
+	 * returned.
 	 */
 	public List<IModelicaPackage> getPackages() 
 		throws CoreException, CompilerException;
