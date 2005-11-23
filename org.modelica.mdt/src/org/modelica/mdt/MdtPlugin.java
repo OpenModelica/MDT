@@ -57,9 +57,12 @@ public class MdtPlugin extends AbstractUIPlugin
 	public static final String MODELICA_NATURE = 
 		"org.modelica.mdt.ModelicaNature";
 
-	private static final int INTERNAL_ERROR = 0;
 	
-	//The shared instance.
+	/* status codes used for logging */ 
+	private static final int INTERNAL_ERROR = 0;
+	private static final int INTERNAL_WARNING = 1;
+	
+	/* The shared instance. */
 	private static MdtPlugin plugin;
 	
 	/**
@@ -123,15 +126,6 @@ public class MdtPlugin extends AbstractUIPlugin
 		widget.setData("name", tag);
 	}
 	
-//	/**
-//	 * convinience wrapper method for loggin to plugin logger
-//	 * @param exception the exception to log
-//	 */
-//	public static void log(CoreException exception)
-//	{
-//		plugin.getLog().log(exception.getStatus());
-//	}
-	
 	/**
 	 * convinience wrapper method for loggin to plugin logger
 	 */
@@ -164,11 +158,25 @@ public class MdtPlugin extends AbstractUIPlugin
 	{
 		log(new Status(IStatus.ERROR, getSymbolicName(), 
 				INTERNAL_ERROR,
-				"Internal Error", e));
+				e.getMessage(), e));
 	}
-	
+
 	/**
-	 * Note: This method is for internal use only. Clients should not call this method.
+	 * Logs a runtime warning. A message that can be helpfull while
+	 * investigating possible problems.
+	 * 
+	 * @param message warning message
+	 */
+	public static void logWarning(String message)
+	{
+		log(new Status(IStatus.WARNING, getSymbolicName(), 
+				INTERNAL_WARNING, message, null));
+					
+	}
+
+	/**
+	 * Note: This method is for internal use only. Clients should not
+	 * call this method.
 	 */
 	public static Object[] concatenate(Object[] a1, Object[] a2) 
 	{
