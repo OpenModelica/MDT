@@ -47,7 +47,6 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.InitializationException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
@@ -75,23 +74,25 @@ public class TestTraversingPackages extends TestCase
 		
 	}
 	
-	public void testTraverse() throws CoreException, InitializationException
+	public void testTraverse() throws CoreException, CompilerException
 	{
 		IModelicaPackage root_package = null;
 		IModelicaPackage childless_package = null;
 		IModelicaFile root_package_model = null;
 		IModelicaFile root_package_function = null;
+
 		/* for a temporal reference too package.mo */
 		IModelicaFile package_mo = null;
+
 		/* root_package/plain_file */
 		IFile root_package_plain_file = null;
+
 		/* root_package/root_package_folder */
 		IModelicaFolder root_package_folder = null;
 		
 		IModelicaPackage sub_package = null;
 		IModelicaPackage leaf_package = null;
 		IModelicaFile sub_package_model = null;
-
 
 		/*
 		 * traverse children of project_root 
@@ -119,12 +120,12 @@ public class TestTraversingPackages extends TestCase
 			fail(e.getMessage());
 		}
 		assertNotNull("root_package not found", root_package);
-		assertEquals("Package base name", root_package.getBaseName(), "");
+		assertEquals("Package base name", root_package.getPrefix(), "");
 		assertEquals("Package name", root_package.getElementName(), 
 				"root_package");
 				
 		assertNotNull("childless_package not found", childless_package);
-		assertEquals("Package base name", childless_package.getBaseName(), "");
+		assertEquals("Package base name", childless_package.getPrefix(), "");
 		assertEquals("Package name", childless_package.getElementName(), 
 				"childless_package");
 		
@@ -210,15 +211,15 @@ public class TestTraversingPackages extends TestCase
 		/* traverse packages */		
 		try
 		{
-		for (IModelicaPackage pkg : sub_package.getPackages())
-		{
-			String name = pkg.getElementName();
-			if (name.equals("leaf_package"))
+			for (IModelicaPackage pkg : sub_package.getPackages())
 			{
-				leaf_package = pkg;
+				String name = pkg.getElementName();
+				if (name.equals("leaf_package"))
+				{
+					leaf_package = pkg;
+				}
+				
 			}
-			
-		}
 		}
 		catch(CompilerException e)
 		{
@@ -261,7 +262,7 @@ public class TestTraversingPackages extends TestCase
 	{
 		assertEquals("Package full name does not match",
 					 fullName,	
-					 zePackage.getBaseName() + "." + 
+					 zePackage.getPrefix() + "." + 
 					         zePackage.getElementName());
 	}
 }

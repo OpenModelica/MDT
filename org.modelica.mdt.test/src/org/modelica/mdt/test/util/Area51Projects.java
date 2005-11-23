@@ -63,8 +63,17 @@ import org.modelica.mdt.core.ModelicaCore;
  * 
  * Following modelica project is created:
  * 
- * 'MODELICA_PROJECT_NAME'
+ *'MODELICA_PROJECT_NAME'
  * + .project
+ * + empty_file
+ * + README.txt
+ * + root_model.mo
+ * + nested_models.mo
+ * + root_folder                 (folder)
+ *   + hej_hopp
+ * + package_look_alike          (folder)
+ *   + package.mo                (an empty file)
+ * + empty_folder                (folder)   
  * + root_package                (folder)
  *   + package.mo
  *   + plain_file
@@ -81,13 +90,12 @@ import org.modelica.mdt.core.ModelicaCore;
  *   
  *  Following simple project (without any natures) is created:
  *  
- *  'SIMPLE_PROJECT_NAME'
- *  + .project
- *  + plain_file
- *  + root_folder                (folder)
- *    + sub_folder               (folder)
- *    + folder_file
- *  
+ *'SIMPLE_PROJECT_NAME'
+ * + .project
+ * + plain_file
+ * + root_folder                (folder)
+ *   + sub_folder               (folder)
+ *   + folder_file
  *  
  * @author Elmir Jagudin
  */
@@ -202,7 +210,87 @@ public class Area51Projects
 		IFolder folder, sub_folder;
 		IFile file;
 		String contents;
+		
+		/* root_folder */
+		folder = modelica_project.getFolder("root_folder");
+		folder.create(false, true, null);
+		
+		/* root_folder/hej_hopp */
+		file = folder.getFile("hej_hopp");
+		file.create(Utility.getByteStream("go morron!\n"), true, null);
+		
+		/* package_look_alike */
+		folder = modelica_project.getFolder("package_look_alike");
+		folder.create(false, true, null);
+		
+		/* package_look_alike/package.mo */
+		file = folder.getFile("package.mo");
+		file.create(Utility.getByteStream(""), true, null);
+		
+		/* empty_folder */
+		folder = modelica_project.getFolder("empty_folder");
+		folder.create(false, true, null);		
+		
+		/* empty_file */
+		file = modelica_project.getFile("empty_file");
+		file.create(Utility.getByteStream(""), true, null);
+
+		/* root_model.mo */
+		file = modelica_project.getFile("root_model.mo");
+		contents = 
+			"model root_model\n" +
+			"    import Modelica;\n" +
+			"end root_model;";
+		file.create(Utility.getByteStream(contents), true, null);
+
+		/* nested_models.mo */
+		file = modelica_project.getFile("nested_models.mo");
+		contents = 
+			"model nested_models\n" +
+			"    import Modelica;\n" +
+			"    record hepp end hepp;\n" +
+			"    class foo\n" +
+			"        class bar\n"+
+			"        end bar;" +
+			"    end foo;\n" +
+			"end nested_models;\n" +
+			"model muu\n" +
+			"Real a;\n" +
+			"equation\n"+
+			"	x = 10;\n"+
+			"end muu;\n"+
+			"\n"+
+			"model foo\n"+
+			"	import Modelica;\n"+
+			"end foo;\n" +
+			"\n\n" +
+			"record hej\n" +
+			"	package ine_paketen\n" +
+			"	end ine_paketen;\n" +
+			"	class hejhej\n" +
+			"		class foo\n" +
+			"		end foo;\n" +
+			"	end hejhej;\n" +
+			"end hej;\n" +
+			"\n\n\n" +
+			"package hepp\n" +
+			"	package hopp\n" +
+			"	end hopp;\n" +
+			"	class hehehe\n" +
+			"	end hehehe;\n" +
+			"end hepp;\n";
 			
+
+		file.create(Utility.getByteStream(""), true, null);
+		
+		
+		/* README.txt */
+		file = modelica_project.getFile("README.txt");
+		contents = 
+			"This is a dummy modelica project to run regression test on.\n" +
+			" trés bien !";
+		file.create(Utility.getByteStream(contents), true, null);
+				
 		/* root_package */
 		folder = modelica_project.getFolder("root_package");
 		folder.create(false, true, null);
