@@ -42,17 +42,16 @@ package org.modelica.mdt.core;
 
 import java.util.List;
 
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
 
 
 
 /**
+ * An object that represent the standart library available in this project
  * @author Elmir Jagudin
  *
- * An object that represent the standart library available in this project
  */
 public interface ISystemLibrary extends IModelicaElement, IParent
 {
-	public List<IModelicaPackage> getPackages() 
-		throws CompilerException;
+	public List<IModelicaPackage> getPackages() throws ConnectionException; 
 }

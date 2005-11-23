@@ -42,7 +42,8 @@ package org.modelica.mdt.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * Common protocol for all elements provided by the Modelica root.
@@ -66,9 +67,12 @@ public interface IModelicaElement extends IAdaptable
 	 * 
 	 * @return the innermost resource enclosing this element, <code>null</code> if this 
 	 * element is included in an external archive
+	 * @throws ConnectionException 
+	 * @throws UnexpectedReplyException 
 	 * @since 2.0
 	 */
-	IResource getResource() throws CompilerException;
+	IResource getResource()
+		throws ConnectionException, UnexpectedReplyException;
 	
 	
 }

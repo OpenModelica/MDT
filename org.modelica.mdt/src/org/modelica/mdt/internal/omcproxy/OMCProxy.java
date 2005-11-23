@@ -26,7 +26,6 @@ public class OMCProxy
 
 	/**
 	 * Reads in the OMC object reference from a file on disk. 
-	 * @throws ConnectionException 
 	 */
 	private static String readObjectFromFile() throws ConnectionException
 	{
@@ -59,7 +58,9 @@ public class OMCProxy
 		return stringifiedObjectReference;
 	}
 	
-	/* Returns the path to the OMC CORBA object that is stored on disk. */
+	/**
+	 * @return Returns the path to the OMC CORBA object that is stored on disk.
+	 */
 	private static String getPathToObject()
 	{
 		String fileName = null;
@@ -84,9 +85,6 @@ public class OMCProxy
 	
 	/**
 	 * Start a new OMC server.
-	 * @throws ConnectionException 
-	 * 
-	 *  @throws InitializationException
 	 */
 	private static void startServer() throws ConnectionException
 	{
@@ -297,7 +295,8 @@ public class OMCProxy
 		return retval;
 	}
 	
-	public static void loadSystemLibrary() throws CompilerException
+	public static void loadSystemLibrary()
+		throws ConnectionException
 	{
 		if (!systemLibraryLoaded)
 		{
@@ -310,10 +309,12 @@ public class OMCProxy
 	 * @param className full class name where to look for packages
 	 * @return an array of subpackages defined (and loaded into OMC)
 	 *  inside the class named className
-	 * @throws InitializationException
+	 * @throws ConnectionException 
+	 * @throws InvocationError 
+	 * @throws UnexpectedReplyException 
 	 */
 	public static String[] getPackages(String className)
-		throws CompilerException
+		throws ConnectionException, InvocationError, UnexpectedReplyException
 	{
 		String retval;
 		
@@ -332,10 +333,12 @@ public class OMCProxy
 	 * @param className full class name where to look for packages
 	 * @return an array of subclasses defined (and loaded into OMC)
 	 *  inside the class named className
+	 * @throws ConnectionException 
+	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
 	 */	
 	public static String[] getClassNames(String className)
-		throws CompilerException
+		throws ConnectionException, UnexpectedReplyException
 	{
 		String retval;
 		retval = sendExpression("getClassNames("+className+")");
@@ -366,10 +369,10 @@ public class OMCProxy
 	 * @param className fully qualified class name
 	 * @return the restriction type of the class or null if 
 	 *         type can't be determined
-	 * @throws CompilerException
+	 * @throws ConnectionException 
 	 */
 	public static IModelicaClass.Type getType(String className)
-		throws CompilerException
+		throws ConnectionException
 	{
 		IModelicaClass.Type type = null;
 		
@@ -463,8 +466,8 @@ public class OMCProxy
 		return res;
 	}
 
-	public static String[] getCrefInfo(String className) 
-		throws CompilerException
+	public static String[] getCrefInfo(String className)
+		throws ConnectionException, UnexpectedReplyException 
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
 		

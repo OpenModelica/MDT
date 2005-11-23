@@ -7,7 +7,6 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.modelica.mdt.core.IClassComponent;
@@ -16,8 +15,10 @@ import org.modelica.mdt.core.IClassImport;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * 
@@ -68,7 +69,8 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return parentPackage;
 	}
 	
-	public Type getType() throws CompilerException
+	public Type getType()
+		throws ConnectionException
 	{
 		if(typeKnown == false)
 		{
@@ -85,7 +87,8 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return type;
 	}
 	
-	public IResource getResource() throws CompilerException
+	public IResource getResource()
+		throws ConnectionException, UnexpectedReplyException
 	{
 		String[] tokens = OMCProxy.getCrefInfo(fullName);
 
@@ -97,7 +100,7 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return f;
 	}
 	
-	public File getFile() throws CompilerException
+	public File getFile() throws ConnectionException, UnexpectedReplyException
 	{
 		String[] tokens = OMCProxy.getCrefInfo(fullName);
 		
@@ -108,7 +111,8 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return file;
 	}
 
-	public List<?> getChildren() throws CompilerException
+	public List<?> getChildren() 
+		throws ConnectionException, InvocationError, UnexpectedReplyException
 	{
 		List<Object> children = new LinkedList<Object>();
 		
@@ -118,12 +122,14 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return children;
 	}
 
-	public boolean hasChildren() throws CoreException, CompilerException
+	public boolean hasChildren()
+		throws ConnectionException, InvocationError, UnexpectedReplyException
 	{
 		return !getChildren().isEmpty();
 	}
 
-	public List<IModelicaClass> getClasses() throws CompilerException
+	public List<IModelicaClass> getClasses() 
+		throws ConnectionException, UnexpectedReplyException
 	{
 		LinkedList<IModelicaClass> classes = new LinkedList<IModelicaClass>();
 		
@@ -134,7 +140,8 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		return classes;
 	}
 
-	public List<IModelicaPackage> getPackages() throws CompilerException
+	public List<IModelicaPackage> getPackages()
+		throws ConnectionException, InvocationError, UnexpectedReplyException
 	{
 		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
 		

@@ -43,7 +43,9 @@ package org.modelica.mdt.internal.core;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * A modelica element that can have children.
@@ -52,9 +54,12 @@ import org.modelica.mdt.internal.omcproxy.CompilerException;
  */
 abstract public class ModelicaParent extends ModelicaElement 
 {
-	abstract public List<?> getChildren() throws CompilerException; 
+	abstract public List<?> getChildren()
+		throws ConnectionException, UnexpectedReplyException, InvocationError; 
 
-	public boolean hasChildren() throws CoreException, CompilerException
+	public boolean hasChildren()
+		throws CoreException, ConnectionException, 
+			UnexpectedReplyException, InvocationError
 	{
 		return !getChildren().isEmpty();
 	}

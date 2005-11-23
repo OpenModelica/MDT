@@ -62,9 +62,10 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.internal.omcproxy.CompileError;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * This builder loads all changed files into OMC in order to check for
@@ -303,7 +304,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	}
 
 	protected static void loadFileAndReportErrors(IFile file)
-		throws CompilerException
+		throws ConnectionException, UnexpectedReplyException
 	{
 		ParseResults res = OMCProxy.loadFileInteractive(file);
 

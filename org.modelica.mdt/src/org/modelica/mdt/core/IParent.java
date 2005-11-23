@@ -13,7 +13,9 @@ package org.modelica.mdt.core;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 
 /**
@@ -30,8 +32,12 @@ public interface IParent
 	 * the children are in no particular order.
 	 *
 	 * @return the immediate children of this element
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 * @throws InvocationError 
 	 */
-	List<?> getChildren() throws CompilerException;
+	List<?> getChildren() 
+		throws ConnectionException, UnexpectedReplyException, InvocationError;
 	
 	/**
 	 * Returns whether this element has one or more immediate children.
@@ -40,6 +46,11 @@ public interface IParent
 	 *
 	 * @return true if the immediate children of this element, false otherwise
 	 * @throws CoreException 
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 * @throws InvocationError 
 	 */
-	boolean hasChildren() throws CoreException, CompilerException;
+	boolean hasChildren() 
+		throws CoreException, ConnectionException, UnexpectedReplyException,
+			InvocationError;
 }

@@ -48,6 +48,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
@@ -108,7 +110,8 @@ abstract public class ModelicaElement extends PlatformObject
 		return super.getAdapter(adapter);
 	}
 
-	public IResource getResource() throws CompilerException
+	public IResource getResource() 
+		throws ConnectionException, UnexpectedReplyException
 	{
 		return null;
 	}

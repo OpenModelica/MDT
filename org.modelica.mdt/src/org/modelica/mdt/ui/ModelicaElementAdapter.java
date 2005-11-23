@@ -52,7 +52,7 @@ import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
 
 /**
  * @author Elmir Jagudin
@@ -92,9 +92,9 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 		else if (object instanceof IModelicaClass)
 		{
 			String imgTag = null;
-			
-			
-			try {
+
+			try
+			{
 				switch (((IModelicaClass)object).getType())
 				{
 				case CLASS:
@@ -121,8 +121,10 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 				default:
 					imgTag = "";
 				}
-			} catch (CompilerException e) {
-				// TODO Proper error handling here!
+			}
+			catch (ConnectionException e)
+			{
+				// TODO proper error handling
 				e.printStackTrace();
 			}
 			return ModelicaImages.getImageDescriptor(imgTag);

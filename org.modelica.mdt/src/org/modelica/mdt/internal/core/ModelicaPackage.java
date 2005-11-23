@@ -52,9 +52,11 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * Represent a file based package. That is a package that is either defined
@@ -158,7 +160,8 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	}
 
 	public List<IModelicaPackage> getPackages()
-		throws CoreException, CompilerException
+		throws CoreException, ConnectionException, UnexpectedReplyException,
+			InvocationError
 	{
 		LinkedList<IModelicaPackage> packages = new LinkedList<IModelicaPackage>();
 		
@@ -188,9 +191,11 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	 * Checks if the resource can represent a modelica package.
 	 * @param res
 	 * @return true if the res is a package, false otherwise.
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
 	 */
 	public static boolean isPackage(IResource res)
-		throws CompilerException
+		throws ConnectionException, UnexpectedReplyException
 	{
 		if (res.getType() == IResource.FOLDER)
 		{
@@ -224,10 +229,13 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		return false;
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * @throws ConnectionException 
+	 * @throws UnexpectedReplyException 
 	 * @see org.modelica.mdt.core.IModelicaPackage#getClasses()
 	 */
-	public List<IModelicaClass> getClasses() throws CompilerException 
+	public List<IModelicaClass> getClasses()
+		throws ConnectionException, UnexpectedReplyException 
 	{
 		//TODO implement me correctly
 		//
@@ -268,7 +276,8 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 		return prefix + "." + getElementName();
 	}
 
-	public List<?> getChildren() throws CompilerException
+	public List<?> getChildren()
+		throws ConnectionException, UnexpectedReplyException, InvocationError
 	{
 		try 
 		{
@@ -292,7 +301,8 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 
 
 
-	public IResource getResource() throws CompilerException 
+	public IResource getResource()
+		throws ConnectionException, UnexpectedReplyException 
 	{
 		if (folder != null)
 		{
@@ -309,7 +319,7 @@ public class ModelicaPackage extends ModelicaParent implements IModelicaPackage
 	}
 
 	public List<IModelicaFolder> getFolders() 
-		throws CoreException, CompilerException 
+		throws CoreException, ConnectionException, UnexpectedReplyException 
 	{
 		if (folder != null)
 		{

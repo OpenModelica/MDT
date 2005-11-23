@@ -51,7 +51,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
@@ -96,12 +97,13 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 	
 	/**
-	 * @throws CompilerException 
-	 * @throws InitializationException 
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 * @throws CoreException
 	 * @see org.modelica.mdt.core.IModelicaFolder#getFolders()
 	 */
 	public List<IModelicaFolder> getFolders() 
-		throws CoreException, CompilerException
+		throws CoreException, ConnectionException, UnexpectedReplyException
 	{
 		IResource[] members = container.members();
 		LinkedList<IModelicaFolder> folders = new LinkedList<IModelicaFolder>();
@@ -119,10 +121,13 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 	/**
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 * @throws CoreException
 	 * @see org.modelica.mdt.core.IModelicaFolder#getPackages()
 	 */
 	public List<IModelicaPackage> getPackages()
-		throws CoreException, CompilerException
+		throws CoreException, ConnectionException, UnexpectedReplyException
 	{
 		IResource[] members = container.members();
 		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
@@ -185,7 +190,8 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 
-	public List<?> getChildren() throws CompilerException 
+	public List<?> getChildren()
+		throws ConnectionException, UnexpectedReplyException 
 	{
 		try 
 		{

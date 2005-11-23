@@ -44,7 +44,9 @@ package org.modelica.mdt.core;
 import java.io.File;
 import java.util.List;
 
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 
 
@@ -57,9 +59,9 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	
 	/**
 	 * @return the restriction type of this class
-	 * @throws InitializationException
+	 * @throws ConnectionException 
 	 */
-	public Type getType() throws CompilerException;
+	public Type getType() throws ConnectionException;
 	
 	/**
 	 * @return the container package for this class. Empty string if the
@@ -69,24 +71,29 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	
 	/**
 	 * @return the file where this class is defined
-	 * @throws InitializationException
+	 * @throws ConnectionException 
+	 * @throws UnexpectedReplyException 
 	 */
-	public File getFile() throws CompilerException;
+	public File getFile() throws ConnectionException, UnexpectedReplyException;
 	
 	/**
 	 * @return subclasses contained in this class
-	 * @throws CompilerException 
+	 * @throws ConnectionException 
+	 * @throws UnexpectedReplyException 
 	 */
-	public List<IModelicaClass> getClasses() throws CompilerException;
+	public List<IModelicaClass> getClasses()
+		throws ConnectionException, UnexpectedReplyException;
 	
 	/**
 	 * @return all subpackages contained in this class 
-	 * (yeah this is weird, i know)
+	 *              (yeah this is weird, i know)
+	 * @throws UnexpectedReplyException 
+	 * @throws InvocationError 
+	 * @throws ConnectionException 
 	 * 
-	 * @throws CompilerException 
-	 * @throws InitializationException 
 	 */
-	public List<IModelicaPackage> getPackages() throws CompilerException;
+	public List<IModelicaPackage> getPackages()
+		throws ConnectionException, InvocationError, UnexpectedReplyException;
 
 	/**
 	 * @return all imports this class is making

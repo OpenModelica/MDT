@@ -42,7 +42,8 @@ package org.modelica.mdt.core;
 
 import java.util.List;
 
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
@@ -52,8 +53,11 @@ public interface IModelicaPackage extends IModelicaFolder
 	
 	/**
 	 * @return classes contained in this package
+	 * @throws ConnectionException 
+	 * @throws UnexpectedReplyException 
 	 */
-	public List<IModelicaClass> getClasses() throws CompilerException;
+	public List<IModelicaClass> getClasses()
+		throws ConnectionException, UnexpectedReplyException;
 
 	/**
 	 * return the package's prefix, that is if package's full name is
