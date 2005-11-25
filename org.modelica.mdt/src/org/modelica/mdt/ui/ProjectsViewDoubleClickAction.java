@@ -7,7 +7,9 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
@@ -24,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.builder.SyntaxChecker;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
@@ -67,11 +70,27 @@ public class ProjectsViewDoubleClickAction extends Action
 		{
 			openInternalFile((IFile)obj);
 		}
+		/* open file that this class is contained in */
 		else if(obj instanceof IModelicaClass)
 		{
 			try
 			{
-				openExternalFile(((IModelicaClass)obj).getFile());
+				IFile file = (IFile)((IModelicaClass)obj).getResource();
+				
+				/* If file is null, the ModelicaClass is contained in an 
+				 * external file. */
+				if(file == null)
+				{
+					openExternalFile(((IModelicaClass)obj).getFile());
+				}
+				else
+				{
+					int line = ((IModelicaClass)obj).getLine();
+					IMarker marker;
+					marker = SyntaxChecker.createMarkerAtLine(file, line,
+							"TEMP", IMarker.TEXT);
+					openInternalFile(file, marker);
+				}
 			}
 			catch (CompilerException e)
 			{
@@ -102,11 +121,15 @@ public class ProjectsViewDoubleClickAction extends Action
 		viewer.expandToLevel(element, 1);
 	}
 
+	private void openInternalFile(IFile file)
+	{
+		openInternalFile(file, null);
+	}
 	/**
 	 * Opens file in the default editor
 	 * param file file to open
 	 */
-	private void openInternalFile(IFile file)
+	private void openInternalFile(IFile file, IMarker marker)
 	{
 			
 		IWorkbenchPage page = PlatformUI.getWorkbench().
@@ -117,6 +140,20 @@ public class ProjectsViewDoubleClickAction extends Action
 			try
 			{
 				IDE.openEditor(page, file);
+				if(marker != null)
+				{
+					IDE.openEditor(page, marker);
+					try
+					{
+						file.deleteMarkers(IMarker.TEXT, true,
+								IFile.DEPTH_INFINITE);
+					}
+					catch(CoreException e)
+					{
+						e.printStackTrace();
+						MdtPlugin.log(e);
+					}
+				}
 			} 
 			catch (PartInitException e)  
 			{
@@ -128,15 +165,12 @@ public class ProjectsViewDoubleClickAction extends Action
 
 	private void openExternalFile(File file)
 	{
-		System.out.println("Open external file " + file);
-		
 		IEditorInput input = new ModelicaFileEditorInput(file);
 		
 		String editorId = getEditorId(file);
 		
 		IWorkbenchPage page = PlatformUI.getWorkbench()
 			.getActiveWorkbenchWindow().getActivePage();
-		
 		
 		try
 		{

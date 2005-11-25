@@ -236,21 +236,27 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	
 	protected static void reportProblem(IFile file, int lineno, String msg)
 	{
+		createMarkerAtLine(file, lineno, msg, IMarker.PROBLEM);
+	}
+
+	public static IMarker createMarkerAtLine(IFile file, int lineno,
+			String message, String type)
+	{
+		IMarker marker = null;
 		try
 		{
-			IMarker marker = file.createMarker(IMarker.PROBLEM);
-			marker.setAttribute(IMarker.MESSAGE, msg);
+			marker = file.createMarker(type);
+			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.LINE_NUMBER, lineno);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 			marker.setAttribute(IMarker.LOCATION, Integer.toString(lineno));
-			
-			
+
 			/*
 			 * To find out where the error is in the file, we have to read it
 			 * in to a Document and then use getLineOffset to convert from a
 			 * line number to a character position.
 			 */
-			int start = 0; int end = 0;
+			int start = 0, end = 0;
 			InputStream is = file.getContents();
 			BufferedInputStream bis = new BufferedInputStream(is);
 			String contents = "";
@@ -263,7 +269,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 						break;
 					byte[] buf = new byte[avail];
 					bis.read(buf, 0, avail);
-
+	
 					contents += new String(buf);
 				}
 				catch(IOException e)
@@ -271,7 +277,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 					e.printStackTrace();
 				}
 			}
-
+	
 			Document d = new Document(contents);
 			try
 			{
@@ -282,7 +288,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			{
 				MdtPlugin.log(e);
 			}
-
+			
 			marker.setAttribute(IMarker.CHAR_START, start);
 			marker.setAttribute(IMarker.CHAR_END, end);
 		}
@@ -290,9 +296,9 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		{
 			MdtPlugin.log(e);
 		}
-		
+		return marker;
 	}
-	
+		
 	protected void startupOnInitialization()
 	{
 		// TODO Add builder init here

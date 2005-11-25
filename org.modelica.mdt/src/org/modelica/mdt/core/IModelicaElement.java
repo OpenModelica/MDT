@@ -64,6 +64,9 @@ public interface IModelicaElement extends IAdaptable
 	 * If this element is included in an external archive, <code>null</code>
 	 * is returned.
 	 * This is a handle-only method.
+	 *
+	 * If this element is stored outside of the workspace root, e.g. the
+	 * system library elements, then null is returned from this method.
 	 * 
 	 * @return the innermost resource enclosing this element, <code>null</code> if this 
 	 * element is included in an external archive
@@ -73,6 +76,4 @@ public interface IModelicaElement extends IAdaptable
 	 */
 	IResource getResource()
 		throws ConnectionException, UnexpectedReplyException;
-	
-	
 }

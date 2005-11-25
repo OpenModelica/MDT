@@ -90,9 +90,25 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	public IResource getResource()
 		throws ConnectionException, UnexpectedReplyException
 	{
+		// TODO The path to the file should actually be stored somewhere in
+		//      ModelicaClass (at least that's what I've heard)
 		String[] tokens = OMCProxy.getCrefInfo(fullName);
 
 		IPath filePath = new Path(tokens[0]);
+
+		/*
+		 * filePath is an absolute path starting at the root of the file system,
+		 * what we want is a path starting from the workspace root.
+		 * To accomplish this, we cut off the first segments. 
+		 */
+		IPath workspacePath = ResourcesPlugin.getWorkspace()
+			.getRoot().getRawLocation();
+		
+		/* Make sure that this file really is inside the workspace root */
+		if(workspacePath.isPrefixOf(filePath) == false)
+			return null;
+		
+		filePath = filePath.removeFirstSegments(workspacePath.segmentCount());
 		
 		IFile f = 
 			ResourcesPlugin.getWorkspace().getRoot().getFile(filePath);
@@ -106,9 +122,14 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		
 		File file = new File(tokens[0]);
 		
-		getImports();
-		
 		return file;
+	}
+	
+	public int getLine() throws ConnectionException, UnexpectedReplyException
+	{
+		String[] tokens = OMCProxy.getCrefInfo(fullName);
+
+		return Integer.parseInt(tokens[1]);
 	}
 
 	public List<?> getChildren() 
@@ -137,6 +158,7 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		{
 			classes.add(new ModelicaClass(name, fullName));
 		}
+		
 		return classes;
 	}
 

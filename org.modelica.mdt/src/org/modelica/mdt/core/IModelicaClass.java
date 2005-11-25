@@ -75,7 +75,9 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 * @throws UnexpectedReplyException 
 	 */
 	public File getFile() throws ConnectionException, UnexpectedReplyException;
-	
+
+	public int getLine() throws ConnectionException, UnexpectedReplyException;
+
 	/**
 	 * @return subclasses contained in this class
 	 * @throws ConnectionException 

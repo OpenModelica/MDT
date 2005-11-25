@@ -323,7 +323,7 @@ public class OMCProxy
 		if (retval.trim().toLowerCase().equals("error"))
 		{
 			throw new InvocationError("getPackages("+className+")" +  
-					" replys 'error'");
+					" replies 'error'");
 		}
 
 		return ProxyParser.parseSimpleList(retval);
@@ -374,7 +374,7 @@ public class OMCProxy
 	public static IModelicaClass.Type getType(String className)
 		throws ConnectionException
 	{
-		IModelicaClass.Type type = null;
+		IModelicaClass.Type type = Type.CLASS;
 		
 		if(sendExpression("isType(" + className + ")").contains("true"))
 		{
@@ -498,12 +498,14 @@ public class OMCProxy
 		return retval.contains("true");
 	}
 	
-	public static void getElementsInfo(String className)
+	public static ElementsInfo getElementsInfo(String className)
 		throws ConnectionException
 	{
 		// TODO actually return real elements info..
 		String retval = sendExpression("getElementsInfo("+ className +")");
+		Vector<Object> v = ProxyParser.parseList(retval);
+		System.out.println(v);
 		
-		ProxyParser.parseList(retval);
+		return new ElementsInfo();
 	}
 }
