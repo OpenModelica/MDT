@@ -1,8 +1,6 @@
 package org.modelica.mdt.ui;
 
-import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.action.IMenuListener;
@@ -11,7 +9,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.swt.SWT;
@@ -20,12 +20,16 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.actions.OpenResourceAction;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -41,7 +45,10 @@ public class ProjectsView extends ViewPart
 	private DrillDownAdapter drillDownAdapter;
 	private IResourceChangeListener resourceListener;
 	private ProjectsViewDoubleClickAction doubleClickAction;
-    private DeleteResourceAction deleteAction;
+	
+	private OpenResourceAction openProjectAction;
+	private CloseResourceAction closeProjectAction;
+	private DeleteResourceAction deleteAction;
     
     /* handes the context menu in this view */ 
     private MenuManager contextMenu;
@@ -51,15 +58,20 @@ public class ProjectsView extends ViewPart
 	public void createPartControl(Composite parent)
 	{
 		/* create tree viewer */
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		viewer =
 			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-
+		
 		viewer.setContentProvider(new ModelicaElementContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ModelicaCore.getModelicaRoot());
 		MdtPlugin.tag(viewer.getTree(), TREE_TAG);
 
+        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                handleSelectionChanged(event);
+            }
+        });
+		
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		
 		makeContextMenu();
@@ -70,32 +82,20 @@ public class ProjectsView extends ViewPart
 		site.setSelectionProvider(viewer);
 		
 		makeActions(); // call before registering for selection changes
+
+		/*
+		 * make Project->Open Project and Project->Close Project main menus
+		 * work in this view also, hehe
+		 */
+		IActionBars actionBars = getViewSite().getActionBars();
+		actionBars.setGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId(),
+				openProjectAction);		
+		actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId(),
+				closeProjectAction);
+
+				
 		
 		hookDoubleClickAction();
-		
-		resourceListener = new IResourceChangeListener()
-		{
-		    public void resourceChanged(IResourceChangeEvent event)
-		    {
-		        if (event.getType() != IResourceChangeEvent.POST_CHANGE)
-		        {
-		             return;
-		        }
-
-		        //TODO this must be made more selective
-		    	// a list of objects (tree-nodes) need to be made
-		    	// from resource delta and posted to UI thread
-		    	// se http://www.eclipse.org/articles/Article-Resource-deltas/resource-deltas.html
-   			    getViewSite().getShell().getDisplay().asyncExec(new Runnable()
-		        {
-		    		 public void run()
-		    		 {
-		    			 viewer.refresh(true);
-		    		 }
-		    	});
-		    }
-		};
-		
 		viewer.getTree().addKeyListener(new KeyAdapter()
 		{
 			@Override
@@ -105,7 +105,12 @@ public class ProjectsView extends ViewPart
 			}
 			
 		});
-		workspace.addResourceChangeListener(resourceListener);
+	}
+
+	protected void handleSelectionChanged(SelectionChangedEvent event)
+	{
+		
+		getViewSite().getActionBars().updateActionBars();
 	}
 
 	protected void handleKeyPressed(KeyEvent e) 
@@ -152,7 +157,13 @@ public class ProjectsView extends ViewPart
 //		moveAction = new ResourceNavigatorMoveAction(shell, treeViewer);
 //		renameAction = new ResourceNavigatorRenameAction(shell, treeViewer);
 
+		openProjectAction = new OpenResourceAction(shell);
+		viewer.addSelectionChangedListener(openProjectAction);
+		closeProjectAction = new CloseResourceAction(shell);
+		viewer.addSelectionChangedListener(closeProjectAction);
+					
 		deleteAction = new DeleteResourceAction(shell);
+		
 		deleteAction.setDisabledImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images
@@ -196,6 +207,12 @@ public class ProjectsView extends ViewPart
 		manager.add(newSubMenu);
 		manager.add(new Separator());
 		manager.add(deleteAction);
+		manager.add(new Separator());		
+		manager.add(openProjectAction);
+		manager.add(closeProjectAction);
+
+		
+//		openProjectAction.selectionChanged((IStructuredSelection) viewer.getSelection());
 		deleteAction.selectionChanged((IStructuredSelection) viewer.getSelection());
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);

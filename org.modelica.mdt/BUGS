@@ -1,5 +1,7 @@
 Known bugs and issues in MDT plugin.
 
+Open Bugs and Issures
+
 BUGID: 	1
 STATUS: open
 TESTCASE: absent
@@ -7,13 +9,15 @@ DESCRIPTION
 When there is a warning displayed New Modelica Class Wizard, the finish button
 is disabled, should be enabled. 
 
-BUGID: 2
-STATUS: open
-TESTCASE: absent
-It is not possible to open/close project from the Modelica Project View.
-
 BUGID: 3
 STATUS: open
 TESTCASE: absent
 It is not possible to print from Modelica Editor. The print icon is grayed out
 on the toolbar.
+
+Closed Bugs and Issures
+
+BUGID: 2
+STATUS: fixed
+TESTCASE: absent, a bit tricky to write
+It is not possible to open/close project from the Modelica Project View.
