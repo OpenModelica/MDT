@@ -420,7 +420,7 @@ public class OMCProxy
 	 * Tries to load file into OMC which causes it to be parsed and the syntax
 	 * checked.
 	 * @param file
-	 * @return either returns the classes found in the file or the error
+	 * @return either returns the classes (and packages) found in the file or the error
 	 * messages from OMC
 	 * @throws ConnectionException 
 	 * @throws UnexpectedReplyException 

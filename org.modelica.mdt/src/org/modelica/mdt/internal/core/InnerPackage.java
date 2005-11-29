@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -38,70 +38,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.internal.core;
 
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElementChange;
-import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.ParseResults;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
+ * A package that is defined inside a modelica file or in the system library.
+ * 
  * @author Elmir Jagudin
  */
-public class ModelicaFile extends ModelicaElement implements IModelicaFile 
+public class InnerPackage extends ModelicaPackage
 {
-	private IFile file;
-	private ModelicaPackage parentPackage;
-
-	/* classes and packages in this file hashed by name */
-	Hashtable<String, Object> children = null;	
-
-	/**
-	 * Create a modelica file that is inside a package. All the definitions
-	 * in the file are placed in the namespace under the parent package.
-	 * 
-	 * @param parent
-	 * @param file
-	 */
-	public ModelicaFile(ModelicaPackage parent, IFile file) 
-	{
-		this.parentPackage = parent;
-		this.file = file;
-	}
-
+	/* subpackages and subclasses hashed by the thier's shortname */
+	private Hashtable<String, Object> children = null;
 	
-	public ModelicaFile(IFile file) 
+	public InnerPackage(String prefix, String name)
 	{
-		this.file = file;
+		this.prefix = prefix;
+		this.name = name;
+		setFullName();
+		
 	}
 
 	/* (non-Javadoc)
-	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
+	 * @see org.modelica.mdt.core.IParent#getChildren()
 	 */
-	public String getElementName()
-	{
-		return file.getName();
-	}
-
-	@Override
-	public IFile getResource() 
-	{
-		return file;
-	}
-
-	public Collection<Object> getChildren()
-		throws ConnectionException, UnexpectedReplyException 
+	public Collection<Object> getChildren() throws ConnectionException,
+			UnexpectedReplyException, InvocationError, CoreException
 	{
 		if (children == null)
 		{
@@ -110,50 +84,38 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		
 		return children.values();
 	}
-
+	
 	private Hashtable<String, Object> loadElements() 
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectionException, UnexpectedReplyException, InvocationError 
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
-
-		ParseResults res = OMCProxy.loadFileInteractive(file);
-
-		for (String name : res.getClasses())
+	
+		for (String name : OMCProxy.getPackages(fullName))
 		{
-			if (OMCProxy.isPackage(name))
-			{
-				if (parentPackage == null)
-				{
-					/* we are not inside a package */
-					elements.put(name, new InnerPackage("", name));
-				}
-				else
-				{
-					elements.put(name, new InnerPackage(
-							parentPackage.getFullName(),
-							name));					
-				}
-			}
-			else
-			{
-				elements.put(name, new ModelicaClass("", name));
-			}
+			elements.put(name, new InnerPackage(fullName, name));
 		}
 		
-		
+		for (String name : OMCProxy.getClassNames(fullName))
+		{
+			elements.put(name, new ModelicaClass(fullName, name));
+		}
+	
 		return elements;
 	}
-	
+
+
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.core.IParent#hasChildren()
+	 */
 	public boolean hasChildren()
-		throws CoreException, ConnectionException, UnexpectedReplyException
+		throws ConnectionException, UnexpectedReplyException, InvocationError,
+		CoreException 
 	{
 		return !getChildren().isEmpty();
 	}
 
-
-	
 	@Override
-	public Collection<IModelicaElementChange> update(IResourceDelta delta)
+	public Collection<IModelicaElementChange> reload()
 		throws ConnectionException, UnexpectedReplyException, InvocationError
 	{
 		LinkedList<IModelicaElementChange> changes = 
@@ -161,11 +123,13 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		
 		if (children == null)
 		{
-			/* if children are not loaded, then we can't update */
+			/* if children are not loaded, then we can't reload */
 			return changes;
 		}
 
+
 		Hashtable<String, Object> newChildren = loadElements();
+
 		@SuppressWarnings("unchecked")
 		Hashtable<String, Object> oldChildren = 
 			(Hashtable<String, Object>) children.clone();
@@ -174,10 +138,10 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		for (Object element : newChildren.values())
 		{
 			ModelicaElement moElement = (ModelicaElement) element;
-			
+
 			ModelicaElement oldElement = (ModelicaElement)
 				oldChildren.remove(moElement.getElementName());
-			
+		
 			if (oldElement == null)
 			{
 				/* new element added */

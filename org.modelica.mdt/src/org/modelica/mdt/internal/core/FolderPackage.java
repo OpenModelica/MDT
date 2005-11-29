@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -44,7 +44,6 @@ package org.modelica.mdt.internal.core;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -53,41 +52,73 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElementChange;
-import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
+ * A package that is stored as a folder.
+ * 
  * @author Elmir Jagudin
  */
-public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
+public class FolderPackage extends ModelicaPackage
 {
-	private IContainer container;
+	private IFolder container;
 	
 	private boolean childrenLoaded = false;
 	
 	private Hashtable<IResource, Object> children = 
 			new Hashtable<IResource, Object>();
-	
-	protected ModelicaFolder(IContainer cont)
-	{
-		this.container = cont;
-	}
-	
 
 	/**
-	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
+	 * Create a root package, a package that is defined in the unnamed root
+	 * namespace.
+	 * 
+	 * @param container the folder where this package resides
 	 */
-	public String getElementName() 
+	public FolderPackage(IFolder container)
 	{
-		return container.getName();
+		this.container = container;
+		prefix = "";
+		name = container.getName();
+		setFullName();
 	}
 
+	/**
+	 * Create a package that is a subpackage to some other folder package.
+	 * @param parent
+	 * @param container
+	 */
+	public FolderPackage(FolderPackage parent, IFolder container)
+	{
+		this.container = container;
+		prefix = parent.getFullName();
+		name = container.getName();
+		setFullName();
+	}
+
+	/**
+	 * @see org.modelica.mdt.core.IModelicaElement#getResource()
+	 */
+	public IResource getResource() throws ConnectionException,
+			UnexpectedReplyException
+	{
+		return container;
+	}
+
+	/**
+	 * @see org.modelica.mdt.core.IParent#hasChildren()
+	 */
+	public boolean hasChildren() throws CoreException, ConnectionException,
+			UnexpectedReplyException, InvocationError
+	{
+		/* a folder package have allways at least package.mo as a child */
+		return true;
+	}
 
 	public Collection<Object> getChildren() 
-		throws CoreException, ConnectionException, UnexpectedReplyException
+	throws CoreException, ConnectionException, UnexpectedReplyException
 	{
 		if (!childrenLoaded)
 		{
@@ -108,39 +139,11 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 	@Override
-	public IContainer getResource()
-	{
-		return container;
-	}
-
-	public List<IModelicaElementChange> update(IResourceDelta delta) 
+	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
 		throws ConnectionException, UnexpectedReplyException, InvocationError
-	{
-		return update(null, delta);
-	}
-
-	/**
-	 * A special update method where alternative root of the changed elements 
-	 * can be specified. This is a little hack to enable ModelicaProject object
-	 * to specifie itself as the parent, otherwise updating the tree in the
-	 * projects view does not work. That is due to the fact that root folder
-	 * of any project is now explisitly shown in the tree. This kinda sucks,
-	 * pehaps there are better design alternatives.
-	 * 
-	 * @param root
-	 * @param delta
-	 * @return
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
-	 * @throws InvocationError 
-	 */
-	public List<IModelicaElementChange> update(Object root, 
-			IResourceDelta delta) 
-			throws ConnectionException, UnexpectedReplyException, InvocationError
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
-		Object parent = (root != null) ? root : this;
 
 		for (IResourceDelta d : delta.getAffectedChildren())
 		{
@@ -150,24 +153,23 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			switch (d.getKind())
 			{
 			case IResourceDelta.ADDED:
-				// TODO when a modelica.mo file is added
-				// there is possability that this folder is turned into 
-				// a package, right now that is just ignored 
 				try
-					{
-						element = wrap(res);
-						
-					} catch (ConnectionException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnexpectedReplyException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				{
+					element = wrap(res);
+					
+				} 
+				catch (ConnectionException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (UnexpectedReplyException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				children.put(res, element);
-				changes.add(new ModelicaElementChange(parent, element));
+				changes.add(new ModelicaElementChange(this, element));
 				break;
 			case IResourceDelta.REMOVED:
 				children.remove(res);
@@ -175,14 +177,11 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 						ChangeType.REMOVED));
 				break;
 			case IResourceDelta.CHANGED:
-				if (element instanceof ModelicaFolder)
-				{
-					changes.addAll(((ModelicaFolder)element).update(d));
-				}
-				else if (element instanceof ModelicaElement)
+				if (element instanceof ModelicaElement)
 				{
 					changes.addAll(((ModelicaElement)element).update(d));
 				}
+				/* the only thing that is not a ModelicaElement is IFile */
 				changes.add(new ModelicaElementChange(element, 
 						ChangeType.CHANGED));
 				break;
@@ -191,11 +190,11 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		
 		return changes;
 	}
-	
+
 	/**
 	 * map a IResource to the type of modelica element it represents
 	 */
-	private Object wrap(IResource res)
+	protected Object wrap(IResource res)
 		throws ConnectionException, UnexpectedReplyException
 	{
 		switch (res.getType())
@@ -205,7 +204,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			if (ModelicaPackage.isPackage(res))
 			{
 				/* we have ourself a package */
-				return new FolderPackage((IFolder)res);
+				return new FolderPackage(this, (IFolder)res);
 			}
 			else
 			{
@@ -224,4 +223,5 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 
 	}
 
+	
 }

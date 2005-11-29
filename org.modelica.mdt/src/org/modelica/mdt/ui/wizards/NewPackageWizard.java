@@ -75,8 +75,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.internal.core.ModelicaPackage;
+import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.ui.ModelicaImages;
 
@@ -250,42 +250,6 @@ public class NewPackageWizard extends Wizard implements INewWizard
 					handleBrowse();
 				}
 			});
-
-//	        /* parent package field */
-//	        l = new Label(composite, SWT.LEFT | SWT.WRAP);
-//	        l.setText("Parent package:");
-//	        gd = new GridData();
-//	        gd.horizontalAlignment = GridData.BEGINNING;
-//	        l.setLayoutData(gd);
-//	        
-//	        parentPackage = new Text(composite, SWT.SINGLE | SWT.BORDER);
-//	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
-//	        					GridData.GRAB_HORIZONTAL);
-//	        parentPackage.setLayoutData(gd);
-//
-//	        
-//	        parentPackage.addModifyListener(new ModifyListener()
-//	    	{
-//	    	      	/* check if entered path exists */
-//	    	       	public void modifyText(ModifyEvent e)
-//	    	       	{
-//	    	       		//sourceFolderChanged();
-//	    	       	}
-//	    	});
-//
-//
-//	        b = new Button(composite, SWT.PUSH);
-//	        b.setText("Browse...");
-//	        gd = new GridData();
-//	        gd.horizontalAlignment = GridData.END;
-//	        b.setLayoutData(gd);
-//			b.addSelectionListener(new SelectionAdapter()
-//			{
-//				public void widgetSelected(SelectionEvent e)
-//				{
-//					//handleBrowse();
-//				}
-//			});
 			
 	        /* create separator */
 	        l = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -419,12 +383,11 @@ public class NewPackageWizard extends Wizard implements INewWizard
 			if (selection instanceof ModelicaPackage)
 			{
 				/*
-				 *  ModelicaPackage used instead of IModelicaPackage
+				 * ModelicaPackage used instead of IModelicaPackage
 				 * to ignore modelica packages elements that are listed under
 				 * system library subtree
 				 */
 
-				//setParentPackage((ModelicaPackage)selection);
 				res = ((ModelicaPackage)selection).getResource();
 			}
 			else if (selection instanceof IModelicaElement)

@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,56 +39,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.core;
+package org.modelica.mdt.internal.core;
 
-import java.io.File;
-
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
-
-
+import org.modelica.mdt.core.IModelicaElementChange;
 
 /**
+ * Implementation of IModelicaElementChange interface
+ * 
  * @author Elmir Jagudin
  */
-public interface IModelicaClass extends IModelicaElement, IParent
+public class ModelicaElementChange implements IModelicaElementChange
 {
-	public enum Type { CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE };
+	private Object element;
+	private Object parent;
+	private ChangeType type;
 	
-	/**
-	 * @return the restriction type of this class
-	 * @throws ConnectionException 
-	 */
-	public Type getType() throws ConnectionException;
-	
-	/**
-	 * @return the container package for this class. Empty string if the
-	 * class in the default unnamed package.
-	 */
-	public String getPackage();
-	
-	/**
-	 * @return the file where this class is defined
-	 * @throws ConnectionException 
-	 * @throws UnexpectedReplyException 
-	 */
-	public File getFile() throws ConnectionException, UnexpectedReplyException;
-
-	public int getLine() throws ConnectionException, UnexpectedReplyException;
 
 	/**
-	 * @return all imports this class is making
+	 * Create a element change of type ADDED.
+	 * 
+	 * @param parent the parent where element was added
+	 * @param element the element that was added
 	 */
-	public IClassImport[] getImports();
+	protected ModelicaElementChange(Object parent, Object element)
+	{
+		this.parent = parent;
+		this.element = element;
+		type = ChangeType.ADDED;
+	}
+	
+	protected ModelicaElementChange(Object element, ChangeType type)
+	{
+		this.element = element;
+		this.type = type;
+	}
 	
 	/**
-	 * @return list of extensions this class is making
+	 * @see org.modelica.mdt.core.IModelicaElementChange#getElement()
 	 */
-	public IClassExtend[] getExtends();
-	
+	public Object getElement()
+	{
+		return element;
+	}
+
 	/**
-	 * @return list of components (variables and constans) of this class
+	 * @see org.modelica.mdt.core.IModelicaElementChange#getChangeType()
 	 */
-	public IClassComponent[] getComponents();
+	public ChangeType getChangeType()
+	{
+		return type;
+	}
+
+	public Object getParent()
+	{
+		return parent;
+	}
 
 }

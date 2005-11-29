@@ -40,15 +40,20 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
@@ -59,9 +64,12 @@ abstract public class ModelicaElement extends PlatformObject
 	implements IModelicaElement 
 {
 	
-	/* regexp pattern of a valid modelica class name */
-	// see modelica specification page 9 (and perhaps some other pages as well)
-	// http://www.modelica.org/documents/ModelicaSpec22.pdf
+	/* 
+	 * regexp pattern of a valid modelica class name,
+	 * see modelica specification page 9 (and perhaps some other pages as well)
+	 * for the formal definition
+	 * http://www.modelica.org/documents/ModelicaSpec22.pdf
+	 */
 	private static String getPattern()
 	{
 
@@ -122,5 +130,43 @@ abstract public class ModelicaElement extends PlatformObject
 	public static boolean isLegalIdentifierName(String name)
 	{
 		return classNamePattern.matcher(name).matches();
+	}
+
+	/**
+	 * All modelica elements that have a direct mapping between the IResource
+	 * (e.g. ModelicaFile -> IFile, FolderPackage -> IFolder) will recive a
+	 * call on this method when it have been detected that the underlying 
+	 * IResouce have been changed.
+	 * 
+	 *  @param delta The resource delta which is rooted at the IResource of
+	 *  this element 
+	 * @throws InvocationError 
+	 */
+	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		/* return an empty list by default */
+		return new LinkedList<IModelicaElementChange>();
+	}
+
+	/**
+	 * This method will be invoked on modelica elements, that do not have
+	 * a direct mapping to a IResource, when it is suspected that thier 
+	 * representation in the compiler have changed.
+	 *  
+	 * The element should requery the compiler and return the difference as
+	 * a collection of IModelicaElementChange:s.
+	 * 
+	 * @return the changes to the element and it's children, or empty collection
+	 * if the element and it's children are not changed.
+	 * @throws InvocationError 
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 */
+	public Collection<IModelicaElementChange> reload()
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		/* return an empty list by default */
+		return new LinkedList<IModelicaElementChange>();		
 	}
 }

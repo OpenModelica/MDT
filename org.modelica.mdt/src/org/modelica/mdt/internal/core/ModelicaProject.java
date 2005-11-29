@@ -40,12 +40,19 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 
+import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
@@ -94,5 +101,36 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		throws ConnectionException, UnexpectedReplyException
 	{
 		return getRootFolder().getResource();
+	}
+
+	public List<IModelicaElementChange> update(IResourceDelta delta)
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		LinkedList<IModelicaElementChange> changes = 
+			new LinkedList<IModelicaElementChange>();
+
+		if ((delta.getFlags() & IResourceDelta.OPEN) != 0)
+		{
+			if (project.isOpen()) /* project was opened */
+			{
+				changes.add(new ModelicaElementChange(this, 
+						ChangeType.OPENED));
+			}
+			else /* project was closed */
+			{
+				changes.add(new ModelicaElementChange(this, 
+						ChangeType.CLOSED));
+				rootFolder = null;
+			}
+		}
+		else
+		{
+			if (rootFolder != null)
+			{
+				changes.addAll(rootFolder.update(this, delta));
+			}
+		}
+		
+		return changes;
 	}
 }

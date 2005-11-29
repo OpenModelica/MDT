@@ -40,7 +40,7 @@
  */
 package org.modelica.mdt.internal.core;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
@@ -54,8 +54,9 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  */
 abstract public class ModelicaParent extends ModelicaElement 
 {
-	abstract public List<?> getChildren()
-		throws ConnectionException, UnexpectedReplyException, InvocationError; 
+	abstract public Collection<?> getChildren()
+		throws ConnectionException, UnexpectedReplyException, 
+				InvocationError, CoreException; 
 
 	public boolean hasChildren()
 		throws CoreException, ConnectionException, 

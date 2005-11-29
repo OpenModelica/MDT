@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.modelica.mdt.core;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
@@ -36,8 +36,9 @@ public interface IParent
 	 * @throws ConnectionException 
 	 * @throws InvocationError 
 	 */
-	List<?> getChildren() 
-		throws ConnectionException, UnexpectedReplyException, InvocationError;
+	Collection<Object> getChildren() 
+		throws ConnectionException, UnexpectedReplyException, 
+			InvocationError, CoreException;
 	
 	/**
 	 * Returns whether this element has one or more immediate children.

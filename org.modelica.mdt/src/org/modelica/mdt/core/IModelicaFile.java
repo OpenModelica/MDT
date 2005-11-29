@@ -40,11 +40,6 @@
  */
 package org.modelica.mdt.core;
 
-import java.util.List;
-
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
-
 /**
  * @author Elmir Jagudin
  * 
@@ -52,19 +47,4 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  */
 public interface IModelicaFile extends IModelicaElement, IParent
 {
-	/**
-	 * @return all subpackages defined in this file
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
-	 */
-	public List<IModelicaPackage> getPackages()
-		throws ConnectionException, UnexpectedReplyException;
-
-	/**
-	 * @return classes contained defined in this file
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
-	 */
-	public List<IModelicaClass> getClasses() 
-		throws ConnectionException, UnexpectedReplyException; 
 }

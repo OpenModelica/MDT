@@ -1,20 +1,22 @@
 package org.modelica.mdt.internal.core;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.modelica.mdt.core.IClassComponent;
 import org.modelica.mdt.core.IClassExtend;
 import org.modelica.mdt.core.IClassImport;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
@@ -27,46 +29,45 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  */
 public class ModelicaClass extends ModelicaElement implements IModelicaClass
 {
-	private String parentPackage;
-	private String className;
+	/* subpackages and subclasses hashed by the thier's shortname */
+	private Hashtable<String, Object> children = null;
+
+	private String prefix;
+	private String name;
 	private String fullName;
 	private Type type;
 	
 	private boolean typeKnown = false;
-	
+
 	/**
-	 * Create a top class that is contained in a specific modelica file.
-	 * 
-	 * @param containerFile
+	 * @param prefix
 	 * @param name
 	 */
-	protected ModelicaClass(IModelicaFile containerFile, String name)
+	protected ModelicaClass(String prefix, String name)
 	{
-		this.className = name;
-		this.fullName = name;
-	}
+		this.name = name;
+		this.prefix = prefix;
 		
-	protected ModelicaClass(String name, String pkg)
-	{
-		className = name;
-		parentPackage = pkg;
-		
-		if(parentPackage == null)
-			fullName = className;
+		if (prefix.equals(""))
+		{
+			fullName = name;
+		}
 		else
-			fullName = parentPackage + "." + className;
+		{
+			fullName = prefix + "." + name;
+		}
 
 		type = Type.CLASS;
 	}
 	
 	public String getElementName()
 	{
-		return className;
+		return name;
 	}
 
 	public String getPackage()
 	{
-		return parentPackage;
+		return prefix;
 	}
 	
 	public Type getType()
@@ -128,50 +129,97 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	public int getLine() throws ConnectionException, UnexpectedReplyException
 	{
 		String[] tokens = OMCProxy.getCrefInfo(fullName);
-
 		return Integer.parseInt(tokens[1]);
 	}
 
-	public List<?> getChildren() 
-		throws ConnectionException, InvocationError, UnexpectedReplyException
-	{
-		List<Object> children = new LinkedList<Object>();
-		
-		children.addAll(getPackages());
-		children.addAll(getClasses());
 
-		return children;
-	}
-
-	public boolean hasChildren()
-		throws ConnectionException, InvocationError, UnexpectedReplyException
+	public Collection<Object> getChildren() 
+		throws ConnectionException,	UnexpectedReplyException,
+			InvocationError, CoreException
 	{
-		return !getChildren().isEmpty();
-	}
-
-	public List<IModelicaClass> getClasses() 
-		throws ConnectionException, UnexpectedReplyException
-	{
-		LinkedList<IModelicaClass> classes = new LinkedList<IModelicaClass>();
-		
-		for (String name : OMCProxy.getClassNames(fullName))
+		if (children == null)
 		{
-			classes.add(new ModelicaClass(name, fullName));
+			children = loadElements();
 		}
 		
-		return classes;
+		return children.values();
 	}
 
-	public List<IModelicaPackage> getPackages()
-		throws ConnectionException, InvocationError, UnexpectedReplyException
+	private Hashtable<String, Object> loadElements() 
+		throws ConnectionException, UnexpectedReplyException, InvocationError 
 	{
-		LinkedList<IModelicaPackage> pkgs = new LinkedList<IModelicaPackage>();
+		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 		
 		for (String name : OMCProxy.getPackages(fullName))
 		{
-			pkgs.add(new ModelicaPackage(name, fullName));
+			elements.put(name, new InnerPackage(fullName, name));
 		}
-		return pkgs;
+		
+		for (String name : OMCProxy.getClassNames(fullName))
+		{
+			elements.put(name, new ModelicaClass(fullName, name));
+		}
+		
+		return elements;
+	}
+
+	public boolean hasChildren()
+		throws ConnectionException, InvocationError, 
+			UnexpectedReplyException, CoreException
+	{
+		return !getChildren().isEmpty();
+	}
+	
+	@Override
+	public Collection<IModelicaElementChange> reload()
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		LinkedList<IModelicaElementChange> changes = 
+			new LinkedList<IModelicaElementChange>();
+
+		if (children == null)
+		{
+			/* if children are not loaded, then we can't reload */
+			return changes;
+		}
+		
+		Hashtable<String, Object> newChildren = loadElements();
+
+		@SuppressWarnings("unchecked")
+		Hashtable<String, Object> oldChildren = 
+			(Hashtable<String, Object>) children.clone();
+		
+		
+		for (Object element : newChildren.values())
+		{
+			ModelicaElement moElement = (ModelicaElement) element;
+
+			ModelicaElement oldElement = (ModelicaElement)
+				oldChildren.remove(moElement.getElementName());
+		
+			if (oldElement == null)
+			{
+				/* new element added */
+				children.put(moElement.getElementName(), element);
+				changes.add(new ModelicaElementChange(this, element));
+			}
+			else
+			{
+				/* element present before, refresh ! */
+				changes.addAll(oldElement.reload());
+			}
+		}
+		
+		/* now there is only removed elements in the oldChildren table */
+		for (Object element : oldChildren.values())
+		{
+			ModelicaElement moElement = (ModelicaElement) element;
+
+			children.remove(moElement.getElementName());
+			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED));
+		}
+		
+		return changes;
 	}
 
 	public IClassImport[] getImports()

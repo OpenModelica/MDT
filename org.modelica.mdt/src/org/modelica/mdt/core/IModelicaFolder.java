@@ -40,14 +40,6 @@
  */
 package org.modelica.mdt.core;
 
-import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
-
 /**
  * @author Elmir Jagudin
  *
@@ -55,26 +47,5 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  */
 public interface IModelicaFolder extends IModelicaElement, IParent
 {
-	public List<IModelicaFolder> getFolders() 
-		throws CoreException, ConnectionException, UnexpectedReplyException;
-	
-	/**
-	 * @return all subpackages contained in this package. If the
-	 * package does not contain any subpackages an empty list should be
-	 * returned.
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
-	 * @throws InvocationError 
-	 */
-	public List<IModelicaPackage> getPackages() 
-		throws CoreException, ConnectionException, UnexpectedReplyException,
-			InvocationError;
 
-	public List<IModelicaFile> getModelicaFiles() throws CoreException;
-	
-	/**
-	 * @return all non modelica files in this folder
-	 * @throws CoreException if there was an error compiling the file list 
-	 */
-	public List<IFile> getFiles() throws CoreException;
 }

@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.modelica.mdt.core.ModelicaCore;
 import org.osgi.framework.BundleContext;
 
 public class MdtPlugin extends AbstractUIPlugin
@@ -102,6 +103,7 @@ public class MdtPlugin extends AbstractUIPlugin
 	public void start(BundleContext context) throws Exception 
 	{
 		super.start(context);
+		ModelicaCore.start();
 	}
 
 	/**
@@ -110,6 +112,7 @@ public class MdtPlugin extends AbstractUIPlugin
 	public void stop(BundleContext context) throws Exception 
 	{
 		super.stop(context);
+		ModelicaCore.stop();
 		plugin = null;
 	}
 

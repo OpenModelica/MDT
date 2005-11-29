@@ -18,7 +18,7 @@ import org.modelica.mdt.MdtPlugin;
 
 public class ModelicaCore 
 {
-	private static IModelicaRoot modelicaRoot = null;
+	private static ModelicaRoot modelicaRoot = null;
 	private static IWorkbenchAdapter modelicaElementAdapter = null;
 	
 	public static class CreateNewProjectRunnable implements IRunnableWithProgress
@@ -106,10 +106,6 @@ public class ModelicaCore
 	
 	public static IModelicaRoot getModelicaRoot()
 	{
-		if (modelicaRoot == null)
-		{
-			modelicaRoot = new ModelicaRoot();
-		}
 		return modelicaRoot;
 	}
 
@@ -122,5 +118,19 @@ public class ModelicaCore
 		}
 
 		return modelicaElementAdapter;
+	}
+
+
+	public static void start()
+	{
+		modelicaRoot = new ModelicaRoot();
+		modelicaRoot.start();
+	}
+
+
+	public static void stop()
+	{
+		modelicaRoot.stop();
+		modelicaRoot = null;
 	}
 }

@@ -38,53 +38,176 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.internal.core;
 
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaElementChangeListener;
+import org.modelica.mdt.internal.core.ModelicaProject;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.core.IModelicaRoot;
 
 /**
  * @author Elmir Jagudin
- *
  */
-public class ModelicaRoot implements IModelicaRoot 
+public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener 
 {
 	private IWorkspaceRoot workspaceRoot = null;
+	private Hashtable<IProject, ModelicaProject> projectsTable = null;
+	private LinkedList<IModelicaElementChangeListener> listeners;
 
 	/**
 	 * @see org.modelica.mdt.core.IModelicaRoot#getProjects()
 	 */
 	public Object[] getProjects() throws CoreException 
 	{
+		if (projectsTable == null)
+		{
+			loadProjects();
+		}
+		return projectsTable.values().toArray();		
+	}
+
+	private void loadProjects() throws CoreException
+	{
 		if (workspaceRoot == null)
 		{
 			workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		}
+		projectsTable = new Hashtable<IProject, ModelicaProject>();
 		
 		IProject[] projects = workspaceRoot.getProjects();
-		Object[] resProjs = new Object[projects.length];
 
 		/*
 		 * wrap all projects with modelica nature into a ModelicProject object
 		 */
 		for (int i = 0; i < projects.length; i++)
 		{
-			if ((projects[i]).isOpen() &&
-				(projects[i]).hasNature(MdtPlugin.MODELICA_NATURE))
-			{
-				resProjs[i] = new ModelicaProject((IProject)projects[i]);
-			}
-			else
-			{
-				resProjs[i] = projects[i];
-			}
+			projectsTable.put(projects[i], 
+					new ModelicaProject((IProject)projects[i]));
 		}
+	}
 
-		return resProjs;
+	
+	public void start()
+	{
+		listeners = new LinkedList<IModelicaElementChangeListener>();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
+					IResourceChangeEvent.POST_CHANGE);
+	}
+
+	public void stop()
+	{
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		listeners = null;
 	}	
 
+	/*
+	 * org.eclipse.core.resources.IResourceChangeListener interface 
+	 */
+	public void resourceChanged(IResourceChangeEvent event)
+	{
+		List<IModelicaElementChange> changes = 
+				new LinkedList<IModelicaElementChange>();
+		
+		for (IResourceDelta delta : event.getDelta().getAffectedChildren())
+		{			
+			IProject project = (IProject) delta.getResource();
+
+			switch (delta.getKind())
+			{
+			case IResourceDelta.ADDED:
+				changes.addAll(handleResourceAdded(project));
+				break;
+			case IResourceDelta.REMOVED:
+				changes.addAll(handleResouceRemoved(project));
+				break;				
+			case IResourceDelta.CHANGED:
+				changes.addAll(handleResourceChanged(project, delta));
+				break;
+			}
+		}
+		
+		postChangeEvent(changes);
+	}
+
+	private List<IModelicaElementChange> handleResourceAdded(IProject project)
+	{
+		List<IModelicaElementChange> changes = 
+				new LinkedList<IModelicaElementChange>();
+		ModelicaProject modelicaProject = new ModelicaProject(project);
+
+		projectsTable.put(project, modelicaProject);
+		changes.add(new ModelicaElementChange(this, modelicaProject));
+
+		return changes;
+	}
+
+	private List<IModelicaElementChange> handleResouceRemoved(IProject project)
+	{
+		List<IModelicaElementChange> changes = 
+			new LinkedList<IModelicaElementChange>();
+
+		Object wrappedProject = projectsTable.remove(project);
+		changes.add(new ModelicaElementChange(wrappedProject, 
+						IModelicaElementChange.ChangeType.REMOVED));
+
+		return changes;
+	}
+
+	private List<IModelicaElementChange> handleResourceChanged(IProject project,
+			IResourceDelta delta)
+	{
+		List<IModelicaElementChange> changes = 
+			new LinkedList<IModelicaElementChange>();
+
+		try
+		{
+			ModelicaProject modelicaProject = projectsTable.get(project);
+			changes.addAll(modelicaProject.update(delta));
+		} 
+		catch (CompilerException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return changes;
+	}
+
+
+	/**
+	 * post IModelicaElementChange event to all listeners
+	 * @param changes the list of changes to post
+	 */
+	private void postChangeEvent(List<IModelicaElementChange> changes)
+	{
+		for (IModelicaElementChangeListener listener : listeners)
+		{
+			listener.elementsChanged(changes);
+		}
+	}
+	
+	public void addModelicaElementChangeListener
+			(IModelicaElementChangeListener listener)
+	{
+		listeners.add(listener);
+	}
+
+	public void removeModelicaElementChangeListener
+			(IModelicaElementChangeListener listener)
+	{
+		listeners.remove(listener);
+	}
 }

@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.ui;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -48,21 +49,37 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Control;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.internal.core.SystemLibrary;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
+ * Content provider for a tree viewer. This content provider works only
+ * whith TreeViewer:s to keep things simple. If you want to use it for
+ * other viewer some addditional hacking is required on this class.
+ *  
  * @author Elmir Jagudin
- *
  */
-public class ModelicaElementContentProvider implements ITreeContentProvider 
+public class ModelicaElementContentProvider 
+	implements ITreeContentProvider, IModelicaElementChangeListener 
 {
-
+	private TreeViewer viewer;
+	
+	public ModelicaElementContentProvider()
+	{
+		/* we are interested in changes to modelica elements tree */
+		ModelicaCore.getModelicaRoot().addModelicaElementChangeListener(this);
+	}
+	
 	public Object[] getElements(Object inputElement)
 	{
 		try
@@ -86,6 +103,7 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
+		this.viewer = (TreeViewer)viewer;
 	}
 
 	public Object[] getChildren(Object parent)
@@ -103,12 +121,23 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 		}
 		else if (parent instanceof IModelicaProject)
 		{
-			List<?> list = null;
+			if (!((IModelicaProject)parent).getProject().isOpen())
+			{
+				/* we have no children if we are closed */
+				return new Object[0];
+			}
+
+			Collection<Object> list = null;
 			try
 			{
-				list = ((IModelicaProject)parent).getRootFolder().getChildren();
+				list = 
+					((IModelicaProject)parent).getRootFolder().getChildren();
 			}
 			catch (CompilerException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -120,7 +149,7 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 			 */
 			list.toArray(children);
 			children[children.length-1] = new SystemLibrary();
-			return children; 
+			return children; 			
 		}
 		else if (parent instanceof IParent)
 		{
@@ -129,6 +158,10 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 				return ((IParent)parent).getChildren().toArray();
 			}
 			catch (CompilerException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -173,5 +206,63 @@ public class ModelicaElementContentProvider implements ITreeContentProvider
 			}
 		}
 		return false;
+	}
+
+	/*
+	 * IModelicaElementChangeListener interface method
+	 */
+	public void elementsChanged(final List<IModelicaElementChange> changes)
+	{
+		Control ctrl = viewer.getControl();
+		
+		if (ctrl == null || ctrl.isDisposed())
+		{
+			return;
+		}
+		if (ctrl.getDisplay().getThread() == Thread.currentThread()) {
+			handleChanges(changes);
+		} else {			
+			ctrl.getDisplay().asyncExec(new Runnable(){
+				/* (non-Javadoc)
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					
+					//Abort if this happens after disposes
+					Control ctrl = viewer.getControl();
+					if (ctrl == null || ctrl.isDisposed())
+						return;
+					handleChanges(changes);
+				}
+			});
+		}
+
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected void handleChanges(List<IModelicaElementChange> changes)
+	{
+		  for (IModelicaElementChange change : changes)
+		  {
+			  Object element = change.getElement();
+
+			  switch (change.getChangeType())
+			  {
+			  case ADDED:
+				  viewer.add(change.getParent(), element);
+				  break;
+			  case CHANGED:
+				  viewer.update(element, null);
+				  break;
+			  case REMOVED:
+				  viewer.remove(element);
+				  break;
+			  case OPENED:
+			  case CLOSED:
+				  viewer.refresh(element);
+				  break;
+			  }
+		  }
 	}
 }

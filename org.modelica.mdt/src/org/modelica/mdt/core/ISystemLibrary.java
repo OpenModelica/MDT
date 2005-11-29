@@ -53,5 +53,5 @@ import org.modelica.mdt.internal.omcproxy.ConnectionException;
  */
 public interface ISystemLibrary extends IModelicaElement, IParent
 {
-	public List<IModelicaPackage> getPackages() throws ConnectionException; 
+	public List<Object> getPackages() throws ConnectionException; 
 }

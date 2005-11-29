@@ -56,10 +56,12 @@ public interface IModelicaRoot
 	 */
 	public Object[] getProjects() throws CoreException;
 	
-//	/**
-//	 * @param path the path to directory or file where to look for package
-//	 * @return the package located at path or null if there is no package at
-//	 * that path
-//	 */
-//	public IModelicaPackage getPackage(IPath path);
+	public void 
+		addModelicaElementChangeListener(IModelicaElementChangeListener listener);
+	
+	public void 
+		removeModelicaElementChangeListener
+			(IModelicaElementChangeListener listener);
+
+
 }
