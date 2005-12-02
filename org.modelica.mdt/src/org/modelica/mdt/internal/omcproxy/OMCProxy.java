@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
@@ -23,6 +25,19 @@ public class OMCProxy
 	private static String os; /* what Operating System we're running on */
 	private static boolean hasInitialized = false;
 	private static boolean systemLibraryLoaded = false;
+	
+	private static boolean traceOMCCalls = false;
+	static
+	{
+		/* load debug options and set debug flag variables accordingly */ 
+		String value = Platform.getDebugOption
+			("org.modelica.mdt/trace/omcCalls");
+		if (value != null && value.equalsIgnoreCase("true"))
+		{
+			traceOMCCalls = true;
+		}
+		
+	}
 
 	/**
 	 * Reads in the OMC object reference from a file on disk. 
@@ -290,10 +305,49 @@ public class OMCProxy
 			init(null);
 		}
 		
+		logOMCCall(exp);		
 		retval = omcc.sendExpression(exp);
+		logOMCReply(retval);
 		
 		return retval;
 	}
+	
+	/**
+	 * loggs the expression send to OMC if the
+	 * tracing flag (traceOMCCalls) is set
+	 * 
+	 * @param expression the expression that is about to be sent to OMC
+	 */
+	private static void logOMCCall(String expression)
+	{
+		if (!traceOMCCalls)
+		{
+			return;
+		}
+		System.out.println(">> " + expression);
+	}
+
+	/**
+	 * loggs the reply resived from OMC if
+	 * the tracing flag (traceOMCCalls) is set
+	 * 
+	 * @param reply the reply recieved from the OMC
+	 */
+	private static void logOMCReply(String reply)
+	{
+		if (!traceOMCCalls)
+		{
+			return;
+		}
+
+		StringTokenizer tokenizer = new StringTokenizer(reply, "\n");
+		
+		while (tokenizer.hasMoreTokens())
+		{
+			System.out.println("<< " + tokenizer.nextToken());
+		}
+	}
+
 	
 	public static void loadSystemLibrary()
 		throws ConnectionException
