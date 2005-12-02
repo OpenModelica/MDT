@@ -150,7 +150,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			switch (d.getKind())
 			{
 			case IResourceDelta.ADDED:
-				// TODO when a modelica.mo file is added
+				// TODO when a modelica file is added
 				// there is possability that this folder is turned into 
 				// a package, right now that is just ignored 
 				try
