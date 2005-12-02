@@ -43,6 +43,7 @@ package org.modelica.mdt.test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaPackage;
@@ -81,7 +82,7 @@ public class TestTraversingPackages extends TestCase
 		IModelicaFile root_package_model = null;
 		IModelicaFile root_package_function = null;
 
-		/* for a temporal reference too package.mo */
+		/* for a temporary reference oo package.mo */
 		IModelicaFile package_mo = null;
 
 		/* root_package/plain_file */
@@ -97,28 +98,28 @@ public class TestTraversingPackages extends TestCase
 		/*
 		 * traverse children of project_root 
 		 */
-		
-		/* traverese packages */
-		try
+		String name;
+		for (Object elm : project_root.getChildren())
 		{
-		for (IModelicaPackage pkg : project_root.getPackages())
-		{
-			
-			String name = pkg.getElementName();
+			if (elm instanceof IFile)
+			{
+				name = ((IFile)elm).getName();
+			}
+			else
+			{
+				name = ((IModelicaElement)elm).getElementName();
+			}
+
 			if (name.equals("root_package"))
 			{
-				root_package = pkg;
+				root_package = (IModelicaPackage)elm;
 			}
 			else if (name.equals("childless_package"))
 			{
-				childless_package = pkg;
+				childless_package = (IModelicaPackage)elm;
 			}
 		}
-		}
-		catch(CompilerException e)
-		{
-			fail(e.getMessage());
-		}
+
 		assertNotNull("root_package not found", root_package);
 		assertEquals("Package base name", root_package.getPrefix(), "");
 		assertEquals("Package name", root_package.getElementName(), 
@@ -132,124 +133,95 @@ public class TestTraversingPackages extends TestCase
 		/*
 		 * traverse children of root_package
 		 */
-		
-		/* traverse packages */
-		try
+		for (Object elm : root_package.getChildren())
 		{
-		for (IModelicaPackage pkg : root_package.getPackages())
-		{
-			String name = pkg.getElementName();
+			if (elm instanceof IFile)
+			{
+				name = ((IFile)elm).getName();
+			}
+			else
+			{
+				name = ((IModelicaElement)elm).getElementName();
+			}
+
 			if (name.equals("sub_package"))
 			{
-				sub_package = pkg;
+				sub_package = (IModelicaPackage)elm;
 			}
-			
-		}
-		}
-		catch(CompilerException e)
-		{
-			fail(e.getMessage());
-		}
-		assertNotNull("sub_package not found", sub_package);
-		checkFullName(sub_package, "root_package.sub_package");
-
-		
-		/* traverse modelica files */
-		for (IModelicaFile file : root_package.getModelicaFiles())
-		{	
-			String name = file.getElementName();
-			
-			if (name.equals("root_package_model.mo"))
+			else if (name.equals("root_package_model.mo"))
 			{
-				root_package_model = file;
+				root_package_model = (IModelicaFile)elm;
 			}
 			else if (name.equals("root_package_function.mo"))
 			{
-				root_package_function = file;
+				root_package_function = (IModelicaFile)elm;
 			}
 			else if (name.equals("package.mo"))
 			{
-				package_mo = file;
+				package_mo = (IModelicaFile)elm;
 			}
+			else if (name.equals("plain_file"))
+			{
+				root_package_plain_file = (IFile)elm;;
+			}
+			else if (name.equals("root_package_folder"))
+			{
+					root_package_folder = (IModelicaFolder)elm;;
+			}
+			
 		}
+
+		assertNotNull("sub_package not found", sub_package);
+		checkFullName(sub_package, "root_package.sub_package");
+
 		assertNotNull("root_package_model.mo not found", root_package_model);
 		assertNotNull("root_package_function.mo not found", 
 				root_package_function);
 		assertNotNull("root_package/package.mo not found",
 				package_mo);
-
-		/* traverse regular files */
-		for (IFile file : root_package.getFiles())
-		{
-			String name = file.getName();
-
-			if (name.equals("plain_file"))
-			{
-				root_package_plain_file = file;
-			}
-		}
 		assertNotNull("root_package/plain_file not found",
 				root_package_plain_file);
-		
-		/* traverse folders */
-		for (IModelicaFolder folder : root_package.getFolders())
-		{
-			String name = folder.getElementName();
-			
-			if (name.equals("root_package_folder"))
-			{
-				root_package_folder = folder;
-			}
-		}
 		assertNotNull("root_package/root_package_folder not found",
 				root_package_folder);
+
 
 		/*
 		 * traverse children of sub_package
 		 */
 
 		/* traverse packages */		
-		try
+		for (Object elm : sub_package.getChildren())
 		{
-			for (IModelicaPackage pkg : sub_package.getPackages())
+			if (elm instanceof IFile)
 			{
-				String name = pkg.getElementName();
-				if (name.equals("leaf_package"))
-				{
-					leaf_package = pkg;
-				}
-				
+				name = ((IFile)elm).getName();
 			}
-		}
-		catch(CompilerException e)
-		{
-			fail(e.getMessage());
-		}
-		assertNotNull("leaf_package not found", leaf_package);
-		checkFullName(leaf_package, "root_package.sub_package.leaf_package");
-		
-		/* traverse modelica files */		
-		package_mo = null;
-
-		for (IModelicaFile file : sub_package.getModelicaFiles())
-		{
-			String name = file.getElementName();
-			if (name.equals("package.mo"))
+			else
 			{
-				package_mo = file;
+				name = ((IModelicaElement)elm).getElementName();
+			}
+			
+			if (name.equals("leaf_package"))
+			{
+				leaf_package = (IModelicaPackage)elm;
+			}
+			else if (name.equals("package.mo"))
+			{
+				package_mo = (IModelicaFile)elm;
 			}
 			else if (name.equals("sub_package_model.mo"))
 			{
-				sub_package_model = file;
+				sub_package_model = (IModelicaFile)elm;
 			}		
+
 		}
+		assertNotNull("leaf_package not found", leaf_package);
+		checkFullName(leaf_package, "root_package.sub_package.leaf_package");
 		assertNotNull("root_package/sub_package/package.mo not found",
 				package_mo);
 		assertNotNull("root_package/sub_package/sub_package_model.mo not found",
 				sub_package_model);
 
-
-		
 	}
 
 	/**

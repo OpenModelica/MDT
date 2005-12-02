@@ -6,7 +6,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.modelica.mdt.test.TestProblemMarkersCreation;
+import org.modelica.mdt.test.TestModelicaRoot;
 
 /**
  * Debuggin aid. Runs some code in run() when an button on ze toolbar is clicked
@@ -14,7 +14,7 @@ import org.modelica.mdt.test.TestProblemMarkersCreation;
 public class ManualRunner implements IWorkbenchWindowActionDelegate 
 {
 
-	class foo extends TestProblemMarkersCreation
+	class foo extends TestModelicaRoot
 	{
 		public void setUp() throws CoreException
 		{
@@ -31,6 +31,16 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 	 */
 	public void run(IAction action) 
 	{
+		foo Foo = new foo();
+		
+		try {
+			Foo.setUp();
+			Foo.testChangesToWorkspace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) 

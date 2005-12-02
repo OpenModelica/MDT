@@ -46,13 +46,14 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
-
 
 import junit.framework.TestCase;
 
@@ -63,17 +64,18 @@ import junit.framework.TestCase;
  */
 public class TestModelicaFolder extends TestCase 
 {
-	/* the test subject */
+	/*
+	 * the test subject
+	 * the root folder of Area51 modelica project
+	 */
 	private IModelicaFolder root;
 	
-	/* collection of expected objects */
-	private Vector<String> expectedFileNames = new Vector<String>(3);
-	private Vector<String> expectedFolderNames = new Vector<String>(3);
-	private Vector<String> expectedModelicaFileNames = new Vector<String>(2);
-	private Vector<String> expectedPackageNames = new Vector<String>(2);
-	private Vector<String> expectedRootFolderFileNames = new Vector<String>(1);
+	/* collection of expected children */
+	private Vector<String> expectedChildren = new Vector<String>(10);	
+	private Vector<String> expectedRootFolderChildren = new Vector<String>(1);
+	
 	/* expected modelica file names in package_look_alike folder */
-	private Vector<String> expectedPackageLookAlikeNames 
+	private Vector<String> expectedPackageLookAlikeChildren 
 		= new Vector<String>(1);
 	
 	@Override
@@ -88,171 +90,114 @@ public class TestModelicaFolder extends TestCase
 		/*
 		 * setup expected collections
 		 */
-		assertTrue(Collections.addAll(expectedFileNames,
-				".project", "empty_file", "README.txt"));
-		
-		assertTrue(Collections.addAll(expectedFolderNames,
-				"empty_folder", "root_folder", "package_look_alike"));
-
-		assertTrue(Collections.addAll(expectedModelicaFileNames,
-				"root_model.mo", "nested_models.mo"));
-		
-		assertTrue(Collections.addAll(expectedPackageNames,
-				"root_package", "childless_package"));
-		
-		assertTrue(Collections.addAll(expectedRootFolderFileNames,
+		assertTrue(Collections.addAll(expectedChildren,
+				".project", "empty_file", "README.txt", "empty_folder", 
+				"root_folder", "package_look_alike", "root_model.mo", 
+				"nested_models.mo", "root_package", "childless_package"));
+				
+		assertTrue(Collections.addAll(expectedRootFolderChildren,
 				"hej_hopp"));
 
-		assertTrue(Collections.addAll(expectedPackageLookAlikeNames,
+		assertTrue(Collections.addAll(expectedPackageLookAlikeChildren,
 				"package.mo"));
-
-
 	}
-	
-	
+
 	/**
-	 * test ModelicaFolder.getFiles()
+	 * test ModelicaFolder.hasChildren()
 	 */
-	public void testGetFiles()
+	public void testHasChildren()
 	{
 		try 
 		{
-			for (IFile file : root.getFiles())
-			{
-				expectedFileNames.remove(file.getName());
-			}
-			assertTrue("could not find all expected files in the root folder",
-					expectedFileNames.isEmpty());
-			
+			assertTrue(root.hasChildren());
 		}
-		catch (CoreException e) 
+		catch (Exception e)
 		{
-			fail("exception thrown while fetching files");
+			fail("exception thrown " + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * test ModelicaFolder.getFolders()
-	 * and check how nested IModelicaFolder:s are doing
+	 * test ModelciaFoldet.getChildren()
+	 * 
 	 */
-	public void testGetFolders()
+	public void testGetChildren() 
+		throws ConnectionException, UnexpectedReplyException, 
+			InvocationError, CoreException
 	{
-		IModelicaFolder empty_folder = null;
 		IModelicaFolder root_folder = null;
+		IModelicaFolder empty_folder = null;
 		IModelicaFolder package_look_alike = null;
-		String name;
-
-		try 
+		
+		
+		String name = "";
+		for (Object elm : root.getChildren())
 		{
-			for (IModelicaFolder folder : root.getFolders())
+			
+			if (elm instanceof IFile)
 			{
-				name = folder.getElementName();
-				
-				expectedFolderNames.remove(name);
-				if (name.equals("empty_folder"))
-				{
-					empty_folder = folder;
-				}
-				else if (name.equals("root_folder"))
-				{
-					root_folder = folder;
-				}
-				else if (name.equals("package_look_alike"))
-				{
-					package_look_alike = folder;
-				}
+				name = ((IFile)elm).getName();
+			}
+			else
+			{
+				name = ((IModelicaElement)elm).getElementName();
+			}
+			expectedChildren.remove(name);
+			
+			if (name.equals("root_folder"))
+			{
+				root_folder = (IModelicaFolder) elm;
+			}
+			else if (name.equals("empty_folder"))
+			{
+				empty_folder = (IModelicaFolder) elm;
+			}
+			else if (name.equals("package_look_alike"))
+			{
+				package_look_alike = (IModelicaFolder) elm;
 			}
 
-			assertTrue("could not find all expected folders in the root folder",
-					expectedFolderNames.isEmpty());
-			assertNotNull(empty_folder);
-			assertNotNull(root_folder);
-			assertNotNull(package_look_alike);
-			
-			/*
-			 * empty folder should not have any children
-			 */
-			assertFalse(empty_folder.hasChildren());
-			assertTrue(empty_folder.getChildren().isEmpty());
-			assertTrue(empty_folder.getFiles().isEmpty());
-			assertTrue(empty_folder.getFolders().isEmpty());
-			assertTrue(empty_folder.getPackages().isEmpty());
-			assertTrue(empty_folder.getModelicaFiles().isEmpty());
-			
-			/* check contents of root_folder */
-			for (IFile file : root_folder.getFiles())
+		}
+		assertTrue("could not find all expected children in the root folder",
+				expectedChildren.isEmpty());
+		
+		assertNotNull("root_folder element not found", root_folder);
+		assertNotNull("empty_folder element not found", empty_folder);
+		assertNotNull("package_look_alike element not found",
+				package_look_alike);
+		
+		for (Object elm : root_folder.getChildren())
+		{
+			if (elm instanceof IFile)
 			{
-				expectedRootFolderFileNames.remove(file.getName());
+				/* we only expect (looking for) files inside root_folder */
+				name = ((IFile)elm).getName();
+				expectedRootFolderChildren.remove(name);
 			}
-			assertTrue("could no find all expected files in root_folder",
-					expectedRootFolderFileNames.isEmpty());
-			
-			/* check contents of package_look_alike */
-			for (IModelicaFile file : package_look_alike.getModelicaFiles())
+		}
+		assertTrue("could no find all expected files in root_folder",
+				expectedRootFolderChildren.isEmpty());
+		
+		for (Object elm : package_look_alike.getChildren())
+		{
+			if (elm instanceof IModelicaFile)
 			{
-				expectedPackageLookAlikeNames.remove(file.getElementName());
+				/* 
+				 * we only expect (looking for) modelica files 
+				 * inside package_look_alike 
+				 */
+				name = ((IModelicaFile)elm).getElementName();
+				expectedPackageLookAlikeChildren.remove(name);
 			}
-			assertTrue("could no find all expected files in package_look_alike",
-					expectedPackageLookAlikeNames.isEmpty());
-			
-			
-			
 		}
-		catch (CoreException e)
-		{
-			fail("exception thrown while fetching files");
-		}
-		catch (CompilerException e)
-		{
-			fail("exception thrown while fetching files");
-		}
-
-	}
-	
-	/**
-	 * test ModelicaFolder.getModelicaFiles()
-	 */
-	public void testGetModelicaFiles()
-	{
-		try 
-		{
-			for (IModelicaFile file : root.getModelicaFiles())
-			{
-				expectedModelicaFileNames.remove(file.getElementName());
-			}
-			assertTrue("could not find all expected mo files in the root folder",
-					expectedModelicaFileNames.isEmpty());
-			
-		}
-		catch (CoreException e)
-		{
-			fail("exception thrown while fetching files");
-		}
-	}
-
-	/**
-	 * test ModelicaFolder.getPackages()
-	 */
-	public void testPackages()
-	{
-		try 
-		{
-			for (IModelicaPackage pkg : root.getPackages())
-			{
-				expectedPackageNames.remove(pkg.getElementName());
-			}
-
-			assertTrue("could not find all expected mo files in the root folder",
-					expectedPackageNames.isEmpty());
-			
-		}
-		catch (CoreException e)
-		{
-			fail("exception thrown while fetching packages");
-		}
-		catch (CompilerException e) 
-		{
-			fail("exception thrown while fetching packages");
-		}
+		assertTrue("could no find all expected files in package_look_alike",
+				expectedPackageLookAlikeChildren.isEmpty());
+		
+		/*
+		 * test the empty_folder IS empty
+		 */
+		assertFalse("empty_folder not empty", empty_folder.hasChildren());
+		assertTrue("empty_folder returns children", 
+				empty_folder.getChildren().isEmpty());
 	}
 }

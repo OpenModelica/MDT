@@ -56,9 +56,6 @@ public class TestOMCProxy extends TestCase
 	protected void setUp()
 	{
 		assertTrue(Collections.addAll(modelicaLibraryPackages,
-				"UsersGuide",
-				"Media",
-				"Utilities",
 				"Mechanics",
 				"Electrical",
 				"Math",
@@ -66,8 +63,7 @@ public class TestOMCProxy extends TestCase
 				"Thermal",
 				"Icons",
 				"Constants",
-				"SIunits",
-				"StateGraph"));
+				"SIunits"));
 	}
 	public void testGetPackages()
 	{

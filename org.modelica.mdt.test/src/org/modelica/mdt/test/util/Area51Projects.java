@@ -281,7 +281,7 @@ public class Area51Projects
 			"end hepp;\n";
 			
 
-		file.create(Utility.getByteStream(""), true, null);
+		file.create(Utility.getByteStream(contents), true, null);
 		
 		
 		/* README.txt */
