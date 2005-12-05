@@ -430,43 +430,47 @@ public class OMCProxy
 	{
 		IModelicaClass.Type type = Type.CLASS;
 		
-		if(sendExpression("isType(" + className + ")").contains("true"))
-		{
-			type = Type.TYPE;
-		}
-		else if(sendExpression("isConnector(" + className + ")").contains("true"))
-		{
-			type = Type.CONNECTOR;
-		}
-		else if(sendExpression("isModel(" + className + ")").contains("true"))
+		String retval = sendExpression("getClassRestriction(" + className + ")");
+		
+		if(retval.contains("model"))
 		{
 			type = Type.MODEL;
 		}
-		else if(sendExpression("isRecord(" + className + ")").contains("true"))
+		else if(retval.contains("connector"))
+		{
+			type = Type.CONNECTOR;
+		}
+		else if(retval.contains("record"))
 		{
 			type = Type.RECORD;
 		}
-		else if(sendExpression("isBlock(" + className + ")").contains("true"))
-		{	
+		else if(retval.contains("block"))
+		{
 			type = Type.BLOCK;
 		}
-		else if(sendExpression("isFunction(" + className + ")").contains("true"))
+		else if(retval.contains("function"))
 		{
 			type = Type.FUNCTION;
 		}
-
+		else if(retval.contains("type"))
+		{
+			type = Type.TYPE;
+		}
+		
 		return type;
 	}
 	
 	public static String getErrorString()
 		throws ConnectionException
 	{
-		/*
-		 * TODO add check that sendExpression really returned a string,
-		 * throw an exception otherwise
-		 */ 
-		String res = sendExpression("getErrorString()").trim();
-		return res.substring(1, res.length() - 1);
+		String res = sendExpression("getErrorString()");
+		if(res != null)
+		{
+			res = res.trim();
+			return res.substring(1, res.length() - 1);
+		}
+		else
+			return "";
 	}
 	
 

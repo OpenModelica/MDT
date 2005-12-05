@@ -73,7 +73,8 @@ public class ProxyParser
 			}
 			else
 			{
-				throw new UnexpectedReplyException("huh?");
+				throw new UnexpectedReplyException("List wasn't flat Modelica "
+						+"list");
 			}
 		}
 		

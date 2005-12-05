@@ -137,10 +137,12 @@ public class ModelicaElementContentProvider
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MdtPlugin.log(e);
 			} catch (CoreException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MdtPlugin.log(e);
 			}
 
 			Object[] children = new Object[list.size()+1];
@@ -161,10 +163,12 @@ public class ModelicaElementContentProvider
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MdtPlugin.log(e);
 			} catch (CoreException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MdtPlugin.log(e);
 			}
 		}
 		return null;
@@ -199,10 +203,12 @@ public class ModelicaElementContentProvider
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MdtPlugin.log(e);
 			} catch (CompilerException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MdtPlugin.log(e);
 			}
 		}
 		return false;

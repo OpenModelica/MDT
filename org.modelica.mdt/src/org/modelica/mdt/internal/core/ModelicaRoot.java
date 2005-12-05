@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -131,7 +131,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 				changes.addAll(handleResourceAdded(project));
 				break;
 			case IResourceDelta.REMOVED:
-				changes.addAll(handleResouceRemoved(project));
+				changes.addAll(handleResourceRemoved(project));
 				break;				
 			case IResourceDelta.CHANGED:
 				changes.addAll(handleResourceChanged(project, delta));
@@ -154,7 +154,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		return changes;
 	}
 
-	private List<IModelicaElementChange> handleResouceRemoved(IProject project)
+	private List<IModelicaElementChange> handleResourceRemoved(IProject project)
 	{
 		List<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -174,6 +174,9 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 
 		try
 		{
+			// TODO work this out
+			if(projectsTable == null)
+				;
 			ModelicaProject modelicaProject = projectsTable.get(project);
 			changes.addAll(modelicaProject.update(delta));
 		} 
