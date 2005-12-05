@@ -40,7 +40,7 @@ public class OMCProxy
 	}
 
 	/**
-	 * Reads in the OMC object reference from a file on disk. 
+	 * Reads in the OMC CORBA object reference from a file on disk. 
 	 */
 	private static String readObjectFromFile() throws ConnectionException
 	{

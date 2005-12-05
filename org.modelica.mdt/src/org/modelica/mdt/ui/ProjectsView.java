@@ -110,6 +110,7 @@ public class ProjectsView extends ViewPart
 		viewer.setContentProvider(new ModelicaElementContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ModelicaCore.getModelicaRoot());
+		viewer.setSorter(new ModelicaElementSorter());
 		MdtPlugin.tag(viewer.getTree(), TREE_TAG);
 
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {

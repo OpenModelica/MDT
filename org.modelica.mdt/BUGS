@@ -43,6 +43,13 @@ Try this. Select an open project and click on 'close project' menu (for example
 in contex menu). Look at the menu again, 'Open project' is still disabled 
 and 'Close project' enabled. Same problem if you open a closed project.
 
+BUGID: 6
+STATUS: open
+
+While in modelica editor line and column number are not visible. In for
+example java editor line and column number are visible in the status bar
+at the bottom.
+
 
 Closed Bugs and Issures
 
