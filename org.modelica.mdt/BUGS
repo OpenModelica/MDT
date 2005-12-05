@@ -31,6 +31,17 @@ This can be some sort of omc bug, getErrorString() returns:
 Length in Modelica
 [..snip..]
 This should probably be reported upstream.
+------------------------------------------
+Mail sent to modelica-pelab list, waiting for reply.
+
+BUGID: 5
+STATUS: open
+TESTCASE: absent
+'Open project' and 'Close project' menu items are not updated after invocation.
+
+Try this. Select an open project and click on 'close project' menu (for example
+in contex menu). Look at the menu again, 'Open project' is still disabled 
+and 'Close project' enabled. Same problem if you open a closed project.
 
 
 Closed Bugs and Issures

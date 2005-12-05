@@ -125,18 +125,19 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 				if (parentPackage == null)
 				{
 					/* we are not inside a package */
-					elements.put(name, new InnerPackage("", name));
+					elements.put(name, new InnerPackage(file, "", name));
 				}
 				else
 				{
 					elements.put(name, new InnerPackage(
+							file,
 							parentPackage.getFullName(),
 							name));					
 				}
 			}
 			else
 			{
-				elements.put(name, new ModelicaClass("", name));
+				elements.put(name, new ModelicaClass(file, "", name));
 			}
 		}
 		

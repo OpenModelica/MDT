@@ -46,7 +46,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
@@ -168,5 +170,20 @@ abstract public class ModelicaElement extends PlatformObject
 	{
 		/* return an empty list by default */
 		return new LinkedList<IModelicaElementChange>();		
+	}
+
+	public IRegion getLocation() 
+		throws ConnectionException, UnexpectedReplyException, 
+			InvocationError, CoreException
+	{
+		/* we don't have a definition region by default */
+		return null;
+	}
+
+	public String getFilePath() 
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		/* we are not defined in an external file by default */
+		return null;
 	}
 }

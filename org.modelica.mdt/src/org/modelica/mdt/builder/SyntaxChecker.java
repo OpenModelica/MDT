@@ -42,6 +42,9 @@
 package org.modelica.mdt.builder;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -60,6 +63,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.internal.omcproxy.CompileError;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
@@ -239,55 +244,99 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		createMarkerAtLine(file, lineno, msg, IMarker.PROBLEM);
 	}
 
+	/**
+	 * Calculate where the particular line begins and how long it stretches.
+	 *  
+	 * @param filePath the full path to the file where to look for lines
+	 * @param lineno line number to find
+	 * @return region which line occupies or null if the does not 
+	 * have such a line number
+	 * @throws CoreException if there were errors reading file contents 
+	 * @throws FileNotFoundException if the filePath does not exists 
+	 */
+	
+	public static IRegion getLineRegion(String filePath, int lineno)
+		throws CoreException, FileNotFoundException
+	{
+		// TODO this probably should be moved into ModelicaFile class,
+		// however that would require that IFile -> IModelicaFile mapping
+		// is implemented. such a mupping is probably needed anyway to
+		// know which other files that should be loaded into OMC and checked
+		// for errors. that is all dependant files, e.g. if file A defines foo
+		// and file B imports foo both A and B should be reshecked for errors
+		// when A is modified (saved), right now only A is checked. end of rant.
+
+		/*
+		 * To find out where the line is in the file, we have to read it
+		 * in to a Document and then use getLineOffset to convert from a
+		 * line number to a character positions.
+		 */
+
+		return getLineRegion(new FileInputStream(new File(filePath)), lineno);
+
+	}
+	
+	public static IRegion getLineRegion(IFile file, int lineno) 
+		throws CoreException
+	{
+		return getLineRegion(file.getContents(), lineno);
+	}
+
+	
+	private static IRegion getLineRegion(InputStream fileContents, int lineno)
+	{
+		BufferedInputStream bis = new BufferedInputStream(fileContents);
+		String contents = "";
+		while(true)
+		{
+			try
+			{
+				int avail = bis.available();
+				if(avail == 0)
+					break;
+				byte[] buf = new byte[avail];
+				bis.read(buf, 0, avail);
+
+				contents += new String(buf);
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		Document d = new Document(contents);
+		try
+		{
+			return new Region(d.getLineOffset(lineno - 1), 
+					d.getLineLength(lineno - 1));
+		}
+		catch(BadLocationException e)
+		{
+			MdtPlugin.log(e);
+		}
+		
+		return null;
+	}
+
 	public static IMarker createMarkerAtLine(IFile file, int lineno,
 			String message, String type)
 	{
 		IMarker marker = null;
 		try
 		{
+			IRegion lineReg = getLineRegion(file, lineno);
+			int start = lineReg.getOffset();
+			int end = start + lineReg.getLength();
+			
 			marker = file.createMarker(type);
+
+			marker.setAttribute(IMarker.CHAR_START, start);
+			marker.setAttribute(IMarker.CHAR_END, end);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.LINE_NUMBER, lineno);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 			marker.setAttribute(IMarker.LOCATION, Integer.toString(lineno));
-
-			/*
-			 * To find out where the error is in the file, we have to read it
-			 * in to a Document and then use getLineOffset to convert from a
-			 * line number to a character position.
-			 */
-			int start = 0, end = 0;
-			InputStream is = file.getContents();
-			BufferedInputStream bis = new BufferedInputStream(is);
-			String contents = "";
-			while(true)
-			{
-				try
-				{
-					int avail = bis.available();
-					if(avail == 0)
-						break;
-					byte[] buf = new byte[avail];
-					bis.read(buf, 0, avail);
-	
-					contents += new String(buf);
-				}
-				catch(IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-	
-			Document d = new Document(contents);
-			try
-			{
-				start = d.getLineOffset(lineno - 1);
-				end = start + d.getLineLength(lineno - 1);
-			}
-			catch(BadLocationException e)
-			{
-				MdtPlugin.log(e);
-			}
 			
 			marker.setAttribute(IMarker.CHAR_START, start);
 			marker.setAttribute(IMarker.CHAR_END, end);

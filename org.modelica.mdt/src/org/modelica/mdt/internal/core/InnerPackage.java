@@ -41,14 +41,23 @@
 
 package org.modelica.mdt.internal.core;
 
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.builder.SyntaxChecker;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ElementLocation;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
@@ -60,16 +69,42 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  */
 public class InnerPackage extends ModelicaPackage
 {
+	
+	/*
+	 * the file where this package is defined, 
+	 * can be null if it is unknown
+	 * when the container is unknow the class is assumed to 
+	 * be external e.g. defined in system library
+	 */
+	private IFile container;
+	
+	private ElementLocation location = null;
+
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, Object> children = null;
 	
-	public InnerPackage(String prefix, String name)
+	public InnerPackage(IFile container, String prefix, String name)
 	{
+		this.container = container;
 		this.prefix = prefix;
 		this.name = name;
 		setFullName();
 		
 	}
+	
+	/**
+	 * Create a modelica package that is defined in unknow location, for example
+	 * a system library class. This method assumes that a class named
+	 * 'prefix'.'name' is loaded into OMC.
+	 * 
+	 * @param prefix
+	 * @param name
+	 */
+	protected InnerPackage(String prefix, String name)
+	{
+		this(null, prefix, name);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.modelica.mdt.core.IParent#getChildren()
@@ -92,12 +127,12 @@ public class InnerPackage extends ModelicaPackage
 	
 		for (String name : OMCProxy.getPackages(fullName))
 		{
-			elements.put(name, new InnerPackage(fullName, name));
+			elements.put(name, new InnerPackage(container, fullName, name));
 		}
 		
 		for (String name : OMCProxy.getClassNames(fullName))
 		{
-			elements.put(name, new ModelicaClass(fullName, name));
+			elements.put(name, new ModelicaClass(container, fullName, name));
 		}
 	
 		return elements;
@@ -166,5 +201,69 @@ public class InnerPackage extends ModelicaPackage
 		
 		return changes;
 	}
+	
+	public IResource getResource()
+	{
+		return container;
+	}
+	
+	/**
+	 * @throws InvocationError 
+	 * @throws CoreException 
+	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
+	 */
+	public IRegion getLocation() 
+		throws ConnectionException, UnexpectedReplyException, 
+			InvocationError, CoreException
+	{
+		if (location == null)
+		{
+			loadElementLocation();
+		}
+		
+		if (container != null)
+		{
+			SyntaxChecker.getLineRegion(container, location.getLine());
+		}
+
+		IRegion reg = null;
+		
+		try
+		{
+			reg = 
+				SyntaxChecker.getLineRegion(location.getPath(), 
+						location.getLine());
+		}
+		catch (FileNotFoundException e)
+		{
+			throw new CoreException(
+					new Status(IStatus.ERROR,
+								MdtPlugin.getSymbolicName(),
+								IStatus.OK, 
+								"could not find modelica source file " + 
+									location.getPath(),
+								e));
+		}
+		return reg;
+	}
+
+	@Override
+	public String getFilePath() 
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		if (location == null)
+		{
+			loadElementLocation();
+		}
+		return location.getPath();
+	}
+
+	private void loadElementLocation()
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		location = OMCProxy.getElementLocation(fullName);
+	}
+
+
 
 }

@@ -520,22 +520,44 @@ public class OMCProxy
 		return res;
 	}
 
-	public static String[] getCrefInfo(String className)
-		throws ConnectionException, UnexpectedReplyException 
+	
+	public static ElementLocation getElementLocation(String className)
+		throws ConnectionException, UnexpectedReplyException, InvocationError 
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
 		
 		if(retval.contains("Error") || retval.contains("error"))
 		{
-			return null;
+			throw new InvocationError("getCrefInfo(" + className + 
+					") replys error");
 		}
+		
+		
+		/*
+		 * getCrefInfo reply have following format:
+		 * 
+		 * <file path>,<line number>,<column number>
+		 * 
+		 */
 		
 		/* For some reason, the list returned doesn't contain curly braces. */
 		retval = "{" + retval + "}"; 
-		
+
 		String[] tokens = ProxyParser.parseSimpleList(retval);
+		int line, column;
+
+		try
+		{
+			line = Integer.parseInt(tokens[1]);
+			column = Integer.parseInt(tokens[2]);
+		}
+		catch (NumberFormatException e)
+		{
+			throw new InvocationError("can't parse getCrefInfo() reply, "+
+					"unexpected format");
+		}
 		
-		return tokens; 
+		return new ElementLocation(tokens[0], line, column);
 	}
 	
 	/**

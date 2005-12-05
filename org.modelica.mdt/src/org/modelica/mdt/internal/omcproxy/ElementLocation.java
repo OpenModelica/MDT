@@ -39,59 +39,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui;
-
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaPackage;
-import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.ISystemLibrary;
+package org.modelica.mdt.internal.omcproxy;
 
 /**
- * Defines what happens when user double clicks on items in the
- * projects view tree. 
+ * Presents information on some elements location in a file.
+ * More specific this class stores the location of the begging of the
+ * definition of the element.
+ * 
+ * @author Homer Simpson
  */
-
-public class ProjectsViewDoubleClickAction extends Action 
+public class ElementLocation
 {
-	private TreeViewer viewer;
+	private String path;
+	private int line;
+	private int column;
 	
-	ProjectsViewDoubleClickAction(TreeViewer viewer)
+	protected ElementLocation(String path, int line, int column)
 	{
-		this.viewer = viewer;
-	}
-
-	@Override
-	public void run()
-	{
-		/* get the object that was double clicked */
-		ISelection selection = viewer.getSelection();
-		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		
-		if (obj instanceof IModelicaProject ||
-				 obj instanceof IModelicaFolder  ||
-				 obj instanceof IModelicaPackage ||
-				 obj instanceof ISystemLibrary   ||
-				 obj instanceof IProject         ||
-				 obj instanceof IFolder          )
-				  
-		{
-			expandElement(obj);
-		}
+		this.path = path;
+		this.line = line;
+		this.column = column;
 	}
 
 	/**
-	 * expands element in the treeviewer, so that it's immediate children are
-	 * visible
-	 * @param element element to expand
+	 * @return the column where this element is defined
 	 */
-	private void expandElement(Object element) 
+	public int getColumn()
 	{
-		viewer.expandToLevel(element, 1);
+		return column;
 	}
+
+	/**
+	 * @return line number where this element is defined
+	 */
+	public int getLine()
+	{
+		return line;
+	}
+
+	/**
+	 * @return full path to the file where the element is defined
+	 */
+	public String getPath()
+	{
+		return path;
+	}
+	
 }

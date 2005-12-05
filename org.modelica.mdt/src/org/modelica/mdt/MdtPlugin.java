@@ -48,6 +48,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 import org.osgi.framework.BundleContext;
@@ -177,6 +179,23 @@ public class MdtPlugin extends AbstractUIPlugin
 					
 	}
 
+	private IWorkbenchPage internalGetActivePage() 
+	{
+		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+		{
+			return null;
+		}
+		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	}
+
+	
+	public static IWorkbenchPage getActivePage() 
+	{
+		return getDefault().internalGetActivePage();
+	}
+
+	
 	/**
 	 * Note: This method is for internal use only. Clients should not
 	 * call this method.
@@ -206,4 +225,6 @@ public class MdtPlugin extends AbstractUIPlugin
 		}
 		return res;
 	}
+	
+	
 }

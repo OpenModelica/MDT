@@ -1,7 +1,47 @@
+/*
+ * This file is part of Modelica Development Tooling.
+ *
+ * Copyright (c) 2005, Linköpings universitet, Department of
+ * Computer and Information Science, PELAB
+ *
+ * All rights reserved.
+ *
+ * (The new BSD license, see also
+ * http://www.opensource.org/licenses/bsd-license.php)
+ *
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ * * Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ *
+ * * Neither the name of Linköpings universitet nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.modelica.mdt.ui;
 
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -9,8 +49,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -24,6 +66,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.DeleteResourceAction;
@@ -35,6 +78,10 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.editor.EditorUtility;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 public class ProjectsView extends ViewPart
 {
@@ -43,7 +90,6 @@ public class ProjectsView extends ViewPart
 
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
-	private IResourceChangeListener resourceListener;
 	private ProjectsViewDoubleClickAction doubleClickAction;
 	
 	private OpenResourceAction openProjectAction;
@@ -81,6 +127,13 @@ public class ProjectsView extends ViewPart
 		site.registerContextMenu(contextMenu, viewer);
 		site.setSelectionProvider(viewer);
 		
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(OpenEvent event) 
+			{
+				handleOpen(event);
+			}
+		});
+		
 		makeActions(); // call before registering for selection changes
 
 		/*
@@ -96,6 +149,7 @@ public class ProjectsView extends ViewPart
 				
 		
 		hookDoubleClickAction();
+		
 		viewer.getTree().addKeyListener(new KeyAdapter()
 		{
 			@Override
@@ -105,6 +159,36 @@ public class ProjectsView extends ViewPart
 			}
 			
 		});
+	}
+
+	protected void handleOpen(OpenEvent event)
+	{
+		IStructuredSelection selecton = 
+			(IStructuredSelection) event.getSelection();
+		try
+		{
+			EditorUtility.openInEditor(selecton.getFirstElement());
+		} catch (PartInitException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConnectionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnexpectedReplyException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationError e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected void handleSelectionChanged(SelectionChangedEvent event)
@@ -211,11 +295,10 @@ public class ProjectsView extends ViewPart
 		manager.add(openProjectAction);
 		manager.add(closeProjectAction);
 
-		
-//		openProjectAction.selectionChanged((IStructuredSelection) viewer.getSelection());
 		deleteAction.selectionChanged((IStructuredSelection) viewer.getSelection());
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
+		
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -224,9 +307,6 @@ public class ProjectsView extends ViewPart
 	public void dispose()
 	{
 		super.dispose();
-
-		ResourcesPlugin.getWorkspace().
-			removeResourceChangeListener(resourceListener);
 	}
 
 }

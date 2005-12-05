@@ -38,11 +38,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.core;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
@@ -76,4 +80,35 @@ public interface IModelicaElement extends IAdaptable
 	 */
 	IResource getResource()
 		throws ConnectionException, UnexpectedReplyException;
+	
+	/**
+	 * For elements that are defined inside a file this method returns
+	 * the region of the file where the file is defined.
+	 * 
+	 * If the element is not defined in a file, null is returned.
+	 * 
+	 * Remark: due to limitations in the OMC, the actual region returned is
+	 * the first line of the elements definition.
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 * @throws CoreException 
+	 * 
+	 */
+	IRegion getLocation() 
+		throws ConnectionException, UnexpectedReplyException, 
+			InvocationError, CoreException;
+
+	/**
+	 * If this element is external then this method returns full path
+	 * to the file where this element is defined. If this element is not
+	 * external (e.g. defined inside the workspace) or is not defined in a
+	 * file null is returned.
+	 *  
+	 * @return
+	 * @throws InvocationError 
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 */
+	public String getFilePath() 
+		throws ConnectionException, UnexpectedReplyException, InvocationError;
 }

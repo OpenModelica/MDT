@@ -1,16 +1,18 @@
 package org.modelica.mdt.internal.core;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.builder.SyntaxChecker;
 import org.modelica.mdt.core.IClassComponent;
 import org.modelica.mdt.core.IClassExtend;
 import org.modelica.mdt.core.IClassImport;
@@ -18,14 +20,13 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ElementLocation;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
- * 
  * @author Andreas Remar
- *
  */
 public class ModelicaClass extends ModelicaElement implements IModelicaClass
 {
@@ -37,14 +38,28 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	private String fullName;
 	private Type type;
 	
+	private ElementLocation location = null;
+	
+	/*
+	 * the file where this class is defined, 
+	 * can be null if it is unknown
+	 * when the container is unknow the class is assumed to 
+	 * be external e.g. defined in system library
+	 */
+	private IFile container;
+	
 	private boolean typeKnown = false;
 
 	/**
+	 * Create a modelica class that is defined inside a modelica file.
+	 * @param container the file where this file is defined
 	 * @param prefix
 	 * @param name
 	 */
-	protected ModelicaClass(String prefix, String name)
+	protected ModelicaClass(IFile container, String prefix, String name)	
 	{
+
+		this.container = container;
 		this.name = name;
 		this.prefix = prefix;
 		
@@ -58,6 +73,19 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		}
 
 		type = Type.CLASS;
+	}
+	
+	/**
+	 * Create a modelica class that is defined in unknow location, for example
+	 * a system library class. This method assumes that a class named
+	 * 'prefix'.'name' is loaded into OMC.
+	 * 
+	 * @param prefix
+	 * @param name
+	 */
+	protected ModelicaClass(String prefix, String name)
+	{
+		this(null, prefix, name);
 	}
 	
 	public String getElementName()
@@ -89,49 +117,68 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 	}
 	
 	public IResource getResource()
-		throws ConnectionException, UnexpectedReplyException
 	{
-		// TODO The path to the file should actually be stored somewhere in
-		//      ModelicaClass (at least that's what I've heard)
-		String[] tokens = OMCProxy.getCrefInfo(fullName);
-
-		IPath filePath = new Path(tokens[0]);
-
-		/*
-		 * filePath is an absolute path starting at the root of the file system,
-		 * what we want is a path starting from the workspace root.
-		 * To accomplish this, we cut off the first segments. 
-		 */
-		IPath workspacePath = ResourcesPlugin.getWorkspace()
-			.getRoot().getRawLocation();
-		
-		/* Make sure that this file really is inside the workspace root */
-		if(workspacePath.isPrefixOf(filePath) == false)
-			return null;
-		
-		filePath = filePath.removeFirstSegments(workspacePath.segmentCount());
-		
-		IFile f = 
-			ResourcesPlugin.getWorkspace().getRoot().getFile(filePath);
-		
-		return f;
+		return container;
 	}
+
 	
-	public File getFile() throws ConnectionException, UnexpectedReplyException
-	{
-		String[] tokens = OMCProxy.getCrefInfo(fullName);
-		
-		File file = new File(tokens[0]);
-		
-		return file;
-	}
 	
-	public int getLine() throws ConnectionException, UnexpectedReplyException
+	/**
+	 * @throws InvocationError 
+	 * @throws CoreException 
+	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
+	 */
+	public IRegion getLocation() 
+		throws ConnectionException, UnexpectedReplyException, 
+			InvocationError, CoreException
 	{
-		String[] tokens = OMCProxy.getCrefInfo(fullName);
-		return Integer.parseInt(tokens[1]);
+		if (location == null)
+		{
+			loadElementLocation();
+		}
+		
+		if (container != null)
+		{
+			SyntaxChecker.getLineRegion(container, location.getLine());
+		}
+
+		IRegion reg = null;
+		
+		try
+		{
+			reg = 
+				SyntaxChecker.getLineRegion(location.getPath(), 
+						location.getLine());
+		}
+		catch (FileNotFoundException e)
+		{
+			throw new CoreException(
+					new Status(IStatus.ERROR,
+								MdtPlugin.getSymbolicName(),
+								IStatus.OK, 
+								"could not find modelica source file " + 
+									location.getPath(),
+								e));
+		}
+		return reg;
 	}
 
+	@Override
+	public String getFilePath() 
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		if (location == null)
+		{
+			loadElementLocation();
+		}
+		return location.getPath();
+	}
+
+	private void loadElementLocation()
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		location = OMCProxy.getElementLocation(fullName);
+	}
 
 	public Collection<Object> getChildren() 
 		throws ConnectionException,	UnexpectedReplyException,
@@ -152,12 +199,12 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 		
 		for (String name : OMCProxy.getPackages(fullName))
 		{
-			elements.put(name, new InnerPackage(fullName, name));
+			elements.put(name, new InnerPackage(container, fullName, name));
 		}
 		
 		for (String name : OMCProxy.getClassNames(fullName))
 		{
-			elements.put(name, new ModelicaClass(fullName, name));
+			elements.put(name, new ModelicaClass(container, fullName, name));
 		}
 		
 		return elements;
@@ -182,6 +229,9 @@ public class ModelicaClass extends ModelicaElement implements IModelicaClass
 			/* if children are not loaded, then we can't reload */
 			return changes;
 		}
+		
+		/* invalidate location */
+		location = null;
 		
 		Hashtable<String, Object> newChildren = loadElements();
 
