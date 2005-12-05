@@ -44,8 +44,15 @@ package org.modelica.mdt.test;
 import java.util.Collections;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IProject;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ElementLocation;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.test.util.Area51Projects;
+import org.modelica.mdt.test.util.Utility;
 
 import junit.framework.TestCase;
 
@@ -55,6 +62,8 @@ public class TestOMCProxy extends TestCase
 	
 	protected void setUp()
 	{
+		Area51Projects.createProjects();
+
 		assertTrue(Collections.addAll(modelicaLibraryPackages,
 				"Mechanics",
 				"Electrical",
@@ -65,6 +74,10 @@ public class TestOMCProxy extends TestCase
 				"Constants",
 				"SIunits"));
 	}
+	
+	/**
+	 * test OMCProxy.getPackages()
+	 */
 	public void testGetPackages()
 	{
 		try
@@ -86,5 +99,62 @@ public class TestOMCProxy extends TestCase
 		{
 			fail(e.getMessage());
 		}
+	}
+	
+	/**
+	 * test OMCProxy.getElementLocation()
+	 */
+	public void testGetElementLocation()
+		throws ConnectionException, UnexpectedReplyException, InvocationError
+	{
+		/* load file nested_models.mo from Area51Projects modelica project */
+		IProject proj = Utility.getProject(
+				Area51Projects.MODELICA_PROJECT_NAME).getProject();
+		
+		OMCProxy.loadFileInteractive(proj.getFile("nested_models.mo"));
+		
+		/*
+		 * we are basicaly only interested in getting the right line number
+		 */
+		ElementLocation loc = OMCProxy.getElementLocation("nested_models");		
+		assertTrue(loc.getPath().endsWith("nested_models.mo"));
+		assertEquals(loc.getLine(), 1);
+		
+		loc = OMCProxy.getElementLocation("nested_models.hepp");		
+		assertEquals(loc.getLine(), 3);
+
+		loc = OMCProxy.getElementLocation("nested_models.foo");		
+		assertEquals(loc.getLine(), 4);
+		
+		loc = OMCProxy.getElementLocation("nested_models.foo.bar");		
+		assertEquals(loc.getLine(), 5);
+		
+		loc = OMCProxy.getElementLocation("muu");		
+		assertEquals(loc.getLine(), 8);
+		
+		loc = OMCProxy.getElementLocation("foo");		
+		assertEquals(loc.getLine(), 14);
+
+		loc = OMCProxy.getElementLocation("hej");		
+		assertEquals(loc.getLine(), 19);
+
+		loc = OMCProxy.getElementLocation("hej.ine_paketen");		
+		assertEquals(loc.getLine(), 20);
+
+		loc = OMCProxy.getElementLocation("hej.hejhej");		
+		assertEquals(loc.getLine(), 22);
+
+		loc = OMCProxy.getElementLocation("hej.hejhej.foo");		
+		assertEquals(loc.getLine(), 23);
+
+		loc = OMCProxy.getElementLocation("hepp");		
+		assertEquals(loc.getLine(), 30);
+
+		loc = OMCProxy.getElementLocation("hepp.hopp");		
+		assertEquals(loc.getLine(), 31);
+
+		loc = OMCProxy.getElementLocation("hepp.hehehe");		
+		assertEquals(loc.getLine(), 33);
+
 	}
 }
