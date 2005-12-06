@@ -44,7 +44,7 @@ package org.modelica.mdt.internal.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
@@ -57,7 +57,7 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  * @author Elmir Jagudin
  */
 abstract public class ModelicaPackage 
-	extends ModelicaElement implements IModelicaPackage
+	extends ModelicaElement implements IModelicaClass
 {
 	/**
 	 * the full name of the parent package

@@ -46,7 +46,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.ISystemLibrary;
 
 /**
@@ -69,7 +69,7 @@ public class ModelicaElementSorter extends ViewerSorter
 	@Override
 	public int category(Object element)
 	{
-		if (element instanceof IModelicaPackage)
+		if (element instanceof IModelicaClass)
 		{
 			return PACKAGE_ORDER;
 		}

@@ -49,7 +49,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
@@ -85,7 +85,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			return wadap.getImageDescriptor(mproj.getProject());
 			
 		}
-		else if (object instanceof IModelicaPackage)
+		else if (object instanceof IModelicaClass)
 		{
 			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_PACKAGE);
 		}

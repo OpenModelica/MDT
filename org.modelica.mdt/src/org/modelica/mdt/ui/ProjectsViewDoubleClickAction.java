@@ -48,7 +48,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
 
@@ -75,7 +75,7 @@ public class ProjectsViewDoubleClickAction extends Action
 		
 		if (obj instanceof IModelicaProject ||
 				 obj instanceof IModelicaFolder  ||
-				 obj instanceof IModelicaPackage ||
+				 obj instanceof IModelicaClass ||
 				 obj instanceof ISystemLibrary   ||
 				 obj instanceof IProject         ||
 				 obj instanceof IFolder          )

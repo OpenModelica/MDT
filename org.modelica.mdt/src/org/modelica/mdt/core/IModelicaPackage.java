@@ -40,11 +40,15 @@
  */
 package org.modelica.mdt.core;
 
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+
 /**
  * @author Elmir Jagudin
  */
 public interface IModelicaPackage extends IModelicaFolder
 {
+	public enum Type { CLASS, MODEL, FUNCTION, RECORD, 
+		CONNECTOR, BLOCK, TYPE, PACKAGE };
 
 	/**
 	 * return the package's prefix, that is if package's full name is
@@ -61,5 +65,27 @@ public interface IModelicaPackage extends IModelicaFolder
 	 * @return the full name of this package
 	 */
 	public String getFullName();
+	
+	/**
+	 * @return all imports this class is making
+	 */
+	public IClassImport[] getImports();
+	
+	/**
+	 * @return list of extensions this class is making
+	 */
+	public IClassExtend[] getExtends();
+	
+	/**
+	 * @return list of components (variables and constans) of this class
+	 */
+	public IClassComponent[] getComponents();
+
+	/**
+	 * @return the restriction type of this class
+	 * @throws ConnectionException 
+	 */
+	public Type getRestrictionType() throws ConnectionException;
+
 	
 }
