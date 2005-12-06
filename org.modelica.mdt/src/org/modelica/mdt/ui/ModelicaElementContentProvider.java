@@ -82,18 +82,12 @@ public class ModelicaElementContentProvider
 	
 	public Object[] getElements(Object inputElement)
 	{
-		try
+		if (inputElement instanceof IModelicaRoot)
 		{
-			if (inputElement instanceof IModelicaRoot)
-			{
-				return ((IModelicaRoot)inputElement).getProjects();
-			}
-			
+			return ((IModelicaRoot)inputElement).getProjects();
 		}
-		catch (CoreException e)
-		{
-			MdtPlugin.log(e);
-		}
+		
+		/* this is not happening */
 		return new Object[] {};
 	}
 	
@@ -121,17 +115,24 @@ public class ModelicaElementContentProvider
 		}
 		else if (parent instanceof IModelicaProject)
 		{
-			if (!((IModelicaProject)parent).getProject().isOpen())
+			IModelicaProject modelicaProj = 
+				(IModelicaProject)parent;
+			if ( !modelicaProj.getProject().isOpen())
 			{
 				/* we have no children if we are closed */
 				return new Object[0];
 			}
 
 			Collection<Object> list = null;
+			boolean hasModelicaNature = false;
 			try
 			{
 				list = 
-					((IModelicaProject)parent).getRootFolder().getChildren();
+					modelicaProj.getRootFolder().getChildren();
+				
+				hasModelicaNature = modelicaProj.getProject().
+					getDescription().hasNature(MdtPlugin.MODELICA_NATURE);
+
 			}
 			catch (CompilerException e)
 			{
@@ -145,6 +146,12 @@ public class ModelicaElementContentProvider
 				MdtPlugin.log(e);
 			}
 
+			if (!hasModelicaNature)
+			{
+				/* don't add system library to non modelica projects */
+				return list.toArray();
+			}
+			
 			Object[] children = new Object[list.size()+1];
 			/*
 			 * add as last element system library

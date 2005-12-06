@@ -63,28 +63,20 @@ import org.modelica.mdt.core.IModelicaRoot;
  */
 public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener 
 {
-	private IWorkspaceRoot workspaceRoot = null;
-	private Hashtable<IProject, ModelicaProject> projectsTable = null;
+	private Hashtable<IProject, ModelicaProject> projectsTable;
 	private LinkedList<IModelicaElementChangeListener> listeners;
 
 	/**
 	 * @see org.modelica.mdt.core.IModelicaRoot#getProjects()
 	 */
-	public Object[] getProjects() throws CoreException 
+	public Object[] getProjects() 
 	{
-		if (projectsTable == null)
-		{
-			loadProjects();
-		}
 		return projectsTable.values().toArray();		
 	}
 
 	private void loadProjects() throws CoreException
 	{
-		if (workspaceRoot == null)
-		{
-			workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		}
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		projectsTable = new Hashtable<IProject, ModelicaProject>();
 		
 		IProject[] projects = workspaceRoot.getProjects();
@@ -102,6 +94,15 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	
 	public void start()
 	{
+		try
+		{
+			loadProjects();
+		}
+		catch (CoreException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		listeners = new LinkedList<IModelicaElementChangeListener>();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
 					IResourceChangeEvent.POST_CHANGE);
@@ -110,6 +111,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	public void stop()
 	{
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		projectsTable = null;
 		listeners = null;
 	}	
 
@@ -171,12 +173,16 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	{
 		List<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
+				
+		if(projectsTable == null)
+		{
+			/* if projects are not loaded, no changes can happen to 'em */
+			return changes;
+		}
+
 
 		try
 		{
-			// TODO work this out
-			if(projectsTable == null)
-				;
 			ModelicaProject modelicaProject = projectsTable.get(project);
 			changes.addAll(modelicaProject.update(delta));
 		} 

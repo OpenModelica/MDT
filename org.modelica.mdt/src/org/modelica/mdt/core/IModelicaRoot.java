@@ -40,11 +40,8 @@
  */
 package org.modelica.mdt.core;
 
-import org.eclipse.core.runtime.CoreException;
-
 /**
  * @author Elmir Jagudin
- *
  */
 public interface IModelicaRoot
 {
@@ -54,7 +51,7 @@ public interface IModelicaRoot
 	 *  
 	 * @return Projects in the workspace
 	 */
-	public Object[] getProjects() throws CoreException;
+	public Object[] getProjects();
 	
 	public void 
 		addModelicaElementChangeListener(IModelicaElementChangeListener listener);
