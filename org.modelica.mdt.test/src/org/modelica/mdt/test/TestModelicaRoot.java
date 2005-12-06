@@ -73,7 +73,6 @@ public class TestModelicaRoot extends TestCase
 	private boolean modelicaProjectAdded   = false;
 	private boolean simpleProjectRemoved   = false;
 	private boolean modelicaProjectRemoved = false;
-
 	
 	public class ElementListener implements IModelicaElementChangeListener 
 	{

@@ -198,24 +198,15 @@ public class Utility
 	 */
 	public static IModelicaProject getProject(String name)
 	{
-		try 
+		for (Object proj : ModelicaCore.getModelicaRoot().getProjects())
 		{
-		
-			for (Object proj : ModelicaCore.getModelicaRoot().getProjects())
+			if (proj instanceof IModelicaProject)
 			{
-				if (proj instanceof IModelicaProject)
+				if (((IModelicaProject)proj).getElementName().equals(name))
 				{
-					if (((IModelicaProject)proj).getElementName().equals(name))
-					{
-						return (IModelicaProject)proj;
-					}
+					return (IModelicaProject)proj;
 				}
 			}
-		} 
-		catch (CoreException e) 
-		{
-			Assert.fail("CoreException thrown while searching for project " +
-					name + " " + e.getMessage());
 		}
 		
 		Assert.fail("No modelica project named '" + name + "' found.");
