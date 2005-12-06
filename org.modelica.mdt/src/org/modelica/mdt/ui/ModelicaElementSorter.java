@@ -46,8 +46,9 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.ISystemLibrary;
+import org.modelica.mdt.core.IModelicaClass.Type;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
 
 /**
  * Implements ordering of modelica elements suitable for displaying 'em in the
@@ -69,16 +70,25 @@ public class ModelicaElementSorter extends ViewerSorter
 	@Override
 	public int category(Object element)
 	{
-		if (element instanceof IModelicaClass)
-		{
-			return PACKAGE_ORDER;
-		}
-		else if (element instanceof IModelicaFolder)
+		if (element instanceof IModelicaFolder)
 		{
 			return FOLDER_ORDER;
 		}
 		else if (element instanceof IModelicaClass)
 		{
+			try
+			{
+				if (((IModelicaClass)element).getRestrictionType() 
+						== Type.PACKAGE)
+				{
+					return PACKAGE_ORDER;
+				}
+			}
+			catch (ConnectionException e)
+			{
+				// TODO proper error handling
+				e.printStackTrace();
+			}
 			return CLASS_ORDER;
 		}
 		else if (element instanceof IModelicaFile)

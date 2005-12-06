@@ -62,7 +62,7 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 public class ModelicaFile extends ModelicaElement implements IModelicaFile 
 {
 	private IFile file;
-	private ModelicaPackage parentPackage;
+	private FolderPackage parentPackage;
 
 	/* classes and packages in this file hashed by name */
 	Hashtable<String, Object> children = null;	
@@ -74,7 +74,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	 * @param parent
 	 * @param file
 	 */
-	public ModelicaFile(ModelicaPackage parent, IFile file) 
+	public ModelicaFile(FolderPackage parent, IFile file) 
 	{
 		this.parentPackage = parent;
 		this.file = file;
@@ -120,24 +120,16 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 
 		for (String name : res.getClasses())
 		{
-			if (OMCProxy.isPackage(name))
+			if (parentPackage == null)
 			{
-				if (parentPackage == null)
-				{
-					/* we are not inside a package */
-					elements.put(name, new InnerPackage(file, "", name));
-				}
-				else
-				{
-					elements.put(name, new InnerPackage(
-							file,
-							parentPackage.getFullName(),
-							name));					
-				}
+				/* we are not inside a package */
+				elements.put(name, new InnerClass(file, "", name));
 			}
 			else
 			{
-				elements.put(name, new ModelicaClass(file, "", name));
+				elements.put(name, 
+						new InnerClass(file, parentPackage.getFullName(),
+								name));					
 			}
 		}
 		

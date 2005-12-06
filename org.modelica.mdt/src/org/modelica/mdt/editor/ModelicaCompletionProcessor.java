@@ -1,7 +1,6 @@
 package org.modelica.mdt.editor;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;

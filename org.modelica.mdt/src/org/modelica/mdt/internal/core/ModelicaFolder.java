@@ -202,7 +202,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		{
 		case IResource.FOLDER:
 			/* a folder is either a package or a just a folder */
-			if (ModelicaPackage.isPackage(res))
+			if (FolderPackage.isFolderPackage(res))
 			{
 				/* we have ourself a package */
 				return new FolderPackage((IFolder)res);

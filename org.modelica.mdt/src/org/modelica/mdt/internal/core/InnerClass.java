@@ -54,6 +54,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.builder.SyntaxChecker;
+import org.modelica.mdt.core.IClassComponent;
+import org.modelica.mdt.core.IClassExtend;
+import org.modelica.mdt.core.IClassImport;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
@@ -67,8 +70,11 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  * 
  * @author Elmir Jagudin
  */
-public class InnerPackage extends ModelicaPackage
+public class InnerClass extends ModelicaClass
 {
+	/* our restriction type */
+	private Type type;
+	private boolean typeKnown = false;
 	
 	/*
 	 * the file where this package is defined, 
@@ -83,7 +89,7 @@ public class InnerPackage extends ModelicaPackage
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, Object> children = null;
 	
-	public InnerPackage(IFile container, String prefix, String name)
+	public InnerClass(IFile container, String prefix, String name)
 	{
 		this.container = container;
 		this.prefix = prefix;
@@ -100,7 +106,7 @@ public class InnerPackage extends ModelicaPackage
 	 * @param prefix
 	 * @param name
 	 */
-	protected InnerPackage(String prefix, String name)
+	protected InnerClass(String prefix, String name)
 	{
 		this(null, prefix, name);
 	}
@@ -125,14 +131,9 @@ public class InnerPackage extends ModelicaPackage
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 	
-		for (String name : OMCProxy.getPackages(fullName))
-		{
-			elements.put(name, new InnerPackage(container, fullName, name));
-		}
-		
 		for (String name : OMCProxy.getClassNames(fullName))
 		{
-			elements.put(name, new ModelicaClass(container, fullName, name));
+			elements.put(name, new InnerClass(container, fullName, name));
 		}
 	
 		return elements;
@@ -264,6 +265,39 @@ public class InnerPackage extends ModelicaPackage
 		location = OMCProxy.getElementLocation(fullName);
 	}
 
+	public IClassImport[] getImports()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	public IClassExtend[] getExtends()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	public IClassComponent[] getComponents()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Type getRestrictionType() throws ConnectionException
+	{
+		if(typeKnown == false)
+		{
+			
+			Type t = OMCProxy.getRestrictionType(fullName);
+			if(t != null)
+			{
+				type = t;
+			}
+			
+			typeKnown = true;
+		}
+	
+		return type;
+	}
 }

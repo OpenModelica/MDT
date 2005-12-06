@@ -45,13 +45,13 @@ import org.modelica.mdt.internal.omcproxy.ConnectionException;
 /**
  * @author Elmir Jagudin
  */
-public interface IModelicaPackage extends IModelicaFolder
+public interface IModelicaClass extends IModelicaElement, IParent
 {
 	public enum Type { CLASS, MODEL, FUNCTION, RECORD, 
 		CONNECTOR, BLOCK, TYPE, PACKAGE };
 
 	/**
-	 * return the package's prefix, that is if package's full name is
+	 * return the class' prefix, that is if class' full name is
 	 * foo.bar.hej then the prefix is foo.bar and short name is hej
 	 * 
 	 * @return the prefix of this package
@@ -59,7 +59,7 @@ public interface IModelicaPackage extends IModelicaFolder
 	public String getPrefix();
 
 	/**
-	 * return the package's full name, that is if package's full name is
+	 * return the class' full name, that is if class' full name is
 	 * foo.bar.hej then the prefix is foo.bar and short name is hej
 	 * 
 	 * @return the full name of this package

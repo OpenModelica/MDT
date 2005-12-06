@@ -74,8 +74,8 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.internal.core.ModelicaPackage;
 import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.ui.ModelicaImages;
@@ -380,15 +380,14 @@ public class NewPackageWizard extends Wizard implements INewWizard
 		{
 			IResource res;
 			
-			if (selection instanceof ModelicaPackage)
+			if (selection instanceof IModelicaClass)
 			{
-				/*
-				 * ModelicaPackage used instead of IModelicaPackage
-				 * to ignore modelica packages elements that are listed under
-				 * system library subtree
-				 */
-
-				res = ((ModelicaPackage)selection).getResource();
+				res = ((IModelicaClass)selection).getResource();
+				if (res == null)
+				{
+					/* ignore external classes (e.g. system library stuff) */
+					return;
+				}
 			}
 			else if (selection instanceof IModelicaElement)
 			{

@@ -66,7 +66,7 @@ public class SystemLibrary extends ModelicaElement implements ISystemLibrary
 		{
 			OMCProxy.loadSystemLibrary();
 			packages = new LinkedList<Object>();			
-			packages.add(new InnerPackage("", "Modelica"));
+			packages.add(new InnerClass("", "Modelica"));
 		}
 		
 		return packages;

@@ -406,10 +406,7 @@ public class OMCProxy
 		
 		for(String str : tokens)
 		{
-			if(!isPackage(className+"."+str))
-			{
-				v.add(str);
-			}
+			v.add(str);
 		}
 
 		String[] t = new String[v.size()];
@@ -425,7 +422,7 @@ public class OMCProxy
 	 *         type can't be determined
 	 * @throws ConnectionException 
 	 */
-	public static IModelicaClass.Type getType(String className)
+	public static IModelicaClass.Type getRestrictionType(String className)
 		throws ConnectionException
 	{
 		IModelicaClass.Type type = Type.CLASS;
@@ -455,6 +452,10 @@ public class OMCProxy
 		else if(retval.contains("type"))
 		{
 			type = Type.TYPE;
+		}
+		else if(retval.contains("package"))
+		{
+			type = Type.PACKAGE;
 		}
 		
 		return type;

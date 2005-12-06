@@ -52,10 +52,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.core.IClassComponent;
+import org.modelica.mdt.core.IClassExtend;
+import org.modelica.mdt.core.IClassImport;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
+import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.ParseResults;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
@@ -63,10 +69,9 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  * 
  * @author Elmir Jagudin
  */
-public class FolderPackage extends ModelicaPackage
+public class FolderPackage extends ModelicaClass
 {
 	private IFolder container;
-	
 	private boolean childrenLoaded = false;
 	
 	private Hashtable<IResource, Object> children = 
@@ -193,6 +198,48 @@ public class FolderPackage extends ModelicaPackage
 		
 		return changes;
 	}
+	/**
+	 * Checks if the resource can represent a modelica package.
+	 * @param res
+	 * @return true if the res is a package, false otherwise.
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 */
+	public static boolean isFolderPackage(IResource res)
+		throws ConnectionException, UnexpectedReplyException
+	{
+		if (res.getType() == IResource.FOLDER)
+		{
+			/*
+			 * If a folder contains a package.mo file, and that file defines a
+			 * top package with the same name as folder name,
+			 * we can consider this folder a Modelica package.
+			 */
+			IFolder fol = (IFolder) res;
+			String folderName = fol.getName();
+			IFile file = fol.getFile("package.mo");
+			
+			if(file.exists())
+			{
+				/*
+				 * check if package.mo defines a package (aka class) 
+				 * with the same name as the parent folder
+				 */
+				ParseResults results = OMCProxy.loadFileInteractive(file);
+				
+				for (String name : results.getClasses())
+				{
+					if (name.equals(folderName))
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
 
 	/**
 	 * map a IResource to the type of modelica element it represents
@@ -204,7 +251,7 @@ public class FolderPackage extends ModelicaPackage
 		{
 		case IResource.FOLDER:
 			/* a folder is either a package or a just a folder */
-			if (ModelicaPackage.isPackage(res))
+			if (isFolderPackage(res))
 			{
 				/* we have ourself a package */
 				return new FolderPackage(this, (IFolder)res);
@@ -224,6 +271,30 @@ public class FolderPackage extends ModelicaPackage
 		/* only one option left, a regular file */
 		return res;
 
+	}
+
+	public IClassImport[] getImports()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IClassExtend[] getExtends()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IClassComponent[] getComponents()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Type getRestrictionType() throws ConnectionException
+	{
+		/* we are a package !*/
+		return IModelicaClass.Type.PACKAGE;
 	}
 
 	
