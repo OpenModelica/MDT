@@ -44,7 +44,9 @@ package org.modelica.mdt.test;
 import java.util.Collections;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.ElementLocation;
@@ -60,10 +62,23 @@ public class TestOMCProxy extends TestCase
 {
 	private Vector<String> modelicaLibraryPackages = new Vector<String>(12);
 	
+	/* a source code file use in some tests */
+	private IFile nested_models_mo;
+	
 	protected void setUp()
 	{
 		Area51Projects.createProjects();
 
+		/* 
+		 * fetch reference to nested_models.mo file 
+		 * from Area51Projects modelica project 
+		 */
+		IProject proj = Utility.getProject(
+				Area51Projects.MODELICA_PROJECT_NAME).getProject();
+		
+		nested_models_mo = proj.getFile("nested_models.mo");
+
+		
 		assertTrue(Collections.addAll(modelicaLibraryPackages,
 				"Mechanics",
 				"Electrical",
@@ -76,29 +91,74 @@ public class TestOMCProxy extends TestCase
 	}
 	
 	/**
+	 * test OMCProxy.getRestrictionType() 
+	 */
+	public void testGetRestrictionType() 
+		throws ConnectionException, UnexpectedReplyException
+	{
+		if (OMCProxy.getRestrictionType("Modelica") != Type.PACKAGE)
+		{
+			fail("Modelica class' restriction type is wrong");
+		}
+		if (OMCProxy.getRestrictionType("Modelica.Blocks.Examples.BusUsage") 
+				!= Type.MODEL)
+		{
+			fail("Modelica.Blocks.Examples.BusUsage class' " + 
+					"restriction type is wrong");
+		}
+		if (OMCProxy.getRestrictionType("Modelica.Math.log") 
+				!= Type.FUNCTION)
+		{
+			fail("Modelica.Math.log class' restriction type is wrong");
+		}
+		if (OMCProxy.getRestrictionType("Modelica.Icons.Record") 
+				!= Type.RECORD)
+		{
+			fail("Modelica.Icons.Record class' restriction type is wrong");
+		}
+		if (OMCProxy.getRestrictionType("Modelica.Blocks.Interfaces.BooleanPort") 
+				!= Type.CONNECTOR)
+		{
+			fail("Modelica.Blocks.Interfaces.BooleanPort class' " + 
+					"restriction type is wrong");
+		}
+		if (OMCProxy.getRestrictionType("Modelica.Blocks.Continuous.Der") 
+				!= Type.BLOCK)
+		{
+			fail("Modelica.Blocks.Continuous.Der class' " + 
+					"restriction type is wrong");
+		}
+		if (OMCProxy.getRestrictionType("Modelica.SIunits.Lethargy") 
+				!= Type.TYPE)
+		{
+			fail("Modelica.SIunits.Lethargy class' restriction type is wrong");
+		}
+		
+		OMCProxy.loadFileInteractive(nested_models_mo);
+		if (OMCProxy.getRestrictionType("hepp.hehehe") 
+				!= Type.CLASS)
+		{
+			fail("hepp.hehehe class' restriction type is wrong");
+		}
+	}
+	
+	/**
 	 * test OMCProxy.getPackages()
 	 */
-	public void testGetPackages()
+	public void testGetPackages() throws CompilerException
 	{
-		try
+		OMCProxy.loadSystemLibrary();
+		String[] str = OMCProxy.getPackages("Modelica");
+		
+		assertNotNull("Could not fetch Modelica package", str);
+		
+		Vector<String> packages = new Vector<String>();
+		for(String s : str)
 		{
-			OMCProxy.loadSystemLibrary();
-			String[] str = OMCProxy.getPackages("Modelica");
-
-			assertNotNull("Could not fetch Modelica package", str);
-			
-			Vector<String> packages = new Vector<String>();
-			for(String s : str)
-			{
-				packages.addElement(s);
-			}
-
-			assertTrue(packages.containsAll(modelicaLibraryPackages));
+			packages.addElement(s);
 		}
-		catch(CompilerException e)
-		{
-			fail(e.getMessage());
-		}
+		
+		assertTrue(packages.containsAll(modelicaLibraryPackages));
 	}
 	
 	/**
@@ -107,12 +167,8 @@ public class TestOMCProxy extends TestCase
 	public void testGetElementLocation()
 		throws ConnectionException, UnexpectedReplyException, InvocationError
 	{
-		/* load file nested_models.mo from Area51Projects modelica project */
-		IProject proj = Utility.getProject(
-				Area51Projects.MODELICA_PROJECT_NAME).getProject();
-		
-		OMCProxy.loadFileInteractive(proj.getFile("nested_models.mo"));
-		
+		OMCProxy.loadFileInteractive(nested_models_mo);
+
 		/*
 		 * we are basicaly only interested in getting the right line number
 		 */

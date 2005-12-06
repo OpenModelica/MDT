@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaPackage;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
@@ -77,8 +77,8 @@ public class TestTraversingPackages extends TestCase
 	
 	public void testTraverse() throws CoreException, CompilerException
 	{
-		IModelicaPackage root_package = null;
-		IModelicaPackage childless_package = null;
+		IModelicaClass root_package = null;
+		IModelicaClass childless_package = null;
 		IModelicaFile root_package_model = null;
 		IModelicaFile root_package_function = null;
 
@@ -91,8 +91,8 @@ public class TestTraversingPackages extends TestCase
 		/* root_package/root_package_folder */
 		IModelicaFolder root_package_folder = null;
 		
-		IModelicaPackage sub_package = null;
-		IModelicaPackage leaf_package = null;
+		IModelicaClass sub_package = null;
+		IModelicaClass leaf_package = null;
 		IModelicaFile sub_package_model = null;
 
 		/*
@@ -112,11 +112,11 @@ public class TestTraversingPackages extends TestCase
 
 			if (name.equals("root_package"))
 			{
-				root_package = (IModelicaPackage)elm;
+				root_package = (IModelicaClass)elm;
 			}
 			else if (name.equals("childless_package"))
 			{
-				childless_package = (IModelicaPackage)elm;
+				childless_package = (IModelicaClass)elm;
 			}
 		}
 
@@ -146,7 +146,7 @@ public class TestTraversingPackages extends TestCase
 
 			if (name.equals("sub_package"))
 			{
-				sub_package = (IModelicaPackage)elm;
+				sub_package = (IModelicaClass)elm;
 			}
 			else if (name.equals("root_package_model.mo"))
 			{
@@ -203,7 +203,7 @@ public class TestTraversingPackages extends TestCase
 			
 			if (name.equals("leaf_package"))
 			{
-				leaf_package = (IModelicaPackage)elm;
+				leaf_package = (IModelicaClass)elm;
 			}
 			else if (name.equals("package.mo"))
 			{
@@ -230,7 +230,7 @@ public class TestTraversingPackages extends TestCase
 	 * @param zePackage
 	 * @param fullName
 	 */
-	private void checkFullName(IModelicaPackage zePackage, String fullName) 
+	private void checkFullName(IModelicaClass zePackage, String fullName) 
 	{
 		assertEquals("Package full name does not match",
 					 fullName,	

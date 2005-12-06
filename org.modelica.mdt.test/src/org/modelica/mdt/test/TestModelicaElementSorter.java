@@ -43,15 +43,12 @@ package org.modelica.mdt.test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.core.IModelicaPackage;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
@@ -117,7 +114,7 @@ public class TestModelicaElementSorter extends TestCase
 			elm = children[i];
 			
 			if (elm instanceof IModelicaFolder && 
-					!(elm instanceof IModelicaPackage))
+					!(elm instanceof IModelicaClass))
 			{
 				current = ((IModelicaFolder)elm).getElementName();
 				if (previous != null)
@@ -144,9 +141,9 @@ public class TestModelicaElementSorter extends TestCase
 		{
 			elm = children[i];
 			
-			if (elm instanceof IModelicaPackage)
+			if (elm instanceof IModelicaClass)
 			{
-				current = ((IModelicaPackage)elm).getElementName();
+				current = ((IModelicaClass)elm).getElementName();
 				if (previous != null)
 				{
 					order = 
