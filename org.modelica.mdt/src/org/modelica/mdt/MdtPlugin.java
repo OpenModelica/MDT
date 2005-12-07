@@ -56,10 +56,8 @@ import org.osgi.framework.BundleContext;
 
 public class MdtPlugin extends AbstractUIPlugin
 {
-
 	public static final String MODELICA_NATURE = 
 		"org.modelica.mdt.ModelicaNature";
-
 	
 	/* status codes used for logging */ 
 	private static final int INTERNAL_ERROR = 0;
@@ -194,7 +192,6 @@ public class MdtPlugin extends AbstractUIPlugin
 	{
 		return getDefault().internalGetActivePage();
 	}
-
 	
 	/**
 	 * Note: This method is for internal use only. Clients should not

@@ -109,4 +109,8 @@
    			</run>
    		</builder>
    	</extension>
+   <extension
+         point="org.eclipse.pde.core.source">
+      <location path="src"/>
+   </extension>
 </plugin>

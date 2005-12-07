@@ -1,3 +1,44 @@
+/*
+ * This file is part of Modelica Development Tooling.
+ *
+ * Copyright (c) 2005, Linköpings universitet, Department of
+ * Computer and Information Science, PELAB
+ *
+ * All rights reserved.
+ *
+ * (The new BSD license, see also
+ * http://www.opensource.org/licenses/bsd-license.php)
+ *
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ * * Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ *
+ * * Neither the name of Linköpings universitet nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.modelica.mdt.internal.omcproxy;
 
 import java.io.BufferedReader;
@@ -27,14 +68,24 @@ public class OMCProxy
 	private static boolean systemLibraryLoaded = false;
 	
 	private static boolean traceOMCCalls = false;
+	private static boolean traceOMCStatus = false;
 	static
 	{
-		/* load debug options and set debug flag variables accordingly */ 
-		String value = Platform.getDebugOption
+		/* load debug options and set debug flag variables accordingly */
+		
+		
+		String value = Platform.getDebugOption  /*load trace/omcCalls flag */
 			("org.modelica.mdt/trace/omcCalls");
 		if (value != null && value.equalsIgnoreCase("true"))
 		{
 			traceOMCCalls = true;
+		}
+		
+		value = Platform.getDebugOption
+		("org.modelica.mdt/trace/omcStatus");
+		if (value != null && value.equalsIgnoreCase("true"))
+		{
+			traceOMCStatus = true;
 		}
 		
 	}
@@ -95,6 +146,9 @@ public class OMCProxy
 			fileName = temp + "\\openmodelica.objid";
 		}
 		
+		logOMCStatus("will look for OMC object reference in '" 
+				+ fileName + "'");
+		
 		return fileName;
 	}
 	
@@ -113,6 +167,8 @@ public class OMCProxy
 		if(omHome == null)
 		{
 			final String m = "Environment variable OPENMODELICAPATH not set";
+			logOMCStatus("Environment variable OPENMODELICAPATH not set,"+
+					" don't know how to start OMC");
 			throw new ConnectionException(m);
 		}
 		
@@ -133,16 +189,21 @@ public class OMCProxy
 		File f = new File(getPathToObject());
 		if(f.exists())
 		{
+			logOMCStatus("removing old OMC object reference file");
 			f.delete();
 		}
 		
-		String command[] = {pathToOmc, "+d=interactiveCorba"};
+		String command[] = { pathToOmc, "+d=interactiveCorba" };
 		try
 		{
+			logOMCStatus("running command " + command[0] + " " + command[1]);
 			Runtime.getRuntime().exec(command);
+			logOMCStatus("command run successfully");
 		}
 		catch(IOException e)
 		{
+			logOMCStatus("error running command " + e.getMessage()
+					+ "\ntrying allternative path to the binary");
 			String secondaryPathToOmc = null;
 			try
 			{
@@ -154,11 +215,17 @@ public class OMCProxy
 				{
 					secondaryPathToOmc = omHome + "\\Compiler\\omc.exe";
 				}
-				command = new String[]{secondaryPathToOmc, "+d=interactiveCorba"};
+
+				command = 
+					new String[]{secondaryPathToOmc, "+d=interactiveCorba"};
+				logOMCStatus("running command " 
+						+ command[0] + " " + command[1]);
 				Runtime.getRuntime().exec(command);
+				logOMCStatus("command run successfully");
 			}
 			catch(IOException ex)
 			{
+				logOMCStatus("error running command, giving up"); 
 				throw new ConnectionException
 					("Unable to start Open Modelica Compiler\n"
 					 + "Tried starting " + pathToOmc
@@ -186,6 +253,9 @@ public class OMCProxy
 			/* If we've waited for 5 seconds, abort wait for OMC */
 			if(ticks > 50)
 			{
+				logOMCStatus("no OMC object reference file created after " + 
+						"approximatly 5 seconds\n" +
+						"it seems OMC does not want to come up, giving up");
 				throw new ConnectionException
 					("Unable to start Open Modelica Compiler");
 			}
@@ -249,27 +319,40 @@ public class OMCProxy
 		if(!f.exists())
 		{
 			/* If a server isn't running, start it */
+			logOMCStatus("no OMC object reference found");
 			startServer();
+		}
+		else
+		{
+			logOMCStatus("OMC object reference present," +
+					" assuming OMC is running");
 		}
 		
 		/* Read in the CORBA OMC object from a file on disk */
 		stringifiedObjectReference = readObjectFromFile();
 
-		/* Setup up OMC object reference by initializing ORB and then
-		 * converting the string object to a real CORBA object. */
+		/*
+		 * Setup up OMC object reference by initializing ORB and then
+		 * converting the string object to a real CORBA object.
+		 */
 		setupOmcc(stringifiedObjectReference);
 
 		try
 		{
-			/* Test the server by trying to send an expression to it. 
+			/*
+			 * Test the server by trying to send an expression to it. 
 			 * This might fail if the object reference found on disk didn't
 			 * have a corresponding server running. If a server is missing,
-			 * catch an exception and try starting a server. */
+			 * catch an exception and try starting a server.
+			 */
+			logOMCStatus("trying to send expression to OMC");
 			omcc.sendExpression("1+1");
+			logOMCStatus("expression send successfully");
 		}
 		catch(org.omg.CORBA.COMM_FAILURE e)
 		{
 			/* Start server and set up omcc */
+			logOMCStatus("failed sending expression");
 			startServer();
 			stringifiedObjectReference = readObjectFromFile();
 			setupOmcc(stringifiedObjectReference);
@@ -277,13 +360,18 @@ public class OMCProxy
 
 		try
 		{
-			/* Once again try to send an expression to OMC. If it fails this
+			/*
+			 * Once again try to send an expression to OMC. If it fails this
 			 * time it's time to send back an exception to the caller of this
-			 * function. */
+			 * function.
+			 */
+			logOMCStatus("trying to send expression to OMC");
 			omcc.sendExpression("1+1");
+			logOMCStatus("expression send successfully");
 		}
 		catch(org.omg.CORBA.COMM_FAILURE e)
 		{
+			logOMCStatus("failed sending expression, giving up");
 			throw new ConnectionException("Unable to start server");
 		}
 
@@ -325,6 +413,20 @@ public class OMCProxy
 			return;
 		}
 		System.out.println(">> " + expression);
+	}
+	
+	/**
+	 * loggs the message conserning OMC status if the
+	 * tracing flag traceOMCStatus is set
+	 * @param message the message to log
+	 */
+	private static void logOMCStatus(String message)
+	{
+		if (!traceOMCStatus)
+		{
+			return;
+		}
+		System.out.println(message);
 	}
 
 	/**
