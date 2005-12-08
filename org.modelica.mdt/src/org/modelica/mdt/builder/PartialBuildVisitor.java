@@ -60,12 +60,19 @@ import org.modelica.mdt.internal.omcproxy.CompilerException;
 public class PartialBuildVisitor implements IResourceDeltaVisitor 
 {
 
+	/**
+	 * @param delta the delta that contains the differences between this
+	 * resource tree and the last resource tree that was built
+	 */
 	public boolean visit(IResourceDelta delta) throws CoreException
 	{
 		String extension = delta.getResource().getFileExtension();
 		
 		int kind = delta.getKind();
 		
+		/*
+		 * Perform the build on .mo files that have either been added or changed
+		 */
 		if(extension != null && extension.equals("mo")
 				&& (kind == IResourceDelta.ADDED
 						|| kind == IResourceDelta.CHANGED))
@@ -73,26 +80,45 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 			IPath path = delta.getProjectRelativePath();
 			IFile file = delta.getResource().getProject().getFile(path);
 
+			// TODO See if this method call is really needed
 			file.deleteMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_INFINITE);
 			try
 			{
+				/*
+				 * Try loading the file into OMC, and report errors if any
+				 * are found.
+				 */
 				SyntaxChecker.loadFileAndReportErrors(file);
 			}
 			catch(CompilerException e)
 			{
+				// TODO Proper error handling?
 				MdtPlugin.log(e);
 			}
 		}
 		
+		/*
+		 * Get the children of this resource that have been changed since
+		 * last rebuild.
+		 */
 		IResourceDelta[] d = delta.getAffectedChildren();
 		if(d == null)
 			return false;
 		
+		/*
+		 * Rebuild all children of this resource that have changed.
+		 * (Maybe this shouldn't be done explicitly but instead return
+		 *  true from this function?)
+		 */
 		for(IResourceDelta d1 : d)
 		{
 			d1.accept(new PartialBuildVisitor());
 		}
+		
+		/*
+		 * Return false to indicate that children should not be visited.
+		 */
 		return false;
 	}
 

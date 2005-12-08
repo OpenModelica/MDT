@@ -75,7 +75,7 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 /**
  * This builder loads all changed files into OMC in order to check for
  * parse errors. If a loaded file have any parse error, then a problem 
- * markers are set to communicate the problem to the user.
+ * marker is set to communicate the problem to the user.
  * 
  * @author Andreas Remar
  */
@@ -84,11 +84,15 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 
 	public static final String BUILDER_ID = "org.modelica.mdt.syntaxChecker";
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
+	 * 				java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException
 	{
-
 		switch(kind)
 		{
 		case IncrementalProjectBuilder.FULL_BUILD:
@@ -111,6 +115,9 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		return null;
 	}
 	
+	/*
+	 * Performs a full build on the project.
+	 */
 	protected void fullBuild(final IProgressMonitor monitor)
 	{
 		try
@@ -124,6 +131,10 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 	}
 	
+	/*
+	 * Performs an incremental build on a project given a resource delta of
+	 * changes.
+	 */
 	protected void incrementalBuild(IResourceDelta delta,
 			IProgressMonitor monitor)
 	{
@@ -138,6 +149,10 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 	}
 	
+	/**
+	 * Adds this builder to the project
+	 * @param project the project to add this builder to
+	 */
 	public static void addBuilderToProject(IProject project)
 	{
 		if(!project.isOpen())
@@ -190,6 +205,10 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 	}
 	
+	/**
+	 * 
+	 * @param project the project to remove this builder from
+	 */
 	public static void removeBuilderFromProject(IProject project)
 	{
 		if(!project.isOpen())
@@ -239,6 +258,12 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 	}
 	
+	/**
+	 * 
+	 * @param file the file where the marker should be added
+	 * @param lineno where in the file this marker should be set
+	 * @param msg a message indicating the problem
+	 */
 	protected static void reportProblem(IFile file, int lineno, String msg)
 	{
 		createMarkerAtLine(file, lineno, msg, IMarker.PROBLEM);
@@ -276,6 +301,14 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 
 	}
 	
+	/**
+	 * Wrapper function to get the region given an IFile and a line number
+	 * @param file the file that contains the line we're interested in
+	 * @param lineno the line number to find
+	 * @return region that this line occupies, or <code>null</code> if no such
+	 * line was found in the file
+	 * @throws CoreException
+	 */
 	public static IRegion getLineRegion(IFile file, int lineno) 
 		throws CoreException
 	{
@@ -283,10 +316,22 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	}
 
 	
+	/**
+	 * Tries to calculate a region for a given file and line number.
+	 * 
+	 * @param fileContents contents of the file that we want to search for line
+	 * @param lineno the line number to find
+	 * @return region that this line occupies, or <code>null</code> if no such
+	 * line was found in the file
+	 */
 	private static IRegion getLineRegion(InputStream fileContents, int lineno)
 	{
 		BufferedInputStream bis = new BufferedInputStream(fileContents);
 		String contents = "";
+
+		/*
+		 * Read in contents of the file.
+		 */
 		while(true)
 		{
 			try
@@ -305,7 +350,14 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			}
 		}
 
+		/*
+		 * Convert contents of the file to a document.
+		 */
 		Document d = new Document(contents);
+		
+		/*
+		 * Try to find the region where the line is.
+		 */
 		try
 		{
 			return new Region(d.getLineOffset(lineno - 1), 
@@ -319,6 +371,15 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param file the file where this marker should be set
+	 * @param lineno the line number where this marker should be set
+	 * @param message a message describing this marker
+	 * @param type the type of the marker (problem, info, ...)
+	 * @return the created marker, or <code>null</code> if marker couldn't
+	 * 		   be created
+	 */
 	public static IMarker createMarkerAtLine(IFile file, int lineno,
 			String message, String type)
 	{
@@ -350,7 +411,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		
 	protected void startupOnInitialization()
 	{
-		// TODO Add builder init here
+		// TODO Add builder init here, maybe remove all markers here?
 	}
 	
 	protected void clean(IProgressMonitor monitor)
@@ -358,11 +419,23 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		// TODO Add builder clean logic here
 	}
 
+	/**
+	 * 
+	 * @param file the file we should load into OMC to check for errors
+	 * @throws ConnectionException
+	 * @throws UnexpectedReplyException
+	 */
 	protected static void loadFileAndReportErrors(IFile file)
 		throws ConnectionException, UnexpectedReplyException
 	{
+		/*
+		 * Try loading the file into OMC and get the results.
+		 */
 		ParseResults res = OMCProxy.loadFileInteractive(file);
 
+		/*
+		 * If there were any compile errors, report them as problems.
+		 */
 		for (CompileError error : res.getCompileErrors())
 		{
 			reportProblem(file, error.getLine(), error.getErrorDescription());

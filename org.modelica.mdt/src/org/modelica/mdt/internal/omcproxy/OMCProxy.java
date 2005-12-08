@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -56,17 +56,27 @@ import org.modelica.mdt.core.IModelicaClass.Type;
 import org.omg.CORBA.ORB;
 
 /**
- * 
+ * The OMCProxy is the glue between the OpenModelica Compiler and MDT.
+ * It uses the interactive API of OMC to get information about classes
+ * and to load classes into OMC. 
  * @author Andreas Remar
  *
  */
 public class OMCProxy
 {
+	/* the CORBA object */
 	private static OmcCommunication omcc;
-	private static String os; /* what Operating System we're running on */
+	
+	/* what Operating System we're running on */
+	private static String os;
+	
+	/* indicates if we've setup the communication with OMC */
 	private static boolean hasInitialized = false;
+	
+	/* indicates if the Modelica System Library has been loaded */
 	private static boolean systemLibraryLoaded = false;
 	
+	/* should we trace the calls to sendExpression? */
 	private static boolean traceOMCCalls = false;
 	private static boolean traceOMCStatus = false;
 	static
@@ -91,7 +101,8 @@ public class OMCProxy
 	}
 
 	/**
-	 * Reads in the OMC CORBA object reference from a file on disk. 
+	 * Reads in the OMC CORBA object reference from a file on disk.
+	 * @return the object reference as a <code>String</code>
 	 */
 	private static String readObjectFromFile() throws ConnectionException
 	{
@@ -130,7 +141,7 @@ public class OMCProxy
 	private static String getPathToObject()
 	{
 		String fileName = null;
-		if(os.equals("Linux"))
+		if(os.equals("Unix"))
 		{
 			/* This mirrors the way OMC creates the object file. */
 			String username = System.getenv("USER");
@@ -172,7 +183,7 @@ public class OMCProxy
 			throw new ConnectionException(m);
 		}
 		
-		if(os.equals("Linux"))
+		if(os.equals("Unix"))
 		{
 			pathToOmc = omHome + "/omc";
 		}
@@ -202,12 +213,17 @@ public class OMCProxy
 		}
 		catch(IOException e)
 		{
+			/*
+			 * If we fail to start the compiler, maybe the executable is in
+			 * the Compiler directory (if we've compiled the compiler from
+			 * source). Try starting OMC from this secondary location.
+			 */
 			logOMCStatus("error running command " + e.getMessage()
 					+ "\ntrying allternative path to the binary");
 			String secondaryPathToOmc = null;
 			try
 			{
-				if(os.equals("Linux"))
+				if(os.equals("Unix"))
 				{
 					secondaryPathToOmc = omHome + "/Compiler/omc";
 				}
@@ -250,7 +266,7 @@ public class OMCProxy
 			}
 			ticks++;
 			
-			/* If we've waited for 5 seconds, abort wait for OMC */
+			/* If we've waited for 5 seconds, abort the wait for OMC */
 			if(ticks > 50)
 			{
 				logOMCStatus("no OMC object reference file created after " + 
@@ -285,14 +301,14 @@ public class OMCProxy
 	
 	/**
 	 * @return the name of the operating system. If an unknown os is found,
-	 * the default is Linux. 
+	 * the default is Unix. 
 	 */
 	private static String getOs()
 	{
 		String osName = System.getProperty("os.name");
 		if(osName.contains("Linux"))
 		{
-			return "Linux";
+			return "Unix";
 		}
 		else if(osName.contains("Windows"))
 		{
@@ -301,11 +317,17 @@ public class OMCProxy
 		else
 		{
 			MdtPlugin.logWarning("Unsupported OS");
-			return "Linux";
+			/* If the OS is not GNU/Linux or Windows, default to Unix */
+			return "Unix";
 		}
 	}
-	
-	private static void init(String args[]) throws ConnectionException
+
+	/**
+	 * Initialize the communication with OMC
+	 * @throws ConnectionException if we're unable to start communicating with
+	 * the server
+	 */
+	private static void init() throws ConnectionException
 	{
 		/* 
 		 * Get type of operating system, used for finding object
@@ -356,23 +378,21 @@ public class OMCProxy
 			startServer();
 			stringifiedObjectReference = readObjectFromFile();
 			setupOmcc(stringifiedObjectReference);
-		}
 
-		try
-		{
-			/*
-			 * Once again try to send an expression to OMC. If it fails this
-			 * time it's time to send back an exception to the caller of this
-			 * function.
-			 */
-			logOMCStatus("trying to send expression to OMC");
-			omcc.sendExpression("1+1");
-			logOMCStatus("expression send successfully");
-		}
-		catch(org.omg.CORBA.COMM_FAILURE e)
-		{
-			logOMCStatus("failed sending expression, giving up");
-			throw new ConnectionException("Unable to start server");
+			try
+			{
+				/* Once again try to send an expression to OMC. If it fails this
+				 * time it's time to send back an exception to the caller of
+				 * this function. */
+				logOMCStatus("trying to send expression to OMC");
+				omcc.sendExpression("1+1");
+				logOMCStatus("expression send successfully");
+			}
+			catch(org.omg.CORBA.COMM_FAILURE x)
+			{
+				logOMCStatus("failed sending expression, giving up");
+				throw new ConnectionException("Unable to start server");
+			}
 		}
 
 		hasInitialized = true;
@@ -380,20 +400,22 @@ public class OMCProxy
 	
 	/**
 	 * Send expression to OMC. If communication is not initialized, it
-	 * is initialized here. After initialization it loads the Modelica
-	 * Standard Library. 
-	 * @throws ConnectionException 
+	 * is initialized here.
+	 * @param exp the expression to send to OMC 
+	 * @throws ConnectionException if we're unable to start communicating with
+	 * the server
 	 */
-	private static String sendExpression(String exp) throws ConnectionException
+	private synchronized static String sendExpression(String exp)
+		throws ConnectionException
 	{
 		String retval = null;
 		
 		if(hasInitialized == false)
 		{
-			init(null);
+			init();
 		}
 		
-		logOMCCall(exp);		
+		logOMCCall(exp);
 		retval = omcc.sendExpression(exp);
 		logOMCReply(retval);
 		
@@ -401,7 +423,7 @@ public class OMCProxy
 	}
 	
 	/**
-	 * loggs the expression send to OMC if the
+	 * Logs the expression sent to OMC if the
 	 * tracing flag (traceOMCCalls) is set
 	 * 
 	 * @param expression the expression that is about to be sent to OMC
@@ -430,7 +452,7 @@ public class OMCProxy
 	}
 
 	/**
-	 * loggs the reply resived from OMC if
+	 * Logs the reply received from OMC if
 	 * the tracing flag (traceOMCCalls) is set
 	 * 
 	 * @param reply the reply recieved from the OMC
@@ -450,7 +472,11 @@ public class OMCProxy
 		}
 	}
 
-	
+	/**
+	 * Loads in the Modelica System Library.
+	 * @throws ConnectionException if we're unable to start communicating with
+	 * the server
+	 */
 	public static void loadSystemLibrary()
 		throws ConnectionException
 	{
@@ -462,6 +488,8 @@ public class OMCProxy
 	}
 	
 	/**
+	 * Get the packages contained in a class (a package is a class..)
+	 * 
 	 * @param className full class name where to look for packages
 	 * @return an array of subpackages defined (and loaded into OMC)
 	 *  inside the class named className
@@ -486,9 +514,13 @@ public class OMCProxy
 	}
 	
 	/**
+	 * Get the classes contained in a class (a package is a class..)
+	 * Packages are not returned from this method (use getPackages instead)
+	 * 
 	 * @param className full class name where to look for packages
 	 * @return an array of subclasses defined (and loaded into OMC)
-	 *  inside the class named className
+	 *  inside the class named className, but don't return packages in this
+	 *  class
 	 * @throws ConnectionException 
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
@@ -496,8 +528,7 @@ public class OMCProxy
 	public static String[] getClassNames(String className)
 		throws ConnectionException, UnexpectedReplyException
 	{
-		String retval;
-		retval = sendExpression("getClassNames("+className+")");
+		String retval = sendExpression("getClassNames("+className+")");
 		
 		String[] tokens = ProxyParser.parseSimpleList(retval);
 
@@ -518,9 +549,10 @@ public class OMCProxy
 	}
 
 	/**
+	 * Gets the restriction type of a class.
 	 * 
 	 * @param className fully qualified class name
-	 * @return the restriction type of the class or null if 
+	 * @return the restriction type of the class or Type.CLASS if 
 	 *         type can't be determined
 	 * @throws ConnectionException 
 	 */
@@ -563,6 +595,12 @@ public class OMCProxy
 		return type;
 	}
 	
+	/**
+	 * Fetches the error string from OMC. This should be called after an "Error"
+	 * is received.
+	 * @return
+	 * @throws ConnectionException
+	 */
 	public static String getErrorString()
 		throws ConnectionException
 	{
@@ -580,9 +618,9 @@ public class OMCProxy
 	/**
 	 * Tries to load file into OMC which causes it to be parsed and the syntax
 	 * checked.
-	 * @param file
-	 * @return either returns the classes (and packages) found in the file or the error
-	 * messages from OMC
+	 * @param file the file we want to load
+	 * @return either returns the classes (and packages) found in the file or
+	 * the error messages from OMC
 	 * @throws ConnectionException 
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
@@ -597,19 +635,18 @@ public class OMCProxy
 				+ "\")");
 		
 		/*
-		 * at this point OMC (ver 1.3.1) 
-		 * does not support returning partial parsing
-		 * results if there was parsing errors in the file. nor does OMC
-		 * provide an interface to both query for file contents and
+		 * At this point OMC (ver 1.3.1) does not support returning partial
+		 * parsing results if there was parsing errors in the file.
+		 * Nor does OMC provide an interface to both query for file contents and
 		 * parsing errors (loadFileInteractive() either returns a class name
 		 * list or "error").
 		 * 
-		 *  so for now we either return parsing errors or class names defined
-		 *  in the file. Go PELAB ! 
+		 * So for now we either return parsing errors or class names defined
+		 * in the file. Go PELAB! 
 		 */
 		
 		/*
-		 * there were parse errors
+		 * See if there were parse errors
 		 */
 		if(retval.toLowerCase().contains("error"))
 		{
@@ -627,7 +664,16 @@ public class OMCProxy
 		return res;
 	}
 
-	
+	/**
+	 * Gets the location (file, line number and column number) of a Modelica
+	 * element. 
+	 * @param className the element we want to get location of
+	 * @return an ElementLocation containing the file, line number and column
+	 * number of the given class 
+	 * @throws ConnectionException
+	 * @throws UnexpectedReplyException
+	 * @throws InvocationError
+	 */
 	public static ElementLocation getElementLocation(String className)
 		throws ConnectionException, UnexpectedReplyException, InvocationError 
 	{
@@ -641,12 +687,12 @@ public class OMCProxy
 		
 		
 		/*
-		 * getCrefInfo reply have following format:
+		 * The getCrefInfo reply have the following format:
 		 * 
 		 * <file path>,<line number>,<column number>
 		 * 
 		 */
-		
+//b56efe		
 		/* For some reason, the list returned doesn't contain curly braces. */
 		retval = "{" + retval + "}"; 
 
@@ -681,6 +727,14 @@ public class OMCProxy
 		return retval.contains("true");
 	}
 	
+	/**
+	 * NOT IMPLEMENTED
+	 * This function returns the info about this element that getElementsInfo
+	 * returns.. somehow
+	 * @param className
+	 * @return
+	 * @throws ConnectionException
+	 */
 	public static ElementsInfo getElementsInfo(String className)
 		throws ConnectionException
 	{

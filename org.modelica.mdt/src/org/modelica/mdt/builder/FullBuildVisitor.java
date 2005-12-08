@@ -1,4 +1,3 @@
-package org.modelica.mdt.builder;
 /*
  * This file is part of Modelica Development Tooling.
  *
@@ -40,6 +39,8 @@ package org.modelica.mdt.builder;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.modelica.mdt.builder;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -56,26 +57,43 @@ import org.modelica.mdt.internal.omcproxy.CompilerException;
  */
 public class FullBuildVisitor implements IResourceVisitor
 {
+	/**
+	 * @param resource the resource in the project that we are 'visiting'
+	 */
 	public boolean visit(IResource resource) throws CoreException
 	{
 		String extension = resource.getFileExtension();
 		
+		/*
+		 * Only send .mo files to OMC.
+		 */
 		if(extension != null && extension.equals("mo"))
 		{
 			IPath path = resource.getProjectRelativePath();
 			IFile file = resource.getProject().getFile(path);
 			
+			// TODO See if this method call is really needed
 			file.deleteMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_INFINITE);
 			try
 			{
+				/*
+				 * Try loading the file into OMC, and report errors if any
+				 * are found.
+				 */
 				SyntaxChecker.loadFileAndReportErrors(file);
 			}
 			catch(CompilerException e)
 			{
+				// TODO Proper error handling?
 				MdtPlugin.log(e);
 			}
 		}
+		
+		/*
+		 * Return true to indicate that the children of this resource should
+		 * be visited.
+		 */
 		return true;
 	}
 }

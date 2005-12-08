@@ -101,11 +101,13 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration {
 				IDocument.DEFAULT_CONTENT_TYPE);
 		
 		assistant.enableAutoActivation(true);
-		assistant.setAutoActivationDelay(500);
+		assistant.setAutoActivationDelay(100);
 		assistant.setProposalPopupOrientation(IContentAssistant
 				.PROPOSAL_OVERLAY);
 		assistant.setContextInformationPopupOrientation(IContentAssistant
 				.CONTEXT_INFO_ABOVE);
+		assistant.setProposalSelectorBackground(new Color(Display.getCurrent(),
+				new RGB(255, 255, 255)));
 		
 		return assistant;
 	}

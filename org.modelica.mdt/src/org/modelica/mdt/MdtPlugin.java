@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -74,7 +74,11 @@ public class MdtPlugin extends AbstractUIPlugin
 		plugin = this;
 	}
 
-	
+	/**
+	 * 
+	 * @param project the project that should be marked as Modelica project
+	 * @throws CoreException
+	 */
 	public static void addModelicaNature(IProject project) throws CoreException
 	{
 		if (project.hasNature(MODELICA_NATURE)) 
@@ -91,6 +95,7 @@ public class MdtPlugin extends AbstractUIPlugin
 	
 	/**
 	 * Returns the shared instance.
+	 * @return the shared instance of MdtPlugin
 	 */
 	public static MdtPlugin getDefault()
 	{
@@ -99,6 +104,7 @@ public class MdtPlugin extends AbstractUIPlugin
 	
 	/**
 	 * This method is called upon plug-in activation
+	 * @param context
 	 */
 	public void start(BundleContext context) throws Exception 
 	{
@@ -111,9 +117,9 @@ public class MdtPlugin extends AbstractUIPlugin
 	 */
 	public void stop(BundleContext context) throws Exception 
 	{
-		super.stop(context);
 		ModelicaCore.stop();
 		plugin = null;
+		super.stop(context);
 	}
 
 	/**
@@ -222,6 +228,4 @@ public class MdtPlugin extends AbstractUIPlugin
 		}
 		return res;
 	}
-	
-	
 }

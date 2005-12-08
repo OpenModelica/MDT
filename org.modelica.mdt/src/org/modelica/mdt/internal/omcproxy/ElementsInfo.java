@@ -43,6 +43,11 @@ package org.modelica.mdt.internal.omcproxy;
 
 /**
  * what the fudge does this class do, and why is it empty ?
+ * 
+ * This class will hold stuff returned from getElementsInfo called
+ * on a class. It is empty because it's not implemented yet.
+ * 
+ * It's a return type from OMCProxy.getElementsInfo(String className)
  */
 public class ElementsInfo
 {

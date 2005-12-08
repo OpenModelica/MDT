@@ -53,23 +53,23 @@ import org.modelica.mdt.MdtPlugin;
 public class ProxyParser
 {
 	/**
-	 * This very simple parser just splits a flat modelica list into
-	 * substrings. Doesn't handle nested lists. 
-	 * 
-	 * an example of a simple Modelica list is: '{hej,hopp,hepp}' 
+	 * This function parses flat (simple) Modelica lists.
+	 * An example of a simple Modelica list is: '{hej,hopp,hepp}' 
 	 * @throws UnexpectedReplyException 
 	 */
 	public static String[] parseSimpleList(String str)
 		throws UnexpectedReplyException
 	{
-		Vector v = parseList(str);
-		String[] retval = new String[v.size()];
-		for(int i = 0;i < v.size();i++)
+		Vector listElements = parseList(str);
+		if(listElements == null)
+			return new String[0];
+		String[] retval = new String[listElements.size()];
+		for(int i = 0;i < listElements.size();i++)
 		{
-			Object o = v.get(i);
-			if(o instanceof String)
+			Object obj = listElements.get(i);
+			if(obj instanceof String)
 			{
-				retval[i] = (String)o;
+				retval[i] = (String)obj;
 			}
 			else
 			{
@@ -82,7 +82,10 @@ public class ProxyParser
 	}
 
 	/**
-	 * TODO Long comment
+	 * This function parses Modelica lists, any nesting possible.
+	 * @param str the Modelica list to parse
+	 * @return a Vector containing Vector:s and String:s. The Vector:s contain
+	 * further Vector:s and String:s. Nesting and stuff.
 	 */
 	public static Vector<Object> parseList(String str)
 	{
@@ -109,13 +112,16 @@ public class ProxyParser
 		 * { { hej, på } , dig } => [[hej,på],dig]
 		 */
 		
+		/*
+		 * Go through the string character by character, looking for commas (,)
+		 * and start ({) and end (}) of lists. 
+		 */
 		String subString = "";
 		int depth = 0;
 		boolean listFound = false;
 		for(int characterPosition = 0;characterPosition < str.length()
 			;characterPosition++)
 		{
-			//System.out.println("+> " + subString);
 			if(str.charAt(characterPosition) == '{')
 			{
 				listFound = true;
@@ -123,12 +129,19 @@ public class ProxyParser
 			}
 			if(str.charAt(characterPosition) == ',' && depth == 0)
 			{
-				// End of token
+				/*
+				 * If we're at depth 0, then we've found a list (or element)
+				 * at the bottom level.
+				 */
 				Object element = null;
 				if(listFound)
+				{
 					element = parseList(subString);
+				}
 				else
+				{
 					element = subString.trim();
+				}
 				
 				listFound = false;
 				if(element instanceof String && ((String)element).equals(""))
