@@ -56,7 +56,6 @@ import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
