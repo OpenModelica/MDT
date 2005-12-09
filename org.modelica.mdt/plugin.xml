@@ -33,7 +33,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewClassWizard"
-            icon="icons/modelicaFile.png"
+            icon="icons/obj16/class_obj.png"
             id="org.modelica.mdt.NewClassWizard"
             name="Modelica Class">
          <description>
