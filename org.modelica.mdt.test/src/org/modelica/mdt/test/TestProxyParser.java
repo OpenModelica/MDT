@@ -169,59 +169,66 @@ public class TestProxyParser extends TestCase
 	 */	
 	public void testParseErrorString()
 	{
-		/* single error windows style */
-		String errorString = 
-			"[c:/folde/hej.mo:2:1]: error: unexpected tooken: muu\n";
-		CompileError[] errors = ProxyParser.parseErrorString(errorString);
-
-		assertEquals(1, errors.length);		
-		CompileError error = errors[0];
-		assertEquals(2, error.getLine());
-		assertEquals("unexpected tooken: muu", error.getErrorDescription());
-
-		/* two errors windows style */
-		errorString = 
-			"[c:/folder he/hej.mo:4:1]: error: unexpected end of file\n" + 
-			"[c:/folder he/hej.mo:15:1]: error: hej remar\n";
-		errors = ProxyParser.parseErrorString(errorString);
-		assertEquals(2, errors.length);
-		
-		error = errors[0];
-		assertEquals(4, error.getLine());
-		assertEquals("unexpected end of file", error.getErrorDescription());
-
-		error = errors[1];
-		assertEquals(15, error.getLine());
-		assertEquals("hej remar", error.getErrorDescription());
-		
-		/* single error unix style */
-		errorString = 
-			"[/usr/folde/hej.mo:12:1]: error: unexpected tooken: muu\n";
-		errors = ProxyParser.parseErrorString(errorString);
-
-		assertEquals(1, errors.length);		
-		error = errors[0];
-		assertEquals(12, error.getLine());
-		assertEquals("unexpected tooken: muu", error.getErrorDescription());
-
-		/* two errors unix style */
-		errorString = 
-			"[/hej/hop/hej.mo:453:1]: error: unexpected end of file\n" + 
-			"[/usr/local/modelica/hej.mo:715:1]: error: hej remar\n";
-		errors = ProxyParser.parseErrorString(errorString);
-		assertEquals(2, errors.length);
-		
-		error = errors[0];
-		assertEquals(453, error.getLine());
-		assertEquals("unexpected end of file", error.getErrorDescription());
-
-		error = errors[1];
-		assertEquals(715, error.getLine());
-		assertEquals("hej remar", error.getErrorDescription());
-
-		/* no errors aka empty error string */
-		errors = ProxyParser.parseErrorString("");
-		assertEquals(0, errors.length);
-	}
+		try
+		{
+			/* single error windows style */
+			String errorString = 
+				"[c:/folde/hej.mo:2:1]: error: unexpected tooken: muu\n";
+			CompileError[] errors = ProxyParser.parseErrorString(errorString);
 	
+			assertEquals(1, errors.length);		
+			CompileError error = errors[0];
+			assertEquals(2, error.getLine());
+			assertEquals("unexpected tooken: muu", error.getErrorDescription());
+	
+			/* two errors windows style */
+			errorString = 
+				"[c:/folder he/hej.mo:4:1]: error: unexpected end of file\n" + 
+				"[c:/folder he/hej.mo:15:1]: error: hej remar\n";
+			errors = ProxyParser.parseErrorString(errorString);
+			assertEquals(2, errors.length);
+			
+			error = errors[0];
+			assertEquals(4, error.getLine());
+			assertEquals("unexpected end of file", error.getErrorDescription());
+	
+			error = errors[1];
+			assertEquals(15, error.getLine());
+			assertEquals("hej remar", error.getErrorDescription());
+			
+			/* single error unix style */
+			errorString = 
+				"[/usr/folde/hej.mo:12:1]: error: unexpected tooken: muu\n";
+			errors = ProxyParser.parseErrorString(errorString);
+	
+			assertEquals(1, errors.length);		
+			error = errors[0];
+			assertEquals(12, error.getLine());
+			assertEquals("unexpected tooken: muu", error.getErrorDescription());
+	
+			/* two errors unix style */
+			errorString = 
+				"[/hej/hop/hej.mo:453:1]: error: unexpected end of file\n" + 
+				"[/usr/local/modelica/hej.mo:715:1]: error: hej remar\n";
+			errors = ProxyParser.parseErrorString(errorString);
+			assertEquals(2, errors.length);
+			
+			error = errors[0];
+			assertEquals(453, error.getLine());
+			assertEquals("unexpected end of file", error.getErrorDescription());
+	
+			error = errors[1];
+			assertEquals(715, error.getLine());
+			assertEquals("hej remar", error.getErrorDescription());
+	
+			/* no errors aka empty error string */
+			errors = ProxyParser.parseErrorString("");
+			assertEquals(0, errors.length);
+		}
+		catch(Exception e)
+		{
+			/* On any exception, fail. */
+			fail(e.getMessage());
+		}
+	}
 }
