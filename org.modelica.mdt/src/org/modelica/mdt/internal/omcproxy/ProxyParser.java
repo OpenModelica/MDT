@@ -194,6 +194,7 @@ public class ProxyParser
 	 * @return
 	 */
 	public static CompileError[] parseErrorString(String errorString)
+		throws UnexpectedReplyException
 	{
 		StringTokenizer strTok = new StringTokenizer(errorString, "\r\n");
 		CompileError[] compileErrs = new CompileError[strTok.countTokens()];
@@ -217,6 +218,13 @@ public class ProxyParser
 			 * and errorParts[1] is error message
 			 */
 			String[] errorParts = errorLine.split("]");
+			
+			if(errorParts.length < 2)
+			{
+				throw new UnexpectedReplyException("Weird error message from "+
+						"the compiler: [" + errorLine + "]");
+			}
+			
 			String errorLocation = errorParts[0];
 			String errorMessage = errorParts[1];
 		
