@@ -515,6 +515,71 @@ public class TestNewClassWizard extends TestCase
 		assertTrue("unexpected conted created in the source file", same);
 		
 	}
+	
+	public void testCreateRecord()
+	{
+		openWizardAndFetchWidgets();
+		
+		String name = "rec1";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "record");
+
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			Utility.compareContent(project.getFile(name + ".mo"), 
+				"record "+ name +"\n" +
+				"\n" +
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
+		
+	}
+	
+	public void testCreatePartialRecord()
+	{
+		openWizardAndFetchWidgets();
+		
+		String name = "rec2";
+		
+		/*
+		 * create class
+		 */
+		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "record");
+		btester.actionClick(partialClass);
+		
+		
+		/* wait for the name change to propogate to enable the finish button */
+		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+		btester.actionClick(finish);
+		
+		
+		while(!project.isOpen()){ Utility.sleep(this, 100); }
+		
+		/*
+		 * check that the generated source code is sane
+		 */
+		boolean same = 
+			Utility.compareContent(project.getFile(name + ".mo"), 
+				"partial record "+ name +"\n" +
+				"\n" +
+				"end "+ name + ";");
+		assertTrue("unexpected conted created in the source file", same);
+	}
 
 	public void testCreateBlock()
 	{
