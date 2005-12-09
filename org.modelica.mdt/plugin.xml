@@ -58,7 +58,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.modelica.mdt.editor.ModelicaEditor"
-            icon="icons/modelicaFile.png"
+            icon="icons/obj16/mo_file.png"
             default="false"
             name="Modelica Editor"
             contributorClass="org.modelica.mdt.editor.BasicTextEditorActionContributor"
