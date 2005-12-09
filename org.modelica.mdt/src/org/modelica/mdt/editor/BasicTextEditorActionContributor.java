@@ -45,19 +45,12 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 /**
  * @author Peter Bunus
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class BasicTextEditorActionContributor extends
-		EditorActionBarContributor {
-
-	/**
-	 * 
-	 */
-	public BasicTextEditorActionContributor() {
+		EditorActionBarContributor 
+{
+	public BasicTextEditorActionContributor() 
+	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
-
 }

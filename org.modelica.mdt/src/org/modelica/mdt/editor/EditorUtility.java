@@ -60,7 +60,8 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * A number of routines for working with modelica elements in editors.
- * 
+ * Currently that number is one. Use openInEditor() to open a modelica element
+ * in the editor.
  */
 public class EditorUtility
 {

@@ -43,11 +43,10 @@ package org.modelica.mdt.editor;
 
 /**
  * @author Peter Bunus
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
-public interface ModelicaSyntax {
+public interface ModelicaSyntax 
+{
+	// TODO is all this stuff relevant to modelica ? I heard wispers of cobolt
 	public static final String[] reservedwords = {"algorithm", "and",
 			"annotation", "block", "boundary", "Code", "class", "connect",
 			"connector", "constant", "discrete", "each", "else", "elseif",
@@ -56,7 +55,8 @@ public interface ModelicaSyntax {
 			"if", "import", "in", "initial", "inner", "input", "loop", "model",
 			"not", "outer", "overload", "or", "output", "package", "parameter",
 			"partial", "protected", "public", "record", "redeclare", "replaceable",
-			"results", "start", "then", "true", "type", "unsigned_real", "when", "while", "within"};
+			"results", "start", "then", "true", "type", "unsigned_real", "when", 
+			"while", "within"};
 
 		  public static final String[] predicates = {"UNION", "IS",
 		      "IS NULL", "NOT NULL", "IS OF", "IN", "BETWEEN",

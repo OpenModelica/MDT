@@ -411,7 +411,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		
 	protected void startupOnInitialization()
 	{
-		// TODO Add builder init here, maybe remove all markers here?
+		/* NOP */
 	}
 	
 	protected void clean(IProgressMonitor monitor)

@@ -68,27 +68,39 @@ import org.eclipse.swt.widgets.Display;
  *    Recoded from scratch, most code abducted from PyDev
  */
 public class ModelicaRuleScanner extends RuleBasedScanner
-								 implements ModelicaSyntax {
+								 implements ModelicaSyntax 
+{
 
-	private static Color COMMENT_COLOR = new Color(Display.getCurrent(), new RGB(0, 139, 0));
-	private static Color KEYWORD_COLOR = new Color(Display.getCurrent(), new RGB(139, 0, 0));
-	private static Color CODE_COLOR = new Color(Display.getCurrent(), new RGB(0, 0, 0));
-	private static Color TYPE_COLOR = new Color(Display.getCurrent(), new RGB(0, 0, 139));
-	private static Color NUMBER_COLOR = new Color(Display.getCurrent(), new RGB(139, 0, 139));
-	private static Color ERROR_COLOR = new Color(Display.getCurrent(), new RGB(255, 0, 0));
+	private static Color COMMENT_COLOR 
+		= new Color(Display.getCurrent(), new RGB(0, 139, 0));
+	private static Color KEYWORD_COLOR 
+		= new Color(Display.getCurrent(), new RGB(139, 0, 0));
+	private static Color CODE_COLOR
+		= new Color(Display.getCurrent(), new RGB(0, 0, 0));
+	private static Color TYPE_COLOR 
+		= new Color(Display.getCurrent(), new RGB(0, 0, 139));
+	private static Color NUMBER_COLOR 
+		= new Color(Display.getCurrent(), new RGB(139, 0, 139));
+	private static Color ERROR_COLOR 
+		= new Color(Display.getCurrent(), new RGB(255, 0, 0));
 
 	/**
 	 * Whitespace detector
 	 */
-	static private class WhiteSpace implements IWhitespaceDetector {
-		public boolean isWhitespace(char c) {return Character.isWhitespace(c);}
+	static private class WhiteSpace implements IWhitespaceDetector
+	{
+		public boolean isWhitespace(char c)
+		{
+			return Character.isWhitespace(c);
+		}
 	}
 	
 	/**
 	 * Modelica keyword detector
 	 */
-	static private class ModelicaKeywordDetector implements IWordDetector {
-		// keywords list has to be alphabetized for this to work properly
+	static private class ModelicaKeywordDetector implements IWordDetector
+	{
+		/* keywords list has to be alphabetized for this to work properly */
 		static public String[] keywords = {
 			"algorithm","and","annotation","block","break",
 			"class","connector","constant",
@@ -105,14 +117,17 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 			"then","time","true","type","when","while","within"
 		};
 
-		public ModelicaKeywordDetector() {
+		public ModelicaKeywordDetector() 
+		{
 		}
 
-		public boolean isWordStart(char c) {
+		public boolean isWordStart(char c) 
+		{
 			return Character.isJavaIdentifierStart(c);
 		}
 
-		public boolean isWordPart(char c) {
+		public boolean isWordPart(char c) 
+		{
 			return Character.isJavaIdentifierPart(c);
 		}
 	}
@@ -120,41 +135,50 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 	/**
 	 * Modelica type detector
 	 */
-	static private class ModelicaTypeDetector implements IWordDetector {
-		// keywords list has to be alphabetized for this to work properly
-		static public String[] keywords = {
+	static private class ModelicaTypeDetector implements IWordDetector 
+	{
+		/* keywords list has to be alphabetized for this to work properly */
+		static public String[] keywords = 
+		{
 			"Boolean","Integer","Real","String"
 		};
 
-		public ModelicaTypeDetector() {
+		public ModelicaTypeDetector() 
+		{
 		}
 
-		public boolean isWordStart(char c) {
+		public boolean isWordStart(char c) 
+		{
 			return Character.isJavaIdentifierStart(c);
 		}
 
-		public boolean isWordPart(char c) {
+		public boolean isWordPart(char c) 
+		{
 			return Character.isJavaIdentifierPart(c);
 		}
 	}
 
-	static public class NumberDetector implements IWordDetector{
+	static public class NumberDetector implements IWordDetector
+	{
         /**
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
          */
-        public boolean isWordStart(char c) {
+        public boolean isWordStart(char c) 
+        {
             return Character.isDigit(c);
         }
 
         /**
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
          */
-        public boolean isWordPart(char c) {
+        public boolean isWordPart(char c) 
+        {
             return Character.isDigit(c) || c == 'e'  || c == '.';
         }
 	}	
 	
-	public ModelicaRuleScanner() {
+	public ModelicaRuleScanner() 
+	{
 		super();
 		
 		setupRules();
@@ -162,23 +186,33 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 
 	private void setupRules()
 	{
-		IToken commentToken = new Token(new TextAttribute(COMMENT_COLOR,null,SWT.BOLD));
-		IToken keywordToken = new Token(new TextAttribute(KEYWORD_COLOR,null,SWT.BOLD));
-		IToken defaultToken = new Token(new TextAttribute(CODE_COLOR,null,SWT.BOLD));
-		IToken typeToken = new Token(new TextAttribute(TYPE_COLOR,null,SWT.BOLD));
-		IToken numberToken = new Token(new TextAttribute(NUMBER_COLOR,null,SWT.BOLD));
-		IToken errorToken = new Token(new TextAttribute(ERROR_COLOR,null,SWT.BOLD));
+		IToken commentToken = 
+			new Token(new TextAttribute(COMMENT_COLOR,null,SWT.BOLD));
+		IToken keywordToken = 
+			new Token(new TextAttribute(KEYWORD_COLOR,null,SWT.BOLD));
+		IToken defaultToken = 
+			new Token(new TextAttribute(CODE_COLOR,null,SWT.BOLD));
+		IToken typeToken = 
+			new Token(new TextAttribute(TYPE_COLOR,null,SWT.BOLD));
+		IToken numberToken = 
+			new Token(new TextAttribute(NUMBER_COLOR,null,SWT.BOLD));
+		IToken errorToken = 
+			new Token(new TextAttribute(ERROR_COLOR,null,SWT.BOLD));
 
 		setDefaultReturnToken(errorToken);
 		List<IRule> rules = new ArrayList<IRule>();
 		
 		rules.add(new WhitespaceRule(new WhiteSpace()));
 		
-		WordRule wordRule = new WordRule(new ModelicaKeywordDetector(), defaultToken);
-		for (int i=0; i<ModelicaKeywordDetector.keywords.length;i++) {
+		WordRule wordRule = 
+			new WordRule(new ModelicaKeywordDetector(), defaultToken);
+		
+		for (int i=0; i<ModelicaKeywordDetector.keywords.length;i++) 
+		{
 			wordRule.addWord(ModelicaKeywordDetector.keywords[i], keywordToken);
 		}
-		for (int i=0; i<ModelicaTypeDetector.keywords.length;i++) {
+		for (int i=0; i<ModelicaTypeDetector.keywords.length;i++) 
+		{
 			wordRule.addWord(ModelicaTypeDetector.keywords[i], typeToken);
 		}
 		rules.add(wordRule);

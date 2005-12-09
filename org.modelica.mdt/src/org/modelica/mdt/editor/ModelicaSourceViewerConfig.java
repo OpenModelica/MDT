@@ -57,27 +57,27 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * @author Peter Bunus
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
-public class ModelicaSourceViewerConfig extends SourceViewerConfiguration {
+public class ModelicaSourceViewerConfig extends SourceViewerConfiguration 
+{
 
 	private ModelicaRuleScanner scanner;
-	// default tag color is black
-	private static Color DEFAULT_TAG_COLOR= new Color(Display.getCurrent(), new RGB(0, 0, 0));
+	
+	/* default tag color is black */
+	private static Color DEFAULT_TAG_COLOR
+		= new Color(Display.getCurrent(), new RGB(0, 0, 0));
 
-	public ModelicaSourceViewerConfig() {
-
+	public ModelicaSourceViewerConfig() 
+	{
 	}
 
-	protected ModelicaRuleScanner getTagScanner() {
-		if (scanner == null) {
+	protected ModelicaRuleScanner getTagScanner() 
+	{
+		if (scanner == null) 
+		{
 			scanner = new ModelicaRuleScanner();
-			scanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(
-			DEFAULT_TAG_COLOR)));
+			scanner.setDefaultReturnToken
+				(new Token(new TextAttribute(DEFAULT_TAG_COLOR)));
 		}
 		return scanner;
 	}
@@ -85,11 +85,13 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration {
 	/**
 	 * Define reconciler for MyEditor
 	 */
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) 
+	{
 		PresentationReconciler reconciler = new PresentationReconciler();
 		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getTagScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		
 		return reconciler;
 	}
 

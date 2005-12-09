@@ -57,7 +57,7 @@ import org.eclipse.ui.PlatformUI;
 public class SystemFileEditorInput implements IStorageEditorInput
 {
 
-	private IStorage fileStorage;
+	private LocalFileStorage fileStorage;
 
 	public SystemFileEditorInput(String path)
 	{
@@ -79,68 +79,79 @@ public class SystemFileEditorInput implements IStorageEditorInput
 		return fileStorage.equals(other.fileStorage);
 	}
 
-	/*
+	/**
 	 * @see IEditorInput#getPersistable()
 	 */
-	public IPersistableElement getPersistable() {
+	public IPersistableElement getPersistable() 
+	{
 		return null;
 	}
 
-	/*
+	/**
 	 * @see IEditorInput#getName()
 	 */
-	public String getName() {
+	public String getName() 
+	{
 		return fileStorage.getName();
 	}
 
-	/*
+	/**
 	 * @see IEditorInput#getFullPath()
 	 */
-	public String getFullPath() {
+	public String getFullPath() 
+	{
 		return fileStorage.getFullPath().toString();
 	}
 
-	/*
+	/**
 	 * @see IEditorInput#getContentType()
 	 */
-	public String getContentType() {
+	public String getContentType() 
+	{
 		return fileStorage.getFullPath().getFileExtension();
 	}
 
-	/*
+	/**
 	 * @see IEditorInput#getToolTipText()
 	 */
-	public String getToolTipText() {
+	public String getToolTipText() 
+	{
 		return fileStorage.getFullPath().toString();
 	}
 
-	/*
+	/**
 	 * @see IEditorInput#getImageDescriptor()
 	 */
-	public ImageDescriptor getImageDescriptor() {
-		IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
-		return registry.getImageDescriptor(fileStorage.getFullPath().getFileExtension());
+	public ImageDescriptor getImageDescriptor() 
+	{
+		IEditorRegistry registry 
+			= PlatformUI.getWorkbench().getEditorRegistry();
+		return 
+			registry.getImageDescriptor
+				(fileStorage.getFullPath().getFileExtension());
 	}
 
-	/*
+	/**
 	 * @see IEditorInput#exists()
 	 */
-	public boolean exists() {
-		// JAR entries can't be deleted
-		return true;
+	public boolean exists() 
+	{
+		return fileStorage.getFile().exists();
 	}
 
-	/*
+	/**
 	 * @see IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(Class adapter) 
+	{
 		return null;
 	}
 
-	/*
+	/**
 	 * see IStorageEditorInput#getStorage()
 	 */
-	 public IStorage getStorage() {
+	 public IStorage getStorage() 
+	 {
 	 	return fileStorage;
 	 }
 

@@ -153,7 +153,7 @@ public class OMCProxy
 		}
 		else if(os.equals("Windows"))
 		{
-			String temp = System.getenv("TEMP");
+			String temp = System.getenv("TMP");			
 			fileName = temp + "\\openmodelica.objid";
 		}
 		
@@ -251,7 +251,7 @@ public class OMCProxy
 
 		/*
 		 * Wait until the object exists on disk, but if it takes longer than
-		 * 5 seconds, abort. (Very arbitrary 5 seconds..) 
+		 * 5 seconds, abort. (Very arbitrary 5 seconds..)
 		 */
 		int ticks = 0;
 		while(!f.exists())
