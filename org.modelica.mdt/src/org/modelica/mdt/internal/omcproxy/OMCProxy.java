@@ -692,7 +692,7 @@ public class OMCProxy
 		 * <file path>,<line number>,<column number>
 		 * 
 		 */
-//b56efe		
+
 		/* For some reason, the list returned doesn't contain curly braces. */
 		retval = "{" + retval + "}"; 
 

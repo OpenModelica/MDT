@@ -67,8 +67,7 @@ import org.eclipse.swt.widgets.Display;
  * 2005-09-14, Andreas Remar
  *    Recoded from scratch, most code abducted from PyDev
  */
-public class ModelicaRuleScanner extends RuleBasedScanner
-								 implements ModelicaSyntax 
+public class ModelicaRuleScanner extends RuleBasedScanner 
 {
 
 	private static Color COMMENT_COLOR 
