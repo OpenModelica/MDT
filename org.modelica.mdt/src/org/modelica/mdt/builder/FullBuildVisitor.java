@@ -72,7 +72,6 @@ public class FullBuildVisitor implements IResourceVisitor
 			IPath path = resource.getProjectRelativePath();
 			IFile file = resource.getProject().getFile(path);
 			
-			// TODO See if this method call is really needed
 			file.deleteMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_INFINITE);
 			try

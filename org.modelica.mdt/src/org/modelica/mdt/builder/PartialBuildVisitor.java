@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.builder;
 
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -80,7 +81,6 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 			IPath path = delta.getProjectRelativePath();
 			IFile file = delta.getResource().getProject().getFile(path);
 
-			// TODO See if this method call is really needed
 			file.deleteMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_INFINITE);
 			try
