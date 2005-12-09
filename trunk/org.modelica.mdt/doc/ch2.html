@@ -1,0 +1,47 @@
+<html>
+<title>Modelica Development Tooling Help</title>
+<body>
+<h1>Getting started</h1>
+
+<h2 id = "configurate_omc">Configuring the Open Modelica Compiler</h2>
+
+MDT need to be able to locate the binary of the compiler. It uses the
+environment variable OPENMODELICAHOME to do so.<br>
+If you have problems using MDT make sure that OPENMODELICAHOME is set to the 
+folder where the Open Modelica Compiler is installed. In other words 
+OPENMODELICAHOME must point to the folder that contais Open Modelica compiler
+binary. It is named omc.exe on Windows Platform and omc on Unix platforms.
+
+<h2 id = "using_modelica_perspective">Using Modelica Perspective</h2>
+
+<p>
+The most convenient way to work with Modelica projects is to use to the
+Modelica perspective. To switch to the Modelica perspective, choose the 
+<b>Window</b> menu item, pick <b>Open Perspective</b>
+ followed by <b>Other...</b>
+Select <b>Modelica</b> option from the dialog presented and click <b>OK</b>.
+Not <b>Cancel</b>. Or any other button.
+</p>
+
+
+
+<h2 id = "making_a_project">Making a project</h2>
+<p>
+To start a new project, use the <b>New Modelica Project</b> Wizard. It is accesible through
+<b>File > New > Modelica Project</b>.
+After creating a project you can add files and folders to the project by selecting
+the corresponding wizard found in <b>File > New</b> menu subsection.
+Files having an extension <i>.mo</i> will be treated as Modelica source code files by MDT.
+</p>
+<img src="pix/new_modelica_project.png">
+
+<h2 id = "importing_a_project">Importing a project</h2>
+<p>
+To import an existing modelica project you need to create an empty modelica project and populate it
+with existing files. Create a new modelica project with the wizard. Use the file system import wizard 
+on that project to copy the files to the project's folder. The import wizard is available by right
+clicking on the project in the <b>Modelica Projects</b> view and choosing <b>Import...</b> alternative.
+</p>
+
+</body>
+</html>
