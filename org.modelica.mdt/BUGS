@@ -15,9 +15,24 @@ TESTCASE: absent
 It is not possible to print from Modelica Editor. The print icon is grayed out
 on the toolbar.
 
-BUGID: 4
+BUGID: 6
 STATUS: open
-TESTCASE: absent
+
+While in modelica editor line and column number are not visible. In for
+example java editor line and column number are visible in the status bar
+at the bottom.
+
+
+Closed Bugs and Issures
+
+BUGID: 2
+STATUS: fixed
+TESTCASE: absent, a bit tricky to write
+It is not possible to open/close project from the Modelica Project View.
+
+BUGID: 4
+STATUS: closed
+TESTCASE: n/a
 ENVIRONMENT: windows XP, omc 1.3.1
 Expand 'System Library'->'Modelica'->SIunits'. A bunch of InvocationError
 exceoptions are thrown. E.g.:
@@ -33,27 +48,14 @@ Length in Modelica
 This should probably be reported upstream.
 ------------------------------------------
 Mail sent to modelica-pelab list, waiting for reply.
+------------------------------------------
+No reply recived, bug entered in omc's bug database, closing this issue.
 
 BUGID: 5
-STATUS: open
+STATUS: fixed
 TESTCASE: absent
 'Open project' and 'Close project' menu items are not updated after invocation.
 
 Try this. Select an open project and click on 'close project' menu (for example
 in contex menu). Look at the menu again, 'Open project' is still disabled 
 and 'Close project' enabled. Same problem if you open a closed project.
-
-BUGID: 6
-STATUS: open
-
-While in modelica editor line and column number are not visible. In for
-example java editor line and column number are visible in the status bar
-at the bottom.
-
-
-Closed Bugs and Issures
-
-BUGID: 2
-STATUS: fixed
-TESTCASE: absent, a bit tricky to write
-It is not possible to open/close project from the Modelica Project View.

@@ -41,6 +41,8 @@
 
 package org.modelica.mdt.ui;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IMenuListener;
@@ -123,7 +125,10 @@ public class ProjectsView extends ViewPart
 		
 		makeContextMenu();
 		
-		// Register viewer with site. This must be done before making the actions.
+		/*
+		 * Register viewer with site. This must be done 
+		 * before making the actions.
+		 */
 		IWorkbenchPartSite site = getSite();
 		site.registerContextMenu(contextMenu, viewer);
 		site.setSelectionProvider(viewer);
@@ -135,7 +140,8 @@ public class ProjectsView extends ViewPart
 			}
 		});
 		
-		makeActions(); // call before registering for selection changes
+		/* call before registering for selection changes */
+		makeActions();
 
 		/*
 		 * make Project->Open Project and Project->Close Project main menus
@@ -146,8 +152,6 @@ public class ProjectsView extends ViewPart
 				openProjectAction);		
 		actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId(),
 				closeProjectAction);
-
-				
 		
 		hookDoubleClickAction();
 		
@@ -164,6 +168,10 @@ public class ProjectsView extends ViewPart
 
 	protected void handleOpen(OpenEvent event)
 	{
+		/*
+		 * hande open action on a element in the project view tree,
+		 * this is usualy a double click on the element
+		 */
 		IStructuredSelection selecton = 
 			(IStructuredSelection) event.getSelection();
 		try
@@ -194,7 +202,6 @@ public class ProjectsView extends ViewPart
 
 	protected void handleSelectionChanged(SelectionChangedEvent event)
 	{
-		
 		getViewSite().getActionBars().updateActionBars();
 	}
 
@@ -242,10 +249,14 @@ public class ProjectsView extends ViewPart
 //		moveAction = new ResourceNavigatorMoveAction(shell, treeViewer);
 //		renameAction = new ResourceNavigatorRenameAction(shell, treeViewer);
 
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		openProjectAction = new OpenResourceAction(shell);
 		viewer.addSelectionChangedListener(openProjectAction);
+		workspace.addResourceChangeListener(openProjectAction);
+		
 		closeProjectAction = new CloseResourceAction(shell);
 		viewer.addSelectionChangedListener(closeProjectAction);
+		workspace.addResourceChangeListener(closeProjectAction);
 					
 		deleteAction = new DeleteResourceAction(shell);
 		
@@ -272,7 +283,7 @@ public class ProjectsView extends ViewPart
 		newSubMenu = new MenuManager("New");
 		newSubMenu.add(new NewWizardMenu(getSite().getWorkbenchWindow()));
 
-		contextMenu = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		contextMenu = new MenuManager("#PopupMenu");
 		contextMenu.setRemoveAllWhenShown(true);
 		contextMenu.addMenuListener(new IMenuListener()
 		{
@@ -300,7 +311,7 @@ public class ProjectsView extends ViewPart
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		
-		// Other plug-ins can contribute there actions here
+		/* Other plug-ins can contribute there actions here */
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
@@ -308,6 +319,10 @@ public class ProjectsView extends ViewPart
 	public void dispose()
 	{
 		super.dispose();
+		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		
+		workspace.removeResourceChangeListener(openProjectAction);
+		workspace.removeResourceChangeListener(closeProjectAction);
 	}
-
 }

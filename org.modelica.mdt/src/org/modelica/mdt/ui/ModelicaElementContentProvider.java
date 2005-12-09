@@ -65,7 +65,7 @@ import org.modelica.mdt.internal.omcproxy.CompilerException;
 /**
  * Content provider for a tree viewer. This content provider works only
  * whith TreeViewer:s to keep things simple. If you want to use it for
- * other viewer some addditional hacking is required on this class.
+ * other viewers some addditional hacking is required on this class.
  *  
  * @author Elmir Jagudin
  */
@@ -232,16 +232,17 @@ public class ModelicaElementContentProvider
 		{
 			return;
 		}
-		if (ctrl.getDisplay().getThread() == Thread.currentThread()) {
+		if (ctrl.getDisplay().getThread() == Thread.currentThread()) 
+		{
 			handleChanges(changes);
-		} else {			
-			ctrl.getDisplay().asyncExec(new Runnable(){
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
-				public void run() {
-					
-					//Abort if this happens after disposes
+		}
+		else
+		{			
+			ctrl.getDisplay().asyncExec(new Runnable()
+			{
+				public void run() 
+				{
+					/* Abort if this happens after disposes */
 					Control ctrl = viewer.getControl();
 					if (ctrl == null || ctrl.isDisposed())
 						return;
@@ -249,9 +250,6 @@ public class ModelicaElementContentProvider
 				}
 			});
 		}
-
-		// TODO Auto-generated method stub
-		
 	}
 
 	protected void handleChanges(List<IModelicaElementChange> changes)
