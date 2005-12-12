@@ -134,9 +134,17 @@ public class ProxyParser
 				 * at the bottom level.
 				 */
 				Object element = null;
+				
 				if(listFound)
-				{
+				{					
 					element = parseList(subString);
+					/*
+					 * If subString really wasn't a list (it contains {} but
+					 * still isn't a list), then just trim it and say it's an
+					 * element.
+					 */
+					if(element == null)
+						element = subString.trim();
 				}
 				else
 				{
@@ -165,13 +173,28 @@ public class ProxyParser
 				}
 			}
 		}
+		
+		/* This happens at the end of the list. */
 		if(depth == 0)
 		{
 			Object element = null;
 			if(listFound)
+			{
 				element = parseList(subString);
+				/*
+				 * If subString really wasn't a list (it contains {} but
+				 * still isn't a list), then just trim it and say it's an
+				 * element.
+				 */
+				if(element == null)
+				{
+					element = subString.trim();
+				}
+			}
 			else
+			{
 				element = subString.trim();
+			}
 			
 			if(element instanceof String && ((String)element).equals(""))
 				/* Don't add empty strings */;
