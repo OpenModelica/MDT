@@ -160,6 +160,19 @@ public class TestProxyParser extends TestCase
 		assertTrue(v.get(0).equals("a"));
 		assertTrue(v.get(1).equals("b"));
 		assertTrue(v.get(2).equals("c"));
+		
+		v = ProxyParser.parseList("{a, b, c={a, b, c}}");
+		assertTrue(v.size() == 3);
+		assertTrue(v.get(0).equals("a"));
+		assertTrue(v.get(1).equals("b"));
+		assertTrue(v.get(2).equals("c={a, b, c}"));
+		
+		v = ProxyParser.parseList("{,,}");
+		assertTrue(v.size() == 0);
+		
+		v = ProxyParser.parseList("{foo={bar, gzonk}}");
+		assertTrue(v.size() == 1);
+		assertTrue(v.get(0).equals("foo={bar, gzonk}"));
 	}
 				
 
