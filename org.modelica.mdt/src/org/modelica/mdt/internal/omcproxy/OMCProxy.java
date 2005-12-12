@@ -415,9 +415,19 @@ public class OMCProxy
 			init();
 		}
 		
-		logOMCCall(exp);
-		retval = omcc.sendExpression(exp);
-		logOMCReply(retval);
+		try
+		{
+			logOMCCall(exp);
+			retval = omcc.sendExpression(exp);
+			logOMCReply(retval);
+		}
+		catch(org.omg.CORBA.COMM_FAILURE x)
+		{
+			/* Server has died, try restarting it. */
+			throw new ConnectionException("Couldn't send message to OMC server."
+					+" Server not running, or we're not connected to it."
+					+" Tried sending: " + exp);
+		}
 		
 		return retval;
 	}
