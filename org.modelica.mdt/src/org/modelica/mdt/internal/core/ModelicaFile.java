@@ -118,8 +118,10 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 
 		ParseResults res = OMCProxy.loadFileInteractive(file);
 
-		for (String name : res.getClasses())
+		for (Object obj : res.getClasses())
 		{
+			String name = (String)obj;
+
 			if (parentPackage == null)
 			{
 				/* we are not inside a package */

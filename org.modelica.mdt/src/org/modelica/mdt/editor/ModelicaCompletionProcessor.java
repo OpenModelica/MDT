@@ -54,25 +54,24 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
+//TODO comment the class, remar !
 /**
  * 
  * @author Andreas Remar
- *
  */
 public class ModelicaCompletionProcessor implements IContentAssistProcessor
 {
-	Vector<String> proposals = new Vector<String>();
+	Vector<Object> proposals = new Vector<Object>();
 	
 	/*
 	 * There is a separate narrowedProposals so that we can store the original
 	 * proposals. This allows us to backtrace the proposals.
 	 */
-	Vector<String> narrowedProposals = new Vector<String>();
+	Vector<Object> narrowedProposals = new Vector<Object>();
 	int typeAhead = 0;
 	
 	protected static class Validator implements IContextInformationValidator,
@@ -113,26 +112,19 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		narrowedProposals.clear();
 		typeAhead = 0;
 
-		String[] classes = null;
 		try
 		{
-			classes = OMCProxy.getClassNames(className);
-		}
-		catch (ConnectionException e)
+			proposals = OMCProxy.getClassNames(className);
+		} catch (ConnectionException e)
 		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			MdtPlugin.log(e);
-		}
-		catch (UnexpectedReplyException e)
+		} catch (UnexpectedReplyException e)
 		{
-			/* Ignore (we simply can't find the class...) */
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		for(String s : classes)
-		{
-			proposals.add(s);
-			narrowedProposals.add(s);
-		}
+		narrowedProposals = proposals;
 	}
 	
 	/**
@@ -144,15 +136,14 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	private void updateProposals(String className)
 	{
 		String classPrefix = className.substring(className.lastIndexOf('.') + 1);
-		//Vector<String> props = new Vector<String>();
 		
 		typeAhead = classPrefix.length();
 		
 		narrowedProposals.clear();
 		
-		for(String proposedClass : proposals)
+		for(Object proposedClass : proposals)
 		{
-			if(proposedClass.startsWith(classPrefix))
+			if(((String)proposedClass).startsWith(classPrefix))
 			{
 				narrowedProposals.add(proposedClass);
 			}
@@ -226,7 +217,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			new ICompletionProposal[narrowedProposals.size()];
 		for(int i = 0;i < narrowedProposals.size();i++)
 		{
-			String proposal = narrowedProposals.get(i);
+			String proposal = (String)narrowedProposals.get(i);
 			completionProposals[i] =
 				new CompletionProposal(proposal, offset - typeAhead, typeAhead,
 						proposal.length(), null, proposal, null, null);

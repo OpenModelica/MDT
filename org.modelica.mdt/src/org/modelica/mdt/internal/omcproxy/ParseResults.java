@@ -40,6 +40,8 @@
  */
 package org.modelica.mdt.internal.omcproxy;
 
+import java.util.Vector;
+
 /**
  * Encapsulates information on content of a modelica file (.mo) as seen
  * by the parser.
@@ -52,14 +54,14 @@ package org.modelica.mdt.internal.omcproxy;
  */
 public class ParseResults 
 {
-	private String[] classes = new String[0];
+	private Vector<Object> classes = new Vector<Object>();
 	private CompileError[] errors = new CompileError[0];
 
 	/**
 	 * @return Returns the names of top classes (and packages) in the file.
 	 *  If no classes where found in the file, an empty array is returned.
 	 */
-	public String[] getClasses()
+	public Vector<Object> getClasses()
 	{
 		return classes;
 	}
@@ -73,7 +75,7 @@ public class ParseResults
 		return errors;
 	}
 
-	public void setClassNames(String[] classNames)
+	public void setClassNames(Vector<Object> classNames)
 	{
 		classes = classNames;
 	}

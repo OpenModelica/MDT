@@ -224,9 +224,9 @@ public class FolderPackage extends ModelicaClass
 				 */
 				ParseResults results = OMCProxy.loadFileInteractive(file);
 				
-				for (String name : results.getClasses())
+				for (Object name : results.getClasses())
 				{
-					if (name.equals(folderName))
+					if (((String)name).equals(folderName))
 					{
 						return true;
 					}

@@ -497,65 +497,52 @@ public class OMCProxy
 		}
 	}
 	
-	/**
-	 * Get the packages contained in a class (a package is a class..)
-	 * 
-	 * @param className full class name where to look for packages
-	 * @return an array of subpackages defined (and loaded into OMC)
-	 *  inside the class named className
-	 * @throws ConnectionException 
-	 * @throws InvocationError 
-	 * @throws UnexpectedReplyException 
-	 */
-	public static String[] getPackages(String className)
-		throws ConnectionException, InvocationError, UnexpectedReplyException
-	{
-		String retval;
-		
-		retval = sendExpression("getPackages("+className+")");
-
-		if (retval.trim().toLowerCase().equals("error"))
-		{
-			throw new InvocationError("getPackages("+className+")" +  
-					" replies 'error'");
-		}
-
-		return ProxyParser.parseSimpleList(retval);
-	}
-	
+//	/**
+//	 * Get the packages contained in a class (a package is a class..)
+//	 * 
+//	 * @param className full class name where to look for packages
+//	 * @return an array of subpackages defined (and loaded into OMC)
+//	 *  inside the class named className
+//	 * @throws ConnectionException 
+//	 * @throws InvocationError 
+//	 * @throws UnexpectedReplyException 
+//	 */
+//	public static String[] getPackages(String className)
+//		throws ConnectionException, InvocationError, UnexpectedReplyException
+//	{
+//		String retval;
+//		
+//		retval = sendExpression("getPackages("+className+")");
+//
+//		if (retval.trim().toLowerCase().equals("error"))
+//		{
+//			throw new InvocationError("getPackages("+className+")" +  
+//					" replies 'error'");
+//		}
+//
+//		return ProxyParser.parseSimpleList(retval);
+//	}
+//	
 	/**
 	 * Get the classes contained in a class (a package is a class..)
-	 * Packages are not returned from this method (use getPackages instead)
+	 *
 	 * 
 	 * @param className full class name where to look for packages
 	 * @return an array of subclasses defined (and loaded into OMC)
 	 *  inside the class named className, but don't return packages in this
-	 *  class
+	 *  class. The results is returned as Vector of objects but objects
+	 *  are actually String's.
+	 *  
 	 * @throws ConnectionException 
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
 	 */	
-	public static String[] getClassNames(String className)
+	public static Vector<Object> getClassNames(String className)
 		throws ConnectionException, UnexpectedReplyException
 	{
 		String retval = sendExpression("getClassNames("+className+")");
 		
-		String[] tokens = ProxyParser.parseSimpleList(retval);
-
-		if(tokens == null)
-			return null;
-		
-		Vector<String> v = new Vector<String>();
-		
-		for(String str : tokens)
-		{
-			v.add(str);
-		}
-
-		String[] t = new String[v.size()];
-		t = v.toArray(t);
-		
-		return t;
+		return ProxyParser.parseList(retval);
 	}
 
 	/**
@@ -642,7 +629,7 @@ public class OMCProxy
 		 */
 		else
 		{
-			res.setClassNames(ProxyParser.parseSimpleList(retval));
+			res.setClassNames(ProxyParser.parseList(retval));
 		}
 		
 		return res;
@@ -680,12 +667,12 @@ public class OMCProxy
 		/* For some reason, the list returned doesn't contain curly braces. */
 		retval = "{" + retval + "}"; 
 
-		String[] tokens = ProxyParser.parseSimpleList(retval);
+		Vector<Object> tokens = ProxyParser.parseList(retval);
 		int line;
 
 		try
 		{
-			line = Integer.parseInt(tokens[1]);
+			line = Integer.parseInt((String)tokens.elementAt(1));
 		}
 		catch (NumberFormatException e)
 		{
@@ -693,7 +680,7 @@ public class OMCProxy
 					"unexpected format");
 		}
 		
-		return new ElementLocation(tokens[0], line);
+		return new ElementLocation((String)tokens.elementAt(0), line);
 	}
 	
 	/**

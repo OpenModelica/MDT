@@ -47,40 +47,10 @@ import java.util.Vector;
 import org.modelica.mdt.MdtPlugin;
 
 /**
- * 
  * @author Andreas Remar
  */
 public class ProxyParser
 {
-	/**
-	 * This function parses flat (simple) Modelica lists.
-	 * An example of a simple Modelica list is: '{hej,hopp,hepp}' 
-	 * @throws UnexpectedReplyException 
-	 */
-	public static String[] parseSimpleList(String str)
-		throws UnexpectedReplyException
-	{
-		Vector listElements = parseList(str);
-		if(listElements == null)
-			return new String[0];
-		String[] retval = new String[listElements.size()];
-		for(int i = 0;i < listElements.size();i++)
-		{
-			Object obj = listElements.get(i);
-			if(obj instanceof String)
-			{
-				retval[i] = (String)obj;
-			}
-			else
-			{
-				throw new UnexpectedReplyException("List wasn't flat Modelica "
-						+"list");
-			}
-		}
-		
-		return retval;
-	}
-
 	/**
 	 * This function parses Modelica lists, any nesting possible.
 	 * @param str the Modelica list to parse
