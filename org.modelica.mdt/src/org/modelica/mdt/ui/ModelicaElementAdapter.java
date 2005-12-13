@@ -46,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
@@ -127,6 +128,18 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			}
 			return ModelicaImages.getImageDescriptor(imgTag);
 		}
+		else if (object instanceof IModelicaComponent)
+		{
+			switch (((IModelicaComponent)object).getVisbility())
+			{
+			case PUBLIC:
+				return ModelicaImages.getImageDescriptor
+					(ModelicaImages.IMG_OBJS_PUBLIC_COMPONENT);
+			case PROTECTED:
+				return ModelicaImages.getImageDescriptor
+					(ModelicaImages.IMG_OBJS_PROTECTED_COMPONENT);
+			}
+		}
 		else if (object instanceof IModelicaFile)
 		{
 			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_MO_FILE);
@@ -140,6 +153,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 		{
 			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_LIBRARY);
 		}
+		
 		
 		return super.getImageDescriptor(object);
 	}

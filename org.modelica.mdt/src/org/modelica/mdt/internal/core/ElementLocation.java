@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.omcproxy;
+package org.modelica.mdt.internal.core;
 
 /**
  * Presents information on some elements location in a file.
@@ -51,22 +51,12 @@ package org.modelica.mdt.internal.omcproxy;
 public class ElementLocation
 {
 	private String path;
-	private int line;
-	private int column;
+	private int line;	
 	
-	protected ElementLocation(String path, int line, int column)
+	public ElementLocation(String path, int line)
 	{
 		this.path = path;
 		this.line = line;
-		this.column = column;
-	}
-
-	/**
-	 * @return the column where this element is defined
-	 */
-	public int getColumn()
-	{
-		return column;
 	}
 
 	/**

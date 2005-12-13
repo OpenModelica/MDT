@@ -53,14 +53,15 @@ import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
+import org.modelica.mdt.internal.core.ElementLocation;
 import org.omg.CORBA.ORB;
 
 /**
  * The OMCProxy is the glue between the OpenModelica Compiler and MDT.
  * It uses the interactive API of OMC to get information about classes
- * and to load classes into OMC. 
+ * and to load classes into OMC.
+ * 
  * @author Andreas Remar
- *
  */
 public class OMCProxy
 {
@@ -707,12 +708,11 @@ public class OMCProxy
 		retval = "{" + retval + "}"; 
 
 		String[] tokens = ProxyParser.parseSimpleList(retval);
-		int line, column;
+		int line;
 
 		try
 		{
 			line = Integer.parseInt(tokens[1]);
-			column = Integer.parseInt(tokens[2]);
 		}
 		catch (NumberFormatException e)
 		{
@@ -720,7 +720,7 @@ public class OMCProxy
 					"unexpected format");
 		}
 		
-		return new ElementLocation(tokens[0], line, column);
+		return new ElementLocation(tokens[0], line);
 	}
 	
 	/**
@@ -738,21 +738,49 @@ public class OMCProxy
 	}
 	
 	/**
-	 * NOT IMPLEMENTED
-	 * This function returns the info about this element that getElementsInfo
-	 * returns.. somehow
 	 * @param className
 	 * @return
 	 * @throws ConnectionException
+	 * @throws InvocationError 
+	 * @throws UnexpectedReplyException 
 	 */
-	public static ElementsInfo getElementsInfo(String className)
-		throws ConnectionException
+	public static Vector<Object> getElementsInfo(String className)
+		throws ConnectionException, InvocationError, UnexpectedReplyException
 	{
-		// TODO actually return real elements info..
 		String retval = sendExpression("getElementsInfo("+ className +")");
-		Vector<Object> v = ProxyParser.parseList(retval);
-		System.out.println(v);
 		
-		return new ElementsInfo();
+		/*
+		 * we need a efficient way to check if the result is
+		 * humongosly huge list or 'Error' or maybe 'error' 
+		 */
+		for (int i = 0; i < retval.length(); i++)
+		{
+			if (retval.charAt(i) == '{')
+			{
+				/* we found the begining of the list, let's hope for the best */
+				return ProxyParser.parseList(retval);		
+			}
+			else if (retval.charAt(i) == 'E' || retval.charAt(i) == 'e')
+			{
+				/*
+				 * this is the unreadable way to check if the retval 
+				 * equals 'Error' or 'error'
+				 */
+				if (retval.substring(i+1,i+5).equals("rror"))
+				{
+					throw new InvocationError("getElementsInfo("+ className +")" + 
+						" replays 'error'");
+				}
+				else
+				{
+					/* OMC returned someting wierd, panic mode ! */
+					break;
+				}
+			}
+		}
+		/* we have no idea what OMC returned */
+		throw new UnexpectedReplyException("getElementsInfo("+ className +")" + 
+						"replays:'" + retval + "'");
+		
 	}
 }

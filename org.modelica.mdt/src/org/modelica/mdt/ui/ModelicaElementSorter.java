@@ -44,6 +44,7 @@ package org.modelica.mdt.ui;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.ISystemLibrary;
@@ -59,13 +60,15 @@ import org.modelica.mdt.internal.omcproxy.ConnectionException;
 public class ModelicaElementSorter extends ViewerSorter
 {
 	
-	private static int FOLDER_ORDER 			= 1;
-	private static int PACKAGE_ORDER 			= 2;
-	private static int CLASS_ORDER 				= 3;
-	private static int MODELICA_FILE_ORDER		= 4;
-	private static int FILE_ORDER 				= 5;
-	private static int SYSTEM_LIBRARY_ORDER 	= 6;
-	private static int UNKOWN_TYPE_ORDER 		= Integer.MAX_VALUE;
+	private static int FOLDER_ORDER 				= 1;
+	private static int PACKAGE_ORDER 				= 2;
+	private static int CLASS_ORDER 					= 3;
+	private static int PUBLIC_COMPONENT_ORDER   	= 4;
+	private static int PROTECTED_COMPONENT_ORDER   	= 5;
+	private static int MODELICA_FILE_ORDER			= 6;
+	private static int FILE_ORDER 					= 7;
+	private static int SYSTEM_LIBRARY_ORDER 		= 8;
+	private static int UNKOWN_TYPE_ORDER 			= Integer.MAX_VALUE;
 
 	@Override
 	public int category(Object element)
@@ -91,6 +94,16 @@ public class ModelicaElementSorter extends ViewerSorter
 			}
 			return CLASS_ORDER;
 		}
+		else if (element instanceof IModelicaComponent)
+		{
+			switch (((IModelicaComponent)element).getVisbility())
+			{
+			case PUBLIC:
+				return PUBLIC_COMPONENT_ORDER;
+			case PROTECTED:
+				return PROTECTED_COMPONENT_ORDER;
+			}
+		}
 		else if (element instanceof IModelicaFile)
 		{
 			return MODELICA_FILE_ORDER;
@@ -102,7 +115,7 @@ public class ModelicaElementSorter extends ViewerSorter
 		else if (element instanceof ISystemLibrary)
 		{
 			return SYSTEM_LIBRARY_ORDER;
-		}
+		}		
 
 		/* what is the meaning of this ? */
 		return UNKOWN_TYPE_ORDER;

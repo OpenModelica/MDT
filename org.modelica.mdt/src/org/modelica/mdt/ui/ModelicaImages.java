@@ -48,8 +48,12 @@ public class ModelicaImages
 	public static final String IMG_OBJS_CONNECTOR = "IMG_OBJS_CONNECTOR";
 	public static final String IMG_OBJS_BLOCK = "IMG_OBJS_BLOCK";	
 	public static final String IMG_OBJS_TYPE = "IMG_OBJS_TYPE";
-	public static final String IMG_OBJS_MO_FILE = "IMG_OBJS_MO_FILE";		
 	public static final String IMG_OBJS_LIBRARY = "IMG_OBJS_LIBRARY";
+	public static final String IMG_OBJS_MO_FILE = "IMG_OBJS_MO_FILE";
+	public static final String IMG_OBJS_PROTECTED_COMPONENT 
+			= "IMG_OBJS_PROTECTED_COMPONENT";
+	public static final String  IMG_OBJS_PUBLIC_COMPONENT 
+			= "IMG_OBJS_PUBLIC_COMPONENT";
 	
 	public static final String IMG_WIZBAN_PACKAGE = "IMG_WIZBAN_PACKAGE";
 	
@@ -117,6 +121,10 @@ public class ModelicaImages
 		declareRegistryImage(IMG_OBJS_TYPE, T_OBJ + "type_obj.png");
 		declareRegistryImage(IMG_OBJS_MO_FILE, T_OBJ + "mo_file.png");
 		declareRegistryImage(IMG_OBJS_LIBRARY, T_OBJ + "library_obj.png");
+		declareRegistryImage(IMG_OBJS_PROTECTED_COMPONENT, 
+				T_OBJ + "protected_component_obj.png");
+		declareRegistryImage(IMG_OBJS_PUBLIC_COMPONENT, 
+				T_OBJ + "public_component_obj.png");
 		
 		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.png");
 				

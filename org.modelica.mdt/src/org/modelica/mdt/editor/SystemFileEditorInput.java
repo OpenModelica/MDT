@@ -99,7 +99,7 @@ public class SystemFileEditorInput implements IStorageEditorInput
 	 * @see IEditorInput#getFullPath()
 	 */
 	public String getFullPath() 
-	{
+	{		
 		return fileStorage.getFullPath().toString();
 	}
 

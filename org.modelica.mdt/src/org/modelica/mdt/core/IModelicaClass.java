@@ -47,8 +47,47 @@ import org.modelica.mdt.internal.omcproxy.ConnectionException;
  */
 public interface IModelicaClass extends IModelicaElement, IParent
 {
-	public enum Type { CLASS, MODEL, FUNCTION, RECORD, 
-		CONNECTOR, BLOCK, TYPE, PACKAGE };
+	public enum Type 
+	{ 
+		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE;
+		
+		public static Type parse(String text)
+		{
+			if (text.equals("CLASS"))
+			{
+				return CLASS;
+			}
+			else if (text.equals("PACKAGE"))
+			{
+				return PACKAGE;
+			}
+			else if (text.equals("MODEL"))
+			{
+				return MODEL;
+			}
+			else if (text.equals("CONNECTOR"))
+			{
+				return CONNECTOR;
+			}
+			else if (text.equals("RECORD"))
+			{
+				return RECORD;
+			}
+			else if (text.equals("BLOCK"))
+			{
+				return BLOCK;
+			}
+			else if (text.equals("FUNCTION"))
+			{
+				return FUNCTION;
+			}
+			
+			/* this is error condition, classRestriction is of unexpected type */
+			//TODO throw an exception ?
+			return CLASS; 
+			
+		}
+	};
 
 	/**
 	 * return the class' prefix, that is if class' full name is
@@ -66,20 +105,20 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 */
 	public String getFullName();
 	
-	/**
-	 * @return all imports this class is making
-	 */
-	public IClassImport[] getImports();
-	
-	/**
-	 * @return list of extensions this class is making
-	 */
-	public IClassExtend[] getExtends();
-	
-	/**
-	 * @return list of components (variables and constans) of this class
-	 */
-	public IClassComponent[] getComponents();
+//	/**
+//	 * @return all imports this class is making
+//	 */
+//	public IClassImport[] getImports();
+//	
+//	/**
+//	 * @return list of extensions this class is making
+//	 */
+//	public IClassExtend[] getExtends();
+//	
+//	/**
+//	 * @return list of components (variables and constans) of this class
+//	 */
+//	public IClassComponent[] getComponents();
 
 	/**
 	 * @return the restriction type of this class

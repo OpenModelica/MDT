@@ -38,55 +38,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt.internal.core;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.ISystemLibrary;
-import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
+package org.modelica.mdt.core;
 
 /**
- * @author Elmir Jagudin
+ * A class component, that's like member variables in java lingo.
+ * 
+ * @author Homer Simpson
  */
-public class SystemLibrary extends ModelicaElement implements ISystemLibrary 
+public interface IModelicaComponent extends IModelicaElement
 {
-	private static List<Object> packages = null;
-
-	/**
-	 * @throws ConnectionException 
-	 * @see org.modelica.mdt.core.ISystemLibrary#getPackages()
-	 */
-	public List<Object> getPackages() throws ConnectionException 
+	enum Visibility 
 	{
-		if (packages == null)
-		{
-			OMCProxy.loadSystemLibrary();
-			packages = new LinkedList<Object>();			
-			packages.add(new InnerClass("", "Modelica", Type.PACKAGE));
-		}
+		PUBLIC, PROTECTED;
 		
-		return packages;
-	}
-
-	/**
-	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
-	 */
-	public String getElementName() 
-	{
-		return "System Library";
-	}
-
-	public List<Object> getChildren() throws ConnectionException 
-	{
-		return getPackages();
-	}
-
-	public boolean hasChildren() throws CoreException 
-	{
-		return true;
-	}
+		public static Visibility parse(String text)
+		{
+			if (text.equals("public"))
+			{
+				return PUBLIC;
+			}
+			else if (!text.equals("protected"))
+			{
+				// TODO error condition, which should throw someting
+			}
+			return PROTECTED;	
+		}
+	};
+	
+	public Visibility getVisbility();
 }

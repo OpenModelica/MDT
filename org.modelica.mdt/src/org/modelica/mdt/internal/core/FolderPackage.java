@@ -52,9 +52,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.MdtPlugin;
-import org.modelica.mdt.core.IClassComponent;
-import org.modelica.mdt.core.IClassExtend;
-import org.modelica.mdt.core.IClassImport;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
@@ -271,24 +268,6 @@ public class FolderPackage extends ModelicaClass
 		/* only one option left, a regular file */
 		return res;
 
-	}
-
-	public IClassImport[] getImports()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IClassExtend[] getExtends()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IClassComponent[] getComponents()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public Type getRestrictionType() throws ConnectionException

@@ -45,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -54,15 +55,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.builder.SyntaxChecker;
-import org.modelica.mdt.core.IClassComponent;
-import org.modelica.mdt.core.IClassExtend;
-import org.modelica.mdt.core.IClassImport;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.ElementLocation;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.ProxyParser;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
@@ -73,7 +73,7 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 public class InnerClass extends ModelicaClass
 {
 	/* our restriction type */
-	private Type type;
+	private Type restrictionType;
 	private boolean typeKnown = false;
 	
 	/*
@@ -84,14 +84,19 @@ public class InnerClass extends ModelicaClass
 	 */
 	private IFile container;
 	
-	private ElementLocation location = null;
+	private ElementLocation location = null;;
 
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, Object> children = null;
 	
-	public InnerClass(IFile container, String prefix, String name)
+	public InnerClass(IFile container, String prefix, String name,
+					ElementLocation location, Type restrictionType)
 	{
 		this.container = container;
+		this.location = location;
+		this.restrictionType = restrictionType;
+		typeKnown = true;
+		
 		this.prefix = prefix;
 		this.name = name;
 		setFullName();
@@ -106,13 +111,21 @@ public class InnerClass extends ModelicaClass
 	 * @param prefix
 	 * @param name
 	 */
-	protected InnerClass(String prefix, String name)
+	protected InnerClass(String prefix, String name, Type restrictionType)
 	{
-		this(null, prefix, name);
+		this(null, prefix, name, null, restrictionType);
 	}
 
 
-	/* (non-Javadoc)
+	public InnerClass(IFile container, String prefix, String name)
+	{
+		this.container = container;
+		this.prefix = prefix;
+		this.name = name;
+		setFullName();
+	}
+
+	/**
 	 * @see org.modelica.mdt.core.IParent#getChildren()
 	 */
 	public Collection<Object> getChildren() throws ConnectionException,
@@ -131,16 +144,114 @@ public class InnerClass extends ModelicaClass
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 	
-		for (String name : OMCProxy.getClassNames(fullName))
+		String str;
+		String elementType;
+		String elementFile = "";
+		String classLine = "";
+		String classFile = "";
+		String className = "";
+		String classRestriction = "";
+		String elementVisibility = "";
+		String elementLine = "";
+		String names = "";
+
+		for (Object o : OMCProxy.getElementsInfo(fullName))
 		{
-			elements.put(name, new InnerClass(container, fullName, name));
+			 
+			elementType = "";
+			for (Object element : ((Collection)o))
+			{
+				/* parse a single the elements info list */
+				str = (String) element;
+				
+				if (str.startsWith("elementtype="))
+				{
+					elementType = str.substring(12).trim();
+				}
+				else if (str.startsWith("classline="))
+				{
+					classLine = str.substring(10).trim();
+				}
+				else if (str.startsWith("elementline="))
+				{
+					elementLine = str.substring(12).trim();
+				}
+				else if (str.startsWith("classname="))
+				{
+					className = str.substring(10).trim();
+				}
+				else if (str.startsWith("elementvisibility="))
+				{
+					elementVisibility = str.substring(18).trim();
+				}
+				else if (str.startsWith("elementfile="))
+				{
+					elementFile = str.substring(12).trim();
+					/*
+					 * remove "" around the path by removing
+					 * first and last character
+					 */
+					elementFile = 
+						elementFile.substring(1, elementFile.length() - 1);
+				}
+				else if (str.startsWith("classfile="))
+				{
+					classFile = str.substring(10).trim();
+					/*
+					 * remove "" around the path by removing
+					 * first and last character
+					 */
+					classFile = 
+						classFile.substring(1, classFile.length() - 1);
+				}
+				else if (str.startsWith("classrestriction="))
+				{
+					classRestriction = str.substring(17).trim();
+				}
+				else if (str.startsWith("names="))
+				{
+					names = str.substring(6).trim();
+				}
+			}
+			
+			if (elementType.equals("classdef"))
+			{
+				/* 'parse' line number information */ 
+				ElementLocation location =
+					new ElementLocation(classFile, 
+									Integer.parseInt(classLine));					
+				
+				elements.put(className, 
+						new InnerClass(container, fullName, className,
+								location, 
+							IModelicaClass.Type.parse(classRestriction)));
+			}
+			else if (elementType.equals("component"))
+			{
+				/*
+				 * names have following format:
+				 * names={component_name,"component_comment"}
+				 * we neet to get the component name
+				 */ 
+				Vector<Object> comp = ProxyParser.parseList(names);
+				
+				String componentName = (String) comp.elementAt(0);
+				
+				
+				elements.put(componentName, 
+						new ModelicaComponent(
+								container,
+								componentName,
+								IModelicaComponent.Visibility.parse(elementVisibility),
+								new ElementLocation(elementFile, 
+										Integer.parseInt(elementLine))));					
+			}
 		}
 	
 		return elements;
 	}
 
-
-	/* (non-Javadoc)
+	/** 
 	 * @see org.modelica.mdt.core.IParent#hasChildren()
 	 */
 	public boolean hasChildren()
@@ -221,7 +332,7 @@ public class InnerClass extends ModelicaClass
 		{
 			loadElementLocation();
 		}
-		
+
 		if (container != null)
 		{
 			SyntaxChecker.getLineRegion(container, location.getLine());
@@ -265,39 +376,20 @@ public class InnerClass extends ModelicaClass
 		location = OMCProxy.getElementLocation(fullName);
 	}
 
-	public IClassImport[] getImports()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public IClassExtend[] getExtends()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IClassComponent[] getComponents()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 	public Type getRestrictionType() throws ConnectionException
 	{
 		if(typeKnown == false)
 		{
-			
 			Type t = OMCProxy.getRestrictionType(fullName);
 			if(t != null)
 			{
-				type = t;
+				restrictionType = t;
 			}
 			
 			typeKnown = true;
 		}
 	
-		return type;
+		return restrictionType;
 	}
 }
