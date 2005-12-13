@@ -46,10 +46,12 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 import org.osgi.framework.BundleContext;
@@ -227,5 +229,14 @@ public class MdtPlugin extends AbstractUIPlugin
 			System.arraycopy(a2, 0, res, a1Len, a2Len);
 		}
 		return res;
+	}
+	
+	public static void showErrorDialog(String title, String message)
+	{
+		IWorkbenchWindow[] iww = 
+			PlatformUI.getWorkbench().getWorkbenchWindows();
+		
+		MessageDialog.openError(iww[0].getShell(), title,
+				message);
 	}
 }
