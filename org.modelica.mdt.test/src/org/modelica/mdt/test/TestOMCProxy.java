@@ -48,7 +48,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.internal.core.ElementLocation;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
@@ -142,24 +141,24 @@ public class TestOMCProxy extends TestCase
 		}
 	}
 	
-	/**
-	 * test OMCProxy.getPackages()
-	 */
-	public void testGetPackages() throws CompilerException
-	{
-		OMCProxy.loadSystemLibrary();
-		String[] str = OMCProxy.getPackages("Modelica");
-		
-		assertNotNull("Could not fetch Modelica package", str);
-		
-		Vector<String> packages = new Vector<String>();
-		for(String s : str)
-		{
-			packages.addElement(s);
-		}
-		
-		assertTrue(packages.containsAll(modelicaLibraryPackages));
-	}
+//	/**
+//	 * test OMCProxy.getPackages()
+//	 */
+//	public void testGetPackages() throws CompilerException
+//	{
+//		OMCProxy.loadSystemLibrary();
+//		String[] str = OMCProxy.getPackages("Modelica");
+//		
+//		assertNotNull("Could not fetch Modelica package", str);
+//		
+//		Vector<String> packages = new Vector<String>();
+//		for(String s : str)
+//		{
+//			packages.addElement(s);
+//		}
+//		
+//		assertTrue(packages.containsAll(modelicaLibraryPackages));
+//	}
 	
 	/**
 	 * test OMCProxy.getElementLocation()

@@ -44,7 +44,6 @@ package org.modelica.mdt.test;
 import java.util.Vector;
 
 import org.modelica.mdt.internal.omcproxy.CompileError;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ProxyParser;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -58,93 +57,86 @@ public class TestProxyParser extends TestCase
 {
 
 	/**
-	 * Test if ProxyParser.parseSimpleList() works as prescribed.
+	 * test parsing some single nested lists with ProxyParser.parseList()
 	 */
 	public void testParseSimpleList()
 	{
 		/*
 		 * some combinations of empty lists
 		 */
-		String[] res;
+		Vector<Object> res;
 		
-		try
-		{
-			res = ProxyParser.parseSimpleList("{}");
-			assertEquals(0, res.length);
+		res = ProxyParser.parseList("{}");
+		assertEquals(0, res.size());
+	
+		res = ProxyParser.parseList("{ }");
+		assertEquals(0, res.size());
 		
-			res = ProxyParser.parseSimpleList("{ }");
-			assertEquals(0, res.length);
-			
-			res = ProxyParser.parseSimpleList("{    }");
-			assertEquals(0, res.length);
-	
-			
-			res = ProxyParser.parseSimpleList("{ \n}");
-			assertEquals(0, res.length);
-			
-			res = ProxyParser.parseSimpleList("{   \n    }");
-			assertEquals(0, res.length);
-	
-			/*
-			 * single element lists
-			 */
-			res = ProxyParser.parseSimpleList("{hej}");
-			assertEquals(1, res.length);
-			assertEquals("hej", res[0]);
-			
-			res = ProxyParser.parseSimpleList("{  muu}");
-			assertEquals(1, res.length);
-			assertEquals("muu", res[0]);
-			
-			res = ProxyParser.parseSimpleList("{  muu   }");
-			assertEquals(1, res.length);
-			assertEquals("muu", res[0]);
-	
-			res = ProxyParser.parseSimpleList("{muu   }");
-			assertEquals(1, res.length);
-			assertEquals("muu", res[0]);
-	
-	
-			/*
-			 * two element lists
-			 */
-			res = ProxyParser.parseSimpleList("{hej,peter}");
-			assertEquals(2, res.length);
-			assertEquals("hej", res[0]);
-			assertEquals("peter", res[1]);
-			
-			res = ProxyParser.parseSimpleList("{peter,  labb}");
-			assertEquals("peter", res[0]);
-			assertEquals("labb", res[1]);
-			
-			res = ProxyParser.parseSimpleList("{peter ,labb}");
-			assertEquals("peter", res[0]);
-			assertEquals("labb", res[1]);
-			
-			res = ProxyParser.parseSimpleList("{peter   ,labb}");
-			assertEquals("peter", res[0]);
-			assertEquals("labb", res[1]);
-			
-			/*
-			 * tree elements list
-			 */
-			res = ProxyParser.parseSimpleList("{alan, l, cox}");
-			assertEquals(3, res.length);
-			assertEquals("alan", res[0]);
-			assertEquals("l", res[1]);
-			assertEquals("cox", res[2]);
-			
-			res = ProxyParser.parseSimpleList("{alan,l,cox}");
-			assertEquals(3, res.length);
-			assertEquals("alan", res[0]);
-			assertEquals("l", res[1]);
-			assertEquals("cox", res[2]);
+		res = ProxyParser.parseList("{    }");
+		assertEquals(0, res.size());
 
-		}
-		catch(CompilerException e)
-		{
-			fail(e.getMessage());
-		}
+		
+		res = ProxyParser.parseList("{ \n}");
+		assertEquals(0, res.size());
+		
+		res = ProxyParser.parseList("{   \n    }");
+		assertEquals(0, res.size());
+
+		/*
+		 * single element lists
+		 */
+		res = ProxyParser.parseList("{hej}");
+		assertEquals(1, res.size());
+		assertEquals("hej", (String)res.elementAt(0));
+		
+		res = ProxyParser.parseList("{  muu}");
+		assertEquals(1,res.size());
+		assertEquals("muu", (String)res.elementAt(0));
+		
+		res = ProxyParser.parseList("{  muu   }");
+		assertEquals(1, res.size());
+		assertEquals("muu", (String)res.elementAt(0));
+
+		res = ProxyParser.parseList("{muu   }");
+		assertEquals(1, res.size());
+		assertEquals("muu", (String)res.elementAt(0));
+
+
+		/*
+		 * two element lists
+		 */
+		res = ProxyParser.parseList("{hej,peter}");
+		assertEquals(2, res.size());
+		assertEquals("hej", (String)res.elementAt(0));
+		assertEquals("peter", (String)res.elementAt(1));
+		
+		res = ProxyParser.parseList("{peter,  labb}");
+		assertEquals("peter", (String)res.elementAt(0));
+		assertEquals("labb", (String)res.elementAt(1));
+		
+		res = ProxyParser.parseList("{peter ,labb}");
+		assertEquals("peter", (String)res.elementAt(0));
+		assertEquals("labb", (String)res.elementAt(1));
+		
+		res = ProxyParser.parseList("{peter   ,labb}");
+		assertEquals("peter", (String)res.elementAt(0));
+		assertEquals("labb", (String)res.elementAt(1));
+		
+		/*
+		 * tree elements list
+		 */
+		res = ProxyParser.parseList("{alan, l, cox}");
+		assertEquals(3, res.size());
+		assertEquals("alan", (String)res.elementAt(0));
+		assertEquals("l", (String)res.elementAt(1));
+		assertEquals("cox", (String)res.elementAt(2));
+		
+		res = ProxyParser.parseList("{alan,l,cox}");
+		assertEquals(3, res.size());
+		assertEquals("alan", (String)res.elementAt(0));
+		assertEquals("l", (String)res.elementAt(1));
+		assertEquals("cox", (String)res.elementAt(2));
+
 	}
 	
 	public void testParseList()
