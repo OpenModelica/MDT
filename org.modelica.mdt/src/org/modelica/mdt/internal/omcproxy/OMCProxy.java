@@ -52,7 +52,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.internal.core.ElementLocation;
 import org.omg.CORBA.ORB;
 
@@ -570,40 +569,14 @@ public class OMCProxy
 	public static IModelicaClass.Type getRestrictionType(String className)
 		throws ConnectionException
 	{
-		IModelicaClass.Type type = Type.CLASS;
+		String reply = 
+			sendExpression("getClassRestriction(" + className + ")");
 		
-		String retval = sendExpression("getClassRestriction(" + className + ")");
+		/* remove " around the reply */
+		reply = reply.trim();
+		reply = reply.substring(1, reply.length()-1);
 		
-		if(retval.contains("model"))
-		{
-			type = Type.MODEL;
-		}
-		else if(retval.contains("connector"))
-		{
-			type = Type.CONNECTOR;
-		}
-		else if(retval.contains("record"))
-		{
-			type = Type.RECORD;
-		}
-		else if(retval.contains("block"))
-		{
-			type = Type.BLOCK;
-		}
-		else if(retval.contains("function"))
-		{
-			type = Type.FUNCTION;
-		}
-		else if(retval.contains("type"))
-		{
-			type = Type.TYPE;
-		}
-		else if(retval.contains("package"))
-		{
-			type = Type.PACKAGE;
-		}
-		
-		return type;
+		return IModelicaClass.Type.parse(reply);
 	}
 	
 	/**

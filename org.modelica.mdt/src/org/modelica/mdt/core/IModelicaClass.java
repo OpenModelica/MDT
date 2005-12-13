@@ -53,33 +53,37 @@ public interface IModelicaClass extends IModelicaElement, IParent
 		
 		public static Type parse(String text)
 		{
-			if (text.equals("CLASS"))
+			if (text.equalsIgnoreCase("CLASS"))
 			{
 				return CLASS;
 			}
-			else if (text.equals("PACKAGE"))
+			else if (text.equalsIgnoreCase("PACKAGE"))
 			{
 				return PACKAGE;
 			}
-			else if (text.equals("MODEL"))
+			else if (text.equalsIgnoreCase("MODEL"))
 			{
 				return MODEL;
 			}
-			else if (text.equals("CONNECTOR"))
+			else if (text.equalsIgnoreCase("CONNECTOR"))
 			{
 				return CONNECTOR;
 			}
-			else if (text.equals("RECORD"))
+			else if (text.equalsIgnoreCase("RECORD"))
 			{
 				return RECORD;
 			}
-			else if (text.equals("BLOCK"))
+			else if (text.equalsIgnoreCase("BLOCK"))
 			{
 				return BLOCK;
 			}
-			else if (text.equals("FUNCTION"))
+			else if (text.equalsIgnoreCase("FUNCTION"))
 			{
 				return FUNCTION;
+			}
+			else if (text.equalsIgnoreCase("TYPE"))
+			{
+				return TYPE;
 			}
 			
 			/* this is error condition, classRestriction is of unexpected type */
@@ -105,21 +109,6 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 */
 	public String getFullName();
 	
-//	/**
-//	 * @return all imports this class is making
-//	 */
-//	public IClassImport[] getImports();
-//	
-//	/**
-//	 * @return list of extensions this class is making
-//	 */
-//	public IClassExtend[] getExtends();
-//	
-//	/**
-//	 * @return list of components (variables and constans) of this class
-//	 */
-//	public IClassComponent[] getComponents();
-
 	/**
 	 * @return the restriction type of this class
 	 * @throws ConnectionException 
