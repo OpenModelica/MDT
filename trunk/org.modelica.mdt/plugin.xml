@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.modelica.mdt.ModelicaCategory"
+            name="Modelica"/>
+      <view
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.ProjectsView"
+            icon="icons/modelicaProject.png"
+            id="org.modelica.mdt.ProjectsView"
+            name="Modelica Projects"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.modelica.mdt.ModelicaCategory"
+            name="Modelica"/>
+      <wizard
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.wizards.NewProjectWizard"
+            descriptionImage="icons/modelicaProjectDest.gif"
+            icon="icons/modelicaProject.png"
+            id="org.modelica.mdt.NewProjectWizard"
+            name="Modelica Project"
+            project="true">
+         <description>
+            Create a new Modelica project.
+         </description>
+      </wizard>
+      <wizard
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.wizards.NewClassWizard"
+            icon="icons/obj16/class_obj.png"
+            id="org.modelica.mdt.NewClassWizard"
+            name="Modelica Class">
+         <description>
+            Create a new Modelica class.
+         </description>
+         <selection class="org.eclipse.core.resources.IResource"/>  
+      </wizard>
+      <wizard
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.wizards.NewPackageWizard"
+            icon="icons/obj16/package_obj.png"
+            id="org.modelica.mdt.NewPackageWizard"
+            name="Modelica Package">
+         <description>
+            Create a new Modelica package.
+         </description>
+      </wizard>        
+   </extension>
+   <extension
+         id="org.modelica.mdt.editor"
+         name="Modelica Editor"
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.modelica.mdt.editor.ModelicaEditor"
+            icon="icons/obj16/mo_file.png"
+            default="false"
+            name="Modelica Editor"
+            contributorClass="org.modelica.mdt.editor.BasicTextEditorActionContributor"
+            id="org.modelica.mdt.editor"
+            extensions="mo"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.modelica.mdt.ui.PerspectiveFactory"
+            icon="icons/modelicaProject.png"
+            id="org.modelica.mdt.perspective"
+            name="Modelica"/>
+   </extension>
+   <extension
+         id="ModelicaNature"
+         name="Modelica"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="org.modelica.mdt.ui.ModelicaNature"/>
+      </runtime>
+      <builder id="org.modelica.mdt.syntaxChecker"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/modelica_ovr.png"
+            id="org.modelica.mdt.modelicaNatureImage"
+            natureId="org.modelica.mdt.ModelicaNature"/>
+   </extension>
+   <extension
+         id="ModelicaHelp"
+         name="Modelica Help"
+         point="org.eclipse.help.toc">
+	  <toc
+         extradir="doc"
+         file="doc/toc.xml"
+         primary="true"/>
+   </extension>
+   <extension
+   		id="syntaxChecker"
+   		name="Modelica Builder"
+   		point="org.eclipse.core.resources.builders">
+   		<builder hasNature="true">
+   			<run
+   				class="org.modelica.mdt.builder.SyntaxChecker">
+   				<parameter name="comment" value="Builder Comment" />
+   			</run>
+   		</builder>
+   	</extension>
+   <extension
+         point="org.eclipse.pde.core.source">
+      <location path="src"/>
+   </extension>
+</plugin>
