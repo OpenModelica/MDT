@@ -46,6 +46,7 @@ import java.util.Vector;
 import org.modelica.mdt.internal.omcproxy.CompileError;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ProxyParser;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 import junit.framework.TestCase;
 
@@ -179,8 +180,9 @@ public class TestProxyParser extends TestCase
 
 	/**
 	 * Test if ProxyParser.parseErrorString() works as prescribed.
+	 * @throws UnexpectedReplyException 
 	 */	
-	public void testParseErrorString()
+	public void testParseErrorString() throws UnexpectedReplyException
 	{
 		try
 		{

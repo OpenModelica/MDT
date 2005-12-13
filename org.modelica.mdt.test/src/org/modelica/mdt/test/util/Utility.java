@@ -59,8 +59,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
+import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 import abbot.finder.matchers.swt.TextMatcher;
 import abbot.finder.swt.BasicFinder;
@@ -299,5 +304,41 @@ public class Utility
 	{
 		return new ByteArrayInputStream(content.getBytes());
 	}
+	
+	/**
+	 * Convinience method to find a modelica file in a modelica folder.
+	 * If the file is not found, then this method will fail 
+	 * (e.g. call Assert.fail()) the invocing test. 
+	 * 
+	 * @param folder the folder where to look
+	 * @param fileName the name of the file to look for
+	 * 
+	 * @return the modelica file found 
+	 * @throws CoreException 
+	 * @throws InvocationError 
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectionException 
+	 */
+	public static IModelicaFile findModelicaFileInFolder(IModelicaFolder folder, 
+			String fileName) 
+	throws ConnectionException, UnexpectedReplyException, 
+		InvocationError, CoreException 
+	{
+		for (Object child : folder.getChildren())
+		{
+				if (child instanceof IModelicaFile)
+				{
+					IModelicaFile f = (IModelicaFile) child;
+					if (f.getElementName().equals(fileName))
+					{
+						return f;
+					}
+				}
+		}
+		
+		Assert.fail("No modelica file named '" + fileName + 
+				"' found in folder '" + folder.getElementName() + "'");  
+		return null; /* this is not happening */
 
+	}
 }

@@ -47,9 +47,9 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.modelica.mdt.core.IModelicaClass.Type;
+import org.modelica.mdt.internal.core.ElementLocation;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.ElementLocation;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
@@ -96,6 +96,8 @@ public class TestOMCProxy extends TestCase
 	public void testGetRestrictionType() 
 		throws ConnectionException, UnexpectedReplyException
 	{
+		System.out.println(OMCProxy.getRestrictionType("Modelica"));
+
 		if (OMCProxy.getRestrictionType("Modelica") != Type.PACKAGE)
 		{
 			fail("Modelica class' restriction type is wrong");

@@ -69,6 +69,7 @@ import org.modelica.mdt.core.ModelicaCore;
  * + README.txt
  * + root_model.mo
  * + nested_models.mo
+ * + component_model.mo
  * + root_folder                 (folder)
  *   + hej_hopp
  * + package_look_alike          (folder)
@@ -282,7 +283,31 @@ public class Area51Projects
 			
 
 		file.create(Utility.getByteStream(contents), true, null);
-		
+
+		/* component_model.mo */
+		file = modelica_project.getFile("component_model.mo");
+		contents = 
+			"model components_bananza\n" +
+			"    Real a_real \"with doc string\";\n" +
+			"    Real an_undocumented_real;\n" +
+			"    package a_package end a_package;\n" +
+			"    class a_class end a_class;\n" +
+			"    model a_model end a_model;\n" +
+			"    connector a_connector end a_connector;\n" +
+			"    record a_record end a_record;\n" +
+			"    block a_block end a_block;\n" +
+			"    function a_function end a_function;\n" +
+			"    type a_type end a_type;\n" +
+			"protected\n" +
+			"	Real a_protected_real;\n" +
+			"	Integer a_protected_integer \"with a comment\";\n" +
+			"equation\n" +
+			"	b = time;\n" +
+			"	der(a) = b;\n" +
+			"end components_bananza;";
+
+		file.create(Utility.getByteStream(contents), true, null);
+
 		
 		/* README.txt */
 		file = modelica_project.getFile("README.txt");
