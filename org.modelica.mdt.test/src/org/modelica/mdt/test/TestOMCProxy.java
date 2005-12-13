@@ -96,8 +96,6 @@ public class TestOMCProxy extends TestCase
 	public void testGetRestrictionType() 
 		throws ConnectionException, UnexpectedReplyException
 	{
-		System.out.println(OMCProxy.getRestrictionType("Modelica"));
-
 		if (OMCProxy.getRestrictionType("Modelica") != Type.PACKAGE)
 		{
 			fail("Modelica class' restriction type is wrong");
