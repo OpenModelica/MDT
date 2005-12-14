@@ -118,7 +118,8 @@ public class OMCProxy
 		catch(IOException e)
 		{
 			throw new ConnectionException
-				("Unable to initialize Open Modelica Compiler");
+				("Unable to read OpenModelica Compiler CORBA object from "
+						+ f.toString());
 		}
 
 		br = new BufferedReader(fr);
@@ -129,8 +130,8 @@ public class OMCProxy
 		}
 		catch(IOException e)
 		{
-			throw new ConnectionException("Unable to read from " + 
-					getPathToObject());
+			throw new ConnectionException("Unable to read OpenModelica Compiler"
+					+ " CORBA object from " + getPathToObject());
 		}
 		return stringifiedObjectReference;
 	}
@@ -243,7 +244,7 @@ public class OMCProxy
 			{
 				logOMCStatus("error running command, giving up"); 
 				throw new ConnectionException
-					("Unable to start Open Modelica Compiler\n"
+					("Unable to start Open Modelica Compiler. "
 					 + "Tried starting " + pathToOmc
 					 + " and " + secondaryPathToOmc);
 			}
@@ -273,7 +274,8 @@ public class OMCProxy
 						"approximatly 5 seconds\n" +
 						"it seems OMC does not want to come up, giving up");
 				throw new ConnectionException
-					("Unable to start Open Modelica Compiler");
+					("Unable to start the Open Modelica Compiler. Waited for 5"
+							+" seconds, but it didn't respond.");
 			}
 		}
 	}
@@ -391,7 +393,8 @@ public class OMCProxy
 			catch(org.omg.CORBA.COMM_FAILURE x)
 			{
 				logOMCStatus("failed sending expression, giving up");
-				throw new ConnectionException("Unable to start server");
+				throw new ConnectionException("Unable to start the OpenModelica"
+						+" Compiler.");
 			}
 		}
 
@@ -424,9 +427,8 @@ public class OMCProxy
 		catch(org.omg.CORBA.COMM_FAILURE x)
 		{
 			/* Server has died, try restarting it. */
-			throw new ConnectionException("Couldn't send message to OMC server."
-					+" Server not running, or we're not connected to it."
-					+" Tried sending: " + exp);
+			throw new ConnectionException("Couldn't send expression to the "+
+					"OpenModelica Compiler. Tried sending: " + exp);
 		}
 		
 		return retval;
@@ -741,6 +743,5 @@ public class OMCProxy
 		/* we have no idea what OMC returned */
 		throw new UnexpectedReplyException("getElementsInfo("+ className +")" + 
 						"replays:'" + retval + "'");
-		
 	}
 }
