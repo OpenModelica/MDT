@@ -101,21 +101,26 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 	{
 		/* keywords list has to be alphabetized for this to work properly */
 		static public String[] keywords = {
-			"algorithm","and","annotation","block","break",
-			"class","connector","constant",
+			"algorithm","and","annotation","assert",
+			"block","break",
+			"class","connect","connector","constant",
 			"der","discrete",
-			"each","elseif","elsewhen","encapsulated","end",
+			"each","else","elseif","elsewhen","encapsulated","end",
 			"enumeration","equation",
 			"extends","external","false","final",
 			"flow","for","function",
 			"if","import","in","initial","inner","input",
 			"loop","model","not","or","outer",
-			"output","package","parameter",
+			"output","overload","package","parameter",
 			"partial","protected","public","record",
-			"redeclare","replacable","return",
-			"then","time","true","type","when","while","within"
+			"redeclare","replacable","return", "terminate",
+			"then","time","true","type","when","while","within",
+			
+			/* The following are Meta-Modelica Keywords */
+			"as", "case", "list", "local", "match", "matchcontinue" ,
+			"tuple", "uniontype"
 		};
-
+		
 		public ModelicaKeywordDetector() 
 		{
 		}
