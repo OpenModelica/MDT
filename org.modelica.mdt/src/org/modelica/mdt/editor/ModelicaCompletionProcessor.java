@@ -41,10 +41,10 @@
 
 package org.modelica.mdt.editor;
 
-import java.text.MessageFormat;
 import java.util.Vector;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -55,7 +55,9 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
+import org.modelica.mdt.internal.omcproxy.ProxyParser;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 //TODO comment the class, remar !
@@ -65,28 +67,64 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
  */
 public class ModelicaCompletionProcessor implements IContentAssistProcessor
 {
-	Vector<Object> proposals = new Vector<Object>();
-	
 	/*
 	 * There is a separate narrowedProposals so that we can store the original
 	 * proposals. This allows us to backtrace the proposals.
 	 */
 	Vector<Object> narrowedProposals = new Vector<Object>();
+	Vector<Object> proposals = new Vector<Object>();
 	int typeAhead = 0;
+
+	Vector<String> inputParameters = new Vector<String>();
+	Vector<String> outputParameters = new Vector<String>();
+	
+	/* This string is used to hold the proposed parameters of a function. */
+	static String functionParameters;
+	
+	static String functionProposal;
 	
 	protected static class Validator implements IContextInformationValidator,
 		IContextInformationPresenter
 	{
+		protected ITextViewer fViewer;
 		protected int fInstallOffset;
 		
 		public boolean isContextInformationValid(int offset)
 		{
-			return Math.abs(fInstallOffset - offset) < 5;
+			/* If we've backed over the (, we're done with this information. */
+			if(offset - fInstallOffset < 0)
+			{
+				return false;
+			}
+			
+			String stringTyped =
+				ModelicaCompletionProcessor.getLine(fViewer, offset);
+
+			/* Get start of parameter list. */
+			int pos = stringTyped.indexOf('(');
+			
+			System.out.println(pos);
+			
+			/* Match parens to see if we're done typing. */
+			int pardepth = 0;
+			for(;pos < stringTyped.length();pos++)
+			{
+				if(stringTyped.charAt(pos) == '(')
+					pardepth++;
+				else if(stringTyped.charAt(pos) == ')')
+					pardepth--;
+			}
+			/* The TYPING will go on as long as it has to! */
+			if(pardepth == 0)
+				return false;
+			else
+				return true;
 		}
 		
 		public void install(IContextInformation info, ITextViewer viewer,
 				int offset)
 		{
+			fViewer = viewer;
 			fInstallOffset = offset;
 		}
 		
@@ -158,7 +196,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @param offset the offset into the document where we're typing
 	 * @return the class name found
 	 */
-	private String findClassName(ITextViewer viewer, int offset)
+	private static String findClassName(ITextViewer viewer, int offset)
 	{
 		int tempCounter = offset;
 		String className = "";
@@ -172,7 +210,8 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			catch(BadLocationException e)
 			{
 			}
-			if(ch == '\n' || ch == '\t' || ch == ' ')
+			if(ch == '\n' || ch == '\t' || ch == ' '
+				|| (ch == '(' && tempCounter < offset - 1))
 				break;
 			else
 				className = ch + className;
@@ -180,6 +219,125 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		while(true);
 		
 		return className;
+	}
+	
+	private static String getLine(ITextViewer viewer, int offset)
+	{
+		IDocument document = viewer.getDocument();
+		
+		int tempCounter = offset;
+		char ch = '\n';
+		String foundString = "";
+		
+		do
+		{
+			try
+			{
+				ch = document.getChar(--tempCounter);
+			}
+			catch(BadLocationException e)
+			{
+				return "";
+			}
+			if(ch == '\n' || ch == '\r')
+				break;
+			else if(foundString.startsWith(functionProposal))
+				break;
+			else
+				foundString = ch + foundString;
+		}
+		while(true);
+		
+		return foundString;
+	}
+	
+	private void fetchParameters(String functionName)
+	{
+		inputParameters.clear();
+		outputParameters.clear();
+		
+		Vector<Object> elementsInfo = new Vector<Object>(0);
+		
+		try 
+		{
+			elementsInfo = OMCProxy.getElementsInfo(functionName);
+		}
+		catch (ConnectionException e){e.printStackTrace();}
+		catch (InvocationError e){e.printStackTrace();}
+		catch (UnexpectedReplyException e){e.printStackTrace();}
+
+		functionProposal = functionName;
+		
+		for(Object o : elementsInfo)
+		{
+			boolean elementIsPublic = false;
+			boolean elementIsComponent = false;
+			boolean elementIsInput = false;
+			boolean elementIsOutput = false;
+			boolean elementNamesFound = false;
+			boolean typenameFound = false;
+			Vector names = new Vector(0);
+			String typename = "";
+			
+			if(o instanceof Vector)
+			{
+				for(Object o2 : (Vector)o)
+				{
+					if(o2 instanceof String)
+					{
+						String s = (String)o2;
+						
+						if(s.startsWith("elementvisibility="))
+						{
+							if(s.substring("elementvisibility=".length()).equals("public"))
+							{
+								elementIsPublic = true;
+							}							
+						}
+						else if(s.startsWith("elementtype="))
+						{
+							if(s.substring("elementtype=".length()).equals("component"))
+							{
+								elementIsComponent = true;
+							}
+						}
+						else if(s.startsWith("direction="))
+						{
+							if(s.substring("direction=".length()).contains("input"))
+							{
+								elementIsInput = true;
+							}
+							else if(s.substring("direction=".length()).contains("output"))
+							{
+								elementIsOutput = true;
+							}
+						}
+						else if(s.startsWith("names="))
+						{
+							names = ProxyParser.parseList(
+									s.substring("names=".length()));
+							elementNamesFound = true;
+						}
+						else if(s.startsWith("typename="))
+						{
+							typename = s.substring("typename=".length());
+							typenameFound = true;
+						}
+					}
+				}
+			}
+			if(elementIsPublic && elementIsComponent
+					&& elementIsInput && elementNamesFound && typenameFound)
+			{
+				inputParameters.add(typename + " " + (String)names.get(0));
+			}
+			else if(elementIsPublic && elementIsComponent
+					&& elementIsOutput && elementNamesFound && typenameFound)
+			{
+				outputParameters.add(typename + " " + (String)names.get(0));
+				
+			}
+		}
 	}
 	
 	/**
@@ -229,11 +387,36 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset)
 	{
-		IContextInformation[] result= new IContextInformation[5];
-		for (int i= 0; i < result.length; i++)
-			result[i]= new ContextInformation(
-				MessageFormat.format("CompletionProcessor.ContextInfo.display.pattern", new Object[] { new Integer(i), new Integer(offset) }),  //$NON-NLS-1$
-				MessageFormat.format("CompletionProcessor.ContextInfo.value.pattern", new Object[] { new Integer(i), new Integer(offset - 5), new Integer(offset + 5)})); //$NON-NLS-1$
+		String className = findClassName(viewer, offset);
+
+		fetchParameters(className.substring(0, className.length()-1));
+		
+		String proposal = "";
+		
+		if(inputParameters.size() > 0)
+		{
+			proposal += "Input: ";
+			for(String s : inputParameters)
+			{
+				proposal += s + ", ";
+			}
+		}
+		if(outputParameters.size() > 0)
+		{
+			proposal += "Output: ";
+			for(int i = 0;i < outputParameters.size();i++)
+			{
+				if(i + 1 < outputParameters.size())
+					proposal += outputParameters.get(i) + ", ";
+				else
+					proposal += outputParameters.get(i);
+			}
+		}
+		
+		IContextInformation[] result = new IContextInformation[1];
+		
+		result[0] = new ContextInformation("Function proposal", proposal);
+		
 		return result;
 	}
 
@@ -244,7 +427,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 
 	public char[] getContextInformationAutoActivationCharacters()
 	{
-		return null;
+		return new char[] {'('};
 	}
 
 	public String getErrorMessage()
