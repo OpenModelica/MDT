@@ -53,7 +53,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -137,7 +137,7 @@ abstract public class ModelicaElement extends PlatformObject
 	 * @throws InvocationError 
 	 */
 	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		/* return an empty list by default */
 		return new LinkedList<IModelicaElementChange>();
@@ -155,17 +155,17 @@ abstract public class ModelicaElement extends PlatformObject
 	 * if the element and it's children are not changed.
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 */
 	public Collection<IModelicaElementChange> reload()
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		/* return an empty list by default */
 		return new LinkedList<IModelicaElementChange>();		
 	}
 
 	public IRegion getLocation()
-		throws CoreException, ConnectionException, 
+		throws CoreException, ConnectException, 
 			UnexpectedReplyException, InvocationError
 	{
 		/* we don't have a definition region by default */
@@ -173,7 +173,7 @@ abstract public class ModelicaElement extends PlatformObject
 	}
 
 	public String getFilePath() 
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		/* we are not defined in an external file by default */
 		return null;

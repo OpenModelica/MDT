@@ -103,7 +103,7 @@ public class OMCProxy
 	 * Reads in the OMC CORBA object reference from a file on disk.
 	 * @return the object reference as a <code>String</code>
 	 */
-	private static String readObjectFromFile() throws ConnectionException
+	private static String readObjectFromFile() throws ConnectException
 	{
 		File f = new File(getPathToObject());
 		String stringifiedObjectReference = null;
@@ -116,7 +116,7 @@ public class OMCProxy
 		}
 		catch(IOException e)
 		{
-			throw new ConnectionException
+			throw new ConnectException
 				("Unable to read OpenModelica Compiler CORBA object from "
 						+ f.toString());
 		}
@@ -129,7 +129,7 @@ public class OMCProxy
 		}
 		catch(IOException e)
 		{
-			throw new ConnectionException("Unable to read OpenModelica Compiler"
+			throw new ConnectException("Unable to read OpenModelica Compiler"
 					+ " CORBA object from " + getPathToObject());
 		}
 		return stringifiedObjectReference;
@@ -166,7 +166,7 @@ public class OMCProxy
 	/**
 	 * Start a new OMC server.
 	 */
-	private static void startServer() throws ConnectionException
+	private static void startServer() throws ConnectException
 	{
 		String pathToOmc = null;
 
@@ -180,7 +180,7 @@ public class OMCProxy
 			final String m = "Environment variable OPENMODELICAPATH not set";
 			logOMCStatus("Environment variable OPENMODELICAPATH not set,"+
 					" don't know how to start OMC");
-			throw new ConnectionException(m);
+			throw new ConnectException(m);
 		}
 		
 		if(os.equals("Unix"))
@@ -242,7 +242,7 @@ public class OMCProxy
 			catch(IOException ex)
 			{
 				logOMCStatus("error running command, giving up"); 
-				throw new ConnectionException
+				throw new ConnectException
 					("Unable to start Open Modelica Compiler. "
 					 + "Tried starting " + pathToOmc
 					 + " and " + secondaryPathToOmc);
@@ -272,7 +272,7 @@ public class OMCProxy
 				logOMCStatus("no OMC object reference file created after " + 
 						"approximatly 5 seconds\n" +
 						"it seems OMC does not want to come up, giving up");
-				throw new ConnectionException
+				throw new ConnectException
 					("Unable to start the Open Modelica Compiler. Waited for 5"
 							+" seconds, but it didn't respond.");
 			}
@@ -325,10 +325,10 @@ public class OMCProxy
 
 	/**
 	 * Initialize the communication with OMC
-	 * @throws ConnectionException if we're unable to start communicating with
+	 * @throws ConnectException if we're unable to start communicating with
 	 * the server
 	 */
-	private static void init() throws ConnectionException
+	private static void init() throws ConnectException
 	{
 		/* 
 		 * Get type of operating system, used for finding object
@@ -392,7 +392,7 @@ public class OMCProxy
 			catch(org.omg.CORBA.COMM_FAILURE x)
 			{
 				logOMCStatus("failed sending expression, giving up");
-				throw new ConnectionException("Unable to start the OpenModelica"
+				throw new ConnectException("Unable to start the OpenModelica"
 						+" Compiler.");
 			}
 		}
@@ -404,11 +404,11 @@ public class OMCProxy
 	 * Send expression to OMC. If communication is not initialized, it
 	 * is initialized here.
 	 * @param exp the expression to send to OMC 
-	 * @throws ConnectionException if we're unable to start communicating with
+	 * @throws ConnectException if we're unable to start communicating with
 	 * the server
 	 */
 	private synchronized static String sendExpression(String exp)
-		throws ConnectionException
+		throws ConnectException
 	{
 		String retval = null;
 		
@@ -426,7 +426,7 @@ public class OMCProxy
 		catch(org.omg.CORBA.COMM_FAILURE x)
 		{
 			/* lost connection to OMC or something */
-			throw new ConnectionException("Couldn't send expression to the "+
+			throw new ConnectException("Couldn't send expression to the "+
 					"OpenModelica Compiler. Tried sending: " + exp);
 		}
 		
@@ -485,11 +485,11 @@ public class OMCProxy
 
 	/**
 	 * Loads in the Modelica System Library.
-	 * @throws ConnectionException if we're unable to start communicating with
+	 * @throws ConnectException if we're unable to start communicating with
 	 * the server
 	 */
 	public static void loadSystemLibrary()
-		throws ConnectionException
+		throws ConnectException
 	{
 		if (!systemLibraryLoaded)
 		{
@@ -504,12 +504,12 @@ public class OMCProxy
 //	 * @param className full class name where to look for packages
 //	 * @return an array of subpackages defined (and loaded into OMC)
 //	 *  inside the class named className
-//	 * @throws ConnectionException 
+//	 * @throws ConnectException 
 //	 * @throws InvocationError 
 //	 * @throws UnexpectedReplyException 
 //	 */
 //	public static String[] getPackages(String className)
-//		throws ConnectionException, InvocationError, UnexpectedReplyException
+//		throws ConnectException, InvocationError, UnexpectedReplyException
 //	{
 //		String retval;
 //		
@@ -534,12 +534,12 @@ public class OMCProxy
 	 *  class. The results is returned as Vector of objects but objects
 	 *  are actually String's.
 	 *  
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
 	 */	
 	public static Vector<Object> getClassNames(String className)
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		String retval = sendExpression("getClassNames("+className+")");
 		
@@ -552,10 +552,10 @@ public class OMCProxy
 	 * @param className fully qualified class name
 	 * @return the restriction type of the class or Type.CLASS if 
 	 *         type can't be determined
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 */
 	public static IModelicaClass.Type getRestrictionType(String className)
-		throws ConnectionException
+		throws ConnectException
 	{
 		String reply = 
 			sendExpression("getClassRestriction(" + className + ")");
@@ -571,10 +571,10 @@ public class OMCProxy
 	 * Fetches the error string from OMC. This should be called after an "Error"
 	 * is received.
 	 * @return
-	 * @throws ConnectionException
+	 * @throws ConnectException
 	 */
 	public static String getErrorString()
-		throws ConnectionException
+		throws ConnectException
 	{
 		String res = sendExpression("getErrorString()");
 		if(res != null)
@@ -593,12 +593,12 @@ public class OMCProxy
 	 * @param file the file we want to load
 	 * @return either returns the classes (and packages) found in the file or
 	 * the error messages from OMC
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
 	 */
 	public static ParseResults loadFileInteractive(IFile file)
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		ParseResults res = new ParseResults();
 		
@@ -642,12 +642,12 @@ public class OMCProxy
 	 * @param className the element we want to get location of
 	 * @return an ElementLocation containing the file, line number and column
 	 * number of the given class 
-	 * @throws ConnectionException
+	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
 	 */
 	public static ElementLocation getElementLocation(String className)
-		throws ConnectionException, UnexpectedReplyException, InvocationError 
+		throws ConnectException, UnexpectedReplyException, InvocationError 
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
 		
@@ -691,10 +691,10 @@ public class OMCProxy
 	 * 
 	 * @param className fully qualified name of the class/package
 	 * @return true if className is a package false otherwise
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 */
 	public static boolean isPackage(String className)
-		throws ConnectionException 
+		throws ConnectException 
 	{
 		String retval = sendExpression("isPackage(" + className + ")");
 		return retval.contains("true");
@@ -703,12 +703,12 @@ public class OMCProxy
 	/**
 	 * @param className
 	 * @return
-	 * @throws ConnectionException
+	 * @throws ConnectException
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
 	 */
 	public static Vector<Object> getElementsInfo(String className)
-		throws ConnectionException, InvocationError, UnexpectedReplyException
+		throws ConnectException, InvocationError, UnexpectedReplyException
 	{
 		String retval = sendExpression("getElementsInfo("+ className +")");
 		

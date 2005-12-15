@@ -53,7 +53,7 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 
 /**
  * @author Elmir Jagudin
@@ -123,7 +123,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 					imgTag = "";
 				}
 			}
-			catch (ConnectionException e)
+			catch (ConnectException e)
 			{
 				ErrorManager.logError(e);
 				/* 

@@ -56,7 +56,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
@@ -106,7 +106,7 @@ public class FolderPackage extends ModelicaClass
 	 * @see org.modelica.mdt.core.IModelicaElement#getResource()
 	 */
 	public IResource getResource() 
-		//throws ConnectionException,	UnexpectedReplyException
+		//throws ConnectException,	UnexpectedReplyException
 	{
 		return container;
 	}
@@ -114,7 +114,7 @@ public class FolderPackage extends ModelicaClass
 	/**
 	 * @see org.modelica.mdt.core.IParent#hasChildren()
 	 */
-	public boolean hasChildren() throws CoreException, ConnectionException,
+	public boolean hasChildren() throws CoreException, ConnectException,
 			UnexpectedReplyException, InvocationError
 	{
 		/* a folder package have allways at least package.mo as a child */
@@ -122,7 +122,7 @@ public class FolderPackage extends ModelicaClass
 	}
 
 	public Collection<Object> getChildren() 
-	throws CoreException, ConnectionException, UnexpectedReplyException
+	throws CoreException, ConnectException, UnexpectedReplyException
 	{
 		if (!childrenLoaded)
 		{
@@ -134,7 +134,7 @@ public class FolderPackage extends ModelicaClass
 	}
 
 	private void loadChildren() 
-		throws CoreException, ConnectionException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException
 	{
 		for (IResource member :  container.members())
 		{
@@ -144,7 +144,7 @@ public class FolderPackage extends ModelicaClass
 
 	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -192,10 +192,10 @@ public class FolderPackage extends ModelicaClass
 	 * @param res
 	 * @return true if the res is a package, false otherwise.
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 */
 	public static boolean isFolderPackage(IResource res)
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		if (res.getType() == IResource.FOLDER)
 		{
@@ -234,7 +234,7 @@ public class FolderPackage extends ModelicaClass
 	 * map a IResource to the type of modelica element it represents
 	 */
 	protected Object wrap(IResource res)
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		switch (res.getType())
 		{
@@ -262,7 +262,7 @@ public class FolderPackage extends ModelicaClass
 
 	}
 
-	public Type getRestrictionType() throws ConnectionException
+	public Type getRestrictionType() throws ConnectException
 	{
 		/* we are a package !*/
 		return IModelicaClass.Type.PACKAGE;

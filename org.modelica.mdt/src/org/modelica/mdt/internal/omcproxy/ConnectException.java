@@ -42,15 +42,15 @@
 package org.modelica.mdt.internal.omcproxy;
 
 /**
- * Thrown when there is an error connecting to the compiler.
+ * Thrown when there is an error while connecting to the compiler.
  * 
  * @author Andreas Remar
  */
-public class ConnectionException extends CompilerException
+public class ConnectException extends CompilerException
 {
 	private static final long serialVersionUID = 5391049301949772469L;
 
-	public ConnectionException(String error)
+	public ConnectException(String error)
 	{
 		super(error);
 	}

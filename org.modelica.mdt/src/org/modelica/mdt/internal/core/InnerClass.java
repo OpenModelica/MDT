@@ -59,7 +59,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ProxyParser;
@@ -128,7 +128,7 @@ public class InnerClass extends ModelicaClass
 	/**
 	 * @see org.modelica.mdt.core.IParent#getChildren()
 	 */
-	public Collection<Object> getChildren() throws ConnectionException,
+	public Collection<Object> getChildren() throws ConnectException,
 			UnexpectedReplyException, InvocationError, CoreException
 	{
 		if (children == null)
@@ -140,7 +140,7 @@ public class InnerClass extends ModelicaClass
 	}
 	
 	private Hashtable<String, Object> loadElements() 
-		throws ConnectionException, UnexpectedReplyException, InvocationError 
+		throws ConnectException, UnexpectedReplyException, InvocationError 
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 	
@@ -255,7 +255,7 @@ public class InnerClass extends ModelicaClass
 	 * @see org.modelica.mdt.core.IParent#hasChildren()
 	 */
 	public boolean hasChildren()
-		throws ConnectionException, UnexpectedReplyException, InvocationError,
+		throws ConnectException, UnexpectedReplyException, InvocationError,
 		CoreException 
 	{
 		return !getChildren().isEmpty();
@@ -263,7 +263,7 @@ public class InnerClass extends ModelicaClass
 
 	@Override
 	public Collection<IModelicaElementChange> reload()
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -324,14 +324,14 @@ public class InnerClass extends ModelicaClass
 	 * 	communicating with compiler
 	 * @throws UnexpectedReplyException if there were errors
 	 * 	 communicating with compiler
-	 * @throws ConnectionException if there were errors
+	 * @throws ConnectException if there were errors
 	 * 	 communicating with compiler
 	 * @throws CoreException if there were errors reading
 	 * 	 the source file of this element
 	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
 	 */
 	public IRegion getLocation()
-		throws ConnectionException, UnexpectedReplyException, 
+		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException
 	{
 		if (location == null)
@@ -367,7 +367,7 @@ public class InnerClass extends ModelicaClass
 
 	@Override
 	public String getFilePath() 
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		if (location == null)
 		{
@@ -377,13 +377,13 @@ public class InnerClass extends ModelicaClass
 	}
 
 	private void loadElementLocation()
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		location = OMCProxy.getElementLocation(fullName);
 	}
 
 
-	public Type getRestrictionType() throws ConnectionException
+	public Type getRestrictionType() throws ConnectException
 	{
 		if(typeKnown == false)
 		{

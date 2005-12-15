@@ -51,7 +51,7 @@ import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 
 /**
  * Implements ordering of modelica elements suitable for displaying 'em in the
@@ -92,7 +92,7 @@ public class ModelicaElementSorter extends ViewerSorter
 					return PACKAGE_ORDER;
 				}
 			}			
-			catch (ConnectionException e)
+			catch (ConnectException e)
 			{
 				ErrorManager.showCompilerError(e);
 				/* we don't realy know what catagory this element is in */

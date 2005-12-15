@@ -52,7 +52,7 @@ import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.builder.SyntaxChecker;
 import org.modelica.mdt.core.IModelicaComponent;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -106,7 +106,7 @@ public class ModelicaComponent extends ModelicaElement
 	 */
 	public IRegion getLocation()
 		throws CoreException
-//		throws ConnectionException, UnexpectedReplyException, 
+//		throws ConnectException, UnexpectedReplyException, 
 //			InvocationError, CoreException
 	{
 		if (container != null)
@@ -137,7 +137,7 @@ public class ModelicaComponent extends ModelicaElement
 
 	@Override
 	public String getFilePath() 
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		return location.getPath();
 	}

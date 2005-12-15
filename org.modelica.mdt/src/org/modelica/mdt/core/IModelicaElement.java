@@ -45,7 +45,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.IRegion;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -74,7 +74,7 @@ public interface IModelicaElement extends IAdaptable
 	 * 
 	 * @return the innermost resource enclosing this element, <code>null</code> if this 
 	 * element is included in an external archive
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @throws UnexpectedReplyException 
 	 * @since 2.0
 	 */
@@ -89,12 +89,12 @@ public interface IModelicaElement extends IAdaptable
 	 * Remark: due to limitations in the OMC, the actual region returned is
 	 * the begining and end of first line of the elements definition.
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @throws CoreException 
 	 * 
 	 */
 	public IRegion getLocation() 
-		throws ConnectionException, UnexpectedReplyException, 
+		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException;
 
 	/**
@@ -106,8 +106,8 @@ public interface IModelicaElement extends IAdaptable
 	 * @return
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 */
 	public String getFilePath() 
-		throws ConnectionException, UnexpectedReplyException, InvocationError;
+		throws ConnectException, UnexpectedReplyException, InvocationError;
 }

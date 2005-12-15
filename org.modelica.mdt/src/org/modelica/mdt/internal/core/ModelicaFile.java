@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
@@ -101,7 +101,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	}
 
 	public Collection<Object> getChildren()
-		throws ConnectionException, UnexpectedReplyException 
+		throws ConnectException, UnexpectedReplyException 
 	{
 		if (children == null)
 		{
@@ -112,7 +112,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	}
 
 	private Hashtable<String, Object> loadElements() 
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 
@@ -140,7 +140,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	}
 	
 	public boolean hasChildren()
-		throws CoreException, ConnectionException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException
 	{
 		return !getChildren().isEmpty();
 	}
@@ -149,7 +149,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	
 	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta)
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();

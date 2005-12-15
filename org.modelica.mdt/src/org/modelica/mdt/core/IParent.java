@@ -13,7 +13,7 @@ package org.modelica.mdt.core;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -33,11 +33,11 @@ public interface IParent
 	 *
 	 * @return the immediate children of this element
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @throws InvocationError 
 	 */
 	Collection<Object> getChildren() 
-		throws ConnectionException, UnexpectedReplyException, 
+		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException;
 	
 	/**
@@ -48,10 +48,10 @@ public interface IParent
 	 * @return true if the immediate children of this element, false otherwise
 	 * @throws CoreException 
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @throws InvocationError 
 	 */
 	boolean hasChildren() 
-		throws CoreException, ConnectionException, UnexpectedReplyException,
+		throws CoreException, ConnectException, UnexpectedReplyException,
 			InvocationError;
 }

@@ -56,13 +56,13 @@ import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ProxyParser;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
-//TODO comment the class, remar !
+
 /**
  * This class is responsible for proposing completions and giving
  * context information about functions. These functions kick in when .
@@ -282,9 +282,22 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		{
 			elementsInfo = OMCProxy.getElementsInfo(functionName);
 		}
-		catch (ConnectionException e){ErrorManager.showCompilerError(e);return;}
-		catch (InvocationError e){/* class wasn't found or something */ return;}
-		catch (UnexpectedReplyException e){/* strange reply from omc? */return;}
+		catch (ConnectException e)
+		{
+			ErrorManager.showCompilerError(e);
+			return;
+		}
+		catch (InvocationError e)
+		{
+			/* class wasn't found or something */ 
+			return;
+		}
+		catch (UnexpectedReplyException e)
+		{
+			/* strange reply from omc? */
+			return;
+		}
+
 
 		functionProposal = functionName;
 		

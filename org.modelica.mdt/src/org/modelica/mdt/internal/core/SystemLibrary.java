@@ -46,7 +46,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 
 /**
@@ -57,10 +57,10 @@ public class SystemLibrary extends ModelicaElement implements ISystemLibrary
 	private static List<Object> packages = null;
 
 	/**
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @see org.modelica.mdt.core.ISystemLibrary#getPackages()
 	 */
-	public List<Object> getPackages() throws ConnectionException 
+	public List<Object> getPackages() throws ConnectException 
 	{
 		if (packages == null)
 		{
@@ -80,7 +80,7 @@ public class SystemLibrary extends ModelicaElement implements ISystemLibrary
 		return "System Library";
 	}
 
-	public List<Object> getChildren() throws ConnectionException 
+	public List<Object> getChildren() throws ConnectException 
 	{
 		return getPackages();
 	}

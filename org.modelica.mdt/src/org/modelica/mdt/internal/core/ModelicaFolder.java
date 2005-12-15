@@ -57,7 +57,7 @@ import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -89,7 +89,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 
 
 	public Collection<Object> getChildren() 
-		throws CoreException, ConnectionException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException
 	{
 		if (!childrenLoaded)
 		{
@@ -101,7 +101,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 	private void loadChildren() 
-		throws CoreException, ConnectionException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException
 	{
 		for (IResource member :  container.members())
 		{
@@ -116,7 +116,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 	public List<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		return update(null, delta);
 	}
@@ -133,12 +133,12 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * @param delta
 	 * @return
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 * @throws InvocationError 
 	 */
 	public List<IModelicaElementChange> update(Object root, 
 			IResourceDelta delta) 
-			throws ConnectionException, UnexpectedReplyException, InvocationError
+			throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -194,7 +194,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * map a IResource to the type of modelica element it represents
 	 */
 	private Object wrap(IResource res)
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		switch (res.getType())
 		{

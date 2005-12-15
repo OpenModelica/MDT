@@ -48,7 +48,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.modelica.mdt.internal.omcproxy.CommunicationException;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
@@ -149,7 +149,7 @@ public class ErrorManager
 			showErrorDialog = !communicationErrorShown;
 			communicationErrorShown = true;
 		}
-		else if (exception instanceof ConnectionException)
+		else if (exception instanceof ConnectException)
 		{
 			message = "Could not establish connection to the " + 
 				OMCProxy.getCompileName() + "."+

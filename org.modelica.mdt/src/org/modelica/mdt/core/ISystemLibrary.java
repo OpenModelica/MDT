@@ -42,7 +42,7 @@ package org.modelica.mdt.core;
 
 import java.util.List;
 
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 
 
 
@@ -53,5 +53,5 @@ import org.modelica.mdt.internal.omcproxy.ConnectionException;
  */
 public interface ISystemLibrary extends IModelicaElement, IParent
 {
-	public List<Object> getPackages() throws ConnectionException; 
+	public List<Object> getPackages() throws ConnectException; 
 }

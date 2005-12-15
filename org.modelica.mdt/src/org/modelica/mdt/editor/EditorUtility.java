@@ -54,7 +54,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -70,13 +70,13 @@ public class EditorUtility
 	 * handles the tricky buisness of opening the element in editor depending
 	 * on it's type
 	 * @param element the element to open in the editor
-	 * @throws ConnectionException
+	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
 	 * @throws CoreException 
 	 */
 	public static void openInEditor(Object element)
-		throws ConnectionException, UnexpectedReplyException, 
+		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException
 	{
 		if (element instanceof IModelicaElement)

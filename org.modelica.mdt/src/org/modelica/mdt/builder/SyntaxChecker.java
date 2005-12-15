@@ -67,7 +67,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.internal.omcproxy.CompileError;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.ParseResults;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
@@ -422,11 +422,11 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	/**
 	 * 
 	 * @param file the file we should load into OMC to check for errors
-	 * @throws ConnectionException
+	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */
 	protected static void loadFileAndReportErrors(IFile file)
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		/*
 		 * Try loading the file into OMC and get the results.
