@@ -119,12 +119,18 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 					imgTag = ModelicaImages.IMG_OBJS_TYPE;
 					break;
 				default:
+					// TODO bug location
 					imgTag = "";
 				}
 			}
 			catch (ConnectionException e)
 			{
 				ErrorManager.log(e);
+				/* 
+				 * hmm, let the class icon be default 
+				 * 'i don't know your type' image
+				 */ 
+				imgTag = ModelicaImages.IMG_OBJS_CLASS;
 			}
 			return ModelicaImages.getImageDescriptor(imgTag);
 		}

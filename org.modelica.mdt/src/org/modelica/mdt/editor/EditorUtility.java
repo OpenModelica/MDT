@@ -73,7 +73,7 @@ public class EditorUtility
 	 * @throws ConnectionException
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
-	 * @throws CoreException
+	 * @throws CoreException 
 	 */
 	public static void openInEditor(Object element)
 		throws ConnectionException, UnexpectedReplyException, 

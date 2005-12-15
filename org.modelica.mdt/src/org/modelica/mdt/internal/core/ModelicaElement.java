@@ -114,7 +114,6 @@ abstract public class ModelicaElement extends PlatformObject
 	}
 
 	public IResource getResource() 
-		//throws ConnectionException, UnexpectedReplyException
 	{
 		return null;
 	}
@@ -165,9 +164,9 @@ abstract public class ModelicaElement extends PlatformObject
 		return new LinkedList<IModelicaElementChange>();		
 	}
 
-	public IRegion getLocation() 
-		throws ConnectionException, UnexpectedReplyException, 
-			InvocationError, CoreException
+	public IRegion getLocation()
+		throws CoreException, ConnectionException, 
+			UnexpectedReplyException, InvocationError
 	{
 		/* we don't have a definition region by default */
 		return null;

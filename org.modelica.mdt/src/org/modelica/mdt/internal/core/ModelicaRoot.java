@@ -51,7 +51,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
@@ -75,7 +74,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		return projectsTable.values().toArray();		
 	}
 
-	private void loadProjects() throws CoreException
+	private void loadProjects()
 	{
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		projectsTable = new Hashtable<IProject, ModelicaProject>();
@@ -95,15 +94,8 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	
 	public void start()
 	{
-		try
-		{
-			loadProjects();
-		}
-		catch (CoreException e)
-		{
-			// TODO handle CoreException
-			e.printStackTrace();
-		}
+		loadProjects();
+
 		listeners = new LinkedList<IModelicaElementChangeListener>();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
 					IResourceChangeEvent.POST_CHANGE);

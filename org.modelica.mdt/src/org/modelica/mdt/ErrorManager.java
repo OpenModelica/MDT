@@ -41,6 +41,7 @@
 
 package org.modelica.mdt;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -234,6 +235,29 @@ public class ErrorManager
 		}
 	}
 
+	/**
+	 * Display Eclipse Core Error, that is condition when a CoreException
+	 * is thrown.
+	 * 
+	 * @param exception the exception describing the error
+	 */
+	public static void showCoreError(final CoreException exception)
+	{
+		/* log error */
+		log(exception);
+		
+		Display display = MdtPlugin.getDisplay();
+		display.asyncExec(new Runnable()
+		{
+			public void run()
+			{
+				ErrorDialog.openError(MdtPlugin.getShell(),	
+						"Error", null, exception.getStatus());
+			}
+		});
+	}
+
+	
 	/**
 	 * Returns caller methods name including classname and source file name.
 	 * This method is usefull for logging internal errors in conditions

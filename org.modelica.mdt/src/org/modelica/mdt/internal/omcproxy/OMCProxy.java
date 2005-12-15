@@ -425,9 +425,7 @@ public class OMCProxy
 		}
 		catch(org.omg.CORBA.COMM_FAILURE x)
 		{
-			/* Server has died, try restarting it. */ //<-- old comment ? TODO
-			//TODO i see no attemptens to restart the server /homer
-			//TODO throw CommunicationException instead
+			/* lost connection to OMC or something */
 			throw new ConnectionException("Couldn't send expression to the "+
 					"OpenModelica Compiler. Tried sending: " + exp);
 		}

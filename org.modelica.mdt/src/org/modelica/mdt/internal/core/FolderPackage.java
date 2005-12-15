@@ -160,7 +160,6 @@ public class FolderPackage extends ModelicaClass
 				try
 				{
 					element = wrap(res);
-					throw new ConnectionException("can't find it");
 				} 
 				catch (CompilerException e)
 				{

@@ -126,5 +126,5 @@ public class ModelicaElementSorter extends ViewerSorter
 		ErrorManager.logWarning("element of unknow type encountered at " +
 				ErrorManager.getCurrentMethod());
 		return UNKOWN_TYPE_ORDER;
-		}
+	}
 }

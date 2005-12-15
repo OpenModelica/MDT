@@ -68,7 +68,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.DeleteResourceAction;
@@ -173,23 +172,18 @@ public class ProjectsView extends ViewPart
 		 */
 		IStructuredSelection selecton = 
 			(IStructuredSelection) event.getSelection();
+
 		try
 		{
 			EditorUtility.openInEditor(selecton.getFirstElement());
 		} 
-		catch (PartInitException e)
-		{
-			// TODO handle PartInitException
-			e.printStackTrace();
-		}
 		catch (CompilerException e)
 		{
 			ErrorManager.showCompilerError(e);
 		}
 		catch (CoreException e)
 		{
-			// TODO handle CoreException
-			e.printStackTrace();
+			ErrorManager.showCoreError(e);
 		}
 	}
 

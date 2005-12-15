@@ -142,9 +142,9 @@ public class ModelicaElementContentProvider
 			}
 			catch (CoreException e)
 			{
-				//TODO handle CoreException
-				e.printStackTrace();
-				ErrorManager.log(e);
+				/* on core error, show message and return empty children array */
+				ErrorManager.showCoreError(e);
+				return new Object[0];
 			}
 
 			if (!hasModelicaNature)
@@ -175,9 +175,9 @@ public class ModelicaElementContentProvider
 			}
 			catch (CoreException e)
 			{
-				//TODO handle CoreException
-				e.printStackTrace();
-				ErrorManager.log(e);
+				/* on core error, show message and return empty children array */
+				ErrorManager.showCoreError(e);
+				return new Object[0];
 			}
 		}
 		return null;
@@ -210,9 +210,12 @@ public class ModelicaElementContentProvider
 			} 
 			catch (CoreException e) 
 			{
-				//TODO handle CoreException
-				e.printStackTrace();
-				ErrorManager.log(e);
+				/* 
+				 * on Core error, show message and return that 
+				 * there are no children 
+				 */
+				ErrorManager.showCoreError(e);
+				return false;
 			}
 			catch (CompilerException e)
 			{

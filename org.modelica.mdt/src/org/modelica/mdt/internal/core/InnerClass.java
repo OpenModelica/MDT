@@ -320,11 +320,17 @@ public class InnerClass extends ModelicaClass
 	}
 	
 	/**
-	 * @throws InvocationError 
-	 * @throws CoreException 
+	 * @throws InvocationError if there were errors 
+	 * 	communicating with compiler
+	 * @throws UnexpectedReplyException if there were errors
+	 * 	 communicating with compiler
+	 * @throws ConnectionException if there were errors
+	 * 	 communicating with compiler
+	 * @throws CoreException if there were errors reading
+	 * 	 the source file of this element
 	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
 	 */
-	public IRegion getLocation() 
+	public IRegion getLocation()
 		throws ConnectionException, UnexpectedReplyException, 
 			InvocationError, CoreException
 	{

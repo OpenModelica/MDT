@@ -104,9 +104,10 @@ public class ModelicaComponent extends ModelicaElement
 	 * @throws CoreException 
 	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
 	 */
-	public IRegion getLocation() 
-		throws ConnectionException, UnexpectedReplyException, 
-			InvocationError, CoreException
+	public IRegion getLocation()
+		throws CoreException
+//		throws ConnectionException, UnexpectedReplyException, 
+//			InvocationError, CoreException
 	{
 		if (container != null)
 		{
