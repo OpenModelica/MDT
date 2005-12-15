@@ -126,8 +126,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			// TODO Proper error handling, remar ?
-			e.printStackTrace();
+			ErrorManager.showCoreError(e);
 		}
 	}
 	
@@ -144,8 +143,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			// TODO Proper error handling, remar ?
-			e.printStackTrace();
+			ErrorManager.showCoreError(e);
 		}
 	}
 	

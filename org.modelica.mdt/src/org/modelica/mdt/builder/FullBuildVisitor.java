@@ -84,8 +84,10 @@ public class FullBuildVisitor implements IResourceVisitor
 			}
 			catch(CompilerException e)
 			{
-				// TODO Proper error handling, remar?
 				ErrorManager.logError(e);
+				
+				/* Don't visit the children, OMC is fubarred. */
+				return false;
 			}
 		}
 		
