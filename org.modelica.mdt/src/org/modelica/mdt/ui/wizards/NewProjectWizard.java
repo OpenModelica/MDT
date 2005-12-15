@@ -43,6 +43,7 @@ package org.modelica.mdt.ui.wizards;
 
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.ui.ModelicaImages;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -85,8 +86,8 @@ public class NewProjectWizard extends Wizard implements INewWizard
 			setTitle("Create a Modelica project");
 			setDescription("Create a Modelica project in the workspace.");
 			
-			// TODO set image descriptor			
-			//setImageDescriptor(...);
+			setImageDescriptor(ModelicaImages.getImageDescriptor(
+		             ModelicaImages.IMG_WIZBAN_PROJECT));
 			
 			/*
 			 * setup widgets for this page
@@ -109,7 +110,8 @@ public class NewProjectWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        projectName = new Text(composite, SWT.SINGLE | SWT.BORDER);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
+	        				  GridData.GRAB_HORIZONTAL);
 	        projectName.setLayoutData(gd);
 	        MdtPlugin.tag(projectName, PROJECT_NAME_TAG);
 	        
@@ -138,9 +140,6 @@ public class NewProjectWizard extends Wizard implements INewWizard
 				setMessage(res.getMessage(), DialogPage.ERROR);
 			}			
 		}
-
-
-
 	}
 
 	private NewProjectPage projectPage = new NewProjectPage();

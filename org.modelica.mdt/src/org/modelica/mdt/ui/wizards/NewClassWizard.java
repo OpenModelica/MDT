@@ -87,6 +87,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.internal.core.ModelicaElement;
+import org.modelica.mdt.ui.ModelicaImages;
 
 public class NewClassWizard extends Wizard implements INewWizard
 {
@@ -128,8 +129,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 			setTitle("Modelica Class");
 			setDescription("Create a new Modelica class.");
 			
-			// TODO set image descriptor			
-			//setImageDescriptor(...);
+			setImageDescriptor(ModelicaImages.getImageDescriptor(
+		             ModelicaImages.IMG_WIZBAN_CLASS));
 			
 			/*
 			 * setup widgets for this page

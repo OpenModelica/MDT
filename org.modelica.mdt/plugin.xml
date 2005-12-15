@@ -21,8 +21,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewProjectWizard"
-            descriptionImage="icons/modelicaProjectDest.gif"
-            icon="icons/modelicaProject.png"
+            icon="icons/etool16/newproject_wiz.png"
             id="org.modelica.mdt.NewProjectWizard"
             name="Modelica Project"
             project="true">
@@ -85,7 +84,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/modelica_ovr.png"
+            icon="icons/ovr16/modelica_ovr.png"
             id="org.modelica.mdt.modelicaNatureImage"
             natureId="org.modelica.mdt.ModelicaNature"/>
    </extension>

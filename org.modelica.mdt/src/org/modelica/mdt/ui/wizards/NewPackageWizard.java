@@ -93,8 +93,6 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	public static final String IS_ENCAPSULATED_TAG = "isEncapsulatedTag";
 
 	private Text sourceFolder;
-	@SuppressWarnings("unused")
-	private Text parentPackage;
 	private Text packageName;
 	private Text packageDesc;
 	public Button isEncapsulated;

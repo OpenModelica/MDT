@@ -57,6 +57,8 @@ public class ModelicaImages
 			= "IMG_OBJS_PUBLIC_COMPONENT";
 	
 	public static final String IMG_WIZBAN_PACKAGE = "IMG_WIZBAN_PACKAGE";
+	public static final String IMG_WIZBAN_PROJECT = "IMG_WIZBAN_PROJECT";
+	public static final String IMG_WIZBAN_CLASS = "IMG_WIZBAN_CLASS";
 	
 	
 	/*
@@ -128,6 +130,8 @@ public class ModelicaImages
 				T_OBJ + "public_component_obj.png");
 		
 		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.png");
+		declareRegistryImage(IMG_WIZBAN_PROJECT, T_WIZBAN + "project_wiz.png");
+		declareRegistryImage(IMG_WIZBAN_CLASS, T_WIZBAN + "class_wiz.png");
 				
 	}
 	
