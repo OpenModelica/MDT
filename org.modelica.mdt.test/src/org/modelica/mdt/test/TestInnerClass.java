@@ -48,7 +48,7 @@ import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.internal.core.InnerClass;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
@@ -102,10 +102,10 @@ public class TestInnerClass extends TestCase
 	 * @throws CoreException 
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 */
 	public void testChildren()
-	throws ConnectionException, UnexpectedReplyException,
+	throws ConnectException, UnexpectedReplyException,
 		InvocationError, CoreException
 	{ 
 		IModelicaComponent a_real = null;

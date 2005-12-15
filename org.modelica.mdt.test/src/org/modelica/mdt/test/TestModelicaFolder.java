@@ -49,7 +49,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
@@ -122,7 +122,7 @@ public class TestModelicaFolder extends TestCase
 	 * 
 	 */
 	public void testGetChildren() 
-		throws ConnectionException, UnexpectedReplyException, 
+		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException
 	{
 		IModelicaFolder root_folder = null;

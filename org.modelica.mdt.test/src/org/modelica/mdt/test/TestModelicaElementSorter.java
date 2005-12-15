@@ -50,7 +50,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
@@ -76,7 +76,7 @@ public class TestModelicaElementSorter extends TestCase
 	}
 	
 	public void testSorter()
-		throws ConnectionException, UnexpectedReplyException, 
+		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException
 	{
 		/*

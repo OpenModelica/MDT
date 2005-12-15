@@ -63,7 +63,7 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
@@ -317,11 +317,11 @@ public class Utility
 	 * @throws CoreException 
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
-	 * @throws ConnectionException 
+	 * @throws ConnectException 
 	 */
 	public static IModelicaFile findModelicaFileInFolder(IModelicaFolder folder, 
 			String fileName) 
-	throws ConnectionException, UnexpectedReplyException, 
+	throws ConnectException, UnexpectedReplyException, 
 		InvocationError, CoreException 
 	{
 		for (Object child : folder.getChildren())

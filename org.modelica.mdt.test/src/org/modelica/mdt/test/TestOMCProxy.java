@@ -48,7 +48,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.internal.core.ElementLocation;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
+import org.modelica.mdt.internal.omcproxy.ConnectException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
@@ -64,7 +64,7 @@ public class TestOMCProxy extends TestCase
 	/* a source code file use in some tests */
 	private IFile nested_models_mo;
 	
-	protected void setUp() throws ConnectionException
+	protected void setUp() throws ConnectException
 	{
 		Area51Projects.createProjects();
 
@@ -96,7 +96,7 @@ public class TestOMCProxy extends TestCase
 	 * test OMCProxy.getRestrictionType() 
 	 */
 	public void testGetRestrictionType() 
-		throws ConnectionException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException
 	{
 		if (OMCProxy.getRestrictionType("Modelica") != Type.PACKAGE)
 		{
@@ -167,7 +167,7 @@ public class TestOMCProxy extends TestCase
 	 * test OMCProxy.getElementLocation()
 	 */
 	public void testGetElementLocation()
-		throws ConnectionException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		OMCProxy.loadFileInteractive(nested_models_mo);
 
