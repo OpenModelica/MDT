@@ -69,7 +69,6 @@ public class TestPerspective extends TestCase
 		 */				
 		assertTrue(Collections.addAll(wizardShortcuts,
 				/* modelica wizards */
-				"org.modelica.mdt.NewProjectWizard",
 				"org.modelica.mdt.NewClassWizard",
 				"org.modelica.mdt.NewPackageWizard",
 				/* generic wizards */
