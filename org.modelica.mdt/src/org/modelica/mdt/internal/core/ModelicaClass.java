@@ -44,8 +44,6 @@ package org.modelica.mdt.internal.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * Superclass of all modelica class/package representation, collects 
@@ -119,7 +117,6 @@ abstract public class ModelicaClass extends ModelicaElement
 
 	
 	public IResource getResource() 
-		throws ConnectionException, UnexpectedReplyException
 	{
 		return container;
 	}

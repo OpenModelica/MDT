@@ -98,7 +98,6 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 
 	@Override
 	public IResource getResource()
-		throws ConnectionException, UnexpectedReplyException
 	{
 		return getRootFolder().getResource();
 	}

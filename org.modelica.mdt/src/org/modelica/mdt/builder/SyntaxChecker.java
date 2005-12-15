@@ -65,7 +65,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.internal.omcproxy.CompileError;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
@@ -126,7 +126,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			// TODO Some other error handling?
+			// TODO Proper error handling, remar ?
 			e.printStackTrace();
 		}
 	}
@@ -144,7 +144,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			// TODO Proper error handling, someone?
+			// TODO Proper error handling, remar ?
 			e.printStackTrace();
 		}
 	}
@@ -167,7 +167,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			MdtPlugin.log(e);
+			ErrorManager.log(e);
 			return;
 		}
 		
@@ -201,7 +201,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			MdtPlugin.log(e);
+			ErrorManager.log(e);
 		}
 	}
 	
@@ -223,7 +223,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			MdtPlugin.log(e);
+			ErrorManager.log(e);
 			return;
 		}
 		
@@ -254,7 +254,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			MdtPlugin.log(e);
+			ErrorManager.log(e);
 		}
 	}
 	
@@ -365,7 +365,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(BadLocationException e)
 		{
-			MdtPlugin.log(e);
+			ErrorManager.log(e);
 		}
 		
 		return null;
@@ -404,7 +404,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			MdtPlugin.log(e);
+			ErrorManager.log(e);
 		}
 		return marker;
 	}
@@ -416,7 +416,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	
 	protected void clean(IProgressMonitor monitor)
 	{
-		// TODO Add builder clean logic here
+		/* NOP */
 	}
 
 	/**

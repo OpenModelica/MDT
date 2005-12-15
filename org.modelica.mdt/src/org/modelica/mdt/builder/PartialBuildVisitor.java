@@ -49,7 +49,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
@@ -93,8 +93,8 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 			}
 			catch(CompilerException e)
 			{
-				// TODO Proper error handling?
-				MdtPlugin.log(e);
+				// TODO Proper error handling, remar ?
+				ErrorManager.log(e);
 			}
 		}
 		

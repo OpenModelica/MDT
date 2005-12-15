@@ -45,6 +45,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
@@ -123,8 +124,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			}
 			catch (ConnectionException e)
 			{
-				// TODO proper error handling
-				e.printStackTrace();
+				ErrorManager.log(e);
 			}
 			return ModelicaImages.getImageDescriptor(imgTag);
 		}

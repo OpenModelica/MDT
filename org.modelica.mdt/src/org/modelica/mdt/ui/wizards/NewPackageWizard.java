@@ -77,9 +77,13 @@ import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.internal.core.ModelicaElement;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.ui.ModelicaImages;
 
+/**
+ * Implements New Modelica Package wizard.
+ * 
+ * @author Homer Simpson
+ */
 public class NewPackageWizard extends Wizard implements INewWizard
 {
 
@@ -320,16 +324,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        isEncapsulated.setLayoutData(gd);
 	        MdtPlugin.tag(isEncapsulated, IS_ENCAPSULATED_TAG);
 	        
-	        try
-	        {
-				setSelection(selection);
-			}
-	        catch (CompilerException e1) 
-	        {
-				// TODO Proper error handling
-				e1.printStackTrace();
-				MdtPlugin.log(e1);
-			}
+	        setSelection(selection);
 		}
 		
 		private void sourceFolderChanged()
@@ -376,7 +371,6 @@ public class NewPackageWizard extends Wizard implements INewWizard
 		}
 
 		private void setSelection(Object selection) 
-			throws CompilerException
 		{
 			IResource res;
 			
@@ -414,7 +408,6 @@ public class NewPackageWizard extends Wizard implements INewWizard
 			}
 
 			setSourceFolder(path);
-
 		}
 		
 		/**
@@ -430,24 +423,6 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        	sourceFolderChanged();
 	        }	        			
 		}
-		
-//		/**
-//		 * set parent package field in the dialog
-//		 * 
-//		 * @param parentPkg the parent package to set or null to set
-//		 * empty parent package 
-//		 */
-//		private void setParentPackage(ModelicaPackage parentPkg) 
-//		{
-//			if (parentPkg == null)
-//			{
-//				parentPackage.setText("");
-//			}
-//			else
-//			{
-//				parentPackage.setText(parentPkg.getFullName());
-//			}
-//		}
 
 		public void init(IStructuredSelection selection)
 		{

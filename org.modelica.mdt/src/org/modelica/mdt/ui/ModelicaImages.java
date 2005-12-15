@@ -17,6 +17,7 @@ import java.net.URL;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.MdtPlugin;
 
 /**
@@ -145,7 +146,7 @@ public class ModelicaImages
 		}
 		catch (MalformedURLException me) 
 		{
-			MdtPlugin.log(me);
+			ErrorManager.log(me);
 		}
 		fgImageRegistry.put(key, desc);
 	}	

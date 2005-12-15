@@ -54,6 +54,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.modelica.mdt.ErrorManager;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
@@ -153,16 +155,19 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		try
 		{
 			proposals = OMCProxy.getClassNames(className);
-		} catch (ConnectionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnexpectedReplyException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		narrowedProposals = proposals;
+		catch (CompilerException e)
+		{
+			/* 
+			 * if there were errors fetching classnames, report
+			 * error and leave proposals empty
+			 */
+			ErrorManager.showCompilerError(e);
+		}
+		finally
+		{
+			narrowedProposals = proposals;
+		}
 	}
 	
 	/**

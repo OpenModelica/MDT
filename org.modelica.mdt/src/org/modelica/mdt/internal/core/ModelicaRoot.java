@@ -52,6 +52,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.internal.core.ModelicaProject;
@@ -100,7 +101,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		}
 		catch (CoreException e)
 		{
-			// TODO Auto-generated catch block
+			// TODO handle CoreException
 			e.printStackTrace();
 		}
 		listeners = new LinkedList<IModelicaElementChangeListener>();
@@ -174,12 +175,11 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		List<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
 				
-		if(projectsTable == null)
+		if (projectsTable == null)
 		{
 			/* if projects are not loaded, no changes can happen to 'em */
 			return changes;
 		}
-
 
 		try
 		{
@@ -188,8 +188,11 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		} 
 		catch (CompilerException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			/*
+			 * display error and return whatever changes was added before
+			 * the error struck
+			 */
+			ErrorManager.showCompilerError(e);
 		}
 		
 		return changes;

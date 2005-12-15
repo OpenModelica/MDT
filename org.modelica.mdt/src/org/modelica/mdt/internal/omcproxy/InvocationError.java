@@ -43,19 +43,44 @@ package org.modelica.mdt.internal.omcproxy;
 
 /**
  * Thrown when compiler reports an unexpected error while invoking
- * some command via the 'interactive api' interface.
- * 
- * Typicaly when compiler returns 'Error' string instead of the expected
- * result of some command.
+ * some command via the 'interactive api' interface. That is when
+ * compiler replys 'error' instead of returning the results in a situation
+ * where no error are expected.
  * 
  * @author Elmir Jagudin
  */
 public class InvocationError extends CompilerException
 {
 	private static final long serialVersionUID = 1437868457853593664L;
+	private String action;
+	private String expression;
 	
-	public InvocationError(String error)
+	/**
+	 * @param action human readable decscription of what action failed
+	 * @param expression the expression what was send to OMC that failed
+	 * @see InvocationError#getAction()
+	 * @see InvocationError#getExpression()
+	 */
+	public InvocationError(String action, String expression)
 	{
-		super(error);
+		super("OMC replyed 'error' to '" + expression + "'");
+		this.action = action;
+		this.expression = expression;
+	}
+	
+	/**
+	 * Get the human readable description of the action that triggered this 
+	 * error. E.g. 'fetching contents of class foo.bar'
+	 * 
+	 * The description should be phrased so that 
+	 */
+	public String getAction()
+	{
+		return action;
+	}
+	
+	public String getExpression()
+	{
+		return expression;
 	}
 }

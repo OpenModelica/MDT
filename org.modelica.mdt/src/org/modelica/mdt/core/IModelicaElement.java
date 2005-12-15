@@ -78,8 +78,7 @@ public interface IModelicaElement extends IAdaptable
 	 * @throws UnexpectedReplyException 
 	 * @since 2.0
 	 */
-	IResource getResource()
-		throws ConnectionException, UnexpectedReplyException;
+	IResource getResource();
 	
 	/**
 	 * For elements that are defined inside a file this method returns

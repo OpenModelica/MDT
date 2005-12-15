@@ -52,6 +52,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
@@ -110,7 +111,7 @@ public class ModelicaElementContentProvider
 			}
 			catch (CoreException e)
 			{
-				MdtPlugin.log(e);
+				ErrorManager.log(e);
 			}
 		}
 		else if (parent instanceof IModelicaProject)
@@ -132,18 +133,18 @@ public class ModelicaElementContentProvider
 				
 				hasModelicaNature = modelicaProj.getProject().
 					getDescription().hasNature(MdtPlugin.MODELICA_NATURE);
-
 			}
 			catch (CompilerException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				MdtPlugin.log(e);
-			} catch (CoreException e)
+				/* on OMC error, show message and return empty children array */
+				ErrorManager.showCompilerError(e);
+				return new Object[0];
+			}
+			catch (CoreException e)
 			{
-				// TODO Auto-generated catch block
+				//TODO handle CoreException
 				e.printStackTrace();
-				MdtPlugin.log(e);
+				ErrorManager.log(e);
 			}
 
 			if (!hasModelicaNature)
@@ -168,14 +169,15 @@ public class ModelicaElementContentProvider
 			}
 			catch (CompilerException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				MdtPlugin.log(e);
-			} catch (CoreException e)
+				/* on OMC error, show message and return empty children array */
+				ErrorManager.showCompilerError(e);
+				return new Object[0];
+			}
+			catch (CoreException e)
 			{
-				// TODO Auto-generated catch block
+				//TODO handle CoreException
 				e.printStackTrace();
-				MdtPlugin.log(e);
+				ErrorManager.log(e);
 			}
 		}
 		return null;
@@ -208,14 +210,18 @@ public class ModelicaElementContentProvider
 			} 
 			catch (CoreException e) 
 			{
-				// TODO Auto-generated catch block
+				//TODO handle CoreException
 				e.printStackTrace();
-				MdtPlugin.log(e);
-			} catch (CompilerException e)
+				ErrorManager.log(e);
+			}
+			catch (CompilerException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				MdtPlugin.log(e);
+				/* 
+				 * on OMC error, show message and return that 
+				 * there are no children 
+				 */
+				ErrorManager.showCompilerError(e);
+				return false;
 			}
 		}
 		return false;

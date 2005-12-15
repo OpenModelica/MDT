@@ -50,7 +50,7 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.internal.core.ElementLocation;
 import org.omg.CORBA.ORB;
@@ -97,7 +97,6 @@ public class OMCProxy
 		{
 			traceOMCStatus = true;
 		}
-		
 	}
 
 	/**
@@ -318,7 +317,7 @@ public class OMCProxy
 		}
 		else
 		{
-			MdtPlugin.logWarning("Unsupported OS");
+			ErrorManager.logWarning("'" + osName + "' is unsupported OS");
 			/* If the OS is not GNU/Linux or Windows, default to Unix */
 			return "Unix";
 		}
@@ -426,7 +425,9 @@ public class OMCProxy
 		}
 		catch(org.omg.CORBA.COMM_FAILURE x)
 		{
-			/* Server has died, try restarting it. */
+			/* Server has died, try restarting it. */ //<-- old comment ? TODO
+			//TODO i see no attemptens to restart the server /homer
+			//TODO throw CommunicationException instead
 			throw new ConnectionException("Couldn't send expression to the "+
 					"OpenModelica Compiler. Tried sending: " + exp);
 		}
@@ -654,8 +655,9 @@ public class OMCProxy
 		
 		if(retval.contains("Error") || retval.contains("error"))
 		{
-			throw new InvocationError("getCrefInfo(" + className + 
-					") replys error");
+			throw new 
+				InvocationError("fetching file position of " + className,
+						"getCrefInfo(" + className + ")");
 		}
 		
 		
@@ -678,7 +680,8 @@ public class OMCProxy
 		}
 		catch (NumberFormatException e)
 		{
-			throw new InvocationError("can't parse getCrefInfo() reply, "+
+			throw new 
+			UnexpectedReplyException("can't parse getCrefInfo() reply, "+
 					"unexpected format");
 		}
 		
@@ -730,8 +733,9 @@ public class OMCProxy
 				 */
 				if (retval.substring(i+1,i+5).equals("rror"))
 				{
-					throw new InvocationError("getElementsInfo("+ className +")" + 
-						" replays 'error'");
+					throw new 
+						InvocationError("fetching contents of " + className,
+								"getElementsInfo("+ className +")");
 				}
 				else
 				{
@@ -743,5 +747,11 @@ public class OMCProxy
 		/* we have no idea what OMC returned */
 		throw new UnexpectedReplyException("getElementsInfo("+ className +")" + 
 						"replays:'" + retval + "'");
+	}
+
+	
+	public static String getCompileName()
+	{
+		return "OpenModelica Compiler";
 	}
 }

@@ -51,10 +51,11 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.OMCProxy;
@@ -104,8 +105,8 @@ public class FolderPackage extends ModelicaClass
 	/**
 	 * @see org.modelica.mdt.core.IModelicaElement#getResource()
 	 */
-	public IResource getResource() throws ConnectionException,
-			UnexpectedReplyException
+	public IResource getResource() 
+		//throws ConnectionException,	UnexpectedReplyException
 	{
 		return container;
 	}
@@ -159,19 +160,11 @@ public class FolderPackage extends ModelicaClass
 				try
 				{
 					element = wrap(res);
-					
+					throw new ConnectionException("can't find it");
 				} 
-				catch (ConnectionException e)
+				catch (CompilerException e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					MdtPlugin.log(e);
-				}
-				catch (UnexpectedReplyException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					MdtPlugin.log(e);
+					ErrorManager.showCompilerError(e);
 				}
 				children.put(res, element);
 				changes.add(new ModelicaElementChange(this, element));

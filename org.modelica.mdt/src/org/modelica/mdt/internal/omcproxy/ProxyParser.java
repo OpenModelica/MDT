@@ -44,7 +44,7 @@ package org.modelica.mdt.internal.omcproxy;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.ErrorManager;
 
 /**
  * @author Andreas Remar
@@ -240,7 +240,7 @@ public class ProxyParser
 			}
 			catch (NumberFormatException e)
 			{
-				MdtPlugin.log(e);
+				ErrorManager.log(e);
 			}
 			
 			/*

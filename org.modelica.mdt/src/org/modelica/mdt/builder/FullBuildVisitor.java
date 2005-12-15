@@ -47,7 +47,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
@@ -84,8 +84,8 @@ public class FullBuildVisitor implements IResourceVisitor
 			}
 			catch(CompilerException e)
 			{
-				// TODO Proper error handling?
-				MdtPlugin.log(e);
+				// TODO Proper error handling, remar?
+				ErrorManager.log(e);
 			}
 		}
 		

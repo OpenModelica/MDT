@@ -52,9 +52,11 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
@@ -154,20 +156,16 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 				// there is possability that this folder is turned into 
 				// a package, right now that is just ignored 
 				try
-					{
-						element = wrap(res);
-						
-					} catch (ConnectionException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnexpectedReplyException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				children.put(res, element);
-				changes.add(new ModelicaElementChange(parent, element));
+				{
+					element = wrap(res);
+					children.put(res, element);
+					changes.add(new ModelicaElementChange(parent, element));
+				} 
+				catch (CompilerException e)
+				{
+					/* report error and pretend nothing happend */
+					ErrorManager.showCompilerError(e);
+				} 
 				break;
 			case IResourceDelta.REMOVED:
 				children.remove(res);

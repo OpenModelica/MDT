@@ -44,14 +44,12 @@ package org.modelica.mdt;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 import org.osgi.framework.BundleContext;
@@ -60,10 +58,12 @@ public class MdtPlugin extends AbstractUIPlugin
 {
 	public static final String MODELICA_NATURE = 
 		"org.modelica.mdt.ModelicaNature";
+
+
+	/* human readable name of the plugin */
+	public static final String PLUGIN_HUMAN_NAME = 
+		"Modelica Development Tooling Plugin";
 	
-	/* status codes used for logging */ 
-	private static final int INTERNAL_ERROR = 0;
-	private static final int INTERNAL_WARNING = 1;
 	
 	/* The shared instance. */
 	private static MdtPlugin plugin;
@@ -132,20 +132,18 @@ public class MdtPlugin extends AbstractUIPlugin
 		return getDefault().getBundle().getSymbolicName();
 	}
 
+	/**
+	 * set an abbot tag, used by GUI regressions tests to find
+	 * specific widgets.
+	 * 
+	 * @param widget the widget to tag
+	 * @param tag the tag to set
+	 */
 	public static void tag(Widget widget, String tag)
 	{
 		widget.setData("name", tag);
 	}
 	
-	/**
-	 * convinience wrapper method for loggin to plugin logger
-	 */
-	public static void log(IStatus stat)
-	{
-		plugin.getLog().log(stat);
-	}
-
-
 	/**
 	 * Returns the standard display to be used. The method first checks, if
 	 * the thread calling this method has an associated display. If so, this
@@ -154,36 +152,12 @@ public class MdtPlugin extends AbstractUIPlugin
 	public static Display getStandardDisplay() 
 	{
 		Display display;
-		display= Display.getCurrent();
+		display = Display.getCurrent();
 		if (display == null)
-			display= Display.getDefault();
+			display = Display.getDefault();
 		return display;		
 	}
 	
-	/**
-	 * Logs an internal error with the specified throwable
-	 * 
-	 * @param e the exception to be logged
-	 */	
-	public static void log(Throwable e) 
-	{
-		log(new Status(IStatus.ERROR, getSymbolicName(), 
-				INTERNAL_ERROR,
-				e.getMessage(), e));
-	}
-
-	/**
-	 * Logs a runtime warning. A message that can be helpfull while
-	 * investigating possible problems.
-	 * 
-	 * @param message warning message
-	 */
-	public static void logWarning(String message)
-	{
-		log(new Status(IStatus.WARNING, getSymbolicName(), 
-				INTERNAL_WARNING, message, null));
-					
-	}
 
 	private IWorkbenchPage internalGetActivePage() 
 	{
@@ -199,6 +173,24 @@ public class MdtPlugin extends AbstractUIPlugin
 	public static IWorkbenchPage getActivePage() 
 	{
 		return getDefault().internalGetActivePage();
+	}
+	
+	public static Shell getShell()
+	{
+		IWorkbench workbench = getDefault().getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			
+		if (window == null)
+		{
+			return null;
+		}
+
+		return window.getShell();
+	}
+	
+	public static Display getDisplay()
+	{
+		return getDefault().getWorkbench().getDisplay();
 	}
 	
 	/**
@@ -218,7 +210,7 @@ public class MdtPlugin extends AbstractUIPlugin
 			a2Len= a2.length;
 		}
 		
-		Object[] res=  new Object[a1Len + a2Len];
+		Object[] res =  new Object[a1Len + a2Len];
 		
 		if (a1 != null)
 		{
@@ -229,14 +221,5 @@ public class MdtPlugin extends AbstractUIPlugin
 			System.arraycopy(a2, 0, res, a1Len, a2Len);
 		}
 		return res;
-	}
-	
-	public static void showErrorDialog(String title, String message)
-	{
-		IWorkbenchWindow[] iww = 
-			PlatformUI.getWorkbench().getWorkbenchWindows();
-		
-		MessageDialog.openError(iww[0].getShell(), title,
-				message);
 	}
 }

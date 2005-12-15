@@ -53,14 +53,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
 import org.modelica.mdt.internal.omcproxy.InvocationError;
 import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
- *
  */
 abstract public class ModelicaElement extends PlatformObject 
 	implements IModelicaElement 
@@ -76,12 +74,15 @@ abstract public class ModelicaElement extends PlatformObject
 	{
 
 		String IDENT = "([_a-zA-Z]\\w*)";
+		
 		/* \p{Graph} are all printable characters in the POSIX standard
 		 * Q-CHAR = [\p{Graph}&&[^'\]] */
 		String Q_CHAR = "[\\p{Graph}&&[^'\\\\]]";
+		
 		/* S-ESCAPE = \'|\"|\?|\\|\a|\b|\f|\n|\r|\t|\v */
 		String S_ESCAPE = "((\\\\')|(\\\\\")|(\\\\\\?)|(\\\\\\\\)|(\\\\a)"
 			+"|(\\\\b)|(\\\\f)|(\\\\n)|(\\\\r)|(\\\\t)|(\\\\v))";
+		
 		/* Q-IDENT = "'" (Q-CHAR | S-ESCAPE) {Q-CHAR | S-ESCAPE} "'" */
 		String Q_IDENT = "('(" + Q_CHAR + "|" + S_ESCAPE + ")+')";
 		
@@ -101,16 +102,8 @@ abstract public class ModelicaElement extends PlatformObject
 		}
 		else if (IResource.class.equals(adapter))
 		{
-			IResource resource = null;
-			try
-			{
-				resource = getResource();
-			}
-			catch (CompilerException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			IResource resource = getResource();
+
 			if (resource != null)
 			{
 				return resource;
@@ -121,7 +114,7 @@ abstract public class ModelicaElement extends PlatformObject
 	}
 
 	public IResource getResource() 
-		throws ConnectionException, UnexpectedReplyException
+		//throws ConnectionException, UnexpectedReplyException
 	{
 		return null;
 	}

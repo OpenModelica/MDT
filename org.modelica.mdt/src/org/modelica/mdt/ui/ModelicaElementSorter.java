@@ -43,6 +43,7 @@ package org.modelica.mdt.ui;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
@@ -79,6 +80,9 @@ public class ModelicaElementSorter extends ViewerSorter
 		}
 		else if (element instanceof IModelicaClass)
 		{
+			/*
+			 * a class can be a package, sort package in their own category
+			 */
 			try
 			{
 				if (((IModelicaClass)element).getRestrictionType() 
@@ -86,11 +90,12 @@ public class ModelicaElementSorter extends ViewerSorter
 				{
 					return PACKAGE_ORDER;
 				}
-			}
+			}			
 			catch (ConnectionException e)
 			{
-				// TODO proper error handling
-				e.printStackTrace();
+				ErrorManager.showCompilerError(e);
+				/* we don't realy know what catagory this element is in */
+				return UNKOWN_TYPE_ORDER;
 			}
 			return CLASS_ORDER;
 		}
@@ -117,7 +122,9 @@ public class ModelicaElementSorter extends ViewerSorter
 			return SYSTEM_LIBRARY_ORDER;
 		}		
 
-		/* what is the meaning of this ? */
+		/* this is higly unexpected location in the code */
+		ErrorManager.logWarning("element of unknow type encountered at " +
+				ErrorManager.getCurrentMethod());
 		return UNKOWN_TYPE_ORDER;
-	}
+		}
 }

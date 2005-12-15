@@ -78,12 +78,11 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.editor.EditorUtility;
-import org.modelica.mdt.internal.omcproxy.ConnectionException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 public class ProjectsView extends ViewPart
 {
@@ -177,25 +176,19 @@ public class ProjectsView extends ViewPart
 		try
 		{
 			EditorUtility.openInEditor(selecton.getFirstElement());
-		} catch (PartInitException e)
+		} 
+		catch (PartInitException e)
 		{
-			// TODO Auto-generated catch block
+			// TODO handle PartInitException
 			e.printStackTrace();
-		} catch (ConnectionException e)
+		}
+		catch (CompilerException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnexpectedReplyException e)
+			ErrorManager.showCompilerError(e);
+		}
+		catch (CoreException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationError e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e)
-		{
-			// TODO Auto-generated catch block
+			// TODO handle CoreException
 			e.printStackTrace();
 		}
 	}
