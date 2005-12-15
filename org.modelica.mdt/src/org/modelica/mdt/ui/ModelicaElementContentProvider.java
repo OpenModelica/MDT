@@ -111,7 +111,7 @@ public class ModelicaElementContentProvider
 			}
 			catch (CoreException e)
 			{
-				ErrorManager.log(e);
+				ErrorManager.logError(e);
 			}
 		}
 		else if (parent instanceof IModelicaProject)

@@ -167,7 +167,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			ErrorManager.log(e);
+			ErrorManager.logError(e);
 			return;
 		}
 		
@@ -201,7 +201,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			ErrorManager.log(e);
+			ErrorManager.logError(e);
 		}
 	}
 	
@@ -223,7 +223,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			ErrorManager.log(e);
+			ErrorManager.logError(e);
 			return;
 		}
 		
@@ -254,7 +254,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			ErrorManager.log(e);
+			ErrorManager.logError(e);
 		}
 	}
 	
@@ -365,7 +365,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(BadLocationException e)
 		{
-			ErrorManager.log(e);
+			ErrorManager.logError(e);
 		}
 		
 		return null;
@@ -404,7 +404,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		}
 		catch(CoreException e)
 		{
-			ErrorManager.log(e);
+			ErrorManager.logError(e);
 		}
 		return marker;
 	}

@@ -80,7 +80,7 @@ public class ErrorManager
 	/**
 	 * convinience wrapper method for loggin to plugin logger
 	 */
-	public static void log(IStatus stat)
+	public static void logError(IStatus stat)
 	{
 		MdtPlugin.getDefault().getLog().log(stat);
 	}
@@ -90,9 +90,9 @@ public class ErrorManager
 	 * 
 	 * @param e the exception to be logged
 	 */	
-	public static void log(Throwable e) 
+	public static void logError(Throwable e) 
 	{
-		log(new Status(IStatus.ERROR, MdtPlugin.getSymbolicName(), 
+		logError(new Status(IStatus.ERROR, MdtPlugin.getSymbolicName(), 
 				INTERNAL_ERROR,
 				e.getMessage(), e));
 	}
@@ -105,7 +105,7 @@ public class ErrorManager
 	 */
 	public static void logWarning(String message)
 	{
-		log(new Status(IStatus.WARNING, MdtPlugin.getSymbolicName(), 
+		logError(new Status(IStatus.WARNING, MdtPlugin.getSymbolicName(), 
 				INTERNAL_WARNING, message, null));
 					
 	}
@@ -218,7 +218,7 @@ public class ErrorManager
 				INTERNAL_ERROR, message, exception);
 		
 		/* log error */
-		log(status);
+		logError(status);
 		
 		/* display error to the user */
 		if (showErrorDialog)
@@ -244,7 +244,7 @@ public class ErrorManager
 	public static void showCoreError(final CoreException exception)
 	{
 		/* log error */
-		log(exception);
+		logError(exception);
 		
 		Display display = MdtPlugin.getDisplay();
 		display.asyncExec(new Runnable()

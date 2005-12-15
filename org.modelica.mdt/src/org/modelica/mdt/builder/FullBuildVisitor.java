@@ -85,7 +85,7 @@ public class FullBuildVisitor implements IResourceVisitor
 			catch(CompilerException e)
 			{
 				// TODO Proper error handling, remar?
-				ErrorManager.log(e);
+				ErrorManager.logError(e);
 			}
 		}
 		

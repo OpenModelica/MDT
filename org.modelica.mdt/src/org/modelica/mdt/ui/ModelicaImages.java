@@ -146,7 +146,7 @@ public class ModelicaImages
 		}
 		catch (MalformedURLException me) 
 		{
-			ErrorManager.log(me);
+			ErrorManager.logError(me);
 		}
 		fgImageRegistry.put(key, desc);
 	}	

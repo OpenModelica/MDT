@@ -125,7 +125,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			}
 			catch (ConnectionException e)
 			{
-				ErrorManager.log(e);
+				ErrorManager.logError(e);
 				/* 
 				 * hmm, let the class icon be default 
 				 * 'i don't know your type' image

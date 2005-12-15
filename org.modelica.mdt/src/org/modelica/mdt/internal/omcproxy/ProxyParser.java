@@ -240,7 +240,7 @@ public class ProxyParser
 			}
 			catch (NumberFormatException e)
 			{
-				ErrorManager.log(e);
+				ErrorManager.logError(e);
 			}
 			
 			/*

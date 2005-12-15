@@ -94,7 +94,7 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 			catch(CompilerException e)
 			{
 				// TODO Proper error handling, remar ?
-				ErrorManager.log(e);
+				ErrorManager.logError(e);
 			}
 		}
 		
