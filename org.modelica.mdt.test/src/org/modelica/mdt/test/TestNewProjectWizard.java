@@ -78,7 +78,7 @@ public class TestNewProjectWizard extends TestCase
 		/* 
 		 * create project by clicking finish button
 		 */
-		Button finish = Utility.findFinishButton();
+		Button finish = Utility.findButtonByText("&Finish");
 		
 		/* wait for the name change to propogate to enable the finish button */
 		while (!finish.getEnabled()) { Utility.sleep(this, 100); }

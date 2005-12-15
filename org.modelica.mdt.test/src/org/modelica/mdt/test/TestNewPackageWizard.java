@@ -127,7 +127,7 @@ public class TestNewPackageWizard extends TestCase
 		isEncapsulated = 
 			ButtonTester.getInstrumentedButton(NewPackageWizard.IS_ENCAPSULATED_TAG);
 		finish = 
-			Utility.findFinishButton();
+			Utility.findButtonByText("&Finish");
 
 		
 		/* make some checks on the state of the wizards */

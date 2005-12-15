@@ -153,14 +153,14 @@ public class Utility
 	 * this function will fail if not exactly one finish button is
 	 * on the screen
 	 */
-	public static Button findFinishButton()
+	public static Button findButtonByText(String buttonText)
 	{
 		BasicFinder finder =  /* find finish button */
 			new BasicFinder(new TestHierarchy(PlatformUI.getWorkbench().getDisplay()));
 
 		try
 		{
-			return (Button) finder.find(new TextMatcher("&Finish"));
+			return (Button) finder.find(new TextMatcher(buttonText));
 		}
 		catch (WidgetNotFoundException e)
 		{

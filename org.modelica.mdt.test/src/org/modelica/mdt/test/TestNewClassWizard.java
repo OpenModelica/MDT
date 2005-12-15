@@ -84,6 +84,7 @@ public class TestNewClassWizard extends TestCase
 	private Button externalBody;
 	
 	private Button finish;
+	private Button cancel;
 	
 
 	@Override
@@ -139,7 +140,13 @@ public class TestNewClassWizard extends TestCase
 		partialClass =  
 			ButtonTester.getInstrumentedButton(NewClassWizard.PARTIAL_CLASS_TAG);
 		finish = 
-			Utility.findFinishButton();
+			Utility.findButtonByText("&Finish");
+		assertNotNull("Problems finding finish button", finish);
+		
+		cancel = 
+			Utility.findButtonByText("Cancel");
+		assertNotNull("Problems finding cancel button", cancel);
+
 
 		/* find classType combo by tag */
 		classType = 
@@ -163,6 +170,205 @@ public class TestNewClassWizard extends TestCase
 
 	}
 	
+	/**
+	 * check if the wizard 'remebers' it's class type selection
+	 * between different invocations 
+	 */
+	public void testSelectionRetention()
+	{
+		/*
+		 * pop-up wizard, change class restriction type to 'type',
+		 * check that check boxes were updated and close wizard
+		 */
+		openWizardAndFetchWidgets();		
+		ctester.actionSelectItem(classType, "type");
+		assertFalse("initial equation check box should be disabled",
+				initialEquation.getEnabled());
+		assertFalse("partial class check box should be disabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		btester.actionClick(cancel);
+		
+		/*
+		 * pup-up wizard again and check that the selection is 'type'
+		 * and that the satus of other widgets is correctly set
+		 */
+		openWizardAndFetchWidgets();
+		assertEquals("wrong class type selection", "type", classType.getText());
+		assertFalse("initial equation check box should be disabled",
+					initialEquation.getEnabled());
+		assertFalse("partial class check box should be disabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		
+		/*
+		 * change class restriction type to 'model',
+		 * check that check boxes were updated and close dialog
+		 */
+		ctester.actionSelectItem(classType, "model");
+		assertTrue("initial equation check box should be enabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		btester.actionClick(cancel);		
+		
+		/*
+		 * pup-up wizard again and check that the selection is 'model'
+		 * and that the satus of other widgets is correctly set
+		 */
+		openWizardAndFetchWidgets();
+		assertEquals("wrong class type selection", "model", classType.getText());
+		assertTrue("initial equation check box should be enabled",
+					initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		
+		/*
+		 * change class restriction type to 'connector',
+		 * check that check boxes were updated and close dialog
+		 */
+		ctester.actionSelectItem(classType, "connector");
+		assertFalse("initial equation check box should be disabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		btester.actionClick(cancel);		
+		
+		/*
+		 * pup-up wizard again and check that the selection is 'connector'
+		 * and that the satus of other widgets is correctly set
+		 */
+		openWizardAndFetchWidgets();
+		assertEquals("wrong class type selection", "connector",
+					classType.getText());
+		assertFalse("initial equation check box should be disabled",
+					initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		
+		/*
+		 * change class restriction type to 'block',
+		 * check that check boxes were updated and close dialog
+		 */
+		ctester.actionSelectItem(classType, "block");
+		assertTrue("initial equation check box should be enabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		btester.actionClick(cancel);		
+		
+		/*
+		 * pup-up wizard again and check that the selection is 'block'
+		 * and that the satus of other widgets is correctly set
+		 */
+		openWizardAndFetchWidgets();
+		assertEquals("wrong class type selection", "block",
+					classType.getText());
+		assertTrue("initial equation check box should be enabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+
+		/*
+		 * change class restriction type to 'record',
+		 * check that check boxes were updated and close dialog
+		 */
+		ctester.actionSelectItem(classType, "record");
+		assertFalse("initial equation check box should be disabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		btester.actionClick(cancel);		
+		
+		/*
+		 * pup-up wizard again and check that the selection is 'record'
+		 * and that the satus of other widgets is correctly set
+		 */
+		openWizardAndFetchWidgets();
+		assertEquals("wrong class type selection", "record",
+					classType.getText());
+		assertFalse("initial equation check box should be disabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+
+		/*
+		 * change class restriction type to 'class',
+		 * check that check boxes were updated and close dialog
+		 */
+		ctester.actionSelectItem(classType, "class");
+		assertTrue("initial equation check box should be enabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+		btester.actionClick(cancel);
+		
+		/*
+		 * pup-up wizard again and check that the selection is 'class',
+		 * check that check boxes were updated 
+		 * and that the satus of other widgets is correctly set
+		 */
+		openWizardAndFetchWidgets();
+		assertEquals("wrong class type selection", "class",
+					classType.getText());
+		assertTrue("initial equation check box should be enabled",
+				initialEquation.getEnabled());
+		assertTrue("partial class check box should be enabled",
+					partialClass.getEnabled());
+		assertFalse("external body check box should be disabled",
+					externalBody.getEnabled());
+
+		/*
+		 * change class restriction type to 'function', check that 
+		 * check boxes were updated and close dialog
+		 */
+		ctester.actionSelectItem(classType, "function");
+		assertFalse("initial equation check box should be disabled",
+				initialEquation.getEnabled());
+		assertFalse("partial class check box should be disabled",
+					partialClass.getEnabled());
+		assertTrue("external body check box should be enabled",
+				externalBody.getEnabled());
+		btester.actionClick(cancel);
+
+		/*
+		 * pup-up wizard again and check that the selection is 'function'
+		 * and that the satus of other widgets is correctly set
+		 */
+		openWizardAndFetchWidgets();
+		assertEquals("wrong class type selection", "function",
+					classType.getText());
+		assertFalse("initial equation check box should be disabled",
+				initialEquation.getEnabled());
+		assertFalse("partial class check box should be disabled",
+					partialClass.getEnabled());
+		assertTrue("external body check box should be enabled",
+				externalBody.getEnabled());
+
+		/* close dialog */
+		btester.actionClick(cancel);
+	}
+	
 	public void testCreateModel()
 	{
 		openWizardAndFetchWidgets();		
@@ -172,6 +378,7 @@ public class TestNewClassWizard extends TestCase
 		 * create model
 		 */
 		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "model");
 		assertTrue(finish.getEnabled());
 
 		/* wait for the name change to propogate to enable the finish button */
@@ -204,6 +411,7 @@ public class TestNewClassWizard extends TestCase
 		 * create model
 		 */
 		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "model");
 		assertTrue(finish.getEnabled());
 		
 		btester.actionClick(initialEquation);
@@ -241,6 +449,7 @@ public class TestNewClassWizard extends TestCase
 		 * create model
 		 */
 		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "model");
 		assertTrue(finish.getEnabled());
 		
 		btester.actionClick(partialClass);
@@ -277,6 +486,7 @@ public class TestNewClassWizard extends TestCase
 		 * create model
 		 */
 		ttester.actionEnterText(className, name);
+		ctester.actionSelectItem(classType, "model");
 		assertTrue(finish.getEnabled());
 		
 		btester.actionClick(partialClass);		
