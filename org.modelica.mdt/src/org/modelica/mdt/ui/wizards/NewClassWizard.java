@@ -98,8 +98,15 @@ public class NewClassWizard extends Wizard implements INewWizard
 	public static final String INITIAL_EQUATION_TAG = "initEqTag";
 	public static final String PARTIAL_CLASS_TAG = "partialTypeTag";
 	public static final String EXTERNAL_BODY_TAG = "extBodyTag";
+	
 
 	private NewClassPage classPage = new NewClassPage();
+	
+	/* 
+	 * the class type selection is saved so that next time
+	 * this wizard is displayed, same selection is presented to the user
+	 */ 
+	public static int lastClassTypeSelected = 0; 
 	
 	public class NewClassPage extends WizardPage
 	{
@@ -190,7 +197,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        className = new Text(composite,  SWT.SINGLE | SWT.BORDER);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
+	        				  GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        className.setLayoutData(gd);
 	        MdtPlugin.tag(className, CLASS_NAME_TAG);
@@ -226,7 +234,6 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        classType.setItems(new String [] {"model", "class", "connector", 
 	        		"record", "block", "type", "function"});
 	        classType.setVisibleItemCount(7);
-	        classType.select(0);	        
 	        MdtPlugin.tag(classType, CLASS_TYPE_TAG);
 	        
 	        gd = new GridData();
@@ -238,23 +245,11 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 				public void widgetSelected(SelectionEvent e)
 				{
-					/*
-					 * update state of the modifiers checkboxes
-					 */
-					initialEquation.setEnabled
-					(NewClassWizard.classTypeHaveEquations
-							(classType.getText()));
-					
-					partialClass.setEnabled
-					(NewClassWizard.canBePartial(classType.getText()));
-					
-					externalBody.setEnabled
-						(classType.getText().equals("function"));
-
+					classTypeChanged();
+	        		lastClassTypeSelected = classType.getSelectionIndex();
 				}
 
-				public void widgetDefaultSelected(SelectionEvent e)
-				{}
+				public void widgetDefaultSelected(SelectionEvent e)	{}
 	        	
 	        });
 	        
@@ -306,10 +301,43 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        gd.horizontalSpan = 2;
 	        externalBody.setLayoutData(gd);
-	        
 
+	        /*
+	         * set class type to the same selection as it was last
+	         * time dialog was used
+	         * 
+	         * this must be done after initialEquation, partialClass
+	         * and externalBody widgets are created becouse class type selection
+	         * affects thiers status (can't set status on unexsiting widgets)
+	         */
+	        classType.select(lastClassTypeSelected);
+	        classTypeChanged();
 		}
 
+		/**
+		 * updates the internal state of the wizard when class type
+		 * is changed in the combo.
+		 * 
+		 * This method should be called whenever changes are made to the
+		 * combo's selection.
+		 */
+		private void classTypeChanged()
+		{
+			/*
+			 * update state of the modifiers checkboxes
+			 */
+			initialEquation.setEnabled
+				(NewClassWizard.classTypeHaveEquations
+						(classType.getText()));
+			
+			partialClass.setEnabled
+				(NewClassWizard.canBePartial(classType.getText()));
+			
+			externalBody.setEnabled
+				(classType.getText().equals("function"));
+
+		}
+		
 		private void sourceFolderChanged()
 		{
 			IResource container = ResourcesPlugin.getWorkspace().getRoot()
@@ -486,7 +514,6 @@ public class NewClassWizard extends Wizard implements INewWizard
 			IProgressMonitor monitor)
 	throws CoreException
 	{
-		// create a sample file
 		monitor.beginTask("Creating " + className, 2);
 		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

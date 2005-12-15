@@ -68,7 +68,6 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.modelica.mdt.ui.PerspectiveFactory"
-            icon="icons/modelicaProject.png"
             id="org.modelica.mdt.perspective"
             name="Modelica"/>
    </extension>
