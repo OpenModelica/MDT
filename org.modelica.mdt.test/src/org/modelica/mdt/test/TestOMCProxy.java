@@ -64,7 +64,7 @@ public class TestOMCProxy extends TestCase
 	/* a source code file use in some tests */
 	private IFile nested_models_mo;
 	
-	protected void setUp()
+	protected void setUp() throws ConnectionException
 	{
 		Area51Projects.createProjects();
 
@@ -87,6 +87,9 @@ public class TestOMCProxy extends TestCase
 				"Icons",
 				"Constants",
 				"SIunits"));
+		
+		/* we need to load modelica package */
+		OMCProxy.loadSystemLibrary();
 	}
 	
 	/**
