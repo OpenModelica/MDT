@@ -48,6 +48,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.internal.omcproxy.ConnectionException;
@@ -60,15 +61,15 @@ import org.modelica.mdt.internal.omcproxy.ConnectionException;
  */
 public class ModelicaElementSorter extends ViewerSorter
 {
-	
-	private static int FOLDER_ORDER 				= 1;
-	private static int PACKAGE_ORDER 				= 2;
-	private static int CLASS_ORDER 					= 3;
-	private static int PUBLIC_COMPONENT_ORDER   	= 4;
-	private static int PROTECTED_COMPONENT_ORDER   	= 5;
-	private static int MODELICA_FILE_ORDER			= 6;
-	private static int FILE_ORDER 					= 7;
-	private static int SYSTEM_LIBRARY_ORDER 		= 8;
+	private static int PROJECT_ORDER 				= 1;
+	private static int FOLDER_ORDER 				= 2;
+	private static int PACKAGE_ORDER 				= 3;
+	private static int CLASS_ORDER 					= 4;
+	private static int PUBLIC_COMPONENT_ORDER   	= 5;
+	private static int PROTECTED_COMPONENT_ORDER   	= 6;
+	private static int MODELICA_FILE_ORDER			= 7;
+	private static int FILE_ORDER 					= 8;
+	private static int SYSTEM_LIBRARY_ORDER 		= 9;
 	private static int UNKOWN_TYPE_ORDER 			= Integer.MAX_VALUE;
 
 	@Override
@@ -120,11 +121,15 @@ public class ModelicaElementSorter extends ViewerSorter
 		else if (element instanceof ISystemLibrary)
 		{
 			return SYSTEM_LIBRARY_ORDER;
-		}		
+		}
+		else if (element instanceof IModelicaProject)
+		{
+			return PROJECT_ORDER;
+		}
 
-		/* this is higly unexpected location in the code */
 		ErrorManager.logWarning("element of unknow type encountered at " +
-				ErrorManager.getCurrentMethod());
+				ErrorManager.getCurrentMethod() + "\n" +
+				"element's class is " + element.getClass().getName());
 		return UNKOWN_TYPE_ORDER;
 	}
 }
