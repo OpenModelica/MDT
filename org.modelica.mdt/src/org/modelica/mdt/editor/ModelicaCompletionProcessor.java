@@ -64,6 +64,15 @@ import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
 
 //TODO comment the class, remar !
 /**
+ * This class is responsible for proposing completions and giving
+ * context information about functions. These functions kick in when .
+ * and ( are typed.
+ * 
+ * computeCompletionProposals() takes care of proposing classnames when
+ * typing after a .
+ * 
+ * computeContextInformation() takes care of showing the definitions of
+ * the parameters of classes that have parameters.
  * 
  * @author Andreas Remar
  */
@@ -104,8 +113,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 
 			/* Get start of parameter list. */
 			int pos = stringTyped.indexOf('(');
-			
-			System.out.println(pos);
 			
 			/* Match parens to see if we're done typing. */
 			int pardepth = 0;
@@ -148,8 +155,15 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 */
 	private void newProposals(String className)
 	{
-		proposals.clear();
-		narrowedProposals.clear();
+		if(proposals != null)
+			proposals.clear();
+		else
+			proposals = new Vector<Object>();
+		if(narrowedProposals != null)
+			narrowedProposals.clear();
+		else
+			narrowedProposals = new Vector<Object>();
+		
 		typeAhead = 0;
 
 		try
@@ -166,7 +180,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		}
 		finally
 		{
-			narrowedProposals = proposals;
+			narrowedProposals.addAll(proposals);
 		}
 	}
 	
@@ -267,9 +281,9 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		{
 			elementsInfo = OMCProxy.getElementsInfo(functionName);
 		}
-		catch (ConnectionException e){e.printStackTrace();}
-		catch (InvocationError e){e.printStackTrace();}
-		catch (UnexpectedReplyException e){e.printStackTrace();}
+		catch (ConnectionException e){ErrorManager.showCompilerError(e);return;}
+		catch (InvocationError e){/* class wasn't found or something */ return;}
+		catch (UnexpectedReplyException e){/* strange reply from omc? */return;}
 
 		functionProposal = functionName;
 		
@@ -417,6 +431,9 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 					proposal += outputParameters.get(i);
 			}
 		}
+		
+		if(proposal == "")
+			return null;
 		
 		IContextInformation[] result = new IContextInformation[1];
 		
