@@ -180,7 +180,8 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		}
 		finally
 		{
-			narrowedProposals.addAll(proposals);
+			if(proposals != null)
+				narrowedProposals.addAll(proposals);
 		}
 	}
 	
