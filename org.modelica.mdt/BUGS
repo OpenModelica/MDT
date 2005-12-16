@@ -1,13 +1,6 @@
-Known bugs and issues in MDT plugin.
+Known bugs and issues in the MDT plugin.
 
-Open Bugs and Issures
-
-BUGID: 	1
-STATUS: open
-TESTCASE: absent
-DESCRIPTION
-When there is a warning displayed New Modelica Class Wizard, the finish button
-is disabled, should be enabled. 
+OPEN BUGS AND ISSUES
 
 BUGID: 3
 STATUS: open
@@ -23,7 +16,7 @@ example java editor line and column number are visible in the status bar
 at the bottom.
 
 
-Closed Bugs and Issures
+CLOSED BUGS AND ISSUES
 
 BUGID: 2
 STATUS: fixed
@@ -59,3 +52,11 @@ TESTCASE: absent
 Try this. Select an open project and click on 'close project' menu (for example
 in contex menu). Look at the menu again, 'Open project' is still disabled 
 and 'Close project' enabled. Same problem if you open a closed project.
+
+BUGID: 	1
+STATUS: fixed
+TESTCASE: org.modelica.mdt.test.TestNewClassWizard.testFinishButtonState()
+DESCRIPTION
+When there is a warning displayed New Modelica Class Wizard, the finish button
+is disabled, should be enabled. 
+

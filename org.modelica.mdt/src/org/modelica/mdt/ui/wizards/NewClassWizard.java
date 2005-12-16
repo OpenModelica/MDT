@@ -119,7 +119,6 @@ public class NewClassWizard extends Wizard implements INewWizard
 	
 		private IPath selection = null;
 		        
-		private boolean classNameValid = false;
 		private boolean sourceFolderValid = false;		
 		
 		public NewClassPage()
@@ -210,13 +209,11 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        	{
 	        		if (!ModelicaElement.isLegalIdentifierName(className.getText()))
 	        		{
-	        			classNameValid  = false;
 	        			updateStatus("Class name is not valid. Illegal identifier.",
 	        						DialogPage.WARNING);
 	        		}
 	        		else
 	        		{
-	        			classNameValid  = true;
 	        			updateStatus(null, DialogPage.NONE);
 	        		}
 	        	}
@@ -407,7 +404,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 		private void updateStatus(String message, int messageType)
 		{
 			setMessage(message, messageType);
-			setPageComplete((classNameValid && sourceFolderValid));
+			setPageComplete((sourceFolderValid));
 		}
 
 
