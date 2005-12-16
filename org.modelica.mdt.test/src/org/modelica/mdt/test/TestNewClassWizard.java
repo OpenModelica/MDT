@@ -68,6 +68,11 @@ public class TestNewClassWizard extends TestCase
 {
 	private static final String PROJECT_NAME_1 = 
 			TestNewClassWizard.class.getName() + "1";
+	
+	/* a project name that is garanteed to be nonexistent */
+	private static final String NON_EXSITING_PROJECT_NAME = 
+		TestNewClassWizard.class.getName() + "non_existing_project";
+
 	private StructuredSelection fileDestination; 
 	
 	private IProject project;
@@ -168,6 +173,41 @@ public class TestNewClassWizard extends TestCase
 				finish.getEnabled());
 		
 
+	}
+	
+	/**
+	 * This test makes wizard to display a warning  and error messages 
+	 * by entering invalid data into the fields.
+	 * 
+	 * The test checks that the state of finish button is right,
+	 * it should be enabled for warnings and disabled for errors.
+	 * 
+	 * Test for BUG #1, se bugs database
+	 */
+	public void testFinishButtonState()
+	{
+		/*
+		 * open dialog and set a legal source folder and an illegal class name,
+		 * which should display a warning
+		 */
+		openWizardAndFetchWidgets();
+		
+		ttester.actionEnterText(sourceFolder, PROJECT_NAME_1);
+		ttester.actionEnterText(className, "#¤%&");
+		assertTrue("Finish button should not be disabled for a warning",
+				finish.getEnabled());
+		
+		/*
+		 * set legal class name and non-existing source folder,
+		 * which should display an error
+		 */
+		ttester.actionEnterText(className, "legal_class_name");
+		ttester.actionEnterText(sourceFolder, NON_EXSITING_PROJECT_NAME);		
+		assertFalse("Finish button should not be enabled for an error",
+				finish.getEnabled());
+		
+		/* close the dialog */
+		btester.actionClick(cancel);		
 	}
 	
 	/**
