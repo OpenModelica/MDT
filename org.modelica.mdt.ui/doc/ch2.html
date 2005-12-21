@@ -1,0 +1,95 @@
+<html>
+<title>Modelica Development Tooling Help</title>
+<body>
+<h1>Getting started</h1>
+
+<h2 id = "configurate_omc">Configuring the OpenModelica Compiler</h2>
+
+MDT need to be able to locate the binary of the OpenModelica Compiler. It uses the
+environment variable OPENMODELICAHOME to do so.<br>
+If you have problems using MDT make sure that OPENMODELICAHOME is set to the 
+folder where the Open Modelica Compiler is installed. In other words 
+OPENMODELICAHOME must point to the folder that contais Open Modelica compiler
+binary. It is named omc.exe on Windows Platform and omc on Unix platforms.
+
+<h2 id = "using_modelica_perspective">Accessing the Modelica Perspective</h2>
+
+<p>
+The most convenient way to work with Modelica projects is to use to the
+Modelica perspective. To switch to the Modelica perspective, choose the 
+<b>Window</b> menu item, pick <b>Open Perspective</b>
+ followed by <b>Other...</b>
+Select the <b>Modelica</b> option from the dialog presented and click <b>OK</b>.
+Not <b>Cancel</b>. Or any other button.
+</p>
+
+<h2 id = "making_a_project">Making a project</h2>
+<p>
+To start a new project, use the <b>New Modelica Project</b> Wizard. It is
+accessible through <b>File > New > Modelica Project</b>.
+After creating a project you can add files and folders to the project by selecting
+the corresponding wizard found in <b>File > New</b> menu subsection.
+Files having an extension <i>.mo</i> will be treated as Modelica source code files by MDT.
+</p>
+<img src="pix/new_modelica_project.png">
+
+<h2 id = "importing_a_project">Importing a project</h2>
+<p>
+To import an existing modelica project you need to create an empty modelica project and populate it
+with existing files. Create a new modelica project with the wizard. Use the file system import wizard 
+on that project to copy the files to the project's folder. The import wizard is available by right
+clicking on the project in the <b>Modelica Projects</b> view and choosing <b>Import...</b> alternative.
+</p>
+
+<h2 = "making_a_package">Making a package</h2>
+<p>
+To create a new Modelica package, use the <b>New Modelica Package</b> Wizard.
+You can access it by going through <b>File > New > Modelica Package</b> or by
+right-clicking in a project and selecting <b>New > Modelica Package</b>.
+Enter the desired name of the package and a description about what it contains.
+</p>
+<img src="pix/new_modelica_package.png">
+
+<h2 = "making_a_class">Making a class</h2>
+<p>
+To make a new Modelica class, select where in the hierarchy that you want to add
+your new class and select <b>File > New > Modelica Class</b>. When creating a
+Modelica class you can add different restrictions on what the class can contain.
+These can for example be <i>model</i>, <i>connector</i>, <i>block</i>,
+<i>record</i>, or <i>function</i>.
+When you have selected your desired class type, you can select modifiers that
+add code blocks to the generated code. <i>Include initial code block</i> will for
+example add the line <b>initial equation</b> to the class.
+</p>
+<img src="pix/new_modelica_class.png">
+
+<h2 = "syntax_checking">Syntax checking</h2>
+<p>
+Whenever a Modelica (.mo) file is saved in the Modelica Editor, it is checked
+for syntactical errors. Any errors that are found are added to the Problems view
+and also marked in the source code editor. Errors are marked in the editor as a
+red circle with a white cross, a squiggly red line under the problematic
+construct, and as a red marker in the right-hand side of the editor. If you want
+to reach the problem, you can either click the item in the Problems view or
+select the red box in the right-hand side of the editor.
+</p>
+<img src="pix/error.png">
+
+<h2 = "code_completion">Code completion</h2>
+<p>
+If you type a dot (.) after anything that is loaded into OMC, code completion
+will kick in. If you for example type <b>Modelica.</b>, a list with packages
+and classes that are available in the Modelica package will be displayed. You
+can narrow down the matches by typing in the first characters of the class or
+package that you want to type in. So if you've first typed <b>Modelica.</b> you
+can the continue typing <b>Me</b> and MDT will propose <b>Mechanics</b> and
+<b>Media</b> as completions. You can always backtrack the narrowing by erasing
+characters.<br>
+<b>Note:</b> As of now, you have to have the Modelica System Library loaded for
+code completion on the system library to work. This can right now be
+accomplished by browsing the Modelica System Library in the projects view before
+trying to use code completion.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<toc label="Modelica Development User Guide" topic="doc/ch1.html">
+
+  <topic label="Getting Started" href="doc/ch2.html">
+      <topic label="Configuring Open Modelica Compiler" 
+             href="doc/ch2.html#configurate_omc"/>
+      <topic label="Using Modelica Perspective" 
+             href="doc/ch2.html#using_modelica_perspective"/>
+      <topic label="Making a project" href="doc/ch2.html#making_a_project"/>
+      <topic label="Importing a project" href="doc/ch2.html#importing_a_project"/>
+  </topic>
+  
+  <topic label="Building modelica projects" href="doc/ch3.html">
+      <topic label="Creating a builder" href="doc/ch3.html#creating_a_builder"/>
+  </topic>
+
+</toc>

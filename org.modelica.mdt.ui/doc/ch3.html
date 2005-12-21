@@ -1,0 +1,41 @@
+<html>
+<body>
+<h1>Building modelica projects</h1>
+
+<div align="right">
+<i>It's a bit tricky.</i><br>&#8211; Adrian Pop
+</div>
+<p>
+Building modelica projects is not supported out of the box right now. However it is possible to 
+instruct Eclipse to use an external program for building. This is done by creating a so called
+project builder.
+</p>
+
+<h2 id = "creating_a_builder">Creating a builder</h2>
+
+<p>
+To create a builder, right click a project and select <b>Properties</b>. Select the <b>Builders</b> option
+and then click <b>New...</b> Choose <b>Program</b> as configuration type. On the next screen, enter the path
+to the make binary in <b>Location</b> field. To select the <b>Working Directory</b>, 
+click <b>Browse Workspace...</b> and select your project from the list.
+</p>
+<img src="pix/builder_properties_main.png">
+<p>
+If you're building Open Modelica you'll also need to set up some environment variables.
+Click on the <b>Environment</b> tab to view the current variables. To add a new variable, simply
+click <b>New...</b> The variables that are needed for building Open Modelica are ANTLRHOME, CLASSPATH
+and RMLHOME. Refer to the Open Modelica README file for details.
+</p>
+<img src="pix/builder_properties_environment.png">
+<p>
+When you're finished, click <b>OK</b> and close the <b>Properties</b> dialog. Now you have to disable the automatic
+build feature by deselecting <b>Build Automatically</b> in the <b>Project</b> menu item.
+</p>
+<img src="pix/builder_deselect_automatic.png">
+<p>
+Now you can build the project by selecting <b>Build Project</b> from the project context menu which you reach
+by right clicking on the project in the Modelica Projects view. Automatic incremantal building of modelica projects
+is not supported at this time, but stay tuned.
+</p>
+</body>
+</html>
