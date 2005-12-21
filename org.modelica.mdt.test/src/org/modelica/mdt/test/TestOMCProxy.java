@@ -47,11 +47,12 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.internal.core.ElementLocation;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.IElementLocation;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.compiler.CompilerProxy;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
@@ -64,7 +65,8 @@ public class TestOMCProxy extends TestCase
 	/* a source code file use in some tests */
 	private IFile nested_models_mo;
 	
-	protected void setUp() throws ConnectException
+	protected void setUp() 
+		throws ConnectException, CompilerInstantiationException
 	{
 		Area51Projects.createProjects();
 
@@ -89,129 +91,114 @@ public class TestOMCProxy extends TestCase
 				"SIunits"));
 		
 		/* we need to load modelica package */
-		OMCProxy.loadSystemLibrary();
+		CompilerProxy.loadSystemLibrary();
 	}
 	
 	/**
 	 * test OMCProxy.getRestrictionType() 
+	 * @throws CompilerInstantiationException 
 	 */
 	public void testGetRestrictionType() 
-		throws ConnectException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
-		if (OMCProxy.getRestrictionType("Modelica") != Type.PACKAGE)
+		if (CompilerProxy.getRestrictionType("Modelica") != Type.PACKAGE)
 		{
 			fail("Modelica class' restriction type is wrong");
 		}
-		if (OMCProxy.getRestrictionType("Modelica.Blocks.Examples.BusUsage") 
+		if (CompilerProxy.getRestrictionType("Modelica.Blocks.Examples.BusUsage") 
 				!= Type.MODEL)
 		{
 			fail("Modelica.Blocks.Examples.BusUsage class' " + 
 					"restriction type is wrong");
 		}
-		if (OMCProxy.getRestrictionType("Modelica.Math.log") 
+		if (CompilerProxy.getRestrictionType("Modelica.Math.log") 
 				!= Type.FUNCTION)
 		{
 			fail("Modelica.Math.log class' restriction type is wrong");
 		}
-		if (OMCProxy.getRestrictionType("Modelica.Icons.Record") 
+		if (CompilerProxy.getRestrictionType("Modelica.Icons.Record") 
 				!= Type.RECORD)
 		{
 			fail("Modelica.Icons.Record class' restriction type is wrong");
 		}
-		if (OMCProxy.getRestrictionType("Modelica.Electrical.Analog.Interfaces.Pin") 
+		if (CompilerProxy.getRestrictionType("Modelica.Electrical.Analog.Interfaces.Pin") 
 				!= Type.CONNECTOR)
 		{
 			fail("Modelica.Blocks.Interfaces.BooleanPort class' " + 
 					"restriction type is wrong");
 		}
-		if (OMCProxy.getRestrictionType("Modelica.Blocks.Continuous.Der") 
+		if (CompilerProxy.getRestrictionType("Modelica.Blocks.Continuous.Der") 
 				!= Type.BLOCK)
 		{
 			fail("Modelica.Blocks.Continuous.Der class' " + 
 					"restriction type is wrong");
 		}
-		if (OMCProxy.getRestrictionType("Modelica.SIunits.Lethargy") 
+		if (CompilerProxy.getRestrictionType("Modelica.SIunits.Lethargy") 
 				!= Type.TYPE)
 		{
 			fail("Modelica.SIunits.Lethargy class' restriction type is wrong");
 		}
 		
-		OMCProxy.loadFileInteractive(nested_models_mo);
-		if (OMCProxy.getRestrictionType("hepp.hehehe") 
+		CompilerProxy.loadFileInteractive(nested_models_mo);
+		if (CompilerProxy.getRestrictionType("hepp.hehehe") 
 				!= Type.CLASS)
 		{
 			fail("hepp.hehehe class' restriction type is wrong");
 		}
 	}
 	
-//	/**
-//	 * test OMCProxy.getPackages()
-//	 */
-//	public void testGetPackages() throws CompilerException
-//	{
-//		OMCProxy.loadSystemLibrary();
-//		String[] str = OMCProxy.getPackages("Modelica");
-//		
-//		assertNotNull("Could not fetch Modelica package", str);
-//		
-//		Vector<String> packages = new Vector<String>();
-//		for(String s : str)
-//		{
-//			packages.addElement(s);
-//		}
-//		
-//		assertTrue(packages.containsAll(modelicaLibraryPackages));
-//	}
-	
 	/**
 	 * test OMCProxy.getElementLocation()
+	 * @throws CompilerInstantiationException 
 	 */
 	public void testGetElementLocation()
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
-		OMCProxy.loadFileInteractive(nested_models_mo);
+		CompilerProxy.loadFileInteractive(nested_models_mo);
 
 		/*
 		 * we are basicaly only interested in getting the right line number
 		 */
-		ElementLocation loc = OMCProxy.getElementLocation("nested_models");		
+		IElementLocation loc = CompilerProxy.getElementLocation("nested_models");		
 		assertTrue(loc.getPath().endsWith("nested_models.mo"));
 		assertEquals(loc.getLine(), 1);
 		
-		loc = OMCProxy.getElementLocation("nested_models.hepp");		
+		loc = CompilerProxy.getElementLocation("nested_models.hepp");		
 		assertEquals(loc.getLine(), 3);
 
-		loc = OMCProxy.getElementLocation("nested_models.foo");		
+		loc = CompilerProxy.getElementLocation("nested_models.foo");		
 		assertEquals(loc.getLine(), 4);
 		
-		loc = OMCProxy.getElementLocation("nested_models.foo.bar");		
+		loc = CompilerProxy.getElementLocation("nested_models.foo.bar");		
 		assertEquals(loc.getLine(), 5);
 		
-		loc = OMCProxy.getElementLocation("muu");		
+		loc = CompilerProxy.getElementLocation("muu");		
 		assertEquals(loc.getLine(), 8);
 		
-		loc = OMCProxy.getElementLocation("foo");		
+		loc = CompilerProxy.getElementLocation("foo");		
 		assertEquals(loc.getLine(), 14);
 
-		loc = OMCProxy.getElementLocation("hej");		
+		loc = CompilerProxy.getElementLocation("hej");		
 		assertEquals(loc.getLine(), 19);
 
-		loc = OMCProxy.getElementLocation("hej.ine_paketen");		
+		loc = CompilerProxy.getElementLocation("hej.ine_paketen");		
 		assertEquals(loc.getLine(), 20);
 
-		loc = OMCProxy.getElementLocation("hej.hejhej");		
+		loc = CompilerProxy.getElementLocation("hej.hejhej");		
 		assertEquals(loc.getLine(), 22);
 
-		loc = OMCProxy.getElementLocation("hej.hejhej.foo");		
+		loc = CompilerProxy.getElementLocation("hej.hejhej.foo");		
 		assertEquals(loc.getLine(), 23);
 
-		loc = OMCProxy.getElementLocation("hepp");		
+		loc = CompilerProxy.getElementLocation("hepp");		
 		assertEquals(loc.getLine(), 30);
 
-		loc = OMCProxy.getElementLocation("hepp.hopp");		
+		loc = CompilerProxy.getElementLocation("hepp.hopp");		
 		assertEquals(loc.getLine(), 31);
 
-		loc = OMCProxy.getElementLocation("hepp.hehehe");		
+		loc = CompilerProxy.getElementLocation("hepp.hehehe");		
 		assertEquals(loc.getLine(), 33);
 
 	}

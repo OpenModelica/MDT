@@ -50,9 +50,10 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.ModelicaElementSorter;
@@ -77,7 +78,7 @@ public class TestModelicaElementSorter extends TestCase
 	
 	public void testSorter()
 		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException
+			InvocationError, CoreException, CompilerInstantiationException
 	{
 		/*
 		 * let the sorter sort children elements of Area51 modelica project

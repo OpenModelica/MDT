@@ -47,7 +47,7 @@ import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.compiler.CompilerException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 

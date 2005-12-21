@@ -41,137 +41,21 @@
 
 package org.modelica.mdt.test;
 
-import java.util.Vector;
-
-import org.modelica.mdt.internal.omcproxy.CompileError;
-import org.modelica.mdt.internal.omcproxy.ProxyParser;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.ICompileError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.omc.internal.OMCParser;
 
 import junit.framework.TestCase;
 
 /**
- * Test various methods in org.modelica.mdt.internal.omcproxy.ProxyParser
+ * Test various methods in org.modelica.mdt.omc.internal.OMCParser
  * @author Elmir Jagudin
  */
 public class TestProxyParser extends TestCase 
 {
 
 	/**
-	 * test parsing some single nested lists with ProxyParser.parseList()
-	 */
-	public void testParseSimpleList()
-	{
-		/*
-		 * some combinations of empty lists
-		 */
-		Vector<Object> res;
-		
-		res = ProxyParser.parseList("{}");
-		assertEquals(0, res.size());
-	
-		res = ProxyParser.parseList("{ }");
-		assertEquals(0, res.size());
-		
-		res = ProxyParser.parseList("{    }");
-		assertEquals(0, res.size());
-
-		
-		res = ProxyParser.parseList("{ \n}");
-		assertEquals(0, res.size());
-		
-		res = ProxyParser.parseList("{   \n    }");
-		assertEquals(0, res.size());
-
-		/*
-		 * single element lists
-		 */
-		res = ProxyParser.parseList("{hej}");
-		assertEquals(1, res.size());
-		assertEquals("hej", (String)res.elementAt(0));
-		
-		res = ProxyParser.parseList("{  muu}");
-		assertEquals(1,res.size());
-		assertEquals("muu", (String)res.elementAt(0));
-		
-		res = ProxyParser.parseList("{  muu   }");
-		assertEquals(1, res.size());
-		assertEquals("muu", (String)res.elementAt(0));
-
-		res = ProxyParser.parseList("{muu   }");
-		assertEquals(1, res.size());
-		assertEquals("muu", (String)res.elementAt(0));
-
-
-		/*
-		 * two element lists
-		 */
-		res = ProxyParser.parseList("{hej,peter}");
-		assertEquals(2, res.size());
-		assertEquals("hej", (String)res.elementAt(0));
-		assertEquals("peter", (String)res.elementAt(1));
-		
-		res = ProxyParser.parseList("{peter,  labb}");
-		assertEquals("peter", (String)res.elementAt(0));
-		assertEquals("labb", (String)res.elementAt(1));
-		
-		res = ProxyParser.parseList("{peter ,labb}");
-		assertEquals("peter", (String)res.elementAt(0));
-		assertEquals("labb", (String)res.elementAt(1));
-		
-		res = ProxyParser.parseList("{peter   ,labb}");
-		assertEquals("peter", (String)res.elementAt(0));
-		assertEquals("labb", (String)res.elementAt(1));
-		
-		/*
-		 * tree elements list
-		 */
-		res = ProxyParser.parseList("{alan, l, cox}");
-		assertEquals(3, res.size());
-		assertEquals("alan", (String)res.elementAt(0));
-		assertEquals("l", (String)res.elementAt(1));
-		assertEquals("cox", (String)res.elementAt(2));
-		
-		res = ProxyParser.parseList("{alan,l,cox}");
-		assertEquals(3, res.size());
-		assertEquals("alan", (String)res.elementAt(0));
-		assertEquals("l", (String)res.elementAt(1));
-		assertEquals("cox", (String)res.elementAt(2));
-
-	}
-	
-	public void testParseList()
-	{
-		Vector v = ProxyParser.parseList("{{a    ,b   }  ,   c   }");
-		assertTrue(v.get(0) instanceof Vector);
-		assertTrue(v.size() == 2);
-		assertTrue(((Vector)v.get(0)).get(0).equals("a"));
-		assertTrue(((Vector)v.get(0)).get(1).equals("b"));
-		assertTrue(v.get(1).equals("c"));
-		
-		v = ProxyParser.parseList("{a, b, c}");
-		assertTrue(v.size() == 3);
-		assertTrue(v.get(0).equals("a"));
-		assertTrue(v.get(1).equals("b"));
-		assertTrue(v.get(2).equals("c"));
-		
-		v = ProxyParser.parseList("{a, b, c={a, b, c}}");
-		assertTrue(v.size() == 3);
-		assertTrue(v.get(0).equals("a"));
-		assertTrue(v.get(1).equals("b"));
-		assertTrue(v.get(2).equals("c={a, b, c}"));
-		
-		v = ProxyParser.parseList("{,,}");
-		assertTrue(v.size() == 0);
-		
-		v = ProxyParser.parseList("{foo={bar, gzonk}}");
-		assertTrue(v.size() == 1);
-		assertTrue(v.get(0).equals("foo={bar, gzonk}"));
-	}
-				
-
-
-	/**
-	 * Test if ProxyParser.parseErrorString() works as prescribed.
+	 * Test if OMCParser.parseErrorString() works as prescribed.
 	 * @throws UnexpectedReplyException 
 	 */	
 	public void testParseErrorString() throws UnexpectedReplyException
@@ -181,10 +65,10 @@ public class TestProxyParser extends TestCase
 			/* single error windows style */
 			String errorString = 
 				"[c:/folde/hej.mo:2:1]: error: unexpected tooken: muu\n";
-			CompileError[] errors = ProxyParser.parseErrorString(errorString);
+			ICompileError[] errors = OMCParser.parseErrorString(errorString);
 	
 			assertEquals(1, errors.length);		
-			CompileError error = errors[0];
+			ICompileError error = errors[0];
 			assertEquals(2, error.getLine());
 			assertEquals("unexpected tooken: muu", error.getErrorDescription());
 	
@@ -192,7 +76,7 @@ public class TestProxyParser extends TestCase
 			errorString = 
 				"[c:/folder he/hej.mo:4:1]: error: unexpected end of file\n" + 
 				"[c:/folder he/hej.mo:15:1]: error: hej remar\n";
-			errors = ProxyParser.parseErrorString(errorString);
+			errors = OMCParser.parseErrorString(errorString);
 			assertEquals(2, errors.length);
 			
 			error = errors[0];
@@ -206,7 +90,7 @@ public class TestProxyParser extends TestCase
 			/* single error unix style */
 			errorString = 
 				"[/usr/folde/hej.mo:12:1]: error: unexpected tooken: muu\n";
-			errors = ProxyParser.parseErrorString(errorString);
+			errors = OMCParser.parseErrorString(errorString);
 	
 			assertEquals(1, errors.length);		
 			error = errors[0];
@@ -217,7 +101,7 @@ public class TestProxyParser extends TestCase
 			errorString = 
 				"[/hej/hop/hej.mo:453:1]: error: unexpected end of file\n" + 
 				"[/usr/local/modelica/hej.mo:715:1]: error: hej remar\n";
-			errors = ProxyParser.parseErrorString(errorString);
+			errors = OMCParser.parseErrorString(errorString);
 			assertEquals(2, errors.length);
 			
 			error = errors[0];
@@ -229,7 +113,7 @@ public class TestProxyParser extends TestCase
 			assertEquals("hej remar", error.getErrorDescription());
 	
 			/* no errors aka empty error string */
-			errors = ProxyParser.parseErrorString("");
+			errors = OMCParser.parseErrorString("");
 			assertEquals(0, errors.length);
 		}
 		catch(Exception e)

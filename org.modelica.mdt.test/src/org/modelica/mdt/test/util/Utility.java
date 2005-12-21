@@ -63,9 +63,10 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 
 import abbot.finder.matchers.swt.TextMatcher;
 import abbot.finder.swt.BasicFinder;
@@ -318,11 +319,12 @@ public class Utility
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
 	 * @throws ConnectException 
+	 * @throws CompilerInstantiationException 
 	 */
 	public static IModelicaFile findModelicaFileInFolder(IModelicaFolder folder, 
 			String fileName) 
 	throws ConnectException, UnexpectedReplyException, 
-		InvocationError, CoreException 
+		InvocationError, CoreException, CompilerInstantiationException 
 	{
 		for (Object child : folder.getChildren())
 		{

@@ -49,9 +49,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
@@ -119,11 +120,12 @@ public class TestModelicaFolder extends TestCase
 
 	/**
 	 * test ModelciaFoldet.getChildren()
+	 * @throws CompilerInstantiationException 
 	 * 
 	 */
 	public void testGetChildren() 
 		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException
+			InvocationError, CoreException, CompilerInstantiationException
 	{
 		IModelicaFolder root_folder = null;
 		IModelicaFolder empty_folder = null;
