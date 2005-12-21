@@ -46,13 +46,13 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.compiler.CompilerInstantiationException;
 import org.modelica.mdt.compiler.ConnectException;
 import org.modelica.mdt.compiler.IElementLocation;
 import org.modelica.mdt.compiler.InvocationError;
 import org.modelica.mdt.compiler.UnexpectedReplyException;
-import org.modelica.mdt.internal.compiler.CompilerProxy;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 

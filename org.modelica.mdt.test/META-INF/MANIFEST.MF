@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Mdt Unit Tests
+Bundle-Name: MDT Unit Tests
 Bundle-SymbolicName: org.modelica.mdt.test; singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.0.0.svn-head
 Bundle-Localization: plugin
 Require-Bundle: org.modelica.mdt,
  org.eclipse.core.runtime,
@@ -11,6 +11,7 @@ Require-Bundle: org.modelica.mdt,
  abbot.swt,
  org.eclipse.core.resources,
  org.eclipse.jface.text,
- org.modelica.mdt.omc
+ org.modelica.mdt.omc,
+ org.modelica.mdt.ui
 Eclipse-AutoStart: false
 Import-Package: org.eclipse.ui.console
