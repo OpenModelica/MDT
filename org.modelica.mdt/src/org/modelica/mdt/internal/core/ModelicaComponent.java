@@ -52,9 +52,10 @@ import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.builder.SyntaxChecker;
 import org.modelica.mdt.core.IModelicaComponent;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.IElementLocation;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 
 /**
  * @author Homer Simpson
@@ -64,7 +65,7 @@ public class ModelicaComponent extends ModelicaElement
 {
 	private String name;
 	private Visibility visibility;
-	private ElementLocation location;
+	private IElementLocation location;
 	private IFile container;
 	
 	/**
@@ -76,7 +77,7 @@ public class ModelicaComponent extends ModelicaElement
 	 * @param location location in the source code file
 	 */
 	public ModelicaComponent(IFile container, String name, Visibility visibility,
-						ElementLocation location)
+						IElementLocation location)
 	{
 		this.name = name;
 		this.visibility = visibility;

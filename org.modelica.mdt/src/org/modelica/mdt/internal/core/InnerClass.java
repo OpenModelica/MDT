@@ -59,11 +59,13 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.ProxyParser;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.IElementLocation;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.ModelicaParser;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 /**
  * A package that is defined inside a modelica file or in the system library.
@@ -84,13 +86,13 @@ public class InnerClass extends ModelicaClass
 	 */
 	private IFile container;
 	
-	private ElementLocation location = null;;
+	private IElementLocation location = null;;
 
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, Object> children = null;
 	
 	public InnerClass(IFile container, String prefix, String name,
-					ElementLocation location, Type restrictionType)
+					IElementLocation location, Type restrictionType)
 	{
 		this.container = container;
 		this.location = location;
@@ -129,7 +131,8 @@ public class InnerClass extends ModelicaClass
 	 * @see org.modelica.mdt.core.IParent#getChildren()
 	 */
 	public Collection<Object> getChildren() throws ConnectException,
-			UnexpectedReplyException, InvocationError, CoreException
+			UnexpectedReplyException, InvocationError, CoreException,
+				CompilerInstantiationException
 	{
 		if (children == null)
 		{
@@ -140,7 +143,8 @@ public class InnerClass extends ModelicaClass
 	}
 	
 	private Hashtable<String, Object> loadElements() 
-		throws ConnectException, UnexpectedReplyException, InvocationError 
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 	
@@ -155,7 +159,7 @@ public class InnerClass extends ModelicaClass
 		String elementLine = "";
 		String names = "";
 
-		for (Object o : OMCProxy.getElementsInfo(fullName))
+		for (Object o : CompilerProxy.getElementsInfo(fullName))
 		{
 			 
 			elementType = "";
@@ -217,7 +221,7 @@ public class InnerClass extends ModelicaClass
 			if (elementType.equals("classdef"))
 			{
 				/* 'parse' line number information */ 
-				ElementLocation location =
+				IElementLocation location =
 					new ElementLocation(classFile, 
 									Integer.parseInt(classLine));					
 				
@@ -233,7 +237,7 @@ public class InnerClass extends ModelicaClass
 				 * names={component_name,"component_comment"}
 				 * we neet to get the component name
 				 */ 
-				Vector<Object> comp = ProxyParser.parseList(names);
+				Vector<Object> comp = ModelicaParser.parseList(names);
 				
 				String componentName = (String) comp.elementAt(0);
 				
@@ -256,14 +260,15 @@ public class InnerClass extends ModelicaClass
 	 */
 	public boolean hasChildren()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
-		CoreException 
+			CoreException, CompilerInstantiationException
 	{
 		return !getChildren().isEmpty();
 	}
 
 	@Override
 	public Collection<IModelicaElementChange> reload()
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -328,11 +333,13 @@ public class InnerClass extends ModelicaClass
 	 * 	 communicating with compiler
 	 * @throws CoreException if there were errors reading
 	 * 	 the source file of this element
+	 * @throws CompilerInstantiationException if there were errors
+	 * 	 communicating with compiler
 	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
 	 */
 	public IRegion getLocation()
 		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException
+			InvocationError, CoreException, CompilerInstantiationException
 	{
 		if (location == null)
 		{
@@ -367,7 +374,8 @@ public class InnerClass extends ModelicaClass
 
 	@Override
 	public String getFilePath() 
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		if (location == null)
 		{
@@ -377,17 +385,19 @@ public class InnerClass extends ModelicaClass
 	}
 
 	private void loadElementLocation()
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
-		location = OMCProxy.getElementLocation(fullName);
+		location = CompilerProxy.getElementLocation(fullName);
 	}
 
 
-	public Type getRestrictionType() throws ConnectException
+	public Type getRestrictionType() 
+		throws ConnectException, CompilerInstantiationException
 	{
 		if(typeKnown == false)
 		{
-			Type t = OMCProxy.getRestrictionType(fullName);
+			Type t = CompilerProxy.getRestrictionType(fullName);
 			if(t != null)
 			{
 				restrictionType = t;

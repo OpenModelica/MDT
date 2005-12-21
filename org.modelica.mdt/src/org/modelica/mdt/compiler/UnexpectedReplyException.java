@@ -39,7 +39,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.omcproxy;
+package org.modelica.mdt.compiler;
+
 
 public class UnexpectedReplyException extends CompilerException
 {

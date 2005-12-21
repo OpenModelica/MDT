@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,20 +39,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.omcproxy;
+package org.modelica.mdt.compiler;
 
 /**
- * Supertype of all exceptions that can be encountered while communicating
- * with the modelica compiler.
- *  
+ * Thrown when there is an error while connecting to the compiler.
+ * 
  * @author Andreas Remar
  */
-abstract public class CompilerException extends Exception
+public class ConnectException extends CompilerException
 {
-	private static final long serialVersionUID = -7881546855664735599L;
+	private static final long serialVersionUID = 5391049301949772469L;
 
-	public CompilerException(String error)
+	public ConnectException(String error)
 	{
 		super(error);
 	}
+
 }

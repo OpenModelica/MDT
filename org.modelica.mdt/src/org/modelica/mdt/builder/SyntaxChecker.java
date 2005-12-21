@@ -66,11 +66,12 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.internal.omcproxy.CompileError;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.ParseResults;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ICompileError;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.IParseResults;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 /**
  * This builder loads all changed files into OMC in order to check for
@@ -422,19 +423,21 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * @param file the file we should load into OMC to check for errors
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
+	 * @throws CompilerInstantiationException 
 	 */
 	protected static void loadFileAndReportErrors(IFile file)
-		throws ConnectException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException, 
+				CompilerInstantiationException
 	{
 		/*
 		 * Try loading the file into OMC and get the results.
 		 */
-		ParseResults res = OMCProxy.loadFileInteractive(file);
+		IParseResults res = CompilerProxy.loadFileInteractive(file);
 
 		/*
 		 * If there were any compile errors, report them as problems.
 		 */
-		for (CompileError error : res.getCompileErrors())
+		for (ICompileError error : res.getCompileErrors())
 		{
 			reportProblem(file, error.getLine(), error.getErrorDescription());
 		}

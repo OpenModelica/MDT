@@ -38,62 +38,91 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt.internal.core;
 
-import java.util.LinkedList;
-import java.util.List;
+package org.modelica.mdt.compiler;
+
+import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.ISystemLibrary;
-import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ConnectException;
-import org.modelica.mdt.internal.compiler.CompilerProxy;
+import org.modelica.mdt.MdtPlugin;
 
 /**
- * @author Elmir Jagudin
+ * This exception is thrown when there was error instantiating the
+ * compiler object. Use getProblemType() to get details of the
+ * instantiation problem.
  */
-public class SystemLibrary extends ModelicaElement implements ISystemLibrary 
+public class CompilerInstantiationException extends CompilerException
 {
-	private static List<Object> packages = null;
+	private static final long serialVersionUID = -1432532276931215491L;
 
-	/**
-	 * @throws ConnectException 
-	 * @throws CompilerInstantiationException 
-	 * @see org.modelica.mdt.core.ISystemLibrary#getPackages()
-	 */
-	public List<Object> getPackages()
-		throws ConnectException, CompilerInstantiationException 
+	public enum ProblemType 
 	{
-		if (packages == null)
+		NO_COMPILERS_FOUND,
+		MULTIPLE_COMPILERS_FOUND,
+		ERROR_CREATING_COMPILER
+	}
+	
+	private ProblemType type;
+	private Collection<String> compilerPlugins;
+	private String compilerPluginName = "unknow";
+	
+	public CompilerInstantiationException(ProblemType type)
+	{
+		super();
+		this.type = type;
+	}
+
+	public CompilerInstantiationException(Collection<String> compilerPlugins)
+	{
+		this(ProblemType.MULTIPLE_COMPILERS_FOUND);
+		this.compilerPlugins = compilerPlugins; 
+	}
+
+	public CompilerInstantiationException(CoreException e,
+				String compilerPluginName)
+	{
+		super(e);
+		type = ProblemType.ERROR_CREATING_COMPILER;
+		this.compilerPluginName = compilerPluginName;
+	}
+
+	public ProblemType getProblemType()
+	{
+		return type;
+	}
+	
+
+	public Collection<String> getCompilerPlugins()
+	{
+		return compilerPlugins;
+	}
+
+	public String getMessage()
+	{
+		String message = "";
+		
+		switch (type)
 		{
-			// TODO this should probaly be redifined so that
-			// loadSystemLibrary returns a list of packages in the system library
-			// more flexible'n'stuff
-			CompilerProxy.loadSystemLibrary();
-			packages = new LinkedList<Object>();			
-			packages.add(new InnerClass("", "Modelica", Type.PACKAGE));
+		case NO_COMPILERS_FOUND:
+			message = "No plugins define extension for " + 
+				MdtPlugin.COMPILER_EXTENSION_ID;
+			break;
+		case MULTIPLE_COMPILERS_FOUND:
+			message = "Multiple plugins define extension for " + 
+				MdtPlugin.COMPILER_EXTENSION_ID;
+			break;
+		case ERROR_CREATING_COMPILER:
+			message = "Error while instantiating IModelicaCompiler class " + 
+				" provided by '" + compilerPluginName + "' plugin. " +
+				getCause().getMessage();
+			break;
 		}
 		
-		return packages;
+		return message;
 	}
 
-	/**
-	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
-	 */
-	public String getElementName() 
+	public String getCompilerPlugin()
 	{
-		return "System Library";
-	}
-
-	public List<Object> getChildren()
-		throws ConnectException, CompilerInstantiationException 
-	{
-		return getPackages();
-	}
-
-	public boolean hasChildren() throws CoreException 
-	{
-		return true;
+		return compilerPluginName;
 	}
 }

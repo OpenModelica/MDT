@@ -55,12 +55,10 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.ProxyParser;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.ModelicaParser;
+import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 
 /**
@@ -168,7 +166,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 
 		try
 		{
-			proposals = OMCProxy.getClassNames(className);
+			proposals = CompilerProxy.getClassNames(className);
 		}
 		catch (CompilerException e)
 		{
@@ -280,24 +278,18 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		try 
 		{
-			elementsInfo = OMCProxy.getElementsInfo(functionName);
+			elementsInfo = CompilerProxy.getElementsInfo(functionName);
 		}
 		catch (ConnectException e)
 		{
 			ErrorManager.showCompilerError(e);
 			return;
 		}
-		catch (InvocationError e)
+		catch (CompilerException e)
 		{
-			/* class wasn't found or something */ 
+			ErrorManager.logError(e);
 			return;
 		}
-		catch (UnexpectedReplyException e)
-		{
-			/* strange reply from omc? */
-			return;
-		}
-
 
 		functionProposal = functionName;
 		
@@ -347,7 +339,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 						}
 						else if(s.startsWith("names="))
 						{
-							names = ProxyParser.parseList(
+							names = ModelicaParser.parseList(
 									s.substring("names=".length()));
 							elementNamesFound = true;
 						}

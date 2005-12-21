@@ -39,20 +39,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.omcproxy;
+package org.modelica.mdt.compiler;
 
 /**
- * Thrown when there is an error while connecting to the compiler.
+ * Thrown if there was an error while invoking command on compiler. E.g. if
+ * compiler dies and connection breaks.
  * 
  * @author Andreas Remar
  */
-public class ConnectException extends CompilerException
+public class CommunicationException extends CompilerException
 {
-	private static final long serialVersionUID = 5391049301949772469L;
+	private static final long serialVersionUID = 310955941812035161L;
 
-	public ConnectException(String error)
+	public CommunicationException(String error)
 	{
 		super(error);
 	}
-
 }

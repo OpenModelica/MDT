@@ -45,9 +45,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.IRegion;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 
 /**
  * Common protocol for all elements provided by the Modelica root.
@@ -91,11 +92,12 @@ public interface IModelicaElement extends IAdaptable
 	 * @throws UnexpectedReplyException 
 	 * @throws ConnectException 
 	 * @throws CoreException 
+	 * @throws CompilerInstantiationException 
 	 * 
 	 */
 	public IRegion getLocation() 
 		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException;
+			InvocationError, CoreException, CompilerInstantiationException;
 
 	/**
 	 * If this element is external then this method returns full path
@@ -107,7 +109,9 @@ public interface IModelicaElement extends IAdaptable
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
 	 * @throws ConnectException 
+	 * @throws CompilerInstantiationException 
 	 */
 	public String getFilePath() 
-		throws ConnectException, UnexpectedReplyException, InvocationError;
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException;
 }

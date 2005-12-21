@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.core;
+package org.modelica.mdt.compiler;
 
 /**
  * Presents information on some elements location in a file.
@@ -48,31 +48,16 @@ package org.modelica.mdt.internal.core;
  * 
  * @author Homer Simpson
  */
-public class ElementLocation
+public interface IElementLocation
 {
-	private String path;
-	private int line;	
 	
-	public ElementLocation(String path, int line)
-	{
-		this.path = path;
-		this.line = line;
-	}
-
 	/**
 	 * @return line number where this element is defined
 	 */
-	public int getLine()
-	{
-		return line;
-	}
+	public int getLine();
 
 	/**
 	 * @return full path to the file where the element is defined
 	 */
-	public String getPath()
-	{
-		return path;
-	}
-	
+	public String getPath();
 }

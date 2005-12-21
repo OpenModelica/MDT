@@ -46,12 +46,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
-import org.modelica.mdt.internal.omcproxy.CommunicationException;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CommunicationException;
+import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 /**
  * Contains code for handling errors and other unexpected/undersireable
@@ -73,9 +74,11 @@ public class ErrorManager
 	 */
 	private static boolean connectErrorShown = false;
 	private static boolean communicationErrorShown = false;
-	private static final long BUG_USER_WITH_ERRORS_INTERVAL = 60000;
+	private static boolean instantiationErrorShown = false;
 	private static long nextInvocationErrorShown = 0;
 	private static long nextUnexpectedReplyErrorShown = 0;
+
+	private static final long BUG_USER_WITH_ERRORS_INTERVAL = 60000;
 	
 	/**
 	 * convinience wrapper method for loggin to plugin logger
@@ -128,21 +131,35 @@ public class ErrorManager
 		
 		/* construct the error message */
 		String message = "unknow error";
+		String compilerName = "unknow modelica compiler";
+		
+		try
+		{
+			compilerName = CompilerProxy.getCompilerName();
+		}
+		catch (CompilerInstantiationException e)
+		{
+			/* 
+			 * oh well, not much to do 'bout this one,
+			 * let's just name our compiler 'unknow'
+			 */
+		}
+		
 		
 		String upgrade_your_software =  /* the standard remedy */
 			"Try upgrading the " + MdtPlugin.PLUGIN_HUMAN_NAME + 
-			" and/or the " + OMCProxy.getCompileName() + 
+			" and/or the " + compilerName + 
 			" to more recent versions.";
 		
 		String check_compiler_and_restart =
-			" Make sure that " + OMCProxy.getCompileName() + 
+			" Make sure that " + compilerName + 
 			" is properly installed and configured on your system and" +
 			" restart Eclipse to retry connecting.";
 			
 
 		if (exception instanceof CommunicationException)
 		{
-			message = "Lost connection to the " + OMCProxy.getCompileName() +
+			message = "Lost connection to the " + compilerName +
 				check_compiler_and_restart;
 			
 			/* we only want to se connect error once */
@@ -152,17 +169,51 @@ public class ErrorManager
 		else if (exception instanceof ConnectException)
 		{
 			message = "Could not establish connection to the " + 
-				OMCProxy.getCompileName() + "."+
-				check_compiler_and_restart;
+				compilerName + "." + check_compiler_and_restart;
 			
 			/* we only want to se connect error once */
 			showErrorDialog = !connectErrorShown;
 			connectErrorShown = true;
 		}
+		else if (exception instanceof CompilerInstantiationException)
+		{
+			CompilerInstantiationException cie 
+				= (CompilerInstantiationException) exception;
+			switch (((CompilerInstantiationException)exception).getProblemType())
+			{
+			case NO_COMPILERS_FOUND:
+				message = "No plugin found that provides modelica " + 
+					" compiler services. Please install a plugin that " + 
+					" provides modelica compiler and try again";
+				break;
+			case MULTIPLE_COMPILERS_FOUND:
+				message = "Multiple modelica compiler plugins available. " +
+					"Please make sure only one compiler is enabled and " + 
+					"try again. Following compiler plugins are found:\n";
+				for (String pluginName : cie.getCompilerPlugins())
+				{
+					message += "'" + pluginName + "'\n"; 
+				}
+				break;
+			case ERROR_CREATING_COMPILER:
+				message = "Could not instantiate the modelica compiler. " +
+					"The compiler plugin '" + cie.getCompilerPlugin() + 
+					"' seems to be faulty. Try upgrading to unfaulty version.";
+				/* 
+				 * log the underlying exception also, to make enhance
+				 * the fourthcoming debuggin experience 
+				 */
+				logError(cie.getCause());
+				break;
+			}
+			
+			/* we only want to se instantiation error once */
+			showErrorDialog = !instantiationErrorShown;
+			instantiationErrorShown = true;
+		}
 		else if (exception instanceof InvocationError)
 		{
-			message = OMCProxy.getCompileName() 
-				+ " unexpectedly reported error while " +
+			message = compilerName + " unexpectedly reported error while " +
 				((InvocationError)exception).getAction() + ". " +
 				upgrade_your_software;
 			
@@ -185,8 +236,7 @@ public class ErrorManager
 		else if (exception instanceof UnexpectedReplyException)
 		{
 			message = "Compatibility problems while communicating with the " +
-				OMCProxy.getCompileName() + ". " +
-				upgrade_your_software +
+				compilerName + ". " + upgrade_your_software +
 				" You can also try to consult the plugins project homepage " +
 				"for compatibility problems.";
 

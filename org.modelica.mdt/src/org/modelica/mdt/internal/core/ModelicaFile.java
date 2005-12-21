@@ -50,11 +50,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.ParseResults;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.IParseResults;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 /**
  * @author Elmir Jagudin
@@ -101,7 +102,8 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	}
 
 	public Collection<Object> getChildren()
-		throws ConnectException, UnexpectedReplyException 
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException 
 	{
 		if (children == null)
 		{
@@ -112,11 +114,12 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	}
 
 	private Hashtable<String, Object> loadElements() 
-		throws ConnectException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 
-		ParseResults res = OMCProxy.loadFileInteractive(file);
+		IParseResults res = CompilerProxy.loadFileInteractive(file);
 
 		for (Object obj : res.getClasses())
 		{
@@ -140,7 +143,8 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	}
 	
 	public boolean hasChildren()
-		throws CoreException, ConnectException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
 		return !getChildren().isEmpty();
 	}
@@ -149,7 +153,8 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	
 	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta)
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CompilerInstantiationException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();

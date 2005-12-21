@@ -16,8 +16,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.core
 Bundle-ClassPath: bin/
 Export-Package: org.modelica.mdt,
+ org.modelica.mdt.compiler,
  org.modelica.mdt.core,
  org.modelica.mdt.editor,
+ org.modelica.mdt.internal.compiler;x-friends:="org.modelica.mdt.test",
  org.modelica.mdt.internal.core,
  org.modelica.mdt.internal.omcproxy,
  org.modelica.mdt.ui,

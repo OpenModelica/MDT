@@ -38,22 +38,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.modelica.mdt.core;
 
-import java.util.List;
-
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ConnectException;
-
-
+package org.modelica.mdt.compiler;
 
 /**
- * An object that represent the standart library available in this project
+ * Thrown when compiler reports an unexpected error while invoking
+ * some command via the 'interactive api' interface. That is when
+ * compiler replys 'error' instead of returning the results in a situation
+ * where no error are expected.
+ * 
  * @author Elmir Jagudin
- *
  */
-public interface ISystemLibrary extends IModelicaElement, IParent
+public class InvocationError extends CompilerException
 {
-	public List<Object> getPackages()
-		throws ConnectException, CompilerInstantiationException; 
+	private static final long serialVersionUID = 1437868457853593664L;
+	private String action;
+	private String expression;
+	
+	/**
+	 * @param action human readable decscription of what action failed
+	 * @param expression the expression what was send to OMC that failed
+	 * @see InvocationError#getAction()
+	 * @see InvocationError#getExpression()
+	 */
+	public InvocationError(String action, String expression)
+	{
+		super("OMC replyed 'error' to '" + expression + "'");
+		this.action = action;
+		this.expression = expression;
+	}
+	
+	/**
+	 * Get the human readable description of the action that triggered this 
+	 * error. E.g. 'fetching contents of class foo.bar'
+	 * 
+	 * The description should be phrased so that 
+	 */
+	public String getAction()
+	{
+		return action;
+	}
+	
+	public String getExpression()
+	{
+		return expression;
+	}
 }

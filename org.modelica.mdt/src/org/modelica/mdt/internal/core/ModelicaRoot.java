@@ -54,8 +54,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
+import org.modelica.mdt.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ModelicaProject;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
 import org.modelica.mdt.core.IModelicaRoot;
 
 /**

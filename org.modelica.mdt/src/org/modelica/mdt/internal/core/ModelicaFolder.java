@@ -56,10 +56,11 @@ import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
@@ -89,7 +90,8 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 
 
 	public Collection<Object> getChildren() 
-		throws CoreException, ConnectException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException, 
+			CompilerInstantiationException
 	{
 		if (!childrenLoaded)
 		{
@@ -101,7 +103,8 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 	private void loadChildren() 
-		throws CoreException, ConnectException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
 		for (IResource member :  container.members())
 		{
@@ -116,7 +119,8 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 	public List<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		return update(null, delta);
 	}
@@ -135,10 +139,12 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * @throws UnexpectedReplyException 
 	 * @throws ConnectException 
 	 * @throws InvocationError 
+	 * @throws CompilerInstantiationException 
 	 */
 	public List<IModelicaElementChange> update(Object root, 
 			IResourceDelta delta) 
-			throws ConnectException, UnexpectedReplyException, InvocationError
+			throws ConnectException, UnexpectedReplyException, InvocationError,
+				CompilerInstantiationException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -192,9 +198,11 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	
 	/**
 	 * map a IResource to the type of modelica element it represents
+	 * @throws CompilerInstantiationException 
 	 */
 	private Object wrap(IResource res)
-		throws ConnectException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
 		switch (res.getType())
 		{

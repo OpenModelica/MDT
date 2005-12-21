@@ -54,9 +54,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 
 /**
  * A number of routines for working with modelica elements in editors.
@@ -74,10 +75,11 @@ public class EditorUtility
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
 	 * @throws CoreException 
+	 * @throws CompilerInstantiationException 
 	 */
 	public static void openInEditor(Object element)
 		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException
+			InvocationError, CoreException, CompilerInstantiationException
 	{
 		if (element instanceof IModelicaElement)
 		{

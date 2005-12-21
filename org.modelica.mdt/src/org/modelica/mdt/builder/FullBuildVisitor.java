@@ -48,7 +48,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.compiler.CompilerException;
 
 /**
  * Visitor used to load files into OMC when a full build is happening.

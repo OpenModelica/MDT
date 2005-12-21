@@ -81,7 +81,7 @@ import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.editor.EditorUtility;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
+import org.modelica.mdt.compiler.CompilerException;
 
 public class ProjectsView extends ViewPart
 {

@@ -53,14 +53,14 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
+import org.modelica.mdt.compiler.CompilerException;
 
 /**
- * @author Elmir Jagudin
- *
  * This class mapps modelica objects (Modelica packages, classes, etc) to icons and labels
  * via IWorkbenchAdapter interface. This icon and lables are used in for example Modelica 
  * Projects view.
+ * 
+ * @author Elmir Jagudin
  */
 
 public class ModelicaElementAdapter extends WorkbenchAdapter 
@@ -123,7 +123,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 					imgTag = "";
 				}
 			}
-			catch (ConnectException e)
+			catch (CompilerException e)
 			{
 				ErrorManager.logError(e);
 				/* 

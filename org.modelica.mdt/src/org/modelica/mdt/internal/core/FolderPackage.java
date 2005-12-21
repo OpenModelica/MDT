@@ -55,12 +55,13 @@ import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.OMCProxy;
-import org.modelica.mdt.internal.omcproxy.ParseResults;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.IParseResults;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 /**
  * A package that is stored as a folder.
@@ -122,7 +123,8 @@ public class FolderPackage extends ModelicaClass
 	}
 
 	public Collection<Object> getChildren() 
-	throws CoreException, ConnectException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException, 
+			CompilerInstantiationException
 	{
 		if (!childrenLoaded)
 		{
@@ -134,7 +136,8 @@ public class FolderPackage extends ModelicaClass
 	}
 
 	private void loadChildren() 
-		throws CoreException, ConnectException, UnexpectedReplyException
+		throws CoreException, ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
 		for (IResource member :  container.members())
 		{
@@ -144,7 +147,8 @@ public class FolderPackage extends ModelicaClass
 
 	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -193,9 +197,11 @@ public class FolderPackage extends ModelicaClass
 	 * @return true if the res is a package, false otherwise.
 	 * @throws UnexpectedReplyException 
 	 * @throws ConnectException 
+	 * @throws CompilerInstantiationException 
 	 */
 	public static boolean isFolderPackage(IResource res)
-		throws ConnectException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
 		if (res.getType() == IResource.FOLDER)
 		{
@@ -214,7 +220,7 @@ public class FolderPackage extends ModelicaClass
 				 * check if package.mo defines a package (aka class) 
 				 * with the same name as the parent folder
 				 */
-				ParseResults results = OMCProxy.loadFileInteractive(file);
+				IParseResults results = CompilerProxy.loadFileInteractive(file);
 				
 				for (Object name : results.getClasses())
 				{
@@ -232,9 +238,11 @@ public class FolderPackage extends ModelicaClass
 
 	/**
 	 * map a IResource to the type of modelica element it represents
+	 * @throws CompilerInstantiationException 
 	 */
 	protected Object wrap(IResource res)
-		throws ConnectException, UnexpectedReplyException
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
 	{
 		switch (res.getType())
 		{

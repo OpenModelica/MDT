@@ -39,38 +39,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.omcproxy;
+package org.modelica.mdt.compiler;
+
+import java.util.Vector;
+
+import org.modelica.mdt.compiler.ICompileError;
 
 /**
- * Provides information on a compile error for some specific file.
- *  
+ * Encapsulates information on content of a modelica file (.mo) as seen
+ * by the parser.
+ * 
+ * A modelica file can contain both class/packages definitions and
+ * compile errors. If there was errors while loading/parsing a file,
+ * it is said to contain compile errors.
+ * 
+ * A compiler should strive to parse as much as possible of the file
+ * despite the parsing errors so that longest possible list of class names
+ * and compile errors are provided to the user.
+ * 
  * @author Elmir Jagudin
  */
-public class CompileError 
+public interface IParseResults
 {
-	private int lineNumber;
-	private String errorDescription;
-	
-	public CompileError(int lineNumber, String errorDescription)
-	{
-		this.lineNumber = lineNumber;
-		this.errorDescription = errorDescription;
-	}
+	/**
+	 * @return Returns the names of top classes (and packages) in the file.
+	 *  If no classes where found in the file, an empty array is returned.
+	 */
+	public Vector<Object> getClasses();
 
 	/**
-	 * @return the line number in the file where this error have occured 
+	 * @return Any compile errors occured while loading/parsing the file.
+	 * If no error occured while parsing the file, an empty array is returned.
 	 */
-	public int getLine()
-	{
-		return lineNumber;
-	}
-	
-	/**
-	 * @return the human readable description of the error
-	 */
-	public String getErrorDescription()
-	{
-		return errorDescription;
-	}
-	
+	public ICompileError[] getCompileErrors();
 }

@@ -40,7 +40,8 @@
  */
 package org.modelica.mdt.core;
 
-import org.modelica.mdt.internal.omcproxy.ConnectException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
 
 /**
  * @author Elmir Jagudin
@@ -112,8 +113,9 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	/**
 	 * @return the restriction type of this class
 	 * @throws ConnectException 
+	 * @throws CompilerInstantiationException 
 	 */
-	public Type getRestrictionType() throws ConnectException;
-
+	public Type getRestrictionType()
+		throws ConnectException, CompilerInstantiationException;
 	
 }

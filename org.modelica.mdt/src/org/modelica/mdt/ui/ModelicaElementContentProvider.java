@@ -60,8 +60,8 @@ import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.compiler.CompilerException;
 import org.modelica.mdt.internal.core.SystemLibrary;
-import org.modelica.mdt.internal.omcproxy.CompilerException;
 
 /**
  * Content provider for a tree viewer. This content provider works only

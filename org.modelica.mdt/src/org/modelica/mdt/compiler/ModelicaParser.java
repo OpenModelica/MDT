@@ -39,17 +39,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.omcproxy;
+package org.modelica.mdt.compiler;
 
-import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.modelica.mdt.ErrorManager;
-
 /**
+ * This class prvides some code to parse simple modelica primitives,
+ * for now it can parse lists in modelica syntax.
+ * 
  * @author Andreas Remar
  */
-public class ProxyParser
+public class ModelicaParser
 {
 	/**
 	 * This function parses Modelica lists, any nesting possible.
@@ -174,96 +174,4 @@ public class ProxyParser
 		
 		return elements;
 	}
-	
-	/**
-	 * Parses the error string that is set by loadFileInteractive() on compile 
-	 * errors. E.g. error string will look like \n delimeted list of
-	 *      [/path/to/file.mo:20:1]: error: some error
-	 *
-	 * The actual error string is retrived by calling getErrorString() after
-	 * calling loadFileInteractive()
-	 * 
-	 * @param errorString the error string in the above format
-	 * @return
-	 */
-	public static CompileError[] parseErrorString(String errorString)
-		throws UnexpectedReplyException
-	{
-		StringTokenizer strTok = new StringTokenizer(errorString, "\r\n");
-		CompileError[] compileErrs = new CompileError[strTok.countTokens()];
-		
-		for (int i = 0; strTok.hasMoreTokens(); i++)
-		{
-			/* default line number is 1 in case OMC returns unexpected string */
-			int lineno = 1;
-			String errorLine = strTok.nextToken();
-			
-		
-			/*
-			 * An error string looks something like:
-			 *    [/path/to/file.mo:20:1]: error: some error
-			 * So to parse line number, we first split
-			 * around ']'
-			 */
-		
-			/* 
-			 * errorParts[0] is now error location
-			 * and errorParts[1] is error message
-			 */
-			String[] errorParts = errorLine.split("]");
-			
-			if(errorParts.length < 2)
-			{
-				throw new UnexpectedReplyException("Weird error message from "+
-						"the compiler: [" + errorLine + "]");
-			}
-			
-			String errorLocation = errorParts[0];
-			String errorMessage = errorParts[1];
-		
-			/* 
-			 * parse error location from
-			 *    "[/path/to/file.mo:20:1"
-			 * we are only interested in line number at this point
-			 * We allready know the file, and column number is just
-			 * broken (OMC allways returns 1) 
-			 */
-			int lastColon = errorLocation.lastIndexOf(":");
-			int beforeLastColon = 
-				errorLocation.substring(0, lastColon).lastIndexOf(":");
-			try
-			{
-				lineno = 
-					Integer.parseInt
-					(errorLocation.substring(beforeLastColon+1,
-					    lastColon));
-			}
-			catch (NumberFormatException e)
-			{
-				ErrorManager.logError(e);
-			}
-			
-			/*
-			 * parse error message from
-			 *   ": error: some error"
-			 * that is we are interested in rest of the string after
-			 * second colon
-			 */					
-			int firstColon = errorMessage.indexOf(":");
-			int secondColon = 
-					errorMessage.substring(firstColon+1).indexOf(":");
-			/* we need global position on errorMessage string */
-			secondColon += firstColon+1;
-			
-			String errorDesc = 
-				errorMessage.substring(secondColon+1).trim();
-			
-			compileErrs[i] = new CompileError(lineno, errorDesc);
-		}
-
-		return compileErrs;
-	}
-	
-	
-	
 }

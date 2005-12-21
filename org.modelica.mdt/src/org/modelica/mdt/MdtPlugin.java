@@ -59,10 +59,13 @@ public class MdtPlugin extends AbstractUIPlugin
 	public static final String MODELICA_NATURE = 
 		"org.modelica.mdt.ModelicaNature";
 
-
 	/* human readable name of the plugin */
 	public static final String PLUGIN_HUMAN_NAME = 
 		"Modelica Development Tooling Plugin";
+
+	/* extension point ID for modelica compilers */
+	public static final String COMPILER_EXTENSION_ID = 
+		"org.modelica.mdt.compiler";
 	
 	
 	/* The shared instance. */
@@ -169,7 +172,7 @@ public class MdtPlugin extends AbstractUIPlugin
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-	
+		
 	public static IWorkbenchPage getActivePage() 
 	{
 		return getDefault().internalGetActivePage();
@@ -192,6 +195,7 @@ public class MdtPlugin extends AbstractUIPlugin
 	{
 		return getDefault().getWorkbench().getDisplay();
 	}
+	
 	
 	/**
 	 * Note: This method is for internal use only. Clients should not

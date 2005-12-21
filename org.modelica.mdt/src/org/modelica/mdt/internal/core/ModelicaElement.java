@@ -53,9 +53,10 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.omcproxy.ConnectException;
-import org.modelica.mdt.internal.omcproxy.InvocationError;
-import org.modelica.mdt.internal.omcproxy.UnexpectedReplyException;
+import org.modelica.mdt.compiler.CompilerInstantiationException;
+import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.compiler.InvocationError;
+import org.modelica.mdt.compiler.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
@@ -135,9 +136,11 @@ abstract public class ModelicaElement extends PlatformObject
 	 *  @param delta The resource delta which is rooted at the IResource of
 	 *  this element 
 	 * @throws InvocationError 
+	 * @throws CompilerInstantiationException 
 	 */
 	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		/* return an empty list by default */
 		return new LinkedList<IModelicaElementChange>();
@@ -156,9 +159,11 @@ abstract public class ModelicaElement extends PlatformObject
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
 	 * @throws ConnectException 
+	 * @throws CompilerInstantiationException 
 	 */
 	public Collection<IModelicaElementChange> reload()
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		/* return an empty list by default */
 		return new LinkedList<IModelicaElementChange>();		
@@ -166,14 +171,16 @@ abstract public class ModelicaElement extends PlatformObject
 
 	public IRegion getLocation()
 		throws CoreException, ConnectException, 
-			UnexpectedReplyException, InvocationError
+			UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		/* we don't have a definition region by default */
 		return null;
 	}
 
 	public String getFilePath() 
-		throws ConnectException, UnexpectedReplyException, InvocationError
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException
 	{
 		/* we are not defined in an external file by default */
 		return null;
