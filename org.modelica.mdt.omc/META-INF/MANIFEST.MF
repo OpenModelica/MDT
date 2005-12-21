@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OMC proxy
+Bundle-SymbolicName: org.modelica.mdt.omc; singleton:=true
+Bundle-Version: 0.0.0.svn-head
+Bundle-Vendor: PELAB
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.modelica.mdt,
+ org.eclipse.core.resources
+Export-Package: org.modelica.mdt.omc.internal;x-friends:="org.modelica.mdt.test"
