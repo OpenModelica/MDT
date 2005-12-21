@@ -55,6 +55,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.builder.SyntaxChecker;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
@@ -65,7 +66,6 @@ import org.modelica.mdt.compiler.IElementLocation;
 import org.modelica.mdt.compiler.InvocationError;
 import org.modelica.mdt.compiler.ModelicaParser;
 import org.modelica.mdt.compiler.UnexpectedReplyException;
-import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 /**
  * A package that is defined inside a modelica file or in the system library.

@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,19 +39,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.editor;
+package org.modelica.mdt.internal.core;
 
-import org.eclipse.ui.editors.text.TextEditor;
+import org.modelica.mdt.compiler.IElementLocation;
+
+//TODO this file should be removed, ElementLocation objects should only
+// be created in the modelica compiler plugin
 
 /**
- * @author Peter Bunus
+ * This class implements IElementLocation on behalf of OMC proxy plugin.
  */
-public class ModelicaEditor extends TextEditor 
+public class ElementLocation implements IElementLocation
 {
-
-	public ModelicaEditor()
+	private String path;
+	private int line;	
+	
+	public ElementLocation(String path, int line)
 	{
-		super();
-		setSourceViewerConfiguration(new ModelicaSourceViewerConfig());
+		this.path = path;
+		this.line = line;
 	}
+	public int getLine()
+	{
+		return line;
+	}
+
+	public String getPath()
+	{
+		return path;
+	}	
 }

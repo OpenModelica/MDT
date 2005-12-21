@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,40 +39,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui;
+package org.modelica.mdt;
 
-import org.eclipse.ui.IFolderLayout;
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.modelica.mdt.builder.SyntaxChecker;
 
-public class PerspectiveFactory implements IPerspectiveFactory
+public class ModelicaNature implements IProjectNature
 {
-
-	public void createInitialLayout(IPageLayout layout)
+	private IProject project;
+	
+	public void configure() throws CoreException 
 	{
-		/* add 'modelica projects' view */
-		IFolderLayout resources = 
-			layout.createFolder("org.modelica.mdt.resourcesArea", 
-					IPageLayout.LEFT, 0.26f, IPageLayout.ID_EDITOR_AREA);
-		resources.addView("org.modelica.mdt.ProjectsView");
 		
-		/* add console view */
-		IFolderLayout consoleArea = 
-			layout.createFolder("org.modelica.mdt.consoleArea", 
-					IPageLayout.BOTTOM, 0.75f, IPageLayout.ID_EDITOR_AREA);
-		consoleArea.addView(IConsoleConstants.ID_CONSOLE_VIEW);
-		consoleArea.addView(IPageLayout.ID_PROBLEM_VIEW);		
+		SyntaxChecker.addBuilderToProject(project);
 		
-		/* add new wizards */
-		layout.addNewWizardShortcut("org.modelica.mdt.NewPackageWizard");
-		layout.addNewWizardShortcut("org.modelica.mdt.NewClassWizard");
-		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
-		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");
-		
-		/* add view shortcuts */
-		layout.addShowViewShortcut("org.modelica.mdt.ProjectsView");
-		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
-		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
+		new Job("Modelica Build")
+		{
+			protected IStatus run(IProgressMonitor monitor)
+			{
+				try
+				{
+					project.build(SyntaxChecker.FULL_BUILD,
+								  SyntaxChecker.BUILDER_ID,
+								  null,
+								  monitor);
+				}
+				catch(CoreException e)
+				{
+					System.out.println(e);
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+	}
+
+	public void deconfigure() throws CoreException 
+	{
+		SyntaxChecker.removeBuilderFromProject(project);
+		// ModelicaBuilder.deleteBuildMarkers(project);
+	}
+
+	public IProject getProject()
+	{
+		return project;
+	}
+
+	public void setProject(IProject project)
+	{
+		this.project = project;
 	}
 }

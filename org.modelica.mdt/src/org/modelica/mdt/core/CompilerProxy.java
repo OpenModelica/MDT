@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.internal.compiler;
+package org.modelica.mdt.core;
 
 import java.util.Vector;
 
@@ -58,7 +58,6 @@ import org.modelica.mdt.compiler.IParseResults;
 import org.modelica.mdt.compiler.InvocationError;
 import org.modelica.mdt.compiler.UnexpectedReplyException;
 import org.modelica.mdt.compiler.CompilerInstantiationException.ProblemType;
-import org.modelica.mdt.core.IModelicaClass;
 
 
 /**

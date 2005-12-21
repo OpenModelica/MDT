@@ -71,7 +71,7 @@ import org.modelica.mdt.compiler.ICompileError;
 import org.modelica.mdt.compiler.ConnectException;
 import org.modelica.mdt.compiler.IParseResults;
 import org.modelica.mdt.compiler.UnexpectedReplyException;
-import org.modelica.mdt.internal.compiler.CompilerProxy;
+import org.modelica.mdt.core.CompilerProxy;
 
 /**
  * This builder loads all changed files into OMC in order to check for

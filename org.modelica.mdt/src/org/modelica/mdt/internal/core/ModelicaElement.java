@@ -49,10 +49,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
-import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.compiler.CompilerInstantiationException;
 import org.modelica.mdt.compiler.ConnectException;
 import org.modelica.mdt.compiler.InvocationError;
@@ -92,27 +90,6 @@ abstract public class ModelicaElement extends PlatformObject
 		return pattern;
 	}
     private static Pattern classNamePattern = Pattern.compile(getPattern());
-
-
-	@Override
-	public Object getAdapter(Class adapter)
-	{
-		if (IWorkbenchAdapter.class.equals(adapter))
-		{
-			return ModelicaCore.getWorkbenchAdapter();
-		}
-		else if (IResource.class.equals(adapter))
-		{
-			IResource resource = getResource();
-
-			if (resource != null)
-			{
-				return resource;
-			}
-		}
-
-		return super.getAdapter(adapter);
-	}
 
 	public IResource getResource() 
 	{

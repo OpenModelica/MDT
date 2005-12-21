@@ -52,7 +52,7 @@ import org.modelica.mdt.compiler.CompilerInstantiationException;
 import org.modelica.mdt.compiler.ConnectException;
 import org.modelica.mdt.compiler.InvocationError;
 import org.modelica.mdt.compiler.UnexpectedReplyException;
-import org.modelica.mdt.internal.compiler.CompilerProxy;
+import org.modelica.mdt.core.CompilerProxy;
 
 /**
  * Contains code for handling errors and other unexpected/undersireable

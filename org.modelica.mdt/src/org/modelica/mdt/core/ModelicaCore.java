@@ -52,15 +52,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.internal.core.ModelicaRoot;
-import org.modelica.mdt.ui.ModelicaElementAdapter;
 import org.modelica.mdt.MdtPlugin;
 
 public class ModelicaCore 
 {
 	private static ModelicaRoot modelicaRoot = null;
-	private static IWorkbenchAdapter modelicaElementAdapter = null;
+
 	
 	public static class CreateNewProjectRunnable implements IRunnableWithProgress
 	{
@@ -149,18 +147,6 @@ public class ModelicaCore
 	{
 		return modelicaRoot;
 	}
-
-
-	public static Object getWorkbenchAdapter() 
-	{
-		if (modelicaElementAdapter == null)
-		{
-			modelicaElementAdapter = new ModelicaElementAdapter();
-		}
-
-		return modelicaElementAdapter;
-	}
-
 
 	public static void start()
 	{

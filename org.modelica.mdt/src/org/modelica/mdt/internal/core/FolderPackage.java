@@ -52,6 +52,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.ErrorManager;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
@@ -61,7 +62,6 @@ import org.modelica.mdt.compiler.ConnectException;
 import org.modelica.mdt.compiler.InvocationError;
 import org.modelica.mdt.compiler.IParseResults;
 import org.modelica.mdt.compiler.UnexpectedReplyException;
-import org.modelica.mdt.internal.compiler.CompilerProxy;
 
 /**
  * A package that is stored as a folder.
