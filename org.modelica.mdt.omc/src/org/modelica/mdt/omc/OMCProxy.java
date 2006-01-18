@@ -736,11 +736,11 @@ public class OMCProxy implements IModelicaCompiler
 		}
 		/* we have no idea what OMC returned */
 		throw new UnexpectedReplyException("getElementsInfo("+ className +")" + 
-						"replays:'" + retval + "'");
+						"replies:'" + retval + "'");
 	}
 
 	
-	public String getCompileName()
+	public String getCompilerName()
 	{
 		return "OpenModelica Compiler";
 	}
