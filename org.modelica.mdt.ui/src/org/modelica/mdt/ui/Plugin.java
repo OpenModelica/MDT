@@ -1,5 +1,6 @@
 package org.modelica.mdt.ui;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -49,16 +50,18 @@ public class Plugin extends AbstractUIPlugin
 	{
 		return plugin;
 	}
-
-//	/**
-//	 * Returns an image descriptor for the image file at the given
-//	 * plug-in relative path.
-//	 *
-//	 * @param path the path
-//	 * @return the image descriptor
-//	 */
-//	public static ImageDescriptor getImageDescriptor(String path) 
-//	{
-//		return AbstractUIPlugin.imageDescriptorFromPlugin("org.modelica.mdt.ui", path);
-//	}
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() 
+	{
+		Display display;
+		display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		return display;		
+	}
 }

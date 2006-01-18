@@ -18,7 +18,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.MdtPlugin;
 
 /**
  * Bundle of most images used by the Mdt plug-in.
@@ -32,7 +31,7 @@ public class ModelicaImages
 	static 
 	{
 		String pathSuffix = "icons/"; //$NON-NLS-1$
-		ICON_BASE_URL= MdtPlugin.getDefault().getBundle().getEntry(pathSuffix);
+		ICON_BASE_URL= Plugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 	
 	// The plugin registry
@@ -107,7 +106,7 @@ public class ModelicaImages
 	
 	private static void initializeImageRegistry() 
 	{
-		fgImageRegistry= new ImageRegistry(MdtPlugin.getStandardDisplay());
+		fgImageRegistry = new ImageRegistry(Plugin.getStandardDisplay());
 		declareImages();
 	}
 	
