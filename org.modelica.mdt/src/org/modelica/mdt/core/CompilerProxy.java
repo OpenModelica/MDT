@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -145,7 +145,7 @@ public class CompilerProxy
 	public static String getCompilerName() 
 		throws CompilerInstantiationException
 	{
-		return getCompiler().getCompileName();
+		return getCompiler().getCompilerName();
 	}
 
 	// TODO rename to loadFile or maybe loadSourceFile ?
