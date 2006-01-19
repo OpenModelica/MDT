@@ -68,6 +68,8 @@ public class ErrorManager
 	/* status codes used for logging */ 
 	private static final int INTERNAL_ERROR = 0;
 	private static final int INTERNAL_WARNING = 1;
+	/* used to logg suspected bugs */
+	private static final int ILLEGAL_INTERNAL_STATE = 2;
 
 	/**
 	 * error dialog showing logic variables
@@ -127,7 +129,7 @@ public class ErrorManager
 	 */
 	public static void showCompilerError(CompilerException exception)
 	{
-		boolean showErrorDialog = true;
+		boolean showErrorDialog = false;
 		
 		/* construct the error message */
 		String message = "unknow error";
@@ -144,7 +146,6 @@ public class ErrorManager
 			 * let's just name our compiler 'unknow'
 			 */
 		}
-		
 		
 		String upgrade_your_software =  /* the standard remedy */
 			"Try upgrading the " + MdtPlugin.PLUGIN_HUMAN_NAME + 
@@ -260,7 +261,11 @@ public class ErrorManager
 		}
 		else
 		{
-			//TODO bug location
+			/* unexpected exception type */
+			ErrorManager.logBug(MdtPlugin.getSymbolicName(),
+					"exception of unexpected type " + 
+					exception.getClass().getName() +
+					" encountered");
 		}
 
 		final IStatus status = 
@@ -307,6 +312,34 @@ public class ErrorManager
 		});
 	}
 
+	/**
+	 * Log illegal internal state that is a suspected bug.
+	 * 
+	 * @param pluginSymbolicName the symbolic name of the plugin where the state 
+	 * is occuring
+	 * @param message a descriptive message of the nature of illegalness of the 
+	 * state, this description should be usable to fix the bug.
+	 * 
+	 */
+	public static void logBug(String pluginSymbolicName, String message)
+	{
+		/*
+		 * get the stack trace of the caller, 
+		 * used to log the location of the bug 
+		 */
+		StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
+		
+		IStatus status = 
+			new Status(IStatus.WARNING, pluginSymbolicName, 
+				ILLEGAL_INTERNAL_STATE, 
+				"illegal internal status (suspected bug) encountered at " +
+				ste.getClassName() + "." + ste.getMethodName() +
+				"(" + ste.getFileName() + ":" + ste.getLineNumber() + "). " +
+				"'" + message + "'", null);
+		
+		MdtPlugin.getDefault().getLog().log(status);
+
+	}
 	
 	/**
 	 * Returns caller methods name including classname and source file name.
