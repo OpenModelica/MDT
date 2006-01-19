@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui;
+package org.modelica.mdt.ui.view;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;

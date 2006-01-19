@@ -8,8 +8,8 @@
             name="Modelica"/>
       <view
             category="org.modelica.mdt.ModelicaCategory"
-            class="org.modelica.mdt.ui.ProjectsView"
-            icon="icons/modelicaProject.png"
+            class="org.modelica.mdt.ui.view.ProjectsView"
+            icon="icons/etool16/newproject_wiz.png"
             id="org.modelica.mdt.ProjectsView"
             name="Modelica Projects"/>
    </extension>

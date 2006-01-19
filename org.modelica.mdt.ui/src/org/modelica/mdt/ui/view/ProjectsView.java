@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui;
+package org.modelica.mdt.ui.view;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -80,6 +80,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.ui.ModelicaElementContentProvider;
+import org.modelica.mdt.ui.ModelicaElementSorter;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.modelica.mdt.compiler.CompilerException;
 
