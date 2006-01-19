@@ -589,7 +589,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
 	 */
-	public ParseResults loadFileInteractive(IFile file)
+	public ParseResults loadSourceFile(IFile file)
 		throws ConnectException, UnexpectedReplyException
 	{
 		ParseResults res = new ParseResults();
