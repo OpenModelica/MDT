@@ -153,7 +153,7 @@ public class CompilerProxy
 		throws ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
-		return getCompiler().loadFileInteractive(file);
+		return getCompiler().loadSourceFile(file);
 	}
 	
 	public static Vector<Object> getClassNames(String className)

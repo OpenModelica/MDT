@@ -46,14 +46,16 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.modelica.mdt.core.IModelicaClass.Type;
 
+//TODO write comments here
 /**
  * 
  */
 public interface IModelicaCompiler
 {
+	//TODO write comments here
 	public String getCompilerName();
 
-	public IParseResults loadFileInteractive(IFile file)
+	public IParseResults loadSourceFile(IFile file)
 			throws ConnectException, UnexpectedReplyException;
 
 	public Vector<Object> getClassNames(String className)
