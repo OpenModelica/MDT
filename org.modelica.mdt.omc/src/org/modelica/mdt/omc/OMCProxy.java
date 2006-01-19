@@ -60,8 +60,8 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.omc.internal.ElementLocation;
 import org.modelica.mdt.omc.internal.ParseResults;
 import org.modelica.mdt.omc.internal.OMCParser;
-import org.modelica.omc.internal.corba.OmcCommunication;
-import org.modelica.omc.internal.corba.OmcCommunicationHelper;
+import org.modelica.mdt.omc.internal.corba.OmcCommunication;
+import org.modelica.mdt.omc.internal.corba.OmcCommunicationHelper;
 import org.omg.CORBA.ORB;
 
 /**

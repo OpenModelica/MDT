@@ -1,4 +1,4 @@
-package org.modelica.omc.internal.corba;
+package org.modelica.mdt.omc.internal.corba;
 
 /**
 * OmcCommunicationOperations.java .
