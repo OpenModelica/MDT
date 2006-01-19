@@ -88,7 +88,9 @@ public class ModelicaElementContentProvider
 			return ((IModelicaRoot)inputElement).getProjects();
 		}
 		
-		/* this is not happening */
+		ErrorManager.logBug(Plugin.getSymbolicName(),
+				"Elements of an object of unexpected type " + 
+				inputElement.getClass().getName() + " requested.");
 		return new Object[] {};
 	}
 	

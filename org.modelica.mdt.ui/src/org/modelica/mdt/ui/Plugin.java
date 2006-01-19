@@ -64,4 +64,13 @@ public class Plugin extends AbstractUIPlugin
 			display = Display.getDefault();
 		return display;		
 	}
+	
+	/**
+	 * @return returns this plugins symbolic name e.g. stuff like org.foo.bar
+	 */
+	public static String getSymbolicName()
+	{
+		return getDefault().getBundle().getSymbolicName();
+	}
+
 }
