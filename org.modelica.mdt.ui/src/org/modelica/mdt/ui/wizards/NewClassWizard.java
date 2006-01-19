@@ -242,7 +242,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 				public void widgetSelected(SelectionEvent e)
 				{
-					classTypeChanged();
+					restrictionTypeChanged();
 	        		lastClassTypeSelected = classType.getSelectionIndex();
 				}
 
@@ -308,7 +308,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	         * affects thiers status (can't set status on unexsiting widgets)
 	         */
 	        classType.select(lastClassTypeSelected);
-	        classTypeChanged();
+	        restrictionTypeChanged();
 		}
 
 		/**
@@ -318,7 +318,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 		 * This method should be called whenever changes are made to the
 		 * combo's selection.
 		 */
-		private void classTypeChanged()
+		private void restrictionTypeChanged()
 		{
 			/*
 			 * update state of the modifiers checkboxes
