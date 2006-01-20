@@ -184,9 +184,9 @@ public class CompilerProxy
 		return getCompiler().getRestrictionType(className);
 	}
 	
-	public static void loadSystemLibrary()
+	public static String[] getStandardLibrary()
 		throws ConnectException, CompilerInstantiationException
 	{
-		getCompiler().loadSystemLibrary();		
+		return getCompiler().getStandardLibrary();		
 	}
 }

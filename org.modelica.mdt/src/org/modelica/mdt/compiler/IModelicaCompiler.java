@@ -70,6 +70,6 @@ public interface IModelicaCompiler
 	public Type getRestrictionType(String className)
 			throws ConnectException;
 	
-	public void loadSystemLibrary()
+	public String[] getStandardLibrary()
 			throws ConnectException;
 }

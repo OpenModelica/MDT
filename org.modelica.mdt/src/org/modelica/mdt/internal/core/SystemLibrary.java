@@ -67,12 +67,11 @@ public class SystemLibrary extends ModelicaElement implements ISystemLibrary
 	{
 		if (packages == null)
 		{
-			// TODO this should probaly be redifined so that
-			// loadSystemLibrary returns a list of packages in the system library
-			// more flexible'n'stuff
-			CompilerProxy.loadSystemLibrary();
-			packages = new LinkedList<Object>();			
-			packages.add(new InnerClass("", "Modelica", Type.PACKAGE));
+			packages = new LinkedList<Object>();
+			for (String packageName : CompilerProxy.getStandardLibrary())
+			{
+				packages.add(new InnerClass("", packageName, Type.PACKAGE));
+			}
 		}
 		
 		return packages;
