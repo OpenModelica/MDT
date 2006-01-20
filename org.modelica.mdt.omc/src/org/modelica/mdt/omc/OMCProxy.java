@@ -84,6 +84,8 @@ public class OMCProxy implements IModelicaCompiler
 	
 	/* indicates if the Modelica System Library has been loaded */
 	private boolean systemLibraryLoaded = false;
+
+	private String[] standardLibraryPackages = { "Modelica" };
 	
 	/* should we trace the calls to sendExpression? */
 	private static boolean traceOMCCalls = false;
@@ -500,21 +502,6 @@ public class OMCProxy implements IModelicaCompiler
 			System.out.println("<< " + tokenizer.nextToken());
 		}
 	}
-
-	/**
-	 * Loads in the Modelica System Library.
-	 * @throws ConnectException if we're unable to start communicating with
-	 * the server
-	 */
-	public void loadSystemLibrary()
-		throws ConnectException
-	{
-		if (!systemLibraryLoaded)
-		{
-			sendExpression("loadModel(Modelica)");
-			systemLibraryLoaded = true;
-		}
-	}
 	
 	/**
 	 * Get the classes contained in a class (a package is a class..)
@@ -743,5 +730,23 @@ public class OMCProxy implements IModelicaCompiler
 	public String getCompilerName()
 	{
 		return "OpenModelica Compiler";
+	}
+
+	/**
+	 * Loads in the Modelica System Library and returns names of the top-level
+	 * packages.
+	 *  
+	 * @throws ConnectException if we're unable to start communicating with
+	 * the server
+	 */	
+	public String[] getStandardLibrary() throws ConnectException
+	{
+		if (!systemLibraryLoaded)
+		{
+			sendExpression("loadModel(Modelica)");
+			systemLibraryLoaded = true;
+		}
+
+		return standardLibraryPackages;
 	}
 }
