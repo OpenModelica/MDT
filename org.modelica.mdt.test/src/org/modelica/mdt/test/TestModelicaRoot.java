@@ -52,12 +52,12 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 
 import org.eclipse.ui.PlatformUI;
 
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.internal.core.MdtPlugin;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 

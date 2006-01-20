@@ -41,8 +41,8 @@
 
 package org.modelica.mdt.test;
 
-import org.modelica.mdt.compiler.ICompileError;
-import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.compiler.ICompileError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.omc.internal.OMCParser;
 
 import junit.framework.TestCase;

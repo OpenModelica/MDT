@@ -4,7 +4,7 @@ Bundle-Name: MDT Unit Tests
 Bundle-SymbolicName: org.modelica.mdt.test; singleton:=true
 Bundle-Version: 0.0.0.svn-head
 Bundle-Localization: plugin
-Require-Bundle: org.modelica.mdt,
+Require-Bundle: org.modelica.mdt.core,
  org.eclipse.core.runtime,
  org.junit,
  org.eclipse.ui,

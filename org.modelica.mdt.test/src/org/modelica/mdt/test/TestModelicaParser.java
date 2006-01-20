@@ -43,12 +43,12 @@ package org.modelica.mdt.test;
 
 import java.util.Vector;
 
-import org.modelica.mdt.compiler.ModelicaParser;
+import org.modelica.mdt.core.compiler.ModelicaParser;
 
 import junit.framework.TestCase;
 
 /**
- * test org.modelica.mdt.compiler.ModelicaParser class' code 
+ * test org.modelica.mdt.core.compiler.ModelicaParser class' code 
  */
 public class TestModelicaParser extends TestCase 
 {
