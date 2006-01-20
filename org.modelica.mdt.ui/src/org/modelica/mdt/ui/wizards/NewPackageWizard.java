@@ -73,9 +73,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.internal.core.MdtPlugin;
 import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.ui.ModelicaImages;
 

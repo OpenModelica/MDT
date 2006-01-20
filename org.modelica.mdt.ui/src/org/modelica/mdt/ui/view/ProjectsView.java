@@ -77,13 +77,13 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.ui.ModelicaElementContentProvider;
 import org.modelica.mdt.ui.ModelicaElementSorter;
 import org.modelica.mdt.ui.editor.EditorUtility;
-import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.internal.core.MdtPlugin;
 
 public class ProjectsView extends ViewPart
 {

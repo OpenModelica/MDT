@@ -54,11 +54,11 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.compiler.CompilerException;
-import org.modelica.mdt.compiler.ConnectException;
-import org.modelica.mdt.compiler.ModelicaParser;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ModelicaParser;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 
 /**

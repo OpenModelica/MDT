@@ -41,8 +41,8 @@
 
 package org.modelica.mdt.ui.wizards;
 
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.internal.core.MdtPlugin;
 import org.modelica.mdt.ui.ModelicaImages;
 
 import org.eclipse.core.resources.IProject;

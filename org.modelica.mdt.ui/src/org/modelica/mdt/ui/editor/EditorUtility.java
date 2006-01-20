@@ -51,13 +51,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ConnectException;
-import org.modelica.mdt.compiler.InvocationError;
-import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.MdtPlugin;
 
 /**
  * A number of routines for working with modelica elements in editors.

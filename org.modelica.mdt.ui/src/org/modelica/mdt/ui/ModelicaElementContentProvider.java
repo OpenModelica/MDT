@@ -52,15 +52,15 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.MdtPlugin;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.internal.core.MdtPlugin;
 import org.modelica.mdt.internal.core.SystemLibrary;
 
 /**

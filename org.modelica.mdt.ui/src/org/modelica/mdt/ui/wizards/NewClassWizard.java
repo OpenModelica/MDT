@@ -85,7 +85,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.ide.IDE;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.internal.core.MdtPlugin;
 import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.ui.ModelicaImages;
 

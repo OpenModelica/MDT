@@ -43,7 +43,6 @@ package org.modelica.mdt.ui;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
@@ -51,7 +50,8 @@ import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
  * Implements ordering of modelica elements suitable for displaying 'em in the

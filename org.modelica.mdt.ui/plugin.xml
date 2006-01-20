@@ -76,7 +76,7 @@
       <image
             icon="icons/ovr16/modelica_ovr.png"
             id="org.modelica.mdt.modelicaNatureImage"
-            natureId="org.modelica.mdt.ModelicaNature"/>
+            natureId="org.modelica.mdt.core.ModelicaNature"/>
    </extension>
    <extension
          id="ModelicaHelp"

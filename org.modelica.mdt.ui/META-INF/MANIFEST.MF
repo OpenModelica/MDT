@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true
 Bundle-Version: 0.0.0.svn-head
 Bundle-Activator: org.modelica.mdt.ui.Plugin
 Bundle-Localization: plugin
-Require-Bundle: org.modelica.mdt,
+Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,

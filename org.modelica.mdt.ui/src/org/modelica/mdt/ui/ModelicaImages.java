@@ -17,7 +17,7 @@ import java.net.URL;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.modelica.mdt.ErrorManager;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
  * Bundle of most images used by the Mdt plug-in.
