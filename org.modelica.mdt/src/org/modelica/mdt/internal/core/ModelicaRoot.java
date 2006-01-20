@@ -51,12 +51,11 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.modelica.mdt.ErrorManager;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
-import org.modelica.mdt.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
+import org.modelica.mdt.core.compiler.CompilerException;
 
 /**
  * @author Elmir Jagudin

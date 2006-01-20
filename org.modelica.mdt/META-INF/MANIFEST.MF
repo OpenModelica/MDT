@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Modelica Development Tooling
-Bundle-SymbolicName: org.modelica.mdt; singleton:=true
+Bundle-SymbolicName: org.modelica.mdt.core; singleton:=true
 Bundle-Version: 0.0.0.svn-head
 Bundle-Localization: plugin
 Bundle-Vendor: PELAB
@@ -10,9 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text
 Bundle-ClassPath: bin/
-Export-Package: org.modelica.mdt,
- org.modelica.mdt.compiler,
+Export-Package: org.modelica.mdt.core.compiler,
  org.modelica.mdt.core,
  org.modelica.mdt.internal.core
-Bundle-Activator: org.modelica.mdt.MdtPlugin
+Bundle-Activator: org.modelica.mdt.internal.core.MdtPlugin
 Eclipse-AutoStart: true

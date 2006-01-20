@@ -40,8 +40,8 @@
  */
 package org.modelica.mdt.core;
 
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
 
 /**
  * @author Elmir Jagudin

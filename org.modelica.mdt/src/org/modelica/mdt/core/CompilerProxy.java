@@ -49,15 +49,15 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.modelica.mdt.MdtPlugin;
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ConnectException;
-import org.modelica.mdt.compiler.IElementLocation;
-import org.modelica.mdt.compiler.IModelicaCompiler;
-import org.modelica.mdt.compiler.IParseResults;
-import org.modelica.mdt.compiler.InvocationError;
-import org.modelica.mdt.compiler.UnexpectedReplyException;
-import org.modelica.mdt.compiler.CompilerInstantiationException.ProblemType;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.IModelicaCompiler;
+import org.modelica.mdt.core.compiler.IParseResults;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException.ProblemType;
+import org.modelica.mdt.internal.core.MdtPlugin;
 
 
 /**
@@ -85,7 +85,7 @@ public class CompilerProxy
 	
 	/**
 	 * Load the first best modelica compiler proxy contributed by 
-	 * some other plugin via the org.modelica.mdt.compiler extension point.
+	 * some other plugin via the org.modelica.mdt.core.compiler extension point.
 	 * 
 	 * @return
 	 * @throws CompilerInstantiationException 

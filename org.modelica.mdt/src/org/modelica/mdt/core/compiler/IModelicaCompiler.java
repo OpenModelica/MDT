@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,22 +39,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.compiler;
+package org.modelica.mdt.core.compiler;
 
+import java.util.Vector;
+
+import org.eclipse.core.resources.IFile;
+import org.modelica.mdt.core.IModelicaClass.Type;
+
+//TODO write comments here
 /**
- * Provides information on a compile error for some specific file.
- *  
- * @author Elmir Jagudin
+ * 
  */
-public interface ICompileError
+public interface IModelicaCompiler
 {
-	/**
-	 * @return the line number in the file where this error have occured 
-	 */
-	public int getLine();
+	//TODO write comments here
+	public String getCompilerName();
+
+	public IParseResults loadSourceFile(IFile file)
+			throws ConnectException, UnexpectedReplyException;
+
+	public Vector<Object> getClassNames(String className)
+			throws ConnectException, UnexpectedReplyException;
+
+	public Vector<Object> getElementsInfo(String className)
+			throws ConnectException, InvocationError, UnexpectedReplyException;
+
+	public IElementLocation getElementLocation(String className)
+			throws ConnectException, UnexpectedReplyException, InvocationError;
+
+	public Type getRestrictionType(String className)
+			throws ConnectException;
 	
-	/**
-	 * @return the human readable description of the error
-	 */
-	public String getErrorDescription();
+	public String[] getStandardLibrary()
+			throws ConnectException;
 }

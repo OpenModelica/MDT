@@ -49,13 +49,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
-import org.modelica.mdt.MdtPlugin;
-import org.modelica.mdt.builder.SyntaxChecker;
 import org.modelica.mdt.core.IModelicaComponent;
-import org.modelica.mdt.compiler.ConnectException;
-import org.modelica.mdt.compiler.IElementLocation;
-import org.modelica.mdt.compiler.InvocationError;
-import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.builder.SyntaxChecker;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * @author Homer Simpson

@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.builder;
+package org.modelica.mdt.core.builder;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -65,13 +65,13 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ICompileError;
-import org.modelica.mdt.compiler.ConnectException;
-import org.modelica.mdt.compiler.IParseResults;
-import org.modelica.mdt.compiler.UnexpectedReplyException;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ICompileError;
+import org.modelica.mdt.core.compiler.IParseResults;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
  * This builder loads all changed files into OMC in order to check for
@@ -83,13 +83,9 @@ import org.modelica.mdt.core.CompilerProxy;
 public class SyntaxChecker extends IncrementalProjectBuilder
 {
 
-	public static final String BUILDER_ID = "org.modelica.mdt.syntaxChecker";
+	public static final String BUILDER_ID = 
+			"org.modelica.mdt.core.syntaxChecker";
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
-	 * 				java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException

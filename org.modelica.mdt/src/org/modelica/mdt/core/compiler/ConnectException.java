@@ -39,15 +39,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.compiler;
+package org.modelica.mdt.core.compiler;
 
-
-public class UnexpectedReplyException extends CompilerException
+/**
+ * Thrown when there is an error while connecting to the compiler.
+ * 
+ * @author Andreas Remar
+ */
+public class ConnectException extends CompilerException
 {
-	private static final long serialVersionUID = 2514962826919739522L;
+	private static final long serialVersionUID = 5391049301949772469L;
 
-	public UnexpectedReplyException(String error)
+	public ConnectException(String error)
 	{
 		super(error);
 	}
+
 }

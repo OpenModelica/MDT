@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.compiler;
+package org.modelica.mdt.core.compiler;
 
 /**
  * Thrown when compiler reports an unexpected error while invoking

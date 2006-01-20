@@ -39,12 +39,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.compiler;
+package org.modelica.mdt.core.compiler;
 
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.MdtPlugin;
+import org.modelica.mdt.internal.core.MdtPlugin;
 
 /**
  * This exception is thrown when there was error instantiating the

@@ -8,18 +8,18 @@
          name="Modelica"
          point="org.eclipse.core.resources.natures">
       <runtime>
-         <run class="org.modelica.mdt.ModelicaNature"/>
+         <run class="org.modelica.mdt.internal.core.ModelicaNature"/>
       </runtime>
-      <builder id="org.modelica.mdt.syntaxChecker"/>
+      <builder id="org.modelica.mdt.core.syntaxChecker"/>
    </extension>
    
    <extension
    		id="syntaxChecker"
-   		name="Modelica Builder"
+   		name="Modelica Syntax Checker"
    		point="org.eclipse.core.resources.builders">
    		<builder hasNature="true">
    			<run
-   				class="org.modelica.mdt.builder.SyntaxChecker">
+   				class="org.modelica.mdt.core.builder.SyntaxChecker">
    				<parameter
              name="comment"
              value="Builder Comment"/>

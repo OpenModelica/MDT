@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt;
+package org.modelica.mdt.internal.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -57,7 +57,7 @@ import org.osgi.framework.BundleContext;
 public class MdtPlugin extends AbstractUIPlugin
 {
 	public static final String MODELICA_NATURE = 
-		"org.modelica.mdt.ModelicaNature";
+		"org.modelica.mdt.core.ModelicaNature";
 
 	/* human readable name of the plugin */
 	public static final String PLUGIN_HUMAN_NAME = 
@@ -65,7 +65,7 @@ public class MdtPlugin extends AbstractUIPlugin
 
 	/* extension point ID for modelica compilers */
 	public static final String COMPILER_EXTENSION_ID = 
-		"org.modelica.mdt.compiler";
+		"org.modelica.mdt.core.compiler";
 	
 	
 	/* The shared instance. */

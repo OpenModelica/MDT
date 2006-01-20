@@ -47,8 +47,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.IModelicaClass.Type;
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
 
 /**
  * @author Elmir Jagudin

@@ -51,11 +51,11 @@ import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.compiler.CompilerInstantiationException;
-import org.modelica.mdt.compiler.ConnectException;
-import org.modelica.mdt.compiler.IParseResults;
-import org.modelica.mdt.compiler.InvocationError;
-import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.IParseResults;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin

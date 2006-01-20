@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,25 +39,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.compiler;
+package org.modelica.mdt.internal.core;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.modelica.mdt.core.builder.SyntaxChecker;
 
 /**
- * Presents information on some elements location in a file.
- * More specific this class stores the location of the begging of the
- * definition of the element.
- * 
- * @author Homer Simpson
+ * Enables Syntax Checker builder on modelica projects 
  */
-public interface IElementLocation
-{
-	
-	/**
-	 * @return line number where this element is defined
-	 */
-	public int getLine();
 
-	/**
-	 * @return full path to the file where the element is defined
-	 */
-	public String getPath();
+public class ModelicaNature implements IProjectNature
+{
+	private IProject project;
+	
+	public void configure() throws CoreException 
+	{
+		
+		SyntaxChecker.addBuilderToProject(project);
+		
+		new Job("Modelica Build")
+		{
+			protected IStatus run(IProgressMonitor monitor)
+			{
+				try
+				{
+					project.build(SyntaxChecker.FULL_BUILD,
+								  SyntaxChecker.BUILDER_ID,
+								  null,
+								  monitor);
+				}
+				catch(CoreException e)
+				{
+					System.out.println(e);
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+	}
+
+	public void deconfigure() throws CoreException 
+	{
+		SyntaxChecker.removeBuilderFromProject(project);
+	}
+
+	public IProject getProject()
+	{
+		return project;
+	}
+
+	public void setProject(IProject project)
+	{
+		this.project = project;
+	}
 }

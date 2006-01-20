@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -39,43 +39,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.compiler;
-
-import org.eclipse.core.runtime.CoreException;
+package org.modelica.mdt.core.compiler;
 
 /**
- * Supertype of all exceptions that can be encountered while communicating
- * with the modelica compiler.
- *  
+ * Thrown if there was an error while invoking command on compiler. E.g. if
+ * compiler dies and connection breaks.
+ * 
  * @author Andreas Remar
  */
-abstract public class CompilerException extends Exception
+public class CommunicationException extends CompilerException
 {
-	private static final long serialVersionUID = -7881546855664735599L;
+	private static final long serialVersionUID = 310955941812035161L;
 
-	
-	/**
-	 * @see Exception#Exception(java.lang.String)
-	 */
-	public CompilerException(String message)
+	public CommunicationException(String error)
 	{
-		super(message);
+		super(error);
 	}
-	
-	/**
-	 * @see Exception#Exception()
-	 */
-	public CompilerException()
-	{
-		super();
-	}
-
-	/**
-	 * @see Exception#Exception(java.lang.Throwable) 
-	 */
-	public CompilerException(CoreException e)
-	{
-		super(e);
-	}
-	
 }

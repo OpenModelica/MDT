@@ -41,7 +41,7 @@
 
 package org.modelica.mdt.internal.core;
 
-import org.modelica.mdt.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.IElementLocation;
 
 //TODO this file should be removed, ElementLocation objects should only
 // be created in the modelica compiler plugin

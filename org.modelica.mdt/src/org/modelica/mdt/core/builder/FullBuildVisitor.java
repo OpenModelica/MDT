@@ -39,48 +39,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.builder;
-
+package org.modelica.mdt.core.builder;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
- * Visitor used to load files into OMC when a partial build is happening. 
+ * Visitor used to load files into OMC when a full build is happening.
  * 
  * @author Andreas Remar
  */
-
-public class PartialBuildVisitor implements IResourceDeltaVisitor 
+public class FullBuildVisitor implements IResourceVisitor
 {
-
 	/**
-	 * @param delta the delta that contains the differences between this
-	 * resource tree and the last resource tree that was built
+	 * @param resource the resource in the project that we are 'visiting'
 	 */
-	public boolean visit(IResourceDelta delta) throws CoreException
+	public boolean visit(IResource resource) throws CoreException
 	{
-		String extension = delta.getResource().getFileExtension();
-		
-		int kind = delta.getKind();
+		String extension = resource.getFileExtension();
 		
 		/*
-		 * Perform the build on .mo files that have either been added or changed
+		 * Only send .mo files to OMC.
 		 */
-		if(extension != null && extension.equals("mo")
-				&& (kind == IResourceDelta.ADDED
-						|| kind == IResourceDelta.CHANGED))
+		if(extension != null && extension.equals("mo"))
 		{
-			IPath path = delta.getProjectRelativePath();
-			IFile file = delta.getResource().getProject().getFile(path);
-
+			IPath path = resource.getProjectRelativePath();
+			IFile file = resource.getProject().getFile(path);
+			
 			file.deleteMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_INFINITE);
 			try
@@ -94,34 +85,16 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 			catch(CompilerException e)
 			{
 				ErrorManager.logError(e);
-
+				
 				/* Don't visit the children, OMC is fubarred. */
 				return false;
 			}
 		}
 		
 		/*
-		 * Get the children of this resource that have been changed since
-		 * last rebuild.
+		 * Return true to indicate that the children of this resource should
+		 * be visited.
 		 */
-		IResourceDelta[] d = delta.getAffectedChildren();
-		if(d == null)
-			return false;
-		
-		/*
-		 * Rebuild all children of this resource that have changed.
-		 * (Maybe this shouldn't be done explicitly but instead return
-		 *  true from this function?)
-		 */
-		for(IResourceDelta d1 : d)
-		{
-			d1.accept(new PartialBuildVisitor());
-		}
-		
-		/*
-		 * Return false to indicate that children should not be visited.
-		 */
-		return false;
+		return true;
 	}
-
 }
