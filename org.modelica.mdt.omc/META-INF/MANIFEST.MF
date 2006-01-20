@@ -6,6 +6,6 @@ Bundle-Version: 0.0.0.svn-head
 Bundle-Vendor: PELAB
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.modelica.mdt,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.modelica.mdt.core
 Export-Package: org.modelica.mdt.omc.internal;x-friends:="org.modelica.mdt.test"

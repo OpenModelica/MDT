@@ -41,7 +41,7 @@
 
 package org.modelica.mdt.omc.internal;
 
-import org.modelica.mdt.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.IElementLocation;
 
 /**
  * This class implements IElementLocation on behalf of OMC proxy plugin.

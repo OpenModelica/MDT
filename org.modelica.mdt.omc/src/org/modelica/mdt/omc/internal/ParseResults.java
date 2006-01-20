@@ -42,7 +42,7 @@ package org.modelica.mdt.omc.internal;
 
 import java.util.Vector;
 
-import org.modelica.mdt.compiler.IParseResults;
+import org.modelica.mdt.core.compiler.IParseResults;
 
 /**
  * This class implements IParseResults on behalf of OMC proxy plugin.

@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension
-         point="org.modelica.mdt.compiler">
+         point="org.modelica.mdt.core.compiler">
       <compiler class="org.modelica.mdt.omc.OMCProxy"/>
    </extension>
 

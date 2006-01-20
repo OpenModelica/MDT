@@ -41,7 +41,7 @@
 
 package org.modelica.mdt.omc.internal;
 
-import org.modelica.mdt.compiler.ICompileError;
+import org.modelica.mdt.core.compiler.ICompileError;
 
 /**
  * Class that implements ICompileError on behalf of OMC proxy plugin.

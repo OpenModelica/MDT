@@ -43,8 +43,8 @@ package org.modelica.mdt.omc.internal;
 
 import java.util.StringTokenizer;
 
-import org.modelica.mdt.ErrorManager;
-import org.modelica.mdt.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
  * Handles parsing of more complex replys from OMC.
