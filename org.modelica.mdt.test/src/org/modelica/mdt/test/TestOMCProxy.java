@@ -41,7 +41,6 @@
 
 package org.modelica.mdt.test;
 
-import java.util.Collections;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -60,8 +59,6 @@ import junit.framework.TestCase;
 
 public class TestOMCProxy extends TestCase
 {
-	private Vector<String> modelicaLibraryPackages = new Vector<String>(12);
-	
 	/* a source code file use in some tests */
 	private IFile nested_models_mo;
 	
@@ -79,19 +76,6 @@ public class TestOMCProxy extends TestCase
 		
 		nested_models_mo = proj.getFile("nested_models.mo");
 
-		
-		assertTrue(Collections.addAll(modelicaLibraryPackages,
-				"Mechanics",
-				"Electrical",
-				"Math",
-				"Blocks",
-				"Thermal",
-				"Icons",
-				"Constants",
-				"SIunits"));
-		
-		/* we need to load modelica package */
-		CompilerProxy.loadSystemLibrary();
 	}
 	
 	/**
@@ -102,6 +86,18 @@ public class TestOMCProxy extends TestCase
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
+		/* we need to load modelica package */		
+		String[] stdPackages = CompilerProxy.getStandardLibrary();
+		
+		 /* make some checks on the returned names of the standard packages */
+		Vector<String> v = new Vector<String>();
+		for (String name : stdPackages)
+		{
+			v.add(name);
+		}
+		assertTrue(v.size() >= 1);
+		assertTrue(v.contains("Modelica"));
+		
 		if (CompilerProxy.getRestrictionType("Modelica") != Type.PACKAGE)
 		{
 			fail("Modelica class' restriction type is wrong");
