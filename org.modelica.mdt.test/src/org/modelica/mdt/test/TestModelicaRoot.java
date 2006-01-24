@@ -41,8 +41,8 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -77,7 +77,7 @@ public class TestModelicaRoot extends TestCase
 	public class ElementListener implements IModelicaElementChangeListener 
 	{
 
-		public void elementsChanged(List<IModelicaElementChange> changes) 
+		public void elementsChanged(Collection<IModelicaElementChange> changes) 
 		{
 			for (IModelicaElementChange change : changes)
 			{

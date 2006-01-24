@@ -157,44 +157,44 @@ public class TestOMCProxy extends TestCase
 		/*
 		 * we are basicaly only interested in getting the right line number
 		 */
-		IElementLocation loc = CompilerProxy.getElementLocation("nested_models");		
+		IElementLocation loc = CompilerProxy.getClassLocation("nested_models");		
 		assertTrue(loc.getPath().endsWith("nested_models.mo"));
 		assertEquals(loc.getLine(), 1);
 		
-		loc = CompilerProxy.getElementLocation("nested_models.hepp");		
+		loc = CompilerProxy.getClassLocation("nested_models.hepp");		
 		assertEquals(loc.getLine(), 3);
 
-		loc = CompilerProxy.getElementLocation("nested_models.foo");		
+		loc = CompilerProxy.getClassLocation("nested_models.foo");		
 		assertEquals(loc.getLine(), 4);
 		
-		loc = CompilerProxy.getElementLocation("nested_models.foo.bar");		
+		loc = CompilerProxy.getClassLocation("nested_models.foo.bar");		
 		assertEquals(loc.getLine(), 5);
 		
-		loc = CompilerProxy.getElementLocation("muu");		
+		loc = CompilerProxy.getClassLocation("muu");		
 		assertEquals(loc.getLine(), 8);
 		
-		loc = CompilerProxy.getElementLocation("foo");		
+		loc = CompilerProxy.getClassLocation("foo");		
 		assertEquals(loc.getLine(), 14);
 
-		loc = CompilerProxy.getElementLocation("hej");		
+		loc = CompilerProxy.getClassLocation("hej");		
 		assertEquals(loc.getLine(), 19);
 
-		loc = CompilerProxy.getElementLocation("hej.ine_paketen");		
+		loc = CompilerProxy.getClassLocation("hej.ine_paketen");		
 		assertEquals(loc.getLine(), 20);
 
-		loc = CompilerProxy.getElementLocation("hej.hejhej");		
+		loc = CompilerProxy.getClassLocation("hej.hejhej");		
 		assertEquals(loc.getLine(), 22);
 
-		loc = CompilerProxy.getElementLocation("hej.hejhej.foo");		
+		loc = CompilerProxy.getClassLocation("hej.hejhej.foo");		
 		assertEquals(loc.getLine(), 23);
 
-		loc = CompilerProxy.getElementLocation("hepp");		
+		loc = CompilerProxy.getClassLocation("hepp");		
 		assertEquals(loc.getLine(), 30);
 
-		loc = CompilerProxy.getElementLocation("hepp.hopp");		
+		loc = CompilerProxy.getClassLocation("hepp.hopp");		
 		assertEquals(loc.getLine(), 31);
 
-		loc = CompilerProxy.getElementLocation("hepp.hehehe");		
+		loc = CompilerProxy.getClassLocation("hepp.hehehe");		
 		assertEquals(loc.getLine(), 33);
 
 	}
