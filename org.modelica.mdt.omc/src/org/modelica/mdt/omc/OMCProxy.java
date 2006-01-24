@@ -625,7 +625,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
 	 */
-	public ElementLocation getElementLocation(String className)
+	public ElementLocation getClassLocation(String className)
 		throws ConnectException, UnexpectedReplyException, InvocationError 
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
