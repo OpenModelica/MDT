@@ -42,7 +42,6 @@
 package org.modelica.mdt.ui;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
@@ -235,7 +234,7 @@ public class ModelicaElementContentProvider
 	/*
 	 * IModelicaElementChangeListener interface method
 	 */
-	public void elementsChanged(final List<IModelicaElementChange> changes)
+	public void elementsChanged(final Collection<IModelicaElementChange> changes)
 	{
 		Control ctrl = viewer.getControl();
 		
@@ -263,7 +262,7 @@ public class ModelicaElementContentProvider
 		}
 	}
 
-	protected void handleChanges(List<IModelicaElementChange> changes)
+	protected void handleChanges(Collection<IModelicaElementChange> changes)
 	{
 		  for (IModelicaElementChange change : changes)
 		  {
@@ -274,7 +273,7 @@ public class ModelicaElementContentProvider
 			  case ADDED:
 				  viewer.add(change.getParent(), element);
 				  break;
-			  case CHANGED:
+			  case MODIFIED:
 				  viewer.update(element, null);
 				  break;
 			  case REMOVED:
