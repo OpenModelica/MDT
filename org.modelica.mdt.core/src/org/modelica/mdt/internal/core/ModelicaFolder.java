@@ -187,7 +187,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 					changes.addAll(((ModelicaElement)element).update(d));
 				}
 				changes.add(new ModelicaElementChange(element, 
-						ChangeType.CHANGED));
+						ChangeType.MODIFIED));
 				break;
 			}
 		}

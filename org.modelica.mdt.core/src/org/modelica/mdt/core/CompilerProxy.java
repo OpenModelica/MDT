@@ -171,11 +171,11 @@ public class CompilerProxy
 		return getCompiler().getElementsInfo(className);
 	}
 
-	public static IElementLocation getElementLocation(String className)
+	public static IElementLocation getClassLocation(String className)
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException 
 	{
-		return getCompiler().getElementLocation(className);
+		return getCompiler().getClassLocation(className);
 	}
 	
 	public static IModelicaClass.Type getRestrictionType(String className)

@@ -46,30 +46,124 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.modelica.mdt.core.IModelicaClass.Type;
 
-//TODO write comments here
 /**
+ * The interface to a modelica compiler.
  * 
+ *  This interface must be implemented by the extender of the
+ *  org.modelica.mdt.compiler point. This defines the methods used to
+ *  access the modelica compiler by the MDT core plugin.
  */
 public interface IModelicaCompiler
 {
-	//TODO write comments here
+	/**
+	 * @return symbolic name of the compiler suitable for end user consumtion
+	 */
 	public String getCompilerName();
 
+	/**
+	 * Load the modelica source file into the internal database. 
+	 * 
+	 * The file must be parsed before it is stored into the database. 
+	 * The file may contain syntax and other errors that are discoverd while
+	 * it is parsed. The compiler must make the best effort to parse as much
+	 * as possible even if errors are discovered. Compiler should return both
+	 * parse errors and the contens of the file.
+	 * 
+	 * @param file the modelica source code file to load
+	 * @return the modelica elemenats and parsing errors found in the file
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */
 	public IParseResults loadSourceFile(IFile file)
 			throws ConnectException, UnexpectedReplyException;
 
+	/**
+	 * Fetches the list of name of subclasses in a given class
+	 * 
+	 * @param className the name of the class where to look for subclasses
+	 * @return the list of the names of subclasses
+	 */
 	public Vector<Object> getClassNames(String className)
 			throws ConnectException, UnexpectedReplyException;
 
+	/**
+	 * Fetches the information on the components of a class. The information
+	 * is returned as the modelica list with raw unparsed elements as returned
+	 * by the OMC (assuming omc plugin is uses, however if omc plugin is not
+	 * used everything will fall apart).
+	 * The format is as follows (from the Compiler/interactive_api.txt form the
+	 * OMC source code):
+	 * <pre>
+	 * Returns all the elements in a class with the following format:
+     *           {attr1=value1, attr2=value2, .... }
+     *             In a class can be elements or annotations:
+     *             - annotations: { elementvisibility=public|protected, 
+     *                              elementtype=annotation }
+     *             - elements:
+     *               + general attributes: 
+     *                  { elementvisibility=public|protected, 
+     *                    elementfile=file, 
+     *                    elementline=line, 
+     *                    elementcolumn=column,
+     *                   // the next ones are exactly like in getComponents 
+     *                    final=true|false,
+     *                    replaceable=true|false,
+     *                    inout=inner|outer|innerouter|none
+     *                    elementtype=classdef|extends|import|component
+     *                 ... // more here depending on the elementtype. read below 
+     *                   }
+     *                   // depending on the elementtype some more attributes 
+     *                   // will follow here 
+     *                     for classdef: classname=id, 
+     *                         classrestriction=PACKAGE|..., classfile=file, 
+     *                                          classline=line, 
+     *                                          classcolumn=column
+     *                     for extends: path=name
+     *                     for import: kind=named|qualified|unqualified 
+     *                          + for named: id=id, path=name
+     *                          + for qualified: path=name
+     *                          + for unqualified: path=name
+     *                     for component: 
+     *                         typename=component_type, 
+     *                                  names={component_name, "comment"}, 
+     *                                  flow=true|false, 
+     *                     variability="unspecified"|"discrete"|"parameter"|
+     *                                  "constant", 
+     *                     direction="input"|"output"|"unspecified"
+     * </pre>
+     * 
+     * This is of couse a big cludge and should be done properly and abstractly.
+     * 
+	 * @param className
+	 * @return the modelica list with string elements as specified above
+	 */
 	public Vector<Object> getElementsInfo(String className)
 			throws ConnectException, InvocationError, UnexpectedReplyException;
 
-	public IElementLocation getElementLocation(String className)
+	/**
+	 * Fetches the location of the definition of the class in the 
+	 * source code file. 
+	 * 
+	 * @param className the name of the class to fetch the location of
+	 * @return the line number and the file path where the class is defined
+	 */
+	public IElementLocation getClassLocation(String className)
 			throws ConnectException, UnexpectedReplyException, InvocationError;
 
+	/**
+	 * Fetches the restriction type of the class.
+	 * 
+	 * @param className the name of the class to fetch restriction type of
+	 * @return the restriction type of the class
+	 */
 	public Type getRestrictionType(String className)
 			throws ConnectException;
-	
+	/**
+	 * The method returns a list of top level packages in the standard library.
+	 * 
+	 * @return the list of names of top-level packages in the standard library
+	 * @throws ConnectException
+	 */	
 	public String[] getStandardLibrary()
 			throws ConnectException;
 }

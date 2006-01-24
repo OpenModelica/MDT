@@ -55,6 +55,7 @@ import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.internal.core.ModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerException;
 
 /**
@@ -62,21 +63,25 @@ import org.modelica.mdt.core.compiler.CompilerException;
  */
 public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener 
 {
-	private Hashtable<IProject, ModelicaProject> projectsTable;
+	private Hashtable<IProject, IModelicaProject> projectsTable;
 	private LinkedList<IModelicaElementChangeListener> listeners;
 
 	/**
 	 * @see org.modelica.mdt.core.IModelicaRoot#getProjects()
 	 */
-	public Object[] getProjects() 
+	public IModelicaProject[] getProjects() 
 	{
-		return projectsTable.values().toArray();		
+		IModelicaProject[] res = 
+			new IModelicaProject[projectsTable.values().size()];
+		projectsTable.values().toArray(res);
+
+		return res;	
 	}
 
 	private void loadProjects()
 	{
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		projectsTable = new Hashtable<IProject, ModelicaProject>();
+		projectsTable = new Hashtable<IProject, IModelicaProject>();
 		
 		IProject[] projects = workspaceRoot.getProjects();
 
@@ -174,7 +179,8 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 
 		try
 		{
-			ModelicaProject modelicaProject = projectsTable.get(project);
+			ModelicaProject modelicaProject = 
+				(ModelicaProject) projectsTable.get(project);
 			changes.addAll(modelicaProject.update(delta));
 		} 
 		catch (CompilerException e)

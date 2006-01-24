@@ -41,12 +41,12 @@
 
 package org.modelica.mdt.core;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Elmir Jagudin
  */
 public interface IModelicaElementChangeListener
 {
-	public void elementsChanged(List<IModelicaElementChange> changes);
+	public void elementsChanged(Collection<IModelicaElementChange> changes);
 }

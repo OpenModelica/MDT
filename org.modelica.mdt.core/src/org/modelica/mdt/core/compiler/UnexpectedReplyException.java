@@ -41,7 +41,13 @@
 
 package org.modelica.mdt.core.compiler;
 
-
+/**
+ * The UnexpectedReplyException exception is thrown when the compiler
+ * replies with something not quite expected. For example if the compiler
+ * replies with a string instead of the expected integer. This is typically a
+ * sign of compatibility problems with the compiler or bugs in the compiler
+ * or the plugin code.
+ */
 public class UnexpectedReplyException extends CompilerException
 {
 	private static final long serialVersionUID = 2514962826919739522L;

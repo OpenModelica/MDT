@@ -183,7 +183,7 @@ public class FolderPackage extends ModelicaClass
 				}
 				/* the only thing that is not a ModelicaElement is IFile */
 				changes.add(new ModelicaElementChange(element, 
-						ChangeType.CHANGED));
+						ChangeType.MODIFIED));
 				break;
 			}
 		}

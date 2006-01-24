@@ -48,7 +48,7 @@ package org.modelica.mdt.core;
 public interface IModelicaElementChange
 {
 	/* OPEN and CLOSED type are only valid for IModelicaProject objects */
-	public enum ChangeType { ADDED, REMOVED, CHANGED, OPENED, CLOSED };
+	public enum ChangeType { ADDED, REMOVED, MODIFIED, OPENED, CLOSED };
 	
 	/**
 	 * @return the changed element

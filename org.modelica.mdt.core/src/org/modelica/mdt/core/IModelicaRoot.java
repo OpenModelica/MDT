@@ -46,12 +46,12 @@ package org.modelica.mdt.core;
 public interface IModelicaRoot
 {
 	/**
-	 * Presents projects in Modelica specific view, that is
-	 * All modelica projects are wrapped into IModelicaProject
+	 * Presents projects in Modelica specific view. All projects are wrapped 
+	 * into a IModelicaProject interface
 	 *  
 	 * @return Projects in the workspace
 	 */
-	public Object[] getProjects();
+	public IModelicaProject[] getProjects();
 	
 	public void 
 		addModelicaElementChangeListener(IModelicaElementChangeListener listener);

@@ -342,7 +342,7 @@ public class InnerClass extends ModelicaClass
 	{
 		if (location == null)
 		{
-			loadElementLocation();
+			loadClassLocation();
 		}
 
 		if (container != null)
@@ -378,16 +378,16 @@ public class InnerClass extends ModelicaClass
 	{
 		if (location == null)
 		{
-			loadElementLocation();
+			loadClassLocation();
 		}
 		return location.getPath();
 	}
 
-	private void loadElementLocation()
+	private void loadClassLocation()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException
 	{
-		location = CompilerProxy.getElementLocation(fullName);
+		location = CompilerProxy.getClassLocation(fullName);
 	}
 
 

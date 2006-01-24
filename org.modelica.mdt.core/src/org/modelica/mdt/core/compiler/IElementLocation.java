@@ -42,9 +42,9 @@
 package org.modelica.mdt.core.compiler;
 
 /**
- * Presents information on some elements location in a file.
- * More specific this class stores the location of the begging of the
- * definition of the element.
+ * Presents information on some elements definiton location in a source 
+ * code file. More specificly this class provides the location of the beginning 
+ * of the definition of the element in some file.
  * 
  * @author Homer Simpson
  */
