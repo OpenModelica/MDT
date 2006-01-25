@@ -45,11 +45,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.ModelicaElementContentProvider;
+import org.modelica.mdt.ui.SystemLibrary;
 
 import junit.framework.TestCase;
 
@@ -102,7 +102,7 @@ public class TestModelicaElementContentProvider extends TestCase
 		boolean systemLibraryElementFound = false;
 		for (Object elm : provider.getChildren(modelicaProject))
 		{
-			if (elm instanceof ISystemLibrary)
+			if (elm instanceof SystemLibrary)
 			{
 				systemLibraryElementFound = true;
 				break;
@@ -116,7 +116,7 @@ public class TestModelicaElementContentProvider extends TestCase
 		 */
 		for (Object elm : provider.getChildren(nonModelicaProject))
 		{
-			if (elm instanceof ISystemLibrary)
+			if (elm instanceof SystemLibrary)
 			{
 				fail("non modelica project contains system library");
 			}

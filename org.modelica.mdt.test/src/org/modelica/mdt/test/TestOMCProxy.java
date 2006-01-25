@@ -41,11 +41,13 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Collection;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -87,13 +89,14 @@ public class TestOMCProxy extends TestCase
 			CompilerInstantiationException
 	{
 		/* we need to load modelica package */		
-		String[] stdPackages = CompilerProxy.getStandardLibrary();
+		Collection<IModelicaClass> stdPackages = 
+			CompilerProxy.getStandardLibrary();
 		
-		 /* make some checks on the returned names of the standard packages */
+		/* make some checks on the returned names of the standard packages */
 		Vector<String> v = new Vector<String>();
-		for (String name : stdPackages)
+		for (IModelicaClass clazz : stdPackages)
 		{
-			v.add(name);
+			v.add(clazz.getElementName());
 		}
 		assertTrue(v.size() >= 1);
 		assertTrue(v.contains("Modelica"));
