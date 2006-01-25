@@ -57,7 +57,7 @@ import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
@@ -197,7 +197,7 @@ public class TestModelicaRoot extends TestCase
 				{
 					assertTrue("project without modelica nature wrapped",
 						((IModelicaProject)p).getProject().
-						hasNature(MdtPlugin.MODELICA_NATURE));
+						hasNature(CorePlugin.MODELICA_NATURE));
 				}
 			}
 			else if (simpleProjects.contains(mproj.getElementName()))
@@ -205,7 +205,7 @@ public class TestModelicaRoot extends TestCase
 				if (mproj.getProject().isOpen())
 				{
 					assertFalse("project with modelica nature not wrapped",
-						mproj.getProject().hasNature(MdtPlugin.MODELICA_NATURE));
+						mproj.getProject().hasNature(CorePlugin.MODELICA_NATURE));
 				}
 			}
 		}
