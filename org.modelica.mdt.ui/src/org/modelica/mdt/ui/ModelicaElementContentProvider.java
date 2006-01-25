@@ -60,7 +60,6 @@ import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.MdtPlugin;
-import org.modelica.mdt.internal.core.SystemLibrary;
 
 /**
  * Content provider for a tree viewer. This content provider works only
@@ -125,7 +124,7 @@ public class ModelicaElementContentProvider
 				return new Object[0];
 			}
 
-			Collection<Object> list = null;
+			Collection<?> list = null;
 			boolean hasModelicaNature = false;
 			try
 			{

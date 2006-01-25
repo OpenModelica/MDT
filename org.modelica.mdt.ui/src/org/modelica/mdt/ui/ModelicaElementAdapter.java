@@ -52,7 +52,6 @@ import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
 
@@ -160,7 +159,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			return PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		}
-		else if (object instanceof ISystemLibrary)
+		else if (object instanceof SystemLibrary)
 		{
 			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_LIBRARY);
 		}

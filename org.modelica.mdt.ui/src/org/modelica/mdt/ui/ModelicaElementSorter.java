@@ -48,7 +48,6 @@ import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.ISystemLibrary;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
@@ -118,7 +117,7 @@ public class ModelicaElementSorter extends ViewerSorter
 		{
 			return FILE_ORDER;
 		}
-		else if (element instanceof ISystemLibrary)
+		else if (element instanceof SystemLibrary)
 		{
 			return SYSTEM_LIBRARY_ORDER;
 		}

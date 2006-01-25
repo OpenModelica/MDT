@@ -50,7 +50,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.ISystemLibrary;
+import org.modelica.mdt.ui.SystemLibrary;
 
 /**
  * Defines what happens when user double clicks on items in the
@@ -75,8 +75,8 @@ public class ProjectsViewDoubleClickAction extends Action
 		
 		if (obj instanceof IModelicaProject ||
 				 obj instanceof IModelicaFolder  ||
-				 obj instanceof IModelicaClass ||
-				 obj instanceof ISystemLibrary   ||
+				 obj instanceof IModelicaClass   ||
+				 obj instanceof SystemLibrary   ||
 				 obj instanceof IProject         ||
 				 obj instanceof IFolder          )
 				  
