@@ -85,7 +85,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.ide.IDE;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.ui.ModelicaImages;
 
@@ -161,7 +161,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        sourceFolder = new Text(composite, SWT.SINGLE | SWT.BORDER);
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	        sourceFolder.setLayoutData(gd);
-	        MdtPlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
+	        CorePlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
 	        setSourceFolder(selection);
 	        
 	        sourceFolder.addModifyListener(new ModifyListener()
@@ -200,7 +200,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        				  GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        className.setLayoutData(gd);
-	        MdtPlugin.tag(className, CLASS_NAME_TAG);
+	        CorePlugin.tag(className, CLASS_NAME_TAG);
 
 	        className.addModifyListener(new ModifyListener()
 	        {
@@ -231,7 +231,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        classType.setItems(new String [] {"model", "class", "connector", 
 	        		"record", "block", "type", "function"});
 	        classType.setVisibleItemCount(7);
-	        MdtPlugin.tag(classType, CLASS_TYPE_TAG);
+	        CorePlugin.tag(classType, CLASS_TYPE_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -269,7 +269,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        /* initial equation block */
 	        initialEquation = new Button(composite, SWT.CHECK);
 	        initialEquation.setText("include initial equation block");
-	        MdtPlugin.tag(initialEquation, INITIAL_EQUATION_TAG);
+	        CorePlugin.tag(initialEquation, INITIAL_EQUATION_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -285,14 +285,14 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        gd.horizontalSpan = 2;
 	        partialClass.setLayoutData(gd);
-	        MdtPlugin.tag(partialClass, PARTIAL_CLASS_TAG);
+	        CorePlugin.tag(partialClass, PARTIAL_CLASS_TAG);
 
 	        /* external body */
 	        new Label(composite, SWT.NONE); /* empty label for padding */
 	        externalBody = new Button(composite, SWT.CHECK);
 	        externalBody.setText("have external body");
 	        externalBody.setEnabled(false);
-	        MdtPlugin.tag(externalBody, EXTERNAL_BODY_TAG);
+	        CorePlugin.tag(externalBody, EXTERNAL_BODY_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -557,7 +557,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 					ErrorDialog.openError(null, "Error", 
 							"Could not open class file in an editor.",
 							(new Status(IStatus.ERROR,
-									MdtPlugin.getSymbolicName(), 0, 
+									CorePlugin.getSymbolicName(), 0, 
 									"error starting editor for " + 
 									file.getName(), e)));
 				}

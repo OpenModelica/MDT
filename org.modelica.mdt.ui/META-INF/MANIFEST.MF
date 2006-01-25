@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Modelica Development Tooling UI
 Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true
 Bundle-Version: 0.0.0.svn-head
-Bundle-Activator: org.modelica.mdt.ui.Plugin
+Bundle-Activator: org.modelica.mdt.ui.UIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ui,

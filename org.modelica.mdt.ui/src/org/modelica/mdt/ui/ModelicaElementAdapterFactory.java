@@ -47,6 +47,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 
 /**
+ * Adaptor factory that converts modelica elements (IModelicaElement) to
+ * IWorkbenchAdapter and IResource instances
  */
 public class ModelicaElementAdapterFactory implements IAdapterFactory
 {

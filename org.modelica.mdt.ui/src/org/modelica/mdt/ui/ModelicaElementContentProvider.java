@@ -59,7 +59,7 @@ import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 
 /**
  * Content provider for a tree viewer. This content provider works only
@@ -86,7 +86,7 @@ public class ModelicaElementContentProvider
 			return ((IModelicaRoot)inputElement).getProjects();
 		}
 		
-		ErrorManager.logBug(Plugin.getSymbolicName(),
+		ErrorManager.logBug(UIPlugin.getSymbolicName(),
 				"Elements of an object of unexpected type " + 
 				inputElement.getClass().getName() + " requested.");
 		return new Object[] {};
@@ -132,7 +132,7 @@ public class ModelicaElementContentProvider
 					modelicaProj.getRootFolder().getChildren();
 				
 				hasModelicaNature = modelicaProj.getProject().
-					getDescription().hasNature(MdtPlugin.MODELICA_NATURE);
+					getDescription().hasNature(CorePlugin.MODELICA_NATURE);
 			}
 			catch (CompilerException e)
 			{

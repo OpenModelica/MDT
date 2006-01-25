@@ -57,7 +57,7 @@ import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 
 /**
  * A number of routines for working with modelica elements in editors.
@@ -131,7 +131,7 @@ public class EditorUtility
 	{
 		if (file != null) 
 		{
-			IWorkbenchPage p = MdtPlugin.getActivePage();
+			IWorkbenchPage p = CorePlugin.getActivePage();
 			if (p != null) 
 			{
 				IEditorPart editorPart= IDE.openEditor(p, file, true);
@@ -146,7 +146,7 @@ public class EditorUtility
 	{
 		if (input != null) 
 		{
-			IWorkbenchPage p = MdtPlugin.getActivePage();
+			IWorkbenchPage p = CorePlugin.getActivePage();
 			if (p != null) 
 			{
 				IEditorPart editorPart = 

@@ -75,7 +75,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.ui.ModelicaImages;
 
@@ -228,7 +228,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
 	        					GridData.GRAB_HORIZONTAL);
 	        sourceFolder.setLayoutData(gd);
-	        MdtPlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
+	        CorePlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
 	        
 	        sourceFolder.addModifyListener(new ModifyListener()
 	    	{
@@ -273,7 +273,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        		          GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        packageName.setLayoutData(gd);
-	        MdtPlugin.tag(packageName, PACKAGE_NAME_TAG);
+	        CorePlugin.tag(packageName, PACKAGE_NAME_TAG);
 
 	        packageName.addModifyListener(new ModifyListener()
 	        {
@@ -309,7 +309,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        		          GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        packageDesc.setLayoutData(gd);
-	        MdtPlugin.tag(packageDesc, PACKAGE_DESC_TAG);
+	        CorePlugin.tag(packageDesc, PACKAGE_DESC_TAG);
 	        
 	        /* is encapsulated package field */
 	        new Label(composite, SWT.NONE); /* empty label for padding */
@@ -320,7 +320,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        gd.horizontalSpan = 2;
 	        isEncapsulated.setLayoutData(gd);
-	        MdtPlugin.tag(isEncapsulated, IS_ENCAPSULATED_TAG);
+	        CorePlugin.tag(isEncapsulated, IS_ENCAPSULATED_TAG);
 	        
 	        setSelection(selection);
 		}

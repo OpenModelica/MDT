@@ -1,7 +1,7 @@
 package org.modelica.mdt.ui;
 
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.plugin.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
@@ -9,15 +9,15 @@ import org.modelica.mdt.core.IModelicaElement;
 import org.osgi.framework.BundleContext;
 
 /**
- * The main plugin class
+ * The main plugin class for the org.modelica.mdt.ui plugin
  */
-public class Plugin extends AbstractUIPlugin 
+public class UIPlugin extends AbstractUIPlugin 
 {
 
 	/* the shared instance */
-	private static Plugin plugin;
+	private static UIPlugin plugin;
 	
-	public Plugin() 
+	public UIPlugin() 
 	{
 		plugin = this;
 	}
@@ -46,7 +46,7 @@ public class Plugin extends AbstractUIPlugin
 	/**
 	 * Returns the shared instance.
 	 */
-	public static Plugin getDefault() 
+	public static UIPlugin getDefault() 
 	{
 		return plugin;
 	}

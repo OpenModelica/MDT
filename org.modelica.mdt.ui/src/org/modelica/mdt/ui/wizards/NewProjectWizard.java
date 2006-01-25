@@ -42,7 +42,7 @@
 package org.modelica.mdt.ui.wizards;
 
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.ui.ModelicaImages;
 
 import org.eclipse.core.resources.IProject;
@@ -113,7 +113,7 @@ public class NewProjectWizard extends Wizard implements INewWizard
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
 	        				  GridData.GRAB_HORIZONTAL);
 	        projectName.setLayoutData(gd);
-	        MdtPlugin.tag(projectName, PROJECT_NAME_TAG);
+	        CorePlugin.tag(projectName, PROJECT_NAME_TAG);
 	        
 	        projectName.addModifyListener(new ModifyListener()
 	    	{

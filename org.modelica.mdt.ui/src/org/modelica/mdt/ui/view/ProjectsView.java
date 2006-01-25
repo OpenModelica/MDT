@@ -83,7 +83,7 @@ import org.modelica.mdt.ui.ModelicaElementContentProvider;
 import org.modelica.mdt.ui.ModelicaElementSorter;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 
 public class ProjectsView extends ViewPart
 {
@@ -113,7 +113,7 @@ public class ProjectsView extends ViewPart
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ModelicaCore.getModelicaRoot());
 		viewer.setSorter(new ModelicaElementSorter());
-		MdtPlugin.tag(viewer.getTree(), TREE_TAG);
+		CorePlugin.tag(viewer.getTree(), TREE_TAG);
 
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {

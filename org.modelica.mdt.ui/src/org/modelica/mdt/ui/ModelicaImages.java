@@ -31,7 +31,7 @@ public class ModelicaImages
 	static 
 	{
 		String pathSuffix = "icons/"; //$NON-NLS-1$
-		ICON_BASE_URL= Plugin.getDefault().getBundle().getEntry(pathSuffix);
+		ICON_BASE_URL= UIPlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 	
 	// The plugin registry
@@ -106,7 +106,7 @@ public class ModelicaImages
 	
 	private static void initializeImageRegistry() 
 	{
-		fgImageRegistry = new ImageRegistry(Plugin.getStandardDisplay());
+		fgImageRegistry = new ImageRegistry(UIPlugin.getStandardDisplay());
 		declareImages();
 	}
 	

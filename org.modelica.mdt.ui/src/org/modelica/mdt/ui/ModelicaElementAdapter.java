@@ -119,7 +119,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 					imgTag = ModelicaImages.IMG_OBJS_TYPE;
 					break;
 				default:
-					ErrorManager.logBug(Plugin.getSymbolicName(),
+					ErrorManager.logBug(UIPlugin.getSymbolicName(),
 							"IModelicaClass object of unexpected restriction " + 
 							"type " + 
 							((IModelicaClass)object).getRestrictionType() +
