@@ -52,7 +52,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ModelicaRoot;
 
 public class ModelicaCore 
@@ -84,7 +84,7 @@ public class ModelicaCore
 				monitor.worked(2);
 
 				/* add modelica nature to the project */
-				MdtPlugin.addModelicaNature(newProject);
+				CorePlugin.addModelicaNature(newProject);
 				
 			}
 			catch (CoreException e)
@@ -98,7 +98,7 @@ public class ModelicaCore
 	private static void showProjectCreationError(String message, Exception e)
 	{
 		showProjectCreationError(new Status(IStatus.ERROR, 
-				MdtPlugin.getSymbolicName(), 0, message, e));
+				CorePlugin.getSymbolicName(), 0, message, e));
 	}
 	
 	

@@ -126,7 +126,7 @@ public class ModelicaComponent extends ModelicaElement
 		{
 			throw new CoreException(
 					new Status(IStatus.ERROR,
-								MdtPlugin.getSymbolicName(),
+								CorePlugin.getSymbolicName(),
 								IStatus.OK, 
 								"could not find modelica source file " + 
 									location.getPath(),

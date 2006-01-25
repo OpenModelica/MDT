@@ -60,7 +60,7 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException.ProblemType;
 import org.modelica.mdt.internal.core.InnerClass;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 
 
 /**
@@ -97,7 +97,7 @@ public class CompilerProxy
 		throws CompilerInstantiationException
 	{		
 		IExtensionPoint extensionPoint = 
-			Platform.getExtensionRegistry().getExtensionPoint(MdtPlugin.COMPILER_EXTENSION_ID);		
+			Platform.getExtensionRegistry().getExtensionPoint(CorePlugin.COMPILER_EXTENSION_ID);		
 		
 		IExtension[] extensions = extensionPoint.getExtensions();
 		

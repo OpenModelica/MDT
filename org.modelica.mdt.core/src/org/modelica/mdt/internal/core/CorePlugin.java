@@ -54,7 +54,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.modelica.mdt.core.ModelicaCore;
 import org.osgi.framework.BundleContext;
 
-public class MdtPlugin extends AbstractUIPlugin
+/**
+ * The main plugin class for the org.modelica.mdt.core plugin
+ * 
+ * @author Sigmund Freud
+ */
+
+public class CorePlugin extends AbstractUIPlugin
 {
 	public static final String MODELICA_NATURE = 
 		"org.modelica.mdt.core.ModelicaNature";
@@ -69,12 +75,12 @@ public class MdtPlugin extends AbstractUIPlugin
 	
 	
 	/* The shared instance. */
-	private static MdtPlugin plugin;
+	private static CorePlugin plugin;
 	
 	/**
 	 * The constructor.
 	 */
-	public MdtPlugin()
+	public CorePlugin()
 	{
 		plugin = this;
 	}
@@ -100,9 +106,9 @@ public class MdtPlugin extends AbstractUIPlugin
 	
 	/**
 	 * Returns the shared instance.
-	 * @return the shared instance of MdtPlugin
+	 * @return the shared instance of CorePlugin
 	 */
-	public static MdtPlugin getDefault()
+	public static CorePlugin getDefault()
 	{
 		return plugin;
 	}

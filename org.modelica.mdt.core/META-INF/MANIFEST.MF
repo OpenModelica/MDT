@@ -13,5 +13,5 @@ Bundle-ClassPath: bin/
 Export-Package: org.modelica.mdt.core.compiler,
  org.modelica.mdt.core,
  org.modelica.mdt.internal.core
-Bundle-Activator: org.modelica.mdt.internal.core.MdtPlugin
+Bundle-Activator: org.modelica.mdt.internal.core.CorePlugin
 Eclipse-AutoStart: true

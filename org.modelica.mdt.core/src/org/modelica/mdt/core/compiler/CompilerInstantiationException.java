@@ -44,7 +44,7 @@ package org.modelica.mdt.core.compiler;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.internal.core.MdtPlugin;
+import org.modelica.mdt.internal.core.CorePlugin;
 
 /**
  * This exception is thrown when there was error instantiating the
@@ -105,11 +105,11 @@ public class CompilerInstantiationException extends CompilerException
 		{
 		case NO_COMPILERS_FOUND:
 			message = "No plugins define extension for " + 
-				MdtPlugin.COMPILER_EXTENSION_ID;
+				CorePlugin.COMPILER_EXTENSION_ID;
 			break;
 		case MULTIPLE_COMPILERS_FOUND:
 			message = "Multiple plugins define extension for " + 
-				MdtPlugin.COMPILER_EXTENSION_ID;
+				CorePlugin.COMPILER_EXTENSION_ID;
 			break;
 		case ERROR_CREATING_COMPILER:
 			message = "Error while instantiating IModelicaCompiler class " + 

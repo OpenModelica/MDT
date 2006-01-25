@@ -80,14 +80,18 @@ public class ErrorManager
 	private static long nextInvocationErrorShown = 0;
 	private static long nextUnexpectedReplyErrorShown = 0;
 
-	private static final long BUG_USER_WITH_ERRORS_INTERVAL = 60000;
+	/* 
+	 * the interval in milliseconds between two error dialogs on same
+	 * transient errors are shown to the user
+	 */
+	private static final long BUG_USER_WITH_ERRORS_INTERVAL = 60000; /* 1 min */
 	
 	/**
 	 * convinience wrapper method for loggin to plugin logger
 	 */
 	public static void logError(IStatus stat)
 	{
-		MdtPlugin.getDefault().getLog().log(stat);
+		CorePlugin.getDefault().getLog().log(stat);
 	}
 
 	/**
@@ -97,7 +101,7 @@ public class ErrorManager
 	 */	
 	public static void logError(Throwable e) 
 	{
-		logError(new Status(IStatus.ERROR, MdtPlugin.getSymbolicName(), 
+		logError(new Status(IStatus.ERROR, CorePlugin.getSymbolicName(), 
 				INTERNAL_ERROR,
 				e.getMessage(), e));
 	}
@@ -110,7 +114,7 @@ public class ErrorManager
 	 */
 	public static void logWarning(String message)
 	{
-		logError(new Status(IStatus.WARNING, MdtPlugin.getSymbolicName(), 
+		logError(new Status(IStatus.WARNING, CorePlugin.getSymbolicName(), 
 				INTERNAL_WARNING, message, null));
 					
 	}
@@ -148,7 +152,7 @@ public class ErrorManager
 		}
 		
 		String upgrade_your_software =  /* the standard remedy */
-			"Try upgrading the " + MdtPlugin.PLUGIN_HUMAN_NAME + 
+			"Try upgrading the " + CorePlugin.PLUGIN_HUMAN_NAME + 
 			" and/or the " + compilerName + 
 			" to more recent versions.";
 		
@@ -262,14 +266,14 @@ public class ErrorManager
 		else
 		{
 			/* unexpected exception type */
-			ErrorManager.logBug(MdtPlugin.getSymbolicName(),
+			ErrorManager.logBug(CorePlugin.getSymbolicName(),
 					"exception of unexpected type " + 
 					exception.getClass().getName() +
 					" encountered");
 		}
 
 		final IStatus status = 
-			new Status(IStatus.ERROR, MdtPlugin.getSymbolicName(), 
+			new Status(IStatus.ERROR, CorePlugin.getSymbolicName(), 
 				INTERNAL_ERROR, message, exception);
 		
 		/* log error */
@@ -278,12 +282,12 @@ public class ErrorManager
 		/* display error to the user */
 		if (showErrorDialog)
 		{
-			Display display = MdtPlugin.getDisplay();
+			Display display = CorePlugin.getDisplay();
 			display.asyncExec(new Runnable()
 			{
 				public void run()
 				{
-					ErrorDialog.openError(MdtPlugin.getShell(),	
+					ErrorDialog.openError(CorePlugin.getShell(),	
 							"Error", null, status);
 				}
 			});
@@ -301,12 +305,12 @@ public class ErrorManager
 		/* log error */
 		logError(exception);
 		
-		Display display = MdtPlugin.getDisplay();
+		Display display = CorePlugin.getDisplay();
 		display.asyncExec(new Runnable()
 		{
 			public void run()
 			{
-				ErrorDialog.openError(MdtPlugin.getShell(),	
+				ErrorDialog.openError(CorePlugin.getShell(),	
 						"Error", null, exception.getStatus());
 			}
 		});
@@ -337,7 +341,7 @@ public class ErrorManager
 				"(" + ste.getFileName() + ":" + ste.getLineNumber() + "). " +
 				"'" + message + "'", null);
 		
-		MdtPlugin.getDefault().getLog().log(status);
+		CorePlugin.getDefault().getLog().log(status);
 
 	}
 	
