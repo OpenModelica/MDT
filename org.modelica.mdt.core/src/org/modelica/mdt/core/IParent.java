@@ -38,7 +38,7 @@ public interface IParent
 	 * @throws InvocationError 
 	 * @throws CompilerInstantiationException 
 	 */
-	Collection<Object> getChildren() 
+	Collection<?> getChildren() 
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException;
 	

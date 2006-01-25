@@ -112,7 +112,7 @@ public class InnerClass extends ModelicaClass
 	 * @param prefix
 	 * @param name
 	 */
-	protected InnerClass(String prefix, String name, Type restrictionType)
+	public InnerClass(String prefix, String name, Type restrictionType)
 	{
 		this(null, prefix, name, null, restrictionType);
 	}
