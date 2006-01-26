@@ -41,9 +41,8 @@
 
 package org.modelica.mdt.core.compiler;
 
-import java.util.Vector;
-
 import org.eclipse.core.resources.IFile;
+import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaClass.Type;
 
 /**
@@ -83,7 +82,7 @@ public interface IModelicaCompiler
 	 * @param className the name of the class where to look for subclasses
 	 * @return the list of the names of subclasses
 	 */
-	public Vector<Object> getClassNames(String className)
+	public List getClassNames(String className)
 			throws ConnectException, UnexpectedReplyException;
 
 	/**
@@ -137,7 +136,7 @@ public interface IModelicaCompiler
 	 * @param className
 	 * @return the modelica list with string elements as specified above
 	 */
-	public Vector<Object> getElementsInfo(String className)
+	public List getElementsInfo(String className)
 			throws ConnectException, InvocationError, UnexpectedReplyException;
 
 	/**

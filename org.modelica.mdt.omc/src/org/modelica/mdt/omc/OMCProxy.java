@@ -46,11 +46,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -517,7 +517,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
 	 */	
-	public Vector<Object> getClassNames(String className)
+	public List getClassNames(String className)
 		throws ConnectException, UnexpectedReplyException
 	{
 		String retval = sendExpression("getClassNames("+className+")");
@@ -583,7 +583,7 @@ public class OMCProxy implements IModelicaCompiler
 		
 		String fullName = file.getLocation().toString();
 		String retval = 
-			sendExpression("loadFileInteractive(\"" + fullName + "\")");
+			sendExpression("loadFileInteractiveQualified(\"" + fullName + "\")");
 		
 		/*
 		 * At this point OMC (ver 1.3.1) does not support returning partial
@@ -648,12 +648,12 @@ public class OMCProxy implements IModelicaCompiler
 		/* For some reason, the list returned doesn't contain curly braces. */
 		retval = "{" + retval + "}"; 
 
-		Vector<Object> tokens = ModelicaParser.parseList(retval);
+		List tokens = ModelicaParser.parseList(retval);
 		int line;
 
 		try
 		{
-			line = Integer.parseInt((String)tokens.elementAt(1));
+			line = Integer.parseInt(tokens.elementAt(1).toString());
 		}
 		catch (NumberFormatException e)
 		{
@@ -662,7 +662,7 @@ public class OMCProxy implements IModelicaCompiler
 					"unexpected format");
 		}
 		
-		return new ElementLocation((String)tokens.elementAt(0), line);
+		return new ElementLocation(tokens.elementAt(0).toString(), line);
 	}
 	
 	/**
@@ -686,7 +686,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws InvocationError 
 	 * @throws UnexpectedReplyException 
 	 */
-	public Vector<Object> getElementsInfo(String className)
+	public List getElementsInfo(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException
 	{
 		String retval = sendExpression("getElementsInfo("+ className +")");

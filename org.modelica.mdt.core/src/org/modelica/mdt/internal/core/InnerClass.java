@@ -45,7 +45,6 @@ import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -54,9 +53,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -158,14 +160,14 @@ public class InnerClass extends ModelicaClass
 		String elementLine = "";
 		String names = "";
 
-		for (Object o : CompilerProxy.getElementsInfo(fullName))
+		for (ListElement o : CompilerProxy.getElementsInfo(fullName))
 		{
 			 
 			elementType = "";
-			for (Object element : ((Collection)o))
+			for (ListElement element : ((List)o))
 			{
 				/* parse a single the elements info list */
-				str = (String) element;
+				str = ((Element)element).toString();
 				
 				if (str.startsWith("elementtype="))
 				{
@@ -236,9 +238,9 @@ public class InnerClass extends ModelicaClass
 				 * names={component_name,"component_comment"}
 				 * we neet to get the component name
 				 */ 
-				Vector<Object> comp = ModelicaParser.parseList(names);
+				List comp = ModelicaParser.parseList(names);
 				
-				String componentName = (String) comp.elementAt(0);
+				String componentName = comp.elementAt(0).toString();
 				
 				
 				elements.put(componentName, 

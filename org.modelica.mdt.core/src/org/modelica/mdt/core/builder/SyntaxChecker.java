@@ -428,7 +428,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		/*
 		 * Try loading the file into OMC and get the results.
 		 */
-		IParseResults res = CompilerProxy.loadFileInteractive(file);
+		IParseResults res = CompilerProxy.loadSourceFile(file);
 
 		/*
 		 * If there were any compile errors, report them as problems.

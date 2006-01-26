@@ -55,6 +55,9 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.Element;
+import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ModelicaParser;
@@ -80,8 +83,8 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * There is a separate narrowedProposals so that we can store the original
 	 * proposals. This allows us to backtrace the proposals.
 	 */
-	Vector<Object> narrowedProposals = new Vector<Object>();
-	Vector<Object> proposals = new Vector<Object>();
+	List narrowedProposals = new List();
+	List proposals = new List();
 	int typeAhead = 0;
 
 	Vector<String> inputParameters = new Vector<String>();
@@ -154,13 +157,21 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	private void newProposals(String className)
 	{
 		if(proposals != null)
+		{
 			proposals.clear();
+		}
 		else
-			proposals = new Vector<Object>();
+		{
+			proposals = new List();
+		}
 		if(narrowedProposals != null)
+		{
 			narrowedProposals.clear();
+		}
 		else
-			narrowedProposals = new Vector<Object>();
+		{
+			narrowedProposals = new List();
+		}
 		
 		typeAhead = 0;
 
@@ -179,7 +190,9 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		finally
 		{
 			if(proposals != null)
+			{
 				narrowedProposals.addAll(proposals);
+			}
 		}
 	}
 	
@@ -197,11 +210,11 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		narrowedProposals.clear();
 		
-		for(Object proposedClass : proposals)
+		for (ListElement proposedClass : proposals)
 		{
-			if(((String)proposedClass).startsWith(classPrefix))
+			if (((Element)proposedClass).toString().startsWith(classPrefix))
 			{
-				narrowedProposals.add(proposedClass);
+				narrowedProposals.append(proposedClass);
 			}
 		}
 	}
@@ -274,7 +287,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		inputParameters.clear();
 		outputParameters.clear();
 		
-		Vector<Object> elementsInfo = new Vector<Object>(0);
+		List elementsInfo;
 		
 		try 
 		{
@@ -301,7 +314,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			boolean elementIsOutput = false;
 			boolean elementNamesFound = false;
 			boolean typenameFound = false;
-			Vector names = new Vector(0);
+			List names = new List();
 			String typename = "";
 			
 			if(o instanceof Vector)
@@ -354,13 +367,12 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			if(elementIsPublic && elementIsComponent
 					&& elementIsInput && elementNamesFound && typenameFound)
 			{
-				inputParameters.add(typename + " " + (String)names.get(0));
+				inputParameters.add(typename + " " + names.elementAt(0).toString());
 			}
 			else if(elementIsPublic && elementIsComponent
 					&& elementIsOutput && elementNamesFound && typenameFound)
 			{
-				outputParameters.add(typename + " " + (String)names.get(0));
-				
+				outputParameters.add(typename + " " + names.elementAt(0).toString());
 			}
 		}
 	}
@@ -400,7 +412,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			new ICompletionProposal[narrowedProposals.size()];
 		for(int i = 0;i < narrowedProposals.size();i++)
 		{
-			String proposal = (String)narrowedProposals.get(i);
+			String proposal = narrowedProposals.elementAt(i).toString();
 			completionProposals[i] =
 				new CompletionProposal(proposal, offset - typeAhead, typeAhead,
 						proposal.length(), null, proposal, null, null);

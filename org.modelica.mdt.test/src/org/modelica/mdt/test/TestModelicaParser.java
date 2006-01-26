@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -41,8 +41,10 @@
 
 package org.modelica.mdt.test;
 
-import java.util.Vector;
+import java.util.Iterator;
 
+import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 
 import junit.framework.TestCase;
@@ -52,6 +54,184 @@ import junit.framework.TestCase;
  */
 public class TestModelicaParser extends TestCase 
 {
+	/*
+	 * the output of the getElements() function to test parsing
+	 */
+	private static final String GET_ELEMENTS_OUTPUT =
+		
+	"{ { elementvisibility=public, " +
+     "elementfile=\"/home/x05andre/ex/Modelica Library/Modelica/package.mo\", "+
+	 "elementline=2, elementcolumn=1, final=false, replaceable=false, "+
+	 "inout=\"none\", elementtype=extends, path=Icons.Library },\n"+
+	"{ elementvisibility=public, elementtype=annotation },\n"+
+	"{ elementvisibility=public, " +
+	 "elementfile=\"/home/x05andre/ex/Modelica Library/Modelica/package.mo\", " +
+	 "elementline=127, elementcolumn=1, final=false, replaceable=false, " +
+	 "inout=\"none\", elementtype=classdef, classname=UsersGuide, " +
+	 "classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/package.mo\", " +
+	 "classline=127, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Media, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica" +
+	            " Library/Modelica/Media/package.mo\", " +
+	 "classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Utilities, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica " +
+	            "Library/Modelica/Utilities/package.mo\", " +
+	            "classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Mechanics, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/" +
+	             "Modelica/Mechanics/package.mo\", " +
+	 "classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Electrical, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/" +
+	            "Modelica/Electrical/package.mo\"," +
+	 " classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Math, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/Math/package.mo\","+
+	 " classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Blocks, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica " +
+	            "Library/Modelica/Blocks/package.mo\", " +
+	            "classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Thermal, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica " +
+	            "Library/Modelica/Thermal/package.mo\", classline=1, " +
+	            "classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Icons, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/Icons.mo\", " +
+	 "classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=Constants, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/Constants.mo\", " +
+	 "classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=SIunits, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/SIunits.mo\", " +
+	 "classline=1, classcolumn=1 },\n"+
+	"{ elementvisibility=public, elementfile=\"\", elementline=0, " +
+	 "elementcolumn=0, final=false, replaceable=false, inout=\"none\", " +
+	 "elementtype=classdef, classname=StateGraph, classrestriction=PACKAGE, " +
+	 "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/StateGraph.mo\", " +
+	 "classline=1, classcolumn=1 }\n"+
+	"}\n";
+	
+
+	/*
+	 * The expected results when getElements() output is parsed 
+	 */
+	private static final String[][] GET_ELEMENTS_RES =
+	{
+	  {"elementvisibility=public",
+	   "elementfile=\"/home/x05andre/ex/Modelica Library/Modelica/package.mo\"",
+	   "elementline=2", "elementcolumn=1", "final=false", "replaceable=false",
+	   "inout=\"none\"", "elementtype=extends", "path=Icons.Library"},
+	   
+	  {"elementvisibility=public", "elementtype=annotation"},
+	  
+	  {"elementvisibility=public",
+	   "elementfile=\"/home/x05andre/ex/Modelica Library/Modelica/package.mo\"",
+	   "elementline=127","elementcolumn=1", "final=false", "replaceable=false",
+	   "inout=\"none\"", "elementtype=classdef", "classname=UsersGuide",
+	   "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/package.mo\"",
+	   "classline=127", "classcolumn=1"},
+
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=Media", "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/Media/package.mo\"",
+	   "classline=1", "classcolumn=1"},
+	   
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=Utilities", 
+	   "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica " +
+		            "Library/Modelica/Utilities/package.mo\"",
+	   "classline=1", "classcolumn=1"},
+	   
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=Mechanics", "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica " +
+	             "Library/Modelica/Mechanics/package.mo\"",
+	   "classline=1", "classcolumn=1"},
+	   
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=Electrical", 
+	   "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica Library/" +
+		            "Modelica/Electrical/package.mo\"",
+	   "classline=1", "classcolumn=1" },
+	   
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=Math", "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica "+
+	               "Library/Modelica/Math/package.mo\"",
+	   "classline=1", "classcolumn=1" },
+	   
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+       "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+       "elementtype=classdef", "classname=Blocks", "classrestriction=PACKAGE",
+       "classfile=\"/home/x05andre/ex/Modelica " +
+		            "Library/Modelica/Blocks/package.mo\"",
+	   "classline=1", "classcolumn=1" },
+
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=Thermal", "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica " +
+		            "Library/Modelica/Thermal/package.mo\"", "classline=1",
+	   "classcolumn=1"},
+	   
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=Icons", "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/Icons.mo\"",
+	   "classline=1", "classcolumn=1" },
+
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef","classname=Constants", "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/Constants.mo\"",
+	   "classline=1", "classcolumn=1" },
+
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=SIunits", "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica Library/Modelica/SIunits.mo\"",
+	   "classline=1", "classcolumn=1" },
+
+	  {"elementvisibility=public", "elementfile=\"\"", "elementline=0",
+	   "elementcolumn=0", "final=false", "replaceable=false", "inout=\"none\"",
+	   "elementtype=classdef", "classname=StateGraph",
+	   "classrestriction=PACKAGE",
+	   "classfile=\"/home/x05andre/ex/Modelica " +
+	               "Library/Modelica/StateGraph.mo\"",
+	   "classline=1", "classcolumn=1" }
+	};
+
 	/**
 	 * test parsing some simple unnested lists with ModelicaParser.parseList()
 	 */
@@ -60,7 +240,7 @@ public class TestModelicaParser extends TestCase
 		/*
 		 * some combinations of empty lists
 		 */
-		Vector<Object> res;
+		List res;
 		
 		res = ModelicaParser.parseList("{}");
 		assertEquals(0, res.size());
@@ -83,19 +263,19 @@ public class TestModelicaParser extends TestCase
 		 */
 		res = ModelicaParser.parseList("{hej}");
 		assertEquals(1, res.size());
-		assertEquals("hej", (String)res.elementAt(0));
+		assertEquals("hej", res.elementAt(0).toString());
 		
 		res = ModelicaParser.parseList("{  muu}");
 		assertEquals(1,res.size());
-		assertEquals("muu", (String)res.elementAt(0));
+		assertEquals("muu", res.elementAt(0).toString());
 		
 		res = ModelicaParser.parseList("{  muu   }");
 		assertEquals(1, res.size());
-		assertEquals("muu", (String)res.elementAt(0));
+		assertEquals("muu", res.elementAt(0).toString());
 
 		res = ModelicaParser.parseList("{muu   }");
 		assertEquals(1, res.size());
-		assertEquals("muu", (String)res.elementAt(0));
+		assertEquals("muu", res.elementAt(0).toString());
 
 
 		/*
@@ -103,35 +283,35 @@ public class TestModelicaParser extends TestCase
 		 */
 		res = ModelicaParser.parseList("{hej,peter}");
 		assertEquals(2, res.size());
-		assertEquals("hej", (String)res.elementAt(0));
-		assertEquals("peter", (String)res.elementAt(1));
+		assertEquals("hej", res.elementAt(0).toString());
+		assertEquals("peter", res.elementAt(1).toString());
 		
 		res = ModelicaParser.parseList("{peter,  labb}");
-		assertEquals("peter", (String)res.elementAt(0));
-		assertEquals("labb", (String)res.elementAt(1));
+		assertEquals("peter", res.elementAt(0).toString());
+		assertEquals("labb", res.elementAt(1).toString());
 		
 		res = ModelicaParser.parseList("{peter ,labb}");
-		assertEquals("peter", (String)res.elementAt(0));
-		assertEquals("labb", (String)res.elementAt(1));
+		assertEquals("peter", res.elementAt(0).toString());
+		assertEquals("labb", res.elementAt(1).toString());
 		
 		res = ModelicaParser.parseList("{peter   ,labb}");
-		assertEquals("peter", (String)res.elementAt(0));
-		assertEquals("labb", (String)res.elementAt(1));
+		assertEquals("peter", res.elementAt(0).toString());
+		assertEquals("labb", res.elementAt(1).toString());
 		
 		/*
 		 * tree elements list
 		 */
 		res = ModelicaParser.parseList("{alan, l, cox}");
 		assertEquals(3, res.size());
-		assertEquals("alan", (String)res.elementAt(0));
-		assertEquals("l", (String)res.elementAt(1));
-		assertEquals("cox", (String)res.elementAt(2));
+		assertEquals("alan", res.elementAt(0).toString());
+		assertEquals("l", res.elementAt(1).toString());
+		assertEquals("cox", res.elementAt(2).toString());
 		
 		res = ModelicaParser.parseList("{alan,l,cox}");
 		assertEquals(3, res.size());
-		assertEquals("alan", (String)res.elementAt(0));
-		assertEquals("l", (String)res.elementAt(1));
-		assertEquals("cox", (String)res.elementAt(2));
+		assertEquals("alan", res.elementAt(0).toString());
+		assertEquals("l", res.elementAt(1).toString());
+		assertEquals("cox",res.elementAt(2).toString());
 
 	}
 	
@@ -140,30 +320,59 @@ public class TestModelicaParser extends TestCase
 	 */
 	public void testParseList()
 	{
-		Vector v = ModelicaParser.parseList("{{a    ,b   }  ,   c   }");
-		assertTrue(v.get(0) instanceof Vector);
+		List v = ModelicaParser.parseList("{{a    ,b   }  ,   c   }");
+		assertTrue(v.elementAt(0) instanceof List);
 		assertTrue(v.size() == 2);
-		assertTrue(((Vector)v.get(0)).get(0).equals("a"));
-		assertTrue(((Vector)v.get(0)).get(1).equals("b"));
-		assertTrue(v.get(1).equals("c"));
+
+		assertEquals("a", ((List)v.elementAt(0)).elementAt(0).toString());
+		assertEquals("b", ((List)v.elementAt(0)).elementAt(1).toString());
+		assertEquals("c", v.elementAt(1).toString());
 		
 		v = ModelicaParser.parseList("{a, b, c}");
-		assertTrue(v.size() == 3);
-		assertTrue(v.get(0).equals("a"));
-		assertTrue(v.get(1).equals("b"));
-		assertTrue(v.get(2).equals("c"));
+		assertEquals(3, v.size());
+		assertEquals("a", v.elementAt(0).toString());
+		assertEquals("b", v.elementAt(1).toString());
+		assertEquals("c", v.elementAt(2).toString());
 		
 		v = ModelicaParser.parseList("{a, b, c={a, b, c}}");
-		assertTrue(v.size() == 3);
-		assertTrue(v.get(0).equals("a"));
-		assertTrue(v.get(1).equals("b"));
-		assertTrue(v.get(2).equals("c={a, b, c}"));
+		assertEquals(3, v.size());
+		assertEquals("a", v.elementAt(0).toString());
+		assertEquals("b", v.elementAt(1).toString());
+		assertEquals("c={a, b, c}", v.elementAt(2).toString());
 		
+		//TODO this is a malformated list, parseList should throw a parsing exception instead
 		v = ModelicaParser.parseList("{,,}");
-		assertTrue(v.size() == 0);
+		assertEquals(0, v.size());
 		
 		v = ModelicaParser.parseList("{foo={bar, gzonk}}");
-		assertTrue(v.size() == 1);
-		assertTrue(v.get(0).equals("foo={bar, gzonk}"));
+		assertEquals(1, v.size());
+		assertEquals("foo={bar, gzonk}", v.elementAt(0).toString());
+	}
+	
+	public void testParseOmcOutput()
+	{
+		List parsedList = ModelicaParser.parseList(GET_ELEMENTS_OUTPUT);
+		
+		assertEquals(14, parsedList.size());
+		
+		/*
+		 * each element in the res should be a list
+		 */
+		Iterator<ListElement> it = parsedList.iterator();
+		for (String[] expectedList : GET_ELEMENTS_RES)
+		{
+			ListElement parsedElements = it.next();
+			assertTrue("expected to find a list but found an element",
+					 (parsedElements instanceof List));
+			
+			Iterator<ListElement> elementsIterator = ((List)parsedElements).iterator(); 
+			for (String expectedElement : expectedList)
+			{
+				assertEquals("parsed list contains unexpected element",
+						expectedElement, elementsIterator.next().toString()); 
+			}
+			assertFalse("more elements then expected in the parse results",
+					elementsIterator.hasNext());
+		}
 	}
 }

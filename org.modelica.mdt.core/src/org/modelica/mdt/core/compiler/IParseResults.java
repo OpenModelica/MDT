@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -40,8 +40,6 @@
  */
 
 package org.modelica.mdt.core.compiler;
-
-import java.util.Vector;
 
 import org.modelica.mdt.core.compiler.ICompileError;
 
@@ -65,7 +63,7 @@ public interface IParseResults
 	 * @return Returns the names of top classes (and packages) in the file.
 	 *  If no classes where found in the file, an empty array is returned.
 	 */
-	public Vector<Object> getClasses();
+	public String[] getClasses();
 
 	/**
 	 * @return Any compile errors occured while loading/parsing the file.

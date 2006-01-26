@@ -40,19 +40,21 @@
  */
 package org.modelica.mdt.omc.internal;
 
-import java.util.Vector;
-
+import org.modelica.mdt.core.Element;
+import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.IParseResults;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * This class implements IParseResults on behalf of OMC proxy plugin.
  */
 public class ParseResults implements IParseResults
 {
-	private Vector<Object> classes = new Vector<Object>();
+	private String[] classes;
 	private CompileError[] errors = new CompileError[0];
 
-	public Vector<Object> getClasses()
+	public String[] getClasses()
 	{
 		return classes;
 	}
@@ -62,9 +64,27 @@ public class ParseResults implements IParseResults
 		return errors;
 	}
 
-	public void setClassNames(Vector<Object> classNames)
+	/**
+	 * This method assumes that a flat list of class names is
+	 * passed to it. If the recived list is nested an UnexpectedReplyException
+	 * is thrown
+	 * @param classNames
+	 * @throws UnexpectedReplyException
+	 */
+	public void setClassNames(List classNames) throws UnexpectedReplyException
 	{
-		classes = classNames;
+		int i = 0;
+		classes = new String[classNames.size()];
+
+		for (ListElement element : classNames)
+		{
+			if (element instanceof List)
+			{
+				throw new UnexpectedReplyException("a nested list of class names recived");
+			}
+			/* now we know that element is of type Element */
+			classes[i++] = ((Element)element).toString();
+		}
 	}
 
 	public void setCompileErrors(CompileError[] errors)

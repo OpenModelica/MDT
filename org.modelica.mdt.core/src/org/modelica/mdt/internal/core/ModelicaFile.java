@@ -119,7 +119,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	{
 		Hashtable<String, Object> elements = new Hashtable<String, Object>();
 
-		IParseResults res = CompilerProxy.loadFileInteractive(file);
+		IParseResults res = CompilerProxy.loadSourceFile(file);
 
 		for (Object obj : res.getClasses())
 		{

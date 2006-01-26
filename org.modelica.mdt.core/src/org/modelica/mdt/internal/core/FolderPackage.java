@@ -219,11 +219,11 @@ public class FolderPackage extends ModelicaClass
 				 * check if package.mo defines a package (aka class) 
 				 * with the same name as the parent folder
 				 */
-				IParseResults results = CompilerProxy.loadFileInteractive(file);
+				IParseResults results = CompilerProxy.loadSourceFile(file);
 				
-				for (Object name : results.getClasses())
+				for (String name : results.getClasses())
 				{
-					if (((String)name).equals(folderName))
+					if (name.equals(folderName))
 					{
 						return true;
 					}

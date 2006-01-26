@@ -152,14 +152,14 @@ public class CompilerProxy
 	}
 
 	// TODO rename to loadFile or maybe loadSourceFile ?
-	public static IParseResults loadFileInteractive(IFile file) 
+	public static IParseResults loadSourceFile(IFile file) 
 		throws ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
 		return getCompiler().loadSourceFile(file);
 	}
 	
-	public static Vector<Object> getClassNames(String className)
+	public static List getClassNames(String className)
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
@@ -167,7 +167,7 @@ public class CompilerProxy
 	}
 	
 	// TODO this should have a better name
-	public static Vector<Object> getElementsInfo(String className)
+	public static List getElementsInfo(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{

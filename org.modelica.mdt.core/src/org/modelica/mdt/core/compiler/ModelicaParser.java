@@ -41,7 +41,9 @@
 
 package org.modelica.mdt.core.compiler;
 
-import java.util.Vector;
+import org.modelica.mdt.core.Element;
+import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ListElement;
 
 /**
  * This class prvides some code to parse simple modelica primitives,
@@ -57,9 +59,9 @@ public class ModelicaParser
 	 * @return a Vector containing Vector:s and String:s. The Vector:s contain
 	 * further Vector:s and String:s. Nesting and stuff.
 	 */
-	public static Vector<Object> parseList(String str)
+	public static List parseList(String str)
 	{
-		Vector<Object> elements = new Vector<Object>();
+		List elements = new List();
 		
 		/* Remove whitespace before and after */
 		str = str.trim();
@@ -67,12 +69,14 @@ public class ModelicaParser
 		/* Make sure this string is not empty */
 		if(str == "" || str.length() < 2)
 		{
+			//TODO throw an exception instead
 			return null;
 		}
 		
 		/* Make sure this is a list */
 		if(str.charAt(0) != '{' || str.charAt(str.length() - 1) != '}')
 		{
+			//TODO throw an exception instead
 			return null;
 		}
 		/* Remove { and } */
@@ -103,7 +107,7 @@ public class ModelicaParser
 				 * If we're at depth 0, then we've found a list (or element)
 				 * at the bottom level.
 				 */
-				Object element = null;
+				ListElement element = null;
 				
 				if(listFound)
 				{					
@@ -114,20 +118,23 @@ public class ModelicaParser
 					 * element.
 					 */
 					if(element == null)
-						element = subString.trim();
+					{
+						element = new Element(subString.trim());
+					}
 				}
 				else
 				{
-					element = subString.trim();
+					element = new Element(subString.trim());
 				}
 				
 				listFound = false;
-				if(element instanceof String && ((String)element).equals(""))
+				if(element instanceof Element && ((Element)element).toString().equals(""))
 				{
 					/* Don't add empty strings */
 					continue;
 				}
-				elements.add(element);
+				
+				elements.append(element);
 				subString = "";
  			}
 			else
@@ -137,9 +144,12 @@ public class ModelicaParser
 			if(str.charAt(characterPosition) == '}')
 			{
 				depth--;
+				
+				/* Unmatched {, */
+				//TODO throw exception here instead of returning empty list 
 				if(depth < 0)
 				{
-					return new Vector<Object>();
+					return new List();
 				}
 			}
 		}
@@ -147,7 +157,7 @@ public class ModelicaParser
 		/* This happens at the end of the list. */
 		if(depth == 0)
 		{
-			Object element = null;
+			ListElement element = null;
 			if(listFound)
 			{
 				element = parseList(subString);
@@ -158,18 +168,22 @@ public class ModelicaParser
 				 */
 				if(element == null)
 				{
-					element = subString.trim();
+					element = new Element(subString.trim());
 				}
 			}
 			else
 			{
-				element = subString.trim();
+				element = new Element(subString.trim());
 			}
 			
-			if(element instanceof String && ((String)element).equals(""))
-				/* Don't add empty strings */;
+			if(element instanceof Element && ((Element)element).toString().equals(""))
+			{
+				/* Don't add empty strings */
+			}
 			else
-				elements.add(element);
+			{
+				elements.append(element);
+			}
 		}
 		
 		return elements;

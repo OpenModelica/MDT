@@ -59,7 +59,10 @@ import org.modelica.mdt.test.util.Utility;
 
 import junit.framework.TestCase;
 
-public class TestOMCProxy extends TestCase
+/**
+ * test org.modelica.mdt.core.CompilerProxy class' code 
+ */
+public class TestCompilerProxy extends TestCase
 {
 	/* a source code file use in some tests */
 	private IFile nested_models_mo;
@@ -81,7 +84,7 @@ public class TestOMCProxy extends TestCase
 	}
 	
 	/**
-	 * test OMCProxy.getRestrictionType() 
+	 * test CompilerProxy.getRestrictionType() 
 	 * @throws CompilerInstantiationException 
 	 */
 	public void testGetRestrictionType() 
@@ -139,7 +142,7 @@ public class TestOMCProxy extends TestCase
 			fail("Modelica.SIunits.Lethargy class' restriction type is wrong");
 		}
 		
-		CompilerProxy.loadFileInteractive(nested_models_mo);
+		CompilerProxy.loadSourceFile(nested_models_mo);
 		if (CompilerProxy.getRestrictionType("hepp.hehehe") 
 				!= Type.CLASS)
 		{
@@ -148,14 +151,14 @@ public class TestOMCProxy extends TestCase
 	}
 	
 	/**
-	 * test OMCProxy.getElementLocation()
+	 * test CompilerProxy.getElementLocation()
 	 * @throws CompilerInstantiationException 
 	 */
-	public void testGetElementLocation()
+	public void testGetClassLocation()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException
 	{
-		CompilerProxy.loadFileInteractive(nested_models_mo);
+		CompilerProxy.loadSourceFile(nested_models_mo);
 
 		/*
 		 * we are basicaly only interested in getting the right line number
