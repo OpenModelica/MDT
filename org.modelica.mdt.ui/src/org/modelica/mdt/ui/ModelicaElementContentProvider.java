@@ -236,11 +236,12 @@ public class ModelicaElementContentProvider
 	public void elementsChanged(final Collection<IModelicaElementChange> changes)
 	{
 		Control ctrl = viewer.getControl();
-		
+
 		if (ctrl == null || ctrl.isDisposed())
 		{
 			return;
 		}
+				
 		if (ctrl.getDisplay().getThread() == Thread.currentThread()) 
 		{
 			handleChanges(changes);
@@ -254,7 +255,9 @@ public class ModelicaElementContentProvider
 					/* Abort if this happens after disposes */
 					Control ctrl = viewer.getControl();
 					if (ctrl == null || ctrl.isDisposed())
+					{
 						return;
+					}
 					handleChanges(changes);
 				}
 			});

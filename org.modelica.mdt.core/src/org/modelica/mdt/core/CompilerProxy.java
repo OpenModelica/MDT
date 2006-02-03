@@ -151,7 +151,6 @@ public class CompilerProxy
 		return getCompiler().getCompilerName();
 	}
 
-	// TODO rename to loadFile or maybe loadSourceFile ?
 	public static IParseResults loadSourceFile(IFile file) 
 		throws ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException

@@ -53,7 +53,8 @@ import junit.framework.TestCase;
 
 public class TestList extends TestCase 
 {
-	private static final String[] content = { "foo", "hej", "bar", "wee" }; 
+	private static final String[] content = { "foo", "hej", "bar", "wee" };
+
 	/**
 	 * test creating, populating and using a simple (not nested) list
 	 */

@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
-import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -75,7 +75,7 @@ public class TestInnerClass extends TestCase
 		IModelicaProject proj = 
 			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
 		
-		IModelicaFile file = 
+		IModelicaSourceFile file = 
 			Utility.findModelicaFileInFolder(proj.getRootFolder(), 
 				"component_model.mo");
 		

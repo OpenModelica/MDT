@@ -40,16 +40,25 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -57,7 +66,8 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
- * Wrappper around IProject to provide Modelica specific view 
+ * Wrappper around IProject to provide Modelica specific view
+ * 
  * @author Elmir Jagudin
  */
 public class ModelicaProject extends ModelicaElement implements IModelicaProject 
@@ -134,4 +144,141 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		
 		return changes;
 	}
+	
+	public IModelicaClass getPackage(String packageName) 
+		throws ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, CoreException, InvocationError
+	{
+		/*
+		 * split up the full package names in separate package names
+		 * e.g. foo.bar.gazonk into foo, bar and gazonk
+		 * 
+		 * look up then foo package among the root packages, bar
+		 * among the foo's children and gazonk among bar's offspring 
+		 */
+		
+		/* start looking among root packages */
+		Collection<? extends IModelicaElement> currentChildren = 
+			getRootPackages();
+		
+		/* iterate over separate package names */
+		StringTokenizer pkgNames = new StringTokenizer(packageName, ".");
+		String subname;
+		IModelicaClass currentParent = null;
+		
+		while(pkgNames.hasMoreTokens())
+		{
+			subname = pkgNames.nextToken();
+			
+			/* look among packages to find the subname */
+			currentParent = null;
+			for (Object o : currentChildren)
+			{
+				if (!(o instanceof IModelicaClass))
+				{
+					/* skip children that are not classes/packages */
+					continue;
+				}
+				
+				/* here we know that o is of type IModelicaClass */
+				IModelicaClass p = (IModelicaClass) o;
+				if (p.getElementName().equals(subname))
+				{
+					/*
+					 * we found our next subpackage,
+					 * continiue to look among it's children
+					 */
+					currentChildren = p.getChildren();
+					currentParent = p;
+					break;
+				}
+			}
+			
+			if (currentParent == null)
+			{
+				/*
+				 * we failed to find our subpackage, the requested packages
+				 * does not exsits, bail out
+				 */
+				break;
+			}
+		}
+		
+		return currentParent;
+	}
+	
+	public Collection<? extends IModelicaClass> getRootPackages()
+		throws ConnectException, CompilerInstantiationException,
+ 			UnexpectedReplyException, CoreException
+	{
+		getRootFolder(); /* make sure root folder is loaded */
+
+		return rootFolder.getRootPackages();
+	}
+
+	public IModelicaElement findElement(IPath resourcePath)
+		throws ConnectException, UnexpectedReplyException, 
+			CompilerInstantiationException, CoreException, InvocationError
+	{
+		getRootFolder(); /* make sure root folder is loaded */
+		
+		/*
+		 * iterate over path segments and check and traverse
+		 * the resource tree until the desired resource is found
+		 * or some segment of the path does not match exiting children
+		 */
+		Collection<? extends IModelicaElement> currentChildren =
+			rootFolder.getChildren();
+		IModelicaElement currentParent = null;
+		
+		for (String segment : resourcePath.segments())
+		{
+			currentParent = null;
+
+			for (IModelicaElement element : currentChildren)
+			{
+				if (element.getElementName().equals(segment))
+				{
+					/* 
+					 * a child with a name that matches to current path
+					 * segment found, continue the search among it's children
+					 */
+					currentParent = element;
+					if (currentParent instanceof IModelicaFile)
+					{
+						/* dont look inside files */
+						currentChildren = 
+							Collections.<IModelicaElement>emptyList();						
+					}
+					else if (currentParent instanceof IParent)
+					{
+						currentChildren = ((IParent)element).getChildren();
+					}
+					else
+					{
+						/*
+						 * an element that is not of type IParent does not
+						 * have any children, evah !
+						 */
+						currentChildren = 
+							Collections.<IModelicaElement>emptyList();
+					}
+					break;
+				}
+			}
+			
+			if (currentParent == null)
+			{
+				/* 
+				 * could not find next element in the tree,  
+				 * we have failed to find the element at the requested path
+				 */
+				break;
+			}
+
+		}
+
+		return currentParent;
+	}
+
 }

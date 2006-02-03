@@ -45,6 +45,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -79,21 +80,21 @@ public class TestTraversingPackages extends TestCase
 	{
 		IModelicaClass root_package = null;
 		IModelicaClass childless_package = null;
-		IModelicaFile root_package_model = null;
-		IModelicaFile root_package_function = null;
+		IModelicaSourceFile root_package_model = null;
+		IModelicaSourceFile root_package_function = null;
 
 		/* for a temporary reference oo package.mo */
-		IModelicaFile package_mo = null;
+		IModelicaSourceFile package_mo = null;
 
 		/* root_package/plain_file */
-		IFile root_package_plain_file = null;
+		IModelicaFile root_package_plain_file = null;
 
 		/* root_package/root_package_folder */
 		IModelicaFolder root_package_folder = null;
 		
 		IModelicaClass sub_package = null;
 		IModelicaClass leaf_package = null;
-		IModelicaFile sub_package_model = null;
+		IModelicaSourceFile sub_package_model = null;
 
 		/*
 		 * traverse children of project_root 
@@ -150,23 +151,23 @@ public class TestTraversingPackages extends TestCase
 			}
 			else if (name.equals("root_package_model.mo"))
 			{
-				root_package_model = (IModelicaFile)elm;
+				root_package_model = (IModelicaSourceFile)elm;
 			}
 			else if (name.equals("root_package_function.mo"))
 			{
-				root_package_function = (IModelicaFile)elm;
+				root_package_function = (IModelicaSourceFile)elm;
 			}
 			else if (name.equals("package.mo"))
 			{
-				package_mo = (IModelicaFile)elm;
+				package_mo = (IModelicaSourceFile)elm;
 			}
 			else if (name.equals("plain_file"))
 			{
-				root_package_plain_file = (IFile)elm;;
+				root_package_plain_file = (IModelicaFile)elm;;
 			}
 			else if (name.equals("root_package_folder"))
 			{
-					root_package_folder = (IModelicaFolder)elm;;
+				root_package_folder = (IModelicaFolder)elm;;
 			}
 			
 		}
@@ -207,11 +208,11 @@ public class TestTraversingPackages extends TestCase
 			}
 			else if (name.equals("package.mo"))
 			{
-				package_mo = (IModelicaFile)elm;
+				package_mo = (IModelicaSourceFile)elm;
 			}
 			else if (name.equals("sub_package_model.mo"))
 			{
-				sub_package_model = (IModelicaFile)elm;
+				sub_package_model = (IModelicaSourceFile)elm;
 			}		
 
 		}

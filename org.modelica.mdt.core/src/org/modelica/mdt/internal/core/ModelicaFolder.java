@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -52,7 +53,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -70,8 +74,8 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	
 	private boolean childrenLoaded = false;
 	
-	private Hashtable<IResource, Object> children = 
-			new Hashtable<IResource, Object>();
+	private Hashtable<IResource, IModelicaElement> children = 
+			new Hashtable<IResource, IModelicaElement>();
 	
 	protected ModelicaFolder(IContainer cont)
 	{
@@ -88,7 +92,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 
-	public Collection<Object> getChildren() 
+	public Collection<? extends IModelicaElement> getChildren() 
 		throws CoreException, ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
@@ -129,7 +133,8 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * can be specified. This is a little hack to enable ModelicaProject object
 	 * to specifie itself as the parent, otherwise updating the tree in the
 	 * projects view does not work. That is due to the fact that root folder
-	 * of any project is now explisitly shown in the tree. This kinda sucks,
+	 * of any project does not have its own node. Root folders children are 
+	 * displayed as direct children of the project node. This kinda sucks,
 	 * pehaps there are better design alternatives.
 	 * 
 	 * @param root
@@ -147,13 +152,23 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
+
+		if (!childrenLoaded)
+		{
+			/* 
+			 * we don't want to process changes until 
+			 * children elements are loaded 
+			 */
+			return changes; /* just return an empty list */
+		}
+		
 		Object parent = (root != null) ? root : this;
 
 		for (IResourceDelta d : delta.getAffectedChildren())
 		{
 			IResource res = d.getResource();
-			Object element = children.get(res);
-
+			IModelicaElement element = children.get(res);
+			
 			switch (d.getKind())
 			{
 			case IResourceDelta.ADDED:
@@ -199,7 +214,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * map a IResource to the type of modelica element it represents
 	 * @throws CompilerInstantiationException 
 	 */
-	private Object wrap(IResource res)
+	private IModelicaElement wrap(IResource res)
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
@@ -221,12 +236,71 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			String extension = res.getFileExtension(); 
 			if (extension != null && extension.equals("mo"))
 			{
-				return new ModelicaFile((IFile)res);
+				return new ModelicaSourceFile((IFile)res);
 			}
 		}
 		/* only one option left, a regular file */
-		return res;
+		return new ModelicaFile((IFile)res);
 
 	}
+	
+	/**
+	 * the recursive function to look for package roots in this
+	 * folder and the subfolders. This function is used by 
+	 * IModelicaProject.getRootPackages() method. 
+	 *  
+	 * @return
+	 * @throws ConnectException
+	 * @throws CompilerInstantiationException
+	 * @throws UnexpectedReplyException
+	 * @throws CoreException
+	 */
+	protected Vector<IModelicaClass> getRootPackages() 
+		throws ConnectException, CompilerInstantiationException,
+			UnexpectedReplyException, CoreException
+	{
+		/* make sure children are loaded */
+		if (!childrenLoaded)
+		{
+			loadChildren();
+			childrenLoaded = true;
+		}
 
+		Vector<IModelicaClass> pkgs = new Vector<IModelicaClass>();
+		IModelicaClass classElement;
+		IModelicaSourceFile fileElement;
+		
+		/*
+		 * go over the children and put all the packages in a list
+		 * and search for root packages in subfolders and files in this
+		 * folder
+		 */
+		for (Object element : children.values())
+		{
+			if (element instanceof IModelicaClass)
+			{
+				classElement = (IModelicaClass) element;
+				if ((classElement.getRestrictionType() == 
+					        IModelicaClass.Type.PACKAGE) &&
+				    classElement.getPrefix().equals(""))
+				{
+					pkgs.add(classElement);
+				}
+			}
+			else if (element instanceof ModelicaFolder)
+			{
+				pkgs.addAll(((ModelicaFolder)element).getRootPackages());
+			}
+			else if (element instanceof IModelicaSourceFile)
+			{
+				fileElement = (IModelicaSourceFile) element;				
+				for (IModelicaClass e : fileElement.getRootPackages())
+				{
+					pkgs.add(e);
+				}
+			}
+		}
+		
+		return pkgs;
+	}
 }

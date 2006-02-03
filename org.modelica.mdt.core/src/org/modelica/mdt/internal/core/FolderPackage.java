@@ -53,6 +53,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -72,8 +73,8 @@ public class FolderPackage extends ModelicaClass
 	private IFolder container;
 	private boolean childrenLoaded = false;
 	
-	private Hashtable<IResource, Object> children = 
-			new Hashtable<IResource, Object>();
+	private Hashtable<IResource, IModelicaElement> children = 
+			new Hashtable<IResource, IModelicaElement>();
 
 	/**
 	 * Create a root package, a package that is defined in the unnamed root
@@ -121,7 +122,7 @@ public class FolderPackage extends ModelicaClass
 		return true;
 	}
 
-	public Collection<Object> getChildren() 
+	public Collection<? extends IModelicaElement> getChildren() 
 		throws CoreException, ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
@@ -138,7 +139,7 @@ public class FolderPackage extends ModelicaClass
 		throws CoreException, ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		for (IResource member :  container.members())
+		for (IResource member : container.members())
 		{
 			children.put(member, wrap(member));
 		}
@@ -152,10 +153,28 @@ public class FolderPackage extends ModelicaClass
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
 
+		if (!childrenLoaded)
+		{
+			/* 
+			 * we don't want to process changes until 
+			 * children elements are loaded 
+			 */
+			return changes; /* just return an empty list */
+		}
+				
 		for (IResourceDelta d : delta.getAffectedChildren())
 		{
 			IResource res = d.getResource();
-			Object element = children.get(res);
+			IModelicaElement element = children.get(res);
+			
+			if (!childrenLoaded)
+			{
+				System.out.println("children not loaded!");
+			}
+			if (d.getKind() == IResourceDelta.CHANGED && element == null)
+			{
+				System.out.println(res + " not found");
+			}
 
 			switch (d.getKind())
 			{
@@ -223,7 +242,7 @@ public class FolderPackage extends ModelicaClass
 				
 				for (String name : results.getClasses())
 				{
-					if (name.equals(folderName))
+					if (name.endsWith(folderName))
 					{
 						return true;
 					}
@@ -239,7 +258,7 @@ public class FolderPackage extends ModelicaClass
 	 * map a IResource to the type of modelica element it represents
 	 * @throws CompilerInstantiationException 
 	 */
-	protected Object wrap(IResource res)
+	protected IModelicaElement wrap(IResource res)
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
@@ -261,11 +280,11 @@ public class FolderPackage extends ModelicaClass
 			String extension = res.getFileExtension(); 
 			if (extension != null && extension.equals("mo"))
 			{
-				return new ModelicaFile((IFile)res);
+				return new ModelicaSourceFile((IFile)res);
 			}
 		}
 		/* only one option left, a regular file */
-		return res;
+		return new ModelicaFile((IFile)res);
 
 	}
 

@@ -77,6 +77,19 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 
 		return res;	
 	}
+	
+	public IModelicaProject getProject(String name)
+	{
+		for (IModelicaProject proj : projectsTable.values())
+		{
+			if (proj.getElementName().equals(name))
+			{
+				return proj;
+			}
+		}
+		return null;
+	}
+
 
 	private void loadProjects()
 	{
@@ -138,7 +151,10 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 			}
 		}
 		
-		postChangeEvent(changes);
+		if (!changes.isEmpty())
+		{
+			postChangeEvent(changes);
+		}
 	}
 
 	private List<IModelicaElementChange> handleResourceAdded(IProject project)
@@ -219,4 +235,5 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	{
 		listeners.remove(listener);
 	}
+
 }

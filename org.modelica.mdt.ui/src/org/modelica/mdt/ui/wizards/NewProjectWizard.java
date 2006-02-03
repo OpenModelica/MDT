@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -42,8 +42,8 @@
 package org.modelica.mdt.ui.wizards;
 
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.ui.ModelicaImages;
+import org.modelica.mdt.ui.UIPlugin;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -113,7 +113,7 @@ public class NewProjectWizard extends Wizard implements INewWizard
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
 	        				  GridData.GRAB_HORIZONTAL);
 	        projectName.setLayoutData(gd);
-	        CorePlugin.tag(projectName, PROJECT_NAME_TAG);
+	        UIPlugin.tag(projectName, PROJECT_NAME_TAG);
 	        
 	        projectName.addModifyListener(new ModifyListener()
 	    	{

@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -85,9 +85,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.ide.IDE;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.internal.core.CorePlugin;
-import org.modelica.mdt.internal.core.ModelicaElement;
 import org.modelica.mdt.ui.ModelicaImages;
+import org.modelica.mdt.ui.UIPlugin;
 
 public class NewClassWizard extends Wizard implements INewWizard
 {
@@ -161,7 +162,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        sourceFolder = new Text(composite, SWT.SINGLE | SWT.BORDER);
 	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	        sourceFolder.setLayoutData(gd);
-	        CorePlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
+	        UIPlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
 	        setSourceFolder(selection);
 	        
 	        sourceFolder.addModifyListener(new ModifyListener()
@@ -200,14 +201,14 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        				  GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        className.setLayoutData(gd);
-	        CorePlugin.tag(className, CLASS_NAME_TAG);
+	        UIPlugin.tag(className, CLASS_NAME_TAG);
 
 	        className.addModifyListener(new ModifyListener()
 	        {
 	        	/* check if entered classname is valid */
 	        	public void modifyText(ModifyEvent e)
 	        	{
-	        		if (!ModelicaElement.isLegalIdentifierName(className.getText()))
+	        		if (!ModelicaCore.isLegalIdentifierName(className.getText()))
 	        		{
 	        			updateStatus("Class name is not valid. Illegal identifier.",
 	        						DialogPage.WARNING);
@@ -231,7 +232,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        classType.setItems(new String [] {"model", "class", "connector", 
 	        		"record", "block", "type", "function"});
 	        classType.setVisibleItemCount(7);
-	        CorePlugin.tag(classType, CLASS_TYPE_TAG);
+	        UIPlugin.tag(classType, CLASS_TYPE_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -269,7 +270,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        /* initial equation block */
 	        initialEquation = new Button(composite, SWT.CHECK);
 	        initialEquation.setText("include initial equation block");
-	        CorePlugin.tag(initialEquation, INITIAL_EQUATION_TAG);
+	        UIPlugin.tag(initialEquation, INITIAL_EQUATION_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -285,14 +286,14 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        gd.horizontalSpan = 2;
 	        partialClass.setLayoutData(gd);
-	        CorePlugin.tag(partialClass, PARTIAL_CLASS_TAG);
+	        UIPlugin.tag(partialClass, PARTIAL_CLASS_TAG);
 
 	        /* external body */
 	        new Label(composite, SWT.NONE); /* empty label for padding */
 	        externalBody = new Button(composite, SWT.CHECK);
 	        externalBody.setText("have external body");
 	        externalBody.setEnabled(false);
-	        CorePlugin.tag(externalBody, EXTERNAL_BODY_TAG);
+	        UIPlugin.tag(externalBody, EXTERNAL_BODY_TAG);
 	        
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -342,7 +343,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 			sourceFolderValid = false;
 			if (sourceFolder.getText().length() == 0) {
-				updateStatus("File container must be specified", 
+				updateStatus("Folder container must be specified", 
 						DialogPage.ERROR);
 				return;
 			}
@@ -350,7 +351,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 			    (container.getType() & 
 			      (IResource.PROJECT | IResource.FOLDER)) == 0) 
 			{
-				updateStatus("File container must exist", DialogPage.ERROR);
+				updateStatus("Folder container must exist", DialogPage.ERROR);
 				return;
 			}
 			if (!container.isAccessible()) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -48,6 +48,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -69,7 +70,7 @@ public class TestModelicaFolder extends TestCase
 	 * the test subject
 	 * the root folder of Area51 modelica project
 	 */
-	private IModelicaFolder root;
+	private IModelicaFolder rootFolder;
 	
 	/* collection of expected children */
 	private Vector<String> expectedChildren = new Vector<String>(10);	
@@ -79,12 +80,13 @@ public class TestModelicaFolder extends TestCase
 	private Vector<String> expectedPackageLookAlikeChildren 
 		= new Vector<String>(1);
 	
+	
 	@Override
 	protected void setUp() throws Exception
 	{
 		Area51Projects.createProjects();
 		
-		root = 
+		rootFolder = 
 			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME).
 				getRootFolder();
 		
@@ -110,16 +112,17 @@ public class TestModelicaFolder extends TestCase
 	{
 		try 
 		{
-			assertTrue(root.hasChildren());
+			assertTrue(rootFolder.hasChildren());
 		}
 		catch (Exception e)
 		{
 			fail("exception thrown " + e.getMessage());
 		}
 	}
+		
 
 	/**
-	 * test ModelciaFoldet.getChildren()
+	 * test ModelicaFolder.getChildren() method
 	 * @throws CompilerInstantiationException 
 	 * 
 	 */
@@ -133,7 +136,7 @@ public class TestModelicaFolder extends TestCase
 		
 		
 		String name = "";
-		for (Object elm : root.getChildren())
+		for (Object elm : rootFolder.getChildren())
 		{
 			
 			if (elm instanceof IFile)
@@ -170,10 +173,10 @@ public class TestModelicaFolder extends TestCase
 		
 		for (Object elm : root_folder.getChildren())
 		{
-			if (elm instanceof IFile)
+			if (elm instanceof IModelicaFile)
 			{
 				/* we only expect (looking for) files inside root_folder */
-				name = ((IFile)elm).getName();
+				name = ((IModelicaFile)elm).getElementName();
 				expectedRootFolderChildren.remove(name);
 			}
 		}
@@ -182,13 +185,13 @@ public class TestModelicaFolder extends TestCase
 		
 		for (Object elm : package_look_alike.getChildren())
 		{
-			if (elm instanceof IModelicaFile)
+			if (elm instanceof IModelicaSourceFile)
 			{
 				/* 
 				 * we only expect (looking for) modelica files 
 				 * inside package_look_alike 
 				 */
-				name = ((IModelicaFile)elm).getElementName();
+				name = ((IModelicaSourceFile)elm).getElementName();
 				expectedPackageLookAlikeChildren.remove(name);
 			}
 		}

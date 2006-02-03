@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -137,6 +137,11 @@ public class TestModelicaRoot extends TestCase
 	private static final String PROJECT_NAME_MOD_EXTRA = 
 		TestModelicaRoot.class.getName() + "_MOD";
 
+	/* name of a non existent project */
+	private static final String PROJECT_NAME_NON_EXISTENT = 
+		TestModelicaRoot.class.getName() + "_NON_EXISTENT";
+
+	
 	private IWorkspaceRoot workspaceRoot = 
 			ResourcesPlugin.getWorkspace().getRoot();	
 	private IModelicaRoot modelicaRoot = 
@@ -183,7 +188,11 @@ public class TestModelicaRoot extends TestCase
 
 	}
 	
-	public void testProjectsEnumeration() throws CoreException
+	/**
+	 * Test if IModelicaRoot.getProjects() (implemented by ModelicaRoot) 
+	 * works as prescribed. 
+	 */
+	public void testGetProjects() throws CoreException
 	{
  
 		IModelicaProject mproj;
@@ -210,6 +219,28 @@ public class TestModelicaRoot extends TestCase
 			}
 		}
 	}
+	
+	/**
+	 * Test if IModelicaRoot.getProject() (implemented by ModelicaRoot) 
+	 * works as prescribed. 
+	 */
+	public void testGetProject()
+	{
+		IModelicaProject proj;
+		
+		proj = modelicaRoot.getProject(PROJECT_NAME_1);
+		assertEquals(PROJECT_NAME_1, proj.getElementName());
+		
+		proj = modelicaRoot.getProject(PROJECT_NAME_3);
+		assertEquals(PROJECT_NAME_3, proj.getElementName());
+
+		proj = modelicaRoot.getProject(PROJECT_NAME_2);
+		assertEquals(PROJECT_NAME_2, proj.getElementName());
+		
+		proj = modelicaRoot.getProject(PROJECT_NAME_NON_EXISTENT);
+		assertNull("hmm, an non-existent project found?", proj);
+	}
+	
 	
 	/**
 	 * Test adding and removing projects to the workspace and check

@@ -600,9 +600,10 @@ public class OMCProxy implements IModelicaCompiler
 		 * See if there were parse errors
 		 */
 		if(retval.toLowerCase().contains("error"))
-		{
+		{			
 			res.setCompileErrors
 				(OMCParser.parseErrorString(getErrorString()));
+			res.setClassNames(new List());
 		}
 		/*
 		 * file loaded and parse successsfully

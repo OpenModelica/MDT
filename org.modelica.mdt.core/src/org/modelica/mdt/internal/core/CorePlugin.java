@@ -46,7 +46,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -140,18 +139,6 @@ public class CorePlugin extends AbstractUIPlugin
 	{
 		return getDefault().getBundle().getSymbolicName();
 	}
-
-	/**
-	 * set an abbot tag, used by GUI regressions tests to find
-	 * specific widgets.
-	 * 
-	 * @param widget the widget to tag
-	 * @param tag the tag to set
-	 */
-	public static void tag(Widget widget, String tag)
-	{
-		widget.setData("name", tag);
-	}		
 
 	private IWorkbenchPage internalGetActivePage() 
 	{

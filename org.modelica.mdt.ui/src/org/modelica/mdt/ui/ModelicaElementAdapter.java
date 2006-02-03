@@ -50,6 +50,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -150,10 +151,26 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 					(ModelicaImages.IMG_OBJS_PROTECTED_COMPONENT);
 			}
 		}
-		else if (object instanceof IModelicaFile)
+		else if (object instanceof IModelicaSourceFile)
 		{
 			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_MO_FILE);
 		}
+		/* 
+		 * this check must be done after IModelicaSourceFile couse 
+		 * IModelciaFile is superclass of IModelicaSourceFile
+		 */
+		else if (object instanceof IModelicaFile)
+		{
+			/*
+			 * pattern beauty continued...
+			 */
+			IModelicaFile mfile = (IModelicaFile) object;
+			IWorkbenchAdapter wadap = 
+				(IWorkbenchAdapter) mfile.getResource().getAdapter(IWorkbenchAdapter.class);
+			return wadap.getImageDescriptor(mfile.getResource());
+			
+		}
+		
 		else if (object instanceof IModelicaFolder)
 		{
 			return PlatformUI.getWorkbench().getSharedImages().

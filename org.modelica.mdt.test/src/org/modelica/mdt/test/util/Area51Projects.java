@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -74,7 +74,11 @@ import org.modelica.mdt.core.ModelicaCore;
  *   + hej_hopp
  * + package_look_alike          (folder)
  *   + package.mo                (an empty file)
- * + empty_folder                (folder)   
+ * + empty_folder                (folder)  
+ * + packages_folder             (folder)
+ *   + folder_package            (folder)
+ *     + package.mo
+ *   + file_package.mo 
  * + root_package                (folder)
  *   + package.mo
  *   + plain_file
@@ -177,8 +181,8 @@ public class Area51Projects
 		
 		/* root_folder */
 		folder = simple_project.getFolder("root_folder");
-		folder.create(false, true, null);
-
+		folder.create(false, true, null);		
+		
 		/* folder_file */
 		file = folder.getFile("folder_file");
 		file.create(Utility.getByteStream(""), true, null);
@@ -219,7 +223,36 @@ public class Area51Projects
 		/* root_folder/hej_hopp */
 		file = folder.getFile("hej_hopp");
 		file.create(Utility.getByteStream("go morron!\n"), true, null);
-		
+
+		/* packages_folder */
+		folder = modelica_project.getFolder("packages_folder");
+		folder.create(false, true, null);
+
+		/* packages_folder/file_package.mo */
+		file = folder.getFile("file_package.mo");
+		contents = 
+			"package file_package1\n" +
+			"    import Modelica;\n" +
+			"end file_package1;\n" +
+			"\n" +
+			"package file_package2\n" +
+			"    import Modelica;\n" +
+			"end file_package2;";
+			
+		file.create(Utility.getByteStream(contents), true, null);
+				
+		/* packages_folder/folder_package */
+		folder = folder.getFolder("folder_package");
+		folder.create(false, true, null);
+
+		/* packages_folder/folder_package/package.mo */
+		file = folder.getFile("package.mo");
+		contents = 
+			"package folder_package\n" +
+			"    import Modelica;\n" +
+			"end folder_package;";
+		file.create(Utility.getByteStream(contents), true, null);
+				
 		/* package_look_alike */
 		folder = modelica_project.getFolder("package_look_alike");
 		folder.create(false, true, null);
@@ -313,7 +346,7 @@ public class Area51Projects
 		file = modelica_project.getFile("README.txt");
 		contents = 
 			"This is a dummy modelica project to run regression test on.\n" +
-			" trés bien !";
+			" trï¿½s bien !";
 		file.create(Utility.getByteStream(contents), true, null);
 				
 		/* root_package */
@@ -354,38 +387,46 @@ public class Area51Projects
 		sub_folder = folder.getFolder("root_package_folder");
 		sub_folder.create(false, true, null);
 			
-		/* sub_package */
+		/* root_package/sub_package */
 		folder = folder.getFolder("sub_package");
 		folder.create(false, true, null);
 			
+		/* root_package/sub_package/package.mo */
 		file = folder.getFile("package.mo");
 		contents = 
+			"within root_package;\n" +
+			"\n" +
 			"package sub_package\n" +
 			"\n" + 
 			"end sub_package;\n";
 		file.create(Utility.getByteStream(contents), true, null);
 			
-		/* sub_package_model inside sub_package */
+		/* root_package/sub_package/sub_package_model.mo */
 		file = folder.getFile("sub_package_model.mo");
-		contents = 
+		contents =
+			"within root_package.sub_package;\n" +
+			"\n" +
 			"model sub_package_model\n" +
 			"\n" + 
 			"end sub_package_model;\n";
 		file.create(Utility.getByteStream(contents), true, null);
 
 
-		/* leaf_package */
+		/* root_package/sub_package/leaf_package */
 		folder = folder.getFolder("leaf_package");
 		folder.create(false, true, null);
-			
+
+		/* root_package/sub_package/leaf_package/package.mo */
 		file = folder.getFile("package.mo");
-		contents = 
+		contents =
+			"within root_package.sub_package;\n" +
+			"\n" +
 			"package leaf_package\n" +
 			"\n" + 
 			"end leaf_package;\n";
 		file.create(Utility.getByteStream(contents), true, null);
 			
-		/* childless_root_package */
+		/* childless_package */
 		folder = modelica_project.getFolder("childless_package");
 		folder.create(false, true, null);
 			

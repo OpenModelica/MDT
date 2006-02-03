@@ -47,5 +47,4 @@ package org.modelica.mdt.core;
  */
 public interface IModelicaFolder extends IModelicaElement, IParent
 {
-
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -81,9 +81,9 @@ import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.ui.ModelicaElementContentProvider;
 import org.modelica.mdt.ui.ModelicaElementSorter;
+import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.internal.core.CorePlugin;
 
 public class ProjectsView extends ViewPart
 {
@@ -113,7 +113,7 @@ public class ProjectsView extends ViewPart
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ModelicaCore.getModelicaRoot());
 		viewer.setSorter(new ModelicaElementSorter());
-		CorePlugin.tag(viewer.getTree(), TREE_TAG);
+		UIPlugin.tag(viewer.getTree(), TREE_TAG);
 
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {

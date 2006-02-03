@@ -42,6 +42,7 @@
 package org.modelica.mdt.core;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -59,6 +60,37 @@ public class ModelicaCore
 {
 	private static ModelicaRoot modelicaRoot = null;
 
+
+	
+	/* 
+	 * regexp pattern of a valid modelica class name,
+	 * see modelica specification page 9 (and perhaps some other pages as well)
+	 * for the formal definition
+	 * http://www.modelica.org/documents/ModelicaSpec22.pdf
+	 */
+	private static String getPattern()
+	{
+
+		String IDENT = "([_a-zA-Z]\\w*)";
+		
+		/* \p{Graph} are all printable characters in the POSIX standard
+		 * Q-CHAR = [\p{Graph}&&[^'\]] */
+		String Q_CHAR = "[\\p{Graph}&&[^'\\\\]]";
+		
+		/* S-ESCAPE = \'|\"|\?|\\|\a|\b|\f|\n|\r|\t|\v */
+		String S_ESCAPE = "((\\\\')|(\\\\\")|(\\\\\\?)|(\\\\\\\\)|(\\\\a)"
+			+"|(\\\\b)|(\\\\f)|(\\\\n)|(\\\\r)|(\\\\t)|(\\\\v))";
+		
+		/* Q-IDENT = "'" (Q-CHAR | S-ESCAPE) {Q-CHAR | S-ESCAPE} "'" */
+		String Q_IDENT = "('(" + Q_CHAR + "|" + S_ESCAPE + ")+')";
+		
+		String pattern = IDENT + "|" + Q_IDENT;
+		
+		return pattern;
+	}
+    private static Pattern classNamePattern = Pattern.compile(getPattern());
+
+	
 	
 	public static class CreateNewProjectRunnable implements IRunnableWithProgress
 	{
@@ -159,5 +191,14 @@ public class ModelicaCore
 	{
 		modelicaRoot.stop();
 		modelicaRoot = null;
+	}
+
+
+	/**
+	 * @return true if name is a valid modelica identifier name
+	 */
+	public static boolean isLegalIdentifierName(String name)
+	{
+		return ModelicaCore.classNamePattern.matcher(name).matches();
 	}
 }

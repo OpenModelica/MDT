@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -41,11 +41,11 @@
 
 package org.modelica.mdt.ui;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaClass.Type;
@@ -67,7 +67,7 @@ public class ModelicaElementSorter extends ViewerSorter
 	private static int PUBLIC_COMPONENT_ORDER   	= 5;
 	private static int PROTECTED_COMPONENT_ORDER   	= 6;
 	private static int MODELICA_FILE_ORDER			= 7;
-	private static int FILE_ORDER 					= 8;
+	private static int PLAIN_FILE_ORDER 			= 8;
 	private static int SYSTEM_LIBRARY_ORDER 		= 9;
 	private static int UNKOWN_TYPE_ORDER 			= Integer.MAX_VALUE;
 
@@ -109,13 +109,13 @@ public class ModelicaElementSorter extends ViewerSorter
 				return PROTECTED_COMPONENT_ORDER;
 			}
 		}
-		else if (element instanceof IModelicaFile)
+		else if (element instanceof IModelicaSourceFile)
 		{
 			return MODELICA_FILE_ORDER;
 		}
-		else if (element instanceof IFile)
+		else if (element instanceof IModelicaFile)
 		{
-			return FILE_ORDER;
+			return PLAIN_FILE_ORDER;
 		}
 		else if (element instanceof SystemLibrary)
 		{
@@ -126,9 +126,8 @@ public class ModelicaElementSorter extends ViewerSorter
 			return PROJECT_ORDER;
 		}
 
-		ErrorManager.logWarning("element of unknow type encountered at " +
-				ErrorManager.getCurrentMethod() + "\n" +
-				"element's class is " + element.getClass().getName());
+		ErrorManager.logBug(UIPlugin.getSymbolicName(),
+				"element of unknow type encountered");
 		return UNKOWN_TYPE_ORDER;
 	}
 }

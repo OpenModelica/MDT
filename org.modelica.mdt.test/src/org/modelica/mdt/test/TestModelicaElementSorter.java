@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -47,7 +47,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -178,9 +178,9 @@ public class TestModelicaElementSorter extends TestCase
 		{
 			elm = children[i];
 			
-			if (elm instanceof IModelicaFile)
+			if (elm instanceof IModelicaSourceFile)
 			{
-				current = ((IModelicaFile)elm).getElementName();
+				current = ((IModelicaSourceFile)elm).getElementName();
 				if (previous != null)
 				{
 					order = 
@@ -235,7 +235,7 @@ public class TestModelicaElementSorter extends TestCase
 			{
 				fail("modelica class in the wrong place");
 			}
-			else if (elm instanceof IModelicaFile)
+			else if (elm instanceof IModelicaSourceFile)
 			{
 				fail("modelica class in the wrong place");
 			}

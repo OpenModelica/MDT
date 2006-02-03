@@ -43,13 +43,16 @@ package org.modelica.mdt.internal.core;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
-import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -60,13 +63,13 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 /**
  * @author Elmir Jagudin
  */
-public class ModelicaFile extends ModelicaElement implements IModelicaFile 
+public class ModelicaSourceFile extends ModelicaElement implements IModelicaSourceFile 
 {
 	private IFile file;
 	private FolderPackage parentPackage;
 
 	/* classes and packages in this file hashed by name */
-	Hashtable<String, Object> children = null;	
+	Hashtable<String, IModelicaElement> children = null;	
 
 	/**
 	 * Create a modelica file that is inside a package. All the definitions
@@ -75,14 +78,14 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	 * @param parent
 	 * @param file
 	 */
-	public ModelicaFile(FolderPackage parent, IFile file) 
+	public ModelicaSourceFile(FolderPackage parent, IFile file) 
 	{
 		this.parentPackage = parent;
 		this.file = file;
 	}
 
 	
-	public ModelicaFile(IFile file) 
+	public ModelicaSourceFile(IFile file) 
 	{
 		this.file = file;
 	}
@@ -101,7 +104,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		return file;
 	}
 
-	public Collection<Object> getChildren()
+	public Collection<? extends IModelicaElement> getChildren()
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException 
 	{
@@ -113,18 +116,16 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		return children.values();
 	}
 
-	private Hashtable<String, Object> loadElements() 
+	private Hashtable<String, IModelicaElement> loadElements() 
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		Hashtable<String, Object> elements = new Hashtable<String, Object>();
+		Hashtable<String, IModelicaElement> elements = 
+			new Hashtable<String, IModelicaElement>();
 
 		IParseResults res = CompilerProxy.loadSourceFile(file);
-
-		for (Object obj : res.getClasses())
+		for (String name : res.getClasses())
 		{
-			String name = (String)obj;
-
 			if (parentPackage == null)
 			{
 				/* we are not inside a package */
@@ -134,7 +135,7 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 			{
 				elements.put(name, 
 						new InnerClass(file, parentPackage.getFullName(),
-								name));					
+						name));
 			}
 		}
 		
@@ -165,23 +166,22 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 			return changes;
 		}
 
-		Hashtable<String, Object> newChildren = loadElements();
+		Hashtable<String, IModelicaElement> newChildren = loadElements();
 		@SuppressWarnings("unchecked")
-		Hashtable<String, Object> oldChildren = 
-			(Hashtable<String, Object>) children.clone();
+		Hashtable<String, IModelicaElement> oldChildren = 
+			(Hashtable<String, IModelicaElement>) children.clone();
 		
 		
-		for (Object element : newChildren.values())
+		for (IModelicaElement element : newChildren.values())
 		{
-			ModelicaElement moElement = (ModelicaElement) element;
-			
+		
 			ModelicaElement oldElement = (ModelicaElement)
-				oldChildren.remove(moElement.getElementName());
+				oldChildren.remove(element.getElementName());
 			
 			if (oldElement == null)
 			{
 				/* new element added */
-				children.put(moElement.getElementName(), element);
+				children.put(element.getElementName(), element);
 				changes.add(new ModelicaElementChange(this, element));
 			}
 			else
@@ -201,6 +201,38 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 		}
 		
 		return changes;
+	}
+
+
+	public IModelicaClass[] getRootPackages() 
+		throws ConnectException, UnexpectedReplyException, CompilerInstantiationException
+	{
+		/* make sure the children are loaded */
+		if (children == null)
+		{
+			children = loadElements();
+		}
+
+		Vector<IModelicaClass> pkgs = new Vector<IModelicaClass>();
+		IModelicaClass classElement;
+		
+		for (Object element : children.values())
+		{
+			if (element instanceof IModelicaClass)
+			{
+				classElement = (IModelicaClass) element;
+				if ((classElement.getRestrictionType() == 
+					        IModelicaClass.Type.PACKAGE) &&
+				    classElement.getPrefix().equals(""))
+				{
+					pkgs.add(classElement);
+				}
+			}
+		}
+		
+		IModelicaClass[] arry =  new IModelicaClass[pkgs.size()];
+
+		return pkgs.toArray(arry);
 	}
 
 }

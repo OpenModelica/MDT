@@ -57,6 +57,7 @@ import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
@@ -90,7 +91,7 @@ public class InnerClass extends ModelicaClass
 	private IElementLocation location = null;;
 
 	/* subpackages and subclasses hashed by the thier's shortname */
-	private Hashtable<String, Object> children = null;
+	private Hashtable<String, IModelicaElement> children = null;
 	
 	public InnerClass(IFile container, String prefix, String name,
 					IElementLocation location, Type restrictionType)
@@ -131,9 +132,9 @@ public class InnerClass extends ModelicaClass
 	/**
 	 * @see org.modelica.mdt.core.IParent#getChildren()
 	 */
-	public Collection<Object> getChildren() throws ConnectException,
-			UnexpectedReplyException, InvocationError, CoreException,
-				CompilerInstantiationException
+	public Collection<? extends IModelicaElement> getChildren() 
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CoreException, CompilerInstantiationException
 	{
 		if (children == null)
 		{
@@ -143,12 +144,17 @@ public class InnerClass extends ModelicaClass
 		return children.values();
 	}
 	
-	private Hashtable<String, Object> loadElements() 
+	private Hashtable<String, IModelicaElement> loadElements() 
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException
 	{
-		Hashtable<String, Object> elements = new Hashtable<String, Object>();
+		Hashtable<String, IModelicaElement> elements = 
+			new Hashtable<String, IModelicaElement>();
 	
+		// 
+		// TODO this parsing code should not be here, it should be pushed
+		// into the compiler plugin (org.modelica.mdt.omc) somehow
+		//
 		String str;
 		String elementType;
 		String elementFile = "";
@@ -281,24 +287,23 @@ public class InnerClass extends ModelicaClass
 		}
 
 
-		Hashtable<String, Object> newChildren = loadElements();
-
+		Hashtable<String, IModelicaElement> newChildren = loadElements();
+		
 		@SuppressWarnings("unchecked")
-		Hashtable<String, Object> oldChildren = 
-			(Hashtable<String, Object>) children.clone();
+		Hashtable<String, IModelicaElement> oldChildren = 
+			(Hashtable<String, IModelicaElement>) children.clone();
 		
 		
-		for (Object element : newChildren.values())
+		for (IModelicaElement element : newChildren.values())
 		{
-			ModelicaElement moElement = (ModelicaElement) element;
-
-			ModelicaElement oldElement = (ModelicaElement)
-				oldChildren.remove(moElement.getElementName());
+			ModelicaElement oldElement =
+				(ModelicaElement)
+					oldChildren.remove(element.getElementName());
 		
 			if (oldElement == null)
 			{
 				/* new element added */
-				children.put(moElement.getElementName(), element);
+				children.put(element.getElementName(), element);
 				changes.add(new ModelicaElementChange(this, element));
 			}
 			else

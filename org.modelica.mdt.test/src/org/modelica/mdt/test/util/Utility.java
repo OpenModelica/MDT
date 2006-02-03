@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -59,7 +59,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
-import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
@@ -321,16 +321,16 @@ public class Utility
 	 * @throws ConnectException 
 	 * @throws CompilerInstantiationException 
 	 */
-	public static IModelicaFile findModelicaFileInFolder(IModelicaFolder folder, 
+	public static IModelicaSourceFile findModelicaFileInFolder(IModelicaFolder folder, 
 			String fileName) 
 	throws ConnectException, UnexpectedReplyException, 
 		InvocationError, CoreException, CompilerInstantiationException 
 	{
 		for (Object child : folder.getChildren())
 		{
-				if (child instanceof IModelicaFile)
+				if (child instanceof IModelicaSourceFile)
 				{
-					IModelicaFile f = (IModelicaFile) child;
+					IModelicaSourceFile f = (IModelicaSourceFile) child;
 					if (f.getElementName().equals(fileName))
 					{
 						return f;

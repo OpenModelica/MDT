@@ -46,38 +46,29 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.internal.core.CorePlugin;
-import org.modelica.mdt.internal.core.ModelicaElement;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.ui.ModelicaImages;
+import org.modelica.mdt.ui.UIPlugin;
 
 /**
  * Implements New Modelica Package wizard.
@@ -89,10 +80,8 @@ public class NewPackageWizard extends Wizard implements INewWizard
 
 	public static final String PACKAGE_NAME_TAG = "packageNameTag";
 	public static final String PACKAGE_DESC_TAG = "packageDescTag";
-	public static final String SOURCE_FOLDER_TAG = "pkgSourceFolderTag";
 	public static final String IS_ENCAPSULATED_TAG = "isEncapsulatedTag";
 
-	private Text sourceFolder;
 	private Text packageName;
 	private Text packageDesc;
 	public Button isEncapsulated;
@@ -101,6 +90,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	private class PackageCreator implements IRunnableWithProgress 
 	{
 		private IPath packagePath;
+		private String parentPackage;
 		private String packageName;
 		private boolean isEncapsulated;
 		private String description;
@@ -108,15 +98,19 @@ public class NewPackageWizard extends Wizard implements INewWizard
 		/**
 		 * 
 		 * @param packagePath
+		 * @param parentPackage parent package full name or "" to create
+		 *        a top level package
 		 * @param packageName
 		 * @param description package documentation string, if is "" no
 		 *        documentation string generated 
 		 * @param isEncapsulated
 		 */
-		public PackageCreator(IPath packagePath, String packageName,
-							String description, boolean isEncapsulated)
+		public PackageCreator(IPath packagePath, String parentPackage,
+						    String packageName, String description, 
+						    boolean isEncapsulated)
 		{
 			this.packagePath = packagePath;
+			this.parentPackage = parentPackage;
 			this.packageName = packageName;
 			this.isEncapsulated = isEncapsulated;
 			this.description = description;
@@ -129,6 +123,12 @@ public class NewPackageWizard extends Wizard implements INewWizard
 			 * generate contents of package.mo
 			 */
 			String contents = "";
+			
+			if (!parentPackage.equals(""))
+			{
+				/* generate within clause if we are not top level package */
+				contents += "within " + parentPackage + ";\n\n";
+			}
 			
 			if (isEncapsulated)
 			{
@@ -181,20 +181,16 @@ public class NewPackageWizard extends Wizard implements INewWizard
 		}
 	}
 
-	public class NewPackagePage extends WizardPage
+	public class NewPackagePage extends NewTypePage
 	{
-		private Object selection = null;
 		protected boolean packageNameValid = false;
-		public boolean sourceFolderValid = true;
-
-		public NewPackagePage()
-		{
-			super("");
-		}
-
+		
 		public void createControl(Composite parent)
 		{
+			super.createControl(parent);
 			setPageComplete(false);
+			
+			Composite composite = getControl();
 			/*
 			 * configure description of this page
 			 */
@@ -207,62 +203,10 @@ public class NewPackageWizard extends Wizard implements INewWizard
 			/*
 			 * setup widgets for this page
 			 */
-			Composite composite = new Composite(parent, SWT.NONE);
-			setControl(composite);
-			composite.setFont(parent.getFont());
-			
-	        GridLayout layout = new GridLayout();
-	        layout.numColumns = 3;
-	        composite.setLayout(layout);
-	        
 	        GridData gd;
 
-	        /* source folder field */
-	        Label l = new Label(composite, SWT.LEFT | SWT.WRAP);
-	        l.setText("Source folder:");
-	        gd = new GridData();
-	        gd.horizontalAlignment = GridData.BEGINNING;
-	        l.setLayoutData(gd);
-	        
-	        sourceFolder = new Text(composite, SWT.SINGLE | SWT.BORDER);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
-	        					GridData.GRAB_HORIZONTAL);
-	        sourceFolder.setLayoutData(gd);
-	        CorePlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
-	        
-	        sourceFolder.addModifyListener(new ModifyListener()
-	    	{
-	        	/* check if entered path exists */
-	        	public void modifyText(ModifyEvent e)
-	        	{
-	    	       		sourceFolderChanged();
-	        	}
-	    	});
-
-
-	        Button b = new Button(composite, SWT.PUSH);
-	        b.setText("Browse...");
-	        gd = new GridData();
-	        gd.horizontalAlignment = GridData.END;
-	        b.setLayoutData(gd);
-			b.addSelectionListener(new SelectionAdapter()
-			{
-				public void widgetSelected(SelectionEvent e)
-				{
-					handleBrowse();
-				}
-			});
-			
-	        /* create separator */
-	        l = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | 
-	        				  GridData.GRAB_HORIZONTAL);
-	        gd.horizontalSpan = 3;
-	        l.setLayoutData(gd);
-			
-	        
 	        /* package name field */
-	        l = new Label(composite, SWT.LEFT | SWT.WRAP);
+	        Label l = new Label(composite, SWT.LEFT | SWT.WRAP);
 	        l.setText("Name:");
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -273,26 +217,26 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        		          GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        packageName.setLayoutData(gd);
-	        CorePlugin.tag(packageName, PACKAGE_NAME_TAG);
+	        UIPlugin.tag(packageName, PACKAGE_NAME_TAG);
 
 	        packageName.addModifyListener(new ModifyListener()
 	        {
 	        	/* check if entered package name is valid */
 	        	public void modifyText(ModifyEvent e)
 	        	{
-	        		if (!ModelicaElement.isLegalIdentifierName
+	        		if (!ModelicaCore.isLegalIdentifierName
 	        				(packageName.getText()))
 	        		{
 	        			packageNameValid  = false;
-	        			updateStatus("Package name is not valid. Illegal " +
-	        					"identifier.",
-	        					DialogPage.WARNING);
+	        			setErrorMessage("Package name is not valid. Illegal " +
+	        					"identifier.");
 	        		}
 	        		else
 	        		{
 	        			packageNameValid  = true;
-	        			updateStatus(null, DialogPage.NONE);
+	        			setErrorMessage(null);
 	        		}
+	        		setPageComplete(isPageComplete());
 	        	}
 	        });
 	        packageName.setFocus();
@@ -309,7 +253,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        		          GridData.GRAB_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        packageDesc.setLayoutData(gd);
-	        CorePlugin.tag(packageDesc, PACKAGE_DESC_TAG);
+	        UIPlugin.tag(packageDesc, PACKAGE_DESC_TAG);
 	        
 	        /* is encapsulated package field */
 	        new Label(composite, SWT.NONE); /* empty label for padding */
@@ -320,128 +264,17 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        gd.horizontalSpan = 2;
 	        isEncapsulated.setLayoutData(gd);
-	        CorePlugin.tag(isEncapsulated, IS_ENCAPSULATED_TAG);
+	        UIPlugin.tag(isEncapsulated, IS_ENCAPSULATED_TAG);
 	        
-	        setSelection(selection);
+
+		}
+
+		@Override
+		public boolean isPageComplete()
+		{
+			return (packageNameValid && super.isPageComplete());
 		}
 		
-		private void sourceFolderChanged()
-		{
-			IResource container = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(new Path(sourceFolder.getText()));
-
-			sourceFolderValid = false;
-			if (sourceFolder.getText().length() == 0) {
-				updateStatus("File container must be specified", 
-						DialogPage.ERROR);
-				return;
-			}
-			if (container == null ||
-			    (container.getType() & 
-			      (IResource.PROJECT | IResource.FOLDER)) == 0) 
-			{
-				updateStatus("File container must exist", DialogPage.ERROR);
-				return;
-			}
-			if (!container.isAccessible()) {
-				updateStatus("Project must be writable", DialogPage.ERROR);
-				return;
-			}
-			sourceFolderValid = true;
-			updateStatus(null, DialogPage.NONE);
-		}
-
-		private void handleBrowse()
-		{
-			ContainerSelectionDialog dialog =
-				new ContainerSelectionDialog(
-					getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-					"Choose a source folder:");
-			
-			if (dialog.open() == ContainerSelectionDialog.OK)
-			{
-				Object[] result = dialog.getResult();
-				if (result.length == 1)
-				{
-					setSourceFolder((IPath) result[0]);
-				}
-			}
-		}
-
-		private void setSelection(Object selection) 
-		{
-			IResource res;
-			
-			if (selection instanceof IModelicaClass)
-			{
-				res = ((IModelicaClass)selection).getResource();
-				if (res == null)
-				{
-					/* ignore external classes (e.g. system library stuff) */
-					return;
-				}
-			}
-			else if (selection instanceof IModelicaElement)
-			{
-				res = ((IModelicaElement)selection).getResource();
-			}
-			else if (selection instanceof IResource)
-			{
-				res = ((IResource)selection);
-			}
-			else
-			{
-				/* ignore all other types of selections */
-				return;
-			}
-			
-			/*
-			 * calculate the source folder path 
-			 */
-			IPath path = res.getFullPath();
-			
-			if (res.getType() == IResource.FILE)
-			{
-				path = path.removeLastSegments(1);
-			}
-
-			setSourceFolder(path);
-		}
-		
-		/**
-		 * set source folder field in the dialog
-		 * 
-		 * @param path the path to set source folder field to
-		 */
-		public void setSourceFolder(IPath path)
-		{
-	        if (path != null)
-	        {	        	
-	        	sourceFolder.setText(path.makeRelative().toString());
-	        	sourceFolderChanged();
-	        }	        			
-		}
-
-		public void init(IStructuredSelection selection)
-		{
-			if (selection == null || selection.size() != 1)
-			{
-				return;
-			}
-			
-			/* 
-			 * now we know that a single element is selected
-			 */
-			this.selection = selection.getFirstElement();
-		}
-		
-		
-		private void updateStatus(String message, int messageType)
-		{
-			setMessage(message, messageType);
-			setPageComplete((packageNameValid && sourceFolderValid));
-		}
-
 	}
 
 	public NewPackageWizard()
@@ -455,7 +288,8 @@ public class NewPackageWizard extends Wizard implements INewWizard
 	public boolean performFinish()
 	{
 		IRunnableWithProgress runable = 
-			new PackageCreator(new Path(sourceFolder.getText()),
+			new PackageCreator(new Path(packagePage.getSourceFolder()),
+							   packagePage.getParentPackge(),
 							   packageName.getText(),
 							   packageDesc.getText(),
 							   isEncapsulated.getSelection());

@@ -32,13 +32,10 @@ public interface IParent
 	 * Unless otherwise specified by the implementing element,
 	 * the children are in no particular order.
 	 *
-	 * @return the immediate children of this element
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectException 
-	 * @throws InvocationError 
-	 * @throws CompilerInstantiationException 
+	 * @return the immediate children of this element or empty collection if
+	 *    the element does not have children
 	 */
-	Collection<?> getChildren() 
+	Collection<? extends IModelicaElement> getChildren() 
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException;
 	
@@ -48,11 +45,6 @@ public interface IParent
 	 * testing whether <code>getChildren</code> is an empty array.
 	 *
 	 * @return true if the immediate children of this element, false otherwise
-	 * @throws CoreException 
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectException 
-	 * @throws InvocationError 
-	 * @throws CompilerInstantiationException 
 	 */
 	boolean hasChildren() 
 		throws CoreException, ConnectException, UnexpectedReplyException,

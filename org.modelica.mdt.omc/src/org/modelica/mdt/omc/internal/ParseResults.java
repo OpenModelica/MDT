@@ -54,11 +54,19 @@ public class ParseResults implements IParseResults
 	private String[] classes;
 	private CompileError[] errors = new CompileError[0];
 
+	/**
+	 * @return the list of fully qualified names of top level classes
+	 * found in the file
+	 */
 	public String[] getClasses()
 	{
 		return classes;
 	}
 	
+	/**
+	 * @return a list of all errors encountered while loading and parsing
+	 * the file 
+	 */	
 	public CompileError[] getCompileErrors()
 	{
 		return errors;

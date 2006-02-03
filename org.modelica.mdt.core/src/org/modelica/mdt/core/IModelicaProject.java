@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -40,7 +40,15 @@
  */
 package org.modelica.mdt.core;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
@@ -48,6 +56,50 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IModelicaProject extends IModelicaElement
 {
+	/**
+	 * @return the root folder of the project wraped into a modelica 
+	 * folder object
+	 */
 	public IModelicaFolder getRootFolder();
+	
+	/**
+	 * @return the wraped project handle
+	 */
 	public IProject getProject();
+	
+	/**
+	 * get package in this project by name
+	 * 
+	 * @param packageName the name of the project to fetch
+	 * @return the package or null if no package is found
+	 * @throws InvocationError 
+	 */
+	public IModelicaClass getPackage(String packageName) 
+		throws ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, CoreException, InvocationError;
+	
+	/**
+	 * get all packages defined in the root namespace in this project
+	 *
+	 * @return ze root packages
+	 */
+	public Collection<? extends IModelicaClass> getRootPackages() 
+		throws ConnectException, CompilerInstantiationException,
+			UnexpectedReplyException, CoreException;
+
+	/**
+	 * Find modelica wraped resource by path in this project
+	 * 
+	 * @param resourcePath project relative path to the resource to fetch
+	 * @return the resource or null if the resource is not found
+	 * @throws CoreException 
+	 * @throws CompilerInstantiationException 
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectException 
+	 * @throws InvocationError 
+	 */
+	public IModelicaElement findElement(IPath resourcePath) 
+		throws ConnectException, UnexpectedReplyException, 
+			CompilerInstantiationException, CoreException, InvocationError;
+
 }

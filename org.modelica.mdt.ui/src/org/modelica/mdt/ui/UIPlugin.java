@@ -1,6 +1,7 @@
 package org.modelica.mdt.ui;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -73,4 +74,15 @@ public class UIPlugin extends AbstractUIPlugin
 		return getDefault().getBundle().getSymbolicName();
 	}
 
+	/**
+	 * set an abbot tag, used by GUI regressions tests to find
+	 * specific widgets.
+	 * 
+	 * @param widget the widget to tag
+	 * @param tag the tag to set
+	 */
+	public static void tag(Widget widget, String tag)
+	{
+		widget.setData("name", tag);
+	}		
 }

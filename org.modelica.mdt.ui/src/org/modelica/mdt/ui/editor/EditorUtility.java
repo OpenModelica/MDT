@@ -52,7 +52,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -105,7 +105,7 @@ public class EditorUtility
 				editor = (ITextEditor) openInEditor((IFile)res);
 			}
 			
-			if (!(element instanceof IModelicaFile))
+			if (!(element instanceof IModelicaSourceFile))
 			{
 				/*
 				 * for all elements except modelica files goto the line

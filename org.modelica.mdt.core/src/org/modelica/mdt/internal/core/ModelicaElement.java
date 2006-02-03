@@ -42,7 +42,6 @@ package org.modelica.mdt.internal.core;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -62,46 +61,9 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 abstract public class ModelicaElement extends PlatformObject 
 	implements IModelicaElement 
 {
-	
-	/* 
-	 * regexp pattern of a valid modelica class name,
-	 * see modelica specification page 9 (and perhaps some other pages as well)
-	 * for the formal definition
-	 * http://www.modelica.org/documents/ModelicaSpec22.pdf
-	 */
-	private static String getPattern()
-	{
-
-		String IDENT = "([_a-zA-Z]\\w*)";
-		
-		/* \p{Graph} are all printable characters in the POSIX standard
-		 * Q-CHAR = [\p{Graph}&&[^'\]] */
-		String Q_CHAR = "[\\p{Graph}&&[^'\\\\]]";
-		
-		/* S-ESCAPE = \'|\"|\?|\\|\a|\b|\f|\n|\r|\t|\v */
-		String S_ESCAPE = "((\\\\')|(\\\\\")|(\\\\\\?)|(\\\\\\\\)|(\\\\a)"
-			+"|(\\\\b)|(\\\\f)|(\\\\n)|(\\\\r)|(\\\\t)|(\\\\v))";
-		
-		/* Q-IDENT = "'" (Q-CHAR | S-ESCAPE) {Q-CHAR | S-ESCAPE} "'" */
-		String Q_IDENT = "('(" + Q_CHAR + "|" + S_ESCAPE + ")+')";
-		
-		String pattern = IDENT + "|" + Q_IDENT;
-		
-		return pattern;
-	}
-    private static Pattern classNamePattern = Pattern.compile(getPattern());
-
 	public IResource getResource() 
 	{
 		return null;
-	}
-
-	/**
-	 * @return true if name is a valid modelica identifier name
-	 */
-	public static boolean isLegalIdentifierName(String name)
-	{
-		return classNamePattern.matcher(name).matches();
 	}
 
 	/**

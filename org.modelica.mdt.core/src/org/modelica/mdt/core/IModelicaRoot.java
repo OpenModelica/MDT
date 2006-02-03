@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -49,9 +49,18 @@ public interface IModelicaRoot
 	 * Presents projects in Modelica specific view. All projects are wrapped 
 	 * into a IModelicaProject interface
 	 *  
-	 * @return Projects in the workspace
+	 * @return All projects in the workspace wrapped into IModelicaProject
 	 */
 	public IModelicaProject[] getProjects();
+	
+	/**
+	 * Get project by name. 
+	 * @param name the name of the project to fetch
+	 * 
+	 * @return the project object or null if no project is found 
+	 */
+	public IModelicaProject getProject(String name);
+	
 	
 	public void 
 		addModelicaElementChangeListener(IModelicaElementChangeListener listener);
