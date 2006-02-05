@@ -47,6 +47,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -115,10 +116,18 @@ public class NewPackageWizard extends Wizard implements INewWizard
 			this.isEncapsulated = isEncapsulated;
 			this.description = description;
 		}
-		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException 
+		
+		/**
+		 * the workhorse of this class, contains the actual code
+		 * that creates the folder and files of the package
+		 * 
+		 * @param monitor where the progress of creation of the package is 
+		 *  reported
+		 */
+		private void createPackage(IProgressMonitor monitor)
+			throws CoreException
 		{
-			monitor.beginTask("Creating package " + packageName, 3);
+			monitor.beginTask("Creating package " + packageName, 2);
 			/*
 			 * generate contents of package.mo
 			 */
@@ -144,39 +153,53 @@ public class NewPackageWizard extends Wizard implements INewWizard
 			
 			monitor.worked(1);
 
-			try 
+			/*
+			 * create the new package's root folder  
+			 */
+
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IContainer pkgParent = (IContainer) root.findMember(packagePath);
+
+			IFolder pkgFolder = 
+				pkgParent.getFolder(new Path(packageName));
+
+			pkgFolder.create(false, true, null);
+			monitor.worked(1);
+
+			/*
+			 * create the new package's package.mo file
+			 */
+			IFile packageMo = 
+				pkgFolder.getFile(new Path("package.mo"));
+
+			packageMo.create(new ByteArrayInputStream(contents.getBytes()),
+					true, null);
+
+			monitor.done();
+
+		}
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException 
+		{
+			/*
+			 * run all package creation operations inside a IWorkspaceRunnble
+			 * to provide better batching of change events
+			 */
+			IWorkspaceRunnable wr = new IWorkspaceRunnable()
 			{
-				/*
-				 * create the new package's root folder  
-				 */
-
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				IContainer pkgParent = (IContainer) root.findMember(packagePath);
-
-				IFolder pkgFolder = 
-					pkgParent.getFolder(new Path(packageName));
-
-				pkgFolder.create(false, true, null);
-				monitor.worked(1);
-
-				/*
-				 * create the new package's package.mo file
-				 */
-				IFile packageMo = 
-					pkgFolder.getFile(new Path("package.mo"));
-
-				packageMo.create(new ByteArrayInputStream(contents.getBytes()),
-						true, null);
-				monitor.worked(1);
-
+				public void run(IProgressMonitor monitor) throws CoreException
+				{
+					createPackage(monitor);
+				}
+			};
+			
+			try
+			{
+				ResourcesPlugin.getWorkspace().run(wr, monitor);
 			}
 			catch (CoreException e) 
 			{
 				throw new InvocationTargetException(e);
-			}
-			finally
-			{
-				monitor.done();
 			}
 		}
 	}
