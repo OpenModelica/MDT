@@ -53,26 +53,21 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -83,7 +78,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.internal.core.CorePlugin;
@@ -93,7 +87,6 @@ import org.modelica.mdt.ui.UIPlugin;
 public class NewClassWizard extends Wizard implements INewWizard
 {
 	/* key widgets' tags for abbot */
-	public static final String SOURCE_FOLDER_TAG = "sourceFolderTag";
 	public static final String CLASS_NAME_TAG = "classNameTag";
 	public static final String CLASS_TYPE_TAG = "classTypeTag";
 	public static final String INITIAL_EQUATION_TAG = "initEqTag";
@@ -109,27 +102,22 @@ public class NewClassWizard extends Wizard implements INewWizard
 	 */ 
 	public static int lastClassTypeSelected = 0; 
 	
-	public class NewClassPage extends WizardPage
+	public class NewClassPage extends NewTypePage
 	{
-		private Text sourceFolder;
 		private Text className;
 		private Combo classType;
 		private Button initialEquation;
 		private Button partialClass;
 		private Button externalBody;
 	
-		private IPath selection = null;
-		        
-		private boolean sourceFolderValid = false;		
+		private boolean classNameValid = false;
 		
-		public NewClassPage()
-		{
-			super("");
-		}
-
 		public void createControl(Composite parent)
 		{
+			super.createControl(parent);
 			setPageComplete(false);
+			
+			Composite composite = getControl();			
 			/*
 			 * configure description of this page
 			 */
@@ -142,55 +130,10 @@ public class NewClassWizard extends Wizard implements INewWizard
 			/*
 			 * setup widgets for this page
 			 */
-			Composite composite= new Composite(parent, SWT.NONE);
-			setControl(composite);
-			composite.setFont(parent.getFont());
-			
-	        GridLayout layout = new GridLayout();
-	        layout.numColumns = 3;
-	        composite.setLayout(layout);
-	        
 	        GridData gd;
-
-	        /* source folder field */
-	        Label l = new Label(composite, SWT.LEFT | SWT.WRAP);
-	        l.setText("Source folder:");
-	        gd = new GridData();
-	        gd.horizontalAlignment = GridData.BEGINNING;
-	        l.setLayoutData(gd);
-	        
-	        sourceFolder = new Text(composite, SWT.SINGLE | SWT.BORDER);
-	        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-	        sourceFolder.setLayoutData(gd);
-	        UIPlugin.tag(sourceFolder, SOURCE_FOLDER_TAG);
-	        setSourceFolder(selection);
-	        
-	        sourceFolder.addModifyListener(new ModifyListener()
-	    	{
-	    	      	/* check if entered path exists */
-	    	       	public void modifyText(ModifyEvent e)
-	    	       	{
-	    	       		sourceFolderChanged();
-	    	       	}
-	    	});
-
-
-	        Button b = new Button(composite, SWT.PUSH);
-	        b.setText("Browse...");
-	        gd = new GridData();
-	        gd.horizontalAlignment = GridData.END;
-	        b.setLayoutData(gd);
-			b.addSelectionListener(new SelectionAdapter()
-			{
-				public void widgetSelected(SelectionEvent e)
-				{
-					handleBrowse();
-				}
-			});
-
 	        
 	        /* class name field */
-	        l = new Label(composite, SWT.LEFT | SWT.WRAP);
+	        Label l = new Label(composite, SWT.LEFT | SWT.WRAP);
 	        l.setText("Name:");
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
@@ -208,14 +151,18 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        	/* check if entered classname is valid */
 	        	public void modifyText(ModifyEvent e)
 	        	{
-	        		if (!ModelicaCore.isLegalIdentifierName(className.getText()))
+	        		if (ModelicaCore.isLegalIdentifierName(className.getText()))
 	        		{
-	        			updateStatus("Class name is not valid. Illegal identifier.",
-	        						DialogPage.WARNING);
+	        			classNameValid  = true;
+	        			setErrorMessage(null);
+	        			setPageComplete(isPageComplete());
 	        		}
 	        		else
 	        		{
-	        			updateStatus(null, DialogPage.NONE);
+	        			classNameValid  = false;
+	        			setErrorMessage
+	        				("Class name is not valid. Illegal identifier.");
+	        			setPageComplete(isPageComplete());
 	        		}
 	        	}
 	        });
@@ -333,90 +280,12 @@ public class NewClassWizard extends Wizard implements INewWizard
 			
 			externalBody.setEnabled
 				(classType.getText().equals("function"));
-
-		}
-		
-		private void sourceFolderChanged()
-		{
-			IResource container = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(new Path(sourceFolder.getText()));
-
-			sourceFolderValid = false;
-			if (sourceFolder.getText().length() == 0) {
-				updateStatus("Folder container must be specified", 
-						DialogPage.ERROR);
-				return;
-			}
-			if (container == null ||
-			    (container.getType() & 
-			      (IResource.PROJECT | IResource.FOLDER)) == 0) 
-			{
-				updateStatus("Folder container must exist", DialogPage.ERROR);
-				return;
-			}
-			if (!container.isAccessible()) {
-				updateStatus("Project must be writable", DialogPage.ERROR);
-				return;
-			}
-			sourceFolderValid = true;
-			updateStatus(null, DialogPage.NONE);
-		}
-		
-		public void setSelection(IStructuredSelection selection)
-		{
-			if (selection == null || selection.size() != 1)
-			{
-				return;
-			}
-			if (!(selection.getFirstElement() instanceof IResource))
-			{
-				return;
-			}
-			
-			/* 
-			 * now we know that a single element of type IResource is selected
-			 */
-			IResource sel = (IResource) selection.getFirstElement();
-
-			this.selection = sel.getFullPath();
-			if (sel.getType() == IResource.FILE)
-			{
-				this.selection = this.selection.removeLastSegments(1);
-			}
-		}
-		
-		private void handleBrowse()
-		{
-			ContainerSelectionDialog dialog =
-				new ContainerSelectionDialog(
-					getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-					"Choose a source folder:");
-			
-			if (dialog.open() == ContainerSelectionDialog.OK)
-			{
-				Object[] result = dialog.getResult();
-				if (result.length == 1)
-				{
-					setSourceFolder((IPath) result[0]);
-				}
-			}
-		}
-		
-		private void updateStatus(String message, int messageType)
-		{
-			setMessage(message, messageType);
-			setPageComplete((sourceFolderValid));
 		}
 
-
-		public void setSourceFolder(IPath path)
+		@Override
+		public boolean isPageComplete()
 		{
-	        if (path != null)
-	        {	        	
-	        	sourceFolder.setText(path.makeRelative().toString());
-	        	setPageComplete(isPageComplete());
-	        	sourceFolderValid = true;
-	        }	        			
+			return super.isPageComplete() && classNameValid;
 		}
 
 	}
@@ -457,7 +326,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 	@Override
 	public boolean performFinish()
 	{
-		final String sourceFolder = classPage.sourceFolder.getText();
+		final String sourceFolder = classPage.getSourceFolder();
+		final String parentPackage = classPage.getParentPackge();
 		final String className = classPage.className.getText();
 		final String classType = classPage.classType.getText();
 		final boolean initialEquationBlock = 
@@ -474,7 +344,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 			 {
 				try 
 				{
-					doFinish(sourceFolder, className, classType, 
+					doFinish(sourceFolder, parentPackage, className, classType, 
 							 initialEquationBlock, partialClass, externalBody,
 							 monitor);
 				} 
@@ -506,8 +376,8 @@ public class NewClassWizard extends Wizard implements INewWizard
 		return true;
 	}
 
-	protected void doFinish(String sourceFolder, String className, 
-			String classType, boolean initialEquationBlock, 
+	protected void doFinish(String sourceFolder, String parentPackage,
+			String className, String classType, boolean initialEquationBlock, 
 			boolean partialClass, boolean haveExternalBody,
 			IProgressMonitor monitor)
 	throws CoreException
@@ -523,8 +393,9 @@ public class NewClassWizard extends Wizard implements INewWizard
 		
 		try
 		{
-			String contents = generateClassContents(className, classType, 
-					initialEquationBlock, partialClass, haveExternalBody);
+			String contents = generateClassContents(className, parentPackage,
+					classType, initialEquationBlock, partialClass, 
+					haveExternalBody);
 			InputStream stream = 
 				new ByteArrayInputStream(contents.getBytes());
 			if (file.exists())
@@ -568,13 +439,20 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 	}
 
-	private String generateClassContents(String className, String classType, 
-			boolean initialEquationBlock, boolean partialClass, boolean haveExternalBody) 
+	private String generateClassContents(String className, String parentPackage,
+			String classType, boolean initialEquationBlock, 
+			boolean partialClass, boolean haveExternalBody) 
 	{
 		/*
 		 * the gory logic of generating a skeleton for a modelica class
 		 */
 		String contents = "";
+		
+		if (!parentPackage.equals(""))
+		{
+			/* generate within clause if we are not top level package */
+			contents += "within " + parentPackage + ";\n\n";
+		}
 
 		if (canBePartial(classType) && partialClass)
 		{
@@ -619,7 +497,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 	public void init(IWorkbench workbench, IStructuredSelection selection)
 	{
-		classPage.setSelection(selection);
+		classPage.init(selection);
 		setWindowTitle("New Modelica Class");
 	}
 

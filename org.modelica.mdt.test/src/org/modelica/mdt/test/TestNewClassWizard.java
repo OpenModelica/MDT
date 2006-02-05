@@ -52,6 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.wizards.NewClassWizard;
+import org.modelica.mdt.ui.wizards.NewTypePage;
 
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.ComboTester;
@@ -137,7 +138,7 @@ public class TestNewClassWizard extends TestCase
 		className = 
 			TextTester.getInstrumentedText(NewClassWizard.CLASS_NAME_TAG);
 		sourceFolder = 
-			TextTester.getInstrumentedText(NewClassWizard.SOURCE_FOLDER_TAG);
+			TextTester.getInstrumentedText(NewTypePage.SOURCE_FOLDER_TAG);
 		initialEquation = 
 			ButtonTester.getInstrumentedButton(NewClassWizard.INITIAL_EQUATION_TAG);
 		externalBody =
@@ -193,9 +194,9 @@ public class TestNewClassWizard extends TestCase
 		openWizardAndFetchWidgets();
 		
 		ttester.actionEnterText(sourceFolder, PROJECT_NAME_1);
-		ttester.actionEnterText(className, "#¤%&");
-		assertTrue("Finish button should not be disabled for a warning",
-				finish.getEnabled());
+		ttester.actionEnterText(className, "#ï¿½%&");
+		assertFalse("Finish button should be disabled when an illegal class " +
+				"name is entered", finish.getEnabled());
 		
 		/*
 		 * set legal class name and non-existing source folder,

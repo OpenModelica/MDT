@@ -73,6 +73,7 @@ public class TestNewPackageWizard extends TestCase
 	private ButtonTester btester;
 	
 	private Text packageName;
+//	private Text parentPackage;
 	private Text packageDesc;
 	private Text sourceFolder;
 	private Button isEncapsulated;
@@ -121,6 +122,8 @@ public class TestNewPackageWizard extends TestCase
 		/* fetch widgets */
 		packageName = 
 			TextTester.getInstrumentedText(NewPackageWizard.PACKAGE_NAME_TAG);
+//		parentPackage = 
+//			TextTester.getInstrumentedText(NewTypePage.PARENT_PACKAGE_TAG);
 		packageDesc = 
 			TextTester.getInstrumentedText(NewPackageWizard.PACKAGE_DESC_TAG);
 		sourceFolder = 
@@ -178,6 +181,49 @@ public class TestNewPackageWizard extends TestCase
 				"\n"+
 				"end " + name + ";");
 		assertTrue("unexpected conted created in the package.mo", same);
+		
+//TODO fix the bug that causes this test below to fail and expand	
+// testCreatePackageWithDesc(), testEncapsulatedCreatePackage() and 
+// testEncapsulatedCreatePackageWithDesc() tests with creating a subpackage
+// after the main package is created
+//		/*
+//		 * test to create a nested package inside pkg1
+//		 */
+//		
+//		openWizardAndFetchWidgets();
+//		
+//		String subName = "sub_pkg1";
+//		
+//		/*
+//		 * fill in the wizard fields
+//		 */
+//		ttester.actionEnterText(packageName, subName);
+//		ttester.actionEnterText(parentPackage, name);
+//
+//		/* wait for the name change to propogate to enable the finish button */
+//		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
+//		Utility.sleep(this, 10000); 		// TODO remove me
+//		btester.actionClick(finish);
+//
+//		/* check if the package folder was created */
+//		folder = folder.getFolder(subName);
+//		assertTrue("no package folder was created", folder.exists());
+//
+//		/*
+//		 * check that the generated package.mo exists and is sane
+//		 */
+//		packageMo = folder.getFile("package.mo");
+//		assertTrue("package.mo was not created", packageMo.exists());
+//		
+//		same = 
+//			Utility.compareContent(packageMo,
+//				"within " + name + ";\n" +
+//				"\n" +
+//				"package " + subName + "\n" +
+//				"\n"+
+//				"end " + name + ";");
+//		assertTrue("unexpected conted created in the package.mo", same);
+//
 	}
 	
 	/**

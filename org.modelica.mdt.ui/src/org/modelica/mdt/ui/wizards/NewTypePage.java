@@ -101,7 +101,8 @@ public class NewTypePage extends WizardPage
 	private Object selection = null;
 	private String proccessedParentPackage = "";
 	private String proccessedSourceFolder = "";
-	public static final String SOURCE_FOLDER_TAG = "pkgSourceFolderTag";
+	public static final String SOURCE_FOLDER_TAG = "newTypeSourceFolderTag";
+	public static final String PARENT_PACKAGE_TAG = "newTypeParentPackageTag";
 	
 	
 	public NewTypePage()
@@ -175,6 +176,7 @@ public class NewTypePage extends WizardPage
         gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
         					GridData.GRAB_HORIZONTAL);
         parentPackage.setLayoutData(gd);
+        UIPlugin.tag(parentPackage, PARENT_PACKAGE_TAG);
         parentPackage.addModifyListener(new ModifyListener()
     	{
         	public void modifyText(ModifyEvent e)
@@ -187,7 +189,6 @@ public class NewTypePage extends WizardPage
         		processParentPackageModifyEvent();
         	}
     	});
-
 
         browsePackages = new Button(composite, SWT.PUSH);
         browsePackages.setEnabled(false);
