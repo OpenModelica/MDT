@@ -49,7 +49,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.wizards.NewPackageWizard;
@@ -58,6 +58,7 @@ import org.modelica.mdt.ui.wizards.NewTypePage;
 import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.TextTester;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
@@ -89,16 +90,23 @@ public class TestNewPackageWizard extends TestCase
 		 * setup project
 		 */
 		project = 
-			ModelicaCore.createProject(PROJECT_NAME_1,
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-		assertNotNull("failed to create project", project);
+			ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME_1);
 		
+		/* create project only if it does not exist yet */
+		if (!project.exists())
+		{
+			IModelicaProject mproj = 
+				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1);
+			Assert.assertNotNull("failed to create project", mproj);
+			
+			project = mproj.getProject();
+		}
+
 		/* 
 		 * create the selection that points at the root of the created project 
 		 */
-		fileDestination = 
-			new StructuredSelection(ResourcesPlugin.getWorkspace().getRoot().
-					getProject(PROJECT_NAME_1));		
+		fileDestination = new StructuredSelection(project);
+		
 		/*
 		 * setup testing support objects
 		 */

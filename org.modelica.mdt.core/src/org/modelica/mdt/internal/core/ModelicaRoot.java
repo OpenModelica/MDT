@@ -51,6 +51,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.internal.core.ModelicaProject;
@@ -59,6 +60,8 @@ import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerException;
 
 /**
+ * The internal implementation of the IModelicaRoot interface.
+ * 
  * @author Elmir Jagudin
  */
 public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener 
@@ -211,7 +214,6 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		return changes;
 	}
 
-
 	/**
 	 * post IModelicaElementChange event to all listeners
 	 * @param changes the list of changes to post
@@ -236,4 +238,21 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		listeners.remove(listener);
 	}
 
+	public IModelicaProject createProject(String name)	throws CoreException
+	{
+		IProject newProject = 
+			ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		
+		/* create the project */
+		newProject.create(null);
+		
+		/* open project */
+		newProject.open(null);
+		
+		/* add modelica nature to the project */
+		CorePlugin.addModelicaNature(newProject);
+
+		/* return a wraped project to the caller */
+		return new ModelicaProject(newProject);
+	}
 }

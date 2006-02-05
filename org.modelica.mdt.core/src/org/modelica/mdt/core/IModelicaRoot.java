@@ -40,6 +40,8 @@
  */
 package org.modelica.mdt.core;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * @author Elmir Jagudin
  */
@@ -61,6 +63,16 @@ public interface IModelicaRoot
 	 */
 	public IModelicaProject getProject(String name);
 	
+	/**
+	 * Create a new modelica project. This method handles all the details
+	 * on creating a new modelica project.
+	 * 
+	 * @param name the name of the new project
+	 * @return the handle to the new project
+	 * @throws CoreException on errors while creating the project
+	 */
+	public IModelicaProject createProject(String name)
+		throws CoreException;
 	
 	public void 
 		addModelicaElementChangeListener(IModelicaElementChangeListener listener);

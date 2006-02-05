@@ -45,11 +45,14 @@ import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.ui.ModelicaImages;
 import org.modelica.mdt.ui.UIPlugin;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -149,15 +152,43 @@ public class NewProjectWizard extends Wizard implements INewWizard
 		setWindowTitle("New Modelica Project");
 	}	
 	
+	private static void showProjectCreationError(IStatus status)
+	{
+		ErrorDialog.openError(null, "Error", "Could not create project", status);	
+	}
 
 	@Override
 	public boolean performFinish()
 	{
-		IProject proj = 
-			ModelicaCore.createProject(projectPage.projectName.getText(),
-					this.getContainer());
+		/*
+		 * run creation of the project operation inside
+		 * an instance of IWorkspaceRunnable to batch the
+		 * changes to the workspace
+		 */
+		try
+		{
+			IWorkspaceRunnable wr = new IWorkspaceRunnable()
+			{
+				public void run(IProgressMonitor monitor) throws CoreException
+				{
+					ModelicaCore.getModelicaRoot().createProject
+						(projectPage.projectName.getText());
+				}
+			};
+			ResourcesPlugin.getWorkspace().run(wr, null);
+		}
+		catch (CoreException e)
+		{
+			/* 
+			 * on error show the error dialog and don't
+			 * close the new project wizard to give user a
+			 * chance to correct the error and try again
+			 */
+			showProjectCreationError(e.getStatus());
+			return false;
+		}
 		
-		return proj != null;
+		return true;
 	}
 	
 	@Override

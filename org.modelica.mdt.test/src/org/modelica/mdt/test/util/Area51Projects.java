@@ -49,7 +49,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.PlatformUI;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
 
 /**
@@ -204,10 +204,12 @@ public class Area51Projects
 		/*
 		 * create the project
 		 */
-		modelica_project = 
-			ModelicaCore.createProject(MODELICA_PROJECT_NAME, 
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-		Assert.assertNotNull("failed to create project", modelica_project);
+		
+		IModelicaProject mproj = 
+			ModelicaCore.getModelicaRoot().createProject(MODELICA_PROJECT_NAME);
+		Assert.assertNotNull("failed to create project", mproj);
+		
+		modelica_project = mproj.getProject();
 		
 		/*
 		 * populate with some packages

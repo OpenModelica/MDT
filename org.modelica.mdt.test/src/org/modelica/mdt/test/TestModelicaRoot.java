@@ -50,8 +50,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IWorkspaceRoot;
 
-import org.eclipse.ui.PlatformUI;
-
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.core.IModelicaProject;
@@ -155,10 +153,13 @@ public class TestModelicaRoot extends TestCase
 		/*
 		 * create a modelica project
 		 */
-		IProject project = 
-			ModelicaCore.createProject(PROJECT_NAME_1, 
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-		assertNotNull("failed to create project", project);
+		IProject project = workspaceRoot.getProject(PROJECT_NAME_1);
+		if (!project.exists())
+		{
+	 		IModelicaProject moProj =
+				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1); 
+			assertNotNull("failed to create project", moProj);		
+		}
 		
 		/*
 		 * create a regular projects
@@ -260,8 +261,8 @@ public class TestModelicaRoot extends TestCase
 		simpleProject.open(null);
 		
 		IProject modelicaProject = 
-			ModelicaCore.createProject(PROJECT_NAME_MOD_EXTRA, 
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+			ModelicaCore.getModelicaRoot().
+				createProject(PROJECT_NAME_MOD_EXTRA).getProject();
 		modelicaProject.open(null);
 
 		

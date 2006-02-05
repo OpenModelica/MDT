@@ -48,7 +48,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.wizards.NewClassWizard;
@@ -58,6 +58,7 @@ import abbot.tester.swt.ButtonTester;
 import abbot.tester.swt.ComboTester;
 import abbot.tester.swt.TextTester;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
@@ -100,16 +101,22 @@ public class TestNewClassWizard extends TestCase
 		 * setup project
 		 */
 		project = 
-			ModelicaCore.createProject(PROJECT_NAME_1,
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-		assertNotNull("failed to create project", project);
+			ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME_1);
 		
+		/* create project only if it does not exist yet */
+		if (!project.exists())
+		{
+			IModelicaProject mproj = 
+				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1);
+			Assert.assertNotNull("failed to create project", mproj);
+			
+			project = mproj.getProject();
+		}
+			
 		/* 
 		 * create the selection that points at the root of the created project 
 		 */
-		fileDestination = 
-			new StructuredSelection(ResourcesPlugin.getWorkspace().getRoot().
-					getProject(PROJECT_NAME_1));
+		fileDestination = new StructuredSelection(project);
 		
 		/*
 		 * setup testing support objects
@@ -119,8 +126,6 @@ public class TestNewClassWizard extends TestCase
 		ctester = new ComboTester();
 				
 	}
-	
-
 	
 	public void openWizardAndFetchWidgets()
 	{
@@ -160,20 +165,17 @@ public class TestNewClassWizard extends TestCase
 				Utility.getInstrumentedWidget(NewClassWizard.CLASS_TYPE_TAG);
 		assertNotNull("Problems finding classType widget", classType);
 		
-		
 		/* make some checks on the state of the wizards */
 		assertEquals("Wrong source folder selected", 
-				sourceFolder.getText(), PROJECT_NAME_1);		
+				PROJECT_NAME_1, sourceFolder.getText());		
 		assertEquals("Junk present in class name field", 
-				className.getText(), "");
+				"", className.getText());
 		assertFalse("initial equation unexpectedly selected",
 				initialEquation.getSelection());
 		assertFalse("partial class unexpectedly selected",
 				partialClass.getSelection());
 		assertFalse("Finish button not disabled", 
 				finish.getEnabled());
-		
-
 	}
 	
 	/**
