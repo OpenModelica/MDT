@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.internal.core;
 
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 
 /**
@@ -50,7 +51,7 @@ import org.modelica.mdt.core.IModelicaElementChange;
  */
 public class ModelicaElementChange implements IModelicaElementChange
 {
-	private Object element;
+	private IModelicaElement element;
 	private Object parent;
 	private ChangeType type;
 	
@@ -61,27 +62,23 @@ public class ModelicaElementChange implements IModelicaElementChange
 	 * @param parent the parent where element was added
 	 * @param element the element that was added
 	 */
-	protected ModelicaElementChange(Object parent, Object element)
+	protected ModelicaElementChange(Object parent, IModelicaElement element)
 	{
 		this.parent = parent;
 		this.element = element;
 		type = ChangeType.ADDED;
 	}
 	
-	protected ModelicaElementChange(Object element, ChangeType type)
+	protected ModelicaElementChange(IModelicaElement element, ChangeType type)
 	{
 		this.element = element;
 		this.type = type;
-		if (type == ChangeType.MODIFIED && element == null)
-		{
-			System.out.println("null element instopppad!!!!!!!!!!!!");
-		}
 	}
 	
 	/**
 	 * @see org.modelica.mdt.core.IModelicaElementChange#getElement()
 	 */
-	public Object getElement()
+	public IModelicaElement getElement()
 	{
 		return element;
 	}

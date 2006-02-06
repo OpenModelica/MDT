@@ -74,12 +74,22 @@ public interface IModelicaRoot
 	public IModelicaProject createProject(String name)
 		throws CoreException;
 	
+	/**
+	 * add a listener that will be notified on changes to the modelica elements
+	 * 
+	 * @param listener the listener object to notify of changes
+	 */
 	public void 
 		addModelicaElementChangeListener(IModelicaElementChangeListener listener);
 	
+	/**
+	 * remove a listener, the specified listener will no longer be notified on
+	 * changes to modelica elements
+	 * 
+	 * @param listener the listener to remove
+	 */
 	public void 
 		removeModelicaElementChangeListener
 			(IModelicaElementChangeListener listener);
-
 
 }

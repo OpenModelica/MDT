@@ -314,11 +314,9 @@ public class InnerClass extends ModelicaClass
 		}
 		
 		/* now there is only removed elements in the oldChildren table */
-		for (Object element : oldChildren.values())
+		for (IModelicaElement element : oldChildren.values())
 		{
-			ModelicaElement moElement = (ModelicaElement) element;
-
-			children.remove(moElement.getElementName());
+			children.remove(element.getElementName());
 			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED));
 		}
 		

@@ -145,7 +145,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * @throws InvocationError 
 	 * @throws CompilerInstantiationException 
 	 */
-	public List<IModelicaElementChange> update(Object root, 
+	public List<IModelicaElementChange> update(IModelicaElement root, 
 			IResourceDelta delta) 
 			throws ConnectException, UnexpectedReplyException, InvocationError,
 				CompilerInstantiationException
@@ -162,7 +162,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			return changes; /* just return an empty list */
 		}
 		
-		Object parent = (root != null) ? root : this;
+		IModelicaElement parent = (root != null) ? root : this;
 
 		for (IResourceDelta d : delta.getAffectedChildren())
 		{

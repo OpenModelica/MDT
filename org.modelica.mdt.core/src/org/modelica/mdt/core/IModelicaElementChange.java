@@ -53,7 +53,7 @@ public interface IModelicaElementChange
 	/**
 	 * @return the changed element
 	 */
-	public Object getElement();
+	public IModelicaElement getElement();
 	
 	/**
 	 * If the change is of type ADDED then this method returns the 

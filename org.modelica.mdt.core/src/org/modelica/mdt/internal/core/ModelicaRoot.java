@@ -177,7 +177,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		List<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
 
-		Object wrappedProject = projectsTable.remove(project);
+		IModelicaProject wrappedProject = projectsTable.remove(project);
 		changes.add(new ModelicaElementChange(wrappedProject, 
 						IModelicaElementChange.ChangeType.REMOVED));
 
