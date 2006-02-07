@@ -580,21 +580,15 @@ public class OMCProxy implements IModelicaCompiler
 		throws ConnectException, UnexpectedReplyException
 	{
 		ParseResults res = new ParseResults();
+
+		// We need to call this to empty the error queue in OMC
+		sendExpression("getMessagesString()");
 		
 		String fullName = file.getLocation().toString();
 		String retval = 
 			sendExpression("loadFileInteractiveQualified(\"" + fullName + "\")");
 		
-		/*
-		 * At this point OMC (ver 1.3.1) does not support returning partial
-		 * parsing results if there was parsing errors in the file.
-		 * Nor does OMC provide an interface to both query for file contents and
-		 * parsing errors (loadFileInteractive() either returns a class name
-		 * list or "error").
-		 * 
-		 * So for now we either return parsing errors or class names defined
-		 * in the file. Go PELAB! 
-		 */
+		String errorString = sendExpression("getMessagesString()");
 		
 		/*
 		 * See if there were parse errors
@@ -611,6 +605,17 @@ public class OMCProxy implements IModelicaCompiler
 		else
 		{
 			res.setClassNames(ModelicaParser.parseList(retval));
+		}
+
+		/*
+		 * If there were errors, but the compilation went through,
+		 * collect the error messages. (Test if errorString == "") 
+		 */
+		errorString = errorString.trim();
+		if(errorString.equals("\"\"") == false)
+		{
+			errorString = errorString.substring(1, errorString.length() - 1);
+			res.setCompileErrors(OMCParser.parseErrorString(errorString));
 		}
 		
 		return res;

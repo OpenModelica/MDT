@@ -104,8 +104,6 @@ public class OMCParser
 			 * parse error location from
 			 *    "[/path/to/file.mo:20:1"
 			 * we are only interested in line number at this point
-			 * We allready know the file, and column number is just
-			 * broken (OMC allways returns 1) 
 			 */
 			int lastColon = errorLocation.lastIndexOf(":");
 			int beforeLastColon = 
