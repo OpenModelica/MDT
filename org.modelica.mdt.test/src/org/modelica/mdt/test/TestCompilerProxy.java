@@ -42,6 +42,7 @@
 package org.modelica.mdt.test;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -51,7 +52,9 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ICompileError;
 import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
@@ -66,12 +69,15 @@ public class TestCompilerProxy extends TestCase
 {
 	/* a source code file use in some tests */
 	private IFile nested_models_mo;
+	private IFile broken_nested_models_mo;
+	private Vector<String> expectedClasses = new Vector<String>(5);
+
 	
 	protected void setUp() 
 		throws ConnectException, CompilerInstantiationException
 	{
 		Area51Projects.createProjects();
-
+		
 		/* 
 		 * fetch reference to nested_models.mo file 
 		 * from Area51Projects modelica project 
@@ -80,7 +86,14 @@ public class TestCompilerProxy extends TestCase
 				Area51Projects.MODELICA_PROJECT_NAME).getProject();
 		
 		nested_models_mo = proj.getFile("nested_models.mo");
-
+		broken_nested_models_mo = proj.getFile("broken_nested_models.mo");
+		
+		/*
+		 * setup expected collection
+		 */
+		assertTrue(Collections.addAll(expectedClasses, "nested_models",
+					"muu", "foo", "hej", "hepp"));
+		
 	}
 	
 	/**
@@ -203,5 +216,33 @@ public class TestCompilerProxy extends TestCase
 		loc = CompilerProxy.getClassLocation("hepp.hehehe");		
 		assertEquals(loc.getLine(), 33);
 
+	}
+	
+	/**
+	 * Test that both compile errors and contents are found in
+	 * a problematic file.
+	 *
+	 */
+	public void testErrorReporting() 
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
+	{
+		IParseResults res = 
+			CompilerProxy.loadSourceFile(broken_nested_models_mo);
+		
+		
+		for(String s : res.getClasses())
+		{
+			expectedClasses.remove(s);
+		}
+		assertTrue("Could not find all expected classes in file",
+				expectedClasses.isEmpty());
+		
+		ICompileError[] errs = res.getCompileErrors();
+		assertEquals(7, errs[0].getLine()); 
+		assertEquals(9, errs[1].getLine()); 
+		assertEquals(11, errs[2].getLine()); 
+		assertEquals(14, errs[3].getLine()); 
+		assertEquals(16, errs[4].getLine()); 
 	}
 }
