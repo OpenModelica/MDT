@@ -107,7 +107,6 @@ public class FolderPackage extends ModelicaClass
 	 * @see org.modelica.mdt.core.IModelicaElement#getResource()
 	 */
 	public IResource getResource() 
-		//throws ConnectException,	UnexpectedReplyException
 	{
 		return container;
 	}
@@ -196,13 +195,58 @@ public class FolderPackage extends ModelicaClass
 						ChangeType.REMOVED));
 				break;
 			case IResourceDelta.CHANGED:
-				if (element instanceof ModelicaElement)
+				if (element instanceof ModelicaFolder)
+				{
+					if (ModelicaFolder.checkIfMorphedIntoPackage(d))
+					{
+						/* 
+						 * replace the folder object with
+						 * package object
+						 */
+						
+						/* remove folder object */
+						children.remove(res);
+						changes.add(new ModelicaElementChange(element,
+								ChangeType.REMOVED));
+
+						/* add package object */
+						element = wrap(res);
+						children.put(res, element);
+						changes.add(new ModelicaElementChange(this, element));
+					}
+					else
+					{
+						changes.addAll(((ModelicaFolder)element).update(d));
+					}
+				}
+				else if (element instanceof FolderPackage)
+				{
+					if (ModelicaFolder.checkIfMorphedIntoFolder(d))
+					{
+						/* 
+						 * replace the folder object with
+						 * package object
+						 */
+						
+						/* remove folder object */
+						children.remove(res);
+						changes.add(new ModelicaElementChange(element,
+								ChangeType.REMOVED));
+
+						/* add package object */
+						element = wrap(res);
+						children.put(res, element);
+						changes.add(new ModelicaElementChange(this, element));
+					}
+					else
+					{
+						changes.addAll(((FolderPackage)element).update(d));
+					}
+				}
+				else if (element instanceof ModelicaElement)
 				{
 					changes.addAll(((ModelicaElement)element).update(d));
 				}
-				/* the only thing that is not a ModelicaElement is IFile */
-				changes.add(new ModelicaElementChange(element, 
-						ChangeType.MODIFIED));
 				break;
 			}
 		}

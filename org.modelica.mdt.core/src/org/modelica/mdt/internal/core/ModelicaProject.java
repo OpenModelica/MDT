@@ -113,6 +113,9 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		return getRootFolder().getResource();
 	}
 
+	/**
+	 * process change events to this project
+	 */
 	public List<IModelicaElementChange> update(IResourceDelta delta)
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException

@@ -45,16 +45,26 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.resources.IWorkspaceRoot;
 
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
+import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
@@ -66,13 +76,16 @@ import junit.framework.TestCase;
  */
 public class TestModelicaRoot extends TestCase 
 {
-	/* this flags are set from the modelica element change listener */
+
+	/* this flags are set from the workspace change listener */
 	private boolean simpleProjectAdded     = false;
 	private boolean modelicaProjectAdded   = false;
 	private boolean simpleProjectRemoved   = false;
 	private boolean modelicaProjectRemoved = false;
+
 	
-	public class ElementListener implements IModelicaElementChangeListener 
+	public class WorkspaceChangesListener 
+			implements IModelicaElementChangeListener 
 	{
 
 		public void elementsChanged(Collection<IModelicaElementChange> changes) 
@@ -114,6 +127,107 @@ public class TestModelicaRoot extends TestCase
 		}
 	}
 
+	/* this flag is set from folder to package morph detector */
+	private boolean morphedToPackage = false;
+	
+	/**
+	 * This class detect when the MORPH_FOLDER folder have morped into
+	 * a package by listening to modelica change events.
+	 * 
+	 * To engage this class register it as a listener with modelica root. When
+	 * the morph is detected the morphedToPackage flag is set.
+	 */
+	public class FolderToPackageMorphDetector 
+		implements IModelicaElementChangeListener
+	{
+		private boolean folderRemoved = false;
+		private boolean packageAdded = false;
+
+		public void elementsChanged(Collection<IModelicaElementChange> changes) 
+		{
+			for (IModelicaElementChange ch : changes)
+			{
+				IModelicaElement element = ch.getElement();
+				
+				if (element.getElementName().equals(MORPH_FOLDER))
+				{
+					/* 
+					 * we are waiting for a removed event for the
+					 * folder event and added event for the package object
+					 */
+					switch(ch.getChangeType())
+					{
+					case REMOVED:
+						folderRemoved = true;
+						break;
+					case ADDED:
+						assertTrue("element morphed into something wierd",
+								element instanceof IModelicaClass);
+						packageAdded = true;
+						break;
+					}
+					
+					/* 
+					 * when both removed and added events recieved we know
+					 * that the folder have morphed
+					 */
+					morphedToPackage = (folderRemoved && packageAdded);
+				}
+			}
+		}
+	}
+
+	/* this flag is set from folder to package morph detector */
+	private boolean morphedToFolder = false;
+	
+	/**
+	 * This class detect when the MORPH_FOLDER package have morped back into
+	 * a folder by listening to modelica change events.
+	 * 
+	 * To engage this class register it as a listener with modelica root. When
+	 * the morph is detected the morphedToFolder flag is set.
+	 */
+	public class PackageToFolderMorphDetector 
+		implements IModelicaElementChangeListener
+	{
+		private boolean packageRemoved = false;
+		private boolean folderAdded = false;
+
+		public void elementsChanged(Collection<IModelicaElementChange> changes) 
+		{
+			for (IModelicaElementChange ch : changes)
+			{
+				IModelicaElement element = ch.getElement();
+				
+				if (element.getElementName().equals(MORPH_FOLDER))
+				{
+					/* 
+					 * we are waiting for a removed event for the
+					 * folder event and added event for the package object
+					 */
+					switch(ch.getChangeType())
+					{
+					case REMOVED:
+						packageRemoved = true;
+						break;
+					case ADDED:
+						assertTrue("element morphed into something wierd",
+								element instanceof IModelicaFolder);
+						folderAdded = true;
+						break;
+					}
+					
+					/* 
+					 * when both removed and added events recieved we know
+					 * that the folder have morphed
+					 */
+					morphedToFolder = (packageRemoved && folderAdded);
+				}
+			}
+		}
+	}
+		
+	
 	/* names of modelica projects */
 	private Vector<String> modelicaProjects = new Vector<String>(2);
 	
@@ -126,6 +240,8 @@ public class TestModelicaRoot extends TestCase
 		TestModelicaRoot.class.getName() + "2";
 	private static final String PROJECT_NAME_3 = 
 		TestModelicaRoot.class.getName() + "3";
+	
+	private static final String MORPH_FOLDER = "morph_folder";
 	
 	/* the SIMple project which is added and removed */
 	private static final String PROJECT_NAME_SIM_EXTRA = 
@@ -145,6 +261,9 @@ public class TestModelicaRoot extends TestCase
 	private IModelicaRoot modelicaRoot = 
 			ModelicaCore.getModelicaRoot();
 	
+	private IFolder morphFolder = null;
+
+	
 	@Override
 	protected void setUp() throws CoreException 
 	{
@@ -158,8 +277,17 @@ public class TestModelicaRoot extends TestCase
 		{
 	 		IModelicaProject moProj =
 				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1); 
-			assertNotNull("failed to create project", moProj);		
+			assertNotNull("failed to create project", moProj);
+			project = moProj.getProject();
+			/*
+			 * create the folder that will be morphed to a package and then
+			 * back to folder (se testMorphing())
+			 */
+			IFolder folder = project.getFolder(new Path(MORPH_FOLDER));
+			folder.create(false, true, null);
+			
 		}
+		morphFolder = project.getFolder(new Path(MORPH_FOLDER));
 		
 		/*
 		 * create a regular projects
@@ -250,7 +378,7 @@ public class TestModelicaRoot extends TestCase
 	public void testChangesToWorkspace() throws CoreException
 	{
 		ModelicaCore.getModelicaRoot().
-			addModelicaElementChangeListener(new ElementListener());
+			addModelicaElementChangeListener(new WorkspaceChangesListener());
 		
 		/* 
 		 * check if ModelicaRoot picks up additions of projects
@@ -325,5 +453,74 @@ public class TestModelicaRoot extends TestCase
 				}
 			}
 		}
+	}
+	
+	/**
+	 * test that a IModelicaFolder changes to an IModelicaPackage
+	 * when a package.mo with correct contents is added to it and
+	 * that IModelicaPackage turns back to IModelicaFolder when
+	 * the package.mo is removed
+	 */
+	public void testMorphing() 
+		throws CoreException, ConnectException, UnexpectedReplyException,
+			InvocationError, CompilerInstantiationException
+	{
+		/* we need to make sure that the folder we are going to morph is loaded */
+		Utility.getProject(PROJECT_NAME_1).getRootFolder().getChildren();
+		
+		/*
+		 * check if folder will morph into a package when the package.mo
+		 * file is added
+		 */
+		IModelicaElementChangeListener listener =
+			new FolderToPackageMorphDetector();
+			
+		ModelicaCore.getModelicaRoot().addModelicaElementChangeListener
+			(listener);
+		IFile file = morphFolder.getFile("package.mo");
+		
+		String contents = 
+			"package " + MORPH_FOLDER + "\n" +
+			"\n" +
+			"end " + MORPH_FOLDER + ";";
+		
+		file.create(Utility.getByteStream(contents), true, null);
+		
+		
+		/* wait tops 5 seconds for the morph to kick in */
+		long waitUntil = System.currentTimeMillis() + 5000;
+		while ((!morphedToPackage) && waitUntil > System.currentTimeMillis())
+		{
+			Utility.sleep(this, 100);
+		}
+		
+		ModelicaCore.getModelicaRoot().
+			removeModelicaElementChangeListener(listener);
+		assertTrue("the folder didn't morph into package, waited to the"+
+				" change around 5 seconds", morphedToPackage); 
+
+		/*
+		 * check if package will morph into a folder when the package.mo
+		 * file is removed
+		 */
+
+		listener =	new PackageToFolderMorphDetector();
+			
+		ModelicaCore.getModelicaRoot().addModelicaElementChangeListener
+			(listener);
+		file.delete(true, false, null);
+		
+		/* wait tops 5 seconds for the morph to kick in */
+		waitUntil = System.currentTimeMillis() + 5000;
+		while ((!morphedToFolder) && waitUntil > System.currentTimeMillis())
+		{
+			Utility.sleep(this, 100);
+		}
+		
+		ModelicaCore.getModelicaRoot().
+			removeModelicaElementChangeListener(listener);
+		assertTrue("the package didn't morph into folder, waited to the"+
+				" change around 5 seconds", morphedToFolder); 
+
 	}
 }

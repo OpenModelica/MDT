@@ -81,7 +81,6 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	{
 		this.container = cont;
 	}
-	
 
 	/**
 	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
@@ -172,9 +171,6 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			switch (d.getKind())
 			{
 			case IResourceDelta.ADDED:
-				// TODO when a modelica file is added
-				// there is possability that this folder is turned into 
-				// a package, right now that is just ignored 
 				try
 				{
 					element = wrap(res);
@@ -195,21 +191,134 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			case IResourceDelta.CHANGED:
 				if (element instanceof ModelicaFolder)
 				{
-					changes.addAll(((ModelicaFolder)element).update(d));
+					if (checkIfMorphedIntoPackage(d))
+					{
+						/* 
+						 * replace the folder object with
+						 * package object
+						 */
+						
+						/* remove folder object */
+						children.remove(res);
+						changes.add(new ModelicaElementChange(element,
+								ChangeType.REMOVED));
+
+						/* add package object */
+						element = wrap(res);
+						children.put(res, element);
+						changes.add(new ModelicaElementChange(parent, element));
+					}
+					else
+					{
+						changes.addAll(((ModelicaFolder)element).update(d));
+					}
+				}
+				else if (element instanceof FolderPackage)
+				{
+					if (checkIfMorphedIntoFolder(d))
+					{
+						/* 
+						 * replace the folder object with
+						 * package object
+						 */
+						
+						/* remove folder object */
+						children.remove(res);
+						changes.add(new ModelicaElementChange(element,
+								ChangeType.REMOVED));
+
+						/* add package object */
+						element = wrap(res);
+						children.put(res, element);
+						changes.add(new ModelicaElementChange(parent, element));
+					}
+					else
+					{
+						changes.addAll(((FolderPackage)element).update(d));
+					}
 				}
 				else if (element instanceof ModelicaElement)
 				{
 					changes.addAll(((ModelicaElement)element).update(d));
 				}
-				changes.add(new ModelicaElementChange(element, 
-						ChangeType.MODIFIED));
+				else
+				{
+					changes.add(new ModelicaElementChange(element, 
+							ChangeType.MODIFIED));
+				}
 				break;
+				
 			}
 		}
 		
 		return changes;
 	}
 	
+	public static boolean checkIfMorphedIntoPackage(IResourceDelta delta)
+	{
+		for (IResourceDelta d : 
+			delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.CHANGED))
+		{
+			IResource res = d.getResource();
+			
+			if (res.getType() == IResource.FILE && 
+					res.getName().equals("package.mo"))
+			{
+				try
+				{
+					return FolderPackage.isFolderPackage(res.getParent());
+				}
+				catch (CompilerException e)
+				{
+					ErrorManager.showCompilerError(e);
+					/* let's say that we can't morph to packages on error */
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean checkIfMorphedIntoFolder(IResourceDelta delta)
+	{
+		for (IResourceDelta d : 
+			delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.CHANGED))
+		{
+			IResource res = d.getResource();
+			
+			if (res.getType() == IResource.FILE && 
+					res.getName().equals("package.mo"))
+			{
+				switch (d.getKind())
+				{
+				case IResourceDelta.REMOVED: 
+					/*
+					 * if we see that a file named package.mo was removed
+					 * then we know that the package is now a folder
+					 */
+					return true;
+				case IResourceDelta.CHANGED:
+					/*
+					 * there is a posability that the package.mo was changed
+					 * so that it does not contain a package definition any more
+					 */
+					try
+					{
+						return !FolderPackage.isFolderPackage(res.getParent());
+					}
+					catch (CompilerException e)
+					{
+						ErrorManager.showCompilerError(e);
+						/* let's say that we can't morph to folder on error */
+						return false;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+
 	/**
 	 * map a IResource to the type of modelica element it represents
 	 * @throws CompilerInstantiationException 
