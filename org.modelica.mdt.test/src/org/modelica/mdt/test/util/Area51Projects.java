@@ -322,7 +322,7 @@ public class Area51Projects
 		/* broken_nested_models.mo */
 		file = modelica_project.getFile("broken_nested_models.mo");
 		contents = 
-			"model nested_models\n" +
+			"model broken_nested_models\n" +
 			"    import Modelica;\n" +
 			"    record hepp end hepp;\n" +
 			"    class foo\n" +
@@ -340,31 +340,32 @@ public class Area51Projects
 			"      c = 2;\n" +
 			"    end foo;\n" +
 			"end nested_models;\n" +
-			"model muu\n" +
+			"\n"+
+			"model bruuken_muu\n" +
 			"Real a;\n" +
 			"equation\n"+
 			"	x = 10;\n"+
-			"end muu;\n"+
+			"end bruuken_muu;\n"+
 			"\n"+
-			"model foo\n"+
+			"model foobared\n"+
 			"	import Modelica;\n"+
-			"end foo;\n" +
+			"end foobared;\n" +
 			"\n\n" +
-			"record hej\n" +
+			"record broken_hej\n" +
 			"	package ine_paketen\n" +
 			"	end ine_paketen;\n" +
 			"	class hejhej\n" +
 			"		class foo\n" +
 			"		end foo;\n" +
 			"	end hejhej;\n" +
-			"end hej;\n" +
+			"end broken_hej;\n" +
 			"\n\n\n" +
-			"package hepp\n" +
+			"package broken_hepp\n" +
 			"	package hopp\n" +
 			"	end hopp;\n" +
 			"	class hehehe\n" +
 			"	end hehehe;\n" +
-			"end hepp;\n";
+			"end broken_hepp;\n";
 			
 
 		file.create(Utility.getByteStream(contents), true, null);
