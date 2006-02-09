@@ -317,13 +317,13 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			List names = new List();
 			String typename = "";
 			
-			if(o instanceof Vector)
+			if(o instanceof List)
 			{
-				for(Object o2 : (Vector)o)
+				for(Object o2 : (List)o)
 				{
-					if(o2 instanceof String)
+					if(o2 instanceof Element)
 					{
-						String s = (String)o2;
+						String s = ((Element)o2).toString();
 						
 						if(s.startsWith("elementvisibility="))
 						{
