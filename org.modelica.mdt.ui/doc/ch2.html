@@ -9,8 +9,8 @@ MDT need to be able to locate the binary of the OpenModelica Compiler. It uses t
 environment variable OPENMODELICAHOME to do so.<br>
 If you have problems using MDT make sure that OPENMODELICAHOME is set to the 
 folder where the Open Modelica Compiler is installed. In other words 
-OPENMODELICAHOME must point to the folder that contais Open Modelica compiler
-binary. It is named omc.exe on Windows Platform and omc on Unix platforms.
+OPENMODELICAHOME must point to the folder that contais the OpenModelica compiler
+binary. It is named omc.exe on Windows platforms and omc on Unix platforms.
 
 <h2 id = "using_modelica_perspective">Accessing the Modelica Perspective</h2>
 
@@ -28,20 +28,22 @@ Not <b>Cancel</b>. Or any other button.
 To start a new project, use the <b>New Modelica Project</b> Wizard. It is
 accessible through <b>File > New > Modelica Project</b>.
 After creating a project you can add files and folders to the project by selecting
-the corresponding wizard found in <b>File > New</b> menu subsection.
-Files having an extension <i>.mo</i> will be treated as Modelica source code files by MDT.
+the corresponding wizard found in the <b>File > New</b> menu subsection.
+Files having an extension of <i>.mo</i> will be treated as Modelica source code files by MDT.
 </p>
 <img src="pix/new_modelica_project.png">
 
 <h2 id = "importing_a_project">Importing a project</h2>
 <p>
-To import an existing modelica project you need to create an empty modelica project and populate it
-with existing files. Create a new modelica project with the wizard. Use the file system import wizard 
-on that project to copy the files to the project's folder. The import wizard is available by right
-clicking on the project in the <b>Modelica Projects</b> view and choosing <b>Import...</b> alternative.
+To import an existing Modelica project you need to create an empty Modelica
+project and populate it with existing files. Create a new Modelica project with
+the wizard. Use the file system import wizard on that project to copy the files
+to the project's folder. The import wizard is available by right clicking on the
+project in the <b>Modelica Projects</b> view and choosing the <b>Import...</b>
+alternative.
 </p>
 
-<h2 = "making_a_package">Making a package</h2>
+<h2 id = "making_a_package">Making a package</h2>
 <p>
 To create a new Modelica package, use the <b>New Modelica Package</b> Wizard.
 You can access it by going through <b>File > New > Modelica Package</b> or by
@@ -50,7 +52,7 @@ Enter the desired name of the package and a description about what it contains.
 </p>
 <img src="pix/new_modelica_package.png">
 
-<h2 = "making_a_class">Making a class</h2>
+<h2 id = "making_a_class">Making a class</h2>
 <p>
 To make a new Modelica class, select where in the hierarchy that you want to add
 your new class and select <b>File > New > Modelica Class</b>. When creating a
@@ -63,7 +65,7 @@ example add the line <b>initial equation</b> to the class.
 </p>
 <img src="pix/new_modelica_class.png">
 
-<h2 = "syntax_checking">Syntax checking</h2>
+<h2 id = "syntax_checking">Syntax checking</h2>
 <p>
 Whenever a Modelica (.mo) file is saved in the Modelica Editor, it is checked
 for syntactical errors. Any errors that are found are added to the Problems view
@@ -71,24 +73,30 @@ and also marked in the source code editor. Errors are marked in the editor as a
 red circle with a white cross, a squiggly red line under the problematic
 construct, and as a red marker in the right-hand side of the editor. If you want
 to reach the problem, you can either click the item in the Problems view or
-select the red box in the right-hand side of the editor.
+select the red box in the right-hand side of the editor.<br>
+<b>Note:</b> If you're using TABs to indent your Modelica code, the error markers
+will be confused. This arises because OMC thinks TABs are 8 characters while Eclipse
+sees a TAB character as a single character.
 </p>
 <img src="pix/error.png">
 
-<h2 = "code_completion">Code completion</h2>
+<h2 id = "code_completion">Code completion</h2>
 <p>
-If you type a dot (.) after anything that is loaded into OMC, code completion
-will kick in. If you for example type <b>Modelica.</b>, a list with packages
+MDT will try to help you with writing code. Code completion starts at strategic
+positions in the code (when you type a dot (.)) or when you type Ctrl+Space.<br>
+If you for example type <b>Modelica.</b> , a list with packages
 and classes that are available in the Modelica package will be displayed. You
 can narrow down the matches by typing in the first characters of the class or
 package that you want to type in. So if you've first typed <b>Modelica.</b> you
-can the continue typing <b>Me</b> and MDT will propose <b>Mechanics</b> and
+can then continue typing <b>Me</b> and MDT will propose <b>Mechanics</b> and
 <b>Media</b> as completions. You can always backtrack the narrowing by erasing
 characters.<br>
+<!--
 <b>Note:</b> As of now, you have to have the Modelica System Library loaded for
 code completion on the system library to work. This can right now be
 accomplished by browsing the Modelica System Library in the projects view before
 trying to use code completion.
+-->
 </p>
 
 </body>

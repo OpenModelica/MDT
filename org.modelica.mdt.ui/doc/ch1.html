@@ -3,8 +3,8 @@
 <body>
 <h1>Modelica Development Tooling Help</h1>
 <p>
-The Modelica Development Tooling (MDT) Plug-In integrates the Open Modelica
-compiler with Eclipse. MDT, together with the Open Modelica compiler provides an
+The Modelica Development Tooling (MDT) Plug-In integrates the OpenModelica
+compiler with Eclipse. MDT, together with the OpenModelica compiler provides an
 environment for working with Modelica projects.
 
 <h2 id = "features">Features</h2>
@@ -13,16 +13,16 @@ environment for a Modelica programmer. The following features are implemented so
 far:
 
 <ul>
-<li>browsing support for modelica classes</li>
+<li>browsing support for Modelica classes</li>
 <li>syntax color highlighting</li>
 <li>syntax checking</li>
 <li>syntax error highlighting</li>
-<li>code completion</li>
+<li>simple code completion</li>
 <li>wizards for creation of projects, packages, and classes</li>
 <li>Modelica System Library browsing support</li>
 </ul>
 
-<h2 id = "nonfeatures">Nonfeatures</h2>
+<h2 id = "nonfeatures">Missing features</h2>
 Some features are as of now missing from MDT:
 
 <ul>
@@ -30,12 +30,22 @@ Some features are as of now missing from MDT:
 <li>loading of classes into correct namespace</li>
 </ul>
 
+<h2 id = "issues">Known issues</h2>
+The following are some know issues with MDT:
+
+<ul>
+<li>OMC defines tabs as 8 characters while in Eclipse tabs are only 1 character.
+    This will lead to problems when displaying error markers in Modelica models.
+    To avoid problems with displaying error markers, use only space to format
+    the model definitions.</li>
+</ul>
+
 <h2 id = "background">Background</h2>
 <p>
 MDT is created by <a href="http://www.ida.liu.se/~pelab/">PELAB</a> at 
 <a href="http://www.liu.se">Link&ouml;ping University</a> as part of an 
-<a href="http://www.ida.liu.se/~pelab/modelica/OpenModelica.html">Open Modelica</a>
-effort. Open Modelica aims at creating a complete development environment for 
+<a href="http://www.ida.liu.se/~pelab/modelica/OpenModelica.html">OpenModelica</a>
+effort. OpenModelica aims at creating a complete development environment for 
 Modelica development.
 </p>
 <h2 id = "requirements">Requirements</h2>
