@@ -259,9 +259,12 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * @param lineno where in the file this marker should be set
 	 * @param msg a message indicating the problem
 	 */
-	protected static void reportProblem(IFile file, int lineno, String msg)
+	protected static void reportProblem(IFile file, ICompileError error)
 	{
-		createMarkerAtLine(file, lineno, msg, IMarker.PROBLEM);
+		createMarkerAtLocation(file,
+							   error.getStartLine(), error.getStartColumn(),
+							   error.getEndLine(), error.getEndColumn(),
+							   error.getErrorDescription(), IMarker.PROBLEM);
 	}
 
 	/**
@@ -369,30 +372,41 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	/**
 	 * 
 	 * @param file the file where this marker should be set
-	 * @param lineno the line number where this marker should be set
+	 * @param startLineNumber the line number where this marker should be set
+	 * @param startColumnNumber TODO
+	 * @param endLineNumber TODO
+	 * @param endColumnNumber TODO
 	 * @param message a message describing this marker
 	 * @param type the type of the marker (problem, info, ...)
 	 * @return the created marker, or <code>null</code> if marker couldn't
 	 * 		   be created
 	 */
-	public static IMarker createMarkerAtLine(IFile file, int lineno,
+	public static IMarker createMarkerAtLocation(IFile file,
+			int startLineNumber, int startColumnNumber,
+			int endLineNumber, int endColumnNumber,
 			String message, String type)
 	{
 		IMarker marker = null;
 		try
 		{
-			IRegion lineReg = getLineRegion(file, lineno);
-			int start = lineReg.getOffset();
-			int end = start + lineReg.getLength();
+			IRegion startLineReg = getLineRegion(file, startLineNumber);
+			IRegion endLineReg = getLineRegion(file, endLineNumber);
+			int start = startLineReg.getOffset() + startColumnNumber - 1;
+			int end = endLineReg.getOffset() + endColumnNumber - 1;
+			if(startLineNumber == endLineNumber
+					&& startColumnNumber == endColumnNumber)
+			{
+				end++;
+			}
 			
 			marker = file.createMarker(type);
 
 			marker.setAttribute(IMarker.CHAR_START, start);
 			marker.setAttribute(IMarker.CHAR_END, end);
 			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.LINE_NUMBER, lineno);
+			marker.setAttribute(IMarker.LINE_NUMBER, startLineNumber);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-			marker.setAttribute(IMarker.LOCATION, Integer.toString(lineno));
+			marker.setAttribute(IMarker.LOCATION, Integer.toString(startLineNumber));
 			
 			marker.setAttribute(IMarker.CHAR_START, start);
 			marker.setAttribute(IMarker.CHAR_END, end);
@@ -435,7 +449,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		 */
 		for (ICompileError error : res.getCompileErrors())
 		{
-			reportProblem(file, error.getLine(), error.getErrorDescription());
+			reportProblem(file, error);
 		}
 	}
 }

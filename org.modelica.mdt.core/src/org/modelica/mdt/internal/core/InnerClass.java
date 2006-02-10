@@ -179,13 +179,13 @@ public class InnerClass extends ModelicaClass
 				{
 					elementType = str.substring(12).trim();
 				}
-				else if (str.startsWith("classline="))
+				else if (str.startsWith("classStartLine="))
 				{
-					classLine = str.substring(10).trim();
+					classLine = str.substring(15).trim();
 				}
-				else if (str.startsWith("elementline="))
+				else if (str.startsWith("elementStartLine="))
 				{
-					elementLine = str.substring(12).trim();
+					elementLine = str.substring(17).trim();
 				}
 				else if (str.startsWith("classname="))
 				{

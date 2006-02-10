@@ -51,7 +51,10 @@ public interface ICompileError
 	/**
 	 * @return the line number in the file where this error have occured 
 	 */
-	public int getLine();
+	public int getStartLine();
+	public int getStartColumn();
+	public int getEndLine();
+	public int getEndColumn();
 	
 	/**
 	 * @return the human readable description of the error
