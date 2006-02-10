@@ -124,7 +124,7 @@ public class TestProblemMarkersCreation extends TestCase
 				start = (Integer) marker.getAttribute(IMarker.CHAR_START);
 				end = (Integer) marker.getAttribute(IMarker.CHAR_END);
 				
-				if (start == 24 && end == 52)
+				if (start == 24 && end == 74)
 				{
 					/* this is the marker we are looking for */
 					foundMarker = true;

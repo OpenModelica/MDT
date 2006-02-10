@@ -496,7 +496,7 @@ public class TestModelicaRoot extends TestCase
 		
 		ModelicaCore.getModelicaRoot().
 			removeModelicaElementChangeListener(listener);
-		assertTrue("the folder didn't morph into package, waited to the"+
+		assertTrue("the folder didn't morph into package, waited for the"+
 				" change around 5 seconds", morphedToPackage); 
 
 		/*
@@ -519,7 +519,7 @@ public class TestModelicaRoot extends TestCase
 		
 		ModelicaCore.getModelicaRoot().
 			removeModelicaElementChangeListener(listener);
-		assertTrue("the package didn't morph into folder, waited to the"+
+		assertTrue("the package didn't morph into folder, waited for the"+
 				" change around 5 seconds", morphedToFolder); 
 
 	}

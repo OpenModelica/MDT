@@ -64,52 +64,57 @@ public class TestProxyParser extends TestCase
 		{
 			/* single error windows style */
 			String errorString = 
-				"[c:/folde/hej.mo:2:1]: error: unexpected tooken: muu\n";
+				"[c:/folde/hej.mo:2:1-3:2:writable]: error: unexpected " +
+				"tooken: muu\n";
 			ICompileError[] errors = OMCParser.parseErrorString(errorString);
 	
 			assertEquals(1, errors.length);		
 			ICompileError error = errors[0];
-			assertEquals(2, error.getLine());
+			assertEquals(2, error.getStartLine());
 			assertEquals("unexpected tooken: muu", error.getErrorDescription());
 	
 			/* two errors windows style */
 			errorString = 
-				"[c:/folder he/hej.mo:4:1]: error: unexpected end of file\n" + 
-				"[c:/folder he/hej.mo:15:1]: error: hej remar\n";
+				"[c:/folder he/hej.mo:4:1-4:5:writable]: error: unexpected " +
+				"end of file\n" + 
+				"[c:/folder he/hej.mo:15:1-16:2:writable]: error: hej remar\n";
 			errors = OMCParser.parseErrorString(errorString);
 			assertEquals(2, errors.length);
 			
 			error = errors[0];
-			assertEquals(4, error.getLine());
+			assertEquals(4, error.getStartLine());
 			assertEquals("unexpected end of file", error.getErrorDescription());
 	
 			error = errors[1];
-			assertEquals(15, error.getLine());
+			assertEquals(15, error.getStartLine());
 			assertEquals("hej remar", error.getErrorDescription());
 			
 			/* single error unix style */
 			errorString = 
-				"[/usr/folde/hej.mo:12:1]: error: unexpected tooken: muu\n";
+				"[/usr/folde/hej.mo:12:1-13:4:writable]: error: unexpected" +
+				" tooken: muu\n";
 			errors = OMCParser.parseErrorString(errorString);
 	
 			assertEquals(1, errors.length);		
 			error = errors[0];
-			assertEquals(12, error.getLine());
+			assertEquals(12, error.getStartLine());
 			assertEquals("unexpected tooken: muu", error.getErrorDescription());
 	
 			/* two errors unix style */
 			errorString = 
-				"[/hej/hop/hej.mo:453:1]: error: unexpected end of file\n" + 
-				"[/usr/local/modelica/hej.mo:715:1]: error: hej remar\n";
+				"[/hej/hop/hej.mo:453:1-570:3:writable]: error: unexpected " +
+				"end of file\n" + 
+				"[/usr/local/modelica/hej.mo:715:1-864:45:writable]: error: " +
+				"hej remar\n";
 			errors = OMCParser.parseErrorString(errorString);
 			assertEquals(2, errors.length);
 			
 			error = errors[0];
-			assertEquals(453, error.getLine());
+			assertEquals(453, error.getStartLine());
 			assertEquals("unexpected end of file", error.getErrorDescription());
 	
 			error = errors[1];
-			assertEquals(715, error.getLine());
+			assertEquals(715, error.getStartLine());
 			assertEquals("hej remar", error.getErrorDescription());
 	
 			/* no errors aka empty error string */

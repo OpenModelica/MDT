@@ -91,8 +91,8 @@ public class TestCompilerProxy extends TestCase
 		/*
 		 * setup expected collection
 		 */
-		assertTrue(Collections.addAll(expectedClasses, "nested_models",
-					"muu", "foo", "hej", "hepp"));
+		assertTrue(Collections.addAll(expectedClasses, "broken_nested_models",
+					"bruuken_muu", "foobared", "broken_hej", "broken_hepp"));
 		
 	}
 	
@@ -230,7 +230,6 @@ public class TestCompilerProxy extends TestCase
 		IParseResults res = 
 			CompilerProxy.loadSourceFile(broken_nested_models_mo);
 		
-		
 		for(String s : res.getClasses())
 		{
 			expectedClasses.remove(s);
@@ -239,10 +238,10 @@ public class TestCompilerProxy extends TestCase
 				expectedClasses.isEmpty());
 		
 		ICompileError[] errs = res.getCompileErrors();
-		assertEquals(7, errs[0].getLine()); 
-		assertEquals(9, errs[1].getLine()); 
-		assertEquals(11, errs[2].getLine()); 
-		assertEquals(14, errs[3].getLine()); 
-		assertEquals(16, errs[4].getLine()); 
+		assertEquals(7, errs[0].getStartLine()); 
+		assertEquals(9, errs[1].getStartLine()); 
+		assertEquals(11, errs[2].getStartLine()); 
+		assertEquals(14, errs[3].getStartLine()); 
+		assertEquals(16, errs[4].getStartLine()); 
 	}
 }
