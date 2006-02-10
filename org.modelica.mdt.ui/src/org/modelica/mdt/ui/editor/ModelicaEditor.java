@@ -41,17 +41,42 @@
 
 package org.modelica.mdt.ui.editor;
 
+import java.util.ResourceBundle;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.TextOperationAction;
 
 /**
  * @author Peter Bunus
  */
 public class ModelicaEditor extends TextEditor 
 {
+	private static final String RESOURCE_BUNDLE = 
+		"org.modelica.mdt.ui.editor.ContentAssist";
 
-	public ModelicaEditor()
+	protected void initializeEditor() 
 	{
-		super();
-		setSourceViewerConfiguration(new ModelicaSourceViewerConfig());
+		super.initializeEditor();
+		setSourceViewerConfiguration(new ModelicaSourceViewerConfig(this));
+	}
+	
+	protected void createActions() 
+	{
+		super.createActions();
+		
+		/*
+		 * create the action that activates the content assist on CTRL+SPACE
+		 */
+		IAction a = 
+			new TextOperationAction(ResourceBundle.getBundle(RESOURCE_BUNDLE),
+					"ContentAssistProposal.", this, 
+					ISourceViewer.CONTENTASSIST_PROPOSALS);
+		a.setActionDefinitionId
+			(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssistProposal", a);
+		
 	}
 }

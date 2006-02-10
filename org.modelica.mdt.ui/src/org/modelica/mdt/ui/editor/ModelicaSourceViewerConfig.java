@@ -54,6 +54,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @author Peter Bunus
@@ -62,13 +63,15 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 {
 
 	private ModelicaRuleScanner scanner;
+	private ITextEditor textEditor;
 	
 	/* default tag color is black */
 	private static Color DEFAULT_TAG_COLOR
 		= new Color(Display.getCurrent(), new RGB(0, 0, 0));
 
-	public ModelicaSourceViewerConfig() 
+	public ModelicaSourceViewerConfig(ITextEditor textEditor) 
 	{
+		this.textEditor = textEditor;
 	}
 
 	protected ModelicaRuleScanner getTagScanner() 
@@ -82,9 +85,6 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 		return scanner;
 	}
 
-	/**
-	 * Define reconciler for MyEditor
-	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) 
 	{
 		PresentationReconciler reconciler = new PresentationReconciler();
@@ -99,7 +99,7 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 	{
 		ContentAssistant assistant = new ContentAssistant();
 		
-		assistant.setContentAssistProcessor(new ModelicaCompletionProcessor(),
+		assistant.setContentAssistProcessor(new ModelicaCompletionProcessor(textEditor),
 				IDocument.DEFAULT_CONTENT_TYPE);
 		
 		assistant.enableAutoActivation(true);
@@ -110,7 +110,14 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 				.CONTEXT_INFO_ABOVE);
 		assistant.setProposalSelectorBackground(new Color(Display.getCurrent(),
 				new RGB(255, 255, 255)));
-		
+
 		return assistant;
 	}
+	
+	public int getTabWidth(ISourceViewer sourceViewer) 
+	{
+		/* return the peter fritzson constant */
+		return 2;
+	}
+
 }

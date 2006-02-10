@@ -10,6 +10,7 @@ import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -46,6 +47,11 @@ public class SystemLibrary extends PlatformObject
 	public boolean hasChildren()
 	{
 		return true;
+	}
+
+	public IModelicaSourceFile getSourceFile()
+	{
+		return null;
 	}
 
 }

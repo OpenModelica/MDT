@@ -54,6 +54,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.List;
@@ -67,7 +69,7 @@ import org.modelica.mdt.internal.core.ErrorManager;
 /**
  * This class is responsible for proposing completions and giving
  * context information about functions. These functions kick in when .
- * and ( are typed.
+ * and ( are typed or when the user presses CTRL+SPACE.
  * 
  * computeCompletionProposals() takes care of proposing classnames when
  * typing after a .
@@ -75,7 +77,7 @@ import org.modelica.mdt.internal.core.ErrorManager;
  * computeContextInformation() takes care of showing the definitions of
  * the parameters of classes that have parameters.
  * 
- * @author Andreas Remar
+ * @author Tyler Durden
  */
 public class ModelicaCompletionProcessor implements IContentAssistProcessor
 {
@@ -83,17 +85,23 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * There is a separate narrowedProposals so that we can store the original
 	 * proposals. This allows us to backtrace the proposals.
 	 */
-	List narrowedProposals = new List();
-	List proposals = new List();
-	int typeAhead = 0;
+	private List narrowedProposals = new List();
+	private List proposals = new List();
+	private int typeAhead = 0;
 
-	Vector<String> inputParameters = new Vector<String>();
-	Vector<String> outputParameters = new Vector<String>();
+	private Vector<String> inputParameters = new Vector<String>();
+	private Vector<String> outputParameters = new Vector<String>();
+	private IEditorPart editor;
 	
 	/* This string is used to hold the proposed parameters of a function. */
-	static String functionParameters;
+//	private static String functionParameters;
 	
-	static String functionProposal;
+	private static String functionProposal;
+	
+	public ModelicaCompletionProcessor(IEditorPart editor) 
+	{
+		this.editor = editor;
+	}
 	
 	protected static class Validator implements IContextInformationValidator,
 		IContextInformationPresenter
@@ -125,10 +133,15 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 					pardepth--;
 			}
 			/* The TYPING will go on as long as it has to! */
+			/* (or somebody yells stop, goes limb, passes out) */
 			if(pardepth == 0)
+			{
 				return false;
+			}
 			else
+			{
 				return true;
+			}
 		}
 		
 		public void install(IContextInformation info, ITextViewer viewer,
@@ -388,6 +401,18 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset)
 	{
+		IEditorInput input = editor.getEditorInput();
+		//TODO when eclipse restores the files that where left
+		// in the editor area when it was closed last time the
+		// editor input will not be of ModelicaElementEditorInput
+		// thus code completion will not work, this should be fixed somehow
+
+		if (input instanceof ModelicaElementEditorInput)
+		{
+			System.out.println("we are looking at " + 
+					((ModelicaElementEditorInput)input).getSourceFile());
+		}
+		
 		String className = findClassName(viewer, offset);
 
 		if(className.charAt(className.length() - 1) == '.')
@@ -421,6 +446,10 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		return completionProposals;
 	}
 
+	/**
+	 * computes the information that is displayed in the yellow pop-up
+	 * as you type.
+	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset)
 	{

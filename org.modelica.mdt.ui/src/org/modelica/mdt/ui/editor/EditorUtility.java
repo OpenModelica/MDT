@@ -102,7 +102,9 @@ public class EditorUtility
 			else if (res instanceof IFile)
 			{
 				/* a element defined inside a file in the workspace */
-				editor = (ITextEditor) openInEditor((IFile)res);
+				System.out.println("opening " + modelicaElement);
+				editor = 
+					(ITextEditor) openInEditor(new ModelicaElementEditorInput(modelicaElement));
 			}
 			
 			if (!(element instanceof IModelicaSourceFile))
