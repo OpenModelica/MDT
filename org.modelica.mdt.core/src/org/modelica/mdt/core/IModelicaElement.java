@@ -68,7 +68,6 @@ public interface IModelicaElement extends IAdaptable
 	 * this is the underlying resource corresponding to the archive. 
 	 * If this element is included in an external archive, <code>null</code>
 	 * is returned.
-	 * This is a handle-only method.
 	 *
 	 * If this element is stored outside of the workspace root, e.g. the
 	 * system library elements, then null is returned from this method.
@@ -114,4 +113,16 @@ public interface IModelicaElement extends IAdaptable
 	public String getFilePath() 
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException;
+	
+	/**
+	 * For modelica elements that are defined in a source code
+	 * file inside the workspace this methods fetches the source file
+	 * reference. For other modelica elements (for example folder packages,
+	 * system library elements) this methods returns null.
+	 * 
+	 * @return the source file where this element is defined or null if
+	 * no source file can be determined
+	 */
+	public IModelicaSourceFile getSourceFile();
+	
 }

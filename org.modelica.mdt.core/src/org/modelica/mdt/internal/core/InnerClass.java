@@ -58,6 +58,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
@@ -81,22 +82,21 @@ public class InnerClass extends ModelicaClass
 	private boolean typeKnown = false;
 	
 	/*
-	 * the file where this package is defined, 
-	 * can be null if it is unknown
+	 * the file where this class is defined, can be null if it is unknown
 	 * when the container is unknow the class is assumed to 
 	 * be external e.g. defined in system library
 	 */
-	private IFile container;
+	private IModelicaSourceFile sourceFile;
 	
 	private IElementLocation location = null;;
 
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, IModelicaElement> children = null;
 	
-	public InnerClass(IFile container, String prefix, String name,
+	public InnerClass(IModelicaSourceFile container, String prefix, String name,
 					IElementLocation location, Type restrictionType)
 	{
-		this.container = container;
+		this.sourceFile = container;
 		this.location = location;
 		this.restrictionType = restrictionType;
 		typeKnown = true;
@@ -121,9 +121,9 @@ public class InnerClass extends ModelicaClass
 	}
 
 
-	public InnerClass(IFile container, String prefix, String name)
+	public InnerClass(IModelicaSourceFile container, String prefix, String name)
 	{
-		this.container = container;
+		this.sourceFile = container;
 		this.prefix = prefix;
 		this.name = name;
 		setFullName();
@@ -233,7 +233,7 @@ public class InnerClass extends ModelicaClass
 									Integer.parseInt(classLine));					
 				
 				elements.put(className, 
-						new InnerClass(container, fullName, className,
+						new InnerClass(sourceFile, fullName, className,
 								location, 
 							IModelicaClass.Type.parse(classRestriction)));
 			}
@@ -251,7 +251,7 @@ public class InnerClass extends ModelicaClass
 				
 				elements.put(componentName, 
 						new ModelicaComponent(
-								container,
+								sourceFile,
 								componentName,
 								IModelicaComponent.Visibility.parse(elementVisibility),
 								new ElementLocation(elementFile, 
@@ -325,7 +325,7 @@ public class InnerClass extends ModelicaClass
 	
 	public IResource getResource()
 	{
-		return container;
+		return sourceFile.getResource();
 	}
 	
 	/**
@@ -350,9 +350,10 @@ public class InnerClass extends ModelicaClass
 			loadClassLocation();
 		}
 
-		if (container != null)
+		if (sourceFile != null)
 		{
-			SyntaxChecker.getLineRegion(container, location.getLine());
+			SyntaxChecker.getLineRegion((IFile)sourceFile.getResource(),
+					location.getLine());
 		}
 
 		IRegion reg = null;
@@ -411,5 +412,10 @@ public class InnerClass extends ModelicaClass
 		}
 	
 		return restrictionType;
+	}
+
+	public IModelicaSourceFile getSourceFile()
+	{
+		return sourceFile;
 	}
 }

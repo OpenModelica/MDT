@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.IModelicaComponent;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IElementLocation;
@@ -65,7 +66,7 @@ public class ModelicaComponent extends ModelicaElement
 	private String name;
 	private Visibility visibility;
 	private IElementLocation location;
-	private IFile container;
+	private IModelicaSourceFile sourceFile;
 	
 	/**
 	 * Create class component
@@ -75,13 +76,13 @@ public class ModelicaComponent extends ModelicaElement
 	 * @param visibility whatever this component is public or protected
 	 * @param location location in the source code file
 	 */
-	public ModelicaComponent(IFile container, String name, Visibility visibility,
+	public ModelicaComponent(IModelicaSourceFile container, String name, Visibility visibility,
 						IElementLocation location)
 	{
 		this.name = name;
 		this.visibility = visibility;
 		this.location = location;
-		this.container = container;
+		this.sourceFile = container;
 	}
 
 	public String getElementName()
@@ -96,7 +97,7 @@ public class ModelicaComponent extends ModelicaElement
 	
 	public IResource getResource()
 	{
-		return container;
+		return sourceFile.getResource();
 	}
 	
 	/**
@@ -105,9 +106,10 @@ public class ModelicaComponent extends ModelicaElement
 	public IRegion getLocation()
 		throws CoreException
 	{
-		if (container != null)
+		if (sourceFile != null)
 		{
-			SyntaxChecker.getLineRegion(container, location.getLine());
+			SyntaxChecker.getLineRegion((IFile)sourceFile.getResource(),
+					location.getLine());
 		}
 
 		IRegion reg = null;
@@ -136,6 +138,11 @@ public class ModelicaComponent extends ModelicaElement
 		throws ConnectException, UnexpectedReplyException, InvocationError
 	{
 		return location.getPath();
+	}
+
+	public IModelicaSourceFile getSourceFile()
+	{
+		return sourceFile;
 	}
 
 }

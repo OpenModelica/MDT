@@ -129,12 +129,12 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 			if (parentPackage == null)
 			{
 				/* we are not inside a package */
-				elements.put(name, new InnerClass(file, "", name));
+				elements.put(name, new InnerClass(this, "", name));
 			}
 			else
 			{
 				elements.put(name, 
-						new InnerClass(file, parentPackage.getFullName(),
+						new InnerClass(this, parentPackage.getFullName(),
 						name));
 			}
 		}
@@ -231,6 +231,12 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		IModelicaClass[] arry =  new IModelicaClass[pkgs.size()];
 
 		return pkgs.toArray(arry);
+	}
+
+
+	public IModelicaSourceFile getSourceFile()
+	{
+		return this;
 	}
 
 }

@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -122,6 +123,11 @@ abstract public class ModelicaElement extends PlatformObject
 			CompilerInstantiationException
 	{
 		/* we are not defined in an external file by default */
+		return null;
+	}
+
+	public IModelicaSourceFile getSourceFile()
+	{
 		return null;
 	}
 }
