@@ -48,20 +48,42 @@ import org.modelica.mdt.core.compiler.ICompileError;
  */
 public class CompileError implements ICompileError
 {
-	private int lineNumber;
+	private int startLineNumber;
+	private int startColumnNumber;
+	private int endLineNumber;
+	private int endColumnNumber;
 	private String errorDescription;
 	
-	public CompileError(int lineNumber, String errorDescription)
+	public CompileError(int startLineNumber, int startColumnNumber,
+			int endLineNumber, int endColumnNumber, String errorDescription)
 	{
-		this.lineNumber = lineNumber;
+		this.startLineNumber = startLineNumber;
+		this.startColumnNumber = startColumnNumber;
+		this.endLineNumber = endLineNumber;
+		this.endColumnNumber = endColumnNumber;
 		this.errorDescription = errorDescription;
 	}
 
-	public int getLine()
+	public int getStartLine()
 	{
-		return lineNumber;
+		return startLineNumber;
 	}
-	
+
+	public int getStartColumn()
+	{
+		return startColumnNumber;
+	}
+
+	public int getEndLine()
+	{
+		return endLineNumber;
+	}
+
+	public int getEndColumn()
+	{
+		return endColumnNumber;
+	}
+
 	public String getErrorDescription()
 	{
 		return errorDescription;

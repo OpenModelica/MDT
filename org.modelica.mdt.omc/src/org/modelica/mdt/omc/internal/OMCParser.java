@@ -57,7 +57,7 @@ public class OMCParser
 	/**
 	 * Parses the error string that is set by loadFileInteractive() on compile 
 	 * errors. E.g. error string will look like \n delimeted list of
-	 *      [/path/to/file.mo:20:1]: error: some error
+	 *      [/path/to/file.mo:20:1-20:5:writable]: error: some error
 	 *
 	 * The actual error string is retrived by calling getErrorString() after
 	 * calling loadFileInteractive()
@@ -74,15 +74,17 @@ public class OMCParser
 		for (int i = 0; strTok.hasMoreTokens(); i++)
 		{
 			/* default line number is 1 in case OMC returns unexpected string */
-			int lineno = 1;
+			int startLineNumber = 1;
+			int startColumnNumber = 1;
+			int endLineNumber = 1;
+			int endColumnNumber = 1;
 			String errorLine = strTok.nextToken();
 			
 		
 			/*
-			 * An error string looks something like:
-			 *    [/path/to/file.mo:20:1]: error: some error
-			 * So to parse line number, we first split
-			 * around ']'
+			 * An error looks something like:
+			 *   [/path/to/file.mo:20:12-34:20:writable]: error: some error
+			 * We split on ']'
 			 */
 		
 			/* 
@@ -102,18 +104,53 @@ public class OMCParser
 		
 			/* 
 			 * parse error location from
-			 *    "[/path/to/file.mo:20:1"
-			 * we are only interested in line number at this point
+			 *    "[/path/to/file.mo:20:12-34:20:writable"
+			 * or
+			 *    "[c:/path/to/file.mo:20:12-34:20:writable"
 			 */
-			int lastColon = errorLocation.lastIndexOf(":");
-			int beforeLastColon = 
-				errorLocation.substring(0, lastColon).lastIndexOf(":");
+			
+			String errorLocationParts[] = errorLocation.split(":");
+			
+			/*
+			 * This is the ugliest hack in a long while. Aaaah, nice.
+			 * 
+			 * How it actually works:
+			 *   Because : is both a separator in Windows (C:/path/to/file) and
+			 *   a separator in error messages, where the line and column
+			 *   numbers are found varies. If on Windows, the info we want
+			 *   starts at array index 2, and on more normal systems, it starts
+			 *   at array index 1. Simply check if the element at index 1 is
+			 *   a digit or something else. Use this to set where in the array
+			 *   that the line and column numbers can be found.
+			 */
+			char startCharacter = errorLocationParts[1].charAt(0);
+			int infoOffset;
+			if(startCharacter >= '0' && startCharacter <= '9')
+			{
+				infoOffset = 0;
+			}
+			else
+			{
+				infoOffset = 1;
+			}
+			
 			try
 			{
-				lineno = 
-					Integer.parseInt
-					(errorLocation.substring(beforeLastColon+1,
-					    lastColon));
+				startLineNumber = 
+					Integer.parseInt(errorLocationParts[1+infoOffset]);
+
+				// Split the 12-34 (start column & end line)
+				String startColumnAndEndLine[] = 
+					errorLocationParts[2+infoOffset].split("-");
+				
+				startColumnNumber =
+					Integer.parseInt(startColumnAndEndLine[0]);
+
+				endLineNumber =
+					Integer.parseInt(startColumnAndEndLine[1]);
+
+				endColumnNumber = 
+					Integer.parseInt(errorLocationParts[3+infoOffset]);
 			}
 			catch (NumberFormatException e)
 			{
@@ -135,7 +172,11 @@ public class OMCParser
 			String errorDesc = 
 				errorMessage.substring(secondColon+1).trim();
 			
-			compileErrs[i] = new CompileError(lineno, errorDesc);
+			compileErrs[i] = new CompileError(startLineNumber,
+											  startColumnNumber,
+											  endLineNumber,
+											  endColumnNumber,
+											  errorDesc);
 		}
 
 		return compileErrs;

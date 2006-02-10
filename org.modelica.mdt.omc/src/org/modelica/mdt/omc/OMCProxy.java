@@ -652,6 +652,7 @@ public class OMCProxy implements IModelicaCompiler
 		 */
 
 		/* For some reason, the list returned doesn't contain curly braces. */
+		retval = retval.trim();
 		retval = "{" + retval + "}"; 
 
 		List tokens = ModelicaParser.parseList(retval);
@@ -659,7 +660,7 @@ public class OMCProxy implements IModelicaCompiler
 
 		try
 		{
-			line = Integer.parseInt(tokens.elementAt(1).toString());
+			line = Integer.parseInt(tokens.elementAt(2).toString());
 		}
 		catch (NumberFormatException e)
 		{
