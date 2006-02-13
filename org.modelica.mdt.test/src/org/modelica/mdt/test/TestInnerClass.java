@@ -43,8 +43,10 @@ package org.modelica.mdt.test;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -66,6 +68,10 @@ public class TestInnerClass extends TestCase
 
 	/* the test subject */
 	private InnerClass componentsBananza;
+	
+	/* teh Modelica package (from the standard library) */
+	private InnerClass modelica = null;
+	
 	@Override
 	protected void setUp() throws Exception 
 	{
@@ -94,6 +100,19 @@ public class TestInnerClass extends TestCase
 		
 		assertNotNull("could not find the model component_bonanza",
 				componentsBananza);
+		
+		/* fetch teh Modelica package from the standard library */
+		for (IModelicaClass clazz : CompilerProxy.getStandardLibrary())
+		{
+			if (clazz.getElementName().equals("Modelica"))
+			{
+				modelica = (InnerClass)clazz;
+				break;
+			}
+		}
+		assertNotNull("could not found standard library package 'Modelica'",
+				modelica);
+		
 
 	}
 	
@@ -128,11 +147,11 @@ public class TestInnerClass extends TestCase
 		 * fetch children to local variables
 		 * so we can perfort check on 'em
 		 */
-		for (Object obj : componentsBananza.getChildren())
+		for (IModelicaElement elm : componentsBananza.getChildren())
 		{
-			if (obj instanceof IModelicaComponent)
+			if (elm instanceof IModelicaComponent)
 			{
-				IModelicaComponent comp = (IModelicaComponent) obj;
+				IModelicaComponent comp = (IModelicaComponent) elm;
 				
 				if (comp.getElementName().endsWith("a_real"))
 				{
@@ -151,33 +170,33 @@ public class TestInnerClass extends TestCase
 					a_protected_integer = comp;
 				}
 			}
-			else if (obj instanceof IModelicaClass)
+			else if (elm instanceof IModelicaClass)
 			{
-				switch (((IModelicaClass)obj).getRestrictionType())
+				switch (((IModelicaClass)elm).getRestrictionType())
 				{
 				case PACKAGE:
-					a_package = (IModelicaClass)obj;
+					a_package = (IModelicaClass)elm;
 					break;
 				case BLOCK:
-					a_block = (IModelicaClass)obj;
+					a_block = (IModelicaClass)elm;
 					break;
 				case CLASS:
-					a_class = (IModelicaClass)obj;
+					a_class = (IModelicaClass)elm;
 					break;
 				case CONNECTOR:
-					a_connector = (IModelicaClass)obj;
+					a_connector = (IModelicaClass)elm;
 					break;
 				case FUNCTION:
-					a_function = (IModelicaClass)obj;
+					a_function = (IModelicaClass)elm;
 					break;
 				case MODEL:
-					a_model = (IModelicaClass)obj;
+					a_model = (IModelicaClass)elm;
 					break;
 				case RECORD:
-					a_record = (IModelicaClass)obj;
+					a_record = (IModelicaClass)elm;
 					break;
 				case TYPE:
-					a_type = (IModelicaClass)obj;
+					a_type = (IModelicaClass)elm;
 					break;
 				}
 			}
@@ -186,6 +205,8 @@ public class TestInnerClass extends TestCase
 		/* sanity checks on components_bananza.a_type */
 		assertNotNull("components_bananza.a_type not found", a_type);
 		assertEquals("wrong element name", a_type.getElementName(), "a_type");
+		System.out.println(a_type.getFilePath());
+		System.out.println(a_type.getFilePath());
 		assertTrue("fishy file path", 
 				a_type.getFilePath().endsWith("component_model.mo"));
 		IRegion reg = a_type.getLocation();
@@ -303,5 +324,119 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 376, reg.getOffset());
 		assertEquals("wrong length", 24, reg.getLength());
 
-	} 
+	}
+	
+	/**
+	 * Do some integrity tests on classes/packages from the standard library.
+	 */
+	public void testStandardLibraryElements()
+		throws ConnectException, UnexpectedReplyException, 
+			InvocationError, CompilerInstantiationException, CoreException
+	{
+		/*
+		 * do checks on Modelica package
+		 */
+		assertNull("standard library should be defined outside of workspace",
+				modelica.getResource());
+		assertFalse("empty path to the source file", 
+				modelica.getFilePath().equals(""));
+		IRegion reg = modelica.getLocation();
+		assertTrue("negative element region can't be", reg.getOffset() >= 0);
+		assertTrue("elements length must be positive", reg.getLength() > 0);
+
+
+		/*
+		 * do checks on Modelica.Blocks and Modelica.Constants packages
+		 */
+
+		InnerClass blocks = null;
+		InnerClass constants = null;
+ 
+		for (IModelicaElement el : modelica.getChildren())
+		{
+			String name = el.getElementName();
+			
+			if (name.equals("Blocks"))
+			{
+				blocks = (InnerClass)el;
+			}
+			else if (name.equals("Constants"))
+			{
+				constants = (InnerClass)el;
+			}
+		} 
+		
+		/* check Modelica.Blocks */
+		assertNotNull("could not find package Modelica.Blocks in standard" +
+				"library ", blocks);
+		assertNull("standard library should be defined outside of workspace",
+				blocks.getResource());
+		assertFalse("empty path to the source file", 
+				blocks.getFilePath().equals(""));
+		reg = blocks.getLocation();
+		assertTrue("negative element region can't be", reg.getOffset() >= 0);
+		assertTrue("elements length must be positive", reg.getLength() > 0);
+
+		
+		/* check Modelica.Constants */
+		assertNotNull("could not find package Modelica.Constants in standard" +
+				"library ", constants);
+		assertNull("standard library should be defined outside of workspace",
+				constants.getResource());
+		assertFalse("empty path to the source file", 
+				constants.getFilePath().equals(""));
+		reg = constants.getLocation();
+		assertTrue("negative element region can't be", reg.getOffset() >= 0);
+		assertTrue("elements length must be positive", reg.getLength() > 0);
+
+
+		IModelicaComponent pi = null;
+		IModelicaComponent D2R = null;
+		
+		/*
+		 * do checks on Modelica.Constants components
+		 */
+		for (IModelicaElement el : constants.getChildren())
+		{
+			String name = el.getElementName();
+			
+			if (name.equals("pi"))
+			{
+				pi = (IModelicaComponent)el;
+			}
+			else if (name.equals("D2R"))
+			{
+				D2R = (IModelicaComponent)el;
+			}
+		}
+
+		/* check Modelica.Constants.pi */
+		assertNotNull("could not find package Modelica.Constants.pi in standard" 
+				+ "library ", pi);
+		assertEquals("pi must have public visibility", 
+				IModelicaComponent.Visibility.PUBLIC,
+				pi.getVisbility());
+		assertNull("standard library should be defined outside of workspace",
+				pi.getResource());
+		assertFalse("empty path to the source file", 
+				pi.getFilePath().equals(""));
+		reg = pi.getLocation();
+		assertTrue("negative element region can't be", reg.getOffset() >= 0);
+		assertTrue("elements length must be positive", reg.getLength() > 0);
+
+		/* check Modelica.Constants.D2R */
+		assertNotNull("could not find package Modelica.Constants.pi in standard" 
+				+ "library ", D2R);
+		assertEquals("pi must have public visibility", 
+				IModelicaComponent.Visibility.PUBLIC,
+				D2R.getVisbility());
+		assertNull("standard library should be defined outside of workspace",
+				D2R.getResource());
+		assertFalse("empty path to the source file", 
+				D2R.getFilePath().equals(""));
+		reg = pi.getLocation();
+		assertTrue("negative element region can't be", reg.getOffset() >= 0);
+		assertTrue("elements length must be positive", reg.getLength() > 0);
+		
+	}
 }

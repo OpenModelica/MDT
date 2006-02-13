@@ -45,13 +45,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ElementsInfo;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
@@ -686,14 +690,7 @@ public class OMCProxy implements IModelicaCompiler
 		return retval.contains("true");
 	}
 	
-	/**
-	 * @param className
-	 * @return
-	 * @throws ConnectException
-	 * @throws InvocationError 
-	 * @throws UnexpectedReplyException 
-	 */
-	public List getElementsInfo(String className)
+	public Collection<ElementsInfo> getElementsInfo(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException
 	{
 		String retval = sendExpression("getElementsInfo("+ className +")");
@@ -706,8 +703,22 @@ public class OMCProxy implements IModelicaCompiler
 		{
 			if (retval.charAt(i) == '{')
 			{
-				/* we found the begining of the list, let's hope for the best */
-				return ModelicaParser.parseList(retval);		
+				/* 
+				 * we found the begining of the list, send it to parser and 
+				 * hope for the best 
+				 */
+				List parsedList = ModelicaParser.parseList(retval);
+				
+				/* convert the parsedList to a collection of ElementsInfo:s */
+				LinkedList<ElementsInfo> elementsInfo = 
+					new LinkedList<ElementsInfo>();
+
+				for (ListElement element : parsedList)
+				{
+					elementsInfo.add(new ElementsInfo((List)element));
+				}
+				
+				return elementsInfo;
 			}
 			else if (retval.charAt(i) == 'E' || retval.charAt(i) == 'e')
 			{

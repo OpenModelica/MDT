@@ -101,9 +101,16 @@ public class ErrorManager
 	 */	
 	public static void logError(Throwable e) 
 	{
+		/* some exceptions return null as a message, Status does not like that*/
+		String message = e.getMessage();
+		if (message == null)
+		{
+			message = "no message available";
+		}
+
 		logError(new Status(IStatus.ERROR, CorePlugin.getSymbolicName(), 
 				INTERNAL_ERROR,
-				e.getMessage(), e));
+				message, e));
 	}
 	
 	/**

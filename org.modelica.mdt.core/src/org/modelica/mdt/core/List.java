@@ -52,8 +52,18 @@ import java.util.LinkedList;
  */
 public class List extends ListElement implements Iterable<ListElement>
 {
-	LinkedList<ListElement> theList = new LinkedList<ListElement>();  
-		
+	java.util.List<ListElement> theList;  
+
+	private List(java.util.List<ListElement> contents)
+	{
+		theList = contents;
+	}
+	
+	public List()
+	{
+		theList = new LinkedList<ListElement>();
+	}
+	
 	public void append(ListElement element)
 	{
 		theList.add(element);
@@ -82,5 +92,10 @@ public class List extends ListElement implements Iterable<ListElement>
 	public void addAll(List proposals)
 	{
 		theList.addAll(proposals.theList);
+	}
+	
+	public List subList(int fromIndex, int toIndex)
+	{
+		return new List(theList.subList(fromIndex, toIndex));
 	}
 }

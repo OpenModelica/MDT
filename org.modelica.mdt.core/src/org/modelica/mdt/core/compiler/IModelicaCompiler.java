@@ -41,6 +41,8 @@
 
 package org.modelica.mdt.core.compiler;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaClass.Type;
@@ -86,57 +88,10 @@ public interface IModelicaCompiler
 			throws ConnectException, UnexpectedReplyException;
 
 	/**
-	 * Fetches the information on the components of a class. The information
-	 * is returned as the modelica list with raw unparsed elements as returned
-	 * by the OMC (assuming omc plugin is uses, however if omc plugin is not
-	 * used everything will fall apart).
-	 * The format is as follows (from the Compiler/interactive_api.txt form the
-	 * OMC source code):
-	 * <pre>
-	 * Returns all the elements in a class with the following format:
-     *           {attr1=value1, attr2=value2, .... }
-     *             In a class can be elements or annotations:
-     *             - annotations: { elementvisibility=public|protected, 
-     *                              elementtype=annotation }
-     *             - elements:
-     *               + general attributes: 
-     *                  { elementvisibility=public|protected, 
-     *                    elementfile=file, 
-     *                    elementline=line, 
-     *                    elementcolumn=column,
-     *                   // the next ones are exactly like in getComponents 
-     *                    final=true|false,
-     *                    replaceable=true|false,
-     *                    inout=inner|outer|innerouter|none
-     *                    elementtype=classdef|extends|import|component
-     *                 ... // more here depending on the elementtype. read below 
-     *                   }
-     *                   // depending on the elementtype some more attributes 
-     *                   // will follow here 
-     *                     for classdef: classname=id, 
-     *                         classrestriction=PACKAGE|..., classfile=file, 
-     *                                          classline=line, 
-     *                                          classcolumn=column
-     *                     for extends: path=name
-     *                     for import: kind=named|qualified|unqualified 
-     *                          + for named: id=id, path=name
-     *                          + for qualified: path=name
-     *                          + for unqualified: path=name
-     *                     for component: 
-     *                         typename=component_type, 
-     *                                  names={component_name, "comment"}, 
-     *                                  flow=true|false, 
-     *                     variability="unspecified"|"discrete"|"parameter"|
-     *                                  "constant", 
-     *                     direction="input"|"output"|"unspecified"
-     * </pre>
-     * 
-     * This is of couse a big cludge and should be done properly and abstractly.
-     * 
-	 * @param className
-	 * @return the modelica list with string elements as specified above
+	 * Fetches the information on the elements of a class. Elements in
+	 * a class are subclasses, components, import statments etc.
 	 */
-	public List getElementsInfo(String className)
+	public Collection<ElementsInfo> getElementsInfo(String className)
 			throws ConnectException, InvocationError, UnexpectedReplyException;
 
 	/**

@@ -97,6 +97,10 @@ public class ModelicaComponent extends ModelicaElement
 	
 	public IResource getResource()
 	{
+		if (sourceFile == null)
+		{
+			return null;
+		}
 		return sourceFile.getResource();
 	}
 	

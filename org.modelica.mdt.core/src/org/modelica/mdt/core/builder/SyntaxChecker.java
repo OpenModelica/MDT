@@ -126,7 +126,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			ErrorManager.showCoreError(e);
 		}
 	}
-	
+
 	/*
 	 * Performs an incremental build on a project given a resource delta of
 	 * changes.
@@ -294,9 +294,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		 * in to a Document and then use getLineOffset to convert from a
 		 * line number to a character positions.
 		 */
-
 		return getLineRegion(new FileInputStream(new File(filePath)), lineno);
-
 	}
 	
 	/**

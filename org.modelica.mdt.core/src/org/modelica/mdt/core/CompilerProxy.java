@@ -53,6 +53,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ElementsInfo;
 import org.modelica.mdt.core.compiler.IElementLocation;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.IParseResults;
@@ -165,8 +166,8 @@ public class CompilerProxy
 		return getCompiler().getClassNames(className);
 	}
 	
-	// TODO this should have a better name
-	public static List getElementsInfo(String className)
+	// TODO this should have a better name, imho
+	public static Collection<ElementsInfo> getElementsInfo(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
@@ -186,6 +187,9 @@ public class CompilerProxy
 		return getCompiler().getRestrictionType(className);
 	}
 	
+	/**
+	 * @return the top classes in the standard library
+	 */
 	public static Collection<IModelicaClass> getStandardLibrary()
 		throws ConnectException, CompilerInstantiationException
 	{
@@ -193,7 +197,8 @@ public class CompilerProxy
 		
 		for (String packageName : getCompiler().getStandardLibrary())
 		{
-			pkgs.add(new InnerClass("", packageName, IModelicaClass.Type.PACKAGE));
+			pkgs.add(new InnerClass("", 
+					packageName, IModelicaClass.Type.PACKAGE));
 		}
 		
 		return pkgs;

@@ -53,18 +53,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
-import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
-import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ElementsInfo;
 import org.modelica.mdt.core.compiler.IElementLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
@@ -88,7 +87,7 @@ public class InnerClass extends ModelicaClass
 	 */
 	private IModelicaSourceFile sourceFile;
 	
-	private IElementLocation location = null;;
+	private IElementLocation location = null;
 
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, IModelicaElement> children = null;
@@ -151,91 +150,24 @@ public class InnerClass extends ModelicaClass
 		Hashtable<String, IModelicaElement> elements = 
 			new Hashtable<String, IModelicaElement>();
 	
-		// 
-		// TODO this parsing code should not be here, it should be pushed
-		// into the compiler plugin (org.modelica.mdt.omc) somehow
-		//
-		String str;
-		String elementType;
-		String elementFile = "";
-		String classLine = "";
-		String classFile = "";
-		String className = "";
-		String classRestriction = "";
-		String elementVisibility = "";
-		String elementLine = "";
-		String names = "";
-
-		for (ListElement o : CompilerProxy.getElementsInfo(fullName))
+		for (ElementsInfo info : CompilerProxy.getElementsInfo(fullName))
 		{
-			 
-			elementType = "";
-			for (ListElement element : ((List)o))
-			{
-				/* parse a single the elements info list */
-				str = ((Element)element).toString();
-				
-				if (str.startsWith("elementtype="))
-				{
-					elementType = str.substring(12).trim();
-				}
-				else if (str.startsWith("classStartLine="))
-				{
-					classLine = str.substring(15).trim();
-				}
-				else if (str.startsWith("elementStartLine="))
-				{
-					elementLine = str.substring(17).trim();
-				}
-				else if (str.startsWith("classname="))
-				{
-					className = str.substring(10).trim();
-				}
-				else if (str.startsWith("elementvisibility="))
-				{
-					elementVisibility = str.substring(18).trim();
-				}
-				else if (str.startsWith("elementfile="))
-				{
-					elementFile = str.substring(12).trim();
-					/*
-					 * remove "" around the path by removing
-					 * first and last character
-					 */
-					elementFile = 
-						elementFile.substring(1, elementFile.length() - 1);
-				}
-				else if (str.startsWith("classfile="))
-				{
-					classFile = str.substring(10).trim();
-					/*
-					 * remove "" around the path by removing
-					 * first and last character
-					 */
-					classFile = 
-						classFile.substring(1, classFile.length() - 1);
-				}
-				else if (str.startsWith("classrestriction="))
-				{
-					classRestriction = str.substring(17).trim();
-				}
-				else if (str.startsWith("names="))
-				{
-					names = str.substring(6).trim();
-				}
-			}
+			String elementType = info.getElementType();
 			
 			if (elementType.equals("classdef"))
 			{
-				/* 'parse' line number information */ 
+				
+				String classFile = info.getClassFile();
+
 				IElementLocation location =
 					new ElementLocation(classFile, 
-									Integer.parseInt(classLine));					
+							info.getClassStartLine());
+				
+				String className = info.getClassName();
 				
 				elements.put(className, 
-						new InnerClass(sourceFile, fullName, className,
-								location, 
-							IModelicaClass.Type.parse(classRestriction)));
+					new InnerClass(sourceFile, fullName, className, location, 
+							IModelicaClass.Type.parse(info.getClassRestriction())));
 			}
 			else if (elementType.equals("component"))
 			{
@@ -244,18 +176,21 @@ public class InnerClass extends ModelicaClass
 				 * names={component_name,"component_comment"}
 				 * we neet to get the component name
 				 */ 
-				List comp = ModelicaParser.parseList(names);
+				List comp = ModelicaParser.parseList(info.getNames());
 				
 				String componentName = comp.elementAt(0).toString();
-				
+				String elementFile = info.getElementFile();
+				IElementLocation location =
+					new ElementLocation(elementFile, 
+							info.getElementStartLine());
 				
 				elements.put(componentName, 
 						new ModelicaComponent(
 								sourceFile,
 								componentName,
-								IModelicaComponent.Visibility.parse(elementVisibility),
-								new ElementLocation(elementFile, 
-										Integer.parseInt(elementLine))));					
+								IModelicaComponent.Visibility.parse
+									(info.getElementVisibility()),
+								location));
 			}
 		}
 	
@@ -325,7 +260,11 @@ public class InnerClass extends ModelicaClass
 	
 	public IResource getResource()
 	{
-		return sourceFile.getResource();
+		if (sourceFile != null)
+		{
+			return sourceFile.getResource();
+		}
+		return null;
 	}
 	
 	/**
