@@ -64,9 +64,7 @@ public class ElementsInfo
 	private Integer elementEndColumn = null;
 	private String elementFile = null;
 	private String className = null;
-	private Integer classStartLine = null;
 	private String classRestriction = null;
-	private String classFile = null;
 	private String names = null;
 	private String elementVisibility = null;
 	private String kind = null;
@@ -103,19 +101,6 @@ public class ElementsInfo
 	}
 	
 	/**
-	 * @return the contents of 'classfile' field
-	 */
-	public String getClassFile()
-	{
-		if (classFile == null)
-		{
-			parseUntil("classfile");
-		}
-		return classFile;
-	}
-
-	
-	/**
 	 * @return the contents of 'elementStartLine' field
 	 */
 	public int getElementStartLine()
@@ -127,18 +112,6 @@ public class ElementsInfo
 		return elementStartLine;
 	}
 
-	/**
-	 * @return the contents of 'classStartLine' field
-	 */
-	public int getClassStartLine()
-	{
-		if (classStartLine == null)
-		{
-			parseUntil("classStartLine");
-		}
-		return classStartLine;
-	}
-	
 	/**
 	 * @return the contents of 'classStartColumn' field
 	 */
@@ -311,17 +284,6 @@ public class ElementsInfo
 				nameLength = 9;
 				className = rawField.substring(nameLength+1).trim();
 			}
-			else if (rawField.startsWith("classfile="))
-			{
-				nameLength = 9;
-				classFile = rawField.substring(nameLength+1).trim();
-				
-				/*
-				 * remove "" around the path by removing
-				 * first and last character
-				 */
-				classFile = classFile.substring(1, classFile.length() - 1);
-			}
 			else if (rawField.startsWith("elementfile="))
 			{
 				nameLength = 11;
@@ -339,12 +301,6 @@ public class ElementsInfo
 			{
 				nameLength = 16;
 				classRestriction = rawField.substring(nameLength+1).trim();
-			}
-			else if (rawField.startsWith("classStartLine="))
-			{
-				nameLength = 14;
-				classStartLine = 
-					new Integer(rawField.substring(nameLength+1).trim());
 			}
 			else if (rawField.startsWith("names="))
 			{

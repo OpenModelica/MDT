@@ -61,9 +61,8 @@ import org.modelica.mdt.test.util.Utility;
 import junit.framework.TestCase;
 
 /**
- * @author Elmir Jagudin
+ * test org.modelica.mdt.core.compiler.InnerClass class' code 
  */
-
 public class TestInnerClass extends TestCase 
 {
 

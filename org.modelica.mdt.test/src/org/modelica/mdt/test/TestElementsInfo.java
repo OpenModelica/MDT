@@ -119,12 +119,11 @@ public class TestElementsInfo extends TestCase
 					heppFound = true;
 					assertEquals(3, ei.getElementStartLine());
 					assertEquals(5, ei.getElementStartColumn());
-					// this is broken in omc at the moment (rev 2104)
-					//assertEquals(3, ei.getElementEndLine());
-					//assertEquals(25, ei.getElementEndColumn());
-					
+					assertEquals(3, ei.getElementEndLine());
+					assertEquals(25, ei.getElementEndColumn());
+
 					assertEquals("RECORD", ei.getClassRestriction());
-					assertTrue(ei.getClassFile().
+					assertTrue(ei.getElementFile().
 							endsWith("nested_models.mo"));
 							
 				}
@@ -133,12 +132,11 @@ public class TestElementsInfo extends TestCase
 					fooFound = true;
 					assertEquals(4, ei.getElementStartLine());
 					assertEquals(5, ei.getElementStartColumn());
-					// this is broken in omc at the moment (rev 2104)
-					//assertEquals(6, ei.getElementEndLine());
-					//assertEquals(28, ei.getElementEndColumn());
+					assertEquals(6, ei.getElementEndLine());
+					assertEquals(28, ei.getElementEndColumn());
 
 					assertEquals("CLASS", ei.getClassRestriction());
-					assertTrue(ei.getClassFile().
+					assertTrue(ei.getElementFile().
 							endsWith("nested_models.mo"));					
 				}
 			}
