@@ -55,6 +55,7 @@ import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -336,6 +337,12 @@ public class FolderPackage extends ModelicaClass
 	{
 		/* we are a package !*/
 		return IModelicaClass.Type.PACKAGE;
+	}
+
+	public Collection<IModelicaImport> getImports()
+	{
+		// TODO implement me
+		return new LinkedList<IModelicaImport>();
 	}
 
 	

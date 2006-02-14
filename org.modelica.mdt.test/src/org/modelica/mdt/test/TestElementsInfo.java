@@ -77,7 +77,17 @@ public class TestElementsInfo extends TestCase
 		 */
 		IModelicaSourceFile file = 
 			(IModelicaSourceFile)proj.findElement(new Path("nested_models.mo"));
+		assertNotNull("could not find nested_models.mo", file);
 		file.getChildren();
+		
+		/*
+		 * make sure nested_models.mo are loaded into compiler
+		 */
+		file =
+			(IModelicaSourceFile)proj.findElement(new Path("import_rich_model.mo"));
+		assertNotNull("could not find import_rich_model.mo", file);
+		file.getChildren();
+
 	}
 
 	/**
@@ -93,6 +103,9 @@ public class TestElementsInfo extends TestCase
 		String className;
 		
 		/* do some tests on nested_models class from nested_models.mo */
+		
+		boolean heppFound = false;
+		boolean fooFound = false;
 		for (ElementsInfo ei : CompilerProxy.getElementsInfo("nested_models"))
 		{
 			elementType = ei.getElementType();
@@ -103,6 +116,7 @@ public class TestElementsInfo extends TestCase
 				
 				if (className.equals("hepp"))
 				{
+					heppFound = true;
 					assertEquals(3, ei.getElementStartLine());
 					assertEquals(5, ei.getElementStartColumn());
 					// this is broken in omc at the moment (rev 2104)
@@ -116,6 +130,7 @@ public class TestElementsInfo extends TestCase
 				}
 				else if (className.equals("foo"))
 				{
+					fooFound = true;
 					assertEquals(4, ei.getElementStartLine());
 					assertEquals(5, ei.getElementStartColumn());
 					// this is broken in omc at the moment (rev 2104)
@@ -129,15 +144,21 @@ public class TestElementsInfo extends TestCase
 			}
 		}
 		
+		assertTrue("class nested_models.foo not found", fooFound);
+		assertTrue("class nested_models.hepp not found", heppFound);
+		
+		boolean component_a_found = false;
 		/* do some tests on muu class from nested_models.mo */
 		for (ElementsInfo ei : CompilerProxy.getElementsInfo("muu"))
 		{
 			if(ei.getElementType().equals("component"))
-			{
+			{				
 				List comp = ModelicaParser.parseList(ei.getNames());
 				
 				/* check component name */
 				assertEquals("a", comp.elementAt(0).toString());
+				
+				component_a_found = true;
 				/* check component comment */
 				assertEquals("\"\"", comp.elementAt(1).toString()); 
 				
@@ -147,6 +168,51 @@ public class TestElementsInfo extends TestCase
 
 			}
 		}
-
+		assertTrue("could not find component muu.a", component_a_found);
+		
+		/* do some test on import_rich_model class from import_rich_model.mo */
+		int importStatmentsFound = 0;
+		
+		for (ElementsInfo ei : CompilerProxy.getElementsInfo("import_rich_model"))
+		{
+			/*
+			 * we are expecting 4 import statments in following order:
+			 * 1. qualified         (import Modelica)
+			 * 2. single definition (import Modelica.Math.sin)
+			 * 3. unqualified       (import Modelica.*)
+			 * 4. renaming          (import mm = Modelica.Math)
+			 */
+			elementType = ei.getElementType();
+			
+			if (elementType.equals("import"))
+			{
+				importStatmentsFound++;
+				switch (importStatmentsFound) 
+				{
+				case 1: // import Modelica
+					assertEquals("qualified", ei.getKind());
+					assertEquals("Modelica", ei.getPath());
+					break;
+				case 2: // import Modelica.Math.sin
+					assertEquals("qualified", ei.getKind());
+					assertEquals("Modelica.Math.sin", ei.getPath());
+					break;
+				case 3: // import Modelica.*
+					assertEquals("unqualified", ei.getKind());
+					assertEquals("Modelica", ei.getPath());
+					break;
+				case 4: // import mm = Modelica.Math
+					assertEquals("named", ei.getKind());
+					assertEquals("Modelica.Math", ei.getPath());
+					assertEquals("mm", ei.getId());
+					break;
+				default:
+					fail("unexpectedly many imports found"); 
+				}
+			}
+		}
+		
+		assertFalse("did not find all import statments", 
+				importStatmentsFound < 4);
 	}
 }

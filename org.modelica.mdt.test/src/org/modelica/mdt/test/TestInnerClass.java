@@ -47,6 +47,7 @@ import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -68,6 +69,7 @@ public class TestInnerClass extends TestCase
 
 	/* the test subject */
 	private InnerClass componentsBananza;
+	private InnerClass importRichModel;
 	
 	/* teh Modelica package (from the standard library) */
 	private InnerClass modelica = null;
@@ -86,20 +88,38 @@ public class TestInnerClass extends TestCase
 				"component_model.mo");
 		
 		componentsBananza = null;
-		for (Object obj : file.getChildren())
+		for (IModelicaElement el : file.getChildren())
 		{
-			if (obj instanceof InnerClass)
+			if (el instanceof InnerClass)
 			{
-				if (((InnerClass)obj).getElementName().equals("components_bananza"))
+				if (el.getElementName().equals("components_bananza"))
 				{
-					componentsBananza = (InnerClass)obj;
+					componentsBananza = (InnerClass)el;
 					break;
 				}
 			}
 		}
+
+
+		/* navigate to the model 'import_rich_model' */
+		file = Utility.findModelicaFileInFolder(proj.getRootFolder(), 
+				"import_rich_model.mo");
 		
-		assertNotNull("could not find the model component_bonanza",
-				componentsBananza);
+		importRichModel = null;
+		for (IModelicaElement el : file.getChildren())
+		{
+			if (el instanceof InnerClass)
+			{
+				if (el.getElementName().equals("import_rich_model"))
+				{
+					importRichModel = (InnerClass)el;
+					break;
+				}
+			}
+		}
+
+		assertNotNull("could not find the model import_rich_model",
+				importRichModel);
 		
 		/* fetch teh Modelica package from the standard library */
 		for (IModelicaClass clazz : CompilerProxy.getStandardLibrary())
@@ -118,12 +138,6 @@ public class TestInnerClass extends TestCase
 	
 	/**
 	 * do some sanity checks on InnerClass children
-	 * 
-	 * @throws CoreException 
-	 * @throws InvocationError 
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectException 
-	 * @throws CompilerInstantiationException 
 	 */
 	public void testChildren()
 	throws ConnectException, UnexpectedReplyException,
@@ -141,7 +155,6 @@ public class TestInnerClass extends TestCase
 		IModelicaClass a_block = null;
 		IModelicaClass a_type = null;
 		IModelicaClass a_function = null;		
-		
 		
 		/*
 		 * fetch children to local variables
@@ -205,8 +218,6 @@ public class TestInnerClass extends TestCase
 		/* sanity checks on components_bananza.a_type */
 		assertNotNull("components_bananza.a_type not found", a_type);
 		assertEquals("wrong element name", a_type.getElementName(), "a_type");
-		System.out.println(a_type.getFilePath());
-		System.out.println(a_type.getFilePath());
 		assertTrue("fishy file path", 
 				a_type.getFilePath().endsWith("component_model.mo"));
 		IRegion reg = a_type.getLocation();
@@ -327,6 +338,52 @@ public class TestInnerClass extends TestCase
 	}
 	
 	/**
+	 * do some sanity checks on InnerClass' imports
+	 */
+	public void testImports() 
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CompilerInstantiationException
+	{
+		int importCounter = 0;
+		for (IModelicaImport imp : importRichModel.getImports())
+		{
+			importCounter++;
+			
+			/*
+			 * we are expecting 4 import statments in following order:
+			 * 1. qualified         (import Modelica)
+			 * 2. single definition (import Modelica.Math.sin)
+			 * 3. unqualified       (import Modelica.*)
+			 * 4. renaming          (import mm = Modelica.Math)
+			 */
+
+			switch (importCounter)
+			{
+			case 1: // import Modelica
+				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
+				break;
+			case 2: // import Modelica.Math.sin
+				// this is basicaly not implemented and maybe will go away...argh
+//				assertEquals(IModelicaImport.Type.SINGLE_DEFINITION, 
+//						imp.getType());
+				break;
+			case 3: // import Modelica.*
+				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
+				break;
+			case 4: // import mm = Modelica.Math
+				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
+				break;
+			default:
+				fail("unexpectedly many imports found"); 
+			}
+		}
+		
+		assertFalse("did not find all import statments", 
+				importCounter < 4);
+
+	}
+	
+	/**
 	 * Do some integrity tests on classes/packages from the standard library.
 	 */
 	public void testStandardLibraryElements()
@@ -376,7 +433,26 @@ public class TestInnerClass extends TestCase
 		reg = blocks.getLocation();
 		assertTrue("negative element region can't be", reg.getOffset() >= 0);
 		assertTrue("elements length must be positive", reg.getLength() > 0);
+		
+		/* check Modelica.Blocks imports */
+		boolean foundSIimport = false;
 
+		for (IModelicaImport imp : blocks.getImports())
+		{
+			switch (imp.getType())
+			{
+			case RENAMING:
+				if (imp.getAlias().equals("SI"))
+				{
+					foundSIimport = true;
+				}
+				break;
+				/* ignore all other types of imports */
+			}
+		}
+		
+		assertTrue("could not find the representation of" +
+				" 'import SI = Modelica.SIunits;' statment", foundSIimport); 
 		
 		/* check Modelica.Constants */
 		assertNotNull("could not find package Modelica.Constants in standard" +
@@ -438,5 +514,32 @@ public class TestInnerClass extends TestCase
 		assertTrue("negative element region can't be", reg.getOffset() >= 0);
 		assertTrue("elements length must be positive", reg.getLength() > 0);
 		
+		/* check Modelica.Constants imports */
+		foundSIimport = false;
+		boolean foundNonSIimport = false;
+
+		for (IModelicaImport imp : constants.getImports())
+		{
+			switch (imp.getType())
+			{
+			case RENAMING:
+				if (imp.getAlias().equals("SI"))
+				{
+					foundSIimport = true;
+				}
+				else if (imp.getAlias().equals("NonSI"))
+				{
+					foundNonSIimport = true;
+				}
+				break;
+				/* ignore all other types of imports */
+			}
+		}
+		
+		assertTrue("could not find the representation of" +
+				" 'import SI = Modelica.SIunits;' statment", foundSIimport); 
+		assertTrue("could not find the representation of" +
+				" import NonSI = Modelica.SIunits.Conversions.NonSIunits;' " +
+				"statment", foundNonSIimport); 
 	}
 }

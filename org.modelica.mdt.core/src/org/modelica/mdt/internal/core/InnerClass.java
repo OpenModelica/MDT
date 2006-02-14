@@ -57,6 +57,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
@@ -91,6 +92,9 @@ public class InnerClass extends ModelicaClass
 
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, IModelicaElement> children = null;
+	
+	/* the import statments */
+	private Collection<IModelicaImport> imports;
 	
 	public InnerClass(IModelicaSourceFile container, String prefix, String name,
 					IElementLocation location, Type restrictionType)
@@ -149,11 +153,14 @@ public class InnerClass extends ModelicaClass
 	{
 		Hashtable<String, IModelicaElement> elements = 
 			new Hashtable<String, IModelicaElement>();
+		
+		imports = new LinkedList<IModelicaImport>();
 	
 		for (ElementsInfo info : CompilerProxy.getElementsInfo(fullName))
 		{
 			String elementType = info.getElementType();
 			
+			/* a sub package */
 			if (elementType.equals("classdef"))
 			{
 				
@@ -169,6 +176,7 @@ public class InnerClass extends ModelicaClass
 					new InnerClass(sourceFile, fullName, className, location, 
 							IModelicaClass.Type.parse(info.getClassRestriction())));
 			}
+			/* a component */
 			else if (elementType.equals("component"))
 			{
 				/*
@@ -191,6 +199,36 @@ public class InnerClass extends ModelicaClass
 								IModelicaComponent.Visibility.parse
 									(info.getElementVisibility()),
 								location));
+			}			
+			/* an import statment */
+			else if (elementType.equals("import"))
+			{
+				String importType = info.getKind();
+				
+				if (importType.equals("qualified"))
+				{
+					imports.add(
+							ModelicaImport.createQualifiedImport(
+									info.getPath()));
+				}
+				else if (importType.equals("unqualified"))
+				{
+					imports.add(
+							ModelicaImport.createUnqualifiedImport(
+									info.getPath()));
+				}
+				else if (importType.equals("named"))
+				{
+					imports.add(
+							ModelicaImport.createRenamingImport(
+									info.getId(), info.getPath()));
+				}
+				else
+				{
+					ErrorManager.logBug(CorePlugin.getSymbolicName(),
+							"import statment of unexpected type '" +
+							importType + "' encountered");
+				}
 			}
 		}
 	
@@ -356,5 +394,17 @@ public class InnerClass extends ModelicaClass
 	public IModelicaSourceFile getSourceFile()
 	{
 		return sourceFile;
+	}
+
+	public Collection<IModelicaImport> getImports() 
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CompilerInstantiationException
+	{
+		if (children == null)
+		{
+			children = loadElements();
+		}
+
+		return imports;
 	}
 }

@@ -69,6 +69,9 @@ public class ElementsInfo
 	private String classFile = null;
 	private String names = null;
 	private String elementVisibility = null;
+	private String kind = null;
+	private String path = null;
+	private String id = null;
 	
 	public ElementsInfo(List elementsInfo)
 	{
@@ -219,7 +222,43 @@ public class ElementsInfo
 		}
 		return elementVisibility;
 	}
+
+	/**
+	 * @return the contents of 'kind' field
+	 */
+	public String getKind()
+	{
+		if (kind  == null)
+		{
+			parseUntil("kind");
+		}
+		return kind;
+	}
+
+	/**
+	 * @return the contents of 'path' field
+	 */
+	public String getPath()
+	{
+		if (path  == null)
+		{
+			parseUntil("path");
+		}
+		return path;
+	}
 	
+	/**
+	 * @return the contents of 'path' field
+	 */
+	public String getId()
+	{
+		if (id  == null)
+		{
+			parseUntil("id");
+		}
+		return id;
+	}
+
 	/**
 	 * parse the elements information list until the specified field
 	 * is found
@@ -317,6 +356,21 @@ public class ElementsInfo
 				nameLength = 17;
 				elementVisibility = rawField.substring(nameLength+1).trim();
 			}
+			else if (rawField.startsWith("kind="))
+			{
+				nameLength = 4;
+				kind = rawField.substring(nameLength+1).trim();
+			}
+			else if (rawField.startsWith("path="))
+			{
+				nameLength = 4;
+				path = rawField.substring(nameLength+1).trim();
+			}
+			else if (rawField.startsWith("id="))
+			{
+				nameLength = 2;
+				id = rawField.substring(nameLength+1).trim();
+			}			
 			else /* we are not interedted in this particular field at all */
 			{
 				continue;

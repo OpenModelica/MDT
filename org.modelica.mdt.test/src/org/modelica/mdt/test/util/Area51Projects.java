@@ -70,6 +70,7 @@ import org.modelica.mdt.core.ModelicaCore;
  * + root_model.mo
  * + nested_models.mo
  * + component_model.mo
+ * + import_rich_model.mo
  * + root_folder                 (folder)
  *   + hej_hopp
  * + package_look_alike          (folder)
@@ -369,8 +370,7 @@ public class Area51Projects
 			
 
 		file.create(Utility.getByteStream(contents), true, null);
-		
-		
+				
 		/* component_model.mo */
 		file = modelica_project.getFile("component_model.mo");
 		contents = 
@@ -392,6 +392,26 @@ public class Area51Projects
 			"	b = time;\n" +
 			"	der(a) = b;\n" +
 			"end components_bananza;";
+
+		file.create(Utility.getByteStream(contents), true, null);
+
+		/* import_rich_model.mo */
+		file = modelica_project.getFile("import_rich_model.mo");
+		contents = 
+			"model import_rich_model\n" +
+			"  // qualified imports\n" +
+			"  import Modelica;\n" +
+			"  // single definition import\n" +
+			"  import Modelica.Math.sin;\n" +
+			"  // unqualified import\n" +
+			"  import Modelica.*;\n" +
+			"  // renaming import\n" +
+			"  import mm = Modelica.Math;\n" +
+			"\n" +
+			"  class bar\n" +
+			"  end bar;\n" +
+			"\n" +
+			"end import_rich_model;";
 
 		file.create(Utility.getByteStream(contents), true, null);
 

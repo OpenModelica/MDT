@@ -40,8 +40,12 @@
  */
 package org.modelica.mdt.core;
 
+import java.util.Collection;
+
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
@@ -112,10 +116,15 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	
 	/**
 	 * @return the restriction type of this class
-	 * @throws ConnectException 
-	 * @throws CompilerInstantiationException 
 	 */
 	public Type getRestrictionType()
 		throws ConnectException, CompilerInstantiationException;
+
+	/**
+	 * @return the imports made in this class
+	 */
+	public Collection<IModelicaImport> getImports()
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException;
 	
 }
