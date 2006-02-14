@@ -74,7 +74,7 @@ public class TestNewPackageWizard extends TestCase
 	private ButtonTester btester;
 	
 	private Text packageName;
-//	private Text parentPackage;
+	private Text parentPackage;
 	private Text packageDesc;
 	private Text sourceFolder;
 	private Button isEncapsulated;
@@ -130,8 +130,8 @@ public class TestNewPackageWizard extends TestCase
 		/* fetch widgets */
 		packageName = 
 			TextTester.getInstrumentedText(NewPackageWizard.PACKAGE_NAME_TAG);
-//		parentPackage = 
-//			TextTester.getInstrumentedText(NewTypePage.PARENT_PACKAGE_TAG);
+		parentPackage = 
+			TextTester.getInstrumentedText(NewTypePage.PARENT_PACKAGE_TAG);
 		packageDesc = 
 			TextTester.getInstrumentedText(NewPackageWizard.PACKAGE_DESC_TAG);
 		sourceFolder = 
@@ -194,44 +194,50 @@ public class TestNewPackageWizard extends TestCase
 // testCreatePackageWithDesc(), testEncapsulatedCreatePackage() and 
 // testEncapsulatedCreatePackageWithDesc() tests with creating a subpackage
 // after the main package is created
-//		/*
-//		 * test to create a nested package inside pkg1
-//		 */
-//		
-//		openWizardAndFetchWidgets();
-//		
-//		String subName = "sub_pkg1";
-//		
-//		/*
-//		 * fill in the wizard fields
-//		 */
-//		ttester.actionEnterText(packageName, subName);
-//		ttester.actionEnterText(parentPackage, name);
-//
-//		/* wait for the name change to propogate to enable the finish button */
-//		while (!finish.getEnabled()) { Utility.sleep(this, 100); }
-//		Utility.sleep(this, 10000); 		// TODO remove me
-//		btester.actionClick(finish);
-//
-//		/* check if the package folder was created */
-//		folder = folder.getFolder(subName);
-//		assertTrue("no package folder was created", folder.exists());
-//
-//		/*
-//		 * check that the generated package.mo exists and is sane
-//		 */
-//		packageMo = folder.getFile("package.mo");
-//		assertTrue("package.mo was not created", packageMo.exists());
-//		
-//		same = 
-//			Utility.compareContent(packageMo,
-//				"within " + name + ";\n" +
-//				"\n" +
-//				"package " + subName + "\n" +
-//				"\n"+
-//				"end " + name + ";");
-//		assertTrue("unexpected conted created in the package.mo", same);
-//
+		/*
+		 * test to create a nested package inside pkg1
+		 */
+		
+		openWizardAndFetchWidgets();
+		
+		String subName = "sub_pkg1";
+		
+		/*
+		 * fill in the wizard fields
+		 */
+		ttester.actionEnterText(packageName, subName);
+		ttester.actionEnterText(parentPackage, name);
+
+		/*
+		 * wait tops 5 seconds for the name change to propogate
+		 * to enable the finish button 
+		 */
+		long waitUntil = System.currentTimeMillis() + 5000;
+		while (!finish.getEnabled() && waitUntil > System.currentTimeMillis())
+		{
+			Utility.sleep(this, 95);
+		}
+		btester.actionClick(finish);
+
+		/* check if the package folder was created */
+		folder = folder.getFolder(subName);
+		assertTrue("no package folder was created", folder.exists());
+
+		/*
+		 * check that the generated package.mo exists and is sane
+		 */
+		packageMo = folder.getFile("package.mo");
+		assertTrue("package.mo was not created", packageMo.exists());
+		
+		same = 
+			Utility.compareContent(packageMo,
+				"within " + name + ";\n" +
+				"\n" +
+				"package " + subName + "\n" +
+				"\n"+
+				"end " + subName + ";");
+		assertTrue("unexpected conted created in the package.mo", same);
+
 	}
 	
 	/**
@@ -271,6 +277,52 @@ public class TestNewPackageWizard extends TestCase
 				"\n"+
 				"end " + name + ";");
 		assertTrue("unexpected conted created in the package.mo", same);
+		
+		/*
+		 * test to create a nested package inside pkg2
+		 */
+		
+		openWizardAndFetchWidgets();
+		
+		String subName = "sub_pkg2";
+		description = "a jolly good subpackage";
+		
+		/*
+		 * fill in the wizard fields
+		 */
+		ttester.actionEnterText(packageName, subName);
+		ttester.actionEnterText(parentPackage, name);
+		ttester.actionEnterText(packageDesc, description);
+
+		/*
+		 * wait tops 5 seconds for the name change to propogate
+		 * to enable the finish button 
+		 */
+		long waitUntil = System.currentTimeMillis() + 5000;
+		while (!finish.getEnabled() && waitUntil > System.currentTimeMillis())
+		{
+			Utility.sleep(this, 95);
+		}
+		btester.actionClick(finish);
+
+		/* check if the package folder was created */
+		folder = folder.getFolder(subName);
+		assertTrue("no package folder was created", folder.exists());
+
+		/*
+		 * check that the generated package.mo exists and is sane
+		 */
+		packageMo = folder.getFile("package.mo");
+		assertTrue("package.mo was not created", packageMo.exists());
+		
+		same = 
+			Utility.compareContent(packageMo,
+				"within " + name + ";\n" +
+				"\n" +
+				"package " + subName + " \"" + description + "\"" + "\n" +
+				"\n"+
+				"end " + subName + ";");
+		assertTrue("unexpected conted created in the package.mo", same);
 	}
 	
 	/**
@@ -309,6 +361,50 @@ public class TestNewPackageWizard extends TestCase
 				"end " + name + ";");
 		assertTrue("unexpected conted created in the package.mo", same);
 		
+		/*
+		 * test to create a nested package inside pkg3
+		 */
+		
+		openWizardAndFetchWidgets();
+		
+		String subName = "sub_pkg3";
+		
+		/*
+		 * fill in the wizard fields
+		 */
+		ttester.actionEnterText(packageName, subName);
+		ttester.actionEnterText(parentPackage, name);
+		btester.actionClick(isEncapsulated);
+
+		/*
+		 * wait tops 5 seconds for the name change to propogate
+		 * to enable the finish button 
+		 */
+		long waitUntil = System.currentTimeMillis() + 5000;
+		while (!finish.getEnabled() && waitUntil > System.currentTimeMillis())
+		{
+			Utility.sleep(this, 95);
+		}
+		btester.actionClick(finish);
+
+		/* check if the package folder was created */
+		folder = folder.getFolder(subName);
+		assertTrue("no package folder was created", folder.exists());
+
+		/*
+		 * check that the generated package.mo exists and is sane
+		 */
+		packageMo = folder.getFile("package.mo");
+		assertTrue("package.mo was not created", packageMo.exists());
+		
+		same = 
+			Utility.compareContent(packageMo,
+				"within " + name + ";\n" +
+				"\n" +
+				"encapsulated package " + subName + "\n" +
+				"\n"+
+				"end " + subName + ";");
+		assertTrue("unexpected conted created in the package.mo", same);
 	}
 	
 	/**
@@ -348,6 +444,54 @@ public class TestNewPackageWizard extends TestCase
 				"encapsulated package " + name + " \"" + description + "\"" + "\n"+
 				"\n"+
 				"end " + name + ";");
+		assertTrue("unexpected conted created in the package.mo", same);
+		
+		/*
+		 * test to create a nested package inside pkg4
+		 */
+		
+		openWizardAndFetchWidgets();
+		
+		String subName = "sub_pkg4";
+		description = "deutsche, jaaa";
+
+		/*
+		 * fill in the wizard fields
+		 */
+		ttester.actionEnterText(packageName, subName);
+		ttester.actionEnterText(parentPackage, name);
+		ttester.actionEnterText(packageDesc, description);
+		btester.actionClick(isEncapsulated);
+		
+
+		/*
+		 * wait tops 5 seconds for the name change to propogate
+		 * to enable the finish button 
+		 */
+		long waitUntil = System.currentTimeMillis() + 5000;
+		while (!finish.getEnabled() && waitUntil > System.currentTimeMillis())
+		{
+			Utility.sleep(this, 95);
+		}
+		btester.actionClick(finish);
+
+		/* check if the package folder was created */
+		folder = folder.getFolder(subName);
+		assertTrue("no package folder was created", folder.exists());
+
+		/*
+		 * check that the generated package.mo exists and is sane
+		 */
+		packageMo = folder.getFile("package.mo");
+		assertTrue("package.mo was not created", packageMo.exists());
+		
+		same = 
+			Utility.compareContent(packageMo,
+				"within " + name + ";\n" +
+				"\n" +
+				"encapsulated package " + subName + " \"" + description + "\"" + "\n" +
+				"\n"+
+				"end " + subName + ";");
 		assertTrue("unexpected conted created in the package.mo", same);
 		
 	}
