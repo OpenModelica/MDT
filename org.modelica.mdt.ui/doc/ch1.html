@@ -26,18 +26,17 @@ far:
 Some features are as of now missing from MDT:
 
 <ul>
-<li>simulation of models</li>
-<li>loading of classes into correct namespace</li>
+<li>simulation of models from within MDT</li>
 </ul>
 
 <h2 id = "issues">Known issues</h2>
 The following are some know issues with MDT:
 
 <ul>
-<li>OMC defines tabs as 8 characters while in Eclipse tabs are only 1 character.
-    This will lead to problems when displaying error markers in Modelica models.
-    To avoid problems with displaying error markers, use only space to format
-    the model definitions.</li>
+<li>Due to compatibilies problems between eclipse framework and OMC parser
+tab characters in the source code are not supported. When tabs are present
+in the sourcecode some MDT features, such as error markers and code completion
+will not work properly. Avoid using tabs when possible.</li>
 </ul>
 
 <h2 id = "background">Background</h2>
@@ -53,8 +52,8 @@ Modelica development.
 <p>
 MDT requires at least the OpenModelica compiler
 <a href="http://www.ida.liu.se/labs/pelab/modelica/OpenModelica.html#Download">
-version 1.3</a> and <a href="http://www.eclipse.org">Eclipse</a> 3.1. Other
-versions of Open Modelica and Eclipse may work, but have not been tested.
+version 1.3.2</a> and <a href="http://www.eclipse.org">Eclipse</a> 3.1. Other
+versions of Eclipse may work, but have not been tested.
 </p>
 
 <p>
