@@ -58,6 +58,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.Element;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -408,8 +410,26 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 
 		if (input instanceof ModelicaElementEditorInput)
 		{
-			System.out.println("we are looking at " + 
-					((ModelicaElementEditorInput)input).getSourceFile());
+			IModelicaSourceFile file = 
+				((ModelicaElementEditorInput)input).getSourceFile();
+			System.out.println("we are looking at " + file);
+			try
+			{
+				IModelicaClass clazz = file.getClassAt(offset);
+				if (clazz != null)
+				{
+					System.out.println("class def is " + clazz.getElementName());
+				}
+				else
+				{
+					System.out.println("no class here");
+				}
+			}
+			catch (Exception e)
+			{
+				System.out.println(e);
+				e.printStackTrace();
+			}
 		}
 		
 		String className = findClassName(viewer, offset);

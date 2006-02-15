@@ -487,8 +487,8 @@ public class TestModelicaRoot extends TestCase
 		file.create(Utility.getByteStream(contents), true, null);
 		
 		
-		/* wait tops 5 seconds for the morph to kick in */
-		long waitUntil = System.currentTimeMillis() + 5000;
+		/* wait tops 7 seconds for the morph to kick in */
+		long waitUntil = System.currentTimeMillis() + 7000;
 		while ((!morphedToPackage) && waitUntil > System.currentTimeMillis())
 		{
 			Utility.sleep(this, 100);
@@ -497,7 +497,7 @@ public class TestModelicaRoot extends TestCase
 		ModelicaCore.getModelicaRoot().
 			removeModelicaElementChangeListener(listener);
 		assertTrue("the folder didn't morph into package, waited for the"+
-				" change around 5 seconds", morphedToPackage); 
+				" change around 7 seconds", morphedToPackage); 
 
 		/*
 		 * check if package will morph into a folder when the package.mo
@@ -510,8 +510,8 @@ public class TestModelicaRoot extends TestCase
 			(listener);
 		file.delete(true, false, null);
 		
-		/* wait tops 5 seconds for the morph to kick in */
-		waitUntil = System.currentTimeMillis() + 5000;
+		/* wait tops 7 seconds for the morph to kick in */
+		waitUntil = System.currentTimeMillis() + 7000;
 		while ((!morphedToFolder) && waitUntil > System.currentTimeMillis())
 		{
 			Utility.sleep(this, 100);
@@ -520,7 +520,7 @@ public class TestModelicaRoot extends TestCase
 		ModelicaCore.getModelicaRoot().
 			removeModelicaElementChangeListener(listener);
 		assertTrue("the package didn't morph into folder, waited for the"+
-				" change around 5 seconds", morphedToFolder); 
+				" change around 7 seconds", morphedToFolder); 
 
 	}
 }

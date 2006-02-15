@@ -122,7 +122,7 @@ public class FolderPackage extends ModelicaClass
 		return true;
 	}
 
-	public Collection<? extends IModelicaElement> getChildren() 
+	public Collection<IModelicaElement> getChildren() 
 		throws CoreException, ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{

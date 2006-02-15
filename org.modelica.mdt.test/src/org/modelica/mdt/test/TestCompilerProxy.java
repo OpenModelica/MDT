@@ -47,6 +47,7 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
@@ -174,47 +175,73 @@ public class TestCompilerProxy extends TestCase
 		CompilerProxy.loadSourceFile(nested_models_mo);
 
 		/*
-		 * we are basicaly only interested in getting the right line number
+		 * we are basicaly only interested in getting the right definition region
 		 */
 		IElementLocation loc = CompilerProxy.getClassLocation("nested_models");		
 		assertTrue(loc.getPath().endsWith("nested_models.mo"));
-		assertEquals(loc.getLine(), 1);
+		IRegion reg = loc.getRegion();
+		assertEquals(0, reg.getOffset());
+		assertEquals(146, reg.getLength());
 		
-		loc = CompilerProxy.getClassLocation("nested_models.hepp");		
-		assertEquals(loc.getLine(), 3);
+		loc = CompilerProxy.getClassLocation("nested_models.hepp");
+		reg = loc.getRegion();
+		assertEquals(45, reg.getOffset());
+		assertEquals(21, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("nested_models.foo");		
-		assertEquals(loc.getLine(), 4);
+		reg = loc.getRegion();
+		assertEquals(71, reg.getOffset());
+		assertEquals(126-71+1, reg.getLength());
 		
 		loc = CompilerProxy.getClassLocation("nested_models.foo.bar");		
-		assertEquals(loc.getLine(), 5);
+		reg = loc.getRegion();
+		assertEquals(89, reg.getOffset());
+		assertEquals(114-89+1, reg.getLength());
 		
 		loc = CompilerProxy.getClassLocation("muu");		
-		assertEquals(loc.getLine(), 8);
+		reg = loc.getRegion();
+		assertEquals(147, reg.getOffset());
+		assertEquals(193-147+1, reg.getLength());
 		
 		loc = CompilerProxy.getClassLocation("foo");		
-		assertEquals(loc.getLine(), 14);
+		reg = loc.getRegion();
+		assertEquals(196, reg.getOffset());
+		assertEquals(234-196+1, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("hej");		
-		assertEquals(loc.getLine(), 19);
+		reg = loc.getRegion();
+		assertEquals(238, reg.getOffset());
+		assertEquals(369-238+1, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("hej.ine_paketen");		
-		assertEquals(loc.getLine(), 20);
+		reg = loc.getRegion();
+		assertEquals(253, reg.getOffset());
+		assertEquals(292-253+1, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("hej.hejhej");		
-		assertEquals(loc.getLine(), 22);
+		reg = loc.getRegion();
+		assertEquals(298, reg.getOffset());
+		assertEquals(360-298+1, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("hej.hejhej.foo");		
-		assertEquals(loc.getLine(), 23);
+		reg = loc.getRegion();
+		assertEquals(319, reg.getOffset());
+		assertEquals(344-319+1, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("hepp");		
-		assertEquals(loc.getLine(), 30);
+		reg = loc.getRegion();
+		assertEquals(374, reg.getOffset());
+		assertEquals(459-374+1, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("hepp.hopp");		
-		assertEquals(loc.getLine(), 31);
+		reg = loc.getRegion();
+		assertEquals(391, reg.getOffset());
+		assertEquals(416-391+1, reg.getLength());
 
 		loc = CompilerProxy.getClassLocation("hepp.hehehe");		
-		assertEquals(loc.getLine(), 33);
+		reg = loc.getRegion();
+		assertEquals(422, reg.getOffset());
+		assertEquals(449-422+1, reg.getLength());
 
 	}
 	

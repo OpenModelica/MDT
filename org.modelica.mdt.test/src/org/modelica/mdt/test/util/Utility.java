@@ -287,7 +287,10 @@ public class Utility
 			fileContent.read(buf);
 			int i = fileContent.read();
 
-			Assert.assertEquals("file is to long", -1, i);
+			if (-1 != i)
+			{
+				Assert.fail("file is to longer than expected");
+			}
 		}
 		catch (IOException e)
 		{

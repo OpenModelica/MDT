@@ -91,7 +91,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 
 
-	public Collection<? extends IModelicaElement> getChildren() 
+	public Collection<IModelicaElement> getChildren() 
 		throws CoreException, ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{

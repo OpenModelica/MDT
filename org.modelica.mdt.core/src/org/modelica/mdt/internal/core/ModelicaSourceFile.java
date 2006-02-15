@@ -48,6 +48,7 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -63,7 +64,8 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 /**
  * @author Elmir Jagudin
  */
-public class ModelicaSourceFile extends ModelicaElement implements IModelicaSourceFile 
+public class ModelicaSourceFile extends ModelicaElement 
+	implements IModelicaSourceFile 
 {
 	private IFile file;
 	private FolderPackage parentPackage;
@@ -104,7 +106,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		return file;
 	}
 
-	public Collection<? extends IModelicaElement> getChildren()
+	public Collection<IModelicaElement> getChildren()
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException 
 	{
@@ -203,7 +205,8 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 
 
 	public IModelicaClass[] getRootPackages() 
-		throws ConnectException, UnexpectedReplyException, CompilerInstantiationException
+		throws ConnectException, UnexpectedReplyException, 
+			CompilerInstantiationException
 	{
 		/* make sure the children are loaded */
 		if (children == null)
@@ -237,6 +240,73 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 	public IModelicaSourceFile getSourceFile()
 	{
 		return this;
+	}
+
+	/**
+	 * @see IModelicaSourceFile#getClassAt(int) 
+	 */
+	public IModelicaClass getClassAt(int position)
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException, InvocationError, CoreException
+	{
+		/* load children if needed */
+		if (children == null)
+		{
+			children = loadElements();
+		}
+		
+		return findClassDefAt(children.values(), position);
+	}
+
+	/**
+	 * Checks if there is a class definition at specified position
+	 * among provided classes.
+	 * 
+	 * @param elements the elements among which look for class definitions
+	 * @param position the character at which look for the class definiton
+	 * @return the innermost class definition found or null if no class
+	 * definitions region overlaps position
+	 */
+	private IModelicaClass findClassDefAt
+		(Collection<? extends IModelicaElement> elements, int position)
+	
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CompilerInstantiationException, CoreException
+	{
+		/*
+		 * do basicaly an optimized tree search for the innermost
+		 * class definition around queried position
+		 */
+
+		for (IModelicaElement el : elements)
+		{
+			/* skip non-class elements */
+			if (!(el instanceof IModelicaClass))
+			{
+				continue;
+			}
+
+			IModelicaClass clazz = (IModelicaClass)el;
+			IRegion reg = clazz.getLocation();
+			int start = reg.getOffset();
+			int end = start + reg.getLength() - 1;
+			
+			if (position >= start && position <= end)
+			{
+				/* check if position is inside a subclass definition */
+				IModelicaClass subclazz = 
+					findClassDefAt(clazz.getChildren(), position);
+				
+				if (subclazz != null)
+				{
+					return subclazz;
+				}
+				return clazz;
+			}
+			
+		}
+		
+		return null; /* no definition found at position */
 	}
 
 }

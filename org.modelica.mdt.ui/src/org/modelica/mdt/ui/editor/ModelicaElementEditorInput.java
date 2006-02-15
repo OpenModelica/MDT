@@ -67,7 +67,7 @@ public class ModelicaElementEditorInput extends FileEditorInput
 	/**
 	 * @return the modelica source file reference that this input represents
 	 */
-	public IModelicaElement getSourceFile()
+	public IModelicaSourceFile getSourceFile()
 	{
 		return sourceFile;
 	}

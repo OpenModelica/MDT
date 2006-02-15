@@ -41,6 +41,8 @@
 
 package org.modelica.mdt.core.compiler;
 
+import org.eclipse.jface.text.IRegion;
+
 /**
  * Presents information on some elements definiton location in a source 
  * code file. More specificly this class provides the location of the beginning 
@@ -52,9 +54,9 @@ public interface IElementLocation
 {
 	
 	/**
-	 * @return line number where this element is defined
+	 * @return the region in the source file where this elements is defined
 	 */
-	public int getLine();
+	public IRegion getRegion();
 
 	/**
 	 * @return full path to the file where the element is defined

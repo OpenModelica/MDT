@@ -41,31 +41,124 @@
 
 package org.modelica.mdt.internal.core;
 
-import org.modelica.mdt.core.compiler.IElementLocation;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-//TODO this file should be removed, ElementLocation objects should only
-// be created in the modelica compiler plugin
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.modelica.mdt.core.compiler.IElementLocation;
 
 /**
  * This class implements IElementLocation on behalf of OMC proxy plugin.
  */
 public class ElementLocation implements IElementLocation
 {
-	private String path;
-	private int line;	
+	private File path;
 	
-	public ElementLocation(String path, int line)
-	{
-		this.path = path;
-		this.line = line;
-	}
-	public int getLine()
-	{
-		return line;
-	}
+	private int startLine;
+	private int startColumn;
+	private int endLine;
+	private int endColumn;
 
+	private Region region = null;
+	
+	public ElementLocation(String path, int startLine, int startColumn,
+							int endLine, int endColumn)
+	{
+		this.path = new File(path);
+		
+		if (!this.path.exists())
+		{
+			//TODO this should not be, throw an exception
+		}
+
+		this.startLine = startLine;
+		this.startColumn = startColumn;
+		this.endLine = endLine;
+		this.endColumn = endColumn;
+	}
+	
 	public String getPath()
 	{
-		return path;
+		return path.getAbsolutePath();
+	}
+
+	public IRegion getRegion()
+	{
+		if (region == null)
+		{
+			computeRegion();
+		}
+
+		return region;
+	}
+
+	private void computeRegion()
+	{
+		
+		BufferedInputStream bis = null;
+		
+		try
+		{
+			bis = new BufferedInputStream(new FileInputStream(path));
+		}
+		catch (FileNotFoundException e)
+		{
+			/*
+			 * we allready checked in the constructor that path exists,
+			 * this this is not happening
+			 */
+			//TODO bug location
+		}
+		String contents = "";
+
+		/*
+		 * Read in contents of the file.
+		 */
+		while(true)
+		{
+			try
+			{
+				int avail = bis.available();
+				if(avail == 0)
+					break;
+				byte[] buf = new byte[avail];
+				bis.read(buf, 0, avail);
+
+				contents += new String(buf);
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		/*
+		 * Convert contents of the file to a document.
+		 */
+		Document doc = new Document(contents);
+		
+		/*
+		 * the default values that are used if exception is 
+		 * thrown in the code below 
+		 */
+		int startChar = 1;
+		int endChar = 1;
+		try
+		{
+			startChar = doc.getLineOffset(startLine-1) + startColumn-1;
+			endChar = doc.getLineOffset(endLine-1) + endColumn;
+		}
+		catch(BadLocationException e)
+		{
+			ErrorManager.logError(e);
+		}
+		
+		region = new Region(startChar, endChar - startChar);
 	}	
 }

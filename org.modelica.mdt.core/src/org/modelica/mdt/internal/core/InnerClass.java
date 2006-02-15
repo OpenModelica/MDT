@@ -41,16 +41,12 @@
 
 package org.modelica.mdt.internal.core;
 
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
@@ -61,7 +57,6 @@ import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementsInfo;
@@ -135,7 +130,7 @@ public class InnerClass extends ModelicaClass
 	/**
 	 * @see org.modelica.mdt.core.IParent#getChildren()
 	 */
-	public Collection<? extends IModelicaElement> getChildren() 
+	public Collection<IModelicaElement> getChildren() 
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
 			CoreException, CompilerInstantiationException
 	{
@@ -168,7 +163,10 @@ public class InnerClass extends ModelicaClass
 
 				IElementLocation location =
 					new ElementLocation(elementFile, 
-							info.getElementStartLine());
+							info.getElementStartLine(),
+							info.getElementStartColumn(),
+							info.getElementEndLine(),
+							info.getElementEndColumn());
 				
 				String className = info.getClassName();
 				
@@ -190,7 +188,11 @@ public class InnerClass extends ModelicaClass
 				String elementFile = info.getElementFile();
 				IElementLocation location =
 					new ElementLocation(elementFile, 
-							info.getElementStartLine());
+							info.getElementStartLine(),
+							info.getElementStartColumn(),
+							info.getElementEndLine(),
+							info.getElementEndColumn());
+
 				
 				elements.put(componentName, 
 						new ModelicaComponent(
@@ -327,31 +329,7 @@ public class InnerClass extends ModelicaClass
 			loadClassLocation();
 		}
 
-		if (sourceFile != null)
-		{
-			SyntaxChecker.getLineRegion((IFile)sourceFile.getResource(),
-					location.getLine());
-		}
-
-		IRegion reg = null;
-		
-		try
-		{
-			reg = 
-				SyntaxChecker.getLineRegion(location.getPath(), 
-						location.getLine());
-		}
-		catch (FileNotFoundException e)
-		{
-			throw new CoreException(
-					new Status(IStatus.ERROR,
-								CorePlugin.getSymbolicName(),
-								IStatus.OK, 
-								"could not find modelica source file " + 
-									location.getPath(),
-								e));
-		}
-		return reg;
+		return location.getRegion();
 	}
 
 	@Override

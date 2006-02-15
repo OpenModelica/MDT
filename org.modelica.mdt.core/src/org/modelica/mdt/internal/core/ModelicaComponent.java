@@ -41,17 +41,11 @@
 
 package org.modelica.mdt.internal.core;
 
-import java.io.FileNotFoundException;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaSourceFile;
-import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IElementLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -110,31 +104,7 @@ public class ModelicaComponent extends ModelicaElement
 	public IRegion getLocation()
 		throws CoreException
 	{
-		if (sourceFile != null)
-		{
-			SyntaxChecker.getLineRegion((IFile)sourceFile.getResource(),
-					location.getLine());
-		}
-
-		IRegion reg = null;
-		
-		try
-		{
-			reg = 
-				SyntaxChecker.getLineRegion(location.getPath(), 
-						location.getLine());
-		}
-		catch (FileNotFoundException e)
-		{
-			throw new CoreException(
-					new Status(IStatus.ERROR,
-								CorePlugin.getSymbolicName(),
-								IStatus.OK, 
-								"could not find modelica source file " + 
-									location.getPath(),
-								e));
-		}
-		return reg;
+		return location.getRegion();
 	}
 
 	@Override

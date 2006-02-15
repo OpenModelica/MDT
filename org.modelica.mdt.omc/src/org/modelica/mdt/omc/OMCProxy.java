@@ -60,8 +60,8 @@ import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.ElementLocation;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.omc.internal.ElementLocation;
 import org.modelica.mdt.omc.internal.ParseResults;
 import org.modelica.mdt.omc.internal.OMCParser;
 import org.modelica.mdt.omc.internal.corba.OmcCommunication;
@@ -651,8 +651,10 @@ public class OMCProxy implements IModelicaCompiler
 		/*
 		 * The getCrefInfo reply have the following format:
 		 * 
-		 * <file path>,<line number>,<column number>
+		 * <file path>,<something>,<start line>,<start column>,<end line>,<end column>
 		 * 
+		 * for example:
+		 * /foo/Modelica/package.mo,writable,1,1,1029,13
 		 */
 
 		/* For some reason, the list returned doesn't contain curly braces. */
@@ -660,20 +662,29 @@ public class OMCProxy implements IModelicaCompiler
 		retval = "{" + retval + "}"; 
 
 		List tokens = ModelicaParser.parseList(retval);
-		int line;
+		
+		String filePath = tokens.elementAt(0).toString();
+		int startLine;
+		int startColumn;
+		int endLine;
+		int endColumn;
 
 		try
 		{
-			line = Integer.parseInt(tokens.elementAt(2).toString());
+			startLine = Integer.parseInt(tokens.elementAt(2).toString());
+			startColumn = Integer.parseInt(tokens.elementAt(3).toString());
+			endLine = Integer.parseInt(tokens.elementAt(4).toString());
+			endColumn = Integer.parseInt(tokens.elementAt(5).toString());
 		}
 		catch (NumberFormatException e)
 		{
 			throw new 
-			UnexpectedReplyException("can't parse getCrefInfo() reply, "+
-					"unexpected format");
+				UnexpectedReplyException("can't parse getCrefInfo() reply, "+
+						"unexpected format");
 		}
 		
-		return new ElementLocation(tokens.elementAt(0).toString(), line);
+		return new ElementLocation(filePath, 
+					startLine, startColumn, endLine, endColumn);
 	}
 	
 	/**

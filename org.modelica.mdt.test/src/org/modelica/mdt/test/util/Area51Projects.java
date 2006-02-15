@@ -294,27 +294,27 @@ public class Area51Projects
 			"model muu\n" +
 			"Real a;\n" +
 			"equation\n"+
-			"	x = 10;\n"+
+			"    x = 10;\n"+
 			"end muu;\n"+
 			"\n"+
 			"model foo\n"+
-			"	import Modelica;\n"+
+			"    import Modelica;\n"+
 			"end foo;\n" +
 			"\n\n" +
 			"record hej\n" +
-			"	package ine_paketen\n" +
-			"	end ine_paketen;\n" +
-			"	class hejhej\n" +
-			"		class foo\n" +
-			"		end foo;\n" +
-			"	end hejhej;\n" +
+			"    package ine_paketen\n" +
+			"    end ine_paketen;\n" +
+			"    class hejhej\n" +
+			"        class foo\n" +
+			"        end foo;\n" +
+			"    end hejhej;\n" +
 			"end hej;\n" +
 			"\n\n\n" +
 			"package hepp\n" +
-			"	package hopp\n" +
-			"	end hopp;\n" +
-			"	class hehehe\n" +
-			"	end hehehe;\n" +
+			"    package hopp\n" +
+			"    end hopp;\n" +
+			"    class hehehe\n" +
+			"    end hehehe;\n" +
 			"end hepp;\n";
 			
 
@@ -345,27 +345,27 @@ public class Area51Projects
 			"model bruuken_muu\n" +
 			"Real a;\n" +
 			"equation\n"+
-			"	x = 10;\n"+
+			"    x = 10;\n"+
 			"end bruuken_muu;\n"+
 			"\n"+
 			"model foobared\n"+
-			"	import Modelica;\n"+
+			"    import Modelica;\n"+
 			"end foobared;\n" +
 			"\n\n" +
 			"record broken_hej\n" +
-			"	package ine_paketen\n" +
-			"	end ine_paketen;\n" +
-			"	class hejhej\n" +
-			"		class foo\n" +
-			"		end foo;\n" +
-			"	end hejhej;\n" +
+			"    package ine_paketen\n" +
+			"    end ine_paketen;\n" +
+			"    class hejhej\n" +
+			"        class foo\n" +
+			"        end foo;\n" +
+			"    end hejhej;\n" +
 			"end broken_hej;\n" +
 			"\n\n\n" +
 			"package broken_hepp\n" +
-			"	package hopp\n" +
-			"	end hopp;\n" +
-			"	class hehehe\n" +
-			"	end hehehe;\n" +
+			"    package hopp\n" +
+			"    end hopp;\n" +
+			"    class hehehe\n" +
+			"    end hehehe;\n" +
 			"end broken_hepp;\n";
 			
 
@@ -386,11 +386,11 @@ public class Area51Projects
 			"    function a_function end a_function;\n" +
 			"    type a_type end a_type;\n" +
 			"protected\n" +
-			"	Real a_protected_real;\n" +
-			"	Integer a_protected_integer \"with a comment\";\n" +
+			"    Real a_protected_real;\n" +
+			"    Integer a_protected_integer \"with a comment\";\n" +
 			"equation\n" +
-			"	b = time;\n" +
-			"	der(a) = b;\n" +
+			"    b = time;\n" +
+			"    der(a) = b;\n" +
 			"end components_bananza;";
 
 		file.create(Utility.getByteStream(contents), true, null);
