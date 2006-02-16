@@ -430,6 +430,7 @@ public class TestInnerClass extends TestCase
 //				blocks.getFilePath().equals(""));
 //		reg = blocks.getLocation();
 //		assertTrue("negative element region can't be", reg.getOffset() >= 0);
+//		System.out.println(reg.getLength());
 //		assertTrue("elements length must be positive", reg.getLength() > 0);
 		
 		/* check Modelica.Blocks imports */
