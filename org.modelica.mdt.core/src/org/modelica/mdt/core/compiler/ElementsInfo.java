@@ -65,6 +65,7 @@ public class ElementsInfo
 	private String elementFile = null;
 	private String className = null;
 	private String classRestriction = null;
+	private String classFileName = null;
 	private String names = null;
 	private String elementVisibility = null;
 	private String kind = null;
@@ -219,6 +220,19 @@ public class ElementsInfo
 		}
 		return path;
 	}
+
+	/**
+	 * @return the contents of 'classfilename' field
+	 */
+	public String getClassFile()
+	{
+		if (classFileName  == null)
+		{
+			parseUntil("classfilename");
+		}
+		return classFileName;
+	}
+
 	
 	/**
 	 * @return the contents of 'path' field
@@ -284,6 +298,11 @@ public class ElementsInfo
 				nameLength = 9;
 				className = rawField.substring(nameLength+1).trim();
 			}
+			else if (rawField.startsWith("classfilename="))
+			{
+				nameLength = 13;
+				classFileName = rawField.substring(nameLength+1).trim();
+			}			
 			else if (rawField.startsWith("elementfile="))
 			{
 				nameLength = 11;
@@ -344,62 +363,4 @@ public class ElementsInfo
 			elementsInfo.subList(parsedElements, elementsInfo.size());
 	
 	}
-
-	
-//	for (ListElement element : ((List)o))
-//	{
-//		/* parse a single the elements info list */
-//		str = ((Element)element).toString();
-//		
-//		if (str.startsWith("elementtype="))
-//		{
-//			elementType = str.substring(12).trim();
-//		}
-//		else if (str.startsWith("classline="))
-//		{
-//			classLine = str.substring(10).trim();
-//		}
-//		else if (str.startsWith("elementline="))
-//		{
-//			elementLine = str.substring(12).trim();
-//		}
-//		else if (str.startsWith("classname="))
-//		{
-//			className = str.substring(10).trim();
-//		}
-//		else if (str.startsWith("elementvisibility="))
-//		{
-//			elementVisibility = str.substring(18).trim();
-//		}
-//		else if (str.startsWith("elementfile="))
-//		{
-//			elementFile = str.substring(12).trim();
-//			/*
-//			 * remove "" around the path by removing
-//			 * first and last character
-//			 */
-//			elementFile = 
-//				elementFile.substring(1, elementFile.length() - 1);
-//		}
-//		else if (str.startsWith("classfile="))
-//		{
-//			classFile = str.substring(10).trim();
-//			/*
-//			 * remove "" around the path by removing
-//			 * first and last character
-//			 */
-//			classFile = 
-//				classFile.substring(1, classFile.length() - 1);
-//		}
-//		else if (str.startsWith("classrestriction="))
-//		{
-//			classRestriction = str.substring(17).trim();
-//		}
-//		else if (str.startsWith("names="))
-//		{
-//			names = str.substring(6).trim();
-//		}
-//	}
-//	
-
 }
