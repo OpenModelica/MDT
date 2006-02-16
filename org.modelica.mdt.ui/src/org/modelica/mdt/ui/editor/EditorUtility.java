@@ -52,6 +52,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -70,18 +71,18 @@ public class EditorUtility
 	/**
 	 * handles the tricky buisness of opening the element in editor depending
 	 * on it's type
+	 * 
 	 * @param element the element to open in the editor
-	 * @throws ConnectException
-	 * @throws UnexpectedReplyException
-	 * @throws InvocationError
-	 * @throws CoreException 
-	 * @throws CompilerInstantiationException 
 	 */
-	public static void openInEditor(Object element)
+	public static void openInEditor(IModelicaElement element)
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException
 	{
-		if (element instanceof IModelicaElement)
+		if (element instanceof IModelicaFile)
+		{
+			openInEditor((IFile)element.getResource());
+		}
+		else if (element instanceof IModelicaElement)
 		{
 			IModelicaElement modelicaElement = (IModelicaElement)element;
 			IResource res = modelicaElement.getResource();
@@ -119,12 +120,7 @@ public class EditorUtility
 					editor.selectAndReveal(reg.getOffset(), reg.getLength());
 				}
 			}
-		}
-		else if (element instanceof IFile)
-		{
-			openInEditor((IFile)element);
-		}
-		
+		}		
 	}
 	
 	private static IEditorPart openInEditor(IFile file) 

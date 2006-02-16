@@ -77,6 +77,7 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.ui.ModelicaElementContentProvider;
@@ -177,7 +178,8 @@ public class ProjectsView extends ViewPart
 
 		try
 		{
-			EditorUtility.openInEditor(selecton.getFirstElement());
+			EditorUtility.openInEditor
+				((IModelicaElement)selecton.getFirstElement());
 		} 
 		catch (CompilerException e)
 		{
