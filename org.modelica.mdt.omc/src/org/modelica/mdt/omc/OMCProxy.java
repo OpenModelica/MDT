@@ -620,12 +620,8 @@ public class OMCProxy implements IModelicaCompiler
 		 * collect the error messages. (Test if errorString != "") 
 		 */
 		String errorString = getErrorString();
-		System.out.println("errorString: -->" + errorString + "<--");
 		if(errorString.equals("") == false)
 		{
-//			errorString = errorString.trim();
-//			errorString = errorString.substring(1, errorString.length() - 1);
-			System.out.println("setCompileErrors!!!");
 			res.setCompileErrors(OMCParser.parseErrorString(errorString));
 		}
 		
