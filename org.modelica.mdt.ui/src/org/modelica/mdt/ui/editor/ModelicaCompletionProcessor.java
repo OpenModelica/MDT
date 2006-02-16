@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.ui.editor;
 
+import java.util.Collection;
 import java.util.Vector;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -63,6 +64,9 @@ import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ElementsInfo;
+import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.internal.core.ErrorManager;
 
 
@@ -92,9 +96,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	private Vector<String> inputParameters = new Vector<String>();
 	private Vector<String> outputParameters = new Vector<String>();
 	private IEditorPart editor;
-	
-	/* This string is used to hold the proposed parameters of a function. */
-//	private static String functionParameters;
 	
 	private static String functionProposal;
 	
@@ -300,95 +301,67 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		inputParameters.clear();
 		outputParameters.clear();
 		
-//		List elementsInfo;
+		Collection<ElementsInfo> elementsInfo;
 		
-		// this is just broken and will be removed really soon (TM)
-//		try 
-//		{
-//			elementsInfo = CompilerProxy.getElementsInfo(functionName);
-//		}
-//		catch (ConnectException e)
-//		{
-//			ErrorManager.showCompilerError(e);
-//			return;
-//		}
-//		catch (CompilerException e)
-//		{
-//			ErrorManager.logError(e);
-//			return;
-//		}
-//
-//		functionProposal = functionName;
-//		
-//		for(Object o : elementsInfo)
-//		{
-//			boolean elementIsPublic = false;
-//			boolean elementIsComponent = false;
-//			boolean elementIsInput = false;
-//			boolean elementIsOutput = false;
-//			boolean elementNamesFound = false;
-//			boolean typenameFound = false;
-//			List names = new List();
-//			String typename = "";
-//			
-//			if(o instanceof List)
-//			{
-//				for(Object o2 : (List)o)
-//				{
-//					if(o2 instanceof Element)
-//					{
-//						String s = ((Element)o2).toString();
-//						
-//						if(s.startsWith("elementvisibility="))
-//						{
-//							if(s.substring("elementvisibility=".length()).equals("public"))
-//							{
-//								elementIsPublic = true;
-//							}							
-//						}
-//						else if(s.startsWith("elementtype="))
-//						{
-//							if(s.substring("elementtype=".length()).equals("component"))
-//							{
-//								elementIsComponent = true;
-//							}
-//						}
-//						else if(s.startsWith("direction="))
-//						{
-//							if(s.substring("direction=".length()).contains("input"))
-//							{
-//								elementIsInput = true;
-//							}
-//							else if(s.substring("direction=".length()).contains("output"))
-//							{
-//								elementIsOutput = true;
-//							}
-//						}
-//						else if(s.startsWith("names="))
-//						{
-//							names = ModelicaParser.parseList(
-//									s.substring("names=".length()));
-//							elementNamesFound = true;
-//						}
-//						else if(s.startsWith("typename="))
-//						{
-//							typename = s.substring("typename=".length());
-//							typenameFound = true;
-//						}
-//					}
-//				}
-//			}
-//			if(elementIsPublic && elementIsComponent
-//					&& elementIsInput && elementNamesFound && typenameFound)
-//			{
-//				inputParameters.add(typename + " " + names.elementAt(0).toString());
-//			}
-//			else if(elementIsPublic && elementIsComponent
-//					&& elementIsOutput && elementNamesFound && typenameFound)
-//			{
-//				outputParameters.add(typename + " " + names.elementAt(0).toString());
-//			}
-//		}
+		try 
+		{
+			elementsInfo = CompilerProxy.getElementsInfo(functionName);
+		}
+		catch (ConnectException e)
+		{
+			ErrorManager.showCompilerError(e);
+			return;
+		}
+		catch (CompilerException e)
+		{
+			ErrorManager.logError(e);
+			return;
+		}
+
+		functionProposal = functionName;
+		
+		for(ElementsInfo info : elementsInfo)
+		{
+			boolean elementIsPublic = false;
+			boolean elementIsComponent = false;
+			boolean elementIsInput = false;
+			boolean elementIsOutput = false;
+			boolean elementNamesFound = false;
+			String name = null;
+			String typename = "";
+			String direction = null;			
+			
+			elementIsPublic = info.getElementVisibility().equals("public");
+			elementIsComponent = info.getElementType().equals("component");
+
+			if (elementIsComponent)
+			{
+				List comp = ModelicaParser.parseList(info.getNames());
+				
+				name = comp.elementAt(0).toString();
+				elementNamesFound = true;
+			}
+			typename = info.getTypeName();
+			
+			direction = info.getDirection();
+	
+			if (direction != null)
+			{
+				elementIsInput = direction.equals("input");
+				elementIsOutput = direction.equals("output");
+			}
+			
+			if(elementIsPublic && elementIsComponent
+					&& elementIsInput && elementNamesFound)
+			{
+				inputParameters.add(typename + " " + name);
+			}
+			else if(elementIsPublic && elementIsComponent
+					&& elementIsOutput && elementNamesFound)
+			{
+				outputParameters.add(typename + " " + name);
+			}
+		}
 	}
 	
 	/**
