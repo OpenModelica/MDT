@@ -71,6 +71,8 @@ public class ElementsInfo
 	private String kind = null;
 	private String path = null;
 	private String id = null;
+	private String typeName = null;
+	private String direction = null;
 	
 	public ElementsInfo(List elementsInfo)
 	{
@@ -232,7 +234,6 @@ public class ElementsInfo
 		}
 		return classFileName;
 	}
-
 	
 	/**
 	 * @return the contents of 'path' field
@@ -245,6 +246,31 @@ public class ElementsInfo
 		}
 		return id;
 	}
+
+	/**
+	 * @return the contents of 'typename' field
+	 */
+	public String getTypeName()
+	{
+		if (typeName  == null)
+		{
+			parseUntil("typename");
+		}
+		return typeName;
+	}
+	
+	/**
+	 * @return the contents of 'direction' field
+	 */
+	public String getDirection()
+	{
+		if (direction  == null)
+		{
+			parseUntil("direction");
+		}
+		return direction;
+	}
+
 
 	/**
 	 * parse the elements information list until the specified field
@@ -345,7 +371,25 @@ public class ElementsInfo
 			{
 				nameLength = 2;
 				id = rawField.substring(nameLength+1).trim();
-			}			
+			}
+			else if (rawField.startsWith("typename="))
+			{
+				nameLength = 8;
+				typeName = rawField.substring(nameLength+1).trim();
+			}
+			else if (rawField.startsWith("direction="))
+			{
+				nameLength = 9;
+				direction = rawField.substring(nameLength+1).trim();
+				
+				/*
+				 * remove "" around the fields value by removing
+				 * first and last character
+				 */
+				direction = 
+					direction.substring(1, direction.length() - 1);
+
+			}
 			else /* we are not interedted in this particular field at all */
 			{
 				continue;
