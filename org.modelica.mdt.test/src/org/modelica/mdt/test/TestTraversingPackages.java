@@ -147,6 +147,9 @@ public class TestTraversingPackages extends TestCase
 
 			if (name.equals("sub_package"))
 			{
+				assertTrue("sub_package of wrong type: " + elm.getClass(),
+						elm instanceof IModelicaClass);
+				
 				sub_package = (IModelicaClass)elm;
 			}
 			else if (name.equals("root_package_model.mo"))

@@ -49,7 +49,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 /**
  * @author Elmir Jagudin
  * 
- * Represents a modelica source file (.mo file basicly)
+ * Represents a Modelica source file (.mo file basically)
  */
 public interface IModelicaSourceFile extends IModelicaFile, IParent
 {

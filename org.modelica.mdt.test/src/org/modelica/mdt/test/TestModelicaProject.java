@@ -106,6 +106,7 @@ public class TestModelicaProject extends TestCase
 		assertEquals("folder_package", pkg.getFullName());
 		
 		pkg = project.getPackage("root_package.sub_package");
+		assertNotNull(pkg);
 		assertEquals("root_package.sub_package", pkg.getFullName());
 
 		pkg = project.getPackage("root_package.sub_package.leaf_package");

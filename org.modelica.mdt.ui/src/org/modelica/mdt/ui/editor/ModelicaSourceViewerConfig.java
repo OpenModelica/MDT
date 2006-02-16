@@ -54,7 +54,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @author Peter Bunus
@@ -63,13 +62,13 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 {
 
 	private ModelicaRuleScanner scanner;
-	private ITextEditor textEditor;
+	private ModelicaEditor textEditor;
 	
 	/* default tag color is black */
 	private static Color DEFAULT_TAG_COLOR
 		= new Color(Display.getCurrent(), new RGB(0, 0, 0));
 
-	public ModelicaSourceViewerConfig(ITextEditor textEditor) 
+	public ModelicaSourceViewerConfig(ModelicaEditor textEditor) 
 	{
 		this.textEditor = textEditor;
 	}

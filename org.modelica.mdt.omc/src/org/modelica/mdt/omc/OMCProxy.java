@@ -90,7 +90,7 @@ public class OMCProxy implements IModelicaCompiler
 	private boolean systemLibraryLoaded = false;
 
 	private String[] standardLibraryPackages = { "Modelica" };
-	
+
 	/* should we trace the calls to sendExpression? */
 	private static boolean traceOMCCalls = false;
 	private static boolean traceOMCStatus = false;
@@ -483,7 +483,7 @@ public class OMCProxy implements IModelicaCompiler
 		{
 			return;
 		}
-		System.out.println(message);
+		System.out.println("OMCSTATUS: " + message);
 	}
 
 	/**
@@ -526,6 +526,9 @@ public class OMCProxy implements IModelicaCompiler
 	{
 		String retval = sendExpression("getClassNames("+className+")");
 		
+		/* fetch error string but ignore it */
+		getErrorString();
+		
 		return ModelicaParser.parseList(retval);
 	}
 
@@ -546,6 +549,9 @@ public class OMCProxy implements IModelicaCompiler
 		/* remove " around the reply */
 		reply = reply.trim();
 		reply = reply.substring(1, reply.length()-1);
+		
+		/* fetch error string but ignore it */
+		getErrorString();
 		
 		return IModelicaClass.Type.parse(reply);
 	}
@@ -585,19 +591,17 @@ public class OMCProxy implements IModelicaCompiler
 	{
 		ParseResults res = new ParseResults();
 
-		// We need to call this to empty the error queue in OMC
-		sendExpression("getMessagesString()");
-		
 		String fullName = file.getLocation().toString();
 		String retval = 
 			sendExpression("loadFileInteractiveQualified(\"" + fullName + "\")");
 		
-		String errorString = sendExpression("getMessagesString()");
+		/* Always keep your stuff nice and tidy! */
+		retval = retval.trim();
 		
 		/*
-		 * See if there were parse errors
+		 * See if there were parse errors, an empty list {} also denotes error
 		 */
-		if(retval.toLowerCase().contains("error"))
+		if(retval.toLowerCase().contains("error") || retval.equals("{}"))
 		{			
 			res.setCompileErrors
 				(OMCParser.parseErrorString(getErrorString()));
@@ -613,12 +617,15 @@ public class OMCProxy implements IModelicaCompiler
 
 		/*
 		 * If there were errors, but the compilation went through,
-		 * collect the error messages. (Test if errorString == "") 
+		 * collect the error messages. (Test if errorString != "") 
 		 */
-		errorString = errorString.trim();
-		if(errorString.equals("\"\"") == false)
+		String errorString = getErrorString();
+		System.out.println("errorString: -->" + errorString + "<--");
+		if(errorString.equals("") == false)
 		{
-			errorString = errorString.substring(1, errorString.length() - 1);
+//			errorString = errorString.trim();
+//			errorString = errorString.substring(1, errorString.length() - 1);
+			System.out.println("setCompileErrors!!!");
 			res.setCompileErrors(OMCParser.parseErrorString(errorString));
 		}
 		
@@ -639,6 +646,9 @@ public class OMCProxy implements IModelicaCompiler
 		throws ConnectException, UnexpectedReplyException, InvocationError 
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
+		
+		/* fetch error string but ignore it */
+		getErrorString();
 		
 		if(retval.contains("Error") || retval.contains("error"))
 		{
@@ -679,8 +689,8 @@ public class OMCProxy implements IModelicaCompiler
 		catch (NumberFormatException e)
 		{
 			throw new 
-				UnexpectedReplyException("can't parse getCrefInfo() reply, "+
-						"unexpected format");
+				UnexpectedReplyException("Can't parse getCrefInfo() reply, "+
+										 "unexpected format");
 		}
 		
 		return new ElementLocation(filePath, 
@@ -698,6 +708,10 @@ public class OMCProxy implements IModelicaCompiler
 		throws ConnectException 
 	{
 		String retval = sendExpression("isPackage(" + className + ")");
+
+		/* fetch error string but ignore it */
+		getErrorString();
+		
 		return retval.contains("true");
 	}
 	
@@ -705,6 +719,9 @@ public class OMCProxy implements IModelicaCompiler
 		throws ConnectException, InvocationError, UnexpectedReplyException
 	{
 		String retval = sendExpression("getElementsInfo("+ className +")");
+		
+		/* fetch error string but ignore it */
+		getErrorString();
 		
 		/*
 		 * we need a efficient way to check if the result is
@@ -773,6 +790,10 @@ public class OMCProxy implements IModelicaCompiler
 		if (!systemLibraryLoaded)
 		{
 			sendExpression("loadModel(Modelica)");
+			
+			/* fetch error string but ignore it */
+			getErrorString();
+			
 			systemLibraryLoaded = true;
 		}
 

@@ -173,13 +173,13 @@ public class ProjectsView extends ViewPart
 		 * hande open action on a element in the project view tree,
 		 * this is usualy a double click on the element
 		 */
-		IStructuredSelection selecton = 
+		IStructuredSelection selection = 
 			(IStructuredSelection) event.getSelection();
 
 		try
 		{
 			EditorUtility.openInEditor
-				((IModelicaElement)selecton.getFirstElement());
+				((IModelicaElement)selection.getFirstElement());
 		} 
 		catch (CompilerException e)
 		{

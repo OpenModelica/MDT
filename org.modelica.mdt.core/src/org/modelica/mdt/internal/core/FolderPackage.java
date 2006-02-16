@@ -167,15 +167,6 @@ public class FolderPackage extends ModelicaClass
 			IResource res = d.getResource();
 			IModelicaElement element = children.get(res);
 			
-			if (!childrenLoaded)
-			{
-				System.out.println("children not loaded!");
-			}
-			if (d.getKind() == IResourceDelta.CHANGED && element == null)
-			{
-				System.out.println(res + " not found");
-			}
-
 			switch (d.getKind())
 			{
 			case IResourceDelta.ADDED:
