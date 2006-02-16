@@ -58,16 +58,18 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
    </license>
 
-   <url>
-      <discovery label="Modelica and the Modelica Association" url="http://www.modelica.org"/>
-      <discovery label="Modelica Related Research at PELAB" url="http://www.ida.liu.se/~pelab/modelica/"/>
-      <discovery label="MDT update site" url="http://www.ida.liu.se/~x05elmja/"/>
-   </url>
-
    <plugin
-         id="org.modelica.mdt"
-         download-size="0"
-         install-size="0"
+         id="org.modelica.mdt.core"
+         version="0.0.0"/>
+         
+    <plugin
+         id="org.modelica.mdt.ui"
+         unpack="false"
+         version="0.0.0"/>
+         
+    <plugin
+         id="org.modelica.mdt.omc"
+         unpack="false"         
          version="0.0.0"/>
 
 </feature>
