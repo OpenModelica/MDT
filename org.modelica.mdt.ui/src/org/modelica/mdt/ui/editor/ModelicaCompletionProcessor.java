@@ -254,6 +254,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			}
 			catch(BadLocationException e)
 			{
+				System.out.println("shhh, don't say anything");
 			}
 			if(ch == '\n' || ch == '\t' || ch == ' '
 				|| (ch == '(' && tempCounter < offset - 1))
@@ -375,38 +376,44 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset)
 	{
-		IEditorInput input = editor.getEditorInput();
+//		IEditorInput input = editor.getEditorInput();
 		//TODO when eclipse restores the files that where left
 		// in the editor area when it was closed last time the
 		// editor input will not be of ModelicaElementEditorInput
 		// thus code completion will not work, this should be fixed somehow
 
-		if (input instanceof ModelicaElementEditorInput)
-		{
-			IModelicaSourceFile file = 
-				((ModelicaElementEditorInput)input).getSourceFile();
-			System.out.println("we are looking at " + file);
-			try
-			{
-				IModelicaClass clazz = file.getClassAt(offset);
-				if (clazz != null)
-				{
-					System.out.println("class def is " + clazz.getElementName());
-				}
-				else
-				{
-					System.out.println("no class here");
-				}
-			}
-			catch (Exception e)
-			{
-				System.out.println(e);
-				e.printStackTrace();
-			}
-		}
+//		if (input instanceof ModelicaElementEditorInput)
+//		{
+//			IModelicaSourceFile file = 
+//				((ModelicaElementEditorInput)input).getSourceFile();
+//			System.out.println("we are looking at " + file);
+//			try
+//			{
+//				IModelicaClass clazz = file.getClassAt(offset);
+//				if (clazz != null)
+//				{
+//					System.out.println("class def is " + clazz.getElementName());
+//				}
+//				else
+//				{
+//					System.out.println("no class here");
+//				}
+//			}
+//			catch (Exception e)
+//			{
+//				System.out.println(e);
+//				e.printStackTrace();
+//			}
+//		}
 		
 		String className = findClassName(viewer, offset);
-
+		
+		if (className == null || className.equals(""))
+		{
+			/* bail out without any proposals */
+			return new ICompletionProposal[0];
+		}
+		
 		if(className.charAt(className.length() - 1) == '.')
 		{
 			/*
