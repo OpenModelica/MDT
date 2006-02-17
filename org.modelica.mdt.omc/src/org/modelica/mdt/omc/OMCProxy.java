@@ -197,8 +197,8 @@ public class OMCProxy implements IModelicaCompiler
 		String omHome = System.getenv("OPENMODELICAHOME");
 		if(omHome == null)
 		{
-			final String m = "Environment variable OPENMODELICAPATH not set";
-			logOMCStatus("Environment variable OPENMODELICAPATH not set,"+
+			final String m = "Environment variable OPENMODELICAHOME not set";
+			logOMCStatus("Environment variable OPENMODELICAHOME not set,"+
 					" don't know how to start OMC");
 			throw new ConnectException(m);
 		}

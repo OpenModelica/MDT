@@ -44,7 +44,6 @@ package org.modelica.mdt.ui;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.console.IConsoleConstants;
 
 public class PerspectiveFactory implements IPerspectiveFactory
 {
@@ -61,7 +60,6 @@ public class PerspectiveFactory implements IPerspectiveFactory
 		IFolderLayout consoleArea = 
 			layout.createFolder("org.modelica.mdt.consoleArea", 
 					IPageLayout.BOTTOM, 0.75f, IPageLayout.ID_EDITOR_AREA);
-		consoleArea.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		consoleArea.addView(IPageLayout.ID_PROBLEM_VIEW);		
 		
 		/* add new wizards */
@@ -72,7 +70,6 @@ public class PerspectiveFactory implements IPerspectiveFactory
 		
 		/* add view shortcuts */
 		layout.addShowViewShortcut("org.modelica.mdt.ProjectsView");
-		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 	}
 }

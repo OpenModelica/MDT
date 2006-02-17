@@ -159,7 +159,7 @@ public class InnerClass extends ModelicaClass
 			if (elementType.equals("classdef"))
 			{
 				
-				String file = info.getClassFile();
+				String file = info.getElementFile();
 
 				IElementLocation location =
 					new ElementLocation(file, 
