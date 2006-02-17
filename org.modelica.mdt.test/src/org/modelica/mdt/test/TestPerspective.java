@@ -83,8 +83,7 @@ public class TestPerspective extends TestCase
 				/* modelica views */
 				"org.modelica.mdt.ProjectsView",
 				/* generic views */
-				IPageLayout.ID_PROBLEM_VIEW,
-				IConsoleConstants.ID_CONSOLE_VIEW));
+				IPageLayout.ID_PROBLEM_VIEW));
 	}
 	
 	/**
@@ -128,7 +127,6 @@ public class TestPerspective extends TestCase
 		 * check that all views are present
 		 */
 		assertNotNull(page.findView("org.modelica.mdt.ProjectsView"));
-		assertNotNull(page.findView(IConsoleConstants.ID_CONSOLE_VIEW));
 		assertNotNull(page.findView(IPageLayout.ID_PROBLEM_VIEW));
 
 	}
