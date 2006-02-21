@@ -278,7 +278,7 @@ public class TestModelicaRoot extends TestCase
 	 		IModelicaProject moProj =
 				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1); 
 			assertNotNull("failed to create project", moProj);
-			project = moProj.getProject();
+			project = moProj.getWrappedProject();
 			/*
 			 * create the folder that will be morphed to a package and then
 			 * back to folder (se testMorphing())
@@ -331,19 +331,19 @@ public class TestModelicaRoot extends TestCase
 
 			if (modelicaProjects.contains(mproj.getElementName()))
 			{
-				if (mproj.getProject().isOpen())
+				if (mproj.getWrappedProject().isOpen())
 				{
 					assertTrue("project without modelica nature wrapped",
-						((IModelicaProject)p).getProject().
+						((IModelicaProject)p).getWrappedProject().
 						hasNature(CorePlugin.MODELICA_NATURE));
 				}
 			}
 			else if (simpleProjects.contains(mproj.getElementName()))
 			{
-				if (mproj.getProject().isOpen())
+				if (mproj.getWrappedProject().isOpen())
 				{
 					assertFalse("project with modelica nature not wrapped",
-						mproj.getProject().hasNature(CorePlugin.MODELICA_NATURE));
+						mproj.getWrappedProject().hasNature(CorePlugin.MODELICA_NATURE));
 				}
 			}
 		}
@@ -390,7 +390,7 @@ public class TestModelicaRoot extends TestCase
 		
 		IProject modelicaProject = 
 			ModelicaCore.getModelicaRoot().
-				createProject(PROJECT_NAME_MOD_EXTRA).getProject();
+				createProject(PROJECT_NAME_MOD_EXTRA).getWrappedProject();
 		modelicaProject.open(null);
 
 		

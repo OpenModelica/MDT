@@ -216,7 +216,9 @@ public class TestInnerClass extends TestCase
 		
 		/* sanity checks on components_bananza.a_type */
 		assertNotNull("components_bananza.a_type not found", a_type);
-		assertEquals("wrong element name", a_type.getElementName(), "a_type");
+		assertEquals("wrong element name", "a_type", a_type.getElementName());
+		assertEquals("wrong element full name", 
+				"components_bananza.a_type", a_type.getFullName());		
 		assertTrue("fishy file path", 
 				a_type.getFilePath().endsWith("component_model.mo"));
 		IRegion reg = a_type.getLocation();
@@ -225,8 +227,10 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_package */
 		assertNotNull("components_bananza.a_package not found", a_package);
-		assertEquals("wrong element name",
-				a_package.getElementName(), "a_package");
+		assertEquals("wrong element name", "a_package",
+				a_package.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_package",
+				a_package.getFullName());
 		assertTrue("fishy file path", 
 				a_package.getFilePath().endsWith("component_model.mo"));
 		reg = a_package.getLocation();
@@ -235,8 +239,10 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_block */
 		assertNotNull("components_bananza.a_block not found", a_block);
-		assertEquals("wrong element name",
-				a_block.getElementName(), "a_block");
+		assertEquals("wrong element name", "a_block",
+				a_block.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_block",
+				a_block.getFullName());
 		assertTrue("fishy file path", 
 				a_block.getFilePath().endsWith("component_model.mo"));
 		reg = a_block.getLocation();
@@ -245,7 +251,9 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_class */
 		assertNotNull("components_bananza.a_class not found", a_class);
-		assertEquals("wrong element name", a_class.getElementName(), "a_class");
+		assertEquals("wrong element name", "a_class", a_class.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_class",
+				a_class.getFullName());
 		assertTrue("fishy file path", 
 				a_class.getFilePath().endsWith("component_model.mo"));
 		reg = a_class.getLocation();
@@ -254,8 +262,10 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_connector */
 		assertNotNull("components_bananza.a_connector not found", a_connector);
-		assertEquals("wrong element name", a_connector.getElementName(), 
-				"a_connector");
+		assertEquals("wrong element name", "a_connector", 
+				a_connector.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_connector", 
+				a_connector.getFullName());
 		assertTrue("fishy file path", 
 				a_connector.getFilePath().endsWith("component_model.mo"));
 		reg = a_connector.getLocation();
@@ -264,8 +274,10 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_function */
 		assertNotNull("components_bananza.a_function not found", a_function);
-		assertEquals("wrong element name", a_function.getElementName(),
-				"a_function");
+		assertEquals("wrong element name", "a_function", 
+				a_function.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_function", 
+				a_function.getFullName());
 		assertTrue("fishy file path", 
 				a_function.getFilePath().endsWith("component_model.mo"));
 		reg = a_function.getLocation();
@@ -274,7 +286,9 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_model */
 		assertNotNull("components_bananza.a_model not found", a_model);
-		assertEquals("wrong element name", a_model.getElementName(), "a_model");
+		assertEquals("wrong element name", "a_model", a_model.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_model", 
+				a_model.getFullName());
 		assertTrue("fishy file path", 
 				a_model.getFilePath().endsWith("component_model.mo"));
 		reg = a_model.getLocation();
@@ -283,7 +297,9 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_record */
 		assertNotNull("components_bananza.a_record not found", a_record);
-		assertEquals("wrong element name", a_record.getElementName(), "a_record");
+		assertEquals("wrong element name", "a_record", a_record.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_record",
+				a_record.getFullName());
 		assertTrue("fishy file path", 
 				a_record.getFilePath().endsWith("component_model.mo"));
 		reg = a_record.getLocation();
@@ -292,7 +308,9 @@ public class TestInnerClass extends TestCase
 
 		/* sanity checks on components_bananza.a_real */
 		assertNotNull("components_bananza.a_real not found", a_real);
-		assertEquals("wrong element name", a_real.getElementName(), "a_real");
+		assertEquals("wrong element name", "a_real", a_real.getElementName());
+		assertEquals("wrong element full name", "components_bananza.a_real", 
+				a_real.getFullName());
 		assertEquals("wrong visibility", a_real.getVisbility(),
 				IModelicaComponent.Visibility.PUBLIC);
 
@@ -303,8 +321,11 @@ public class TestInnerClass extends TestCase
 		/* sanity checks on components_bananza.a_undocumented_real */
 		assertNotNull("components_bananza.an_undocumented_real not found", 
 				an_undocumented_real);
-		assertEquals("wrong element name", an_undocumented_real.getElementName(),
-				"an_undocumented_real");
+		assertEquals("wrong element name", "an_undocumented_real",
+				an_undocumented_real.getElementName());
+		assertEquals("wrong element full name", 
+				"components_bananza.an_undocumented_real",
+				an_undocumented_real.getFullName());
 		assertEquals("wrong visibility", an_undocumented_real.getVisbility(),
 				IModelicaComponent.Visibility.PUBLIC);
 		reg = an_undocumented_real.getLocation();
@@ -314,8 +335,11 @@ public class TestInnerClass extends TestCase
 		/* sanity checks on components_bananza.a_protected_integer */
 		assertNotNull("components_bananza.a_protected_integer not found", 
 				a_protected_integer);
-		assertEquals("wrong element name", a_protected_integer.getElementName(),
-				"a_protected_integer");
+		assertEquals("wrong element name", "a_protected_integer", 
+				a_protected_integer.getElementName());
+		assertEquals("wrong element full name", 
+				"components_bananza.a_protected_integer", 
+				a_protected_integer.getFullName());
 		assertEquals("wrong visibility", a_protected_integer.getVisbility(),
 				IModelicaComponent.Visibility.PROTECTED);
 		reg = a_protected_integer.getLocation();
@@ -325,8 +349,11 @@ public class TestInnerClass extends TestCase
 		/* sanity checks on components_bananza.a_protected_real */
 		assertNotNull("components_bananza.a_protected_real not found", 
 				a_protected_real);
-		assertEquals("wrong element name", a_protected_real.getElementName(), 
-				"a_protected_real");
+		assertEquals("wrong element name", "a_protected_real", 
+				a_protected_real.getElementName());
+		assertEquals("wrong element full name", 
+				"components_bananza.a_protected_real", 
+				a_protected_real.getFullName());		
 		assertEquals("wrong visibility", a_protected_real.getVisbility(),
 				IModelicaComponent.Visibility.PROTECTED);
 		reg = a_protected_real.getLocation();
@@ -342,22 +369,32 @@ public class TestInnerClass extends TestCase
 			CompilerInstantiationException
 	{
 		int importCounter = 0;
+		IModelicaClass importedPackage;
 		for (IModelicaImport imp : importRichModel.getImports())
 		{
 			importCounter++;
 			
 			/*
-			 * we are expecting 4 import statments in following order:
+			 * we are expecting 8 import statments in following order:
 			 * 1. qualified         (import Modelica)
 			 * 2. single definition (import Modelica.Math.sin)
 			 * 3. unqualified       (import Modelica.*)
 			 * 4. renaming          (import mm = Modelica.Math)
+			 * 5. local renaming    (import foo = hepp)
+			 * 6. local qualified   (import hepp.hopp)
+			 * 7. local unqualified (import hepp.*)
+			 * 8. local single definition 
+			 *                      (import root_package.root_package_model)
 			 */
 
 			switch (importCounter)
 			{
 			case 1: // import Modelica
 				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
+				importedPackage = imp.getImportedPackage();
+				assertEquals("wrong imported package returned",
+						"Modelica",
+						importedPackage.getFullName());
 				break;
 			case 2: // import Modelica.Math.sin
 				// this is basicaly not implemented and maybe will go away...argh
@@ -369,6 +406,19 @@ public class TestInnerClass extends TestCase
 				break;
 			case 4: // import mm = Modelica.Math
 				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
+				break;
+			case 5: // import foo = hepp
+				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
+				break;
+			case 6: // import hepp.hopp
+				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
+				break;
+			case 7: // import hepp.*
+				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
+				break;
+			case 8: // import root_package.root_package_model
+				// this is basicaly not implemented and maybe will go away...argh
+//				assertEquals(IModelicaImport.Type.SINGLE_DEFINITION, imp.getType());
 				break;
 			default:
 				fail("unexpectedly many imports found"); 

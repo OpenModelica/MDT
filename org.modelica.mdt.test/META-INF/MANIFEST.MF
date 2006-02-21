@@ -12,6 +12,9 @@ Require-Bundle: org.modelica.mdt.core,
  org.eclipse.core.resources,
  org.eclipse.jface.text,
  org.modelica.mdt.omc,
- org.modelica.mdt.ui
+ org.modelica.mdt.ui,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.editors
 Eclipse-AutoStart: false
 Import-Package: org.eclipse.ui.console

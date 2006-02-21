@@ -99,7 +99,7 @@ public class TestNewPackageWizard extends TestCase
 				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1);
 			Assert.assertNotNull("failed to create project", mproj);
 			
-			project = mproj.getProject();
+			project = mproj.getWrappedProject();
 		}
 
 		/* 

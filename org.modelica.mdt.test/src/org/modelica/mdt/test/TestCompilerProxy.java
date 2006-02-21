@@ -84,7 +84,7 @@ public class TestCompilerProxy extends TestCase
 		 * from Area51Projects modelica project 
 		 */
 		IProject proj = Utility.getProject(
-				Area51Projects.MODELICA_PROJECT_NAME).getProject();
+				Area51Projects.MODELICA_PROJECT_NAME).getWrappedProject();
 		
 		nested_models_mo = proj.getFile("nested_models.mo");
 		broken_nested_models_mo = proj.getFile("broken_nested_models.mo");

@@ -210,7 +210,7 @@ public class Area51Projects
 			ModelicaCore.getModelicaRoot().createProject(MODELICA_PROJECT_NAME);
 		Assert.assertNotNull("failed to create project", mproj);
 		
-		modelica_project = mproj.getProject();
+		modelica_project = mproj.getWrappedProject();
 		
 		/*
 		 * populate with some packages
@@ -407,8 +407,18 @@ public class Area51Projects
 			"  import Modelica.*;\n" +
 			"  // renaming import\n" +
 			"  import mm = Modelica.Math;\n" +
+			"\n"+
+			"  // import some local packages, defined in the same project\n"+
+			"  import foo = hepp;\n"+
+			"  import hepp.hopp;\n"+
+			"  import hepp.*;\n"+
+			"  import root_package.root_package_model;\n"+
+			""+
 			"\n" +
 			"  class bar\n" +
+			"    // a import that is local to class bar\n"+
+			"    import cp = childless_package;\n"+
+			"  equation\n"+			
 			"  end bar;\n" +
 			"\n" +
 			"end import_rich_model;";

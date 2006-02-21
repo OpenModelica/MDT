@@ -179,6 +179,12 @@ public class TestElementsInfo extends TestCase
 			 * 2. single definition (import Modelica.Math.sin)
 			 * 3. unqualified       (import Modelica.*)
 			 * 4. renaming          (import mm = Modelica.Math)
+			 * 5. local renaming    (import foo = hepp)
+			 * 6. local qualified   (import hepp.hopp)
+			 * 7. local unqualified (import hepp.*)
+			 * 8. local single definition 
+			 *                      (import root_package.root_package_model)
+
 			 */
 			elementType = ei.getElementType();
 			
@@ -204,6 +210,24 @@ public class TestElementsInfo extends TestCase
 					assertEquals("Modelica.Math", ei.getPath());
 					assertEquals("mm", ei.getId());
 					break;
+				case 5: // import foo = hepp
+					assertEquals("named", ei.getKind());
+					assertEquals("hepp", ei.getPath());
+					assertEquals("foo", ei.getId());
+					break;
+				case 6: // import hepp.hopp
+					assertEquals("qualified", ei.getKind());
+					assertEquals("hepp.hopp", ei.getPath());
+					break;
+				case 7: // import hepp.*
+					assertEquals("unqualified", ei.getKind());
+					assertEquals("hepp", ei.getPath());
+					break;
+				case 8: // import root_package.root_package_model
+					assertEquals("qualified", ei.getKind());
+					assertEquals("root_package.root_package_model",
+							ei.getPath());
+					break;					
 				default:
 					fail("unexpectedly many imports found"); 
 				}
