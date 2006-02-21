@@ -77,8 +77,9 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	private Hashtable<IResource, IModelicaElement> children = 
 			new Hashtable<IResource, IModelicaElement>();
 	
-	protected ModelicaFolder(IContainer cont)
+	protected ModelicaFolder(IModelicaElement parent, IContainer cont)
 	{
+		super(parent);
 		this.container = cont;
 	}
 
@@ -334,22 +335,22 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			if (FolderPackage.isFolderPackage(res))
 			{
 				/* we have ourself a package */
-				return new FolderPackage((IFolder)res);
+				return new FolderPackage(this, (IFolder)res);
 			}
 			else
 			{
 				/* just a folder */
-				return new ModelicaFolder((IContainer)res);
+				return new ModelicaFolder(this, (IContainer)res);
 			}
 		case IResource.FILE:
 			String extension = res.getFileExtension(); 
 			if (extension != null && extension.equals("mo"))
 			{
-				return new ModelicaSourceFile((IFile)res);
+				return new ModelicaSourceFile(this, (IFile)res);
 			}
 		}
 		/* only one option left, a regular file */
-		return new ModelicaFile((IFile)res);
+		return new ModelicaFile(this, (IFile)res);
 
 	}
 	
@@ -411,5 +412,11 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		}
 		
 		return pkgs;
+	}
+
+	public String getFullName() 
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -57,6 +57,7 @@ import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementsInfo;
@@ -76,13 +77,6 @@ public class InnerClass extends ModelicaClass
 	private Type restrictionType;
 	private boolean typeKnown = false;
 	
-	/*
-	 * the file where this class is defined, can be null if it is unknown
-	 * when the container is unknow the class is assumed to 
-	 * be external e.g. defined in system library
-	 */
-	private IModelicaSourceFile sourceFile;
-	
 	private IElementLocation location = null;
 
 	/* subpackages and subclasses hashed by the thier's shortname */
@@ -91,15 +85,17 @@ public class InnerClass extends ModelicaClass
 	/* the import statments */
 	private Collection<IModelicaImport> imports;
 	
-	public InnerClass(IModelicaSourceFile container, String prefix, String name,
-					IElementLocation location, Type restrictionType)
+	public InnerClass(IModelicaSourceFile container,
+					IModelicaClass parentNamespace,
+					String name, IElementLocation location,
+					Type restrictionType)
 	{
-		this.sourceFile = container;
+		super(container);
 		this.location = location;
 		this.restrictionType = restrictionType;
 		typeKnown = true;
 		
-		this.prefix = prefix;
+		this.parentNamespace = parentNamespace;
 		this.name = name;
 		setFullName();
 		
@@ -113,16 +109,16 @@ public class InnerClass extends ModelicaClass
 	 * @param prefix
 	 * @param name
 	 */
-	public InnerClass(String prefix, String name, Type restrictionType)
+	public InnerClass(IModelicaClass parentNamespace, String name, Type restrictionType)
 	{
-		this(null, prefix, name, null, restrictionType);
+		this(null, parentNamespace, name, null, restrictionType);
 	}
 
 
-	public InnerClass(IModelicaSourceFile container, String prefix, String name)
+	public InnerClass(IModelicaSourceFile container, IModelicaClass parentNamespace, String name)
 	{
-		this.sourceFile = container;
-		this.prefix = prefix;
+		super(container);
+		this.parentNamespace = parentNamespace;
 		this.name = name;
 		setFullName();
 	}
@@ -171,7 +167,7 @@ public class InnerClass extends ModelicaClass
 				String className = info.getClassName();
 				
 				elements.put(className, 
-					new InnerClass(sourceFile, fullName, className, location, 
+					new InnerClass(getSourceFile(), this, className, location, 
 							IModelicaClass.Type.parse(info.getClassRestriction())));
 			}
 			/* a component */
@@ -196,7 +192,7 @@ public class InnerClass extends ModelicaClass
 				
 				elements.put(componentName, 
 						new ModelicaComponent(
-								sourceFile,
+								this,
 								componentName,
 								IModelicaComponent.Visibility.parse
 									(info.getElementVisibility()),
@@ -209,9 +205,21 @@ public class InnerClass extends ModelicaClass
 				
 				if (importType.equals("qualified"))
 				{
-					imports.add(
-							ModelicaImport.createQualifiedImport(
-									info.getPath()));
+					try 
+					{
+						imports.add(ModelicaImport.createQualifiedImport
+								(getProject(),info.getPath()));
+					}
+					catch (CompilerException e) 
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+					catch (CoreException e) 
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				else if (importType.equals("unqualified"))
 				{
@@ -300,6 +308,7 @@ public class InnerClass extends ModelicaClass
 	
 	public IResource getResource()
 	{
+		IModelicaSourceFile sourceFile = getSourceFile();
 		if (sourceFile != null)
 		{
 			return sourceFile.getResource();
@@ -367,11 +376,6 @@ public class InnerClass extends ModelicaClass
 		}
 	
 		return restrictionType;
-	}
-
-	public IModelicaSourceFile getSourceFile()
-	{
-		return sourceFile;
 	}
 
 	public Collection<IModelicaImport> getImports() 

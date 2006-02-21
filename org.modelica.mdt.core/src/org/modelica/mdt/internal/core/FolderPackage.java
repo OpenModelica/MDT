@@ -83,10 +83,11 @@ public class FolderPackage extends ModelicaClass
 	 * 
 	 * @param container the folder where this package resides
 	 */
-	public FolderPackage(IFolder container)
+	public FolderPackage(ModelicaFolder parent, IFolder container)
 	{
+		super(parent);
 		this.container = container;
-		prefix = "";
+		parentNamespace = null;
 		name = container.getName();
 		setFullName();
 	}
@@ -98,8 +99,9 @@ public class FolderPackage extends ModelicaClass
 	 */
 	public FolderPackage(FolderPackage parent, IFolder container)
 	{
+		super(parent);
 		this.container = container;
-		prefix = parent.getFullName();
+		parentNamespace = parent;
 		name = container.getName();
 		setFullName();
 	}
@@ -310,17 +312,17 @@ public class FolderPackage extends ModelicaClass
 			else
 			{
 				/* just a folder */
-				return new ModelicaFolder((IContainer)res);
+				return new ModelicaFolder(this, (IContainer)res);
 			}
 		case IResource.FILE:
 			String extension = res.getFileExtension(); 
 			if (extension != null && extension.equals("mo"))
 			{
-				return new ModelicaSourceFile((IFile)res);
+				return new ModelicaSourceFile(this, (IFile)res);
 			}
 		}
 		/* only one option left, a regular file */
-		return new ModelicaFile((IFile)res);
+		return new ModelicaFile(this, (IFile)res);
 
 	}
 
@@ -334,6 +336,12 @@ public class FolderPackage extends ModelicaClass
 	{
 		// TODO implement me
 		return new LinkedList<IModelicaImport>();
+	}
+
+	public IModelicaClass getParentNamespace() 
+	{
+		// TODO implement me
+		return null;
 	}
 
 	

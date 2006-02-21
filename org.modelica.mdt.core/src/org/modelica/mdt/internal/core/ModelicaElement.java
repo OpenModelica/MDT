@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -62,6 +63,32 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 abstract public class ModelicaElement extends PlatformObject 
 	implements IModelicaElement 
 {
+	private IModelicaElement parent;
+	
+	protected ModelicaElement(IModelicaElement parent)
+	{
+		this.parent = parent;
+	}
+	
+	public IModelicaElement getParent()
+	{
+		return parent;
+	}
+	
+	public IModelicaProject getProject()
+	{
+		return parent.getProject();
+	}
+	
+	public IModelicaSourceFile getSourceFile()
+	{
+		if (parent == null)
+		{
+			return null;
+		}
+		return parent.getSourceFile();
+	}
+	
 	public IResource getResource() 
 	{
 		return null;
@@ -124,10 +151,5 @@ abstract public class ModelicaElement extends PlatformObject
 	{
 		/* we are not defined in an external file by default */
 		return null;
-	}
-
-	public IModelicaSourceFile getSourceFile()
-	{
-		return null;
-	}
+	}	
 }

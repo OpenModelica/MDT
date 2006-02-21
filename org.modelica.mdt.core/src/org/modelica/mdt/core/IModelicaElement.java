@@ -63,6 +63,15 @@ public interface IModelicaElement extends IAdaptable
 	public String getElementName();
 
 	/**
+	 * return the element's full name, that is if element's full name is
+	 * foo.bar.hej then the prefix is foo.bar and short name is hej
+	 * 
+	 * @return the full name of this package
+	 */
+	public String getFullName();
+
+	
+	/**
 	 * Returns the innermost resource enclosing this element. 
 	 * If this element is included in an archive and this archive is not external, 
 	 * this is the underlying resource corresponding to the archive. 
@@ -125,4 +134,11 @@ public interface IModelicaElement extends IAdaptable
 	 */
 	public IModelicaSourceFile getSourceFile();
 	
+	
+	public IModelicaElement getParent();
+	
+	/**
+	 * @return the project where this element is defined
+	 */
+	public IModelicaProject getProject();
 }

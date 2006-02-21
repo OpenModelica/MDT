@@ -41,9 +41,15 @@
 
 package org.modelica.mdt.internal.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
+import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * An implementation of IModelicaImport interface.
@@ -56,7 +62,8 @@ public class ModelicaImport implements IModelicaImport
 	private Type type;
 	private String alias;
 	
-	private ModelicaImport() { }
+	/* this class is instanciated via factory methods */
+	private ModelicaImport() { } 
 	
 	protected static ModelicaImport createRenamingImport(String alias,
 			String importedElement)
@@ -75,36 +82,26 @@ public class ModelicaImport implements IModelicaImport
 		mi.type = Type.UNQUALIFIED;
 
 		return mi;
-	}	
+	}
+
 	protected static ModelicaImport createQualifiedImport(
+			IModelicaProject containerProject,
 			String importedElement)
+		throws ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, InvocationError, CoreException
 	{
 		ModelicaImport mi = new ModelicaImport();
 		mi.type = Type.QUALIFIED;
-
+		mi.importedPackage = containerProject.getPackage(importedElement);
+		
+		if (mi.importedPackage == null)
+		{
+			/* the package specified in this import statment does not exists */
+			//TODO throw an exception or something
+			System.out.println("omg, omg, omg ! " + importedElement);
+		}
+		
 		return mi;
-//		
-//		mi.importedPackage = containerProject.getPackage(importedElement);
-//	
-//		if (mi.importedPackage != null)
-//		{
-//			/* we are importing a package, this is a qualified import */
-//			mi.type = Type.QUALIFIED;
-//			return mi;
-//		}
-//		
-//		/*
-//		 *  this looks like a single definition import
-//		 */
-//		
-//		String prefix = importedElement.substring(0,
-//				importedElement.lastIndexOf('.'));
-//		System.out.println(prefix);
-//		
-//		IModelicaClass parentPkg = containerProject.getPackage(prefix);
-//
-//		
-//		return mi;
 	}
 
 	/**

@@ -44,6 +44,7 @@ package org.modelica.mdt.internal.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 
 /**
  * Superclass of all modelica class/package representation, collects 
@@ -56,9 +57,10 @@ abstract public class ModelicaClass extends ModelicaElement
 	implements IModelicaClass
 {
 	/**
-	 * the full name of the parent class
+	 * The namespace where this class is defined or null if 
+	 * defined in top-level namespace
 	 */
-	protected String prefix;
+	protected IModelicaClass parentNamespace;
 	
 	/**
 	 * the short name of this class
@@ -78,14 +80,17 @@ abstract public class ModelicaClass extends ModelicaElement
 	 */
 	private IFile container;
 	
-	
+	public ModelicaClass(IModelicaElement parent)
+	{
+		super(parent);
+	}
 
 	/**
 	 * calculate the base name of this package
 	 */
 	protected void setFullName()
 	{
-		if(prefix.equals(""))
+		if (parentNamespace == null)
 		{
 			/*
 			 * special case for packages that are direct children of
@@ -95,13 +100,17 @@ abstract public class ModelicaClass extends ModelicaElement
 		}
 		else /* general case */
 		{
-			fullName = prefix + "." + name;
+			fullName = parentNamespace.getFullName() + "." + name;
 		}
 	}
 	
 	public String getPrefix()
 	{
-		return prefix;
+		if (parentNamespace == null)
+		{
+			return "";
+		}
+		return parentNamespace.getFullName();
 	}
 
 	public String getElementName() 
@@ -114,11 +123,14 @@ abstract public class ModelicaClass extends ModelicaElement
 		return fullName;
 	}
 	
-
-	
 	public IResource getResource() 
 	{
 		return container;
 	}
+	
 
+	public IModelicaClass getParentNamespace() 
+	{
+		return parentNamespace;
+	}
 }

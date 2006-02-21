@@ -105,14 +105,6 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 * @return the prefix of this package
 	 */
 	public String getPrefix();
-
-	/**
-	 * return the class' full name, that is if class' full name is
-	 * foo.bar.hej then the prefix is foo.bar and short name is hej
-	 * 
-	 * @return the full name of this package
-	 */
-	public String getFullName();
 	
 	/**
 	 * @return the restriction type of this class
@@ -126,5 +118,11 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	public Collection<IModelicaImport> getImports()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException;
+	
+	/**
+	 * @return the class that defines tha parent namespace or null if this class
+	 * is defined in top namespace
+	 */
+	public IModelicaClass getParentNamespace();
 	
 }

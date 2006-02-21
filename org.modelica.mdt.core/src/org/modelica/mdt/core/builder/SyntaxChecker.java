@@ -334,7 +334,9 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			{
 				int avail = bis.available();
 				if(avail == 0)
+				{
 					break;
+				}
 				byte[] buf = new byte[avail];
 				bis.read(buf, 0, avail);
 

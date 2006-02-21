@@ -68,7 +68,7 @@ public class ModelicaSourceFile extends ModelicaElement
 	implements IModelicaSourceFile 
 {
 	private IFile file;
-	private FolderPackage parentPackage;
+//	private FolderPackage parentPackage;
 
 	/* classes and packages in this file hashed by name */
 	Hashtable<String, IModelicaElement> children = null;	
@@ -76,23 +76,25 @@ public class ModelicaSourceFile extends ModelicaElement
 	/**
 	 * Create a modelica file that is inside a package. All the definitions
 	 * in the file are placed in the namespace under the parent package.
-	 * 
-	 * @param parent
-	 * @param file
 	 */
 	public ModelicaSourceFile(FolderPackage parent, IFile file) 
 	{
-		this.parentPackage = parent;
+		super(parent);
+		//this.parentPackage = parent;
 		this.file = file;
 	}
 
-	
-	public ModelicaSourceFile(IFile file) 
+	/**
+	 * Creagte a modelica source file that is inside a folder. All the 
+	 * definitions in the file are placed in the root namespace.
+	 */
+	public ModelicaSourceFile(ModelicaFolder parent, IFile file) 
 	{
+		super(parent);
 		this.file = file;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.modelica.mdt.core.IModelicaElement#getElementName()
 	 */
 	public String getElementName()
@@ -128,17 +130,18 @@ public class ModelicaSourceFile extends ModelicaElement
 		IParseResults res = CompilerProxy.loadSourceFile(file);
 		for (String name : res.getClasses())
 		{
-			if (parentPackage == null)
+			IModelicaElement parent = getParent();
+			FolderPackage parentPackage = null;
+			/* 
+			 * check if we live inside a package, in that
+			 * case define the classes inside our parents namespace
+			 * otherwise define it in the root name space (=null)
+			 */ 
+			if (parent instanceof FolderPackage)
 			{
-				/* we are not inside a package */
-				elements.put(name, new InnerClass(this, "", name));
+				parentPackage = (FolderPackage)parent; 
 			}
-			else
-			{
-				elements.put(name, 
-						new InnerClass(this, parentPackage.getFullName(),
-						name));
-			}
+			elements.put(name, new InnerClass(this, parentPackage,	name));
 		}
 		
 		
@@ -309,4 +312,9 @@ public class ModelicaSourceFile extends ModelicaElement
 		return null; /* no definition found at position */
 	}
 
+
+	public String getFullName() 
+	{
+		return getElementName();
+	}
 }

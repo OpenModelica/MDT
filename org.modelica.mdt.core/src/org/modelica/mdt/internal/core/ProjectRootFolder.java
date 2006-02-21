@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Link�pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Link�pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -38,39 +38,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.internal.core;
 
-import java.util.Collection;
-
-import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.compiler.CompilerInstantiationException;
-import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.InvocationError;
-import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.IModelicaProject;
 
 /**
- * A modelica element that can have children.
- * 
- * @author Elmir Jagudin
+ * A special object that represent the root folder in a project.
+ * The folder inside which all projects elements are contained. 
  */
-abstract public class ModelicaParent extends ModelicaElement 
+public class ProjectRootFolder extends ModelicaFolder
 {
-	public ModelicaParent(IModelicaElement parent)
+	/*
+	 * The class implements the special version of getProject()
+	 * method that finishes the look-up calls to getProject()
+	 * that are propageted to the parents
+	 * by returning the results of getParent()
+	 * This is becouse the root folder is a direct child of a project.
+	 */
+	protected ProjectRootFolder(IModelicaProject project)
 	{
-		super(parent);
-	}
-	abstract public Collection<?> getChildren()
-		throws ConnectException, UnexpectedReplyException, 
-				InvocationError, CoreException, CompilerInstantiationException; 
-
-	public boolean hasChildren()
-		throws CoreException, ConnectException, 
-			UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
-	{
-		return !getChildren().isEmpty();
+		super(project, project.getWrappedProject());
 	}
 
-
+	public IModelicaProject getProject()
+	{
+		/* the project is also our direct parent */
+		return (IModelicaProject) getParent();
+	}
 }

@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.internal.core;
 
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,12 +53,16 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.internal.core.ModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
 
 /**
  * The internal implementation of the IModelicaRoot interface.
@@ -68,6 +73,8 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 {
 	private Hashtable<IProject, IModelicaProject> projectsTable;
 	private LinkedList<IModelicaElementChangeListener> listeners;
+	
+	private Collection<IModelicaClass> standardPackages = null;
 
 	/**
 	 * @see org.modelica.mdt.core.IModelicaRoot#getProjects()
@@ -254,5 +261,15 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 
 		/* return a wraped project to the caller */
 		return new ModelicaProject(newProject);
+	}
+
+	public Collection<IModelicaClass> getStandardLibraryPackages()
+		throws ConnectException, CompilerInstantiationException 
+	{
+		if (standardPackages == null)
+		{
+			standardPackages = CompilerProxy.getStandardLibrary();
+		}
+		return standardPackages;
 	}
 }

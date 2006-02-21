@@ -59,6 +59,7 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IParent;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -66,7 +67,7 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
- * Wrappper around IProject to provide Modelica specific view
+ * Wrappper around IProject to provide Modelica specific view.
  * 
  * @author Elmir Jagudin
  */
@@ -78,6 +79,8 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	
 	protected ModelicaProject(IProject project)
 	{
+	 	/* A project is a top-level modelica element. */
+		super(null);
 		this.project = project; 
 	}
 
@@ -85,7 +88,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	 * 
 	 * @return the IProject on which this IModelicaProject  was created
 	 */
-	public IProject getProject()
+	public IProject getWrappedProject()
 	{
 		return project;
 	}
@@ -101,7 +104,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	{
 		if (rootFolder == null)
 		{
-			rootFolder = new ModelicaFolder(project);
+			rootFolder = new ProjectRootFolder(this);
 		}
 		
 		return rootFolder;
@@ -148,6 +151,9 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		return changes;
 	}
 	
+	/**
+	 * @see IModelicaProject#getPackage(String)
+	 */
 	public IModelicaClass getPackage(String packageName) 
 		throws ConnectException, CompilerInstantiationException, 
 			UnexpectedReplyException, CoreException, InvocationError
@@ -160,9 +166,14 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		 * among the foo's children and gazonk among bar's offspring 
 		 */
 		
-		/* start looking among root packages */
-		Collection<? extends IModelicaElement> currentChildren = 
-			getRootPackages();
+		/*
+		 * start looking among local root packages and 
+		 * standard library root packages
+		 */
+		Collection<? super IModelicaElement> currentChildren =
+			new LinkedList<IModelicaElement>();
+		currentChildren.addAll(getRootPackages());		
+		currentChildren.addAll(ModelicaCore.getModelicaRoot().getStandardLibraryPackages());
 		
 		/* iterate over separate package names */
 		StringTokenizer pkgNames = new StringTokenizer(packageName, ".");
@@ -191,7 +202,8 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 					 * we found our next subpackage,
 					 * continiue to look among it's children
 					 */
-					currentChildren = p.getChildren();
+					currentChildren.clear();
+					currentChildren.addAll(p.getChildren());
 					currentParent = p;
 					break;
 				}
@@ -210,7 +222,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		return currentParent;
 	}
 	
-	public Collection<? extends IModelicaClass> getRootPackages()
+	public Collection<IModelicaClass> getRootPackages()
 		throws ConnectException, CompilerInstantiationException,
  			UnexpectedReplyException, CoreException
 	{
@@ -284,4 +296,16 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		return currentParent;
 	}
 
+	public String getFullName() 
+	{
+		return getElementName();
+	}
+
+	/**
+	 * project is defined in it self :P
+	 */
+	public IModelicaProject getProject()
+	{
+		return this;
+	}
 }

@@ -44,8 +44,8 @@ package org.modelica.mdt.internal.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
-import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IElementLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -60,23 +60,22 @@ public class ModelicaComponent extends ModelicaElement
 	private String name;
 	private Visibility visibility;
 	private IElementLocation location;
-	private IModelicaSourceFile sourceFile;
 	
 	/**
 	 * Create class component
 	 * 
-	 * @param container The filename where this component is defined
+	 * @param parent the class where this component is defined
 	 * @param name name if this component
 	 * @param visibility whatever this component is public or protected
 	 * @param location location in the source code file
 	 */
-	public ModelicaComponent(IModelicaSourceFile container, String name, Visibility visibility,
-						IElementLocation location)
+	public ModelicaComponent(IModelicaClass parent, String name, 
+				Visibility visibility, IElementLocation location)
 	{
+		super(parent);
 		this.name = name;
 		this.visibility = visibility;
 		this.location = location;
-		this.sourceFile = container;
 	}
 
 	public String getElementName()
@@ -91,11 +90,7 @@ public class ModelicaComponent extends ModelicaElement
 	
 	public IResource getResource()
 	{
-		if (sourceFile == null)
-		{
-			return null;
-		}
-		return sourceFile.getResource();
+		return getParent().getResource();
 	}
 	
 	/**
@@ -114,9 +109,8 @@ public class ModelicaComponent extends ModelicaElement
 		return location.getPath();
 	}
 
-	public IModelicaSourceFile getSourceFile()
+	public String getFullName() 
 	{
-		return sourceFile;
+		return getParent().getFullName() + "." + name;
 	}
-
 }

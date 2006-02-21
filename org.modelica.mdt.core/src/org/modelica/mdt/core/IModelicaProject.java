@@ -63,9 +63,9 @@ public interface IModelicaProject extends IModelicaElement
 	public IModelicaFolder getRootFolder();
 	
 	/**
-	 * @return the wraped project handle
+	 * @return the wrapped project handle
 	 */
-	public IProject getProject();
+	public IProject getWrappedProject();
 	
 	/**
 	 * get package in this project by name

@@ -40,7 +40,11 @@
  */
 package org.modelica.mdt.core;
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
 
 /**
  * @author Elmir Jagudin
@@ -91,5 +95,11 @@ public interface IModelicaRoot
 	public void 
 		removeModelicaElementChangeListener
 			(IModelicaElementChangeListener listener);
+	
+	/**
+	 * @return the top-level packages in the standard library
+	 */
+	public Collection<IModelicaClass> getStandardLibraryPackages()
+		throws ConnectException, CompilerInstantiationException;
 
 }

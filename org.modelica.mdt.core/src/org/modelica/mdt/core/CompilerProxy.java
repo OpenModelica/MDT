@@ -72,6 +72,7 @@ import org.modelica.mdt.internal.core.CorePlugin;
  * All access to the modelica compiler should be made through this class.
  * 
  */
+//TODO move this to org.modelica.mdt.internal.core package ?
 public class CompilerProxy
 {
 	private static IModelicaCompiler compiler = null;
@@ -197,8 +198,8 @@ public class CompilerProxy
 		
 		for (String packageName : getCompiler().getStandardLibrary())
 		{
-			pkgs.add(new InnerClass("", 
-					packageName, IModelicaClass.Type.PACKAGE));
+			pkgs.add(new InnerClass(null, packageName, 
+					IModelicaClass.Type.PACKAGE));
 		}
 		
 		return pkgs;

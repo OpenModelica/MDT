@@ -43,6 +43,7 @@ package org.modelica.mdt.internal.core;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 
 /**
@@ -53,8 +54,9 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 {
 	private IFile file;
 
-	public ModelicaFile(IFile file)
+	public ModelicaFile(IModelicaElement parent, IFile file)
 	{
+		super(parent);
 		this.file = file;
 	}
 
@@ -70,5 +72,10 @@ public class ModelicaFile extends ModelicaElement implements IModelicaFile
 	public IResource getResource()
 	{
 		return file;
+	}
+
+	public String getFullName() 
+	{
+		return file.getName();
 	}
 }
