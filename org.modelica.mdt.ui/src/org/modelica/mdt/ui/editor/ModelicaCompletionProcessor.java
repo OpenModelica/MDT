@@ -42,8 +42,11 @@
 package org.modelica.mdt.ui.editor;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -55,16 +58,23 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.modelica.mdt.core.CompilerProxy;
-import org.modelica.mdt.core.Element;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaImport;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
-import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementsInfo;
+import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.ui.UIPlugin;
 
 
 /**
@@ -82,13 +92,13 @@ import org.modelica.mdt.internal.core.ErrorManager;
  */
 public class ModelicaCompletionProcessor implements IContentAssistProcessor
 {
-	/*
-	 * There is a separate narrowedProposals so that we can store the original
-	 * proposals. This allows us to backtrace the proposals.
-	 */
-	private List narrowedProposals = new List();
-	private List proposals = new List();
-	private int typeAhead = 0;
+//	/*
+//	 * There is a separate narrowedProposals so that we can store the original
+//	 * proposals. This allows us to backtrace the proposals.
+//	 */
+//	private List narrowedProposals = new List();
+//	private List proposals = new List();
+//	private int typeAhead = 0;
 
 	private Vector<String> inputParameters = new Vector<String>();
 	private Vector<String> outputParameters = new Vector<String>();
@@ -158,110 +168,133 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	
 	protected IContextInformationValidator validator = new Validator();
 	
-	/**
-	 * This method calls OMC and tries to get the classes defined in the
-	 * class name found in the document we're editing.
-	 * 
-	 * @param viewer where the document is stored
-	 * @param offset offset to where in the document we've typed a .
-	 */
-	private void newProposals(String className)
-	{
-		if(proposals != null)
-		{
-			proposals.clear();
-		}
-		else
-		{
-			proposals = new List();
-		}
-		if(narrowedProposals != null)
-		{
-			narrowedProposals.clear();
-		}
-		else
-		{
-			narrowedProposals = new List();
-		}
-		
-		typeAhead = 0;
-
-		try
-		{
-			proposals = CompilerProxy.getClassNames(className);
-		}
-		catch (CompilerException e)
-		{
-			/* 
-			 * if there were errors fetching classnames, report
-			 * error and leave proposals empty
-			 */
-			ErrorManager.showCompilerError(e);
-		}
-		finally
-		{
-			if(proposals != null)
-			{
-				narrowedProposals.addAll(proposals);
-			}
-		}
-	}
+//	/**
+//	 * This method calls OMC and tries to get the classes defined in the
+//	 * class name found in the document we're editing.
+//	 * 
+//	 * @param viewer where the document is stored
+//	 * @param offset offset to where in the document we've typed a .
+//	 */
+//	private void newProposals(String className)
+//	{
+//		if(proposals != null)
+//		{
+//			proposals.clear();
+//		}
+//		else
+//		{
+//			proposals = new List();
+//		}
+//		if(narrowedProposals != null)
+//		{
+//			narrowedProposals.clear();
+//		}
+//		else
+//		{
+//			narrowedProposals = new List();
+//		}
+//		
+//		typeAhead = 0;
+//
+//		try
+//		{
+//			proposals = CompilerProxy.getClassNames(className);
+//		}
+//		catch (CompilerException e)
+//		{
+//			/* 
+//			 * if there were errors fetching classnames, report
+//			 * error and leave proposals empty
+//			 */
+//			ErrorManager.showCompilerError(e);
+//		}
+//		finally
+//		{
+//			if(proposals != null)
+//			{
+//				narrowedProposals.addAll(proposals);
+//			}
+//		}
+//	}
 	
+//	/**
+//	 * Update the completion proposals by only adding the class names that
+//	 * match the currently typed prefix of a class.
+//	 * 
+//	 * @param className the prefix of a proper class name
+//	 */
+//	private void updateProposals(String className)
+//	{
+//		String classPrefix = className.substring(className.lastIndexOf('.') + 1);
+//		
+//		typeAhead = classPrefix.length();
+//		
+//		narrowedProposals.clear();
+//		
+//		for (ListElement proposedClass : proposals)
+//		{
+//			if (((Element)proposedClass).toString().startsWith(classPrefix))
+//			{
+//				narrowedProposals.append(proposedClass);
+//			}
+//		}
+//	}
+//	
 	/**
-	 * Update the completion proposals by only adding the class names that
-	 * match the currently typed prefix of a class.
-	 * 
-	 * @param className the prefix of a proper class name
-	 */
-	private void updateProposals(String className)
-	{
-		String classPrefix = className.substring(className.lastIndexOf('.') + 1);
-		
-		typeAhead = classPrefix.length();
-		
-		narrowedProposals.clear();
-		
-		for (ListElement proposedClass : proposals)
-		{
-			if (((Element)proposedClass).toString().startsWith(classPrefix))
-			{
-				narrowedProposals.append(proposedClass);
-			}
-		}
-	}
-	
-	/**
-	 * Tries to find a class name in the document before the current
-	 * cursor offset (where we're typing).
+	 * calculates the prefix of possible class/package/component names
+	 * at specified offset
 	 * 
 	 * @param viewer the container of the document
 	 * @param offset the offset into the document where we're typing
-	 * @return the class name found
+	 * @return the prefix calculated
 	 */
-	private static String findClassName(ITextViewer viewer, int offset)
+	private String getPrefix(IDocument doc, int offset)
 	{
-		int tempCounter = offset;
-		String className = "";
-		char ch = '\n';
-		do
+		/*
+		 * look for characters that can not be part of a
+		 * modelica element name such as ' ', '\t' and so on
+		 * this is just a best guess attempt to figure out the
+		 * prefix, actually
+		 */
+		try
 		{
-			try
+			int end = offset;
+			char c;
+			
+			do
 			{
-				ch = viewer.getDocument().getChar(--tempCounter);
+				/* goto next character */
+				offset--;
+				if (offset < 0)
+				{
+					/* past the start of the document */
+					break;
+				}
+				c = doc.getChar(offset);
 			}
-			catch(BadLocationException e)
-			{
-				System.out.println("shhh, don't say anything");
-			}
-			if(ch == '\n' || ch == '\t' || ch == ' '
-				|| (ch == '(' && tempCounter < offset - 1))
-				break;
-			else
-				className = ch + className;
+			while
+			(	/* the characters we are looking for */
+				c != '\n' && c != '\t' && c != ' ' && c != '(' && c != ';'
+				&& c != ')');
+//			for (char ch )
+//			do
+//			{
+//				ch = doc.getChar(offset);
+//				System.out.println(offset + " '" + ch + "'");
+//			}
+//			while (offset >= 0 &&
+//					/* the characters we are looking for */
+//					ch != '\n' && ch != '\t' && ch != ' ' && ch != '(');
+//
+			offset++; /* exclude the charachter we looked at lastly */
+			return doc.get(offset, (end - offset));
 		}
-		while(true);
-		
-		return className;
+		catch (BadLocationException e)
+		{
+			ErrorManager.logBug(UIPlugin.getSymbolicName(),
+					"illegal position encountered while calculating prefix");
+		}
+		return "omg"; /* this will happend only if our code is broken somehow */
 	}
 	
 	private static String getLine(ITextViewer viewer, int offset)
@@ -373,73 +406,194 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset)
 	{
-//		IEditorInput input = editor.getEditorInput();
+		
+		IEditorInput input = editor.getEditorInput();
+		LinkedList<ICompletionProposal> proposals = 
+			new LinkedList<ICompletionProposal>();
+		
+		String prefix = getPrefix(viewer.getDocument(), offset);
+
 		//TODO when eclipse restores the files that where left
 		// in the editor area when it was closed last time the
 		// editor input will not be of ModelicaElementEditorInput
 		// thus code completion will not work, this should be fixed somehow
+		// check out org.eclipse.ui.IEditorInput.getPersistable() method 
 
-//		if (input instanceof ModelicaElementEditorInput)
-//		{
-//			IModelicaSourceFile file = 
-//				((ModelicaElementEditorInput)input).getSourceFile();
-//			System.out.println("we are looking at " + file);
-//			try
-//			{
-//				IModelicaClass clazz = file.getClassAt(offset);
-//				if (clazz != null)
-//				{
-//					System.out.println("class def is " + clazz.getElementName());
-//				}
-//				else
-//				{
-//					System.out.println("no class here");
-//				}
-//			}
-//			catch (Exception e)
-//			{
-//				System.out.println(e);
-//				e.printStackTrace();
-//			}
-//		}
-		
-		String className = findClassName(viewer, offset);
-		
-		if (className == null || className.equals(""))
+		if (input instanceof ModelicaElementEditorInput)
 		{
-			/* bail out without any proposals */
-			return new ICompletionProposal[0];
+			IModelicaSourceFile file = 
+				((ModelicaElementEditorInput)input).getSourceFile();
+			System.out.println("we are looking at " + file);
+			try
+			{
+				IModelicaClass clazz = file.getClassAt(offset);
+				if (clazz != null)
+				{
+					System.out.println("class def is " + clazz.getElementName());
+					computeCompPropsFromImports(clazz, prefix, offset, proposals);
+				}
+				else
+				{
+					System.out.println("no class here");
+				}
+			}
+			catch (Exception e)
+			{
+				System.out.println(e);
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			System.out.println("not an instance");
 		}
 		
-		if(className.charAt(className.length() - 1) == '.')
+//		String className = findClassName(viewer, offset);
+//		
+//		if (className == null || className.equals(""))
+//		{
+//			/* bail out without any proposals */
+//			return new ICompletionProposal[0];
+//		}
+//		
+//		if(className.charAt(className.length() - 1) == '.')
+//		{
+//			/*
+//			 * If the last character is a dot (.) we should fetch new proposals.
+//			 * We do a substring to get rid of the dot at the end.
+//			 */
+//			newProposals(className.substring(0, className.length()-1));
+//		}
+//		else
+//		{
+//			/* 
+//			 * Else we should narrow the proposals by only proposing the class
+//			 * names that has a prefix matching that of the typed class name.
+//			 */
+//			updateProposals(className);
+//		}
+//		
+//		/* Create 'real' completion proposals out of our proposals. */
+//		ICompletionProposal[] completionProposals = 
+//			new ICompletionProposal[narrowedProposals.size()];
+//		for(int i = 0;i < narrowedProposals.size();i++)
+//		{
+//			String proposal = narrowedProposals.elementAt(i).toString();
+//			completionProposals[i] =
+//				new CompletionProposal(proposal, offset - typeAhead, typeAhead,
+//						proposal.length(), null, proposal, null, null);
+//		}
+//
+//		return completionProposals;
+		return proposals.toArray(new ICompletionProposal[proposals.size()]);
+	}
+
+	/**
+	 * compute completion proposals based in imports statments in the provided class
+	 * 
+	 * @param clazz the class who's import statmets to use for computation
+	 * @param proposals the container where the proposals will be added
+	 */
+	private void computeCompPropsFromImports(IModelicaClass clazz, 
+			String prefix, int offset,
+			Collection<ICompletionProposal> proposals) 
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException
+	{
+		/*
+		 * compute complete list of imports available in this class
+		 * That is the list of all imports made in this class and 
+		 * up to the top-level namespace 
+		 */
+		Collection<IModelicaImport> imports = new LinkedList<IModelicaImport>();
+		IModelicaClass currClass = clazz;
+		
+		while (currClass != null)
 		{
-			/*
-			 * If the last character is a dot (.) we should fetch new proposals.
-			 * We do a substring to get rid of the dot at the end.
+			imports.addAll(currClass.getImports());
+			currClass = currClass.getParentNamespace();
+		}
+		
+		for (IModelicaImport imp : imports)
+		{
+			IModelicaClass imported = imp.getImportedPackage();
+
+			switch (imp.getType())
+			{
+			case QUALIFIED:
+				computeCompPropsFromPackage(imp.getImportedPackage(),
+						prefix, offset, proposals);
+				break;
+			case SINGLE_DEFINITION:
+				break;
+			case UNQUALIFIED:
+				break;
+			case RENAMING:
+				break;
+			}
+		}
+	}
+
+	private void computeCompPropsFromPackage(IModelicaClass importedPackage,
+			String prefix, int offset,
+			Collection<ICompletionProposal> proposals) 
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CompilerInstantiationException, CoreException
+	{
+		/*
+		 * check with regards to prefix if it is possible that user
+		 * wants to type name from this package.
+		 */
+		int firstDot = prefix.indexOf('.');
+		String packageName = importedPackage.getElementName();
+
+		if (firstDot == -1)
+		{
+			/* 
+			 * there is not dots in the currnet prefix
+			 *
+			 * prefix must match the begining of our name otherwise
+			 * the user is typing something else
 			 */
-			newProposals(className.substring(0, className.length()-1));
+			if (!packageName.startsWith(prefix))
+			{
+				/* 
+				 * user is typing something else, 
+				 * don't contribute any proposals 
+				 */
+				return;
+			}
 		}
 		else
 		{
 			/* 
-			 * Else we should narrow the proposals by only proposing the class
-			 * names that has a prefix matching that of the typed class name.
+			 * the is dot in the prefix, name of this package must match
+			 * with the prefixe's first part before the dot
 			 */
-			updateProposals(className);
+			if (!packageName.equals(prefix.substring(0, firstDot)))
+			{
+				/* 
+				 * user is typing something else, 
+				 * don't contribute any proposals 
+				 */
+				return;
+			}
 		}
 		
-		/* Create 'real' completion proposals out of our proposals. */
-		ICompletionProposal[] completionProposals = 
-			new ICompletionProposal[narrowedProposals.size()];
-		for(int i = 0;i < narrowedProposals.size();i++)
+		StringTokenizer st = new StringTokenizer(prefix, ".");
+		String token;
+		
+		while (st.hasMoreTokens())
 		{
-			String proposal = narrowedProposals.elementAt(i).toString();
-			completionProposals[i] =
-				new CompletionProposal(proposal, offset - typeAhead, typeAhead,
-						proposal.length(), null, proposal, null, null);
+			token = st.nextToken();
+			System.out.println("tonek: " + token);
 		}
-
-		return completionProposals;
+		
+//		for (IModelicaElement element : importedPackage.getChildren())
+//		{
+//			String name = element.getFullName();
+//			proposals.add(new CompletionProposal(name, 0, name.length(), 0));
+//		}
 	}
 
 	/**
@@ -449,7 +603,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset)
 	{
-		String className = findClassName(viewer, offset);
+		String className = getPrefix(viewer.getDocument(), offset);
 
 		fetchParameters(className.substring(0, className.length()-1));
 		

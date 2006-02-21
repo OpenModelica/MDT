@@ -83,8 +83,8 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			 */
 			IModelicaProject mproj = (IModelicaProject) object;
 			IWorkbenchAdapter wadap = 
-				(IWorkbenchAdapter) mproj.getProject().getAdapter(IWorkbenchAdapter.class);
-			return wadap.getImageDescriptor(mproj.getProject());
+				(IWorkbenchAdapter) mproj.getWrappedProject().getAdapter(IWorkbenchAdapter.class);
+			return wadap.getImageDescriptor(mproj.getWrappedProject());
 			
 		}
 		else if (object instanceof IModelicaClass)

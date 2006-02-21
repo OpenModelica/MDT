@@ -18,4 +18,5 @@ Require-Bundle: org.modelica.mdt.core,
 Eclipse-AutoStart: true
 Bundle-Vendor: PELAB
 Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test",
+ org.modelica.mdt.ui.editor;x-friends:="org.modelica.mdt.test",
  org.modelica.mdt.ui.wizards;x-friends:="org.modelica.mdt.test"

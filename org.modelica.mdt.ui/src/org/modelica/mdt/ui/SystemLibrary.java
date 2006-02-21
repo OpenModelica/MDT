@@ -50,6 +50,7 @@ import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -68,6 +69,11 @@ public class SystemLibrary extends PlatformObject
 		return "System Library";
 	}
 
+	public String getFullName()
+	{
+		return getElementName();
+	}
+	
 	public IResource getResource()
 	{
 		return null;
@@ -99,4 +105,13 @@ public class SystemLibrary extends PlatformObject
 		return null;
 	}
 
+	public IModelicaElement getParent()
+	{
+		return null;
+	}
+
+	public IModelicaProject getProject()
+	{
+		return null;
+	}
 }

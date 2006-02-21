@@ -118,7 +118,7 @@ public class ModelicaElementContentProvider
 		{
 			IModelicaProject modelicaProj = 
 				(IModelicaProject)parent;
-			if ( !modelicaProj.getProject().isOpen())
+			if ( !modelicaProj.getWrappedProject().isOpen())
 			{
 				/* we have no children if we are closed */
 				return new Object[0];
@@ -131,7 +131,7 @@ public class ModelicaElementContentProvider
 				list = 
 					modelicaProj.getRootFolder().getChildren();
 				
-				hasModelicaNature = modelicaProj.getProject().
+				hasModelicaNature = modelicaProj.getWrappedProject().
 					getDescription().hasNature(CorePlugin.MODELICA_NATURE);
 			}
 			catch (CompilerException e)
@@ -200,7 +200,7 @@ public class ModelicaElementContentProvider
 		}
 		else if (element instanceof IModelicaProject)
 		{
-			return ((IModelicaProject)element).getProject().isOpen();
+			return ((IModelicaProject)element).getWrappedProject().isOpen();
 		}
 		else if (element instanceof IParent)
 		{

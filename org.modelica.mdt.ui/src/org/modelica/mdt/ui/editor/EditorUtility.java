@@ -78,7 +78,8 @@ public class EditorUtility
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException
 	{
-		if (element instanceof IModelicaFile)
+		if (element instanceof IModelicaFile && 
+				!(element instanceof IModelicaSourceFile)) /* yeah, this is uggly */
 		{
 			openInEditor((IFile)element.getResource());
 		}
