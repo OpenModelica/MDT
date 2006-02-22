@@ -65,6 +65,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -276,16 +277,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			(	/* the characters we are looking for */
 				c != '\n' && c != '\t' && c != ' ' && c != '(' && c != ';'
 				&& c != ')');
-//			for (char ch )
-//			do
-//			{
-//				ch = doc.getChar(offset);
-//				System.out.println(offset + " '" + ch + "'");
-//			}
-//			while (offset >= 0 &&
-//					/* the characters we are looking for */
-//					ch != '\n' && ch != '\t' && ch != ' ' && ch != '(');
-//
+
 			offset++; /* exclude the charachter we looked at lastly */
 			return doc.get(offset, (end - offset));
 		}
@@ -294,7 +286,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			ErrorManager.logBug(UIPlugin.getSymbolicName(),
 					"illegal position encountered while calculating prefix");
 		}
-		return "omg"; /* this will happend only if our code is broken somehow */
+		return ""; /* this will happend only if our code is broken somehow */
 	}
 	
 	private static String getLine(ITextViewer viewer, int offset)
@@ -408,83 +400,56 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	{
 		
 		IEditorInput input = editor.getEditorInput();
+		
+		if (!(input instanceof ModelicaElementEditorInput))
+		{
+			/*
+			 * we should never be attached to an editor on anything else
+			 * but a modelica source file (a modelica element)
+			 */
+			ErrorManager.logBug(UIPlugin.getSymbolicName(),
+					"completion prossesor invoked on a non-modelica content");
+			/* no completion if there is a bug ! */
+			return new ICompletionProposal[0];
+			
+			//TODO currently this bug will be triggered when eclipse restores 
+			// the files that where left
+			// in the editor area when it was closed last time the
+			// editor input will not be of ModelicaElementEditorInput
+			// thus code completion will not work, this should be fixed somehow
+			// check out org.eclipse.ui.IEditorInput.getPersistable() method 
+
+		}
+		
 		LinkedList<ICompletionProposal> proposals = 
 			new LinkedList<ICompletionProposal>();
 		
 		String prefix = getPrefix(viewer.getDocument(), offset);
 
-		//TODO when eclipse restores the files that where left
-		// in the editor area when it was closed last time the
-		// editor input will not be of ModelicaElementEditorInput
-		// thus code completion will not work, this should be fixed somehow
-		// check out org.eclipse.ui.IEditorInput.getPersistable() method 
-
-		if (input instanceof ModelicaElementEditorInput)
+		IModelicaSourceFile file = 
+			((ModelicaElementEditorInput)input).getSourceFile();
+		System.out.println("we are looking at " + file);
+		try
 		{
-			IModelicaSourceFile file = 
-				((ModelicaElementEditorInput)input).getSourceFile();
-			System.out.println("we are looking at " + file);
-			try
+			IModelicaClass clazz = file.getClassAt(offset);
+			if (clazz != null)
 			{
-				IModelicaClass clazz = file.getClassAt(offset);
-				if (clazz != null)
-				{
-					System.out.println("class def is " + clazz.getElementName());
-					computeCompPropsFromImports(clazz, prefix, offset, proposals);
-				}
-				else
-				{
-					System.out.println("no class here");
-				}
+				computeCompPropsFromImports(clazz, prefix, offset, proposals);
 			}
-			catch (Exception e)
+			else
 			{
-				System.out.println(e);
-				e.printStackTrace();
+				System.out.println("no class here");
 			}
 		}
-		else
+		catch (CoreException e)
 		{
-			System.out.println("not an instance");
+			ErrorManager.showCoreError(e);
+		} 
+		catch (CompilerException e)
+		{
+			ErrorManager.showCompilerError(e);
 		}
 		
-//		String className = findClassName(viewer, offset);
-//		
-//		if (className == null || className.equals(""))
-//		{
-//			/* bail out without any proposals */
-//			return new ICompletionProposal[0];
-//		}
-//		
-//		if(className.charAt(className.length() - 1) == '.')
-//		{
-//			/*
-//			 * If the last character is a dot (.) we should fetch new proposals.
-//			 * We do a substring to get rid of the dot at the end.
-//			 */
-//			newProposals(className.substring(0, className.length()-1));
-//		}
-//		else
-//		{
-//			/* 
-//			 * Else we should narrow the proposals by only proposing the class
-//			 * names that has a prefix matching that of the typed class name.
-//			 */
-//			updateProposals(className);
-//		}
-//		
-//		/* Create 'real' completion proposals out of our proposals. */
-//		ICompletionProposal[] completionProposals = 
-//			new ICompletionProposal[narrowedProposals.size()];
-//		for(int i = 0;i < narrowedProposals.size();i++)
-//		{
-//			String proposal = narrowedProposals.elementAt(i).toString();
-//			completionProposals[i] =
-//				new CompletionProposal(proposal, offset - typeAhead, typeAhead,
-//						proposal.length(), null, proposal, null, null);
-//		}
-//
-//		return completionProposals;
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
@@ -516,8 +481,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		for (IModelicaImport imp : imports)
 		{
-			IModelicaClass imported = imp.getImportedPackage();
-
 			switch (imp.getType())
 			{
 			case QUALIFIED:
@@ -546,7 +509,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		 */
 		int firstDot = prefix.indexOf('.');
 		String packageName = importedPackage.getElementName();
-
+			
 		if (firstDot == -1)
 		{
 			/* 
@@ -563,6 +526,19 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				 */
 				return;
 			}
+			/*
+			 * if there are no dots in the prefix then we can
+			 * only propose our own name
+			 */ 
+
+			proposals.add(new CompletionProposal(packageName,
+					offset-prefix.length(),
+					prefix.length(),
+					packageName.length(), 
+					null, // TODO provide real image here instead
+					packageName, 
+					null, null));
+			return;
 		}
 		else
 		{
@@ -579,21 +555,85 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				return;
 			}
 		}
+
+		int lastDot = prefix.lastIndexOf('.');
+		String levelName = 
+			prefix.substring(0, lastDot);
+
+		/* child prefix is begins past last dot */
+		String childPrefix =
+			prefix.substring(lastDot + 1);
 		
-		StringTokenizer st = new StringTokenizer(prefix, ".");
+		StringTokenizer st = new StringTokenizer(levelName, ".");
 		String token;
+				
+		IParent currLevel = (IParent)importedPackage;
 		
+		/* skip first token */
+		if (st.hasMoreTokens())
+		{
+			st.nextToken();
+		}
 		while (st.hasMoreTokens())
 		{
 			token = st.nextToken();
-			System.out.println("tonek: " + token);
+			boolean foundNextLevel = false;
+
+			for (IModelicaElement child : currLevel.getChildren())
+			{
+				if (child.getElementName().equals(token))
+				{
+					foundNextLevel = true;
+					/* we have found our next elemnt */
+					if (child instanceof IParent)
+					{
+						currLevel = (IParent)child;
+					}
+					else
+					{
+						/* 
+						 * level name must refere to an instance
+						 * of a IParent, otherwise we don't know
+						 * what the user is typing and cannot contribute
+						 * any completions
+						 */
+						return; /* bail out */
+					}
+				}
+			}
+			
+			if (!foundNextLevel)
+			{
+				/* 
+				 * level name does not refere to any of this packages children,
+				 * nothing to contribute
+				 */
+				return;
+			}
 		}
 		
-//		for (IModelicaElement element : importedPackage.getChildren())
-//		{
-//			String name = element.getFullName();
-//			proposals.add(new CompletionProposal(name, 0, name.length(), 0));
-//		}
+		/* 
+		 * compute contribution based on current level and
+		 * child prefix
+		 */
+		for (IModelicaElement element : currLevel.getChildren())
+		{
+			String elementName = element.getElementName();
+			
+			/* filter out children by child prefix */
+			if (!elementName.startsWith(childPrefix))
+			{
+				continue;
+			}
+			
+			proposals.add(new CompletionProposal(elementName,
+					offset - childPrefix.length(),
+					childPrefix.length(),
+					elementName.length(), 
+					null, // TODO provide real image here instead
+					elementName, 
+					null, null));
+		}
 	}
 
 	/**

@@ -57,9 +57,9 @@ import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
- * This class mapps modelica objects (Modelica packages, classes, etc) to icons and labels
- * via IWorkbenchAdapter interface. This icon and lables are used in for example Modelica 
- * Projects view.
+ * This class mapps modelica objects (Modelica packages, classes, etc) to icons 
+ * and labels via IWorkbenchAdapter interface. This icon and lables are used in 
+ * for example Modelica Projects view.
  * 
  * @author Elmir Jagudin
  */
