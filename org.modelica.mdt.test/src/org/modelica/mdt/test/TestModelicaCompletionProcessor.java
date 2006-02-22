@@ -41,16 +41,20 @@
 
 package org.modelica.mdt.test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension6;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
@@ -73,6 +77,16 @@ public class TestModelicaCompletionProcessor extends TestCase
 	/* test subject */
 	private ModelicaCompletionProcessor compProc;
 	
+	/* the viewer we are testing completion processor */
+	private ITextViewer textViewer;
+	
+	/* the editor that contains the text we are computing completions on */
+	private AbstractTextEditor editor;
+	
+	/* we can undo changes, this easy ! */
+	private IUndoManager undoManager;
+	
+	
 	@Override
 	//TODO replace me with the line below
 	public void setUp() throws Exception
@@ -92,16 +106,17 @@ public class TestModelicaCompletionProcessor extends TestCase
 		assertTrue("expected a source file ", 
 				(file instanceof IModelicaSourceFile));
 		
-		IEditorPart editor = 
-			openInEditor(new ModelicaElementEditorInput(file));
+		editor = 
+			(AbstractTextEditor)
+				openInEditor(new ModelicaElementEditorInput(file));
 		
 		assertNotNull(editor);
 		
 		compProc = new ModelicaCompletionProcessor(editor);
 		
-		/*
-		 * setup the document to test getPrefix() on
-		 */
+		textViewer = callGetSourceViewer(editor);
+		assertNotNull("could not fetch ITextViewer", textViewer);
+		undoManager = ((ITextViewerExtension6)textViewer).getUndoManager();
 	}
 	
 	private static IEditorPart openInEditor(IEditorInput input)
@@ -121,13 +136,307 @@ public class TestModelicaCompletionProcessor extends TestCase
 		return null;
 	}
 
+	/**
+	 * check ModelicaCompletionProcessor.computeCompletionProposals() method
+	 */
+	public void testComputeCompletionProposals() throws Exception
+	{
+		IDocument doc = textViewer.getDocument();
+		String result;
+				
+		/*
+		 * test completions inside the import_rich_model class but
+		 * outside import_rich_model.bar
+		 */
+
+		/* type 'Mode' inside import_rich_model */
+		doc.replace(383, 0, "Mode"); 
+
+		/* get proposals at the end of 'Mode' */
+		ICompletionProposal[] props =   
+			compProc.computeCompletionProposals(textViewer, 387);
+		
+		/* we are expecting a proposal for the Modelica package */
+		boolean foundModelicaProp = false;
+		for (ICompletionProposal proposal : props)
+		{
+			if (proposal.getDisplayString().startsWith("Modelica"))
+			{
+				proposal.apply(doc);
+				result = doc.get(383, 8);
+				assertEquals("unexpected result of applying proposal",
+						"Modelica", result);
+				foundModelicaProp = true;
+			}
+		}
+		assertTrue("did not found proposal for the 'Modelica'", 
+				foundModelicaProp);
+		
+		/* type 'Modelica' inside import_rich_model */
+		editor.doRevertToSaved();
+		doc.replace(383, 0, "Modelica.M"); 
+
+		/* get proposals at the end of 'Modelica.M' */
+		props = compProc.computeCompletionProposals(textViewer, 393);
+
+		/* 
+		 * we are expecting a proposal for the Modelica.Math and 
+		 * Modelica.Mechanics package 
+		 */
+		boolean foundModelicaMathProp = false;
+		boolean foundModelicaMechanicsProp = false;
+		
+		for (ICompletionProposal proposal : props)
+		{
+			
+			if (proposal.getDisplayString().startsWith("Math"))
+			{
+				/* must be Modelica.Math proposal */
+				proposal.apply(doc);
+				result = doc.get(383, 13);
+				assertEquals("unexpected result of applying proposal",
+						"Modelica.Math", result);
+				foundModelicaMathProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("Mechanics"))
+			{
+				/* must be Modelica.Math proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "Modelica.Mechanics".length());
+				assertEquals("unexpected result of applying proposal",
+						"Modelica.Mechanics", result);
+				foundModelicaMechanicsProp = true;
+				undoManager.undo();
+			}
+			
+		}
+		assertTrue("did not found proposal for the 'Modelica.Math'", 
+				foundModelicaMathProp);
+		assertTrue("did not found proposal for the 'Modelica.Mechanics'", 
+				foundModelicaMechanicsProp);
+
+		/* overwrite 'Modelica.M' with 'Modelica.Math.' */
+		editor.doRevertToSaved();
+		doc.replace(383, 0, "Modelica.Math."); 
+
+		/* get proposals at the end of 'Modelica.Math.' */
+		props = compProc.computeCompletionProposals(textViewer, 397);
+
+		/* 
+		 * we are expecting a proposal for among others Modelica.Math.asin,
+		 * Modelica.Math.cos, Modelica.Math.exp and Modelica.Math.log
+		 */
+		boolean foundModelicaMathAsinProp = false;
+		boolean foundModelicaMathCosProp = false;
+		boolean foundModelicaMathExpProp = false;
+		boolean foundModelicaMathLogProp = false;
+		
+		for (ICompletionProposal proposal : props)
+		{
+			
+			if (proposal.getDisplayString().startsWith("asin"))
+			{
+				/* must be Modelica.Math.asin proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "Modelica.Math.asin".length());
+				assertEquals("unexpected result of applying proposal",
+						"Modelica.Math.asin", result);
+				foundModelicaMathAsinProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("cos"))
+			{
+				/* must be Modelica.Math.cos proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "Modelica.Math.cos".length());
+				assertEquals("unexpected result of applying proposal",
+						"Modelica.Math.cos", result);
+				foundModelicaMathCosProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("exp"))
+			{
+				/* must be Modelica.Math.exp proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "Modelica.Math.exp".length());
+				assertEquals("unexpected result of applying proposal",
+						"Modelica.Math.exp", result);
+				foundModelicaMathExpProp = true;
+				undoManager.undo();
+			}			
+			else if (proposal.getDisplayString().startsWith("log"))
+			{
+				/* must be Modelica.Math.log proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "Modelica.Math.log".length());
+				assertEquals("unexpected result of applying proposal",
+						"Modelica.Math.log", result);
+				foundModelicaMathLogProp = true;
+				undoManager.undo();
+			}			
+		}
+		
+		assertTrue("did not found proposal for the 'Modelica.Math.asin'", 
+				foundModelicaMathAsinProp);
+		assertTrue("did not found proposal for the 'Modelica.Math.cos'", 
+				foundModelicaMathCosProp);
+		assertTrue("did not found proposal for the 'Modelica.Math.exp'", 
+				foundModelicaMathExpProp);
+		assertTrue("did not found proposal for the 'Modelica.Math.log'", 
+				foundModelicaMathLogProp);		
+		/*
+		 * test completions inside the inside import_rich_model.bar
+		 */
+		
+		/* type '    ho' inside import_rich_model.bar */
+		editor.doRevertToSaved();
+		doc.replace(554, 0, "    ho");
+		
+		/* get proposals at the end of 'ho' */
+		props = compProc.computeCompletionProposals(textViewer, 560);
+		
+		/* we are expecting a proposal for the hopp package */
+		boolean foundHoppProp = false;
+		for (ICompletionProposal proposal : props)
+		{
+			if (proposal.getDisplayString().startsWith("hopp"))
+			{
+				proposal.apply(doc);
+				result = doc.get(558, "hopp".length());
+				assertEquals("unexpected result of applying proposal",
+						"hopp", result);
+				foundHoppProp = true;
+			}
+		}
+		assertTrue("did not found proposal for the 'hopp'", 
+				foundHoppProp);		
+
+
+		/* type 'SIunits.Absorb' inside import_rich_model.bar */
+		editor.doRevertToSaved();
+		doc.replace(554, 0, "SIunits.Absorb"); 
+
+		/* get proposals at the end of 'SIunits.Absorb' */
+		props = compProc.computeCompletionProposals(textViewer, 568);
+
+		/* 
+		 * we are expecting a proposal for the SIunits.AbsorbedDose and 
+		 * SIunits.AbsorbedDoseRate 
+		 */
+		boolean foundAbsorbedDoseProp = false;
+		boolean foundAbsorbedDoseRateProp = false;
+		
+		for (ICompletionProposal proposal : props)
+		{
+			/*
+			 * the order of these if statments is important becouse 
+			 * 'AbsorbedDoseRate' also starts with 'AbsorbedDose'
+			 */
+			if (proposal.getDisplayString().startsWith("AbsorbedDoseRate"))
+			{
+				/* must be Modelica.Math proposal */
+				proposal.apply(doc);
+				result = doc.get(554, "SIunits.AbsorbedDoseRate".length());
+				assertEquals("unexpected result of applying proposal",
+						"SIunits.AbsorbedDoseRate", result);
+				foundAbsorbedDoseRateProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().equals("AbsorbedDose"))
+			{
+				/* must be Modelica.Math proposal */
+				proposal.apply(doc);
+				result = doc.get(554, "SIunits.AbsorbedDose".length());
+				assertEquals("unexpected result of applying proposal",
+						"SIunits.AbsorbedDose", result);
+				foundAbsorbedDoseProp = true;
+				undoManager.undo();
+			}			
+		}
+		assertTrue("did not found proposal for the 'SIunits.AbsorbedDose'", 
+				foundAbsorbedDoseProp);
+		assertTrue("did not found proposal for the 'SIunits.AbsorbedDoseRate'", 
+				foundAbsorbedDoseRateProp);
+
+		
+		/* type 'Blocks.Math.' inside import_rich_model.bar */
+		editor.doRevertToSaved();
+		doc.replace(554, 0, "Blocks.Math.");
+		
+		/* get proposals at the end of 'Blocks.Math.' */
+		props = compProc.computeCompletionProposals(textViewer, 566);
+
+		/* 
+		 * we are expecting among others proposals for the Math.Edge, Math.Min
+		 * and Math.Feedback
+		 */
+		boolean foundMathEdgeProp = false;
+		boolean foundMathMinProp = false;
+		boolean foundMathFeedbackProp = false;
+		
+		for (ICompletionProposal proposal : props)
+		{
+			
+			if (proposal.getDisplayString().startsWith("Edge"))
+			{
+				/* must be Blocks.Math.Edge proposal */
+				proposal.apply(doc);
+				result = doc.get(554, "Blocks.Math.Edge".length());
+				assertEquals("unexpected result of applying proposal",
+						"Blocks.Math.Edge", result);
+				foundMathEdgeProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("Min"))
+			{
+				/* must be Blocks.Math.Min proposal */
+				proposal.apply(doc);
+				result = doc.get(554, "Blocks.Math.Min".length());
+				assertEquals("unexpected result of applying proposal",
+						"Blocks.Math.Min", result);
+				foundMathMinProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("Feedback"))
+			{
+				/* must be Blocks.Math.Min proposal */
+				proposal.apply(doc);
+				result = doc.get(554, "Blocks.Math.Feedback".length());
+				assertEquals("unexpected result of applying proposal",
+						"Blocks.Math.Feedback", result);
+				foundMathFeedbackProp = true;
+				undoManager.undo();
+			}
+
+		}
+		
+		assertTrue("did not found proposal for the 'Blocks.Math.Edge'", 
+				foundMathEdgeProp);
+		assertTrue("did not found proposal for the 'Blocks.Math.Min'", 
+				foundMathMinProp);
+		assertTrue("did not found proposal for the 'Blocks.Math.Feedback'", 
+				foundMathFeedbackProp);
+		
+		/* 
+		 * revert to saved otherwise a dialog will pop-up asking us to save
+		 * changes. that will make the test require manual labor to finish
+		 * running, not good
+		 */
+		editor.doRevertToSaved();
+
+	}
 	
+	/**
+	 * check ModelicaCompletionProcessor.getPrefix() method
+	 */
 	public void testPrefix()
+		throws Exception
 	{
 		/* this is used to test getPrefix() method */
 		String docContents = 
-			"hej hopp jaa\n" + // 13 characters
-			"asdf im(prt ;da"; // 15 characters
+			"hej hopp jaa\n" + /* 13 characters */
+			"asdf im(prt ;da"; /* 15 characters */
 
 		Document prefixDoc = new Document(docContents);
 
@@ -178,38 +487,41 @@ public class TestModelicaCompletionProcessor extends TestCase
 
 	}
 
+	/**
+	 * This method allows to call the private method  
+	 * ModelicaCompletionProcessor.getPrefix() by the magic of reflection.
+	 *
+	 * @param compProc the ModelicaCompletionProcessor to invoke the method on
+	 * @param doc the 'doc' argument to pass to getPrefix()
+	 * @param offset the 'offset' argument to pass to getPrefix()
+	 */
 	private String callGetPrefix(ModelicaCompletionProcessor compProc, 
 			Document doc, int offset) 
+		throws Exception
 	{
-		try 
-		{
-			Method method = 
-				compProc.getClass().getDeclaredMethod("getPrefix", 
-							IDocument.class, int.class);
-			
-			method.setAccessible(true);
-			return (String) method.invoke(compProc, doc, offset);
-		}
-		catch (SecurityException e) 
-		{
-			fail("was not allowed to call getPrefix()");
-		}
-		catch (NoSuchMethodException e) 
-		{
-			fail("could not find the getPrefix() method");
-		} 
-		catch (IllegalArgumentException e) 
-		{
-			fail("illegal arguments supplied to getPrefix()");
-		}
-		catch (IllegalAccessException e) 
-		{
-			fail("ehh, aj think they accuse us of tresspassing");
-		}
-		catch (InvocationTargetException e) 
-		{
-			fail("expection thrown while calling getPrefix()");
-		}
-		return null; /* we should have failed by now */
+		Method method = 
+			compProc.getClass().getDeclaredMethod("getPrefix", 
+						IDocument.class, int.class);
+		
+		method.setAccessible(true);
+		return (String) method.invoke(compProc, doc, offset);
 	}
+
+	/**
+	 * This method allows to call the private method  
+	 * AbstractTextEditor.getSourceViewer() by the magic of reflection.
+	 *
+	 * @param editor the AbstractTextEditor to invoke the method on
+	 */	
+	private ITextViewer callGetSourceViewer(AbstractTextEditor editor)
+		throws Exception
+	{
+		Method method = 
+			AbstractTextEditor.class.getDeclaredMethod("getSourceViewer"); 
+		
+		method.setAccessible(true);
+		return (ITextViewer) method.invoke(editor);
+	}
+
+
 }
