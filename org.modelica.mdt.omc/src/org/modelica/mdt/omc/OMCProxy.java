@@ -52,6 +52,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IllegalTypeException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -177,8 +178,8 @@ public class OMCProxy implements IModelicaCompiler
 			fileName = temp + "\\openmodelica.objid";
 		}
 		
-		logOMCStatus("will look for OMC object reference in '" 
-				+ fileName + "'");
+		logOMCStatus("Will look for OMC object reference in '" 
+				+ fileName + "'.");
 		
 		return fileName;
 	}
@@ -199,7 +200,7 @@ public class OMCProxy implements IModelicaCompiler
 		{
 			final String m = "Environment variable OPENMODELICAHOME not set";
 			logOMCStatus("Environment variable OPENMODELICAHOME not set,"+
-					" don't know how to start OMC");
+					" don't know how to start OMC.");
 			throw new ConnectException(m);
 		}
 		
@@ -220,16 +221,16 @@ public class OMCProxy implements IModelicaCompiler
 		File f = new File(getPathToObject());
 		if(f.exists())
 		{
-			logOMCStatus("removing old OMC object reference file");
+			logOMCStatus("Removing old OMC object reference file.");
 			f.delete();
 		}
 		
 		String command[] = { pathToOmc, "+d=interactiveCorba" };
 		try
 		{
-			logOMCStatus("running command " + command[0] + " " + command[1]);
+			logOMCStatus("Running command " + command[0] + " " + command[1]);
 			Runtime.getRuntime().exec(command);
-			logOMCStatus("command run successfully");
+			logOMCStatus("Command run successfully.");
 		}
 		catch(IOException e)
 		{
@@ -238,8 +239,8 @@ public class OMCProxy implements IModelicaCompiler
 			 * the Compiler directory (if we've compiled the compiler from
 			 * source). Try starting OMC from this secondary location.
 			 */
-			logOMCStatus("error running command " + e.getMessage()
-					+ "\ntrying allternative path to the binary");
+			logOMCStatus("Error running command " + e.getMessage()
+					+ ", trying alternative path to the binary.");
 			String secondaryPathToOmc = null;
 			try
 			{
@@ -254,21 +255,23 @@ public class OMCProxy implements IModelicaCompiler
 
 				command = 
 					new String[]{secondaryPathToOmc, "+d=interactiveCorba"};
-				logOMCStatus("running command " 
+				logOMCStatus("Running command " 
 						+ command[0] + " " + command[1]);
 				Runtime.getRuntime().exec(command);
-				logOMCStatus("command run successfully");
+				logOMCStatus("Command run successfully.");
 			}
 			catch(IOException ex)
 			{
-				logOMCStatus("error running command, giving up"); 
+				logOMCStatus("Unable to start OMC, giving up."); 
 				throw new ConnectException
-					("Unable to start Open Modelica Compiler. "
+					("Unable to start the OpenModelica Compiler. "
 					 + "Tried starting " + pathToOmc
 					 + " and " + secondaryPathToOmc);
 			}
 		}
 
+		logOMCStatus("Wait for OMC CORBA object reference to appear on disk.");
+		
 		/*
 		 * Wait until the object exists on disk, but if it takes longer than
 		 * 5 seconds, abort. (Very arbitrary 5 seconds..)
@@ -289,14 +292,16 @@ public class OMCProxy implements IModelicaCompiler
 			/* If we've waited for 5 seconds, abort the wait for OMC */
 			if(ticks > 50)
 			{
-				logOMCStatus("no OMC object reference file created after " + 
-						"approximatly 5 seconds\n" +
-						"it seems OMC does not want to come up, giving up");
+				logOMCStatus("No OMC object reference file created after " + 
+						"approximately 5 seconds.");
+				logOMCStatus("It seems OMC does not want to come up, giving " +
+						"up.");
 				throw new ConnectException
 					("Unable to start the Open Modelica Compiler. Waited for 5"
 							+" seconds, but it didn't respond.");
 			}
 		}
+		logOMCStatus("OMC object reference found.");
 	}
 	
 	/**
@@ -362,13 +367,13 @@ public class OMCProxy implements IModelicaCompiler
 		if(!f.exists())
 		{
 			/* If a server isn't running, start it */
-			logOMCStatus("no OMC object reference found");
+			logOMCStatus("No OMC object reference found, starting server.");
 			startServer();
 		}
 		else
 		{
-			logOMCStatus("OMC object reference present," +
-					" assuming OMC is running");
+			logOMCStatus("Old OMC CORBA object reference present," +
+					" assuming OMC is running.");
 		}
 		
 		/* Read in the CORBA OMC object from a file on disk */
@@ -388,14 +393,14 @@ public class OMCProxy implements IModelicaCompiler
 			 * have a corresponding server running. If a server is missing,
 			 * catch an exception and try starting a server.
 			 */
-			logOMCStatus("trying to send expression to OMC");
+			logOMCStatus("Trying to send expression to OMC.");
 			omcc.sendExpression("1+1");
-			logOMCStatus("expression send successfully");
+			logOMCStatus("Expression sent successfully.");
 		}
 		catch(org.omg.CORBA.COMM_FAILURE e)
 		{
 			/* Start server and set up omcc */
-			logOMCStatus("failed sending expression");
+			logOMCStatus("Failed sending expression, will try to start OMC.");
 			startServer();
 			stringifiedObjectReference = readObjectFromFile();
 			setupOmcc(stringifiedObjectReference);
@@ -405,13 +410,13 @@ public class OMCProxy implements IModelicaCompiler
 				/* Once again try to send an expression to OMC. If it fails this
 				 * time it's time to send back an exception to the caller of
 				 * this function. */
-				logOMCStatus("trying to send expression to OMC");
+				logOMCStatus("Trying to send expression to OMC.");
 				omcc.sendExpression("1+1");
-				logOMCStatus("expression send successfully");
+				logOMCStatus("Expression sent successfully.");
 			}
 			catch(org.omg.CORBA.COMM_FAILURE x)
 			{
-				logOMCStatus("failed sending expression, giving up");
+				logOMCStatus("Failed sending expression, giving up.");
 				throw new ConnectException("Unable to start the OpenModelica"
 						+" Compiler.");
 			}
@@ -449,6 +454,7 @@ public class OMCProxy implements IModelicaCompiler
 		}
 		catch(org.omg.CORBA.COMM_FAILURE x)
 		{
+			logOMCCallError("Error while sending expression " + exp + " ["+x+"]");
 			/* lost connection to OMC or something */
 			throw new ConnectException("Couldn't send expression to the "+
 					"OpenModelica Compiler. Tried sending: " + exp);
@@ -470,6 +476,20 @@ public class OMCProxy implements IModelicaCompiler
 			return;
 		}
 		System.out.println(">> " + expression);
+	}
+	
+	/**
+	 * outputs the message about a call error that occured
+	 * when communicating with omc
+	 * @param message the message to log
+	 */
+	private static void logOMCCallError(String message)
+	{
+		if(!traceOMCCalls)
+		{
+			return;
+		}
+		System.out.println(message);
 	}
 	
 	/**
@@ -541,19 +561,37 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws ConnectException 
 	 */
 	public IModelicaClass.Type getRestrictionType(String className)
-		throws ConnectException
+		throws ConnectException, UnexpectedReplyException
 	{
 		String reply = 
 			sendExpression("getClassRestriction(" + className + ")");
-		
+
 		/* remove " around the reply */
 		reply = reply.trim();
+		
+		if(reply.equals(""))
+		{
+			throw new UnexpectedReplyException("getClassRestriction("+className
+					+") returned an empty result");
+		}
+		
 		reply = reply.substring(1, reply.length()-1);
 		
 		/* fetch error string but ignore it */
 		getErrorString();
 		
-		return IModelicaClass.Type.parse(reply);
+		IModelicaClass.Type type = null;
+		try
+		{
+			type = IModelicaClass.Type.parse(reply);
+		}
+		catch(IllegalTypeException e)
+		{
+			throw new UnexpectedReplyException("Illegal type: "
+					+ e.getMessage());
+		}
+		
+		return type;
 	}
 	
 	/**
@@ -603,8 +641,7 @@ public class OMCProxy implements IModelicaCompiler
 		 */
 		if(retval.toLowerCase().contains("error") || retval.equals("{}"))
 		{			
-			res.setCompileErrors
-				(OMCParser.parseErrorString(getErrorString()));
+			res.setCompileErrors(OMCParser.parseErrorString(getErrorString()));
 			res.setClassNames(new List());
 		}
 		/*

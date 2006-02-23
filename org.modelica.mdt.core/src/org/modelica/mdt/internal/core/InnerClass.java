@@ -55,6 +55,7 @@ import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IllegalTypeException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -166,9 +167,21 @@ public class InnerClass extends ModelicaClass
 				
 				String className = info.getClassName();
 				
+				IModelicaClass.Type type = null;
+				try
+				{
+					type = IModelicaClass.Type.parse
+						(info.getClassRestriction());
+				}
+				catch(IllegalTypeException e)
+				{
+					throw new UnexpectedReplyException("Illegal type: "
+							+ e.getMessage());
+				}
+				
 				elements.put(className, 
 					new InnerClass(getSourceFile(), this, className, location, 
-							IModelicaClass.Type.parse(info.getClassRestriction())));
+							type));
 			}
 			/* a component */
 			else if (elementType.equals("component"))
@@ -362,7 +375,8 @@ public class InnerClass extends ModelicaClass
 
 
 	public Type getRestrictionType() 
-		throws ConnectException, CompilerInstantiationException
+		throws ConnectException, CompilerInstantiationException,
+			UnexpectedReplyException
 	{
 		if(typeKnown == false)
 		{

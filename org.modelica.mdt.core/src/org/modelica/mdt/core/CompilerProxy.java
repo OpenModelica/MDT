@@ -183,7 +183,8 @@ public class CompilerProxy
 	}
 	
 	public static IModelicaClass.Type getRestrictionType(String className)
-		throws ConnectException, CompilerInstantiationException
+		throws ConnectException, CompilerInstantiationException,
+			   UnexpectedReplyException
 	{
 		return getCompiler().getRestrictionType(className);
 	}

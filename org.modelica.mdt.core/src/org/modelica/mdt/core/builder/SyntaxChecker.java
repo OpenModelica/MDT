@@ -66,12 +66,18 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ICompileError;
 import org.modelica.mdt.core.compiler.IParseResults;
+import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.internal.core.FolderPackage;
 
 /**
  * This builder loads all changed files into OMC in order to check for
@@ -266,6 +272,13 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 							   error.getEndLine(), error.getEndColumn(),
 							   error.getErrorDescription(), IMarker.PROBLEM);
 	}
+	
+	protected static void reportNamespaceProblem(IFile file, String className)
+	{
+		createMarkerAtLocation(file, 1, 1, 1, 1,
+				className + " defined in an unexpected namespace",
+				CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID);
+	}
 
 	/**
 	 * Calculate where the particular line begins and how long it stretches.
@@ -381,12 +394,13 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * @return the created marker, or <code>null</code> if marker couldn't
 	 * 		   be created
 	 */
-	public static IMarker createMarkerAtLocation(IFile file,
-			int startLineNumber, int startColumnNumber,
-			int endLineNumber, int endColumnNumber,
-			String message, String type)
+	public static void createMarkerAtLocation(final IFile file,
+			final int startLineNumber, final int startColumnNumber,
+			final int endLineNumber, final int endColumnNumber,
+			final String message, final String type)
 	{
 		IMarker marker = null;
+
 		try
 		{
 			IRegion startLineReg = getLineRegion(file, startLineNumber);
@@ -415,7 +429,6 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		{
 			ErrorManager.logError(e);
 		}
-		return marker;
 	}
 		
 	protected void startupOnInitialization()
@@ -450,6 +463,90 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		for (ICompileError error : res.getCompileErrors())
 		{
 			reportProblem(file, error);
+		}
+		
+		/*
+		 * Make sure that everything was defined in the correct namespace.
+		 */
+		checkForNamespaceProblems(file, res);
+	}
+
+	/**
+	 * Check a file for missing of malformed 'within' statements by comparing
+	 * where in the file hierarky a file is defined and the actual contents
+	 * returned from OMC.
+	 * 
+	 * @param file the file that has been loaded into OMC
+	 * @param res the compilation result from having loaded the file
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 * @throws CompilerInstantiationException
+	 */
+	private static void checkForNamespaceProblems(IFile file, IParseResults res)
+		throws ConnectException, UnexpectedReplyException,
+			CompilerInstantiationException
+	{
+		IModelicaProject project = 
+			ModelicaCore.getModelicaRoot()
+				.getProject(file.getProject().getName());
+
+		IModelicaElement element = null;
+		try {
+			element = project.findElement(file.getProjectRelativePath());
+		} catch (InvocationError e) {
+			ErrorManager.logError(e);
+		} catch (CoreException e) {
+			ErrorManager.logError(e);
+		}
+
+		IModelicaElement parent = element.getParent();
+		String ppName = parent.getFullName();
+		
+		/*
+		 * If the parent is a package, the elements inside should be defined
+		 * as being children of the parent. 
+		 */
+		if(parent instanceof FolderPackage)
+		{
+			String filePath = file.getLocation().toString();
+			if(filePath.endsWith("/package.mo")
+					|| filePath.endsWith("\\package.mo"))
+			{
+				for(String name : res.getClasses())
+				{
+					if(name.equals(ppName) == false)
+					{
+						reportNamespaceProblem(file, name);
+					}
+				}
+			}
+			else
+			{
+				for(String name : res.getClasses())
+				{
+					/* get the prefix of the class, eg.
+					 * Modelica.Math.sin has prefix Modelica.Math */	
+					String prefix = null;
+					int lastIndex = name.lastIndexOf('.');
+					if(lastIndex != -1)
+					{
+						prefix = name.substring(0, lastIndex);
+					}
+					else
+					{
+						prefix = "";
+					}
+		
+					/*
+					 * If the prefix doesn't match the parent packages name,
+					 * then the 'within' statement is bad. 
+					 */
+					if(prefix.equals(ppName) == false)
+					{
+						reportNamespaceProblem(file, name);
+					}
+				}
+			}
 		}
 	}
 }

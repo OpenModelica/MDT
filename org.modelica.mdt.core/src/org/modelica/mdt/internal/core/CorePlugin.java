@@ -72,6 +72,8 @@ public class CorePlugin extends AbstractUIPlugin
 	public static final String COMPILER_EXTENSION_ID = 
 		"org.modelica.mdt.core.compiler";
 	
+	public static final String UNEXPECTED_NAMESPACE_MARKER_ID =
+		"org.modelica.mdt.core.unexpectednamespacemarker";
 	
 	/* The shared instance. */
 	private static CorePlugin plugin;

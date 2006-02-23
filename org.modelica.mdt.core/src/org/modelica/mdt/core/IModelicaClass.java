@@ -56,7 +56,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	{ 
 		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE;
 		
-		public static Type parse(String text)
+		public static Type parse(String text) throws IllegalTypeException
 		{
 			if (text.equalsIgnoreCase("CLASS"))
 			{
@@ -91,10 +91,11 @@ public interface IModelicaClass extends IModelicaElement, IParent
 				return TYPE;
 			}
 			
-			/* this is error condition, classRestriction is of unexpected type */
-			//TODO throw an exception ?
-			return CLASS; 
-			
+			/* 
+			 * this is an error condition, classRestriction is of unexpected
+			 * type
+			 */
+			throw new IllegalTypeException(text);
 		}
 	};
 
@@ -108,9 +109,11 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	
 	/**
 	 * @return the restriction type of this class
+	 * @throws UnexpectedReplyException 
 	 */
 	public Type getRestrictionType()
-		throws ConnectException, CompilerInstantiationException;
+		throws ConnectException, CompilerInstantiationException,
+				UnexpectedReplyException;
 
 	/**
 	 * @return the imports made in this class
@@ -124,5 +127,4 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 * is defined in top namespace
 	 */
 	public IModelicaClass getParentNamespace();
-	
 }

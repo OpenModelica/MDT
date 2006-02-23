@@ -76,7 +76,7 @@ public class ModelicaNature implements IProjectNature
 				}
 				catch(CoreException e)
 				{
-					System.out.println(e);
+					ErrorManager.logError(e.getStatus());
 				}
 				return Status.OK_STATUS;
 			}

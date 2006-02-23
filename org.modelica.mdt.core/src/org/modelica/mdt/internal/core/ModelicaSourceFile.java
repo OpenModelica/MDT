@@ -54,6 +54,8 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -128,22 +130,75 @@ public class ModelicaSourceFile extends ModelicaElement
 			new Hashtable<String, IModelicaElement>();
 
 		IParseResults res = CompilerProxy.loadSourceFile(file);
-		for (String name : res.getClasses())
-		{
-			IModelicaElement parent = getParent();
-			FolderPackage parentPackage = null;
-			/* 
-			 * check if we live inside a package, in that
-			 * case define the classes inside our parents namespace
-			 * otherwise define it in the root name space (=null)
-			 */ 
-			if (parent instanceof FolderPackage)
-			{
-				parentPackage = (FolderPackage)parent; 
-			}
-			elements.put(name, new InnerClass(this, parentPackage,	name));
-		}
 		
+		IModelicaElement parent = getParent();
+		FolderPackage parentPackage = null;
+		
+		/*
+		 * If we're inside a package, define the classes inside the
+		 * parent package.
+		 */
+		if(parent instanceof FolderPackage)
+		{
+			parentPackage = (FolderPackage)parent;
+			String ppName = parentPackage.getFullName();
+			String filePath = file.getFullPath().toString();
+
+			for(String name : res.getClasses())
+			{
+				if(name.equals(ppName)
+						&& (filePath.endsWith("/package.mo")
+								|| filePath.endsWith("\\package.mo")))
+				{
+					List list = CompilerProxy.getClassNames(name);
+					if(list != null)
+					{
+						for(ListElement element : list)
+						{
+							elements.put(element.toString(),
+									new InnerClass(this, parentPackage,
+											element.toString()));
+						}
+					}
+					
+					/* don't add the package definition to the package.mo */
+					continue;
+				}
+
+				String prefix = "";
+
+				/* If there is a . then there is a prefix! (We hope) */
+				if(name.lastIndexOf('.') != -1)
+				{
+					prefix = name.substring(0, name.lastIndexOf('.'));
+				}
+
+				/* If the class has a prefix that equals the package that this
+				 * class is in, just remove the prefix. */
+				if(prefix.equals(ppName))
+				{
+					name = name.substring(ppName.length()+1);
+					elements.put(name, new InnerClass(this, parentPackage,
+							name));
+				}
+				else
+				{
+					/* Something is wrong, return an empty list of elements */
+					return new Hashtable<String, IModelicaElement>();
+				}
+			}
+		}
+		/*
+		 * If we're not inside a package, simply define the classes without
+		 * a parent.
+		 */
+		else
+		{
+			for(String name : res.getClasses())
+			{
+				elements.put(name, new InnerClass(this, null, name));				
+			}
+		}	
 		
 		return elements;
 	}

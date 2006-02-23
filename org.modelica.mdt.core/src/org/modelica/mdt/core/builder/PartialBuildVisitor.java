@@ -50,6 +50,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
@@ -83,6 +84,9 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 
 			file.deleteMarkers(IMarker.PROBLEM, false,
 					IResource.DEPTH_INFINITE);
+			file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false,
+					IResource.DEPTH_INFINITE);
+			
 			try
 			{
 				/*
@@ -93,7 +97,7 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 			}
 			catch(CompilerException e)
 			{
-				ErrorManager.logError(e);
+				ErrorManager.showCompilerError(e);
 
 				/* Don't visit the children, OMC is fubarred. */
 				return false;

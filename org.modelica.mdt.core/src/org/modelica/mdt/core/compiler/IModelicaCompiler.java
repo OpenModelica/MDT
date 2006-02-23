@@ -109,9 +109,10 @@ public interface IModelicaCompiler
 	 * 
 	 * @param className the name of the class to fetch restriction type of
 	 * @return the restriction type of the class
+	 * @throws UnexpectedReplyException 
 	 */
 	public Type getRestrictionType(String className)
-			throws ConnectException;
+			throws ConnectException, UnexpectedReplyException;
 	/**
 	 * The method returns a list of top level packages in the standard library.
 	 * 
