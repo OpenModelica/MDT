@@ -41,7 +41,6 @@
 
 package org.modelica.mdt.test;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -49,7 +48,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
-import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -105,15 +103,15 @@ public class TestCompilerProxy extends TestCase
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		/* we need to load modelica package */		
-		Collection<IModelicaClass> stdPackages = 
-			CompilerProxy.getStandardLibrary();
-		
-		/* make some checks on the returned names of the standard packages */
+		/* 
+		 * we need to load modelica package,
+		 * we can ass well do some checks		
+		 * on the returned names of the standard packages 
+		 */
 		Vector<String> v = new Vector<String>();
-		for (IModelicaClass clazz : stdPackages)
+		for (String clazz : CompilerProxy.getStandardLibrary())
 		{
-			v.add(clazz.getElementName());
+			v.add(clazz);
 		}
 		assertTrue(v.size() >= 1);
 		assertTrue(v.contains("Modelica"));

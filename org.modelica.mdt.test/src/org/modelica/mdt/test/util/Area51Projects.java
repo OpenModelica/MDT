@@ -401,7 +401,7 @@ public class Area51Projects
 			"model import_rich_model\n" +
 			"  // qualified imports\n" +
 			"  import Modelica;\n" +
-			"  // single definition import\n" +
+			"  // another qualified import\n" +
 			"  import Modelica.Math.sin;\n" +
 			"  // unqualified import\n" +
 			"  import Modelica.*;\n" +

@@ -41,15 +41,20 @@
 
 package org.modelica.mdt.test;
 
+import java.util.LinkedList;
+
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 import org.modelica.mdt.ui.ModelicaElementContentProvider;
-import org.modelica.mdt.ui.SystemLibrary;
 
 import junit.framework.TestCase;
 
@@ -99,28 +104,67 @@ public class TestModelicaElementContentProvider extends TestCase
 		/*
 		 * check that the modelica project have a system library
 		 */
-		boolean systemLibraryElementFound = false;
+		boolean standardLibraryElementFound = false;
 		for (Object elm : provider.getChildren(modelicaProject))
 		{
-			if (elm instanceof SystemLibrary)
+			if (elm instanceof IStandardLibrary)
 			{
-				systemLibraryElementFound = true;
+				standardLibraryElementFound = true;
 				break;
 			}
 		}
 		assertTrue("no system library element found in modelica project",
-				systemLibraryElementFound);
+				standardLibraryElementFound);
 
 		/*
 		 * check that the non-modelica project does _not_ have a system library
 		 */
 		for (Object elm : provider.getChildren(nonModelicaProject))
 		{
-			if (elm instanceof SystemLibrary)
+			if (elm instanceof IStandardLibrary)
 			{
 				fail("non modelica project contains system library");
 			}
 		}
+	}
+	
+	/**
+	 * check that content provider returns correkt children
+	 * on the standard library object
+	 */
+	public void testSystemLibraryChildren()
+		throws ConnectException, CompilerInstantiationException
+	{
+		IStandardLibrary standardLibrary =
+			ModelicaCore.getModelicaRoot().getStandardLibrary();
+		
+		assertTrue("standard library node should have children",
+				provider.hasChildren(standardLibrary));
+		
+		/*
+		 * build a collection of all children's names that standard library
+		 * node should have
+		 */
+		LinkedList<String> expectedChildren = 
+			new LinkedList<String>();
+		
+		for (IModelicaClass ch : standardLibrary.getPackages())
+		{
+			expectedChildren.add(ch.getFullName());
+		}
+		
+		/*
+		 * check that content provider returns an array of the expected
+		 * children (we only check that names match)
+		 */
+		for (Object obj : provider.getChildren(standardLibrary))
+		{			
+			assertTrue("provider returned an unexpected child",
+				expectedChildren.remove(((IModelicaClass)obj).getFullName()));
+		}
+		
+		assertTrue("content provider did not return all of the expected children",
+				expectedChildren.isEmpty());
 	}
 
 }

@@ -42,8 +42,10 @@
 package org.modelica.mdt.test;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.IRegion;
-import org.modelica.mdt.core.CompilerProxy;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
@@ -57,6 +59,8 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.InnerClass;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 import junit.framework.TestCase;
 
@@ -70,8 +74,6 @@ public class TestInnerClass extends TestCase
 	private InnerClass componentsBananza;
 	private InnerClass importRichModel;
 	
-	/* teh Modelica package (from the standard library) */
-	private InnerClass modelica = null;
 	
 	@Override
 	protected void setUp() throws Exception 
@@ -119,29 +121,27 @@ public class TestInnerClass extends TestCase
 
 		assertNotNull("could not find the model import_rich_model",
 				importRichModel);
-		
-		/* fetch teh Modelica package from the standard library */
-		for (IModelicaClass clazz : CompilerProxy.getStandardLibrary())
-		{
-			if (clazz.getElementName().equals("Modelica"))
-			{
-				modelica = (InnerClass)clazz;
-				break;
-			}
-		}
-		assertNotNull("could not found standard library package 'Modelica'",
-				modelica);
-		
-
 	}
 	
 	/**
 	 * do some sanity checks on InnerClass children
 	 */
 	public void testChildren()
-	throws ConnectException, UnexpectedReplyException,
-		InvocationError, CoreException, CompilerInstantiationException
+		throws ConnectException, UnexpectedReplyException,
+			InvocationError, CoreException, CompilerInstantiationException,
+			BundleException
 	{ 
+		/*
+		 * we want to check if we can convert modelica elemnts to workbench
+		 * object and get correct label and some image
+		 * the adapter factory that handles modelica elements object
+		 * is installed by the org.modelica.mdt.ui plugin,
+		 * make sure it is loaded before running tests 
+		 */
+		Bundle bundle = Platform.getBundle("org.modelica.mdt.ui");		
+		bundle.start();
+
+		
 		IModelicaComponent a_real = null;
 		IModelicaComponent an_undocumented_real = null;
 		IModelicaComponent a_protected_real = null;
@@ -214,7 +214,9 @@ public class TestInnerClass extends TestCase
 			}
 		}
 		
-		/* sanity checks on components_bananza.a_type */
+		/* 
+		 * sanity checks on components_bananza.a_type 
+		 */
 		assertNotNull("components_bananza.a_type not found", a_type);
 		assertEquals("wrong element name", "a_type", a_type.getElementName());
 		assertEquals("wrong element full name", 
@@ -224,8 +226,25 @@ public class TestInnerClass extends TestCase
 		IRegion reg = a_type.getLocation();
 		assertEquals("wrong start offset", 342, reg.getOffset());
 		assertEquals("wrong length", 364-342+1, reg.getLength());
+		
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_type instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		IWorkbenchAdapter wbAdapter = 
+			(IWorkbenchAdapter)a_type.getAdapter(IWorkbenchAdapter.class);
 
-		/* sanity checks on components_bananza.a_package */
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_type",
+				wbAdapter.getLabel(a_type));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_type));
+		
+
+		/*
+		 * sanity checks on components_bananza.a_package
+		 */
 		assertNotNull("components_bananza.a_package not found", a_package);
 		assertEquals("wrong element name", "a_package",
 				a_package.getElementName());
@@ -237,7 +256,23 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 95, reg.getOffset());
 		assertEquals("wrong length", 126-95+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_block */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_package instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_package.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		wbAdapter.getLabel(a_package);
+		assertEquals("wrong label", "a_package",
+				wbAdapter.getLabel(a_package));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_package));
+		
+		/*
+		 * sanity checks on components_bananza.a_block
+		 */
 		assertNotNull("components_bananza.a_block not found", a_block);
 		assertEquals("wrong element name", "a_block",
 				a_block.getElementName());
@@ -249,7 +284,22 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 271, reg.getOffset());
 		assertEquals("wrong length", 296-271+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_class */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_block instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_block.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_block",
+				wbAdapter.getLabel(a_block));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_block));
+
+		/*
+		 * sanity checks on components_bananza.a_class
+		 */
 		assertNotNull("components_bananza.a_class not found", a_class);
 		assertEquals("wrong element name", "a_class", a_class.getElementName());
 		assertEquals("wrong element full name", "components_bananza.a_class",
@@ -260,7 +310,22 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 132, reg.getOffset());
 		assertEquals("wrong length", 157-132+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_connector */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_class instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_class.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_class",
+				wbAdapter.getLabel(a_class));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_class));
+
+		/*
+		 * sanity checks on components_bananza.a_connector 
+		 */
 		assertNotNull("components_bananza.a_connector not found", a_connector);
 		assertEquals("wrong element name", "a_connector", 
 				a_connector.getElementName());
@@ -272,7 +337,22 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 194, reg.getOffset());
 		assertEquals("wrong length", 231-194+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_function */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_connector instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_connector.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_connector",
+				wbAdapter.getLabel(a_connector));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_connector));
+
+		/*
+		 * sanity checks on components_bananza.a_function 
+		 */
 		assertNotNull("components_bananza.a_function not found", a_function);
 		assertEquals("wrong element name", "a_function", 
 				a_function.getElementName());
@@ -284,7 +364,22 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 302, reg.getOffset());
 		assertEquals("wrong length", 336-302+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_model */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_function instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_function.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_function",
+				wbAdapter.getLabel(a_function));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_function));
+
+		/* 
+		 * sanity checks on components_bananza.a_model 
+		 */
 		assertNotNull("components_bananza.a_model not found", a_model);
 		assertEquals("wrong element name", "a_model", a_model.getElementName());
 		assertEquals("wrong element full name", "components_bananza.a_model", 
@@ -295,7 +390,22 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 163, reg.getOffset());
 		assertEquals("wrong length", 188-163+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_record */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_model instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_model.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_model",
+				wbAdapter.getLabel(a_model));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_model));
+	
+		/*
+		 * sanity checks on components_bananza.a_record 
+		 */
 		assertNotNull("components_bananza.a_record not found", a_record);
 		assertEquals("wrong element name", "a_record", a_record.getElementName());
 		assertEquals("wrong element full name", "components_bananza.a_record",
@@ -306,7 +416,22 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 237, reg.getOffset());
 		assertEquals("wrong length", 265-237+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_real */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_record instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_record.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_record",
+				wbAdapter.getLabel(a_record));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_record));
+				
+		/*
+		 * sanity checks on components_bananza.a_real 
+		 */
 		assertNotNull("components_bananza.a_real not found", a_real);
 		assertEquals("wrong element name", "a_real", a_real.getElementName());
 		assertEquals("wrong element full name", "components_bananza.a_real", 
@@ -317,8 +442,23 @@ public class TestInnerClass extends TestCase
 		reg = a_real.getLocation();
 		assertEquals("wrong start offset", 29, reg.getOffset());
 		assertEquals("wrong length", 58-29+1, reg.getLength());
+
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_real instanceof IAdaptable));
 		
-		/* sanity checks on components_bananza.a_undocumented_real */
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	(IWorkbenchAdapter)a_real.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_real",
+				wbAdapter.getLabel(a_real));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_real));
+		
+		/*
+		 * sanity checks on components_bananza.a_undocumented_real 
+		 */
 		assertNotNull("components_bananza.an_undocumented_real not found", 
 				an_undocumented_real);
 		assertEquals("wrong element name", "an_undocumented_real",
@@ -332,7 +472,23 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 64, reg.getOffset());
 		assertEquals("wrong length", 89-64+1, reg.getLength());
 		
-		/* sanity checks on components_bananza.a_protected_integer */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(an_undocumented_real instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	
+			(IWorkbenchAdapter)an_undocumented_real.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "an_undocumented_real",
+				wbAdapter.getLabel(an_undocumented_real));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(an_undocumented_real));
+				
+		/*
+		 * sanity checks on components_bananza.a_protected_integer 
+		 */
 		assertNotNull("components_bananza.a_protected_integer not found", 
 				a_protected_integer);
 		assertEquals("wrong element name", "a_protected_integer", 
@@ -346,7 +502,23 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong start offset", 407, reg.getOffset());
 		assertEquals("wrong length", 451-407+1, reg.getLength());
 
-		/* sanity checks on components_bananza.a_protected_real */
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_protected_integer instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	
+			(IWorkbenchAdapter)a_protected_integer.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_protected_integer",
+				wbAdapter.getLabel(a_protected_integer));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_protected_integer));
+				
+		/*
+		 * sanity checks on components_bananza.a_protected_real 
+		 */
 		assertNotNull("components_bananza.a_protected_real not found", 
 				a_protected_real);
 		assertEquals("wrong element name", "a_protected_real", 
@@ -359,6 +531,20 @@ public class TestInnerClass extends TestCase
 		reg = a_protected_real.getLocation();
 		assertEquals("wrong start offset", 380, reg.getOffset());
 		assertEquals("wrong length", 401-380+1, reg.getLength());
+
+		/* check if element is adaptable */
+		assertTrue("element object must be adaptable",
+				(a_protected_real instanceof IAdaptable));
+		
+		/* check if we can convert element to workbench adapter */
+		wbAdapter =	
+			(IWorkbenchAdapter)a_protected_real.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		assertEquals("wrong label", "a_protected_real",
+				wbAdapter.getLabel(a_protected_real));
+		assertNotNull("no image provided", 
+				wbAdapter.getImageDescriptor(a_protected_real));
 	}
 	
 	/**
@@ -366,7 +552,7 @@ public class TestInnerClass extends TestCase
 	 */
 	public void testImports() 
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		int importCounter = 0;
 		IModelicaClass importedPackage;
@@ -377,7 +563,7 @@ public class TestInnerClass extends TestCase
 			/*
 			 * we are expecting 8 import statments in following order:
 			 * 1. qualified         (import Modelica)
-			 * 2. single definition (import Modelica.Math.sin)
+			 * 2. qualified         (import Modelica.Math.sin)
 			 * 3. unqualified       (import Modelica.*)
 			 * 4. renaming          (import mm = Modelica.Math)
 			 * 5. local renaming    (import foo = hepp)
@@ -397,12 +583,18 @@ public class TestInnerClass extends TestCase
 						importedPackage.getFullName());
 				break;
 			case 2: // import Modelica.Math.sin
-				// this is basicaly not implemented and maybe will go away...argh
-//				assertEquals(IModelicaImport.Type.SINGLE_DEFINITION, 
-//						imp.getType());
+				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
+				importedPackage = imp.getImportedPackage();
+				assertEquals("wrong imported package returned",
+						"Modelica.Math.sin",
+						importedPackage.getFullName());
 				break;
 			case 3: // import Modelica.*
 				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
+				importedPackage = imp.getImportedPackage();
+				assertEquals("wrong imported package returned",
+						"Modelica",
+						importedPackage.getFullName());
 				break;
 			case 4: // import mm = Modelica.Math
 				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
@@ -428,168 +620,5 @@ public class TestInnerClass extends TestCase
 		assertFalse("did not find all import statments", 
 				importCounter < 4);
 
-	}
-	
-	/**
-	 * Do some integrity tests on classes/packages from the standard library.
-	 */
-	public void testStandardLibraryElements()
-		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CompilerInstantiationException, CoreException
-	{
-		/*
-		 * do checks on Modelica package
-		 */
-		assertNull("standard library should be defined outside of workspace",
-				modelica.getResource());
-		assertFalse("empty path to the source file", 
-				modelica.getFilePath().equals(""));
-		IRegion reg = modelica.getLocation();
-		assertTrue("negative element region can't be", reg.getOffset() >= 0);
-		assertTrue("elements length must be positive", reg.getLength() > 0);
-
-
-		/*
-		 * do checks on Modelica.Blocks and Modelica.Constants packages
-		 */
-
-		InnerClass blocks = null;
-		InnerClass constants = null;
- 
-		for (IModelicaElement el : modelica.getChildren())
-		{
-			String name = el.getElementName();
-			
-			if (name.equals("Blocks"))
-			{
-				blocks = (InnerClass)el;
-			}
-			else if (name.equals("Constants"))
-			{
-				constants = (InnerClass)el;
-			}
-		} 
-		
-		/* check Modelica.Blocks */
-		assertNotNull("could not find package Modelica.Blocks in standard" +
-				"library ", blocks);
-		assertNull("standard library should be defined outside of workspace",
-				blocks.getResource());
-		//TODO this is broken in omc (rev 2113), uncomment blew then omc is fixed
-//		assertFalse("empty path to the source file", 
-//				blocks.getFilePath().equals(""));
-//		reg = blocks.getLocation();
-//		assertTrue("negative element region can't be", reg.getOffset() >= 0);
-//		System.out.println(reg.getLength());
-//		assertTrue("elements length must be positive", reg.getLength() > 0);
-		
-		/* check Modelica.Blocks imports */
-		boolean foundSIimport = false;
-
-		for (IModelicaImport imp : blocks.getImports())
-		{
-			switch (imp.getType())
-			{
-			case RENAMING:
-				if (imp.getAlias().equals("SI"))
-				{
-					foundSIimport = true;
-				}
-				break;
-				/* ignore all other types of imports */
-			}
-		}
-		
-		assertTrue("could not find the representation of" +
-				" 'import SI = Modelica.SIunits;' statment", foundSIimport); 
-		
-		/* check Modelica.Constants */
-		assertNotNull("could not find package Modelica.Constants in standard" +
-				"library ", constants);
-		assertNull("standard library should be defined outside of workspace",
-				constants.getResource());
-		//TODO this is broken in omc (rev 2113), uncomment blew then omc is fixed
-//		assertFalse("empty path to the source file", 
-//				constants.getFilePath().equals(""));
-//		reg = constants.getLocation();
-//		assertTrue("negative element region can't be", reg.getOffset() >= 0);
-//		assertTrue("elements length must be positive", reg.getLength() > 0);
-
-
-		IModelicaComponent pi = null;
-		IModelicaComponent D2R = null;
-		
-		/*
-		 * do checks on Modelica.Constants components
-		 */
-		for (IModelicaElement el : constants.getChildren())
-		{
-			String name = el.getElementName();
-			
-			if (name.equals("pi"))
-			{
-				pi = (IModelicaComponent)el;
-			}
-			else if (name.equals("D2R"))
-			{
-				D2R = (IModelicaComponent)el;
-			}
-		}
-
-		/* check Modelica.Constants.pi */
-		assertNotNull("could not find package Modelica.Constants.pi in standard" 
-				+ "library ", pi);
-		assertEquals("pi must have public visibility", 
-				IModelicaComponent.Visibility.PUBLIC,
-				pi.getVisbility());
-		assertNull("standard library should be defined outside of workspace",
-				pi.getResource());
-		assertFalse("empty path to the source file", 
-				pi.getFilePath().equals(""));
-		reg = pi.getLocation();
-		assertTrue("negative element region can't be", reg.getOffset() >= 0);
-		assertTrue("elements length must be positive", reg.getLength() > 0);
-
-		/* check Modelica.Constants.D2R */
-		assertNotNull("could not find package Modelica.Constants.pi in standard" 
-				+ "library ", D2R);
-		assertEquals("pi must have public visibility", 
-				IModelicaComponent.Visibility.PUBLIC,
-				D2R.getVisbility());
-		assertNull("standard library should be defined outside of workspace",
-				D2R.getResource());
-		assertFalse("empty path to the source file", 
-				D2R.getFilePath().equals(""));
-		reg = pi.getLocation();
-		assertTrue("negative element region can't be", reg.getOffset() >= 0);
-		assertTrue("elements length must be positive", reg.getLength() > 0);
-		
-		/* check Modelica.Constants imports */
-		foundSIimport = false;
-		boolean foundNonSIimport = false;
-
-		for (IModelicaImport imp : constants.getImports())
-		{
-			switch (imp.getType())
-			{
-			case RENAMING:
-				if (imp.getAlias().equals("SI"))
-				{
-					foundSIimport = true;
-				}
-				else if (imp.getAlias().equals("NonSI"))
-				{
-					foundNonSIimport = true;
-				}
-				break;
-				/* ignore all other types of imports */
-			}
-		}
-		
-		assertTrue("could not find the representation of" +
-				" 'import SI = Modelica.SIunits;' statment", foundSIimport); 
-		assertTrue("could not find the representation of" +
-				" import NonSI = Modelica.SIunits.Conversions.NonSIunits;' " +
-				"statment", foundNonSIimport); 
-	}
+	}	
 }
