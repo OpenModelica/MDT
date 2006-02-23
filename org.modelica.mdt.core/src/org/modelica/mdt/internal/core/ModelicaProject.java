@@ -44,7 +44,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -121,7 +120,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	 */
 	public List<IModelicaElementChange> update(IResourceDelta delta)
 		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -159,67 +158,62 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 			UnexpectedReplyException, CoreException, InvocationError
 	{
 		/*
-		 * split up the full package names in separate package names
-		 * e.g. foo.bar.gazonk into foo, bar and gazonk
-		 * 
-		 * look up then foo package among the root packages, bar
-		 * among the foo's children and gazonk among bar's offspring 
-		 */
-		
-		/*
 		 * start looking among local root packages and 
 		 * standard library root packages
 		 */
-		Collection<? super IModelicaElement> currentChildren =
-			new LinkedList<IModelicaElement>();
+		Collection<IModelicaClass> currentChildren =
+			new LinkedList<IModelicaClass>();
 		currentChildren.addAll(getRootPackages());		
-		currentChildren.addAll(ModelicaCore.getModelicaRoot().getStandardLibraryPackages());
+		currentChildren.addAll
+			(ModelicaCore.getModelicaRoot().getStandardLibrary().getPackages());
 		
-		/* iterate over separate package names */
-		StringTokenizer pkgNames = new StringTokenizer(packageName, ".");
-		String subname;
-		IModelicaClass currentParent = null;
-		
-		while(pkgNames.hasMoreTokens())
-		{
-			subname = pkgNames.nextToken();
-			
-			/* look among packages to find the subname */
-			currentParent = null;
-			for (Object o : currentChildren)
-			{
-				if (!(o instanceof IModelicaClass))
-				{
-					/* skip children that are not classes/packages */
-					continue;
-				}
-				
-				/* here we know that o is of type IModelicaClass */
-				IModelicaClass p = (IModelicaClass) o;
-				if (p.getElementName().equals(subname))
-				{
-					/*
-					 * we found our next subpackage,
-					 * continiue to look among it's children
-					 */
-					currentChildren.clear();
-					currentChildren.addAll(p.getChildren());
-					currentParent = p;
-					break;
-				}
-			}
-			
-			if (currentParent == null)
-			{
-				/*
-				 * we failed to find our subpackage, the requested packages
-				 * does not exsits, bail out
-				 */
-				break;
-			}
-		}
-		
-		return currentParent;
+		return ModelicaRoot.getPackage(currentChildren, packageName);
+//		
+//		/* iterate over separate package names */
+//		StringTokenizer pkgNames = new StringTokenizer(packageName, ".");
+//		String subname;
+//		IModelicaClass currentParent = null;
+//		
+//		while(pkgNames.hasMoreTokens())
+//		{
+//			subname = pkgNames.nextToken();
+//			
+//			/* look among packages to find the subname */
+//			currentParent = null;
+//			for (Object o : currentChildren)
+//			{
+//				if (!(o instanceof IModelicaClass))
+//				{
+//					/* skip children that are not classes/packages */
+//					continue;
+//				}
+//				
+//				/* here we know that o is of type IModelicaClass */
+//				IModelicaClass p = (IModelicaClass) o;
+//				if (p.getElementName().equals(subname))
+//				{
+//					/*
+//					 * we found our next subpackage,
+//					 * continiue to look among it's children
+//					 */
+//					currentChildren.clear();
+//					currentChildren.addAll(p.getChildren());
+//					currentParent = p;
+//					break;
+//				}
+//			}
+//			
+//			if (currentParent == null)
+//			{
+//				/*
+//				 * we failed to find our subpackage, the requested packages
+//				 * does not exsits, bail out
+//				 */
+//				break;
+//			}
+//		}
+//		
+//		return currentParent;
 	}
 	
 	public Collection<IModelicaClass> getRootPackages()
@@ -302,7 +296,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	}
 
 	/**
-	 * project is defined in it self :P
+	 * project is defined in it self
 	 */
 	public IModelicaProject getProject()
 	{

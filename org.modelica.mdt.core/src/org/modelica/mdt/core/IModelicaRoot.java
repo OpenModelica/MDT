@@ -38,13 +38,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.core;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.compiler.CompilerInstantiationException;
-import org.modelica.mdt.core.compiler.ConnectException;
 
 /**
  * @author Elmir Jagudin
@@ -95,11 +92,9 @@ public interface IModelicaRoot
 	public void 
 		removeModelicaElementChangeListener
 			(IModelicaElementChangeListener listener);
-	
-	/**
-	 * @return the top-level packages in the standard library
-	 */
-	public Collection<IModelicaClass> getStandardLibraryPackages()
-		throws ConnectException, CompilerInstantiationException;
 
+	/**
+	 * @return the reference to the standard library
+	 */
+	public IStandardLibrary getStandardLibrary();
 }

@@ -57,8 +57,8 @@ import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IllegalTypeException;
 import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
-import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementsInfo;
@@ -99,12 +99,11 @@ public class InnerClass extends ModelicaClass
 		this.parentNamespace = parentNamespace;
 		this.name = name;
 		setFullName();
-		
 	}
 	
 	/**
 	 * Create a modelica package that is defined in unknow location, for example
-	 * a system library class. This method assumes that a class named
+	 * a standard library class. This method assumes that a class named
 	 * 'prefix'.'name' is loaded into OMC.
 	 * 
 	 * @param prefix
@@ -141,7 +140,7 @@ public class InnerClass extends ModelicaClass
 	
 	private Hashtable<String, IModelicaElement> loadElements() 
 		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		Hashtable<String, IModelicaElement> elements = 
 			new Hashtable<String, IModelicaElement>();
@@ -214,37 +213,23 @@ public class InnerClass extends ModelicaClass
 			/* an import statment */
 			else if (elementType.equals("import"))
 			{
+				System.out.println(info.getKind() + " " + info.getPath());
 				String importType = info.getKind();
 				
 				if (importType.equals("qualified"))
 				{
-					try 
-					{
-						imports.add(ModelicaImport.createQualifiedImport
-								(getProject(),info.getPath()));
-					}
-					catch (CompilerException e) 
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} 
-					catch (CoreException e) 
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					imports.add(new ModelicaImport
+							(getProject(), true, info.getPath()));
 				}
 				else if (importType.equals("unqualified"))
 				{
-					imports.add(
-							ModelicaImport.createUnqualifiedImport(
-									info.getPath()));
+					imports.add(new ModelicaImport
+							(getProject(), false, info.getPath()));
 				}
 				else if (importType.equals("named"))
 				{
-					imports.add(
-							ModelicaImport.createRenamingImport(
-									info.getId(), info.getPath()));
+					imports.add(new ModelicaImport
+							(getProject(), info.getId(), info.getPath()));
 				}
 				else
 				{
@@ -271,7 +256,7 @@ public class InnerClass extends ModelicaClass
 	@Override
 	public Collection<IModelicaElementChange> reload()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
@@ -394,7 +379,7 @@ public class InnerClass extends ModelicaClass
 
 	public Collection<IModelicaImport> getImports() 
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		if (children == null)
 		{
@@ -402,5 +387,20 @@ public class InnerClass extends ModelicaClass
 		}
 
 		return imports;
+	}
+
+	@Override
+	public IModelicaElement getParent()
+	{
+		IModelicaElement p = super.getParent();
+		if (p == null)
+		{
+			/* 
+			 * the only way we can have a null parent is if we are a
+			 * top-level class in the standard library
+			 */
+			return ModelicaCore.getModelicaRoot().getStandardLibrary();
+		}
+		return p;
 	}
 }

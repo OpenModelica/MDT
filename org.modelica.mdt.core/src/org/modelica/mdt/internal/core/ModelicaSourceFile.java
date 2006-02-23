@@ -215,7 +215,7 @@ public class ModelicaSourceFile extends ModelicaElement
 	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta)
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();

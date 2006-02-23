@@ -48,7 +48,7 @@ package org.modelica.mdt.core;
 public interface IModelicaImport
 {
 	public enum Type 
-		{ QUALIFIED, SINGLE_DEFINITION, UNQUALIFIED, RENAMING };
+		{ QUALIFIED, UNQUALIFIED, RENAMING };
 		
 	/**
 	 * @return the type of the import statment
@@ -56,17 +56,10 @@ public interface IModelicaImport
 	public Type getType();
 	
 	/**
-	 * @return the package that this statment imports
+	 * @return the package/class that this statment imports
 	 */
 	public IModelicaClass getImportedPackage();
 		
-	/**
-	 * 
-	 * @return for single definition imports the class/component this
-	 * statment imports, for other types of imports this method is not defined
-	 */
-	public IModelicaElement getImportedElement();
-	
 	/**
 	 * @return for renaming import returns the name to which the imported
 	 * elemetns is renamed, for other types of imports this method is not 

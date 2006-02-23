@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Link�pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -38,6 +38,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.core;
 
 import java.util.Collection;
@@ -49,83 +50,23 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
- * @author Elmir Jagudin
+ * The interface that gives access to elements defined in the standard library
  */
-public interface IModelicaClass extends IModelicaElement, IParent
+public interface IStandardLibrary extends IModelicaElement 
 {
-	public enum Type 
-	{ 
-		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE;
-		
-		public static Type parse(String text) throws IllegalTypeException
-		{
-			if (text.equalsIgnoreCase("CLASS"))
-			{
-				return CLASS;
-			}
-			else if (text.equalsIgnoreCase("PACKAGE"))
-			{
-				return PACKAGE;
-			}
-			else if (text.equalsIgnoreCase("MODEL"))
-			{
-				return MODEL;
-			}
-			else if (text.equalsIgnoreCase("CONNECTOR"))
-			{
-				return CONNECTOR;
-			}
-			else if (text.equalsIgnoreCase("RECORD"))
-			{
-				return RECORD;
-			}
-			else if (text.equalsIgnoreCase("BLOCK"))
-			{
-				return BLOCK;
-			}
-			else if (text.equalsIgnoreCase("FUNCTION"))
-			{
-				return FUNCTION;
-			}
-			else if (text.equalsIgnoreCase("TYPE"))
-			{
-				return TYPE;
-			}
-			
-			/* 
-			 * this is an error condition, classRestriction is of unexpected
-			 * type
-			 */
-			throw new IllegalTypeException(text);
-		}
-	};
+	/**
+	 * @return the top classes in the standard library
+	 */
+	public Collection<IModelicaClass> getPackages() 
+		throws ConnectException, CompilerInstantiationException;
 
 	/**
-	 * return the class' prefix, that is if class' full name is
-	 * foo.bar.hej then the prefix is foo.bar and short name is hej
+	 * get package in the standard library by name
 	 * 
-	 * @return the prefix of this package
+	 * @param packageName the name of the project to fetch
+	 * @return the package or null if no package is found
 	 */
-	public String getPrefix();
-	
-	/**
-	 * @return the restriction type of this class
-	 * @throws UnexpectedReplyException 
-	 */
-	public Type getRestrictionType()
+	public IModelicaClass getPackage(String packageName)
 		throws ConnectException, CompilerInstantiationException,
-				UnexpectedReplyException;
-
-	/**
-	 * @return the imports made in this class
-	 */
-	public Collection<IModelicaImport> getImports()
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException;
-	
-	/**
-	 * @return the class that defines tha parent namespace or null if this class
-	 * is defined in top namespace
-	 */
-	public IModelicaClass getParentNamespace();
+			UnexpectedReplyException, InvocationError, CoreException; 
 }

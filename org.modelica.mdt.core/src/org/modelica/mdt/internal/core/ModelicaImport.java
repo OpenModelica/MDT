@@ -43,9 +43,9 @@ package org.modelica.mdt.internal.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -58,52 +58,71 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public class ModelicaImport implements IModelicaImport
 {
+	//TODO imported package loading should be done lazily
 	private IModelicaClass importedPackage;
 	private Type type;
 	private String alias;
 	
-	/* this class is instanciated via factory methods */
-	private ModelicaImport() { } 
-	
-	protected static ModelicaImport createRenamingImport(String alias,
-			String importedElement)
-	{
-		ModelicaImport mi = new ModelicaImport();
-		mi.type = Type.RENAMING;
-		mi.alias = alias;
-
-		return mi;
-	}
-
-	protected static ModelicaImport createUnqualifiedImport(
-			String importedElement)
-	{
-		ModelicaImport mi = new ModelicaImport();
-		mi.type = Type.UNQUALIFIED;
-
-		return mi;
-	}
-
-	protected static ModelicaImport createQualifiedImport(
-			IModelicaProject containerProject,
-			String importedElement)
-		throws ConnectException, CompilerInstantiationException, 
-			UnexpectedReplyException, InvocationError, CoreException
-	{
-		ModelicaImport mi = new ModelicaImport();
-		mi.type = Type.QUALIFIED;
-		mi.importedPackage = containerProject.getPackage(importedElement);
+	/**
+	 * Create an import of the qualified or unqualified type
+	 * @param containerProject the project where the import statment is defined
+	 * @param isQualified wheter if this is a qualified import
+	 * @param importedElement the full name if the imported package/class
+	 */
+	public ModelicaImport(IModelicaProject containerProject, 
+			boolean isQualified,
+			String importedElement) 
+		throws ConnectException, CompilerInstantiationException,
+		UnexpectedReplyException, InvocationError, CoreException
+	{ 
+		type = isQualified ? Type.QUALIFIED : Type.UNQUALIFIED;
 		
-		if (mi.importedPackage == null)
+		importedPackage = containerProject.getPackage(importedElement);
+		
+		if (importedPackage == null)
 		{
 			/* the package specified in this import statment does not exists */
 			//TODO throw an exception or something
 			System.out.println("omg, omg, omg ! " + importedElement);
+		}		
+	}
+	
+	/**
+	 * Create an import if renaming type.
+	 * 
+	 * @param containerProject the project where the import statment is defined
+	 * @param alias the new name of the imported package
+	 * @param importedElement the full name if the imported package/class
+	 */
+	public ModelicaImport(IModelicaProject containerProject,
+			String alias,
+			String importedElement)
+		throws ConnectException, CompilerInstantiationException,
+			UnexpectedReplyException, InvocationError, CoreException
+	{ 
+		type = Type.RENAMING;
+		this.alias = alias;
+
+		if (containerProject != null)
+		{
+			importedPackage = containerProject.getPackage(importedElement);
+		}
+		else
+		{
+			importedPackage = 
+				ModelicaCore.getModelicaRoot().getStandardLibrary().
+					getPackage(importedElement);
 		}
 		
-		return mi;
-	}
-
+		if (importedPackage == null)
+		{
+			/* the package specified in this import statment does not exists */
+			//TODO throw an exception or something
+			System.out.println("omg, (renaming) " + importedElement);
+		}
+		
+	} 
+	
 	/**
 	 * @see org.modelica.mdt.core.IModelicaImport#getType()
 	 */
@@ -118,15 +137,6 @@ public class ModelicaImport implements IModelicaImport
 	public IModelicaClass getImportedPackage()
 	{
 		return importedPackage;
-	}
-
-	/**
-	 * @see org.modelica.mdt.core.IModelicaImport#getImportedElement()
-	 */
-	public IModelicaElement getImportedElement()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**

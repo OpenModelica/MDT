@@ -138,7 +138,8 @@ public interface IModelicaElement extends IAdaptable
 	public IModelicaElement getParent();
 	
 	/**
-	 * @return the project where this element is defined
+	 * @return the project where this element is defined,
+	 * elements from standard library returns null here
 	 */
 	public IModelicaProject getProject();
 }

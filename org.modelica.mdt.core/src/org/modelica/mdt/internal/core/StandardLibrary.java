@@ -38,116 +38,106 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.modelica.mdt.internal.core;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IParent;
+import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
-/**
- * @author Elmir Jagudin
- */
-abstract public class ModelicaElement extends PlatformObject 
-	implements IModelicaElement 
+public class StandardLibrary  extends PlatformObject 
+	implements IStandardLibrary, IParent
 {
-	private IModelicaElement parent;
-	
-	protected ModelicaElement(IModelicaElement parent)
+	LinkedList<IModelicaClass> packages = null;
+
+	public Collection<IModelicaClass> getPackages()
+		throws ConnectException, CompilerInstantiationException
 	{
-		this.parent = parent;
-	}
-	
-	public IModelicaElement getParent()
-	{
-		return parent;
-	}
-	
-	public IModelicaProject getProject()
-	{
-		if (parent == null)
+		if (packages == null)
 		{
-			return null;
+			packages = new LinkedList<IModelicaClass>();
+			
+			for (String packageName : CompilerProxy.getStandardLibrary())
+			{
+				packages.add(new InnerClass(null, packageName, 
+							IModelicaClass.Type.PACKAGE));
+			}
 		}
-		return parent.getProject();
+		
+		return packages;
 	}
-	
-	public IModelicaSourceFile getSourceFile()
+
+	public String getElementName() 
 	{
-		if (parent == null)
-		{
-			return null;
-		}
-		return parent.getSourceFile();
+		return "Standard Library";
 	}
-	
+
+	public String getFullName() 
+	{
+		return getElementName();
+	}
+
 	public IResource getResource() 
 	{
 		return null;
 	}
 
-	/**
-	 * All modelica elements that have a direct mapping between the IResource
-	 * (e.g. ModelicaFile -> IFile, FolderPackage -> IFolder) will recive a
-	 * call on this method when it have been detected that the underlying 
-	 * IResouce have been changed.
-	 * 
-	 *  @param delta The resource delta which is rooted at the IResource of
-	 *  this element 
-	 */
-	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException
-	{
-		/* return an empty list by default */
-		return new LinkedList<IModelicaElementChange>();
-	}
-
-	/**
-	 * This method will be invoked on modelica elements, that do not have
-	 * a direct mapping to a IResource, when it is suspected that thier 
-	 * representation in the compiler have changed.
-	 *  
-	 * The element should requery the compiler and return the difference as
-	 * a collection of IModelicaElementChange:s.
-	 * 
-	 * @return the changes to the element and it's children, or empty collection
-	 * if the element and it's children are not changed.
-	 */
-	public Collection<IModelicaElementChange> reload()
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException
-	{
-		/* return an empty list by default */
-		return new LinkedList<IModelicaElementChange>();		
-	}
-
 	public IRegion getLocation()
-		throws CoreException, ConnectException, 
-			UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
 	{
-		/* we don't have a definition region by default */
 		return null;
 	}
 
-	public String getFilePath() 
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
+	public String getFilePath()
 	{
-		/* we are not defined in an external file by default */
 		return null;
-	}	
+	}
+
+	public IModelicaSourceFile getSourceFile() 
+	{
+		return null;
+	}
+
+	public IModelicaElement getParent()
+	{
+		return null;
+	}
+
+	public IModelicaProject getProject() 
+	{
+		return null;
+	}
+
+	public IModelicaClass getPackage(String packageName)
+		throws ConnectException, CompilerInstantiationException,
+			UnexpectedReplyException, InvocationError, CoreException 
+	{
+		return ModelicaRoot.getPackage(packages, packageName);
+	}
+
+	public Collection<? extends IModelicaElement> getChildren() 
+		throws ConnectException, CompilerInstantiationException
+	{
+		return getPackages();
+	}
+
+	public boolean hasChildren()
+	{
+		return true;
+	}
+
 }

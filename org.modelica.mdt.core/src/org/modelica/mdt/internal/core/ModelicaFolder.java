@@ -123,7 +123,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 
 	public List<IModelicaElementChange> update(IResourceDelta delta) 
 		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		return update(null, delta);
 	}
@@ -148,7 +148,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	public List<IModelicaElementChange> update(IModelicaElement root, 
 			IResourceDelta delta) 
 			throws ConnectException, UnexpectedReplyException, InvocationError,
-				CompilerInstantiationException
+				CompilerInstantiationException, CoreException
 	{
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();

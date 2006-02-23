@@ -72,7 +72,6 @@ public interface IModelicaProject extends IModelicaElement
 	 * 
 	 * @param packageName the name of the project to fetch
 	 * @return the package or null if no package is found
-	 * @throws InvocationError 
 	 */
 	public IModelicaClass getPackage(String packageName) 
 		throws ConnectException, CompilerInstantiationException, 
@@ -92,11 +91,6 @@ public interface IModelicaProject extends IModelicaElement
 	 * 
 	 * @param resourcePath project relative path to the resource to fetch
 	 * @return the resource or null if the resource is not found
-	 * @throws CoreException 
-	 * @throws CompilerInstantiationException 
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectException 
-	 * @throws InvocationError 
 	 */
 	public IModelicaElement findElement(IPath resourcePath) 
 		throws ConnectException, UnexpectedReplyException, 

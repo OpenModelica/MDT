@@ -42,7 +42,6 @@
 package org.modelica.mdt.core;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -60,7 +59,6 @@ import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException.ProblemType;
-import org.modelica.mdt.internal.core.InnerClass;
 import org.modelica.mdt.internal.core.CorePlugin;
 
 
@@ -72,7 +70,7 @@ import org.modelica.mdt.internal.core.CorePlugin;
  * All access to the modelica compiler should be made through this class.
  * 
  */
-//TODO move this to org.modelica.mdt.internal.core package ?
+//TODO move this to org.modelica.mdt.internal.core package !
 public class CompilerProxy
 {
 	private static IModelicaCompiler compiler = null;
@@ -192,17 +190,9 @@ public class CompilerProxy
 	/**
 	 * @return the top classes in the standard library
 	 */
-	public static Collection<IModelicaClass> getStandardLibrary()
+	public static String[] getStandardLibrary()
 		throws ConnectException, CompilerInstantiationException
 	{
-		LinkedList<IModelicaClass> pkgs = new LinkedList<IModelicaClass>();
-		
-		for (String packageName : getCompiler().getStandardLibrary())
-		{
-			pkgs.add(new InnerClass(null, packageName, 
-					IModelicaClass.Type.PACKAGE));
-		}
-		
-		return pkgs;
+		return getCompiler().getStandardLibrary();
 	}
 }

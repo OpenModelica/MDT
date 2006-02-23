@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -53,16 +54,19 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
+import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.internal.core.ModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * The internal implementation of the IModelicaRoot interface.
@@ -74,7 +78,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	private Hashtable<IProject, IModelicaProject> projectsTable;
 	private LinkedList<IModelicaElementChangeListener> listeners;
 	
-	private Collection<IModelicaClass> standardPackages = null;
+	private StandardLibrary standardLibrary = null;
 
 	/**
 	 * @see org.modelica.mdt.core.IModelicaRoot#getProjects()
@@ -217,6 +221,15 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 			 */
 			ErrorManager.showCompilerError(e);
 		}
+		catch (CoreException e)
+		{
+			/*
+			 * display error and return whatever changes was added before
+			 * the error struck
+			 */
+			ErrorManager.showCoreError(e);
+		}
+
 		
 		return changes;
 	}
@@ -263,13 +276,88 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		return new ModelicaProject(newProject);
 	}
 
-	public Collection<IModelicaClass> getStandardLibraryPackages()
-		throws ConnectException, CompilerInstantiationException 
+	public IStandardLibrary getStandardLibrary() 
 	{
-		if (standardPackages == null)
+		if (standardLibrary  == null)
 		{
-			standardPackages = CompilerProxy.getStandardLibrary();
+			standardLibrary = new StandardLibrary();
 		}
-		return standardPackages;
+		return standardLibrary;
 	}
+	
+	
+	/**
+	 * A utilit methods to look-up a package by it's full name.
+	 * 
+	 * This method looks in all subtrees of the top elements provided.
+	 * 
+	 * @param topElements the roots of the elements subtrees to look among
+	 * @param packageName the package's full name that we want to locate
+	 * @return the package found or null if there were no such package
+	 */
+	protected static IModelicaClass getPackage
+		(Collection<? extends IModelicaElement> topElements, String packageName)
+	
+		throws ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, CoreException, InvocationError
+	{
+		/*
+		 * split up the full package names in separate package names
+		 * e.g. foo.bar.gazonk into foo, bar and gazonk
+		 * 
+		 * look up then foo package among the root packages, bar
+		 * among the foo's children and gazonk among bar's offspring 
+		 */
+		Collection<? super IModelicaElement> currentChildren =
+			new LinkedList<IModelicaElement>();
+		currentChildren.addAll(topElements);
+
+		/* iterate over separate package names */
+		StringTokenizer pkgNames = new StringTokenizer(packageName, ".");
+		String subname;
+		IModelicaClass currentParent = null;
+		
+		while(pkgNames.hasMoreTokens())
+		{
+			subname = pkgNames.nextToken();
+			
+			/* look among packages to find the subname */
+			currentParent = null;
+			for (Object o : currentChildren)
+			{
+				if (!(o instanceof IModelicaClass))
+				{
+					/* skip children that are not classes/packages */
+					continue;
+				}
+				
+				/* here we know that o is of type IModelicaClass */
+				IModelicaClass p = (IModelicaClass) o;
+				if (p.getElementName().equals(subname))
+				{
+					/*
+					 * we found our next subpackage,
+					 * continiue to look among it's children
+					 */
+					currentChildren.clear();
+					currentChildren.addAll(p.getChildren());
+					currentParent = p;
+					break;
+				}
+			}
+			
+			if (currentParent == null)
+			{
+				/*
+				 * we failed to find our subpackage, the requested packages
+				 * does not exsits, bail out
+				 */
+				break;
+			}
+		}
+		
+		return currentParent;
+
+	}
+
 }
