@@ -402,18 +402,36 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			switch (imp.getType())
 			{
 			case QUALIFIED:
-				computeCompPropsFromPackage(imp.getImportedPackage(),
+				computeCompPropsFromPackage(imp.getImportedPackage(), null,
 						prefix, offset, proposals);
 				break;
 			case UNQUALIFIED:
 				break;
 			case RENAMING:
+				computeCompPropsFromPackage(imp.getImportedPackage(), 
+						imp.getAlias(),	prefix, offset, proposals);				
 				break;
 			}
 		}
 	}
 
+	/**
+	 * Compute proposals based on an imported package. This method
+	 * bases the computation on package, packages alias if available,
+	 * the prefix before current cursor position.
+	 * 
+	 * Proposals are added to provided list 'proposals' list. Given offset
+	 * is used to create completion propopal object with correct replacement
+	 * data.  
+	 * 
+	 * @param importedPackage the package that is imported
+	 * @param packageAlias package's alias or null if package have no alias
+	 * @param prefix the prefix before current cursor position
+	 * @param offset the current cursor position in the document
+	 * @param proposals the computed proposals will be added to this list
+	 */
 	private void computeCompPropsFromPackage(IModelicaClass importedPackage,
+			String packageAlias,
 			String prefix, int offset,
 			Collection<ICompletionProposal> proposals) 
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
@@ -424,8 +442,17 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		 * wants to type name from this package.
 		 */
 		int firstDot = prefix.indexOf('.');
-		String packageName = importedPackage.getElementName();
-			
+		String packageName;
+		
+		if (packageAlias != null)
+		{
+			packageName = packageAlias;
+		}
+		else
+		{
+			packageName = importedPackage.getElementName();
+		}
+
 		if (firstDot == -1)
 		{
 			/* 
