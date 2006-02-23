@@ -85,12 +85,10 @@ public class TestModelicaCompletionProcessor extends TestCase
 	
 	/* we can undo changes, this easy ! */
 	private IUndoManager undoManager;
-	
+
 	
 	@Override
-	//TODO replace me with the line below
-	public void setUp() throws Exception
-	//protected void setUp() throws Exception 
+	protected void setUp() throws Exception 
 	{
 		Area51Projects.createProjects();
 		
@@ -284,7 +282,77 @@ public class TestModelicaCompletionProcessor extends TestCase
 		assertTrue("did not found proposal for the 'Modelica.Math.exp'", 
 				foundModelicaMathExpProp);
 		assertTrue("did not found proposal for the 'Modelica.Math.log'", 
-				foundModelicaMathLogProp);		
+				foundModelicaMathLogProp);
+		
+		/* type 'm' inside import_rich_model */
+		editor.doRevertToSaved();
+		doc.replace(383, 0, "m"); 
+
+		/* get proposals at just past 'm' */
+		props =	compProc.computeCompletionProposals(textViewer, 384);
+		
+		/* 
+		 * we are expecting a proposal for the 'mm', 
+		 * the renamed Modelica.Math package 
+		 */
+		boolean foundMMProp = false;
+		for (ICompletionProposal proposal : props)
+		{
+			if (proposal.getDisplayString().startsWith("mm"))
+			{
+				proposal.apply(doc);
+				result = doc.get(383, "mm".length());
+				assertEquals("unexpected result of applying proposal",
+						"mm", result);
+				foundMMProp = true;
+			}
+		}
+		assertTrue("did not found proposal for the 'mm'", 
+				foundMMProp);
+		
+		/* type 'mm.s' inside import_rich_model */
+		editor.doRevertToSaved();
+		doc.replace(383, 0, "mm.s"); 
+
+		/* get proposals at the end of 'mm.s' */
+		props =	compProc.computeCompletionProposals(textViewer, 386);
+		
+		/* 
+		 * we are expecting a proposal for the 'mm.sin' and 'mm.sinh' 
+		 * the renamed Modelica.Math package 
+		 */
+		boolean foundMMSinProp = false;
+		boolean foundMMSinhProp = false;
+		for (ICompletionProposal proposal : props)
+		{
+			/*
+			 * the order of these if statments is important becouse 
+			 * 'sinh' starts with 'sin'
+			 */
+			if (proposal.getDisplayString().startsWith("sinh"))
+			{
+				proposal.apply(doc);
+				result = doc.get(383, "mm.sinh".length());
+				assertEquals("unexpected result of applying proposal",
+						"mm.sinh", result);
+				foundMMSinhProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("sin"))
+			{
+				proposal.apply(doc);
+				result = doc.get(383, "mm.sin".length());
+				assertEquals("unexpected result of applying proposal",
+						"mm.sin", result);
+				foundMMSinProp = true;
+				undoManager.undo();
+			}
+		}
+		assertTrue("did not found proposal for the 'mm.sinh'", 
+				foundMMSinhProp);
+		assertTrue("did not found proposal for the 'mm.sin'", 
+				foundMMSinProp);
+		
 		/*
 		 * test completions inside the inside import_rich_model.bar
 		 */
@@ -331,7 +399,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 		{
 			/*
 			 * the order of these if statments is important becouse 
-			 * 'AbsorbedDoseRate' also starts with 'AbsorbedDose'
+			 * 'AbsorbedDoseRate' starts with 'AbsorbedDose'
 			 */
 			if (proposal.getDisplayString().startsWith("AbsorbedDoseRate"))
 			{

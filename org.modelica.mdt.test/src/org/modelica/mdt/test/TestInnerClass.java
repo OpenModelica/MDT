@@ -598,9 +598,11 @@ public class TestInnerClass extends TestCase
 				break;
 			case 4: // import mm = Modelica.Math
 				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
+				assertEquals("mm", imp.getAlias());
 				break;
 			case 5: // import foo = hepp
 				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
+				assertEquals("foo", imp.getAlias());
 				break;
 			case 6: // import hepp.hopp
 				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
@@ -609,8 +611,8 @@ public class TestInnerClass extends TestCase
 				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
 				break;
 			case 8: // import root_package.root_package_model
-				// this is basicaly not implemented and maybe will go away...argh
-//				assertEquals(IModelicaImport.Type.SINGLE_DEFINITION, imp.getType());
+				// TODO this is broken, fix this (folder package and all i think)
+//				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
 				break;
 			default:
 				fail("unexpectedly many imports found"); 
