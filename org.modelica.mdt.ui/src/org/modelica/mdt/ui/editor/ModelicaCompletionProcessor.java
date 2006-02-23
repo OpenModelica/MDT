@@ -399,17 +399,23 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		for (IModelicaImport imp : imports)
 		{
+			IModelicaClass importedPackage = imp.getImportedPackage();
 			switch (imp.getType())
 			{
 			case QUALIFIED:
-				computeCompPropsFromPackage(imp.getImportedPackage(), null,
+				computeCompPropsFromPackage(importedPackage, null,
 						prefix, offset, proposals);
 				break;
 			case UNQUALIFIED:
+				for (IModelicaElement child : importedPackage.getChildren())
+				{
+					computeCompPropsFromPackage(((IModelicaClass)child), null,
+							prefix, offset, proposals);
+				}
 				break;
 			case RENAMING:
-				computeCompPropsFromPackage(imp.getImportedPackage(), 
-						imp.getAlias(),	prefix, offset, proposals);				
+				computeCompPropsFromPackage(importedPackage, imp.getAlias(),
+						prefix, offset, proposals);				
 				break;
 			}
 		}
