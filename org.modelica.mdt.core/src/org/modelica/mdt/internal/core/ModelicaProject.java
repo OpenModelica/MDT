@@ -168,52 +168,6 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 			(ModelicaCore.getModelicaRoot().getStandardLibrary().getPackages());
 		
 		return ModelicaRoot.getPackage(currentChildren, packageName);
-//		
-//		/* iterate over separate package names */
-//		StringTokenizer pkgNames = new StringTokenizer(packageName, ".");
-//		String subname;
-//		IModelicaClass currentParent = null;
-//		
-//		while(pkgNames.hasMoreTokens())
-//		{
-//			subname = pkgNames.nextToken();
-//			
-//			/* look among packages to find the subname */
-//			currentParent = null;
-//			for (Object o : currentChildren)
-//			{
-//				if (!(o instanceof IModelicaClass))
-//				{
-//					/* skip children that are not classes/packages */
-//					continue;
-//				}
-//				
-//				/* here we know that o is of type IModelicaClass */
-//				IModelicaClass p = (IModelicaClass) o;
-//				if (p.getElementName().equals(subname))
-//				{
-//					/*
-//					 * we found our next subpackage,
-//					 * continiue to look among it's children
-//					 */
-//					currentChildren.clear();
-//					currentChildren.addAll(p.getChildren());
-//					currentParent = p;
-//					break;
-//				}
-//			}
-//			
-//			if (currentParent == null)
-//			{
-//				/*
-//				 * we failed to find our subpackage, the requested packages
-//				 * does not exsits, bail out
-//				 */
-//				break;
-//			}
-//		}
-//		
-//		return currentParent;
 	}
 	
 	public Collection<IModelicaClass> getRootPackages()

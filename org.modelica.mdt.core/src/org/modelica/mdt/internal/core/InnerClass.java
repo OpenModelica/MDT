@@ -213,7 +213,6 @@ public class InnerClass extends ModelicaClass
 			/* an import statment */
 			else if (elementType.equals("import"))
 			{
-				System.out.println(info.getKind() + " " + info.getPath());
 				String importType = info.getKind();
 				
 				if (importType.equals("qualified"))
