@@ -48,6 +48,7 @@ import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.IModelicaClass.Type;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
@@ -68,7 +69,7 @@ public class ModelicaElementSorter extends ViewerSorter
 	private static int PROTECTED_COMPONENT_ORDER   	= 6;
 	private static int MODELICA_FILE_ORDER			= 7;
 	private static int PLAIN_FILE_ORDER 			= 8;
-	private static int SYSTEM_LIBRARY_ORDER 		= 9;
+	private static int STANDARD_LIBRARY_ORDER 		= 9;
 	private static int UNKOWN_TYPE_ORDER 			= Integer.MAX_VALUE;
 
 	@Override
@@ -117,9 +118,9 @@ public class ModelicaElementSorter extends ViewerSorter
 		{
 			return PLAIN_FILE_ORDER;
 		}
-		else if (element instanceof SystemLibrary)
+		else if (element instanceof IStandardLibrary)
 		{
-			return SYSTEM_LIBRARY_ORDER;
+			return STANDARD_LIBRARY_ORDER;
 		}
 		else if (element instanceof IModelicaProject)
 		{

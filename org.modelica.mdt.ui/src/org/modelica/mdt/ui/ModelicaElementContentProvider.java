@@ -158,7 +158,9 @@ public class ModelicaElementContentProvider
 			 * add as last element system library
 			 */
 			list.toArray(children);
-			children[children.length-1] = new SystemLibrary();
+			children[children.length-1] = 
+				ModelicaCore.getModelicaRoot().getStandardLibrary();
+
 			return children; 			
 		}
 		else if (parent instanceof IParent)

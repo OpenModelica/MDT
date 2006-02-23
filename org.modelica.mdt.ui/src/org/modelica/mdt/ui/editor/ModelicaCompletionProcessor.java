@@ -77,7 +77,6 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.UIPlugin;
 
-
 /**
  * This class is responsible for proposing completions and giving
  * context information about functions. These functions kick in when .
@@ -93,13 +92,6 @@ import org.modelica.mdt.ui.UIPlugin;
  */
 public class ModelicaCompletionProcessor implements IContentAssistProcessor
 {
-//	/*
-//	 * There is a separate narrowedProposals so that we can store the original
-//	 * proposals. This allows us to backtrace the proposals.
-//	 */
-//	private List narrowedProposals = new List();
-//	private List proposals = new List();
-//	private int typeAhead = 0;
 
 	private Vector<String> inputParameters = new Vector<String>();
 	private Vector<String> outputParameters = new Vector<String>();
@@ -169,78 +161,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	
 	protected IContextInformationValidator validator = new Validator();
 	
-//	/**
-//	 * This method calls OMC and tries to get the classes defined in the
-//	 * class name found in the document we're editing.
-//	 * 
-//	 * @param viewer where the document is stored
-//	 * @param offset offset to where in the document we've typed a .
-//	 */
-//	private void newProposals(String className)
-//	{
-//		if(proposals != null)
-//		{
-//			proposals.clear();
-//		}
-//		else
-//		{
-//			proposals = new List();
-//		}
-//		if(narrowedProposals != null)
-//		{
-//			narrowedProposals.clear();
-//		}
-//		else
-//		{
-//			narrowedProposals = new List();
-//		}
-//		
-//		typeAhead = 0;
-//
-//		try
-//		{
-//			proposals = CompilerProxy.getClassNames(className);
-//		}
-//		catch (CompilerException e)
-//		{
-//			/* 
-//			 * if there were errors fetching classnames, report
-//			 * error and leave proposals empty
-//			 */
-//			ErrorManager.showCompilerError(e);
-//		}
-//		finally
-//		{
-//			if(proposals != null)
-//			{
-//				narrowedProposals.addAll(proposals);
-//			}
-//		}
-//	}
-	
-//	/**
-//	 * Update the completion proposals by only adding the class names that
-//	 * match the currently typed prefix of a class.
-//	 * 
-//	 * @param className the prefix of a proper class name
-//	 */
-//	private void updateProposals(String className)
-//	{
-//		String classPrefix = className.substring(className.lastIndexOf('.') + 1);
-//		
-//		typeAhead = classPrefix.length();
-//		
-//		narrowedProposals.clear();
-//		
-//		for (ListElement proposedClass : proposals)
-//		{
-//			if (((Element)proposedClass).toString().startsWith(classPrefix))
-//			{
-//				narrowedProposals.append(proposedClass);
-//			}
-//		}
-//	}
-//	
 	/**
 	 * calculates the prefix of possible class/package/component names
 	 * at specified offset
@@ -414,11 +334,10 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			
 			//TODO currently this bug will be triggered when eclipse restores 
 			// the files that where left
-			// in the editor area when it was closed last time the
-			// editor input will not be of ModelicaElementEditorInput
+			// in the editor area when it was closed last time
+			// the editor input will not be of ModelicaElementEditorInput
 			// thus code completion will not work, this should be fixed somehow
 			// check out org.eclipse.ui.IEditorInput.getPersistable() method 
-
 		}
 		
 		LinkedList<ICompletionProposal> proposals = 
@@ -428,7 +347,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 
 		IModelicaSourceFile file = 
 			((ModelicaElementEditorInput)input).getSourceFile();
-		System.out.println("we are looking at " + file);
 		try
 		{
 			IModelicaClass clazz = file.getClassAt(offset);
@@ -486,8 +404,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			case QUALIFIED:
 				computeCompPropsFromPackage(imp.getImportedPackage(),
 						prefix, offset, proposals);
-				break;
-			case SINGLE_DEFINITION:
 				break;
 			case UNQUALIFIED:
 				break;

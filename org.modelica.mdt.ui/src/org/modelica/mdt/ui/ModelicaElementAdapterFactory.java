@@ -83,7 +83,7 @@ public class ModelicaElementAdapterFactory implements IAdapterFactory
 			return ((IModelicaElement)adaptableObject).getResource();
 		}
 
-		return null;
+		return null; 
 	}
 
 	/**

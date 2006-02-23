@@ -32,6 +32,7 @@ public class UIPlugin extends AbstractUIPlugin
 		
 		IAdapterManager manager = Platform.getAdapterManager();
 		IAdapterFactory factory = new ModelicaElementAdapterFactory();
+
 		manager.registerAdapters(factory, IModelicaElement.class);
 	}
 
