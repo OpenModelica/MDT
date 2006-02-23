@@ -214,7 +214,50 @@ public class TestModelicaCompletionProcessor extends TestCase
 		assertTrue("did not found proposal for the 'Modelica.Mechanics'", 
 				foundModelicaMechanicsProp);
 
-		/* overwrite 'Modelica.M' with 'Modelica.Math.' */
+		/* type 'Mechanics.Rotational.Sp' inside import_rich_model */
+		editor.doRevertToSaved();
+		doc.replace(383, 0, "Mechanics.Rotational.Sp"); 
+
+		/* get proposals at the end of 'Modelica.M' */
+		props = compProc.computeCompletionProposals(textViewer, 
+				383 + "Mechanics.Rotational.Sp".length());
+
+		/* 
+		 * we are expecting a proposal for the Mechanics.Rotational.Speed and 
+		 * Mechanics.Rotational.Spring packages 
+		 */
+		boolean foundSpeedProp = false;
+		boolean foundSpringDamperProp = false;
+		
+		for (ICompletionProposal proposal : props)
+		{
+			if (proposal.getDisplayString().startsWith("Speed"))
+			{
+				proposal.apply(doc);
+				result = doc.get(383, "Mechanics.Rotational.Speed".length());
+				assertEquals("unexpected result of applying proposal",
+						"Mechanics.Rotational.Speed", result);
+				foundSpeedProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("SpringDamper"))
+			{
+				proposal.apply(doc);
+				result = doc.get(383, 
+						"Mechanics.Rotational.SpringDamper".length());
+				assertEquals("unexpected result of applying proposal",
+						"Mechanics.Rotational.SpringDamper", result);
+				foundSpringDamperProp = true;
+				undoManager.undo();
+			}
+		}
+		assertTrue("did not found proposal for the Mechanics.Rotational.Speed", 
+				foundSpeedProp);
+		assertTrue("did not found proposal for the Mechanics.Rotational.SpringDamper", 
+				foundSpringDamperProp);
+		
+		
+		/* type 'Modelica.Math.' */
 		editor.doRevertToSaved();
 		doc.replace(383, 0, "Modelica.Math."); 
 
@@ -283,6 +326,62 @@ public class TestModelicaCompletionProcessor extends TestCase
 				foundModelicaMathExpProp);
 		assertTrue("did not found proposal for the 'Modelica.Math.log'", 
 				foundModelicaMathLogProp);
+		
+		/* 
+		 * test completion proposals in 'the middle of nowhere'
+		 * in a place where the prefix will be empty (the '' string)
+		 */
+		editor.doRevertToSaved();
+		props = compProc.computeCompletionProposals(textViewer, 383);
+
+		/* 
+		 * we are expecting a proposal for among others Blocks,
+		 * Icons and hehehe
+		 */
+		boolean foundBlocksProp = false;
+		boolean foundIconsProp = false;
+		boolean foundHeheheProp = false;
+		
+		for (ICompletionProposal proposal : props)
+		{
+			
+			if (proposal.getDisplayString().startsWith("Blocks"))
+			{
+				proposal.apply(doc);
+				result = doc.get(383, "Blocks".length());
+				assertEquals("unexpected result of applying proposal",
+						"Blocks", result);
+				foundBlocksProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("Icons"))
+			{
+				/* must be Modelica.Math.cos proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "Icons".length());
+				assertEquals("unexpected result of applying proposal",
+						"Icons", result);
+				foundIconsProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("hehehe"))
+			{
+				/* must be Modelica.Math.exp proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "hehehe".length());
+				assertEquals("unexpected result of applying proposal",
+						"hehehe", result);
+				foundHeheheProp = true;
+				undoManager.undo();
+			}			
+		}
+		
+		assertTrue("did not found proposal for the 'Blocks'", 
+				foundBlocksProp);
+		assertTrue("did not found proposal for the 'Icons'", 
+				foundIconsProp);
+		assertTrue("did not found proposal for the 'hehehe'", 
+				foundHeheheProp);
 		
 		/* type 'm' inside import_rich_model */
 		editor.doRevertToSaved();
