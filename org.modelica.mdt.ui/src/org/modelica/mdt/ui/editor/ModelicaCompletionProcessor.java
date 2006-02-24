@@ -623,9 +623,16 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset)
 	{
-		String className = getPrefix(viewer.getDocument(), offset);
+		/* make sure we don't back over the document... */
+		if(offset == 0)
+		{
+			return new IContextInformation[0];
+		}
+		
+		String className = getPrefix(viewer.getDocument(), offset - 1);
 
-		fetchParameters(className.substring(0, className.length()-1));
+		
+		fetchParameters(className);
 		
 		String proposal = "";
 		
