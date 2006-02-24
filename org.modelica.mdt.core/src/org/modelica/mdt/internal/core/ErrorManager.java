@@ -143,8 +143,8 @@ public class ErrorManager
 		boolean showErrorDialog = false;
 		
 		/* construct the error message */
-		String message = "unknow error";
-		String compilerName = "unknow modelica compiler";
+		String message = "unknown error";
+		String compilerName = "unknown Modelica compiler";
 		
 		try
 		{
@@ -154,7 +154,7 @@ public class ErrorManager
 		{
 			/* 
 			 * oh well, not much to do 'bout this one,
-			 * let's just name our compiler 'unknow'
+			 * let's just name our compiler 'unknown'
 			 */
 		}
 		
@@ -194,21 +194,21 @@ public class ErrorManager
 			switch (((CompilerInstantiationException)exception).getProblemType())
 			{
 			case NO_COMPILERS_FOUND:
-				message = "No plugin found that provides modelica " + 
-					" compiler services. Please install a plugin that " + 
-					" provides modelica compiler and try again";
+				message = "No plugin found that provides Modelica " + 
+					"compiler services. Please install a plugin that " + 
+					"provides a Modelica compiler and try again";
 				break;
 			case MULTIPLE_COMPILERS_FOUND:
-				message = "Multiple modelica compiler plugins available. " +
+				message = "Multiple Modelica compiler plugins available. " +
 					"Please make sure only one compiler is enabled and " + 
-					"try again. Following compiler plugins are found:\n";
+					"try again. The following compiler plugins were found:\n";
 				for (String pluginName : cie.getCompilerPlugins())
 				{
 					message += "'" + pluginName + "'\n"; 
 				}
 				break;
 			case ERROR_CREATING_COMPILER:
-				message = "Could not instantiate the modelica compiler. " +
+				message = "Could not instantiate the Modelica compiler. " +
 					"The compiler plugin '" + cie.getCompilerPlugin() + 
 					"' seems to be faulty. Try upgrading to unfaulty version.";
 				/* 
@@ -274,7 +274,7 @@ public class ErrorManager
 		{
 			/* unexpected exception type */
 			ErrorManager.logBug(CorePlugin.getSymbolicName(),
-					"exception of unexpected type " + 
+					"Exception of unexpected type " + 
 					exception.getClass().getName() +
 					" encountered");
 		}
