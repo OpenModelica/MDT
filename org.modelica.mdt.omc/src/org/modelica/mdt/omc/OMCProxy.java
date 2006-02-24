@@ -636,32 +636,33 @@ public class OMCProxy implements IModelicaCompiler
 		/* Always keep your stuff nice and tidy! */
 		retval = retval.trim();
 		
+		String errorString = getErrorString();
+
 		/*
 		 * See if there were parse errors, an empty list {} also denotes error
 		 */
 		if(retval.toLowerCase().contains("error") || retval.equals("{}"))
 		{			
-			res.setCompileErrors(OMCParser.parseErrorString(getErrorString()));
 			res.setClassNames(new List());
+			res.setCompileErrors(OMCParser.parseErrorString(errorString));
 		}
 		/*
-		 * file loaded and parse successsfully
+		 * File loaded and parsed successfully
 		 */
 		else
 		{
 			res.setClassNames(ModelicaParser.parseList(retval));
+
+			/*
+			 * If there were errors, but the compilation went through,
+			 * collect the error messages. (Test if errorString != "") 
+			 */
+			if(errorString.equals("") == false)
+			{
+				res.setCompileErrors(OMCParser.parseErrorString(errorString));				
+			}
 		}
 
-		/*
-		 * If there were errors, but the compilation went through,
-		 * collect the error messages. (Test if errorString != "") 
-		 */
-		String errorString = getErrorString();
-		if(errorString.equals("") == false)
-		{
-			res.setCompileErrors(OMCParser.parseErrorString(errorString));
-		}
-		
 		return res;
 	}
 
