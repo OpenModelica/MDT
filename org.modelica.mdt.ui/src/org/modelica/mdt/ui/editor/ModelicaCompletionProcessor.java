@@ -66,7 +66,9 @@ import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParent;
+import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -208,7 +210,11 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		}
 		return ""; /* this will happend only if our code is broken somehow */
 	}
-	
+
+	//TODO this getLine() should be removed and some of the other 25 implementa-
+	//tions of getLie() should be called instead. Some day we may get to a sin-
+	//gle digit number of getLine() implementations
+
 	private static String getLine(ITextViewer viewer, int offset)
 	{
 		IDocument document = viewer.getDocument();
@@ -353,6 +359,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			if (clazz != null)
 			{
 				computeCompPropsFromImports(clazz, prefix, offset, proposals);
+				computeCompPropsFromStdLib(clazz, prefix, offset, proposals);
 			}
 			else
 			{
@@ -372,7 +379,31 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	}
 
 	/**
-	 * compute completion proposals based in imports statments in the provided class
+	 * Compute proposals based on the packages of the standard library, that
+	 * can be refered globaly.
+	 * 
+	 * @param clazz the class where the proposals are made
+	 * @param prefix
+	 * @param offset
+	 * @param proposals the container where the proposals will be added
+	 */
+	private void computeCompPropsFromStdLib(IModelicaClass clazz, String prefix,
+			int offset, LinkedList<ICompletionProposal> proposals) 
+		throws ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, InvocationError, CoreException
+	{
+		IStandardLibrary stdLib =
+			ModelicaCore.getModelicaRoot().getStandardLibrary();
+		
+		for (IModelicaClass pkg : stdLib.getPackages())
+		{
+			computeCompPropsFromPackage(pkg, null, prefix, offset, proposals);
+		}
+	}
+
+	/**
+	 * compute completion proposals based in imports statments in the 
+	 * provided class
 	 * 
 	 * @param clazz the class who's import statmets to use for computation
 	 * @param proposals the container where the proposals will be added
