@@ -207,11 +207,11 @@ public class OMCProxy implements IModelicaCompiler
 		
 		if(os.equals("Unix"))
 		{
-			pathToOmc = omHome + "/omc";
+			pathToOmc = omHome + "/bin/omc";
 		}
 		else if(os.equals("Windows"))
 		{
-			pathToOmc = omHome + "\\omc.exe";
+			pathToOmc = omHome + "\\bin\\omc.exe";
 		}
 		
 		/* We should start OMC from the OPENMODELICAHOME directory */
