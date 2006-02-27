@@ -17,6 +17,12 @@ import java.net.URL;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaComponent;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IStandardLibrary;
+import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
@@ -162,6 +168,71 @@ public class ModelicaImages
 		}
 			
 		return new URL(ICON_BASE_URL, iconPath);
-	}	
+	}
+	
+	/**
+	 * Get the key to the image used to display certain modelica elements.
+	 * @param element the modelica element who's image key to fetch 
+	 * @return the image key or null if it is unknow which image is used
+	 * to visualize provided element
+	 */
+	public static String getModelicaElementKey(IModelicaElement element)
+	{
+		if (element instanceof IModelicaClass)
+		{
+			try
+			{
+				switch (((IModelicaClass)element).getRestrictionType())
+				{
+				case PACKAGE:
+					return ModelicaImages.IMG_OBJS_PACKAGE;
+				case CLASS:
+					return ModelicaImages.IMG_OBJS_CLASS;
+				case MODEL:
+					return ModelicaImages.IMG_OBJS_MODEL;
+				case FUNCTION:
+					return ModelicaImages.IMG_OBJS_FUNCTION;
+				case RECORD:
+					return ModelicaImages.IMG_OBJS_RECORD;
+				case CONNECTOR:
+					return ModelicaImages.IMG_OBJS_CONNECTOR;
+				case BLOCK:
+					return ModelicaImages.IMG_OBJS_BLOCK;
+				case TYPE:
+					return ModelicaImages.IMG_OBJS_TYPE;
+				default:
+					ErrorManager.logBug(UIPlugin.getSymbolicName(),
+							"IModelicaClass object of unexpected restriction " + 
+							"type " + 
+							((IModelicaClass)element).getRestrictionType() +
+							" encountered.");
+				}
+			}
+			catch (CompilerException e)
+			{
+				ErrorManager.logError(e);
+			}
+		}
+		else if (element instanceof IModelicaComponent)
+		{
+			switch (((IModelicaComponent)element).getVisbility())
+			{
+			case PUBLIC:
+				return ModelicaImages.IMG_OBJS_PUBLIC_COMPONENT;
+			case PROTECTED:
+				return ModelicaImages.IMG_OBJS_PROTECTED_COMPONENT;
+			}
+		}
+		else if (element instanceof IModelicaSourceFile)
+		{
+			return ModelicaImages.IMG_OBJS_MO_FILE;
+		}
+		else if (element instanceof IStandardLibrary)
+		{
+			return ModelicaImages.IMG_OBJS_LIBRARY;
+		}
 
+		/* we have no idea */
+		return null;
+	}
 }

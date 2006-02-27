@@ -77,6 +77,7 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.ui.ModelicaImages;
 import org.modelica.mdt.ui.UIPlugin;
 
 /**
@@ -506,16 +507,17 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				 */
 				return;
 			}
+			
 			/*
 			 * if there are no dots in the prefix then we can
 			 * only propose our own name
 			 */ 
-
 			proposals.add(new CompletionProposal(packageName,
 					offset-prefix.length(),
 					prefix.length(),
-					packageName.length(), 
-					null, // TODO provide real image here instead
+					packageName.length(),
+					ModelicaImages.get
+						(ModelicaImages.getModelicaElementKey(importedPackage)),
 					packageName, 
 					null, null));
 			return;
@@ -610,7 +612,8 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 					offset - childPrefix.length(),
 					childPrefix.length(),
 					elementName.length(), 
-					null, // TODO provide real image here instead
+					ModelicaImages.get
+						(ModelicaImages.getModelicaElementKey(element)),
 					elementName, 
 					null, null));
 		}

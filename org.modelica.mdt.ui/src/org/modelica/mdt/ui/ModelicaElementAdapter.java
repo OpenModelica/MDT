@@ -46,16 +46,11 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
-import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.IStandardLibrary;
-import org.modelica.mdt.core.compiler.CompilerException;
-import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
  * This class mapps modelica objects (Modelica packages, classes, etc) to icons 
@@ -88,79 +83,12 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			return wadap.getImageDescriptor(mproj.getWrappedProject());
 			
 		}
-		else if (object instanceof IModelicaClass)
-		{
-			String imgTag = null;
-
-			try
-			{
-				switch (((IModelicaClass)object).getRestrictionType())
-				{
-				case PACKAGE:
-					imgTag = ModelicaImages.IMG_OBJS_PACKAGE;
-					break;
-				case CLASS:
-					imgTag = ModelicaImages.IMG_OBJS_CLASS;
-					break;
-				case MODEL:
-					imgTag = ModelicaImages.IMG_OBJS_MODEL;
-					break;
-				case FUNCTION:
-					imgTag = ModelicaImages.IMG_OBJS_FUNCTION;
-					break;
-				case RECORD:
-					imgTag = ModelicaImages.IMG_OBJS_RECORD;
-					break;
-				case CONNECTOR:
-					imgTag = ModelicaImages.IMG_OBJS_CONNECTOR;
-					break;
-				case BLOCK:
-					imgTag = ModelicaImages.IMG_OBJS_BLOCK;
-					break;
-				case TYPE:
-					imgTag = ModelicaImages.IMG_OBJS_TYPE;
-					break;
-				default:
-					ErrorManager.logBug(UIPlugin.getSymbolicName(),
-							"IModelicaClass object of unexpected restriction " + 
-							"type " + 
-							((IModelicaClass)object).getRestrictionType() +
-							" encountered.");
-					imgTag = "";
-				}
-			}
-			catch (CompilerException e)
-			{
-				ErrorManager.logError(e);
-				/* 
-				 * hmm, let the class icon be default 
-				 * 'i don't know your type' image
-				 */ 
-				imgTag = ModelicaImages.IMG_OBJS_CLASS;
-			}
-			return ModelicaImages.getImageDescriptor(imgTag);
-		}
-		else if (object instanceof IModelicaComponent)
-		{
-			switch (((IModelicaComponent)object).getVisbility())
-			{
-			case PUBLIC:
-				return ModelicaImages.getImageDescriptor
-					(ModelicaImages.IMG_OBJS_PUBLIC_COMPONENT);
-			case PROTECTED:
-				return ModelicaImages.getImageDescriptor
-					(ModelicaImages.IMG_OBJS_PROTECTED_COMPONENT);
-			}
-		}
-		else if (object instanceof IModelicaSourceFile)
-		{
-			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_MO_FILE);
-		}
 		/* 
-		 * this check must be done after IModelicaSourceFile couse 
+		 * this check uggly must be done couse 
 		 * IModelciaFile is superclass of IModelicaSourceFile
 		 */
-		else if (object instanceof IModelicaFile)
+		else if ((object instanceof IModelicaFile) 
+				&& !(object instanceof IModelicaSourceFile))
 		{
 			/*
 			 * pattern beauty continued...
@@ -171,17 +99,20 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 			return wadap.getImageDescriptor(mfile.getResource());
 			
 		}
-		
 		else if (object instanceof IModelicaFolder)
 		{
 			return PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+					getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		}
-		else if (object instanceof IStandardLibrary)
+		else if (object instanceof IModelicaElement)
 		{
-			return ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OBJS_LIBRARY);
+			String key = 
+				ModelicaImages.getModelicaElementKey((IModelicaElement)object);
+			if (key != null)
+			{
+				return ModelicaImages.getImageDescriptor(key);
+			}
 		}
-		
 		
 		return super.getImageDescriptor(object);
 	}
