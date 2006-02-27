@@ -323,7 +323,7 @@ public class NewTypePage extends WizardPage
 		try
 		{
 			currentParentPackage = 
-				currentModelicaProject.getPackage(packageName);
+				currentModelicaProject.getClass(packageName);
 			
 			if (packageName.equals(""))
 			{

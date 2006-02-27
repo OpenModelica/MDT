@@ -84,7 +84,7 @@ public class PackageTreeContentProvider implements ITreeContentProvider
 			
 			if (parentElement instanceof IModelicaProject)
 			{
-				children = ((IModelicaProject)parentElement).getRootPackages();
+				children = ((IModelicaProject)parentElement).getRootClasses();
 			}
 			else if (parentElement instanceof IParent) 
 			{
