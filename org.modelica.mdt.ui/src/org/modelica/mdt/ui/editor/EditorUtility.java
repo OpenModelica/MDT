@@ -118,7 +118,7 @@ public class EditorUtility
 				
 				if (reg != null)
 				{
-					editor.selectAndReveal(reg.getOffset(), reg.getLength());
+					editor.setHighlightRange(reg.getOffset(), reg.getLength(), true);
 				}
 			}
 		}		
