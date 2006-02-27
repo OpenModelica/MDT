@@ -262,7 +262,7 @@ public class ModelicaSourceFile extends ModelicaElement
 	}
 
 
-	public IModelicaClass[] getRootPackages() 
+	public IModelicaClass[] getRootClasses() 
 		throws ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
@@ -280,9 +280,7 @@ public class ModelicaSourceFile extends ModelicaElement
 			if (element instanceof IModelicaClass)
 			{
 				classElement = (IModelicaClass) element;
-				if ((classElement.getRestrictionType() == 
-					        IModelicaClass.Type.PACKAGE) &&
-				    classElement.getPrefix().equals(""))
+				if (classElement.getPrefix().equals(""))
 				{
 					pkgs.add(classElement);
 				}

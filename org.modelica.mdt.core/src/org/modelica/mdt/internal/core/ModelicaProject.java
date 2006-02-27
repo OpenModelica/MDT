@@ -151,9 +151,9 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	}
 	
 	/**
-	 * @see IModelicaProject#getPackage(String)
+	 * @see IModelicaProject#getClass(String)
 	 */
-	public IModelicaClass getPackage(String packageName) 
+	public IModelicaClass getClass(String packageName) 
 		throws ConnectException, CompilerInstantiationException, 
 			UnexpectedReplyException, CoreException, InvocationError
 	{
@@ -163,20 +163,20 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		 */
 		Collection<IModelicaClass> currentChildren =
 			new LinkedList<IModelicaClass>();
-		currentChildren.addAll(getRootPackages());		
+		currentChildren.addAll(getRootClasses());		
 		currentChildren.addAll
 			(ModelicaCore.getModelicaRoot().getStandardLibrary().getPackages());
 		
 		return ModelicaRoot.getPackage(currentChildren, packageName);
 	}
 	
-	public Collection<IModelicaClass> getRootPackages()
+	public Collection<IModelicaClass> getRootClasses()
 		throws ConnectException, CompilerInstantiationException,
  			UnexpectedReplyException, CoreException
 	{
 		getRootFolder(); /* make sure root folder is loaded */
 
-		return rootFolder.getRootPackages();
+		return rootFolder.getRootClasses();
 	}
 
 	public IModelicaElement findElement(IPath resourcePath)

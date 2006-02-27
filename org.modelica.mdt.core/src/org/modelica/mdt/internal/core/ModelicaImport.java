@@ -77,7 +77,7 @@ public class ModelicaImport implements IModelicaImport
 	{ 
 		type = isQualified ? Type.QUALIFIED : Type.UNQUALIFIED;
 		
-		importedPackage = containerProject.getPackage(importedElement);
+		importedPackage = containerProject.getClass(importedElement);
 		
 		if (importedPackage == null)
 		{
@@ -105,7 +105,7 @@ public class ModelicaImport implements IModelicaImport
 
 		if (containerProject != null)
 		{
-			importedPackage = containerProject.getPackage(importedElement);
+			importedPackage = containerProject.getClass(importedElement);
 		}
 		else
 		{

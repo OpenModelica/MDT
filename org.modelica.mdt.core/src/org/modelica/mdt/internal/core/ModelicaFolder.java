@@ -355,9 +355,9 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	}
 	
 	/**
-	 * the recursive function to look for package roots in this
+	 * the recursive function to look for class roots in this
 	 * folder and the subfolders. This function is used by 
-	 * IModelicaProject.getRootPackages() method. 
+	 * IModelicaProject.getRootClasses() method. 
 	 *  
 	 * @return
 	 * @throws ConnectException
@@ -365,7 +365,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * @throws UnexpectedReplyException
 	 * @throws CoreException
 	 */
-	protected Vector<IModelicaClass> getRootPackages() 
+	protected Vector<IModelicaClass> getRootClasses() 
 		throws ConnectException, CompilerInstantiationException,
 			UnexpectedReplyException, CoreException
 	{
@@ -390,21 +390,19 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			if (element instanceof IModelicaClass)
 			{
 				classElement = (IModelicaClass) element;
-				if ((classElement.getRestrictionType() == 
-					        IModelicaClass.Type.PACKAGE) &&
-				    classElement.getPrefix().equals(""))
+				if (classElement.getPrefix().equals(""))
 				{
 					pkgs.add(classElement);
 				}
 			}
 			else if (element instanceof ModelicaFolder)
 			{
-				pkgs.addAll(((ModelicaFolder)element).getRootPackages());
+				pkgs.addAll(((ModelicaFolder)element).getRootClasses());
 			}
 			else if (element instanceof IModelicaSourceFile)
 			{
 				fileElement = (IModelicaSourceFile) element;				
-				for (IModelicaClass e : fileElement.getRootPackages())
+				for (IModelicaClass e : fileElement.getRootClasses())
 				{
 					pkgs.add(e);
 				}

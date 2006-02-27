@@ -58,6 +58,8 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElementChangeListener;
+import org.modelica.mdt.core.IModelicaFolder;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.internal.core.ModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
@@ -308,7 +310,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		 * look up then foo package among the root packages, bar
 		 * among the foo's children and gazonk among bar's offspring 
 		 */
-		Collection<? super IModelicaElement> currentChildren =
+		LinkedList<? super IModelicaElement> currentChildren =
 			new LinkedList<IModelicaElement>();
 		currentChildren.addAll(topElements);
 
@@ -323,16 +325,31 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 			
 			/* look among packages to find the subname */
 			currentParent = null;
-			for (Object o : currentChildren)
+			while (!currentChildren.isEmpty())
 			{
-				if (!(o instanceof IModelicaClass))
+				Object o = currentChildren.removeFirst();
+				if (o instanceof IModelicaSourceFile)
 				{
-					/* skip children that are not classes/packages */
+					/* we should take a look among files children */
+					currentChildren.addAll(((IModelicaSourceFile)o).getChildren());
+					continue;
+				}
+				else if (o instanceof IModelicaFolder)
+				{
+					/* we should take a look among folders children */
+					currentChildren.addAll(((IModelicaFolder)o).getChildren());
+					continue;
+					
+				}
+				else if (!(o instanceof IModelicaClass))
+				{
+					/* skip other elements (files, components, etc) */
 					continue;
 				}
 				
 				/* here we know that o is of type IModelicaClass */
 				IModelicaClass p = (IModelicaClass) o;
+
 				if (p.getElementName().equals(subname))
 				{
 					/*

@@ -54,7 +54,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 public interface IModelicaSourceFile extends IModelicaFile, IParent
 {
 	
-	IModelicaClass[] getRootPackages() 
+	IModelicaClass[] getRootClasses() 
 		throws ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException;
 

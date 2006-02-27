@@ -73,16 +73,16 @@ public interface IModelicaProject extends IModelicaElement
 	 * @param packageName the name of the project to fetch
 	 * @return the package or null if no package is found
 	 */
-	public IModelicaClass getPackage(String packageName) 
+	public IModelicaClass getClass(String packageName) 
 		throws ConnectException, CompilerInstantiationException, 
 			UnexpectedReplyException, CoreException, InvocationError;
 	
 	/**
-	 * get all packages defined in the root namespace in this project
+	 * get all packages/classes defined in the root namespace in this project
 	 *
 	 * @return ze root packages
 	 */
-	public Collection<? extends IModelicaClass> getRootPackages() 
+	public Collection<? extends IModelicaClass> getRootClasses() 
 		throws ConnectException, CompilerInstantiationException,
 			UnexpectedReplyException, CoreException;
 
