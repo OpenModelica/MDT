@@ -190,6 +190,7 @@ public class OMCProxy implements IModelicaCompiler
 	private static void startServer() throws ConnectException
 	{
 		String pathToOmc = null;
+		File workingDirectory;
 
 		/* 
 		 * Path to omc (or omc.exe) can be found in the OPENMODELICAHOME
@@ -212,6 +213,9 @@ public class OMCProxy implements IModelicaCompiler
 		{
 			pathToOmc = omHome + "\\omc.exe";
 		}
+		
+		/* We should start OMC from the OPENMODELICAHOME directory */
+		workingDirectory = new File(omHome);
 
 		/* 
 		 * Delete old object reference file. We need to do this because we're
@@ -229,7 +233,7 @@ public class OMCProxy implements IModelicaCompiler
 		try
 		{
 			logOMCStatus("Running command " + command[0] + " " + command[1]);
-			Runtime.getRuntime().exec(command);
+			Runtime.getRuntime().exec(command, null, workingDirectory);
 			logOMCStatus("Command run successfully.");
 		}
 		catch(IOException e)
@@ -246,18 +250,18 @@ public class OMCProxy implements IModelicaCompiler
 			{
 				if(os.equals("Unix"))
 				{
-					secondaryPathToOmc = omHome + "/Compiler/omc";
+					secondaryPathToOmc = omHome + "/build/bin/omc";
 				}
 				else if(os.equals("Windows"))
 				{
-					secondaryPathToOmc = omHome + "\\Compiler\\omc.exe";
+					secondaryPathToOmc = omHome + "\\build\\bin\\omc.exe";
 				}
 
 				command = 
 					new String[]{secondaryPathToOmc, "+d=interactiveCorba"};
 				logOMCStatus("Running command " 
 						+ command[0] + " " + command[1]);
-				Runtime.getRuntime().exec(command);
+				Runtime.getRuntime().exec(command, null, workingDirectory);
 				logOMCStatus("Command run successfully.");
 			}
 			catch(IOException ex)
@@ -532,11 +536,9 @@ public class OMCProxy implements IModelicaCompiler
 	 *
 	 * 
 	 * @param className full class name where to look for packages
-	 * @return an array of subclasses defined (and loaded into OMC)
-	 *  inside the class named className, but don't return packages in this
-	 *  class. The results is returned as Vector of objects but objects
-	 *  are actually String's.
-	 *  
+	 * @return a <code>List</code> of subclasses defined (and loaded into OMC)
+	 * inside the class named className.
+	 * 
 	 * @throws ConnectException 
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
@@ -558,7 +560,8 @@ public class OMCProxy implements IModelicaCompiler
 	 * @param className fully qualified class name
 	 * @return the restriction type of the class or Type.CLASS if 
 	 *         type can't be determined
-	 * @throws ConnectException 
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
 	 */
 	public IModelicaClass.Type getRestrictionType(String className)
 		throws ConnectException, UnexpectedReplyException
@@ -596,15 +599,17 @@ public class OMCProxy implements IModelicaCompiler
 	
 	/**
 	 * Fetches the error string from OMC. This should be called after an "Error"
-	 * is received.
-	 * @return
+	 * is received. (Or whenever the queue of errors should be emptied.)
+	 * @return the <code>String</code> of errors
 	 * @throws ConnectException
 	 */
 	private String getErrorString()
 		throws ConnectException
 	{
 		String res = sendExpression("getErrorString()");
-		if(res != null)
+		
+		/* Make sure the error string isn't empty */
+		if(res != null && res.length() > 2)
 		{
 			res = res.trim();
 			return res.substring(1, res.length() - 1);
@@ -618,8 +623,8 @@ public class OMCProxy implements IModelicaCompiler
 	 * Tries to load file into OMC which causes it to be parsed and the syntax
 	 * checked.
 	 * @param file the file we want to load
-	 * @return either returns the classes (and packages) found in the file or
-	 * the error messages from OMC
+	 * @return a <code>ParseResult</code> containing the classes found in the
+	 * file and the error messages from OMC 
 	 * @throws ConnectException 
 	 * @throws UnexpectedReplyException 
 	 * @throws InitializationException
@@ -644,7 +649,10 @@ public class OMCProxy implements IModelicaCompiler
 		if(retval.toLowerCase().contains("error") || retval.equals("{}"))
 		{			
 			res.setClassNames(new List());
-			res.setCompileErrors(OMCParser.parseErrorString(errorString));
+			if(errorString.equals("") == false)
+			{
+				res.setCompileErrors(OMCParser.parseErrorString(errorString));
+			}
 		}
 		/*
 		 * File loaded and parsed successfully
@@ -667,11 +675,11 @@ public class OMCProxy implements IModelicaCompiler
 	}
 
 	/**
-	 * Gets the location (file, line number and column number) of a Modelica
-	 * element. 
+	 * Gets the location (file, starting and ending line number and column
+	 * number) of a Modelica element. 
 	 * @param className the element we want to get location of
-	 * @return an IElementLocation containing the file, line number and column
-	 * number of the given class 
+	 * @return an <code>ElementLocation</code> containing the file, starting and
+	 * ending line number and column number of the given class 
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
@@ -687,13 +695,13 @@ public class OMCProxy implements IModelicaCompiler
 		if(retval.contains("Error") || retval.contains("error"))
 		{
 			throw new 
-				InvocationError("fetching file position of " + className,
+				InvocationError("Fetching file position of " + className,
 						"getCrefInfo(" + className + ")");
 		}
 		
 		
 		/*
-		 * The getCrefInfo reply have the following format:
+		 * The getCrefInfo reply has the following format:
 		 * 
 		 * <file path>,<something>,<start line>,<start column>,<end line>,<end column>
 		 * 
@@ -735,7 +743,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * Queries the compiler if a particular modelica class/package is a package.
 	 * 
 	 * @param className fully qualified name of the class/package
-	 * @return true if className is a package false otherwise
+	 * @return true if className is a package, false otherwise
 	 * @throws ConnectException 
 	 */
 	public boolean isPackage(String className)
@@ -749,6 +757,14 @@ public class OMCProxy implements IModelicaCompiler
 		return retval.contains("true");
 	}
 	
+	/**
+	 * Uses the OMC API call getElementsInfo to fetch lots of information
+	 * about a class definition. See interactive_api.txt in the OMC
+	 * source tree.
+	 * @param className the fully qualified name of a class
+	 * @return a <code>Collection</code> (of <code>ElementsInfo</code>)
+	 * containing the information about className
+	 */
 	public Collection<ElementsInfo> getElementsInfo(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException
 	{
@@ -806,7 +822,10 @@ public class OMCProxy implements IModelicaCompiler
 						"replies:'" + retval + "'");
 	}
 
-	
+	/**
+	 * @return the name of the compiler that this plugin tries to communicate
+	 * with (at least it tries...)
+	 */
 	public String getCompilerName()
 	{
 		return "OpenModelica Compiler";
