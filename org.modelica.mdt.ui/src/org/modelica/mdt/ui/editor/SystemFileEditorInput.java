@@ -47,14 +47,17 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.modelica.mdt.ui.ModelicaElementFactory;
 
 /**
  * @author Homer Simpson
  */
-public class SystemFileEditorInput implements IStorageEditorInput
+public class SystemFileEditorInput implements 
+	IStorageEditorInput, IPersistableElement
 {
 
 	private LocalFileStorage fileStorage;
@@ -77,14 +80,6 @@ public class SystemFileEditorInput implements IStorageEditorInput
 		
 		SystemFileEditorInput other = (SystemFileEditorInput) obj;
 		return fileStorage.equals(other.fileStorage);
-	}
-
-	/**
-	 * @see IEditorInput#getPersistable()
-	 */
-	public IPersistableElement getPersistable() 
-	{
-		return null;
 	}
 
 	/**
@@ -150,9 +145,32 @@ public class SystemFileEditorInput implements IStorageEditorInput
 	/**
 	 * see IStorageEditorInput#getStorage()
 	 */
-	 public IStorage getStorage() 
-	 {
+	public IStorage getStorage() 
+	{
 	 	return fileStorage;
-	 }
+	}
 
+	/**
+	 * @see IEditorInput#getPersistable()
+	 */
+	public IPersistableElement getPersistable() 
+	{
+		return this;
+	}
+
+	 
+	public String getFactoryId()
+	{
+		return ModelicaElementFactory.FACTORY_ID;
+	}
+
+	public void saveState(IMemento memento)
+	{
+		memento.putInteger(ModelicaElementFactory.STORED_CLASS_KEY,
+				ModelicaElementFactory.SYSTEM_FILE_EDITOR_INPUT);
+		
+		memento.putString(ModelicaElementFactory.FILE_PATH_KEY,
+				getFullPath());
+
+	}
 }

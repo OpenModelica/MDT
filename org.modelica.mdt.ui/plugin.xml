@@ -87,4 +87,10 @@
          file="doc/toc.xml"
          primary="true"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.modelica.mdt.ui.ModelicaElementFactory"
+            id="org.modelica.mdt.ui.ModelicaElementFactory"/>
+   </extension>
 </plugin>

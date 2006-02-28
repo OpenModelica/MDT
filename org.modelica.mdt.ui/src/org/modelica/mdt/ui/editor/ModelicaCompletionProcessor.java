@@ -338,13 +338,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 					"completion prossesor invoked on a non-modelica content");
 			/* no completion if there is a bug ! */
 			return new ICompletionProposal[0];
-			
-			//TODO currently this bug will be triggered when eclipse restores 
-			// the files that where left
-			// in the editor area when it was closed last time
-			// the editor input will not be of ModelicaElementEditorInput
-			// thus code completion will not work, this should be fixed somehow
-			// check out org.eclipse.ui.IEditorInput.getPersistable() method 
 		}
 		
 		LinkedList<ICompletionProposal> proposals = 

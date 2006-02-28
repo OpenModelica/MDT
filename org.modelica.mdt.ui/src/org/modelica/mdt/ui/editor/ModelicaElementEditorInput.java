@@ -42,9 +42,13 @@
 package org.modelica.mdt.ui.editor;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.part.FileEditorInput;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.ui.ModelicaElementFactory;
 
 /**
  * An instance of this class can be used to open a modelica element
@@ -56,12 +60,12 @@ import org.modelica.mdt.core.IModelicaSourceFile;
  */
 public class ModelicaElementEditorInput extends FileEditorInput
 {
-	private IModelicaSourceFile sourceFile;
+	private IModelicaElement element;
 	
 	public ModelicaElementEditorInput(IModelicaElement element)
 	{
 		super((IFile)element.getResource());
-		sourceFile = element.getSourceFile();		
+		this.element = element;		
 	}
 
 	/**
@@ -69,6 +73,32 @@ public class ModelicaElementEditorInput extends FileEditorInput
 	 */
 	public IModelicaSourceFile getSourceFile()
 	{
-		return sourceFile;
+		return element.getSourceFile();
+	}
+	
+	public IPersistableElement getPersistable()
+	{
+		return this;
+	}
+	
+
+	@Override
+	public String getFactoryId()
+	{
+		return ModelicaElementFactory.FACTORY_ID;
+	}
+
+	@Override
+	public void saveState(IMemento memento)
+	{
+		IModelicaProject proj = element.getProject();
+		
+		memento.putInteger(ModelicaElementFactory.STORED_CLASS_KEY,
+				ModelicaElementFactory.MODELICA_ELEMENT_EDITOR_INPUT_CLASS);
+		memento.putString(ModelicaElementFactory.ELEMENT_PROJECT_NAME_KEY,
+				proj.getElementName());			
+		memento.putString(ModelicaElementFactory.ELEMENT_SOURCE_FILE_KEY, 
+				getSourceFile().getResource().getProjectRelativePath().
+					toOSString());
 	}
 }
