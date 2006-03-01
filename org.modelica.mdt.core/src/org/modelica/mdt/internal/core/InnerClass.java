@@ -55,6 +55,8 @@ import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IParameter;
+import org.modelica.mdt.core.ISignature;
 import org.modelica.mdt.core.IllegalTypeException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ModelicaCore;
@@ -86,6 +88,10 @@ public class InnerClass extends ModelicaClass
 	/* the import statments */
 	private Collection<IModelicaImport> imports;
 	
+	/* input and output parameters found in the signature */
+	private LinkedList<IParameter> inputParams = null;
+	private LinkedList<IParameter> outputParams = null;
+
 	public InnerClass(IModelicaSourceFile container,
 					IModelicaClass parentNamespace,
 					String name, IElementLocation location,
@@ -146,6 +152,9 @@ public class InnerClass extends ModelicaClass
 			new Hashtable<String, IModelicaElement>();
 		
 		imports = new LinkedList<IModelicaImport>();
+		
+		inputParams = new LinkedList<IParameter>();
+		outputParams = new LinkedList<IParameter>();
 	
 		for (ElementsInfo info : CompilerProxy.getElementsInfo(fullName))
 		{
@@ -209,11 +218,30 @@ public class InnerClass extends ModelicaClass
 								IModelicaComponent.Visibility.parse
 									(info.getElementVisibility()),
 								location));
+				
+				String typeName = info.getTypeName();
+				if(info.getElementVisibility().equals("public")
+						&& info.getDirection().equals("input"))
+				{
+					inputParams.add(new Parameter(componentName, typeName));
+				}
+				else if(info.getElementVisibility().equals("public")
+						&& info.getDirection().equals("output"))
+				{
+					outputParams.add(new Parameter(componentName, typeName));
+				}
 			}			
 			/* an import statment */
 			else if (elementType.equals("import"))
 			{
 				String importType = info.getKind();
+				
+				System.out.println(info.getPath() + " " + importType);
+				
+				if(info.getPath().equals("Modelica.SIunits"))
+				{
+					System.out.println("WTF");
+				}
 				
 				if (importType.equals("qualified"))
 				{
@@ -401,5 +429,19 @@ public class InnerClass extends ModelicaClass
 			return ModelicaCore.getModelicaRoot().getStandardLibrary();
 		}
 		return p;
+	}
+	
+	public ISignature getSignature()
+		throws ConnectException, InvocationError, UnexpectedReplyException,
+			CompilerInstantiationException, CoreException
+	{
+		if(inputParams == null || outputParams == null)
+		{
+			loadElements();
+		}
+		
+		return new Signature(inputParams.toArray(
+				new IParameter[inputParams.size()]),
+				outputParams.toArray(new IParameter[outputParams.size()]));
 	}
 }

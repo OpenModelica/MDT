@@ -128,4 +128,12 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 * is defined in top namespace
 	 */
 	public IModelicaClass getParentNamespace();
+	
+	/**
+	 * 
+	 * @return the signature of this class (input and output parameters)
+	 */
+	public ISignature getSignature()
+		throws ConnectException, InvocationError, UnexpectedReplyException,
+			CompilerInstantiationException, CoreException;
 }

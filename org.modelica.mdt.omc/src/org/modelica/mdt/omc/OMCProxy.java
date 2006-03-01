@@ -189,7 +189,7 @@ public class OMCProxy implements IModelicaCompiler
 	 */
 	private static void startServer() throws ConnectException
 	{
-		String pathToOmc = null;
+		String[] pathsToOmc = new String[3];
 		File workingDirectory;
 
 		/* 
@@ -207,11 +207,15 @@ public class OMCProxy implements IModelicaCompiler
 		
 		if(os.equals("Unix"))
 		{
-			pathToOmc = omHome + "/bin/omc";
+			pathsToOmc[0] = omHome + "/bin/omc";
+			pathsToOmc[1] = omHome + "/omc";
+			pathsToOmc[2] = omHome + "/Compiler/omc";
 		}
 		else if(os.equals("Windows"))
 		{
-			pathToOmc = omHome + "\\bin\\omc.exe";
+			pathsToOmc[0] = omHome + "\\bin\\omc.exe";
+			pathsToOmc[1] = omHome + "\\omc.exe";
+			pathsToOmc[2] = omHome + "\\Compiler\\omc.exe";
 		}
 		
 		/* We should start OMC from the OPENMODELICAHOME directory */
@@ -229,49 +233,37 @@ public class OMCProxy implements IModelicaCompiler
 			f.delete();
 		}
 		
-		String command[] = { pathToOmc, "+d=interactiveCorba" };
-		try
+		for(int i = 0;i < 3;i++)
 		{
-			logOMCStatus("Running command " + command[0] + " " + command[1]);
-			Runtime.getRuntime().exec(command, null, workingDirectory);
-			logOMCStatus("Command run successfully.");
-		}
-		catch(IOException e)
-		{
-			/*
-			 * If we fail to start the compiler, maybe the executable is in
-			 * the Compiler directory (if we've compiled the compiler from
-			 * source). Try starting OMC from this secondary location.
-			 */
-			logOMCStatus("Error running command " + e.getMessage()
-					+ ", trying alternative path to the binary.");
-			String secondaryPathToOmc = null;
+			String command[] = { pathsToOmc[i], "+d=interactiveCorba" };
 			try
 			{
-				if(os.equals("Unix"))
-				{
-					secondaryPathToOmc = omHome + "/build/bin/omc";
-				}
-				else if(os.equals("Windows"))
-				{
-					secondaryPathToOmc = omHome + "\\build\\bin\\omc.exe";
-				}
-
-				command = 
-					new String[]{secondaryPathToOmc, "+d=interactiveCorba"};
-				logOMCStatus("Running command " 
-						+ command[0] + " " + command[1]);
+				logOMCStatus("Running command " + command[0] + " " + command[1]);
 				Runtime.getRuntime().exec(command, null, workingDirectory);
 				logOMCStatus("Command run successfully.");
+				
+				break; /* exit the for loop, we've started OMC */
 			}
-			catch(IOException ex)
+			catch(IOException e)
 			{
-				logOMCStatus("Unable to start OMC, giving up."); 
-				throw new ConnectException
-					("Unable to start the OpenModelica Compiler. "
-					 + "Tried starting " + pathToOmc
-					 + " and " + secondaryPathToOmc);
-			}
+				if(i < 2)
+				{
+					logOMCStatus("Error running command " + e.getMessage()
+							+ ", trying alternative path to the binary.");
+					
+					/* If the call failed, try another path to the compiler */
+				}
+				else
+				{
+					/* If all the paths to OMC were wrong, throw an exception */
+					
+					logOMCStatus("Unable to start OMC, giving up."); 
+					throw new ConnectException
+						("Unable to start the OpenModelica Compiler. "
+						 + "Tried starting " + pathsToOmc[0] + ", " 
+						 + pathsToOmc[1] + " and " + pathsToOmc[2]);
+				}
+			}			
 		}
 
 		logOMCStatus("Wait for OMC CORBA object reference to appear on disk.");

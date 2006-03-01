@@ -44,7 +44,6 @@ package org.modelica.mdt.ui.editor;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
@@ -58,25 +57,25 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IParameter;
 import org.modelica.mdt.core.IParent;
+import org.modelica.mdt.core.ISignature;
 import org.modelica.mdt.core.IStandardLibrary;
-import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.ElementsInfo;
 import org.modelica.mdt.core.compiler.InvocationError;
-import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.ModelicaImages;
@@ -98,11 +97,11 @@ import org.modelica.mdt.ui.UIPlugin;
 public class ModelicaCompletionProcessor implements IContentAssistProcessor
 {
 
-	private Vector<String> inputParameters = new Vector<String>();
-	private Vector<String> outputParameters = new Vector<String>();
 	private IEditorPart editor;
 	
-	private static String functionProposal;
+	private static String functionProposal = "";
+	private static int functionNameStart = 0;
+	private static int functionNameEnd = 0;
 	
 	public ModelicaCompletionProcessor(IEditorPart editor) 
 	{
@@ -125,9 +124,14 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			
 			String stringTyped =
 				ModelicaCompletionProcessor.getLine(fViewer, offset);
-
+			
 			/* Get start of parameter list. */
 			int pos = stringTyped.indexOf('(');
+			
+			if(pos == -1)
+			{
+				return false;
+			}
 			
 			/* Match parens to see if we're done typing. */
 			int pardepth = 0;
@@ -138,6 +142,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				else if(stringTyped.charAt(pos) == ')')
 					pardepth--;
 			}
+			
 			/* The TYPING will go on as long as it has to! */
 			/* (or somebody yells stop, goes limb, passes out) */
 			if(pardepth == 0)
@@ -160,7 +165,20 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		public boolean updatePresentation(int documentPosition,
 				TextPresentation presentation)
 		{
-			return false;
+			/* Only apply the style range as we start displaying this
+			 * information*/
+			if(fInstallOffset != documentPosition)
+			{
+				return false;
+			}
+			
+			StyleRange sr;
+			sr = new StyleRange(functionNameStart, 
+					functionNameEnd - functionNameStart, null, null, SWT.BOLD);
+
+			presentation.addStyleRange(sr);
+			
+			return true;
 		}
 	}
 	
@@ -246,74 +264,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		while(true);
 		
 		return foundString;
-	}
-	
-	private void fetchParameters(String functionName)
-	{
-		inputParameters.clear();
-		outputParameters.clear();
-		
-		Collection<ElementsInfo> elementsInfo;
-		
-		try 
-		{
-			elementsInfo = CompilerProxy.getElementsInfo(functionName);
-		}
-		catch (ConnectException e)
-		{
-			ErrorManager.showCompilerError(e);
-			return;
-		}
-		catch (CompilerException e)
-		{
-			ErrorManager.logError(e);
-			return;
-		}
-
-		functionProposal = functionName;
-		
-		for(ElementsInfo info : elementsInfo)
-		{
-			boolean elementIsPublic = false;
-			boolean elementIsComponent = false;
-			boolean elementIsInput = false;
-			boolean elementIsOutput = false;
-			boolean elementNamesFound = false;
-			String name = null;
-			String typename = "";
-			String direction = null;			
-			
-			elementIsPublic = info.getElementVisibility().equals("public");
-			elementIsComponent = info.getElementType().equals("component");
-
-			if (elementIsComponent)
-			{
-				List comp = ModelicaParser.parseList(info.getNames());
-				
-				name = comp.elementAt(0).toString();
-				elementNamesFound = true;
-			}
-			typename = info.getTypeName();
-			
-			direction = info.getDirection();
-	
-			if (direction != null)
-			{
-				elementIsInput = direction.equals("input");
-				elementIsOutput = direction.equals("output");
-			}
-			
-			if(elementIsPublic && elementIsComponent
-					&& elementIsInput && elementNamesFound)
-			{
-				inputParameters.add(typename + " " + name);
-			}
-			else if(elementIsPublic && elementIsComponent
-					&& elementIsOutput && elementNamesFound)
-			{
-				outputParameters.add(typename + " " + name);
-			}
-		}
 	}
 	
 	/**
@@ -639,49 +589,284 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset)
 	{
-		/* make sure we don't back over the document... */
+		/* If the offset is 0, there is no prefix and there can be no
+		 * context information */
 		if(offset == 0)
 		{
-			return new IContextInformation[0];
+			return new ContextInformation[0];
 		}
 		
-		String className = getPrefix(viewer.getDocument(), offset - 1);
-
+		IEditorInput input = editor.getEditorInput();
 		
-		fetchParameters(className);
-		
-		String proposal = "";
-		
-		if(inputParameters.size() > 0)
+		if((input instanceof ModelicaElementEditorInput) == false)
 		{
-			proposal += "Input: ";
-			for(String s : inputParameters)
+			ErrorManager.logBug(UIPlugin.getSymbolicName(),
+					"Context information processor invoked on a non-modelica" +
+					" content.");
+			
+			return new ContextInformation[0];
+			
+			// TODO see todo in computeCompletionProposals
+		}
+		
+		String prefix = getPrefix(viewer.getDocument(), offset - 1);
+		
+		/* If the prefix ends with a dot, there is no function name that we
+		 * can fetch parameters from */
+		if(prefix.endsWith("."))
+		{
+			return new ContextInformation[0];
+		}
+		
+		LinkedList<IContextInformation> information =
+			new LinkedList<IContextInformation>();
+		
+		IModelicaSourceFile file = 
+			((ModelicaElementEditorInput)input).getSourceFile();
+		
+		try
+		{
+			IModelicaClass modelicaClass = file.getClassAt(offset);
+			if(modelicaClass != null)
 			{
-				proposal += s + ", ";
+				computeContextInformationFromImports(modelicaClass, prefix,
+						offset, information);
+				computeContextInformationFromStdLib(modelicaClass, prefix,
+						offset, information);
+			}
+			else
+			{
+				return new IContextInformation[0];
 			}
 		}
-		if(outputParameters.size() > 0)
+		catch(CoreException e)
 		{
-			proposal += "Output: ";
-			for(int i = 0;i < outputParameters.size();i++)
-			{
-				if(i + 1 < outputParameters.size())
-					proposal += outputParameters.get(i) + ", ";
-				else
-					proposal += outputParameters.get(i);
-			}
+			ErrorManager.showCoreError(e);
+		}
+		catch(CompilerException e)
+		{
+			ErrorManager.showCompilerError(e);
 		}
 		
-		if(proposal == "")
-			return null;
+		return information.toArray(new IContextInformation[information.size()]);		
+	}
+	
+	private void computeContextInformationFromStdLib(
+			IModelicaClass modelicaClass, String prefix, int offset,
+			LinkedList<IContextInformation> info)
+		throws ConnectException, CompilerInstantiationException,
+			UnexpectedReplyException, InvocationError, CoreException
+	{
+		IStandardLibrary stdLib = 
+			ModelicaCore.getModelicaRoot().getStandardLibrary();
 		
-		IContextInformation[] result = new IContextInformation[1];
-		
-		result[0] = new ContextInformation("Function proposal", proposal);
-		
-		return result;
+		for(IModelicaClass pkg : stdLib.getPackages())
+		{
+			computeContextInformationFromPackage(pkg, null, prefix, offset,
+					info);
+		}
 	}
 
+	private void computeContextInformationFromImports(
+			IModelicaClass modelicaClass, String prefix, int offset,
+			LinkedList<IContextInformation> info) 
+		throws ConnectException,
+			UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException
+	{
+		Collection<IModelicaImport> imports = new LinkedList<IModelicaImport>();
+		
+		/* I wanted a for-loop and I got a for-loop. Hah! */
+		for(IModelicaClass currClass = modelicaClass;
+			currClass != null;
+			currClass = currClass.getParentNamespace())
+		{
+			imports.addAll(currClass.getImports());
+		}
+		
+		for(IModelicaImport imp : imports)
+		{
+			IModelicaClass importedPackage = imp.getImportedPackage();
+
+			switch(imp.getType())
+			{
+			case QUALIFIED:
+				computeContextInformationFromPackage(importedPackage, null,
+						prefix, offset, info);
+				break;
+			case UNQUALIFIED:
+				for(IModelicaElement child : importedPackage.getChildren())
+				{
+					computeContextInformationFromPackage((IModelicaClass)child,
+							null, prefix, offset, info);
+				}
+				break;
+			}
+		}
+	}
+	
+	private void computeContextInformationFromPackage(
+			IModelicaClass importedPackage, String packageAlias, String prefix,
+			int offset, Collection<IContextInformation> info) 
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException
+	{
+		String packageName;
+		
+		if(packageAlias != null)
+		{
+			packageName = packageAlias;
+		}
+		else
+		{
+			packageName = importedPackage.getElementName();
+		}
+
+		int firstDot = prefix.indexOf('.');
+		if(firstDot == -1)
+		{
+			
+			if(!packageName.equals(prefix))
+			{
+				return;
+			}
+
+			String proposal = constructProposalString(importedPackage);
+			
+			if(info.size() == 0)
+			{
+				info.add(new ContextInformation(proposal, proposal));
+				functionProposal = prefix;
+			}
+			return;
+		}
+		else if(packageName.equals(prefix.substring(0, firstDot)) == false)
+		{
+			return;
+		}
+		
+		int lastDot = prefix.lastIndexOf('.');
+		String levelName = prefix.substring(0, lastDot);
+		
+		String childPrefix = prefix.substring(lastDot + 1);
+		
+		StringTokenizer st = new StringTokenizer(levelName, ".");
+		String token;
+		
+		IParent currLevel = (IParent)importedPackage;
+		
+		if(st.hasMoreTokens())
+		{
+			st.nextToken();
+		}
+		
+		while(st.hasMoreTokens())
+		{
+			token = st.nextToken();
+			boolean foundNextLevel = false;
+			
+			for(IModelicaElement child : currLevel.getChildren())
+			{
+				if(child.getElementName().equals(token))
+				{
+					foundNextLevel = true;
+					if(child instanceof IParent)
+					{
+						currLevel = (IParent)child;
+					}
+					else
+					{
+						return;
+					}
+				}
+			}
+			
+			if(foundNextLevel == false)
+			{
+				return;
+			}
+		}
+		
+		for(IModelicaElement element : currLevel.getChildren())
+		{
+			String elementName = element.getElementName();
+			
+			if(elementName.equals(childPrefix) == false)
+			{
+				continue;
+			}
+
+			if(element instanceof IModelicaClass)
+			{
+				String proposal = 
+					constructProposalString((IModelicaClass)element);
+
+				if(info.size() == 0)
+				{
+					info.add(new ContextInformation(proposal, proposal));
+					functionProposal = prefix;
+				}
+			}
+		}
+	}
+	
+	private String constructProposalString(IModelicaClass modelicaClass)
+		throws ConnectException, InvocationError, UnexpectedReplyException,
+			CompilerInstantiationException, CoreException
+	{
+		ISignature signature = modelicaClass.getSignature();
+		if(signature == null)
+		{
+			return "";
+		}
+		
+		String proposal;
+		
+		IParameter[] outputs = signature.getOutputs();
+
+		if(outputs.length >= 2)
+		{
+			proposal = "(";
+			
+			int i = 0;
+			for(;i < outputs.length - 1;i++)
+			{
+				proposal += outputs[i].getType() + ", ";
+			}
+			
+			proposal += outputs[i].getType() + ") ";
+		}
+		else if(outputs.length == 1)
+		{
+			proposal = outputs[0].getType() + " ";
+		}
+		else
+		{
+			proposal = "";
+		}
+		
+		functionNameStart = proposal.length();
+		
+		proposal += modelicaClass.getElementName() + "(";
+		
+		functionNameEnd = proposal.length() - 1;
+		
+		IParameter[] inputs = signature.getInputs();
+		if(inputs.length >= 1)
+		{
+			int i = 0;
+			for(;i < inputs.length - 1;i++)
+			{
+				proposal += inputs[i].getType() + " "
+					+ inputs[i].getName() + ", ";
+			}
+			proposal += inputs[i].getType() + " " + inputs[i].getName();
+		}
+		proposal += ")";
+
+		return proposal;
+	}
+	
 	public char[] getCompletionProposalAutoActivationCharacters()
 	{
 		return new char[] {'.'};

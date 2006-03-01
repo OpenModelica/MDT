@@ -76,8 +76,17 @@ public class ModelicaImport implements IModelicaImport
 		UnexpectedReplyException, InvocationError, CoreException
 	{ 
 		type = isQualified ? Type.QUALIFIED : Type.UNQUALIFIED;
-		
-		importedPackage = containerProject.getClass(importedElement);
+
+		if(containerProject != null)
+		{
+			importedPackage = containerProject.getClass(importedElement);
+		}
+		else
+		{
+			importedPackage = 
+				ModelicaCore.getModelicaRoot().getStandardLibrary().
+					getPackage(importedElement);			
+		}
 		
 		if (importedPackage == null)
 		{
