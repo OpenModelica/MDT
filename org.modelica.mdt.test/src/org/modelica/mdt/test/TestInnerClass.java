@@ -41,6 +41,8 @@
 
 package org.modelica.mdt.test;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -70,9 +72,14 @@ import junit.framework.TestCase;
 public class TestInnerClass extends TestCase 
 {
 
+	/* the file on which we make the changing locations test */
+	private static final String CHANGING_FILE = "changing_file.mo";
+	
 	/* the test subject */
 	private InnerClass componentsBananza;
 	private InnerClass importRichModel;
+	
+	private IModelicaProject proj;
 	
 	
 	@Override
@@ -81,8 +88,7 @@ public class TestInnerClass extends TestCase
 		Area51Projects.createProjects();
 		
 		/* navigate to the model 'component_bananza' */
-		IModelicaProject proj = 
-			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
+		proj = Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
 		
 		IModelicaSourceFile file = 
 			Utility.findModelicaFileInFolder(proj.getRootFolder(), 
@@ -611,7 +617,7 @@ public class TestInnerClass extends TestCase
 				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
 				break;
 			case 8: // import root_package.root_package_model
-				// TODO this is broken, fix this (folder package and all i think)
+				// TODO this is broken, fix this
 //				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
 				break;
 			default:
@@ -622,5 +628,119 @@ public class TestInnerClass extends TestCase
 		assertFalse("did not find all import statments", 
 				importCounter < 4);
 
-	}	
+	}
+	
+	/** 
+	 * test that the when a class definiton is changed in the disk
+	 * it's location is updated
+	 */
+	public void testLocationUpdates() throws CoreException, 
+		ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, InvocationError
+	{		
+//		
+//		/* create initial class definitons */
+//		createClassDef();		
+//		/* 
+//		 * check the initial locations 
+//		 */
+//		IModelicaClass clazz;
+//		IRegion defReg;
+//		
+//		/* checks on EquationComponent */
+//		clazz = proj.getClass("EquationComponent"); 
+//		assertNotNull(clazz);
+//		
+//		defReg = clazz.getLocation();
+//		assertEquals("wrong start offset", 111, defReg.getOffset());
+//		assertEquals("wrong length", 239-111+1, defReg.getLength());
+//
+//		/* checks on EquationComponent.R */
+//		clazz = proj.getClass("EquationComponent.R"); 
+//		assertNotNull(clazz);
+//		
+//		defReg = clazz.getLocation();
+//		assertEquals("wrong start offset", 137, defReg.getOffset());
+//		assertEquals("wrong length", 167-137+1, defReg.getLength());
+//		
+//		
+//		/* modify class defintions */
+//		modifyClassDef();
+//		
+//		/*
+//		 * check that locations where updated 
+//		 */
+//		/* checks on EquationComponent */
+//		clazz = proj.getClass("EquationComponent"); 
+//		assertNotNull(clazz);
+//		
+//		defReg = clazz.getLocation();
+//		assertEquals("wrong start offset", 25, defReg.getOffset());
+//		assertEquals("wrong length", 179-25+1, defReg.getLength());
+//
+//		/* checks on EquationComponent.R */
+//		clazz = proj.getClass("EquationComponent.R"); 
+//		assertNotNull(clazz);
+//		
+//		defReg = clazz.getLocation();
+//		assertEquals("wrong start offset", 76, defReg.getOffset());
+//		assertEquals("wrong length", 106-76+1, defReg.getLength());
+//
+	}
+	
+	/**
+	 * utility function for the testLocationUpdates test
+	 * 
+	 * overwrites the initial definitions in a source file with
+	 * some modifications
+	 */
+	private void modifyClassDef() throws CoreException 
+	{
+		String contents =
+			"// funny comment removed\n" +
+			"class EquationComponent\n" +
+			"  /* records are nice */\n" +
+			"  record R\n" +
+			"    Real x,y;\n" +
+			"  end R;\n" +
+			"\n" +
+			"  R a,b,c;\n" +
+			"equation\n" +
+			"  a = if true then b else c;\n" +
+			"end EquationComponent;";
+
+		IProject project = proj.getWrappedProject();
+		IFile file = project.getFile(CHANGING_FILE);
+		
+		file.setContents(Utility.getByteStream(contents), true, true, null);
+	}
+
+	/**
+	 * utility function for the testLocationUpdates test
+	 * 
+	 * Creates the initial definitions in a source file
+	 *
+	 */
+	private void createClassDef() throws CoreException 
+	{
+		String contents =
+			"/*\n" +
+			" * However, don't ever expect you can parse\n" +
+			" * the error message from the compiler.\n" +
+			" *    -- Adrian Pop\n" +
+			" */\n" +
+			"class EquationComponent\n" +
+			"  record R\n" +
+			"    Real x,y;\n" +
+			"  end R;\n" + 
+			"  R a,b,c;\n" +
+			"equation\n" +
+			"  a = if true then b else c;\n" +
+			"end EquationComponent;";
+
+		IProject project = proj.getWrappedProject();
+		IFile file = project.getFile(CHANGING_FILE);
+		
+		file.create(Utility.getByteStream(contents), true, null);
+	}
 }
