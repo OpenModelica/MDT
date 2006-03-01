@@ -63,6 +63,8 @@ import org.eclipse.ui.IEditorPart;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParent;
@@ -556,6 +558,13 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 
 			for (IModelicaElement child : currLevel.getChildren())
 			{
+				if ((child instanceof IModelicaFile) ||
+					(child instanceof IModelicaSourceFile) ||
+					(child instanceof IModelicaFolder))
+				{
+					/* don't propose files, source files and folders */
+					continue;
+				}
 				if (child.getElementName().equals(token))
 				{
 					foundNextLevel = true;
@@ -595,9 +604,20 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		{
 			String elementName = element.getElementName();
 			
+			
+			/* filter out children by type */ 
+			if ((element instanceof IModelicaFile) ||
+					(element instanceof IModelicaSourceFile) ||
+					(element instanceof IModelicaFolder))
+			{
+					/* don't propose files, source files and folders */
+					continue;
+			}
+
 			/* filter out children by child prefix */
 			if (!elementName.startsWith(childPrefix))
 			{
+				/* don't propose children with non-matching prefix */
 				continue;
 			}
 			
