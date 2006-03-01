@@ -58,8 +58,8 @@ import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
-import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.CorePlugin;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
  * Content provider for a tree viewer. This content provider works only

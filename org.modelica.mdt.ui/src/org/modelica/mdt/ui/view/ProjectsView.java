@@ -80,11 +80,11 @@ import org.eclipse.ui.part.ViewPart;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.ModelicaElementContentProvider;
 import org.modelica.mdt.ui.ModelicaElementSorter;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.editor.EditorUtility;
-import org.modelica.mdt.internal.core.ErrorManager;
 
 public class ProjectsView extends ViewPart
 {

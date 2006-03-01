@@ -93,4 +93,13 @@
             class="org.modelica.mdt.ui.ModelicaElementFactory"
             id="org.modelica.mdt.ui.ModelicaElementFactory"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.modelica.mdt.ui.preferences.ModelicaPreferencePage"
+            id="org.modelica.mdt.ui.modelica"
+            name="Modelica"/>
+   </extension>
+   
+   
 </plugin>
