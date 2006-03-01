@@ -79,6 +79,7 @@ import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.FolderPackage;
 
+
 /**
  * This builder loads all changed files into OMC in order to check for
  * parse errors. If a loaded file have any parse error, then a problem 

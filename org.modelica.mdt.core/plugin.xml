@@ -33,4 +33,8 @@
       <super type="org.eclipse.core.resources.problemmarker"/>
       <persistent value="true"/>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.modelica.mdt.core.preferences.PreferenceManager"/>
+   </extension>
 </plugin>

@@ -206,4 +206,6 @@ public class CorePlugin extends AbstractUIPlugin
 		}
 		return res;
 	}
+
+	
 }

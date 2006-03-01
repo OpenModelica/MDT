@@ -53,6 +53,7 @@ import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.preferences.PreferenceManager;
 
 /**
  * Contains code for handling errors and other unexpected/undersireable
@@ -230,7 +231,13 @@ public class ErrorManager
 				upgrade_your_software;
 			
 			long now = System.currentTimeMillis();
-			if (now >= nextInvocationErrorShown)
+			
+			if (!PreferenceManager.getDisplayCompErrors())
+			{
+				/* the user don't want to see this error message */
+				showErrorDialog = false;
+			}
+			else if (now >= nextInvocationErrorShown)
 			{
 				/* it is time to bug user again */
 				showErrorDialog = true;
@@ -253,7 +260,12 @@ public class ErrorManager
 				"for compatibility problems.";
 
 			long now = System.currentTimeMillis();
-			if (now >= nextUnexpectedReplyErrorShown)
+			if (!PreferenceManager.getDisplayCompErrors())
+			{
+				/* the user don't want to see this error message */
+				showErrorDialog = false;
+			}
+			else if (now >= nextUnexpectedReplyErrorShown)
 			{
 				/* it is time to bug user again */
 				showErrorDialog = true;
