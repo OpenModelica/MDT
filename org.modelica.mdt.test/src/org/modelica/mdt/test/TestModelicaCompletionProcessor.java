@@ -585,6 +585,33 @@ public class TestModelicaCompletionProcessor extends TestCase
 		assertTrue("did not found proposal for the 'Blocks.Math.Feedback'", 
 				foundMathFeedbackProp);
 		
+		/*
+		 * this is a bug trigger code
+		 * when cp. is typed inside the import_rich_model.bar
+		 * the faulty version of the completion processor proposes 'package.mo'
+		 */
+		
+		/* type 'cp.' inside import_rich_model.bar */
+		editor.doRevertToSaved();
+		doc.replace(554, 0, "cp.");
+		
+		/* get proposals at the end of 'Blocks.Math.' */
+		props = compProc.computeCompletionProposals(textViewer, 557);
+
+		/* 
+		 * we are NOT expecting a proposal for package.mo
+		 */
+		for (ICompletionProposal proposal : props)
+		{
+			System.out.println(proposal.getDisplayString());
+			if (proposal.getDisplayString().startsWith("package.mo"))
+			{
+				/* not good !*/
+				fail("proposal for package.mo found");
+			}
+		}
+
+		
 		/* 
 		 * revert to saved otherwise a dialog will pop-up asking us to save
 		 * changes. that will make the test require manual labor to finish
