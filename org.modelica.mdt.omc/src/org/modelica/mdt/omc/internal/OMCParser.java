@@ -112,13 +112,23 @@ public class OMCParser
 			String errorLocationParts[] = errorLocation.split(":");
 			
 			/*
+			 * we expect 5 (on unix) or 6 (on windows) ':' separated parts in a 
+			 * proper error location string 
+			 */ 
+			if (errorLocationParts.length < 5 || 
+				errorLocationParts.length > 6 )
+			{
+				throw new UnexpectedReplyException("Weird error message from "+
+						"the compiler: [" + errorLine + "]");				
+			}
+			/*
 			 * This is the ugliest hack in a long while. Aaaah, nice.
 			 * 
 			 * How it actually works:
 			 *   Because : is both a separator in Windows (C:/path/to/file) and
 			 *   a separator in error messages, where the line and column
 			 *   numbers are found varies. If on Windows, the info we want
-			 *   starts at array index 2, and on more normal systems, it starts
+			 *   starts at array index 2, and on Unix, it starts
 			 *   at array index 1. Simply check if the element at index 1 is
 			 *   a digit or something else. Use this to set where in the array
 			 *   that the line and column numbers can be found.
