@@ -386,10 +386,10 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	/**
 	 * 
 	 * @param file the file where this marker should be set
-	 * @param startLineNumber the line number where this marker should be set
-	 * @param startColumnNumber TODO
-	 * @param endLineNumber TODO
-	 * @param endColumnNumber TODO
+	 * @param startLineNumber the line number where this marker should start
+	 * @param startColumnNumber the column number where this marker should start
+	 * @param endLineNumber the line number where this marker should end
+	 * @param endColumnNumber the column number where this marker should end
 	 * @param message a message describing this marker
 	 * @param type the type of the marker (problem, info, ...)
 	 * @return the created marker, or <code>null</code> if marker couldn't

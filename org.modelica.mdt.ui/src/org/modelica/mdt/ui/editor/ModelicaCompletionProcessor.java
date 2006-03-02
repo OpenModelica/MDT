@@ -90,7 +90,8 @@ import org.modelica.mdt.ui.UIPlugin;
  * typing after a .
  * 
  * computeContextInformation() takes care of showing the definitions of
- * the parameters of classes that have parameters.
+ * the parameters of classes that have parameters. Shows this information
+ * after ( has been typed.
  * 
  * @author Tyler Durden
  */
@@ -100,6 +101,9 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	private IEditorPart editor;
 	
 	private static String functionProposal = "";
+	
+	/* Remember where in the context information the name of the function is.
+	 * This is used to highlight the function name in the context information.*/
 	private static int functionNameStart = 0;
 	private static int functionNameEnd = 0;
 	
@@ -108,12 +112,21 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		this.editor = editor;
 	}
 	
+	/*
+	 * This Validator makes sure that the context information should still be
+	 * visible. 
+	 */
 	protected static class Validator implements IContextInformationValidator,
 		IContextInformationPresenter
 	{
 		protected ITextViewer fViewer;
 		protected int fInstallOffset;
 		
+		/**
+		 * Check if the context information should still be displayed. Do this
+		 * by counting opening '(' and closing ')' parens and see if they match
+		 * up.
+		 */
 		public boolean isContextInformationValid(int offset)
 		{
 			/* If we've backed over the (, we're done with this information. */
@@ -123,11 +136,13 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			}
 			
 			String stringTyped =
-				ModelicaCompletionProcessor.getLine(fViewer, offset);
+				ModelicaCompletionProcessor.getTypedString(fViewer, offset);
 			
 			/* Get start of parameter list. */
 			int pos = stringTyped.indexOf('(');
 			
+			/* If no ( was found, something is wrong and the context information
+			 * should not be displayed. */
 			if(pos == -1)
 			{
 				return false;
@@ -138,15 +153,28 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			for(;pos < stringTyped.length();pos++)
 			{
 				if(stringTyped.charAt(pos) == '(')
+				{
 					pardepth++;
+				}
 				else if(stringTyped.charAt(pos) == ')')
+				{
 					pardepth--;
+				}
 			}
 			
 			/* The TYPING will go on as long as it has to! */
 			/* (or somebody yells stop, goes limb, passes out) */
 			if(pardepth == 0)
 			{
+				return false;
+			}
+			else if(pardepth < 0)
+			{
+				/* This is a bug */
+				
+				ErrorManager.logBug(UIPlugin.getSymbolicName(),
+						"The user typed too many ) and we don't even noticed.");
+				
 				return false;
 			}
 			else
@@ -162,21 +190,23 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			fInstallOffset = offset;
 		}
 		
+		/**
+		 * Whenever the user types a character, the presentation can be updated.
+		 * We just update the presentation at the start, by formatting the
+		 * function name as BOLD.
+		 */
 		public boolean updatePresentation(int documentPosition,
 				TextPresentation presentation)
 		{
 			/* Only apply the style range as we start displaying this
-			 * information*/
+			 * information. */
 			if(fInstallOffset != documentPosition)
 			{
 				return false;
 			}
-			
-			StyleRange sr;
-			sr = new StyleRange(functionNameStart, 
-					functionNameEnd - functionNameStart, null, null, SWT.BOLD);
 
-			presentation.addStyleRange(sr);
+			presentation.addStyleRange(new StyleRange(functionNameStart, 
+					functionNameEnd - functionNameStart, null, null, SWT.BOLD));
 			
 			return true;
 		}
@@ -185,8 +215,8 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	protected IContextInformationValidator validator = new Validator();
 	
 	/**
-	 * calculates the prefix of possible class/package/component names
-	 * at specified offset
+	 * Calculates the prefix of possible class/package/component names
+	 * at specified offset.
 	 * 
 	 * @param viewer the container of the document
 	 * @param offset the offset into the document where we're typing
@@ -232,19 +262,26 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		return ""; /* this will happend only if our code is broken somehow */
 	}
 
-	//TODO this getLine() should be removed and some of the other 25 implementa-
-	//tions of getLie() should be called instead. Some day we may get to a sin-
-	//gle digit number of getLine() implementations
-
-	private static String getLine(ITextViewer viewer, int offset)
+	/**
+	 * Fetches the string that has been typed since the start of the function
+	 * name. For example if the user has typed:
+	 * 
+	 * x = Modelica.Math.sin(a
+	 * 
+	 * then this function will return
+	 * 
+	 * Modelica.Math.sin(a
+	 * 
+	 */
+	private static String getTypedString(ITextViewer viewer, int offset)
 	{
 		IDocument document = viewer.getDocument();
 		
 		int tempCounter = offset;
 		char ch = '\n';
 		String foundString = "";
-		
-		do
+
+		while(true)
 		{
 			try
 			{
@@ -261,7 +298,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			else
 				foundString = ch + foundString;
 		}
-		while(true);
 		
 		return foundString;
 	}
@@ -343,7 +379,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		for (IModelicaClass pkg : stdLib.getPackages())
 		{
-			computeCompPropsFromPackage(pkg, null, prefix, offset, proposals);
+			computeProposalsFromPackage(pkg, null, prefix, offset, proposals);
 		}
 	}
 
@@ -380,18 +416,18 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			switch (imp.getType())
 			{
 			case QUALIFIED:
-				computeCompPropsFromPackage(importedPackage, null,
+				computeProposalsFromPackage(importedPackage, null,
 						prefix, offset, proposals);
 				break;
 			case UNQUALIFIED:
 				for (IModelicaElement child : importedPackage.getChildren())
 				{
-					computeCompPropsFromPackage(((IModelicaClass)child), null,
+					computeProposalsFromPackage(((IModelicaClass)child), null,
 							prefix, offset, proposals);
 				}
 				break;
 			case RENAMING:
-				computeCompPropsFromPackage(importedPackage, imp.getAlias(),
+				computeProposalsFromPackage(importedPackage, imp.getAlias(),
 						prefix, offset, proposals);				
 				break;
 			}
@@ -413,7 +449,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @param offset the current cursor position in the document
 	 * @param proposals the computed proposals will be added to this list
 	 */
-	private void computeCompPropsFromPackage(IModelicaClass importedPackage,
+	private void computeProposalsFromPackage(IModelicaClass importedPackage,
 			String packageAlias,
 			String prefix, int offset,
 			Collection<ICompletionProposal> proposals) 
@@ -583,8 +619,13 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	}
 
 	/**
-	 * computes the information that is displayed in the yellow pop-up
+	 * Computes the information that is displayed in the yellow pop-up
 	 * as you type.
+	 * 
+	 * @param viewer the holder of the document we're editing
+	 * @param offset the offset into the document where we're editing
+	 * @return the context information given the function name that has been
+	 *         typed
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset)
@@ -600,15 +641,20 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		if((input instanceof ModelicaElementEditorInput) == false)
 		{
+			/*
+			 * we should never be attached to an editor on anything else
+			 * but a modelica source file (a modelica element)
+			 */
 			ErrorManager.logBug(UIPlugin.getSymbolicName(),
-					"Context information processor invoked on a non-modelica" +
-					" content.");
+					"Context information prossesor invoked on a non-Modelica " +
+					"content");
 			
+			/* no context information if there is a bug ! */
 			return new ContextInformation[0];
-			
-			// TODO see todo in computeCompletionProposals
 		}
 		
+		
+		/* get prefix from offset-1 to skip the first ( */
 		String prefix = getPrefix(viewer.getDocument(), offset - 1);
 		
 		/* If the prefix ends with a dot, there is no function name that we
@@ -626,6 +672,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		try
 		{
+			/* Fetch information about what class we're typing inside */
 			IModelicaClass modelicaClass = file.getClassAt(offset);
 			if(modelicaClass != null)
 			{
@@ -651,6 +698,15 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		return information.toArray(new IContextInformation[information.size()]);		
 	}
 	
+	/**
+	 * Compute context information based on the packages in the standard library
+	 * which can be accessed globally.
+	 * 
+	 * @param modelicaClass the class where the context information is requested
+	 * @param prefix
+	 * @param offset the offset into the document where we're typing
+	 * @param info the container where context info will be added
+	 */
 	private void computeContextInformationFromStdLib(
 			IModelicaClass modelicaClass, String prefix, int offset,
 			LinkedList<IContextInformation> info)
@@ -667,6 +723,16 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		}
 	}
 
+	/**
+	 * Compute context information based on import statements in the provided
+	 * class.
+	 * 
+	 * @param modelicaClass the class who's import statements will be used
+	 * for computing context information
+	 * @param prefix
+	 * @param offset the offset into the document where we're typing
+	 * @param info the container where context info will be added
+	 */
 	private void computeContextInformationFromImports(
 			IModelicaClass modelicaClass, String prefix, int offset,
 			LinkedList<IContextInformation> info) 
@@ -676,7 +742,6 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	{
 		Collection<IModelicaImport> imports = new LinkedList<IModelicaImport>();
 		
-		/* I wanted a for-loop and I got a for-loop. Hah! */
 		for(IModelicaClass currClass = modelicaClass;
 			currClass != null;
 			currClass = currClass.getParentNamespace())
@@ -701,10 +766,30 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 							null, prefix, offset, info);
 				}
 				break;
+				
+			case RENAMING:
+				computeContextInformationFromPackage(importedPackage,
+						imp.getAlias(),	prefix, offset, info);
+				break;
 			}
 		}
 	}
 	
+	/**
+	 * Compute context information based on some package. This method bases
+	 * the computation on the imported package, the package alias if available
+	 * (renaming import), and the prefix before the current cursor position.
+	 * 
+	 * Context information is added to the provided list 'info'. Currently, only
+	 * one piece of context information will be added to the list.
+	 * 
+	 * @param importedPackage the package that is imported
+	 * @param packageAlias the alias of the package (renaming import)
+	 * @param prefix the prefix before current cursor position
+	 * @param offset the current cursor position in the document
+	 * @param info the list of context information where the context information
+	 * will be added
+	 */
 	private void computeContextInformationFromPackage(
 			IModelicaClass importedPackage, String packageAlias, String prefix,
 			int offset, Collection<IContextInformation> info) 
@@ -740,6 +825,8 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			}
 			return;
 		}
+		/* Make sure the first part of the prefix matches this package, else 
+		 * return */
 		else if(packageName.equals(prefix.substring(0, firstDot)) == false)
 		{
 			return;
@@ -755,6 +842,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		IParent currLevel = (IParent)importedPackage;
 		
+		/* skip first token */
 		if(st.hasMoreTokens())
 		{
 			st.nextToken();
@@ -769,6 +857,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			{
 				if(child.getElementName().equals(token))
 				{
+					/* we have found the next level */
 					foundNextLevel = true;
 					if(child instanceof IParent)
 					{
@@ -776,6 +865,10 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 					}
 					else
 					{
+						/* Level name must refer to an instance of an IParent,
+						 * otherwise we don't know what the user is typing and
+						 * can't contribute any context information, so just
+						 * escape from this method. */
 						return;
 					}
 				}
@@ -783,14 +876,22 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			
 			if(foundNextLevel == false)
 			{
+				/* Level name doesn't refer to any of this packages children,
+				 * nothing to contribute */
 				return;
 			}
 		}
 		
+		/*
+		 * Compute context information based on the current level and child 
+		 * prefix
+		 */
 		for(IModelicaElement element : currLevel.getChildren())
 		{
 			String elementName = element.getElementName();
 			
+			/* The child should match exactly to be of interest for context
+			 * information */
 			if(elementName.equals(childPrefix) == false)
 			{
 				continue;
@@ -804,12 +905,22 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				if(info.size() == 0)
 				{
 					info.add(new ContextInformation(proposal, proposal));
+					
+					/* save what the user typed to get this context
+					 * information */
 					functionProposal = prefix;
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Constructs a textual representation of a functions signature.
+	 *  
+	 * @param modelicaClass the class that will have its input and output
+	 * parameters displayed
+	 * @return the constructed <code>String</code>
+	 */
 	private String constructProposalString(IModelicaClass modelicaClass)
 		throws ConnectException, InvocationError, UnexpectedReplyException,
 			CompilerInstantiationException, CoreException
@@ -819,6 +930,16 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		{
 			return "";
 		}
+		
+		/*
+		 * If a function has several return values it will look like this:
+		 * 
+		 *  (Real, Integer) foo(Real a, Real b)
+		 *  
+		 * if a function only has one return value it will look like this:
+		 * 
+		 *  Real bar(Integer a)
+		 */
 		
 		String proposal;
 		
@@ -867,11 +988,19 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		return proposal;
 	}
 	
+	/**
+	 * @return the character that should start completion proposal. For MDT
+	 * this character is .
+	 */
 	public char[] getCompletionProposalAutoActivationCharacters()
 	{
 		return new char[] {'.'};
 	}
 
+	/**
+	 * @return the character that should start context information. For MDT
+	 * this character is )
+	 */
 	public char[] getContextInformationAutoActivationCharacters()
 	{
 		return new char[] {'('};

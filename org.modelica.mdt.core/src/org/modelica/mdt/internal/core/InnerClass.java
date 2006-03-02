@@ -236,13 +236,6 @@ public class InnerClass extends ModelicaClass
 			{
 				String importType = info.getKind();
 				
-				System.out.println(info.getPath() + " " + importType);
-				
-				if(info.getPath().equals("Modelica.SIunits"))
-				{
-					System.out.println("WTF");
-				}
-				
 				if (importType.equals("qualified"))
 				{
 					imports.add(new ModelicaImport
