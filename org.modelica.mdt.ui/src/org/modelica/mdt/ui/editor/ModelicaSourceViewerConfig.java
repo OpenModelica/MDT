@@ -109,6 +109,8 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 				.CONTEXT_INFO_ABOVE);
 		assistant.setProposalSelectorBackground(new Color(Display.getCurrent(),
 				new RGB(255, 255, 255)));
+		assistant.setContextInformationPopupBackground(new Color(Display.getCurrent(),
+				new RGB(255, 255, 255)));
 
 		return assistant;
 	}
