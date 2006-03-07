@@ -47,13 +47,39 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.modelica.mdt.internal.core.CorePlugin;
 
 /**
- * Class used to initialize default preference values.
+ * This class manages the settings for the omc plugin (and at the moment the omc
+ * and ui plugin as well, but that's just uggly)
+ * 
+ * The class provides two services, it sets the default settings and
+ * gives an easy access to current settings via the get<Setting_Name> methods.
+ * 
+ * This class does not provides means for changing settings. To modify the 
+ * settings the preference store object should be fetched from the core plugin.
+ * 
+ * Following settings are available:
+ * 
+ * DisplayCompErrors:
+ *  if set to false then compatibility error dialogs will not be displayed when
+ *  omc replys with something unexpected, the error will only be logged
+ *  
+ * UseStandardOmcPath:
+ *  if set to true the OPENMODELICAHOME environment variable will be used to
+ *  find the omc binary. if set to false the CustomOmcPath settings value will
+ *  be used instead, se below.
+ *  
+ * CustomOmcPath:
+ *  the value of this setting can be used as alternative path to find omc binary.
+ *  used if UseStandardOmcPath settings is set to false, se above.
  */
 public class PreferenceManager extends AbstractPreferenceInitializer 
 {
-
+	/* settings tags in the preference store */
 	public static final String DISPLAY_COMPATIBILTY_ERRORS = 
-		"DisplayCompatibilityErrors";	
+		"DisplayCompatibilityErrors";
+	public static final String USE_STANDARD_OMC_PATH = 
+		"UseStandardOmcPath";
+	public static final String CUSTOM_OMC_PATH = 
+		"CustomOmcPath";	
 	
 	private static IPreferenceStore store = null;
 	
@@ -62,8 +88,14 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	 */
 	public void initializeDefaultPreferences() 
 	{
-		/* setup default settings */
-		getStore().setDefault(DISPLAY_COMPATIBILTY_ERRORS, true);
+		/* 
+		 * setup default settings 
+		 */
+		IPreferenceStore store = getStore();
+
+		store.setDefault(DISPLAY_COMPATIBILTY_ERRORS, true);
+		store.setDefault(USE_STANDARD_OMC_PATH, true);
+		store.setDefault(CUSTOM_OMC_PATH, "");
 	}
 	
 	private static IPreferenceStore getStore() 
@@ -76,10 +108,26 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	}
 
 	/**
-	 * @return the current setting for display compatibility errors
+	 * @return current setting for 'display compatibility errors'
 	 */
 	public static boolean getDisplayCompErrors()
 	{
 		return getStore().getBoolean(DISPLAY_COMPATIBILTY_ERRORS);
+	}
+	
+	/**
+	 * @return current settig for 'use standard omc path (that is $OPENMODELICAHOME)'
+	 */
+	public static boolean getUseStandardOmcPath()
+	{
+		return getStore().getBoolean(USE_STANDARD_OMC_PATH);
+	}
+	
+	/**
+	 * @return current settig for 'custom omc path' 
+	 */
+	public static String getCustomOmcPath()
+	{
+		return getStore().getString(CUSTOM_OMC_PATH);
 	}
 }
