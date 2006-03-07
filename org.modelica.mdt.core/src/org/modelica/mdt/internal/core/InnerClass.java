@@ -58,6 +58,7 @@ import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParameter;
 import org.modelica.mdt.core.ISignature;
 import org.modelica.mdt.core.IllegalTypeException;
+import org.modelica.mdt.core.IllegalVisibilityException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
@@ -210,14 +211,21 @@ public class InnerClass extends ModelicaClass
 							info.getElementEndLine(),
 							info.getElementEndColumn());
 
-				
-				elements.put(componentName, 
-						new ModelicaComponent(
-								this,
-								componentName,
-								IModelicaComponent.Visibility.parse
-									(info.getElementVisibility()),
-								location));
+				try
+				{
+					elements.put(componentName, 
+							new ModelicaComponent(
+									this,
+									componentName,
+									IModelicaComponent.Visibility.parse
+										(info.getElementVisibility()),
+									location));					
+				}
+				catch(IllegalVisibilityException e)
+				{
+					throw new UnexpectedReplyException("Unexpected visibility: "
+							+ e.getMessage());
+				}
 				
 				String typeName = info.getTypeName();
 				if(info.getElementVisibility().equals("public")

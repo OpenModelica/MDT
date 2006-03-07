@@ -53,6 +53,7 @@ public interface IModelicaComponent extends IModelicaElement
 		PUBLIC, PROTECTED;
 		
 		public static Visibility parse(String text)
+			throws IllegalVisibilityException
 		{
 			if (text.equals("public"))
 			{
@@ -60,7 +61,8 @@ public interface IModelicaComponent extends IModelicaElement
 			}
 			else if (!text.equals("protected"))
 			{
-				// TODO error condition, which should throw someting
+				throw new IllegalVisibilityException(text + 
+						" is not a valid visibility");
 			}
 			return PROTECTED;	
 		}
