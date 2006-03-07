@@ -61,6 +61,7 @@ import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.preferences.PreferenceManager;
 import org.modelica.mdt.internal.core.ElementLocation;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.omc.internal.ParseResults;
@@ -81,8 +82,11 @@ public class OMCProxy implements IModelicaCompiler
 	/* the CORBA object */
 	private static OmcCommunication omcc;
 	
+	
+	enum osType { WINDOWS, UNIX };
+	
 	/* what Operating System we're running on */
-	private static String os;
+	private static osType os;
 	
 	/* indicates if we've setup the communication with OMC */
 	private boolean hasInitialized = false;
@@ -162,20 +166,25 @@ public class OMCProxy implements IModelicaCompiler
 	private static String getPathToObject()
 	{
 		String fileName = null;
-		if(os.equals("Unix"))
+
+		/* This mirrors the way OMC creates the object file. */		
+		switch (os)
 		{
-			/* This mirrors the way OMC creates the object file. */
+		case UNIX:
 			String username = System.getenv("USER");
 			if(username == null)
 			{
 				username = "nobody";
 			}
 			fileName = "/tmp/openmodelica." + username + ".objid";
-		}
-		else if(os.equals("Windows"))
-		{
+			break;
+		case WINDOWS:
 			String temp = System.getenv("TMP");			
 			fileName = temp + "\\openmodelica.objid";
+			break;
+		default:
+			ErrorManager.logBug("org.modelica.mdt.omc",
+					"os variable set to unexpected os-type");
 		}
 		
 		logOMCStatus("Will look for OMC object reference in '" 
@@ -185,42 +194,132 @@ public class OMCProxy implements IModelicaCompiler
 	}
 	
 	/**
+	 * With the help of voodoo magic determines the path to the
+	 * omc binary that user (probably) wants to use and the working
+	 * direcoty of where that binary (most likely) should be started in
+	 * 
+	 * This will returns for example 'c:\openmodelica132\omc.exe'
+	 * or '/usr/local/share/openmodelica/omc' depending on
+	 * such factors as: OS type, environment variables settings,
+	 * plugin user preferences, where the first matching
+	 * binary found and the weather outside. 
+	 * 
+	 * @return full path to the omc binary  
+	 * @throws ConnectException if the path could not be determined
+	 */
+	private static File[] getOmcBinaryPaths() throws ConnectException
+	{
+		String binaryName = "omc";
+		
+		if (os == osType.WINDOWS)
+		{
+			binaryName += ".exe";
+		}
+		
+		File omcBinary = null;
+		File omcWorkingDirectory = null;
+		if (PreferenceManager.getUseStandardOmcPath())
+		{
+			/*
+			 * user specified that standard path to omc should be used,
+			 * try to determine the omc path via the OPENMODELICAHOME and
+			 * by checking in it's varius subdirectory for the omc binary file
+			 */
+			logOMCStatus("Using standard path to omc-binary");
+			
+			/* 
+			 * Standard path to omc (or omc.exe) binary is encoded in OPENMODELICAHOME
+			 * variable. 
+			 */
+			String openModelicaHome = System.getenv("OPENMODELICAHOME");
+			if(openModelicaHome == null)
+			{
+				final String m = "Environment variable OPENMODELICAHOME not set";
+				logOMCStatus("Environment variable OPENMODELICAHOME not set,"+
+						" don't know how to start OMC from standard path.");
+				throw new ConnectException(m);
+			}
+			
+			omcWorkingDirectory = new File(openModelicaHome);
+			
+			/* the subdirectories where omc binary may be located, hurray for standards! */
+			String[] subdirs = { "", "bin", "compiler" };
+			
+			for (String subdir : subdirs)
+			{
+				File file = new File(openModelicaHome + 
+						subdir + File.separator + binaryName);
+
+				if (file.exists())
+				{
+					omcBinary = file;
+					logOMCStatus("Using omc-binary at '" + omcBinary.getAbsolutePath() + "'");
+					break;
+				}
+			}
+			
+			if (omcBinary == null)
+			{
+				logOMCStatus("Could not fine omc-binary on the standard path");
+				throw new ConnectException("Unable to start the OpenModelica Compiler, binary not found");
+			}
+		}
+		else
+		{
+			omcBinary = new File(PreferenceManager.getCustomOmcPath());
+			
+			logOMCStatus("Using userspecified omc-binary at '" +
+					omcBinary.getAbsolutePath() + "'");
+			
+			if (!omcBinary.exists())
+			{
+				logOMCStatus("file '" + omcBinary.getAbsolutePath() + "' does not exist");
+				throw new ConnectException("Specified omc-binary '" + omcBinary.getAbsolutePath() +
+				 	"' does not exist");
+			}
+			
+			/*
+			 * take an educated guess at where the user wants the binary to be
+			 * started. The guessing heuristics are as follows:
+			 * 
+			 * If binary is inside the 'bin' or 'compiler' directory, use the
+			 * above directory as working directory.
+			 * 
+			 * Otherwise use the directory where binary is located as working 
+			 * directory.
+			 * 
+			 * e.g. binary path /foo/bar/bin/omc      => working directory /foo/bar
+			 *      binary path /foo/bar/compiler/omc => working directory /foo/bar
+			 *      binary path /foo/bar/omc          => working directory /foo/bar
+			 */
+			File parent = omcBinary.getParentFile();
+			
+			if (parent.getName().equalsIgnoreCase("bin") || 
+				parent.getName().equalsIgnoreCase("compiler"))
+			{
+				omcWorkingDirectory = parent.getParentFile();
+			}
+			else
+			{
+				omcWorkingDirectory = parent;
+			}
+			
+		}
+
+		return new File[] {omcBinary, omcWorkingDirectory};
+	}
+	
+	/**
 	 * Start a new OMC server.
 	 */
 	private static void startServer() throws ConnectException
 	{
-		String[] pathsToOmc = new String[3];
-		File workingDirectory;
+		File tmp[] = getOmcBinaryPaths();
 
-		/* 
-		 * Path to omc (or omc.exe) can be found in the OPENMODELICAHOME
-		 * variable. 
-		 */
-		String omHome = System.getenv("OPENMODELICAHOME");
-		if(omHome == null)
-		{
-			final String m = "Environment variable OPENMODELICAHOME not set";
-			logOMCStatus("Environment variable OPENMODELICAHOME not set,"+
-					" don't know how to start OMC.");
-			throw new ConnectException(m);
-		}
-		
-		if(os.equals("Unix"))
-		{
-			pathsToOmc[0] = omHome + "/bin/omc";
-			pathsToOmc[1] = omHome + "/omc";
-			pathsToOmc[2] = omHome + "/Compiler/omc";
-		}
-		else if(os.equals("Windows"))
-		{
-			pathsToOmc[0] = omHome + "\\bin\\omc.exe";
-			pathsToOmc[1] = omHome + "\\omc.exe";
-			pathsToOmc[2] = omHome + "\\Compiler\\omc.exe";
-		}
-		
-		/* We should start OMC from the OPENMODELICAHOME directory */
-		workingDirectory = new File(omHome);
+		File omcBinary = tmp[0];
+		File workingDirectory = tmp[1];
 
+		
 		/* 
 		 * Delete old object reference file. We need to do this because we're
 		 * checking if the file exists to determine if the server has started
@@ -233,40 +332,23 @@ public class OMCProxy implements IModelicaCompiler
 			f.delete();
 		}
 		
-		for(int i = 0;i < 3;i++)
+		String command[] = { omcBinary.getAbsolutePath(), "+d=interactiveCorba" };
+		try
 		{
-			String command[] = { pathsToOmc[i], "+d=interactiveCorba" };
-			try
-			{
-				logOMCStatus("Running command " + command[0] + " " + command[1]);
-				Runtime.getRuntime().exec(command, null, workingDirectory);
-				logOMCStatus("Command run successfully.");
-				
-				break; /* exit the for loop, we've started OMC */
-			}
-			catch(IOException e)
-			{
-				if(i < 2)
-				{
-					logOMCStatus("Error running command " + e.getMessage()
-							+ ", trying alternative path to the binary.");
-					
-					/* If the call failed, try another path to the compiler */
-				}
-				else
-				{
-					/* If all the paths to OMC were wrong, throw an exception */
-					
-					logOMCStatus("Unable to start OMC, giving up."); 
-					throw new ConnectException
-						("Unable to start the OpenModelica Compiler. "
-						 + "Tried starting " + pathsToOmc[0] + ", " 
-						 + pathsToOmc[1] + " and " + pathsToOmc[2]);
-				}
-			}			
+			logOMCStatus("Running command " + command[0] + " " + command[1]);
+			logOMCStatus("Setting working directory to " + workingDirectory.getAbsolutePath());
+			Runtime.getRuntime().exec(command, null, workingDirectory);
+			logOMCStatus("Command run successfully.");
 		}
+		catch(IOException e)
+		{
+			logOMCStatus("Error running command " + e.getMessage());
+			logOMCStatus("Unable to start OMC, giving up."); 
+			throw new ConnectException
+				("Unable to start the OpenModelica Compiler. ");
+		}			
 
-		logOMCStatus("Wait for OMC CORBA object reference to appear on disk.");
+		logOMCStatus("Waiting for OMC CORBA object reference to appear on disk.");
 		
 		/*
 		 * Wait until the object exists on disk, but if it takes longer than
@@ -281,11 +363,11 @@ public class OMCProxy implements IModelicaCompiler
 			}
 			catch(InterruptedException e)
 			{
-				// Ignore
+				/* ignore */
 			}
 			ticks++;
 			
-			/* If we've waited for 5 seconds, abort the wait for OMC */
+			/* If we've waited for around 5 seconds, abort the wait for OMC */
 			if(ticks > 50)
 			{
 				logOMCStatus("No OMC object reference file created after " + 
@@ -325,22 +407,22 @@ public class OMCProxy implements IModelicaCompiler
 	 * @return the name of the operating system. If an unknown os is found,
 	 * the default is Unix. 
 	 */
-	private static String getOs()
+	private static osType getOs()
 	{
 		String osName = System.getProperty("os.name");
 		if(osName.contains("Linux"))
 		{
-			return "Unix";
+			return osType.UNIX;
 		}
 		else if(osName.contains("Windows"))
 		{
-			return "Windows";
+			return osType.WINDOWS;
 		}
 		else
 		{
-			ErrorManager.logWarning("'" + osName + "' is unsupported OS");
+			ErrorManager.logWarning("'" + osName + "' not officialy supported OS");
 			/* If the OS is not GNU/Linux or Windows, default to Unix */
-			return "Unix";
+			return osType.UNIX;
 		}
 	}
 
