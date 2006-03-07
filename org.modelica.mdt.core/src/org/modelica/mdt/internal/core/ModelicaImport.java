@@ -58,10 +58,18 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public class ModelicaImport implements IModelicaImport
 {
-	//TODO imported package loading should be done lazily
-	private IModelicaClass importedPackage;
+	/* the import type this class is representing */ 
 	private Type type;
+	/* the imported package, loaded lazily to improve latency and be more eclipsish */
+	private IModelicaClass importedPackage = null;
+	/* for renaming inports this is the new name of the imported package */
 	private String alias;
+	
+	/*
+	 * data needed to lazily load the imported package
+	 */
+	IModelicaProject importedPackageContainerProject;
+	String importedPackageName;
 	
 	/**
 	 * Create an import of the qualified or unqualified type
@@ -72,28 +80,10 @@ public class ModelicaImport implements IModelicaImport
 	public ModelicaImport(IModelicaProject containerProject, 
 			boolean isQualified,
 			String importedElement) 
-		throws ConnectException, CompilerInstantiationException,
-		UnexpectedReplyException, InvocationError, CoreException
 	{ 
-		type = isQualified ? Type.QUALIFIED : Type.UNQUALIFIED;
-
-		if(containerProject != null)
-		{
-			importedPackage = containerProject.getClass(importedElement);
-		}
-		else
-		{
-			importedPackage = 
-				ModelicaCore.getModelicaRoot().getStandardLibrary().
-					getPackage(importedElement);			
-		}
-		
-		if (importedPackage == null)
-		{
-			/* the package specified in this import statment does not exists */
-			//TODO throw an exception or something
-			System.out.println("omg, omg, omg ! " + importedElement);
-		}		
+		this.type = isQualified ? Type.QUALIFIED : Type.UNQUALIFIED;		
+		this.importedPackageContainerProject = containerProject;
+		this.importedPackageName = importedElement;
 	}
 	
 	/**
@@ -106,30 +96,11 @@ public class ModelicaImport implements IModelicaImport
 	public ModelicaImport(IModelicaProject containerProject,
 			String alias,
 			String importedElement)
-		throws ConnectException, CompilerInstantiationException,
-			UnexpectedReplyException, InvocationError, CoreException
 	{ 
-		type = Type.RENAMING;
+		this.type = Type.RENAMING;
 		this.alias = alias;
-
-		if (containerProject != null)
-		{
-			importedPackage = containerProject.getClass(importedElement);
-		}
-		else
-		{
-			importedPackage = 
-				ModelicaCore.getModelicaRoot().getStandardLibrary().
-					getPackage(importedElement);
-		}
-		
-		if (importedPackage == null)
-		{
-			/* the package specified in this import statment does not exists */
-			//TODO throw an exception or something
-			System.out.println("omg, (renaming) " + importedElement);
-		}
-		
+		this.importedPackageContainerProject = containerProject;
+		this.importedPackageName = importedElement;
 	} 
 	
 	/**
@@ -143,8 +114,14 @@ public class ModelicaImport implements IModelicaImport
 	/**
 	 * @see org.modelica.mdt.core.IModelicaImport#getImportedPackage()
 	 */
-	public IModelicaClass getImportedPackage()
+	public IModelicaClass getImportedPackage() 
+		throws ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, InvocationError, CoreException
 	{
+		if (importedPackage == null)
+		{
+			loadImportedPackage();
+		}
 		return importedPackage;
 	}
 
@@ -154,5 +131,45 @@ public class ModelicaImport implements IModelicaImport
 	public String getAlias()
 	{
 		return alias;
+	}
+	
+	/**
+	 * Loads a reference to the package that is imported by this statement.
+	 *
+	 * This function is used to implemet lazy loading of imported package
+	 * when it is first requested.
+	 */
+	private void loadImportedPackage() 
+		throws ConnectException, CompilerInstantiationException, 
+			UnexpectedReplyException, InvocationError, CoreException
+	{
+		if(importedPackageContainerProject != null)
+		{
+			/* a package from some workbench project imported */
+			importedPackage = 
+				importedPackageContainerProject.getClass(importedPackageName);
+		}
+		else
+		{
+			/* a package from standard library imported */
+			importedPackage = 
+				ModelicaCore.getModelicaRoot().getStandardLibrary().
+					getPackage(importedPackageName);			
+		}
+				
+		if (importedPackage == null)
+		{
+			/* the package specified in this import statment does not exists */
+			//TODO throw an exception or something
+			System.out.println("omg, omg, omg ! " + importedPackageName);
+		}
+		
+		/*
+		 * remove references to the lazy loading data to allow them 
+		 * be garbage collected
+		 */
+		importedPackageContainerProject = null;
+		importedPackageName = null;
+
 	}
 }

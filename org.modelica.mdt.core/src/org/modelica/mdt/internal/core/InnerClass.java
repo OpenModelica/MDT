@@ -267,7 +267,7 @@ public class InnerClass extends ModelicaClass
 				}
 			}
 		}
-	
+
 		return elements;
 	}
 
