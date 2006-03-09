@@ -243,7 +243,7 @@ public class OMCProxy implements IModelicaCompiler
 			omcWorkingDirectory = new File(openModelicaHome);
 			
 			/* the subdirectories where omc binary may be located, hurray for standards! */
-			String[] subdirs = { "", "bin", "compiler" };
+			String[] subdirs = { "", "bin", "Compiler" };
 			
 			for (String subdir : subdirs)
 			{
@@ -258,6 +258,10 @@ public class OMCProxy implements IModelicaCompiler
 					omcBinary = file;
 					logOMCStatus("Using omc-binary at '" + omcBinary.getAbsolutePath() + "'");
 					break;
+				}
+				else
+				{
+					logOMCStatus("No omc binary at: [" + path + "]");
 				}
 			}
 			
