@@ -68,7 +68,18 @@ public class OMCParser
 	public static CompileError[] parseErrorString(String errorString)
 		throws UnexpectedReplyException
 	{
+		if(errorString.equals(""))
+		{
+			throw new UnexpectedReplyException("Empty error message");
+		}
+		
 		StringTokenizer strTok = new StringTokenizer(errorString, "\r\n");
+		
+		if(strTok.countTokens() == 0)
+		{
+			throw new UnexpectedReplyException("Empty error message");
+		}
+		
 		CompileError[] compileErrs = new CompileError[strTok.countTokens()];
 		
 		for (int i = 0; strTok.hasMoreTokens(); i++)
@@ -93,7 +104,7 @@ public class OMCParser
 			 */
 			String[] errorParts = errorLine.split("]");
 			
-			if(errorParts.length < 2)
+			if(errorParts.length != 2)
 			{
 				throw new UnexpectedReplyException("Weird error message from "+
 						"the compiler: [" + errorLine + "]");
@@ -133,6 +144,12 @@ public class OMCParser
 			 *   a digit or something else. Use this to set where in the array
 			 *   that the line and column numbers can be found.
 			 */
+			if(errorLocationParts[1].length() == 0)
+			{
+				throw new UnexpectedReplyException("Weird error message from " +
+						"the compiler: [" + errorLine + "]");
+			}
+			
 			char startCharacter = errorLocationParts[1].charAt(0);
 			int infoOffset;
 			if(startCharacter >= '0' && startCharacter <= '9')
@@ -165,6 +182,8 @@ public class OMCParser
 			catch (NumberFormatException e)
 			{
 				ErrorManager.logError(e);
+				throw new UnexpectedReplyException("Weird error message from"+
+						" the compiler: [" + errorLine + "]");
 			}
 			
 			/*

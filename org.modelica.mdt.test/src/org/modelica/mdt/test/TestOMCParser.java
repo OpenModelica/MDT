@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -43,6 +43,7 @@ package org.modelica.mdt.test;
 
 import org.modelica.mdt.core.compiler.ICompileError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.omc.internal.CompileError;
 import org.modelica.mdt.omc.internal.OMCParser;
 
 import junit.framework.TestCase;
@@ -115,10 +116,6 @@ public class TestOMCParser extends TestCase
 			error = errors[1];
 			assertEquals(715, error.getStartLine());
 			assertEquals("hej remar", error.getErrorDescription());
-	
-			/* no errors aka empty error string */
-			errors = OMCParser.parseErrorString("");
-			assertEquals(0, errors.length);
 		}
 		catch(Exception e)
 		{
@@ -134,13 +131,40 @@ public class TestOMCParser extends TestCase
 	 */		
 	public void testParseIllegalErrorString()
 	{
+
+		/* random string generated with getRandomString(-2147477960, 1124) */
+		assertUnexpectedReplyThrown(
+			"\u009f\u00a8\u001c\u0019'\u00fe\u0082pL\u0080\u008a\u00c2\u000eT::" +
+			"\u00e2!j\u001fPCx\u0009\u00b31aO{D:\u001dyv*j\u0097\u00cb\u00d3\u00f3" +
+			"\u0019c\u000f\u009a\u00ff\u00be\u0014\u0098\u00eb6\u00cf\u0092\u00d0" +
+			"\u0082\u00f0\u00d6\u008e\u000c:/mD\u0010\u00c8\u0097B\u00ca\u008e" +
+			"\u00a9\u00e3\u00c2\u00e0\u0090\u000e\u00f3\u0015\u0097s\u00db\u0005," +
+			"\u0012E\u00c5\u000e\u00e3\u00b7\u00ec\u009cCO\\]}\u00ad!^\u00b5\u00dd" +
+			"<\u00ce\u00ad\u000c\u00c3\u0007\u0097S\u00ef\u00e6T+9\u00d6wI\u000e~");
+
+		/* random string generated with getRandomString(-2147219462, 1124) */
+		assertUnexpectedReplyThrown(
+			"\"_y\u009b\u0093\u0006\u00a5X\u00e6#\u0092::\u00e9\u00c1\u0093$r" +
+			"\u0082\u00a7\u00fa\u00b7Ya\u008f\u00880\u00ce'e^\u00c8j\u00e8\u00e9" +
+			"\u00bfG\u009c\u0010\u00da\u00c8L',\u0084X\u00d8Of\u00e8!\u0002,3" +
+			"\u0097\u00dfQ\u0015\u00e0\u0095\u00df\u0087w\u0080\u00f3\u0006\u0092" +
+			"\u00cf\\(\u00a8\u00c9:\u0016\u00b7\u00fc\u0004\u00f0\u001a\u009e" +
+			"\u00f2\u00b8o\u00a4\u0094\u00a7\u008e'\u0095p\u00b1<\u00a2c\u00fe+" +
+			"\u0015\u00ca\u00b3\u00ff\u00del\u00dcol7Ov.\u00df\u0089\u0004\u00fa" +
+			"\u00ec\u00ef\u00d9\u0014\u0015:\u00a3\u00f5OD;\u0007\u00b7gE{\u00b8d" +
+			"\u00d9\u00a3r\u00cd\u009c\u0004\u00a1\u00e2\u00d6\u00da\u0003M\u00e2D" +
+			"\u00a6\u00e9\u0086\u0091\u00ea)\u0010\u00c0E\u00b3\u0098G\u00f1\u00b1" +
+			"\u00e1\u00a5\u00e6=v\u00c0\u001d{q\u0099\u00b7c\u0005\u00c4\u00d2m" +
+			"\u008a\u00a8\u001dr\u00e6sb\u00da\u00e8y#\u0007\u00bb\u00c1\"\u0005" +
+			"\u00eaf]\u0088q\u0011\u00d2\u00c3q");
+
 //		 accepted		
 
 		assertUnexpectedReplyThrown(""); 
  
 		assertUnexpectedReplyThrown(
 			"!F\u00a13Q\u0081a\u00d8L~\u00ad\u00db\u00bcj\u0014!Z;\u00dci\u00b9%" +
-			"\u0000\u00d0\"\u0001E7D04\u00ce\u00d1\u00b6r\u0083W\u00c8\u0019sJ" +
+			"\u0001\u00d0\"\u0001E7D04\u00ce\u00d1\u00b6r\u0083W\u00c8\u0019sJ" +
 			"\u00d2J\u0005\u0081MaK\u00b2\u0012\u00ccg\u008d9\u00bb\u0085}9.\u00ce" +
 			"w\u008f\u00d8\u001c\u00a8\u0083\u001b\u00f0J%:\u0092\u001a\u00e1[ " +
 			"\u0097TD\u00997\u001e\u00f4\u00ca\u009f6C|(\u00f4\u00a9\u0005u\u00ecl" +
@@ -379,32 +403,6 @@ public class TestOMCParser extends TestCase
 			"\r");
 
 		
-		/* random string generated with getRandomString(-2147477960, 1124) */
-		assertUnexpectedReplyThrown(
-			"\u009f\u00a8\u001c\u0019'\u00fe\u0082pL\u0080\u008a\u00c2\u000eT::" +
-			"\u00e2!j\u001fPCx\u0009\u00b31aO{D:\u001dyv*j\u0097\u00cb\u00d3\u00f3" +
-			"\u0019c\u000f\u009a\u00ff\u00be\u0014\u0098\u00eb6\u00cf\u0092\u00d0" +
-			"\u0082\u00f0\u00d6\u008e\u000c:/mD\u0010\u00c8\u0097B\u00ca\u008e" +
-			"\u00a9\u00e3\u00c2\u00e0\u0090\u000e\u00f3\u0015\u0097s\u00db\u0005," +
-			"\u0012E\u00c5\u000e\u00e3\u00b7\u00ec\u009cCO\\]}\u00ad!^\u00b5\u00dd" +
-			"<\u00ce\u00ad\u000c\u00c3\u0007\u0097S\u00ef\u00e6T+9\u00d6wI\u000e~");
-
-		/* random string generated with getRandomString(-2147219462, 1124) */
-		assertUnexpectedReplyThrown(
-			"\"_y\u009b\u0093\u0006\u00a5X\u00e6#\u0092::\u00e9\u00c1\u0093$r" +
-			"\u0082\u00a7\u00fa\u00b7Ya\u008f\u00880\u00ce'e^\u00c8j\u00e8\u00e9" +
-			"\u00bfG\u009c\u0010\u00da\u00c8L',\u0084X\u00d8Of\u00e8!\u0002,3" +
-			"\u0097\u00dfQ\u0015\u00e0\u0095\u00df\u0087w\u0080\u00f3\u0006\u0092" +
-			"\u00cf\\(\u00a8\u00c9:\u0016\u00b7\u00fc\u0004\u00f0\u001a\u009e" +
-			"\u00f2\u00b8o\u00a4\u0094\u00a7\u008e'\u0095p\u00b1<\u00a2c\u00fe+" +
-			"\u0015\u00ca\u00b3\u00ff\u00del\u00dcol7Ov.\u00df\u0089\u0004\u00fa" +
-			"\u00ec\u00ef\u00d9\u0014\u0015:\u00a3\u00f5OD;\u0007\u00b7gE{\u00b8d" +
-			"\u00d9\u00a3r\u00cd\u009c\u0004\u00a1\u00e2\u00d6\u00da\u0003M\u00e2D" +
-			"\u00a6\u00e9\u0086\u0091\u00ea)\u0010\u00c0E\u00b3\u0098G\u00f1\u00b1" +
-			"\u00e1\u00a5\u00e6=v\u00c0\u001d{q\u0099\u00b7c\u0005\u00c4\u00d2m" +
-			"\u008a\u00a8\u001dr\u00e6sb\u00da\u00e8y#\u0007\u00bb\u00c1\"\u0005" +
-			"\u00eaf]\u0088q\u0011\u00d2\u00c3q");
-
 
 	}
 
