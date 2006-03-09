@@ -225,7 +225,7 @@ public class OMCProxy implements IModelicaCompiler
 			 * try to determine the omc path via the OPENMODELICAHOME and
 			 * by checking in it's varius subdirectory for the omc binary file
 			 */
-			logOMCStatus("Using standard path to omc-binary");
+			logOMCStatus("Using OPENMODELICAHOME environment variable to find omc-binary");
 			
 			/* 
 			 * Standard path to omc (or omc.exe) binary is encoded in OPENMODELICAHOME
@@ -247,8 +247,11 @@ public class OMCProxy implements IModelicaCompiler
 			
 			for (String subdir : subdirs)
 			{
-				File file = new File(openModelicaHome + 
-						subdir + File.separator + binaryName);
+			
+				String path = omcWorkingDirectory.getAbsolutePath() + File.separator;
+				path += subdir.equals("") ? binaryName :  subdir + File.separator + binaryName;
+
+				File file = new File(path); 
 
 				if (file.exists())
 				{
@@ -260,7 +263,7 @@ public class OMCProxy implements IModelicaCompiler
 			
 			if (omcBinary == null)
 			{
-				logOMCStatus("Could not fine omc-binary on the standard path");
+				logOMCStatus("Could not fine omc-binary on the OPENMODELICAHOME path");
 				throw new ConnectException("Unable to start the OpenModelica Compiler, binary not found");
 			}
 		}
