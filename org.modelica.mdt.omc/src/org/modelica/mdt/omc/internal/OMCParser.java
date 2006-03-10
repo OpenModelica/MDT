@@ -170,6 +170,12 @@ public class OMCParser
 				String startColumnAndEndLine[] = 
 					errorLocationParts[2+infoOffset].split("-");
 				
+				if(startColumnAndEndLine.length != 2)
+				{
+					throw new UnexpectedReplyException("Weird error message " +
+							"from the compiler: [" + errorLine + "]");
+				}
+				
 				startColumnNumber =
 					Integer.parseInt(startColumnAndEndLine[0]);
 
