@@ -55,6 +55,7 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IllegalTypeException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
+import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementsInfo;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
@@ -632,7 +633,18 @@ public class OMCProxy implements IModelicaCompiler
 		/* fetch error string but ignore it */
 		getErrorString();
 		
-		return ModelicaParser.parseList(retval);
+		List list = null;
+		try
+		{
+			list = ModelicaParser.parseList(retval);
+		}
+		catch(ModelicaParserException e)
+		{
+			throw new UnexpectedReplyException("Unable to parse list: " 
+					+ e.getMessage());
+		}
+		
+		return list;
 	}
 
 	/**
@@ -740,7 +752,15 @@ public class OMCProxy implements IModelicaCompiler
 		 */
 		else
 		{
-			res.setClassNames(ModelicaParser.parseList(retval));
+			try
+			{
+				res.setClassNames(ModelicaParser.parseList(retval));
+			} 
+			catch (ModelicaParserException e)
+			{
+				throw new UnexpectedReplyException("Unable to parse list: " 
+						+ e.getMessage());
+			}
 
 			/*
 			 * If there were errors, but the compilation went through,
@@ -794,7 +814,16 @@ public class OMCProxy implements IModelicaCompiler
 		retval = retval.trim();
 		retval = "{" + retval + "}"; 
 
-		List tokens = ModelicaParser.parseList(retval);
+		List tokens = null;
+		try
+		{
+			tokens = ModelicaParser.parseList(retval);
+		} 
+		catch (ModelicaParserException e1)
+		{
+			throw new UnexpectedReplyException("Unable to parse list: " 
+					+ e1.getMessage());
+		}
 		
 		String filePath = tokens.elementAt(0).toString();
 		int startLine;
@@ -866,7 +895,16 @@ public class OMCProxy implements IModelicaCompiler
 				 * we found the begining of the list, send it to parser and 
 				 * hope for the best 
 				 */
-				List parsedList = ModelicaParser.parseList(retval);
+				List parsedList = null;
+				try
+				{
+					parsedList = ModelicaParser.parseList(retval);
+				} 
+				catch (ModelicaParserException e)
+				{
+					throw new UnexpectedReplyException("Unable to parse list: " 
+							+ e.getMessage());
+				}
 				
 				/* convert the parsedList to a collection of ElementsInfo:s */
 				LinkedList<ElementsInfo> elementsInfo = 

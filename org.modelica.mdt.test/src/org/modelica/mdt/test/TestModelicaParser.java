@@ -45,6 +45,7 @@ import java.util.Iterator;
 
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
+import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 
 import junit.framework.TestCase;
@@ -234,8 +235,9 @@ public class TestModelicaParser extends TestCase
 
 	/**
 	 * test parsing some simple unnested lists with ModelicaParser.parseList()
+	 * @throws ModelicaParserException 
 	 */
-	public void testParseSimpleList()
+	public void testParseSimpleList() throws ModelicaParserException
 	{
 		/*
 		 * some combinations of empty lists
@@ -317,8 +319,9 @@ public class TestModelicaParser extends TestCase
 	
 	/**
 	 * test parsing some nested lists with ModelicaParser.parseList()
+	 * @throws ModelicaParserException 
 	 */
-	public void testParseList()
+	public void testParseList() throws ModelicaParserException
 	{
 		List v = ModelicaParser.parseList("{{a    ,b   }  ,   c   }");
 		assertTrue(v.elementAt(0) instanceof List);
@@ -340,16 +343,23 @@ public class TestModelicaParser extends TestCase
 		assertEquals("b", v.elementAt(1).toString());
 		assertEquals("c={a, b, c}", v.elementAt(2).toString());
 		
-		//TODO this is a malformated list, parseList should throw a parsing exception instead
-		v = ModelicaParser.parseList("{,,}");
-		assertEquals(0, v.size());
+		boolean failedParse = false;
+		try
+		{
+			v = ModelicaParser.parseList("{,,}");
+		}
+		catch(ModelicaParserException e)
+		{
+			failedParse = true;
+		}
+		assertTrue("Parsing didn't fail on {,,}", failedParse);
 		
 		v = ModelicaParser.parseList("{foo={bar, gzonk}}");
 		assertEquals(1, v.size());
 		assertEquals("foo={bar, gzonk}", v.elementAt(0).toString());
 	}
 	
-	public void testParseOmcOutput()
+	public void testParseOmcOutput() throws ModelicaParserException
 	{
 		List parsedList = ModelicaParser.parseList(GET_ELEMENTS_OUTPUT);
 		

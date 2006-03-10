@@ -61,6 +61,7 @@ import org.modelica.mdt.core.IllegalTypeException;
 import org.modelica.mdt.core.IllegalVisibilityException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -200,7 +201,17 @@ public class InnerClass extends ModelicaClass
 				 * names={component_name,"component_comment"}
 				 * we neet to get the component name
 				 */ 
-				List comp = ModelicaParser.parseList(info.getNames());
+				
+				List comp = null;
+				try
+				{
+					comp = ModelicaParser.parseList(info.getNames());
+				}
+				catch(ModelicaParserException e)
+				{
+					throw new UnexpectedReplyException("Unable to parse " +
+							"returned list: " + e.getMessage());
+				}
 				
 				String componentName = comp.elementAt(0).toString();
 				String elementFile = info.getElementFile();

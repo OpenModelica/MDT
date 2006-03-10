@@ -46,6 +46,7 @@ import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementsInfo;
@@ -94,10 +95,12 @@ public class TestElementsInfo extends TestCase
 	 * get a list of elements infos on classes defined in nested_models.mo 
 	 * file in Area51 modelica project and check that fetching fields values 
 	 * works as expected
+	 * @throws ModelicaParserException 
 	 */
 	public void testFetchingFields()
 		throws ConnectException, InvocationError, 
-			UnexpectedReplyException, CompilerInstantiationException
+			UnexpectedReplyException, CompilerInstantiationException, 
+			ModelicaParserException
 	{
 		String elementType;
 		String className;

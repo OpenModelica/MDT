@@ -44,6 +44,7 @@ package org.modelica.mdt.core.compiler;
 import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
+import org.modelica.mdt.core.ModelicaParserException;
 
 /**
  * This class prvides some code to parse simple modelica primitives,
@@ -58,8 +59,9 @@ public class ModelicaParser
 	 * @param str the Modelica list to parse
 	 * @return a Vector containing Vector:s and String:s. The Vector:s contain
 	 * further Vector:s and String:s. Nesting and stuff.
+	 * @throws ModelicaParserException 
 	 */
-	public static List parseList(String str)
+	public static List parseList(String str) throws ModelicaParserException
 	{
 		List elements = new List();
 		
@@ -69,18 +71,22 @@ public class ModelicaParser
 		/* Make sure this string is not empty */
 		if(str == "" || str.length() < 2)
 		{
-			//TODO throw an exception instead
-			return null;
+			throw new ModelicaParserException("Empty list: [" + str + "]");
 		}
 		
 		/* Make sure this is a list */
 		if(str.charAt(0) != '{' || str.charAt(str.length() - 1) != '}')
 		{
-			//TODO throw an exception instead
-			return null;
+			throw new ModelicaParserException("Not a list: ["+str+"]");
 		}
 		/* Remove { and } */
 		str = str.substring(1, str.length() - 1);
+		
+		if(str.trim().equals(""))
+		{
+			/* This is an empty list, so return an empty list! */
+			return new List();
+		}
 		
 		/*
 		 * { { hej, på } , dig } => [[hej,på],dig]
@@ -110,8 +116,21 @@ public class ModelicaParser
 				ListElement element = null;
 				
 				if(listFound)
-				{					
-					element = parseList(subString);
+				{
+					try
+					{
+						element = parseList(subString);
+					}
+					catch(ModelicaParserException e)
+					{
+						/* If there was an error, it might have been because
+						 * subString isn't a list. It might be an element.
+						 * But if it's not 'Not a list', just pass this on. */
+						if(e.getMessage().startsWith("Not a list: [") == false)
+						{
+							throw e;
+						}
+					}
 					/*
 					 * If subString really wasn't a list (it contains {} but
 					 * still isn't a list), then just trim it and say it's an
@@ -130,8 +149,9 @@ public class ModelicaParser
 				listFound = false;
 				if(element instanceof Element && ((Element)element).toString().equals(""))
 				{
-					/* Don't add empty strings */
-					continue;
+					/* An empty string denotes an empty list element, which
+					 * is an error. */
+					throw new ModelicaParserException("Element is empty");
 				}
 				
 				elements.append(element);
@@ -145,11 +165,10 @@ public class ModelicaParser
 			{
 				depth--;
 				
-				/* Unmatched {, */
-				//TODO throw exception here instead of returning empty list 
+				/* Unmatched } */
 				if(depth < 0)
 				{
-					return new List();
+					throw new ModelicaParserException("Unmatched }: ["+str+"]");
 				}
 			}
 		}
@@ -160,7 +179,20 @@ public class ModelicaParser
 			ListElement element = null;
 			if(listFound)
 			{
-				element = parseList(subString);
+				try
+				{
+					element = parseList(subString);
+				}
+				catch(ModelicaParserException e)
+				{
+					/* If there was an error, it might have been because
+					 * subString isn't a list. It might be an element.
+					 * But if it's not 'Not a list', just pass this on. */
+					if(e.getMessage().startsWith("Not a list: [") == false)
+					{
+						throw e;
+					}
+				}
 				/*
 				 * If subString really wasn't a list (it contains {} but
 				 * still isn't a list), then just trim it and say it's an
@@ -178,7 +210,9 @@ public class ModelicaParser
 			
 			if(element instanceof Element && ((Element)element).toString().equals(""))
 			{
-				/* Don't add empty strings */
+				/* An empty string denotes an empty list element, which
+				 * is an error. */
+				throw new ModelicaParserException("Element is empty");
 			}
 			else
 			{

@@ -150,7 +150,17 @@ public class ModelicaSourceFile extends ModelicaElement
 						&& (filePath.endsWith("/package.mo")
 								|| filePath.endsWith("\\package.mo")))
 				{
-					List list = CompilerProxy.getClassNames(name);
+					List list = null;
+					try
+					{
+						CompilerProxy.getClassNames(name);
+					}
+					catch(UnexpectedReplyException e)
+					{
+						/* Ignore, just don't add something that contains
+						 * errors */
+					}
+					
 					if(list != null)
 					{
 						for(ListElement element : list)
