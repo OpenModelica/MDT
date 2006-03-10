@@ -249,7 +249,7 @@ public class NewTypePage extends WizardPage
 				{
 					/* check if the ras is a package */
 					if (((IModelicaClass)res).getRestrictionType() == 
-						IModelicaClass.Type.PACKAGE)
+						IModelicaClass.RestrictionType.PACKAGE)
 					{
 						/* update parent package field */
 						currentParentPackage = (IModelicaClass) res;

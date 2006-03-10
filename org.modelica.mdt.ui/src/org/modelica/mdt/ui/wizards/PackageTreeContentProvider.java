@@ -110,7 +110,7 @@ public class PackageTreeContentProvider implements ITreeContentProvider
 				IModelicaClass classElement = (IModelicaClass) elm;
 
 				if (classElement.getRestrictionType() != 
-					IModelicaClass.Type.PACKAGE)
+					IModelicaClass.RestrictionType.PACKAGE)
 				{
 					/* ignore non-package classes */
 					continue;
