@@ -52,19 +52,21 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IllegalTypeException;
+import org.modelica.mdt.core.IllegalRestrictionTypeException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.ModelicaParserException;
+import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.ElementsInfo;
+import org.modelica.mdt.core.compiler.ElementInfo;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.core.preferences.PreferenceManager;
-import org.modelica.mdt.internal.core.ElementLocation;
+import org.modelica.mdt.internal.core.DefinitionLocation;
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.omc.internal.ClassInfo;
 import org.modelica.mdt.omc.internal.ParseResults;
 import org.modelica.mdt.omc.internal.OMCParser;
 import org.modelica.mdt.omc.internal.corba.OmcCommunication;
@@ -656,7 +658,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */
-	public IModelicaClass.Type getRestrictionType(String className)
+	public IModelicaClass.RestrictionType getRestrictionType(String className)
 		throws ConnectException, UnexpectedReplyException
 	{
 		String reply = 
@@ -676,12 +678,12 @@ public class OMCProxy implements IModelicaCompiler
 		/* fetch error string but ignore it */
 		getErrorString();
 		
-		IModelicaClass.Type type = null;
+		IModelicaClass.RestrictionType type = null;
 		try
 		{
-			type = IModelicaClass.Type.parse(reply);
+			type = IModelicaClass.RestrictionType.parse(reply);
 		}
-		catch(IllegalTypeException e)
+		catch(IllegalRestrictionTypeException e)
 		{
 			throw new UnexpectedReplyException("Illegal type: "
 					+ e.getMessage());
@@ -785,7 +787,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
 	 */
-	public ElementLocation getClassLocation(String className)
+	public DefinitionLocation getClassLocation(String className)
 		throws ConnectException, UnexpectedReplyException, InvocationError 
 	{
 		String retval = sendExpression("getCrefInfo(" + className + ")");
@@ -845,7 +847,7 @@ public class OMCProxy implements IModelicaCompiler
 										 "unexpected format");
 		}
 		
-		return new ElementLocation(filePath, 
+		return new DefinitionLocation(filePath, 
 					startLine, startColumn, endLine, endColumn);
 	}
 	
@@ -875,7 +877,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * @return a <code>Collection</code> (of <code>ElementsInfo</code>)
 	 * containing the information about className
 	 */
-	public Collection<ElementsInfo> getElementsInfo(String className)
+	public Collection<ElementInfo> getElements(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException
 	{
 		String retval = sendExpression("getElementsInfo("+ className +")");
@@ -907,12 +909,12 @@ public class OMCProxy implements IModelicaCompiler
 				}
 				
 				/* convert the parsedList to a collection of ElementsInfo:s */
-				LinkedList<ElementsInfo> elementsInfo = 
-					new LinkedList<ElementsInfo>();
+				LinkedList<ElementInfo> elementsInfo = 
+					new LinkedList<ElementInfo>();
 
 				for (ListElement element : parsedList)
 				{
-					elementsInfo.add(new ElementsInfo((List)element));
+					elementsInfo.add(new ElementInfo((List)element));
 				}
 				
 				return elementsInfo;
@@ -941,6 +943,33 @@ public class OMCProxy implements IModelicaCompiler
 						"replies:'" + retval + "'");
 	}
 
+	public IClassInfo getClassInfo(String className)
+		throws ConnectException, UnexpectedReplyException
+	{
+		String retval = sendExpression("getClassInformation("+ className +")");
+		
+		/* fetch error string but ignore it */
+		getErrorString();
+		
+		ClassInfo ci = null;
+		
+		try
+		{
+			ci = new ClassInfo(retval);
+		} 
+		catch (ModelicaParserException e)
+		{
+			throw new UnexpectedReplyException(retval);
+		}
+		catch (IllegalRestrictionTypeException e)
+		{
+			throw new UnexpectedReplyException(retval);
+		}
+		
+		return  ci;
+	}
+
+	
 	/**
 	 * @return the name of the compiler that this plugin tries to communicate
 	 * with (at least it tries...)
