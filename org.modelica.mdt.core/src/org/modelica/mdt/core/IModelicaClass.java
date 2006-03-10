@@ -53,11 +53,18 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public interface IModelicaClass extends IModelicaElement, IParent
 {
-	public enum Type 
+	public enum RestrictionType 
 	{ 
 		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE;
 		
-		public static Type parse(String text) throws IllegalTypeException
+		/**
+		 * @param text the name of restriction type
+		 * @return the restriction type provied
+		 * @throws IllegalRestrictionTypeException if could not parse 
+		 * restriction type
+		 */
+		public static RestrictionType parse(String text) 
+			throws IllegalRestrictionTypeException
 		{
 			if (text.equalsIgnoreCase("CLASS"))
 			{
@@ -96,7 +103,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 			 * this is an error condition, classRestriction is of unexpected
 			 * type
 			 */
-			throw new IllegalTypeException(text);
+			throw new IllegalRestrictionTypeException(text);
 		}
 	};
 
@@ -112,7 +119,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 * @return the restriction type of this class
 	 * @throws UnexpectedReplyException 
 	 */
-	public Type getRestrictionType()
+	public RestrictionType getRestrictionType()
 		throws ConnectException, CompilerInstantiationException,
 				UnexpectedReplyException;
 
@@ -136,4 +143,11 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	public ISignature getSignature()
 		throws ConnectException, InvocationError, UnexpectedReplyException,
 			CompilerInstantiationException, CoreException;
+	
+	/**
+	 * @return true if the class is encapsulated (prefix with keyword encapsulated)
+	 */
+	public boolean isEncapsulated() 
+		throws CompilerInstantiationException, ConnectException,
+			UnexpectedReplyException;
 }

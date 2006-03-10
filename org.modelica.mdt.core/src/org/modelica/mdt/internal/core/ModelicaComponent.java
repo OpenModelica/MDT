@@ -47,7 +47,7 @@ import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
@@ -59,7 +59,7 @@ public class ModelicaComponent extends ModelicaElement
 {
 	private String name;
 	private Visibility visibility;
-	private IElementLocation location;
+	private IDefinitionLocation location;
 	
 	/**
 	 * Create class component
@@ -70,7 +70,7 @@ public class ModelicaComponent extends ModelicaElement
 	 * @param location location in the source code file
 	 */
 	public ModelicaComponent(IModelicaClass parent, String name, 
-				Visibility visibility, IElementLocation location)
+				Visibility visibility, IDefinitionLocation location)
 	{
 		super(parent);
 		this.name = name;

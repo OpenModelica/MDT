@@ -75,7 +75,7 @@ public class StandardLibrary  extends PlatformObject
 			for (String packageName : CompilerProxy.getStandardLibrary())
 			{
 				packages.add(new InnerClass(null, packageName, 
-							IModelicaClass.Type.PACKAGE));
+							IModelicaClass.RestrictionType.PACKAGE));
 			}
 		}
 		
@@ -126,7 +126,7 @@ public class StandardLibrary  extends PlatformObject
 		throws ConnectException, CompilerInstantiationException,
 			UnexpectedReplyException, InvocationError, CoreException 
 	{
-		return ModelicaRoot.getPackage(packages, packageName);
+		return ModelicaRoot.getPackage(getPackages(), packageName);
 	}
 
 	public Collection<? extends IModelicaElement> getChildren() 

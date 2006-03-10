@@ -47,9 +47,10 @@ import org.modelica.mdt.core.ListElement;
 
 
 /**
- * Provides information on contens of a modelica information. 
+ * Encapsulates information on an element and provides
+ * a api to retrive this information.
  */
-public class ElementsInfo
+public class ElementInfo
 {
 	/* the 'raw unparsed' elements information list */
 	private List elementsInfo;
@@ -74,7 +75,7 @@ public class ElementsInfo
 	private String typeName = null;
 	private String direction = null;
 	
-	public ElementsInfo(List elementsInfo)
+	public ElementInfo(List elementsInfo)
 	{
 		this.elementsInfo = elementsInfo;
 	}

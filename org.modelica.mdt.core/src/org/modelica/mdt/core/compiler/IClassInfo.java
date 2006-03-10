@@ -41,25 +41,25 @@
 
 package org.modelica.mdt.core.compiler;
 
-import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.core.IModelicaClass.RestrictionType;
 
 /**
- * Presents information on some elements definiton location in a source 
- * code file. More specificly this class provides the location of the beginning 
- * of the definition of the element in some file.
- * 
- * @author Homer Simpson
+ * Provide abstract interface to convay information about a modelica class.
  */
-public interface IElementLocation
+public interface IClassInfo 
 {
+	/**
+	 * @return restriction type of the class
+	 */
+	public RestrictionType getRestrictionType();
 	
 	/**
-	 * @return the region in the source file where this elements is defined
+	 * @return true if the class is encapsulated false otherwise
 	 */
-	public IRegion getRegion();
+	public boolean getEncapsulated(); 
 
 	/**
-	 * @return full path to the file where the element is defined
+	 * @return the definition location of the class
 	 */
-	public String getPath();
+	public IDefinitionLocation getDefinitionLocation(); 
 }

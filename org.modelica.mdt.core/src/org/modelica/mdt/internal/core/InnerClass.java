@@ -57,7 +57,6 @@ import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParameter;
 import org.modelica.mdt.core.ISignature;
-import org.modelica.mdt.core.IllegalTypeException;
 import org.modelica.mdt.core.IllegalVisibilityException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ModelicaCore;
@@ -65,8 +64,9 @@ import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.ElementsInfo;
-import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.ElementInfo;
+import org.modelica.mdt.core.compiler.IClassInfo;
+import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
@@ -78,12 +78,44 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public class InnerClass extends ModelicaClass
 {
-	/* our restriction type */
-	private Type restrictionType;
-	private boolean typeKnown = false;
+	/*
+	 * Contents of a class are loaded lazily when they are first
+	 * queried and 'cached' by storing them as member fields.
+	 * 
+	 * currently following contens of a modelica class are available for queries:
+	 * 
+	 * - restriction type of the class
+	 * - encapsulated status of the class
+	 * - class definition location in the source file
+	 * - subclasses/subpackages
+	 * - class components
+	 * - special input/output components
+	 * - import statments
+	 *  
+	 *  The above information is fetched via the following methods in CompilerProxy:
+	 *  
+	 *  getElements() provides:
+	 * 		- subclasses/subpackages
+	 * 		- class components
+	 * 		- special input/output components
+	 * 		- import statments
+	 * 
+	 * This information is callectively called for 'class components'.
+	 * 
+	 *  getClassInfo() provides:
+	 * 		- restriction type of the class
+	 * 		- encapsulated status of the class
+	 * 		- class definition location in the source file
+	 * This information is callectively called for 'class attributes'.
+	 * 
+	 * Whenver it is detected that the source file where this modelica class is
+	 * defined have changed on the disk this class is notified by having it's
+	 * reload() method invoked.  
+	 */
 	
-	private IElementLocation location = null;
-
+	/* class attributes are stored here */
+	private IClassInfo classAttributes = null;
+	
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, IModelicaElement> children = null;
 	
@@ -96,13 +128,9 @@ public class InnerClass extends ModelicaClass
 
 	public InnerClass(IModelicaSourceFile container,
 					IModelicaClass parentNamespace,
-					String name, IElementLocation location,
-					Type restrictionType)
+					String name)
 	{
 		super(container);
-		this.location = location;
-		this.restrictionType = restrictionType;
-		typeKnown = true;
 		
 		this.parentNamespace = parentNamespace;
 		this.name = name;
@@ -117,19 +145,12 @@ public class InnerClass extends ModelicaClass
 	 * @param prefix
 	 * @param name
 	 */
-	public InnerClass(IModelicaClass parentNamespace, String name, Type restrictionType)
+	public InnerClass(IModelicaClass parentNamespace, 
+			String name, RestrictionType restrictionType)
 	{
-		this(null, parentNamespace, name, null, restrictionType);
+		this(null, parentNamespace, name);
 	}
 
-
-	public InnerClass(IModelicaSourceFile container, IModelicaClass parentNamespace, String name)
-	{
-		super(container);
-		this.parentNamespace = parentNamespace;
-		this.name = name;
-		setFullName();
-	}
 
 	/**
 	 * @see org.modelica.mdt.core.IParent#getChildren()
@@ -158,40 +179,16 @@ public class InnerClass extends ModelicaClass
 		inputParams = new LinkedList<IParameter>();
 		outputParams = new LinkedList<IParameter>();
 	
-		for (ElementsInfo info : CompilerProxy.getElementsInfo(fullName))
+		for (ElementInfo info : CompilerProxy.getElements(fullName))
 		{
 			String elementType = info.getElementType();
 			
 			/* a sub package */
 			if (elementType.equals("classdef"))
 			{
-				
-				String file = info.getElementFile();
-
-				IElementLocation location =
-					new ElementLocation(file, 
-							info.getElementStartLine(),
-							info.getElementStartColumn(),
-							info.getElementEndLine(),
-							info.getElementEndColumn());
-				
 				String className = info.getClassName();
-				
-				IModelicaClass.Type type = null;
-				try
-				{
-					type = IModelicaClass.Type.parse
-						(info.getClassRestriction());
-				}
-				catch(IllegalTypeException e)
-				{
-					throw new UnexpectedReplyException("Illegal type: "
-							+ e.getMessage());
-				}
-				
 				elements.put(className, 
-					new InnerClass(getSourceFile(), this, className, location, 
-							type));
+					new InnerClass(getSourceFile(), this, info.getClassName()));
 			}
 			/* a component */
 			else if (elementType.equals("component"))
@@ -215,8 +212,8 @@ public class InnerClass extends ModelicaClass
 				
 				String componentName = comp.elementAt(0).toString();
 				String elementFile = info.getElementFile();
-				IElementLocation location =
-					new ElementLocation(elementFile, 
+				IDefinitionLocation location =
+					new DefinitionLocation(elementFile, 
 							info.getElementStartLine(),
 							info.getElementStartColumn(),
 							info.getElementEndLine(),
@@ -297,6 +294,24 @@ public class InnerClass extends ModelicaClass
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException
 	{
+		
+		/*
+		 * the reload strategy is as follows:
+		 */
+		
+		 /*
+		  * all class attribute fields are just reset and 
+		  * lazily reloaded as they are queried
+		  */
+		classAttributes = null;
+
+		 /* 
+		  * new class component are fetched and compared to
+		  * the old in order to generate a change events list.
+		  * 
+		  * components that are not new or were removed are notified
+		  * of the change to give them a chance to update thier's state
+		  */
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
 		
@@ -370,12 +385,21 @@ public class InnerClass extends ModelicaClass
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException
 	{
-		if (location == null)
-		{
-			loadClassLocation();
-		}
+		return getAttributes().getDefinitionLocation().getRegion();
+	}
 
-		return location.getRegion();
+	/**
+	 * handles the lazyloading of class attributes
+	 */
+	private IClassInfo getAttributes() 
+		throws CompilerInstantiationException, ConnectException,
+			UnexpectedReplyException 
+	{
+		if (classAttributes == null)
+		{
+			classAttributes = CompilerProxy.getClassInfo(fullName);
+		}
+		return classAttributes;
 	}
 
 	@Override
@@ -383,37 +407,14 @@ public class InnerClass extends ModelicaClass
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException
 	{
-		if (location == null)
-		{
-			loadClassLocation();
-		}
-		return location.getPath();
+		return getAttributes().getDefinitionLocation().getPath();
 	}
 
-	private void loadClassLocation()
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
-	{
-		location = CompilerProxy.getClassLocation(fullName);
-	}
-
-
-	public Type getRestrictionType() 
+	public RestrictionType getRestrictionType() 
 		throws ConnectException, CompilerInstantiationException,
 			UnexpectedReplyException
 	{
-		if(typeKnown == false)
-		{
-			Type t = CompilerProxy.getRestrictionType(fullName);
-			if(t != null)
-			{
-				restrictionType = t;
-			}
-			
-			typeKnown = true;
-		}
-	
-		return restrictionType;
+		return getAttributes().getRestrictionType();
 	}
 
 	public Collection<IModelicaImport> getImports() 
@@ -455,5 +456,12 @@ public class InnerClass extends ModelicaClass
 		return new Signature(inputParams.toArray(
 				new IParameter[inputParams.size()]),
 				outputParams.toArray(new IParameter[outputParams.size()]));
+	}
+
+	public boolean isEncapsulated()
+		throws CompilerInstantiationException, ConnectException, 
+			UnexpectedReplyException 
+	{
+		return getAttributes().getEncapsulated();
 	}
 }

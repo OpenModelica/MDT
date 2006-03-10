@@ -51,12 +51,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.IDefinitionLocation;
 
 /**
  * This class implements IElementLocation on behalf of OMC proxy plugin.
  */
-public class ElementLocation implements IElementLocation
+public class DefinitionLocation implements IDefinitionLocation
 {
 	private File path;
 	
@@ -67,7 +67,7 @@ public class ElementLocation implements IElementLocation
 
 	private Region region = null;
 	
-	public ElementLocation(String path, int startLine, int startColumn,
+	public DefinitionLocation(String path, int startLine, int startColumn,
 							int endLine, int endColumn)
 	{
 		this.path = new File(path);

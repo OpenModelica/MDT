@@ -327,10 +327,10 @@ public class FolderPackage extends ModelicaClass
 
 	}
 
-	public Type getRestrictionType() throws ConnectException
+	public RestrictionType getRestrictionType() throws ConnectException
 	{
 		/* we are a package !*/
-		return IModelicaClass.Type.PACKAGE;
+		return IModelicaClass.RestrictionType.PACKAGE;
 	}
 
 	public Collection<IModelicaImport> getImports()
@@ -349,5 +349,11 @@ public class FolderPackage extends ModelicaClass
 	{
 		/* A package doesn't have a signature */
 		return null;
+	}
+
+	public boolean isEncapsulated()
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

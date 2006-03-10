@@ -50,10 +50,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.ElementsInfo;
-import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.ElementInfo;
+import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -165,22 +166,21 @@ public class CompilerProxy
 		return getCompiler().getClassNames(className);
 	}
 	
-	// TODO this should have a better name, imho
-	public static Collection<ElementsInfo> getElementsInfo(String className)
+	public static Collection<ElementInfo> getElements(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
-		return getCompiler().getElementsInfo(className);
+		return getCompiler().getElements(className);
 	}
 
-	public static IElementLocation getClassLocation(String className)
+	public static IDefinitionLocation getClassLocation(String className)
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException 
 	{
 		return getCompiler().getClassLocation(className);
 	}
 	
-	public static IModelicaClass.Type getRestrictionType(String className)
+	public static IModelicaClass.RestrictionType getRestrictionType(String className)
 		throws ConnectException, CompilerInstantiationException,
 			   UnexpectedReplyException
 	{
@@ -194,5 +194,12 @@ public class CompilerProxy
 		throws ConnectException, CompilerInstantiationException
 	{
 		return getCompiler().getStandardLibrary();
+	}
+
+	public static IClassInfo getClassInfo(String className) 
+		throws CompilerInstantiationException, ConnectException,
+			UnexpectedReplyException 
+	{
+		return getCompiler().getClassInfo(className);
 	}
 }

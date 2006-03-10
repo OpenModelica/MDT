@@ -45,7 +45,7 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.modelica.mdt.core.List;
-import org.modelica.mdt.core.IModelicaClass.Type;
+import org.modelica.mdt.core.IModelicaClass.RestrictionType;
 
 /**
  * The interface to a modelica compiler.
@@ -91,7 +91,7 @@ public interface IModelicaCompiler
 	 * Fetches the information on the elements of a class. Elements in
 	 * a class are subclasses, components, import statments etc.
 	 */
-	public Collection<ElementsInfo> getElementsInfo(String className)
+	public Collection<ElementInfo> getElements(String className)
 			throws ConnectException, InvocationError, UnexpectedReplyException;
 
 	/**
@@ -101,7 +101,7 @@ public interface IModelicaCompiler
 	 * @param className the name of the class to fetch the location of
 	 * @return the line number and the file path where the class is defined
 	 */
-	public IElementLocation getClassLocation(String className)
+	public IDefinitionLocation getClassLocation(String className)
 			throws ConnectException, UnexpectedReplyException, InvocationError;
 
 	/**
@@ -111,7 +111,7 @@ public interface IModelicaCompiler
 	 * @return the restriction type of the class
 	 * @throws UnexpectedReplyException 
 	 */
-	public Type getRestrictionType(String className)
+	public RestrictionType getRestrictionType(String className)
 			throws ConnectException, UnexpectedReplyException;
 	/**
 	 * The method returns a list of top level packages in the standard library.
@@ -121,4 +121,13 @@ public interface IModelicaCompiler
 	 */	
 	public String[] getStandardLibrary()
 			throws ConnectException;
+
+	/**
+	 * Fetches information about a class, such as encapusulated status,
+	 * class definition location and so on.
+	 * 
+	 * @param className the full name of the class to fetch info on
+	 */
+	public IClassInfo getClassInfo(String className) 
+		throws ConnectException, UnexpectedReplyException;
 }
