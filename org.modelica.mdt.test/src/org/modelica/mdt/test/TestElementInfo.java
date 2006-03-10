@@ -49,7 +49,7 @@ import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.ElementsInfo;
+import org.modelica.mdt.core.compiler.ElementInfo;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
@@ -61,7 +61,7 @@ import junit.framework.TestCase;
 /**
  * test org.modelica.mdt.core.compiler.ElementsInfo class' code 
  */
-public class TestElementsInfo extends TestCase 
+public class TestElementInfo extends TestCase 
 {
 	@Override
 	protected void setUp() throws Exception 
@@ -92,7 +92,7 @@ public class TestElementsInfo extends TestCase
 	}
 
 	/**
-	 * get a list of elements infos on classes defined in nested_models.mo 
+	 * get a list of element infos on classes defined in nested_models.mo 
 	 * file in Area51 modelica project and check that fetching fields values 
 	 * works as expected
 	 * @throws ModelicaParserException 
@@ -109,7 +109,7 @@ public class TestElementsInfo extends TestCase
 		
 		boolean heppFound = false;
 		boolean fooFound = false;
-		for (ElementsInfo ei : CompilerProxy.getElementsInfo("nested_models"))
+		for (ElementInfo ei : CompilerProxy.getElements("nested_models"))
 		{
 			elementType = ei.getElementType();
 			
@@ -150,7 +150,7 @@ public class TestElementsInfo extends TestCase
 		
 		boolean component_a_found = false;
 		/* do some tests on muu class from nested_models.mo */
-		for (ElementsInfo ei : CompilerProxy.getElementsInfo("muu"))
+		for (ElementInfo ei : CompilerProxy.getElements("muu"))
 		{
 			if(ei.getElementType().equals("component"))
 			{				
@@ -174,7 +174,7 @@ public class TestElementsInfo extends TestCase
 		/* do some test on import_rich_model class from import_rich_model.mo */
 		int importStatmentsFound = 0;
 		
-		for (ElementsInfo ei : CompilerProxy.getElementsInfo("import_rich_model"))
+		for (ElementInfo ei : CompilerProxy.getElements("import_rich_model"))
 		{
 			/*
 			 * we are expecting 4 import statments in following order:

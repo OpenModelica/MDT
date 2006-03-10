@@ -238,7 +238,7 @@ public class Area51Projects
 			"    import Modelica;\n" +
 			"end file_package1;\n" +
 			"\n" +
-			"package file_package2\n" +
+			"encapsulated package file_package2\n" +
 			"    import Modelica;\n" +
 			"end file_package2;";
 			

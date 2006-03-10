@@ -54,6 +54,8 @@ import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IStandardLibrary;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -629,7 +631,40 @@ public class TestInnerClass extends TestCase
 				importCounter < 4);
 
 	}
-	
+
+	public void testIsEncapsulated()
+		throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, 
+			InvocationError, CoreException
+	{
+		IModelicaClass clazz;
+		IStandardLibrary stdLib = ModelicaCore.getModelicaRoot().getStandardLibrary();
+		
+		/*
+		 * check correctness of isEncapsulated() in classes from standard library
+		 */
+		clazz = stdLib.getPackage("Modelica.Blocks.Examples.BusUsage");
+		assertNotNull(clazz);
+		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
+		
+		clazz = stdLib.getPackage("Modelica.Math.acos");
+		assertNotNull(clazz);
+		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
+
+		clazz = stdLib.getPackage("Modelica.Mechanics.Rotational.Examples.Friction");
+		assertNotNull(clazz);
+		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
+
+		clazz = stdLib.getPackage("Modelica.Mechanics.Rotational.Examples.Friction");
+		assertNotNull(clazz);
+		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
+		
+		clazz = stdLib.getPackage("Modelica");
+		assertNotNull(clazz);
+		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
+
+
+	}
+
 	/** 
 	 * test that the when a class definiton is changed in the disk
 	 * it's location is updated

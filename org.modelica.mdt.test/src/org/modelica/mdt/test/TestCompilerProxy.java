@@ -48,11 +48,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
-import org.modelica.mdt.core.IModelicaClass.Type;
+import org.modelica.mdt.core.IModelicaClass.RestrictionType;
+import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ICompileError;
-import org.modelica.mdt.core.compiler.IElementLocation;
+import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
@@ -60,6 +61,9 @@ import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
 import junit.framework.TestCase;
+
+import static org.modelica.mdt.core.IModelicaClass.RestrictionType.MODEL;
+import static org.modelica.mdt.core.IModelicaClass.RestrictionType.PACKAGE;
 
 /**
  * test org.modelica.mdt.core.CompilerProxy class' code 
@@ -73,7 +77,7 @@ public class TestCompilerProxy extends TestCase
 
 	
 	protected void setUp() 
-		throws ConnectException, CompilerInstantiationException
+		throws ConnectException, CompilerInstantiationException, UnexpectedReplyException
 	{
 		Area51Projects.createProjects();
 		
@@ -86,6 +90,11 @@ public class TestCompilerProxy extends TestCase
 		
 		nested_models_mo = proj.getFile("nested_models.mo");
 		broken_nested_models_mo = proj.getFile("broken_nested_models.mo");
+		
+
+		CompilerProxy.loadSourceFile(nested_models_mo);
+		CompilerProxy.loadSourceFile
+			(proj.getFolder("packages_folder").getFile("file_package.mo"));
 		
 		/*
 		 * setup expected collection
@@ -116,47 +125,47 @@ public class TestCompilerProxy extends TestCase
 		assertTrue(v.size() >= 1);
 		assertTrue(v.contains("Modelica"));
 		
-		if (CompilerProxy.getRestrictionType("Modelica") != Type.PACKAGE)
+		if (CompilerProxy.getRestrictionType("Modelica") != RestrictionType.PACKAGE)
 		{
 			fail("Modelica class' restriction type is wrong");
 		}
 		if (CompilerProxy.getRestrictionType("Modelica.Blocks.Examples.BusUsage") 
-				!= Type.MODEL)
+				!= RestrictionType.MODEL)
 		{
 			fail("Modelica.Blocks.Examples.BusUsage class' " + 
 					"restriction type is wrong");
 		}
 		if (CompilerProxy.getRestrictionType("Modelica.Math.log") 
-				!= Type.FUNCTION)
+				!= RestrictionType.FUNCTION)
 		{
 			fail("Modelica.Math.log class' restriction type is wrong");
 		}
 		if (CompilerProxy.getRestrictionType("Modelica.Icons.Record") 
-				!= Type.RECORD)
+				!= RestrictionType.RECORD)
 		{
 			fail("Modelica.Icons.Record class' restriction type is wrong");
 		}
 		if (CompilerProxy.getRestrictionType("Modelica.Electrical.Analog.Interfaces.Pin") 
-				!= Type.CONNECTOR)
+				!= RestrictionType.CONNECTOR)
 		{
 			fail("Modelica.Blocks.Interfaces.BooleanPort class' " + 
 					"restriction type is wrong");
 		}
 		if (CompilerProxy.getRestrictionType("Modelica.Blocks.Continuous.Der") 
-				!= Type.BLOCK)
+				!= RestrictionType.BLOCK)
 		{
 			fail("Modelica.Blocks.Continuous.Der class' " + 
 					"restriction type is wrong");
 		}
 		if (CompilerProxy.getRestrictionType("Modelica.SIunits.Lethargy") 
-				!= Type.TYPE)
+				!= RestrictionType.TYPE)
 		{
 			fail("Modelica.SIunits.Lethargy class' restriction type is wrong");
 		}
 		
 		CompilerProxy.loadSourceFile(nested_models_mo);
 		if (CompilerProxy.getRestrictionType("hepp.hehehe") 
-				!= Type.CLASS)
+				!= RestrictionType.CLASS)
 		{
 			fail("hepp.hehehe class' restriction type is wrong");
 		}
@@ -164,18 +173,15 @@ public class TestCompilerProxy extends TestCase
 	
 	/**
 	 * test CompilerProxy.getElementLocation()
-	 * @throws CompilerInstantiationException 
 	 */
 	public void testGetClassLocation()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException
 	{
-		CompilerProxy.loadSourceFile(nested_models_mo);
-
 		/*
 		 * we are basicaly only interested in getting the right definition region
 		 */
-		IElementLocation loc = CompilerProxy.getClassLocation("nested_models");		
+		IDefinitionLocation loc = CompilerProxy.getClassLocation("nested_models");		
 		assertTrue(loc.getPath().endsWith("nested_models.mo"));
 		IRegion reg = loc.getRegion();
 		assertEquals(0, reg.getOffset());
@@ -269,4 +275,46 @@ public class TestCompilerProxy extends TestCase
 		assertEquals(14, errs[3].getStartLine()); 
 		assertEquals(16, errs[4].getStartLine()); 
 	}
+	
+	/**
+	 * test CompilerProxy.getClassInfo() 
+	 */
+	public void testClassInfo() throws Exception
+	{
+		IClassInfo ci;
+		IDefinitionLocation loc;
+				
+		/*
+		 * run getClassInfo() on contents of nested_models.mo
+		 * and make sure the returned info checks out
+		 */
+		ci = CompilerProxy.getClassInfo("nested_models");
+		assertEquals("wrong restriction type", MODEL, ci.getRestrictionType());
+		assertFalse("wrong encapsulated status", ci.getEncapsulated());
+		loc = ci.getDefinitionLocation();
+		assertTrue("fishy path", loc.getPath().endsWith("nested_models.mo"));
+		assertEquals("wring start offset", 0, loc.getRegion().getOffset());
+		assertEquals("wring start offset", 146, loc.getRegion().getLength());
+		
+		/*
+		 * run getClassInfo() on contents of packages_folder/file_package.mo
+		 * and make sure the returned info checks out
+		 */
+		ci = CompilerProxy.getClassInfo("file_package1");
+		assertEquals("wrong restriction type", PACKAGE, ci.getRestrictionType());
+		assertFalse("wrong encapsulated status", ci.getEncapsulated());
+		loc = ci.getDefinitionLocation();
+		assertTrue("fishy path", loc.getPath().endsWith("file_package.mo"));
+		assertEquals("wring start offset", 0, loc.getRegion().getOffset());
+		assertEquals("wring start offset", 61, loc.getRegion().getLength());
+		
+		ci = CompilerProxy.getClassInfo("file_package2");
+		assertEquals("wrong restriction type", PACKAGE, ci.getRestrictionType());
+		assertTrue("wrong encapsulated status", ci.getEncapsulated());
+		loc = ci.getDefinitionLocation();
+		assertTrue("fishy path", loc.getPath().endsWith("file_package.mo"));
+		assertEquals("wring start offset", 63, loc.getRegion().getOffset());
+		assertEquals("wring start offset", 137-63, loc.getRegion().getLength());
+	}
 }
+
