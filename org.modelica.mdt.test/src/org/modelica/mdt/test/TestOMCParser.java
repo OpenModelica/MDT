@@ -43,7 +43,6 @@ package org.modelica.mdt.test;
 
 import org.modelica.mdt.core.compiler.ICompileError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
-import org.modelica.mdt.omc.internal.CompileError;
 import org.modelica.mdt.omc.internal.OMCParser;
 
 import junit.framework.TestCase;
@@ -131,8 +130,6 @@ public class TestOMCParser extends TestCase
 	 */		
 	public void testParseIllegalErrorString()
 	{
-
-		/* random string generated with getRandomString(-2147477960, 1124) */
 		assertUnexpectedReplyThrown(
 			"\u009f\u00a8\u001c\u0019'\u00fe\u0082pL\u0080\u008a\u00c2\u000eT::" +
 			"\u00e2!j\u001fPCx\u0009\u00b31aO{D:\u001dyv*j\u0097\u00cb\u00d3\u00f3" +
@@ -141,9 +138,7 @@ public class TestOMCParser extends TestCase
 			"\u00a9\u00e3\u00c2\u00e0\u0090\u000e\u00f3\u0015\u0097s\u00db\u0005," +
 			"\u0012E\u00c5\u000e\u00e3\u00b7\u00ec\u009cCO\\]}\u00ad!^\u00b5\u00dd" +
 			"<\u00ce\u00ad\u000c\u00c3\u0007\u0097S\u00ef\u00e6T+9\u00d6wI\u000e~");
-
-//		 accepted		
-
+		
 		assertUnexpectedReplyThrown(""); 
  
 		assertUnexpectedReplyThrown(
@@ -171,6 +166,15 @@ public class TestOMCParser extends TestCase
 			"](Q\u009f\u0091\u00a5\u00c32\u00073\u0085\u009b\u009c\u00a7`&\u00e3" +
 			"\u001f\u00e012(\u00c0Y\u0017\u00a6\u00b2\u001el\u00de53\u00e0\u00b8'" +
 			"\u00b2T");
+		
+		assertUnexpectedReplyThrown(
+			":9:3:\u00e0\u00e3\u00fbe\u00b6\u00fb\u00845!@\u00c5\u00f5Ci2t\u008d" +
+			"\u00e0\u00a2\u00b4\u00a8L\u000410\u00fb[\u008br\u00fcW\u00dbH\u00ef" +
+			"\u0005i\u0098\u00c7n\u001e.:\u0095(\u00feY\u00d71\u0084B\u00dc\u00e27" +
+			"\u00e96g\u00c9\u00ac(\u00929\u00de\u00e0\u001cz\u00c2\u00ad\u0004" +
+			"\u00a1\u00d6\u001eh\u0015\u00c3\u00bdVK{9L.J\u00a3\u0096\u00bc\u00a6" +
+			"\u00090\u00014\u0014E\u00d7]\u00bf\u00e2\u00cb\u00f1\u00bf\u00cbJ\n" +
+			"\u00ed\u0087\u00f6\u00ad");		
 	}
 
 	private void assertUnexpectedReplyThrown(String errorString)
