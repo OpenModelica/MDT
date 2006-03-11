@@ -41,10 +41,21 @@
 
 package org.modelica.mdt.internal.core;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.IClassInfo;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * Superclass of all modelica class/package representation, collects 
@@ -52,6 +63,7 @@ import org.modelica.mdt.core.IModelicaElement;
  * 
  * @author Elmir Jagudin
  * @author Andreas Remar
+ * @author Kent Beck
  */
 abstract public class ModelicaClass extends ModelicaElement 
 	implements IModelicaClass
@@ -79,6 +91,10 @@ abstract public class ModelicaClass extends ModelicaElement
 	 * be external e.g. defined in system library
 	 */
 	private IFile container;
+
+	/* class attributes (restriction type, encapsulated status, etc) */
+	private IClassInfo classAttributes = null;
+
 	
 	public ModelicaClass(IModelicaElement parent)
 	{
@@ -133,4 +149,58 @@ abstract public class ModelicaClass extends ModelicaElement
 	{
 		return parentNamespace;
 	}
+		
+	/**
+	 * handles the lazyloading of class attributes
+	 */
+	protected IClassInfo getAttributes() 
+		throws CompilerInstantiationException, ConnectException,
+			UnexpectedReplyException, CoreException, InvocationError 
+	{
+		if (classAttributes == null)
+		{
+			classAttributes = CompilerProxy.getClassInfo(fullName);
+		}
+		return classAttributes;
+	}
+
+	public IRegion getLocation()
+		throws ConnectException, UnexpectedReplyException, 
+			InvocationError, CoreException, CompilerInstantiationException
+	{
+		return getAttributes().getDefinitionLocation().getRegion();
+	}
+	
+	@Override
+	public String getFilePath() 
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException
+	{
+		return getAttributes().getDefinitionLocation().getPath();
+	}
+	
+	public RestrictionType getRestrictionType() 
+		throws ConnectException, CompilerInstantiationException,
+			UnexpectedReplyException, CoreException, InvocationError
+	{
+		return getAttributes().getRestrictionType();
+	}
+	
+	public boolean isEncapsulated()
+		throws CompilerInstantiationException, ConnectException, 
+			UnexpectedReplyException, CoreException, InvocationError 
+	{
+		return getAttributes().getEncapsulated();
+	}
+
+	@Override
+	public Collection<IModelicaElementChange> reload()
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException 
+	{
+		classAttributes = null;
+		return super.reload();
+	}
+
+
 }

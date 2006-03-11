@@ -473,8 +473,8 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	}
 
 	/**
-	 * Check a file for missing of malformed 'within' statements by comparing
-	 * where in the file hierarky a file is defined and the actual contents
+	 * Check a file for missing or malformed 'within' statements by comparing
+	 * where in the file hierarchy a file is defined and the actual contents
 	 * returned from OMC.
 	 * 
 	 * @param file the file that has been loaded into OMC
@@ -492,11 +492,16 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 				.getProject(file.getProject().getName());
 
 		IModelicaElement element = null;
-		try {
+		try 
+		{
 			element = project.findElement(file.getProjectRelativePath());
-		} catch (InvocationError e) {
+		}
+		catch (InvocationError e) 
+		{
 			ErrorManager.logError(e);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) 
+		{
 			ErrorManager.logError(e);
 		}
 
@@ -510,8 +515,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		if(parent instanceof FolderPackage)
 		{
 			String filePath = file.getLocation().toString();
-			if(filePath.endsWith("/package.mo")
-					|| filePath.endsWith("\\package.mo"))
+			if(filePath.endsWith(File.separator + "package.mo"))
 			{
 				for(String name : res.getClasses())
 				{

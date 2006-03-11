@@ -56,11 +56,13 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaImport;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.ISignature;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
@@ -74,6 +76,12 @@ public class FolderPackage extends ModelicaClass
 {
 	private IFolder container;
 	private boolean childrenLoaded = false;
+	
+	/*
+	 * the source file where the this folder is defined,
+	 * in other words the notorious package.mo file
+	 */
+	private IModelicaSourceFile packageMo = null;
 	
 	private Hashtable<IResource, IModelicaElement> children = 
 			new Hashtable<IResource, IModelicaElement>();
@@ -142,9 +150,17 @@ public class FolderPackage extends ModelicaClass
 		throws CoreException, ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
+		IModelicaElement modElement;
 		for (IResource member : container.members())
 		{
-			children.put(member, wrap(member));
+			modElement = wrap(member);
+			children.put(member, modElement);
+			
+			/* save a reference to package.mo */
+			if (member.getName().equalsIgnoreCase("package.mo"))
+			{
+				packageMo = (IModelicaSourceFile)modElement;
+			}
 		}
 	}
 
@@ -153,9 +169,10 @@ public class FolderPackage extends ModelicaClass
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException
 	{
+		super.reload();
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
-
+		
 		if (!childrenLoaded)
 		{
 			/* 
@@ -351,9 +368,23 @@ public class FolderPackage extends ModelicaClass
 		return null;
 	}
 
-	public boolean isEncapsulated()
+	@Override
+	protected IClassInfo getAttributes()
+		throws CompilerInstantiationException, ConnectException, 
+			UnexpectedReplyException, CoreException, InvocationError 
 	{
-		// TODO Auto-generated method stub
-		return false;
+		/* 
+		 * before we can load attributes on a folder package 
+		 * we must make sure the package.mo file is loaded into omc
+		 */
+		
+		/* make sure children (and among them package.mo) are loaded */
+		getChildren();
+		/* 
+		 * by quering for children of the package.mo we make sure it's
+		 * loaded into OMC 
+		 */
+		packageMo.getChildren();
+		return super.getAttributes();
 	}
 }

@@ -40,6 +40,7 @@
  */
 package org.modelica.mdt.internal.core;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -70,7 +71,6 @@ public class ModelicaSourceFile extends ModelicaElement
 	implements IModelicaSourceFile 
 {
 	private IFile file;
-//	private FolderPackage parentPackage;
 
 	/* classes and packages in this file hashed by name */
 	Hashtable<String, IModelicaElement> children = null;	
@@ -82,7 +82,6 @@ public class ModelicaSourceFile extends ModelicaElement
 	public ModelicaSourceFile(FolderPackage parent, IFile file) 
 	{
 		super(parent);
-		//this.parentPackage = parent;
 		this.file = file;
 	}
 
@@ -147,8 +146,7 @@ public class ModelicaSourceFile extends ModelicaElement
 			for(String name : res.getClasses())
 			{
 				if(name.equals(ppName)
-						&& (filePath.endsWith("/package.mo")
-								|| filePath.endsWith("\\package.mo")))
+						&& (filePath.endsWith(File.separator + "package.mo")))
 				{
 					List list = null;
 					try

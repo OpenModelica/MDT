@@ -47,7 +47,6 @@ import java.util.LinkedList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
@@ -65,7 +64,6 @@ import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
-import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
@@ -112,10 +110,7 @@ public class InnerClass extends ModelicaClass
 	 * defined have changed on the disk this class is notified by having it's
 	 * reload() method invoked.  
 	 */
-	
-	/* class attributes are stored here */
-	private IClassInfo classAttributes = null;
-	
+		
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, IModelicaElement> children = null;
 	
@@ -294,7 +289,6 @@ public class InnerClass extends ModelicaClass
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException
 	{
-		
 		/*
 		 * the reload strategy is as follows:
 		 */
@@ -303,7 +297,7 @@ public class InnerClass extends ModelicaClass
 		  * all class attribute fields are just reset and 
 		  * lazily reloaded as they are queried
 		  */
-		classAttributes = null;
+		super.reload();
 
 		 /* 
 		  * new class component are fetched and compared to
@@ -368,55 +362,6 @@ public class InnerClass extends ModelicaClass
 		return null;
 	}
 	
-	/**
-	 * @throws InvocationError if there were errors 
-	 * 	communicating with compiler
-	 * @throws UnexpectedReplyException if there were errors
-	 * 	 communicating with compiler
-	 * @throws ConnectException if there were errors
-	 * 	 communicating with compiler
-	 * @throws CoreException if there were errors reading
-	 * 	 the source file of this element
-	 * @throws CompilerInstantiationException if there were errors
-	 * 	 communicating with compiler
-	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
-	 */
-	public IRegion getLocation()
-		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException, CompilerInstantiationException
-	{
-		return getAttributes().getDefinitionLocation().getRegion();
-	}
-
-	/**
-	 * handles the lazyloading of class attributes
-	 */
-	private IClassInfo getAttributes() 
-		throws CompilerInstantiationException, ConnectException,
-			UnexpectedReplyException 
-	{
-		if (classAttributes == null)
-		{
-			classAttributes = CompilerProxy.getClassInfo(fullName);
-		}
-		return classAttributes;
-	}
-
-	@Override
-	public String getFilePath() 
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
-	{
-		return getAttributes().getDefinitionLocation().getPath();
-	}
-
-	public RestrictionType getRestrictionType() 
-		throws ConnectException, CompilerInstantiationException,
-			UnexpectedReplyException
-	{
-		return getAttributes().getRestrictionType();
-	}
-
 	public Collection<IModelicaImport> getImports() 
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
 			CompilerInstantiationException, CoreException
@@ -456,12 +401,5 @@ public class InnerClass extends ModelicaClass
 		return new Signature(inputParams.toArray(
 				new IParameter[inputParams.size()]),
 				outputParams.toArray(new IParameter[outputParams.size()]));
-	}
-
-	public boolean isEncapsulated()
-		throws CompilerInstantiationException, ConnectException, 
-			UnexpectedReplyException 
-	{
-		return getAttributes().getEncapsulated();
 	}
 }

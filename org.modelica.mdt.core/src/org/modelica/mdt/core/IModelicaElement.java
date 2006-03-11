@@ -112,16 +112,10 @@ public interface IModelicaElement extends IAdaptable
 	 * to the file where this element is defined. If this element is not
 	 * external (e.g. defined inside the workspace) or is not defined in a
 	 * file null is returned.
-	 *  
-	 * @return
-	 * @throws InvocationError 
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectException 
-	 * @throws CompilerInstantiationException 
 	 */
 	public String getFilePath() 
 		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException;
+			CompilerInstantiationException, CoreException;
 	
 	/**
 	 * For modelica elements that are defined in a source code

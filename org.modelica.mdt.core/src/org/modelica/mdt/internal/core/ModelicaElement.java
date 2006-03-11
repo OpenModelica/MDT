@@ -145,7 +145,7 @@ abstract public class ModelicaElement extends PlatformObject
 
 	public String getFilePath() 
 		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
+			CompilerInstantiationException, CoreException
 	{
 		/* we are not defined in an external file by default */
 		return null;

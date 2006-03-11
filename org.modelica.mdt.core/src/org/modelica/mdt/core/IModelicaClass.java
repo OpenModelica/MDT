@@ -117,11 +117,10 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	
 	/**
 	 * @return the restriction type of this class
-	 * @throws UnexpectedReplyException 
 	 */
 	public RestrictionType getRestrictionType()
 		throws ConnectException, CompilerInstantiationException,
-				UnexpectedReplyException;
+				UnexpectedReplyException, CoreException, InvocationError;
 
 	/**
 	 * @return the imports made in this class
@@ -149,5 +148,5 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 */
 	public boolean isEncapsulated() 
 		throws CompilerInstantiationException, ConnectException,
-			UnexpectedReplyException;
+			UnexpectedReplyException, CoreException, InvocationError;
 }
