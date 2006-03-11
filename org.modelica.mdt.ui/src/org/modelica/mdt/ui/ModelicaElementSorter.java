@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.ui;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
@@ -95,6 +96,12 @@ public class ModelicaElementSorter extends ViewerSorter
 			catch (CompilerException e)
 			{
 				ErrorManager.showCompilerError(e);
+				/* we don't realy know what catagory this element is in */
+				return UNKOWN_TYPE_ORDER;
+			}
+			catch (CoreException e)
+			{
+				ErrorManager.showCoreError(e);
 				/* we don't realy know what catagory this element is in */
 				return UNKOWN_TYPE_ORDER;
 			}

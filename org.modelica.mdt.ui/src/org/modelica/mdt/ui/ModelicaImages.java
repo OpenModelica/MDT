@@ -14,6 +14,7 @@ package org.modelica.mdt.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -212,6 +213,11 @@ public class ModelicaImages
 			{
 				ErrorManager.logError(e);
 			}
+			catch (CoreException e)
+			{
+				ErrorManager.logError(e);
+			}
+
 		}
 		else if (element instanceof IModelicaComponent)
 		{
