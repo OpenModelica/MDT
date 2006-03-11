@@ -275,7 +275,7 @@ public class Area51Projects
 		/* root_model.mo */
 		file = modelica_project.getFile("root_model.mo");
 		contents = 
-			"model root_model\n" +
+			"encapsulated model root_model\n" +
 			"    import Modelica;\n" +
 			"end root_model;";
 		file.create(Utility.getByteStream(contents), true, null);
@@ -515,7 +515,7 @@ public class Area51Projects
 		contents =
 			"within root_package.sub_package;\n" +
 			"\n" +
-			"package leaf_package\n" +
+			"encapsulated package leaf_package\n" +
 			"\n" + 
 			"end leaf_package;\n";
 		file.create(Utility.getByteStream(contents), true, null);
@@ -526,7 +526,7 @@ public class Area51Projects
 			
 		file = folder.getFile("package.mo");
 		contents = 
-			"package childless_package\n" +
+			"encapsulated package childless_package\n" +
 			"\n" + 
 			"end childless_package;\n";
 		file.create(Utility.getByteStream(contents), true, null);

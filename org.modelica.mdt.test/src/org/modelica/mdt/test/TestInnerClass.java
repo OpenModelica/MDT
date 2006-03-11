@@ -637,7 +637,8 @@ public class TestInnerClass extends TestCase
 			InvocationError, CoreException
 	{
 		IModelicaClass clazz;
-		IStandardLibrary stdLib = ModelicaCore.getModelicaRoot().getStandardLibrary();
+		IStandardLibrary stdLib = 
+				ModelicaCore.getModelicaRoot().getStandardLibrary();
 		
 		/*
 		 * check correctness of isEncapsulated() in classes from standard library
@@ -661,8 +662,44 @@ public class TestInnerClass extends TestCase
 		clazz = stdLib.getPackage("Modelica");
 		assertNotNull(clazz);
 		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
+		
+		/*
+		 * check correctness of isEncapsulated() on classes from area51 project
+		 */
+		
+		/* test inner packager */
+		clazz = proj.getClass("root_model");
+		assertNotNull(clazz);
+		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
+		
+		clazz = proj.getClass("file_package1");
+		assertNotNull(clazz);
+		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
 
+		clazz = proj.getClass("file_package2");
+		assertNotNull(clazz);
+		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
 
+		clazz = proj.getClass("nested_models.foo.bar");
+		assertNotNull(clazz);
+		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
+		
+		/* test folder packages */
+		clazz = proj.getClass("root_package");
+		assertNotNull(clazz);
+		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
+		
+		clazz = proj.getClass("root_package.sub_package");
+		assertNotNull(clazz);
+		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
+//TODO this is broken, fix it		
+//		clazz = proj.getClass("root_package.sub_package.leaf_package");
+//		assertNotNull(clazz);
+//		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
+		
+		clazz = proj.getClass("childless_package");
+		assertNotNull(clazz);
+		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
 	}
 
 	/** 

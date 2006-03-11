@@ -66,3 +66,14 @@ public class CodeDepot {}
 //			break;
 //		}
 //	}
+
+/**
+ * prints the calling stack
+ */
+//for (StackTraceElement element : Thread.currentThread().getStackTrace())
+//{
+//	System.out.println(element.getClassName() +
+//			"." + element.getMethodName() + ":" +
+//			element.getLineNumber());
+//}
+
