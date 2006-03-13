@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.5.0"
+      version="0.6.0"
       provider-name="PELAB">
 
    <description url="http://www.ida.liu.se/~pelab/modelica/">
