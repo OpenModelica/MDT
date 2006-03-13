@@ -228,6 +228,9 @@ public class ModelicaSourceFile extends ModelicaElement
 		LinkedList<IModelicaElementChange> changes = 
 			new LinkedList<IModelicaElementChange>();
 		
+		/* this file have been change, add an the event that describes that */
+		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED));
+		
 		if (children == null)
 		{
 			/* if children are not loaded, then we can't update */

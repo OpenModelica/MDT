@@ -87,6 +87,8 @@ public interface IModelicaRoot
 	 * remove a listener, the specified listener will no longer be notified on
 	 * changes to modelica elements
 	 * 
+	 * If the provided listener is not registered, then no action is taken
+	 * 
 	 * @param listener the listener to remove
 	 */
 	public void 

@@ -69,6 +69,18 @@ public class ModelicaElementChange implements IModelicaElementChange
 		type = ChangeType.ADDED;
 	}
 	
+	/**
+	 * Create element change.
+	 * 
+	 * NB the constructor can not be used to create element change object of 
+	 * the type ADDED. 
+	 * Use ModelicaElementChange#ModelicaElementChange(IModelicaElement, ChangeType)
+	 * instead.
+	 * 
+	 * @param element the element that was changed
+	 * @param type the type of change (don't use ADDED type here)
+	 * @see ModelicaElementChange#ModelicaElementChange(IModelicaElement, ChangeType)
+	 */
 	protected ModelicaElementChange(IModelicaElement element, ChangeType type)
 	{
 		this.element = element;
