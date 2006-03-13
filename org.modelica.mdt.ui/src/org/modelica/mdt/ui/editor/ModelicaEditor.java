@@ -41,22 +41,60 @@
 
 package org.modelica.mdt.ui.editor;
 
+import java.util.Collection;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaElementChangeListener;
+import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IParent;
+import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.InvocationError;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
+ * Creates an editor for modelica source code.
+ * 
+ * The editor is configured with following features:
+ * 
+ *  - modelica syntax highlighting
+ *  - content assiastant
+ *  - info-pops
+ *  - action that invokes contet assisten on ctrl+space
+ *  - folding(collapsing) of blocks of source code
+ * 
  * @author Peter Bunus
  */
-public class ModelicaEditor extends TextEditor 
+public class ModelicaEditor extends TextEditor
+	implements IModelicaElementChangeListener
 {
 	private static final String RESOURCE_BUNDLE = 
 		"org.modelica.mdt.ui.editor.ContentAssist";
 
+    private ProjectionSupport projectionSupport;
+	
 	protected void initializeEditor() 
 	{
 		super.initializeEditor();
@@ -78,5 +116,164 @@ public class ModelicaEditor extends TextEditor
 			(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", a);
 		
+	}
+
+	@Override
+	public void createPartControl(Composite parent)
+	{
+        super.createPartControl(parent);
+        
+        /*
+         * install the gadgets that enable text folding
+         */
+        ProjectionViewer viewer = (ProjectionViewer)getSourceViewer();        
+        projectionSupport = 
+        	new ProjectionSupport(viewer,getAnnotationAccess(),
+        			getSharedColors());
+		projectionSupport.install();
+		
+		/* turn projection mode on */
+		viewer.doOperation(ProjectionViewer.TOGGLE);
+		
+		IModelicaSourceFile file = getSourceFile();				
+		if (file != null)
+		{
+			/* don't do folding unless we are invoked on a modelica element */
+			updateAnnotations(file);
+			ModelicaCore.getModelicaRoot().
+				addModelicaElementChangeListener(this);
+		}
+	}
+
+	/**
+	 * Find the modelica source file this editor is opened on.
+	 * 
+	 * @return the source file this editor is opened on or null
+	 * 	if the editor is not opened on modelica source file
+	 */
+	private IModelicaSourceFile getSourceFile()
+	{
+		IEditorInput input = getEditorInput();
+
+		if (!(input instanceof ModelicaElementEditorInput))
+		{
+			return null;
+		}
+		
+		return ((ModelicaElementEditorInput) input).getSourceFile();
+	}
+
+	@Override
+	protected ISourceViewer createSourceViewer(Composite parent, 
+			IVerticalRuler ruler, int styles)
+	{
+		/*
+		 * setup the viewer that is capable of text folding
+		 */
+        ISourceViewer viewer = 
+        		new ProjectionViewer(parent, ruler, getOverviewRuler(), 
+        				isOverviewRulerVisible(), styles);
+
+    	/* ensure decoration support has been created and configured */
+    	getSourceViewerDecorationSupport(viewer);
+    	
+    	return viewer;
+	}
+	
+	public void dispose()
+	{
+		super.dispose();
+		ModelicaCore.getModelicaRoot().removeModelicaElementChangeListener(this);
+	}
+
+	public void elementsChanged(Collection<IModelicaElementChange> changes)
+	{
+		IModelicaSourceFile file = getSourceFile();
+		
+		/*
+		 * check among change list if the file we are open
+		 * on have been changed, and in that case
+		 * update folding annotations
+		 */
+		for (IModelicaElementChange change : changes)
+		{
+			IModelicaElement elm = change.getElement();
+			
+			if (elm == file)
+			{
+				updateAnnotations(file);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * updates the folding annotations in this editr based
+	 * on the contents of the provided modelica source file.
+	 * old annotations are removed.
+	 * 
+	 * @param file the source file to create annotations from
+	 */
+	private void updateAnnotations(IModelicaSourceFile file)
+	{
+		try
+		{
+			/*
+			 * remove old annotations and call helper function
+			 * to create new annotations
+			 */
+			ProjectionAnnotationModel annotationModel = 
+				((ProjectionViewer)getSourceViewer()).getProjectionAnnotationModel();
+			annotationModel.removeAllAnnotations();
+			
+			int docLength = getSourceViewer().getDocument().getLength();
+			updateAnnotationsIter(file, docLength, annotationModel);
+		} 
+		catch (CompilerException e)
+		{
+			ErrorManager.showCompilerError(e);
+		}
+		catch (CoreException e)
+		{
+			ErrorManager.showCoreError(e);
+		}
+	}
+
+	/**
+	 * this is helper function for updateAnnotationsIter() that
+	 * recursivly creates folding annotations based on class
+	 * definition regions
+	 */
+	private void updateAnnotationsIter(IParent parentElement,
+			int docLength,
+			IAnnotationModel annotationModel) 
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CompilerInstantiationException, CoreException
+	{
+		/*
+		 * go over the children of provided element,
+		 * add folding annotation for each subclass found
+		 * and invoke annotations creations based on that class
+		 */
+		IRegion reg;
+		for (IModelicaElement elm : parentElement.getChildren())
+		{
+			reg = elm.getLocation();
+			/* make only class definitions collapsable */
+			if (elm instanceof IModelicaClass) 
+			{
+				int offset = reg.getOffset();
+				int length = reg.getLength();
+
+				if (offset + length < docLength)
+				{
+					length += 1;
+				}
+				annotationModel.addAnnotation(new ProjectionAnnotation(false),
+						new Position(offset, length));
+
+				updateAnnotationsIter((IParent)elm, docLength, annotationModel);
+			}
+		}		
 	}
 }

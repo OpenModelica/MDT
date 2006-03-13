@@ -75,14 +75,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.CorePlugin;
+import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.ModelicaImages;
 import org.modelica.mdt.ui.UIPlugin;
+import org.modelica.mdt.ui.editor.EditorUtility;
 
 public class NewClassWizard extends Wizard implements INewWizard
 {
@@ -418,11 +419,17 @@ public class NewClassWizard extends Wizard implements INewWizard
 		{
 			public void run()
 			{
-				IWorkbenchPage page =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try 
 				{
-					IDE.openEditor(page, file, true);
+					/*
+					 * find the modelica class reference object
+					 * and open it in the editor
+					 */
+					IModelicaProject proj = 
+						ModelicaCore.getModelicaRoot().getProject(file.getProject().
+								getName());
+					EditorUtility.openInEditor
+						(proj.findElement(file.getProjectRelativePath()));
 				}
 				catch (PartInitException e) 
 				{
@@ -433,6 +440,15 @@ public class NewClassWizard extends Wizard implements INewWizard
 									"error starting editor for " + 
 									file.getName(), e)));
 				}
+				catch (CompilerException e)
+				{
+					ErrorManager.showCompilerError(e);
+				}
+				catch (CoreException e)
+				{
+					ErrorManager.showCoreError(e);
+				}
+
 			}
 		});
 		monitor.worked(1);
