@@ -42,6 +42,8 @@
 package org.modelica.mdt.ui.editor;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
@@ -54,6 +56,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -72,12 +75,21 @@ public class EditorUtility
 	 * handles the tricky buisness of opening the element in editor depending
 	 * on it's type
 	 * 
+	 * This method figures the source file of the element. If the element
+	 * does not have a specific source file (e.g. folder package, modelica
+	 * project) then no action is taken.
+	 * 
 	 * @param element the element to open in the editor
 	 */
 	public static void openInEditor(IModelicaElement element)
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException
 	{
+		if (element instanceof IStandardLibrary)
+		{
+			/* don't open standard library node */
+			return;
+		}
 		if (element instanceof IModelicaFile && 
 				!(element instanceof IModelicaSourceFile)) /* yeah, this is uggly */
 		{
@@ -88,7 +100,7 @@ public class EditorUtility
 			IModelicaElement modelicaElement = (IModelicaElement)element;
 			IResource res = modelicaElement.getResource();
 			ITextEditor editor = null;
-			
+
 			if (res == null)
 			{
 				/* 
@@ -106,6 +118,11 @@ public class EditorUtility
 				/* a element defined inside a file in the workspace */
 				editor = 
 					(ITextEditor) openInEditor(new ModelicaElementEditorInput(modelicaElement));
+			}
+			else if ((res instanceof IFolder) || (res instanceof IProject))
+			{
+				/* don't open folder packages and project */
+				return;
 			}
 			
 			if (!(element instanceof IModelicaSourceFile))
