@@ -710,54 +710,54 @@ public class TestInnerClass extends TestCase
 		ConnectException, CompilerInstantiationException, 
 			UnexpectedReplyException, InvocationError
 	{		
-//		
-//		/* create initial class definitons */
-//		createClassDef();		
-//		/* 
-//		 * check the initial locations 
-//		 */
-//		IModelicaClass clazz;
-//		IRegion defReg;
-//		
-//		/* checks on EquationComponent */
-//		clazz = proj.getClass("EquationComponent"); 
-//		assertNotNull(clazz);
-//		
-//		defReg = clazz.getLocation();
-//		assertEquals("wrong start offset", 111, defReg.getOffset());
-//		assertEquals("wrong length", 239-111+1, defReg.getLength());
-//
-//		/* checks on EquationComponent.R */
-//		clazz = proj.getClass("EquationComponent.R"); 
-//		assertNotNull(clazz);
-//		
-//		defReg = clazz.getLocation();
-//		assertEquals("wrong start offset", 137, defReg.getOffset());
-//		assertEquals("wrong length", 167-137+1, defReg.getLength());
-//		
-//		
-//		/* modify class defintions */
-//		modifyClassDef();
-//		
-//		/*
-//		 * check that locations where updated 
-//		 */
-//		/* checks on EquationComponent */
-//		clazz = proj.getClass("EquationComponent"); 
-//		assertNotNull(clazz);
-//		
-//		defReg = clazz.getLocation();
-//		assertEquals("wrong start offset", 25, defReg.getOffset());
-//		assertEquals("wrong length", 179-25+1, defReg.getLength());
-//
-//		/* checks on EquationComponent.R */
-//		clazz = proj.getClass("EquationComponent.R"); 
-//		assertNotNull(clazz);
-//		
-//		defReg = clazz.getLocation();
-//		assertEquals("wrong start offset", 76, defReg.getOffset());
-//		assertEquals("wrong length", 106-76+1, defReg.getLength());
-//
+		
+		/* create initial class definitons */
+		createClassDef();		
+		/* 
+		 * check the initial locations 
+		 */
+		IModelicaClass clazz;
+		IRegion defReg;
+		
+		/* checks on EquationComponent */
+		clazz = proj.getClass("EquationComponent"); 
+		assertNotNull(clazz);
+		
+		defReg = clazz.getLocation();
+		assertEquals("wrong start offset", 111, defReg.getOffset());
+		assertEquals("wrong length", 239-111+1, defReg.getLength());
+
+		/* checks on EquationComponent.R */
+		clazz = proj.getClass("EquationComponent.R"); 
+		assertNotNull(clazz);
+		
+		defReg = clazz.getLocation();
+		assertEquals("wrong start offset", 137, defReg.getOffset());
+		assertEquals("wrong length", 167-137+1, defReg.getLength());
+		
+		
+		/* modify class defintions */
+		modifyClassDef();
+		
+		/*
+		 * check that locations where updated 
+		 */
+		/* checks on EquationComponent */
+		clazz = proj.getClass("EquationComponent"); 
+		assertNotNull(clazz);
+		
+		defReg = clazz.getLocation();
+		assertEquals("wrong start offset", 25, defReg.getOffset());
+		assertEquals("wrong length", 179-25+1, defReg.getLength());
+
+		/* checks on EquationComponent.R */
+		clazz = proj.getClass("EquationComponent.R"); 
+		assertNotNull(clazz);
+		
+		defReg = clazz.getLocation();
+		assertEquals("wrong start offset", 76, defReg.getOffset());
+		assertEquals("wrong length", 106-76+1, defReg.getLength());
+
 	}
 	
 	/**
