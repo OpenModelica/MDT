@@ -3,15 +3,6 @@
 <body>
 <h1>Getting started</h1>
 
-<h2 id = "configurate_omc">Configuring the OpenModelica Compiler</h2>
-
-MDT need to be able to locate the binary of the OpenModelica Compiler. It uses the
-environment variable OPENMODELICAHOME to do so.<br>
-If you have problems using MDT make sure that OPENMODELICAHOME is set to the 
-folder where the Open Modelica Compiler is installed. In other words 
-OPENMODELICAHOME must point to the folder that contais the OpenModelica compiler
-binary. It is named omc.exe on Windows platforms and omc on Unix platforms.
-
 <h2 id = "using_modelica_perspective">Accessing the Modelica Perspective</h2>
 
 <p>
@@ -90,13 +81,35 @@ can narrow down the matches by typing in the first characters of the class or
 package that you want to type in. So if you've first typed <b>Modelica.</b> you
 can then continue typing <b>Me</b> and MDT will propose <b>Mechanics</b> and
 <b>Media</b> as completions. You can always backtrack the narrowing by erasing
-characters.<br>
-<!--
-<b>Note:</b> As of now, you have to have the Modelica System Library loaded for
-code completion on the system library to work. This can right now be
-accomplished by browsing the Modelica System Library in the projects view before
-trying to use code completion.
--->
+characters.
+</p>
+
+<h2 id = "configurate_omc">Specifying the OpenModelica Compiler</h2>
+
+<p>
+MDT need to be able to locate the binary of the OpenModelica Compiler. The default
+behavior is to use the environment variable OPENMODELICAHOME to locate the binary.
+OPENMODELICAHOME must point to the root folder where OpenModelica compiler was
+installed. The variable is automaticaly set if you use the official binary installation
+packages provided by PELAB.
+</p>
+
+<p>
+If for some reason you are not able set OPENMODELICAHOME to correct value, or wish to
+use another binary, custom binary can be specified. To configure OMC binary goto Modelica
+preferences page. It is accessable via <b>Window > Preferences...</b> menu, followed by selecting
+<b>Modelica</b> category in the left column.
+</p>
+<img src="pix/modelica_preferences.png">
+<p>
+Tick the <b>use custom binary</b> option. Now you can enter the full path to compiler
+binary to use in the textfield below. You can also use <b>Browse...</b> button to 
+navigate to and select the binary with a dialog. Press <b>OK</b> button	when finished.
+Currently MDT can not garantee that new OMC binary will be used, if the old one is 
+running at the moment you made changes. To make sure that new binary will be used, 
+terminate current OMC process and restart Eclipse. We are aware the the above behavior
+is broken and most irritating to the users and currently working on improving the 
+situtaion. Thank you for your patience.
 </p>
 
 </body>

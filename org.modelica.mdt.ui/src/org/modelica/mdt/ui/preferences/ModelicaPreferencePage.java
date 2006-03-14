@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -125,7 +125,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		new Label(parent, SWT.NONE);
 		
 		group = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		group.setText("OpenModelica Compiler (OMC) Path");
+		group.setText("OpenModelica Compiler (OMC) Binary");
 		
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
@@ -137,7 +137,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		
 		/* use standard path option */
 		useStandardOmcPath = new Button(group, SWT.RADIO);
-		useStandardOmcPath.setText("use OPENMODELICAHOME environment variable");
+		useStandardOmcPath.setText("use OPENMODELICAHOME specified binary");
 
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
@@ -148,7 +148,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 				
 		/* use custom path option */
 		useCustomOmcPath = new Button(group, SWT.RADIO);
-		useCustomOmcPath.setText("use custom path:");
+		useCustomOmcPath.setText("use custom binary:");
 
 		useCustomOmcPath.setSelection(!PreferenceManager.getUseStandardOmcPath());
 				

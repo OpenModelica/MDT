@@ -1,8 +1,6 @@
 <toc label="Modelica Development User Guide" topic="doc/ch1.html">
 
   <topic label="Getting Started" href="doc/ch2.html">
-      <topic label="Configuring the OpenModelica Compiler" 
-             href="doc/ch2.html#configurate_omc"/>
       <topic label="Accessing the Modelica Perspective" 
              href="doc/ch2.html#using_modelica_perspective"/>
       <topic label="Making a project" href="doc/ch2.html#making_a_project"/>
@@ -11,6 +9,9 @@
       <topic label="Making a class" href="doc/ch2.html#making_a_class"/>
       <topic label="Syntax checking" href="doc/ch2.html#syntax_checking"/>
       <topic label="Code completion" href="doc/ch2.html#code_completion"/>
+      <topic label="Specifying the OpenModelica Compiler" 
+      		 href="doc/ch2.html#configurate_omc"/>
+      
   </topic>
   
   <topic label="Building modelica projects" href="doc/ch3.html">
