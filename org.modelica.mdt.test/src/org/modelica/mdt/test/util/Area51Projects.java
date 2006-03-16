@@ -417,19 +417,27 @@ public class Area51Projects
 			// and couses a bunch of tests to fail
 			//TODO fix that bug and put back the import
 			//"  import root_package.root_package_model;\n" +
-			"" +
+			"\n" +
+			"  constant Real x;\n" +
 			"\n" +
 			"  class bar\n" +
 			"    // do some imports that are local to the class bar\n" +
 			"    import Modelica.SIunits;\n" +
 			"    import Modelica.Blocks;\n" +
 			"    import cp = childless_package;\n" +
+			"    Real y;\n" +
 			"  equation\n" +
 			"\n" +
 			"  // its easier to write this comment then to fix the bug\n" +
 			"  end bar;\n" +
+			"  // an encapsulated class for testing lookup scope encapsulation\n"+
+			"  encapsulated class foo\n" +
+			"    Real foo_local_var;\n" +
 			"\n" +
-			"end import_rich_model;";
+			"  end foo;\n" +
+			"\n" +
+			"end import_rich_model;\n" +
+			" // an area outside of any class definitions";
 
 		file.create(Utility.getByteStream(contents), true, null);
 

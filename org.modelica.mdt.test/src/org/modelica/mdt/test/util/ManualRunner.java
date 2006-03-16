@@ -36,7 +36,7 @@ public class ManualRunner implements IWorkbenchWindowActionDelegate
 		
 		try {
 			foo.setUp();
-			foo.testComputeCompletionProposals();
+			//foo.testComputeCompletionProposals();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

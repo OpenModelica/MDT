@@ -153,7 +153,8 @@ public class TestModelicaCompletionProcessor extends TestCase
 		/* get proposals at the end of 'Mode' */
 		ICompletionProposal[] props =   
 			compProc.computeCompletionProposals(textViewer, 387);
-		
+		checkProposalsOrder(props);
+
 		/* we are expecting a proposal for the Modelica package */
 		boolean foundModelicaProp = false;
 		for (ICompletionProposal proposal : props)
@@ -176,6 +177,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 
 		/* get proposals at the end of 'Modelica.M' */
 		props = compProc.computeCompletionProposals(textViewer, 393);
+		checkProposalsOrder(props);
 
 		/* 
 		 * we are expecting a proposal for the Modelica.Math and 
@@ -221,7 +223,8 @@ public class TestModelicaCompletionProcessor extends TestCase
 		/* get proposals at the end of 'Modelica.M' */
 		props = compProc.computeCompletionProposals(textViewer, 
 				383 + "Mechanics.Rotational.Sp".length());
-
+		checkProposalsOrder(props);
+		
 		/* 
 		 * we are expecting a proposal for the Mechanics.Rotational.Speed and 
 		 * Mechanics.Rotational.Spring packages 
@@ -263,6 +266,8 @@ public class TestModelicaCompletionProcessor extends TestCase
 
 		/* get proposals at the end of 'Modelica.Math.' */
 		props = compProc.computeCompletionProposals(textViewer, 397);
+		checkProposalsOrder(props);
+		
 
 		/* 
 		 * we are expecting a proposal for among others Modelica.Math.asin,
@@ -333,14 +338,16 @@ public class TestModelicaCompletionProcessor extends TestCase
 		 */
 		editor.doRevertToSaved();
 		props = compProc.computeCompletionProposals(textViewer, 383);
+		checkProposalsOrder(props);
 
 		/* 
 		 * we are expecting a proposal for among others Blocks,
-		 * Icons and hehehe
+		 * x, Icons and hehehe
 		 */
 		boolean foundBlocksProp = false;
 		boolean foundIconsProp = false;
 		boolean foundHeheheProp = false;
+		boolean foundXProp = false;
 		
 		for (ICompletionProposal proposal : props)
 		{
@@ -373,7 +380,17 @@ public class TestModelicaCompletionProcessor extends TestCase
 						"hehehe", result);
 				foundHeheheProp = true;
 				undoManager.undo();
-			}			
+			}
+			else if (proposal.getDisplayString().startsWith("x"))
+			{
+				/* must be Modelica.Math.cos proposal */
+				proposal.apply(doc);
+				result = doc.get(383, "x".length());
+				assertEquals("unexpected result of applying proposal",
+						"x", result);
+				foundXProp = true;
+				undoManager.undo();
+			}
 		}
 		
 		assertTrue("did not found proposal for the 'Blocks'", 
@@ -382,6 +399,8 @@ public class TestModelicaCompletionProcessor extends TestCase
 				foundIconsProp);
 		assertTrue("did not found proposal for the 'hehehe'", 
 				foundHeheheProp);
+		assertTrue("did not found proposal for the 'x'", 
+				foundXProp);
 		
 		/* type 'm' inside import_rich_model */
 		editor.doRevertToSaved();
@@ -389,7 +408,8 @@ public class TestModelicaCompletionProcessor extends TestCase
 
 		/* get proposals at just past 'm' */
 		props =	compProc.computeCompletionProposals(textViewer, 384);
-		
+		checkProposalsOrder(props);
+				
 		/* 
 		 * we are expecting a proposal for the 'mm', 
 		 * the renamed Modelica.Math package 
@@ -415,7 +435,8 @@ public class TestModelicaCompletionProcessor extends TestCase
 
 		/* get proposals at the end of 'mm.s' */
 		props =	compProc.computeCompletionProposals(textViewer, 386);
-		
+		checkProposalsOrder(props);
+
 		/* 
 		 * we are expecting a proposal for the 'mm.sin' and 'mm.sinh' 
 		 * the renamed Modelica.Math package 
@@ -458,11 +479,13 @@ public class TestModelicaCompletionProcessor extends TestCase
 		
 		/* type '    ho' inside import_rich_model.bar */
 		editor.doRevertToSaved();
-		doc.replace(554, 0, "    ho");
+		doc.replace(586, 0, "    ho");
 		
 		/* get proposals at the end of 'ho' */
-		props = compProc.computeCompletionProposals(textViewer, 560);
-		
+		props = compProc.computeCompletionProposals(textViewer, 
+				586 + "    ho".length());
+		checkProposalsOrder(props);
+
 		/* we are expecting a proposal for the hopp package */
 		boolean foundHoppProp = false;
 		for (ICompletionProposal proposal : props)
@@ -470,7 +493,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 			if (proposal.getDisplayString().startsWith("hopp"))
 			{
 				proposal.apply(doc);
-				result = doc.get(558, "hopp".length());
+				result = doc.get(590, "hopp".length());
 				assertEquals("unexpected result of applying proposal",
 						"hopp", result);
 				foundHoppProp = true;
@@ -482,10 +505,12 @@ public class TestModelicaCompletionProcessor extends TestCase
 
 		/* type 'SIunits.Absorb' inside import_rich_model.bar */
 		editor.doRevertToSaved();
-		doc.replace(554, 0, "SIunits.Absorb"); 
+		doc.replace(586, 0, "SIunits.Absorb"); 
 
 		/* get proposals at the end of 'SIunits.Absorb' */
-		props = compProc.computeCompletionProposals(textViewer, 568);
+		props = compProc.computeCompletionProposals(textViewer, 
+				586 + "SIunits.Absorb".length());
+		checkProposalsOrder(props);
 
 		/* 
 		 * we are expecting a proposal for the SIunits.AbsorbedDose and 
@@ -504,7 +529,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 			{
 				/* must be Modelica.Math proposal */
 				proposal.apply(doc);
-				result = doc.get(554, "SIunits.AbsorbedDoseRate".length());
+				result = doc.get(586, "SIunits.AbsorbedDoseRate".length());
 				assertEquals("unexpected result of applying proposal",
 						"SIunits.AbsorbedDoseRate", result);
 				foundAbsorbedDoseRateProp = true;
@@ -514,7 +539,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 			{
 				/* must be Modelica.Math proposal */
 				proposal.apply(doc);
-				result = doc.get(554, "SIunits.AbsorbedDose".length());
+				result = doc.get(586, "SIunits.AbsorbedDose".length());
 				assertEquals("unexpected result of applying proposal",
 						"SIunits.AbsorbedDose", result);
 				foundAbsorbedDoseProp = true;
@@ -529,10 +554,12 @@ public class TestModelicaCompletionProcessor extends TestCase
 		
 		/* type 'Blocks.Math.' inside import_rich_model.bar */
 		editor.doRevertToSaved();
-		doc.replace(554, 0, "Blocks.Math.");
+		doc.replace(586, 0, "Blocks.Math.");
 		
 		/* get proposals at the end of 'Blocks.Math.' */
-		props = compProc.computeCompletionProposals(textViewer, 566);
+		props = compProc.computeCompletionProposals(textViewer, 
+				586 + "Blocks.Math.".length());
+		checkProposalsOrder(props);
 
 		/* 
 		 * we are expecting among others proposals for the Math.Edge, Math.Min
@@ -544,12 +571,11 @@ public class TestModelicaCompletionProcessor extends TestCase
 		
 		for (ICompletionProposal proposal : props)
 		{
-			
 			if (proposal.getDisplayString().startsWith("Edge"))
 			{
 				/* must be Blocks.Math.Edge proposal */
 				proposal.apply(doc);
-				result = doc.get(554, "Blocks.Math.Edge".length());
+				result = doc.get(586, "Blocks.Math.Edge".length());
 				assertEquals("unexpected result of applying proposal",
 						"Blocks.Math.Edge", result);
 				foundMathEdgeProp = true;
@@ -559,7 +585,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 			{
 				/* must be Blocks.Math.Min proposal */
 				proposal.apply(doc);
-				result = doc.get(554, "Blocks.Math.Min".length());
+				result = doc.get(586, "Blocks.Math.Min".length());
 				assertEquals("unexpected result of applying proposal",
 						"Blocks.Math.Min", result);
 				foundMathMinProp = true;
@@ -569,7 +595,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 			{
 				/* must be Blocks.Math.Min proposal */
 				proposal.apply(doc);
-				result = doc.get(554, "Blocks.Math.Feedback".length());
+				result = doc.get(586, "Blocks.Math.Feedback".length());
 				assertEquals("unexpected result of applying proposal",
 						"Blocks.Math.Feedback", result);
 				foundMathFeedbackProp = true;
@@ -584,6 +610,61 @@ public class TestModelicaCompletionProcessor extends TestCase
 				foundMathMinProp);
 		assertTrue("did not found proposal for the 'Blocks.Math.Feedback'", 
 				foundMathFeedbackProp);
+
+		/*
+		 * type nothing inside import_rich_model.bar to test proposals
+		 * for empty prefix 
+		 */
+		editor.doRevertToSaved();
+		
+		props = compProc.computeCompletionProposals(textViewer,	586);
+		checkProposalsOrder(props);
+
+		/* 
+		 * we are expecting among others proposals for the x, y and cp
+		 */
+		foundXProp = false;
+		boolean foundYProp = false;
+		boolean foundCpProp = false;
+		
+		for (ICompletionProposal proposal : props)
+		{
+			if (proposal.getDisplayString().startsWith("x"))
+			{
+				proposal.apply(doc);
+				result = doc.get(586, "x".length());
+				assertEquals("unexpected result of applying proposal",
+						"x", result);
+				foundXProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("y"))
+			{
+				proposal.apply(doc);
+				result = doc.get(586, "y".length());
+				assertEquals("unexpected result of applying proposal",
+						"y", result);
+				foundYProp = true;
+				undoManager.undo();
+			}
+			else if (proposal.getDisplayString().startsWith("cp"))
+			{
+				proposal.apply(doc);
+				result = doc.get(586, "cp".length());
+				assertEquals("unexpected result of applying proposal",
+						"cp", result);
+				foundCpProp = true;
+				undoManager.undo();
+			}
+
+		}
+		assertTrue("did not found proposal for the 'Blocks.Math.Edge'", 
+				foundXProp);
+		assertTrue("did not found proposal for the 'Blocks.Math.Min'", 
+				foundYProp);
+		assertTrue("did not found proposal for the 'Blocks.Math.Feedback'", 
+				foundCpProp);
+
 		
 		/*
 		 * this is a bug trigger code
@@ -593,24 +674,81 @@ public class TestModelicaCompletionProcessor extends TestCase
 		
 		/* type 'cp.' inside import_rich_model.bar */
 		editor.doRevertToSaved();
-		doc.replace(554, 0, "cp.");
+		doc.replace(586, 0, "cp.");
 		
 		/* get proposals at the end of 'Blocks.Math.' */
 		props = compProc.computeCompletionProposals(textViewer, 557);
+		checkProposalsOrder(props);
 
 		/* 
 		 * we are NOT expecting a proposal for package.mo
 		 */
 		for (ICompletionProposal proposal : props)
 		{
+			/* check that no unexpected proposals show up */
 			System.out.println(proposal.getDisplayString());
 			if (proposal.getDisplayString().startsWith("package.mo"))
 			{
 				/* not good !*/
 				fail("proposal for package.mo found");
-			}
+			}		
 		}
 
+
+		/*
+		 *  Test generating proposals inside the encapsulated
+		 *  class import_rich_model.foo with empty prefix.
+		 *  
+		 *  We must check that no proposals based on the outside
+		 *  class are returned to uss.
+		 */
+		
+		editor.doRevertToSaved();
+		/* get proposals at inside import_rich_model.foo with empty prefix */
+		props = compProc.computeCompletionProposals(textViewer, 771);
+		checkProposalsOrder(props);
+
+		/* 
+		 * we are NOT expecting a proposal for among others Modelica.Math.sin,
+		 * mm, Modelica.Blocks, Modelica.Icons 
+		 * 
+		 * we are expecting a proposal for foo_local_var
+		 */
+		boolean foundFooLocalVarProp = false;
+		for (ICompletionProposal proposal : props)
+		{
+			/* check that no unexpected proposals show up */
+			if (proposal.getDisplayString().startsWith("sin"))
+			{
+				fail("proposal for sin");
+			}
+			else if (proposal.getDisplayString().startsWith("mm"))
+			{
+				fail("proposal for mm (Modelica.Math)");
+			}
+			else if (proposal.getDisplayString().startsWith("Icons"))
+			{
+				fail("proposal for Icons");
+			}
+			else if (proposal.getDisplayString().startsWith("Blocks"))
+			{
+				fail("proposal for Blocks");
+			}
+			
+			/* check for expected proposals */
+			if (proposal.getDisplayString().startsWith("foo_local_var"))
+			{
+				proposal.apply(doc);
+				result = doc.get(771, "foo_local_var".length());
+				assertEquals("unexpected result of applying proposal",
+						"foo_local_var", result);
+				foundFooLocalVarProp = true;
+				undoManager.undo();
+			}
+
+		}
+		assertTrue("did not found proposal for the 'foo_local_var'", 
+				foundFooLocalVarProp);
 		
 		/* 
 		 * revert to saved otherwise a dialog will pop-up asking us to save
@@ -619,6 +757,33 @@ public class TestModelicaCompletionProcessor extends TestCase
 		 */
 		editor.doRevertToSaved();
 
+	}
+
+	/**
+	 * THis method check that proposals are sorted in alpabetic order
+	 * on the display string. It proposals are not sorted, this
+	 * method fails the test.
+	 */
+	private void checkProposalsOrder(ICompletionProposal[] props)
+	{
+		ICompletionProposal prevProp = null;
+
+		for (ICompletionProposal currProp : props)
+		{
+			if (prevProp != null)
+			{
+				int compRes = 
+					prevProp.getDisplayString().compareToIgnoreCase
+						(currProp.getDisplayString());
+				
+				/* 
+				 * current proposals display string must be
+				 * greater or equal to previus
+				 */
+				assertTrue("completion proposals not sorted", compRes <= 0);
+			}
+			prevProp = currProp;
+		}
 	}
 	
 	/**
