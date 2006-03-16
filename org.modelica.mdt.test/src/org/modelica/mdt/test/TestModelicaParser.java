@@ -43,6 +43,7 @@ package org.modelica.mdt.test;
 
 import java.util.Iterator;
 
+import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.ModelicaParserException;
@@ -135,6 +136,17 @@ public class TestModelicaParser extends TestCase
 	 "classline=1, classcolumn=1 }\n"+
 	"}\n";
 	
+	/*
+	 * the output of the getElements() function to test parsing
+	 */
+
+	private static final String GET_CLASS_INFO1 = 
+		"{\"model\"," +
+		"\"Chua's circuit, ns, V, A\"," +
+		"C:\\OpenModelica132\\ModelicaLibrary\\Modelica\\Electrical\\Anal" +
+		"og\\Examples\\ChuaCircuit.mo\"," +
+		"{false,false,true}," +
+		"{\"writable\",1,1,65,16}}";
 
 	/*
 	 * The expected results when getElements() output is parsed 
@@ -359,7 +371,11 @@ public class TestModelicaParser extends TestCase
 		assertEquals("foo={bar, gzonk}", v.elementAt(0).toString());
 	}
 	
-	public void testParseOmcOutput() throws ModelicaParserException
+	/**
+	 * Test actual input that omc have returned via getElementsInfo()
+	 * function.
+	 */
+	public void testParseGetElementsOutput() throws ModelicaParserException
 	{
 		List parsedList = ModelicaParser.parseList(GET_ELEMENTS_OUTPUT);
 		
@@ -384,5 +400,98 @@ public class TestModelicaParser extends TestCase
 			assertFalse("more elements then expected in the parse results",
 					elementsIterator.hasNext());
 		}
+	}
+	
+	/**
+	 * Test actual input that omc have returned via getClassInformation()
+	 * function.
+	 */
+	public void testParseGetClassInformationOutput() throws ModelicaParserException
+	{
+		List parsedList;
+		ListElement listElement;
+		List list;
+
+		parsedList = ModelicaParser.parseList(GET_CLASS_INFO1);
+		
+		assertEquals("parse resuls if of wrong length", 4, parsedList.size());
+		
+		listElement = parsedList.elementAt(0);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "\"model\"",
+				((Element)listElement).toString());
+
+		listElement = parsedList.elementAt(1);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string",
+				"Chua's circuit, ns, V, A\",\"C:\\OpenModelica132\\Modelica" +
+				"Library\\Modelica\\Electrical\\Analog\\Examples\\ChuaCircuit.mo",
+				((Element)listElement).toString());
+
+		
+		listElement = parsedList.elementAt(2);
+		assertTrue("expected list found simple element",
+				listElement instanceof List);
+		list = (List)listElement;
+		
+		assertEquals("parse resuls if of wrong length", 3, parsedList.size());
+		
+		listElement = list.elementAt(0);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "false",
+				((Element)listElement).toString());
+		
+		listElement = list.elementAt(1);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "false",
+				((Element)listElement).toString());
+		
+		listElement = list.elementAt(2);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "true",
+				((Element)listElement).toString());
+
+
+		listElement = parsedList.elementAt(3);
+		assertTrue("expected list found simple element",
+				listElement instanceof List);
+		list = (List)listElement;
+		
+		assertEquals("parse resuls if of wrong length", 5, parsedList.size());
+		
+		listElement = list.elementAt(0);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "writeable",
+				((Element)listElement).toString());
+		
+		listElement = list.elementAt(1);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "1",
+				((Element)listElement).toString());
+		
+		listElement = list.elementAt(2);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "1",
+				((Element)listElement).toString());
+		
+		listElement = list.elementAt(3);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "65",
+				((Element)listElement).toString());
+
+		listElement = list.elementAt(4);
+		assertTrue("expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("wrong string", "16",
+				((Element)listElement).toString());
 	}
 }
