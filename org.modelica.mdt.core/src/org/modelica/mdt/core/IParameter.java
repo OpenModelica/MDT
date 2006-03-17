@@ -41,8 +41,23 @@
 
 package org.modelica.mdt.core;
 
+/**
+ * A parameter is either an argument to a function or a return
+ * value from a function.
+ * 
+ * Note that almost anything in Modelica can be regarded as a function (have
+ * input and output parameters)
+ * 
+ * @author Andreas Remar
+ */
 public interface IParameter
 {
+	/**
+	 * @return the name of this parameter
+	 */
 	public String getName();
+	/**
+	 * @return the type of this parameter
+	 */
 	public String getType();
 }

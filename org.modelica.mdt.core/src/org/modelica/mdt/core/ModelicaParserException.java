@@ -41,6 +41,12 @@
 
 package org.modelica.mdt.core;
 
+/**
+ * ModelicaParserException is thrown by ModelicaParser when malformed lists
+ * are parsed.
+ * 
+ * @author Andreas Remar
+ */
 public class ModelicaParserException extends Exception
 {
 	private static final long serialVersionUID = -1679300919795844448L;

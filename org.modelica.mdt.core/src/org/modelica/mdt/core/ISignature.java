@@ -41,8 +41,22 @@
 
 package org.modelica.mdt.core;
 
+/**
+ * A signature is a functions input and output parameters
+ * 
+ * In Modelica, most anything can have input and output variables
+ *
+ * @author Andreas Remar
+ */
 public interface ISignature
 {
+	/**
+	 * @return the input parameters
+	 */
 	public IParameter[] getInputs();
+	
+	/**
+	 * @return the output parameters
+	 */
 	public IParameter[] getOutputs();
 }

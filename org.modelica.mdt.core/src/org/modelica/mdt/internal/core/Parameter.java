@@ -43,6 +43,15 @@ package org.modelica.mdt.internal.core;
 
 import org.modelica.mdt.core.IParameter;
 
+/**
+ * A parameter is either an argument to a function or a return
+ * value from a function.
+ * 
+ * Note that almost anything in Modelica can be regarded as a function (have
+ * input and output parameters)
+ * 
+ * @author Andreas Remar
+ */
 public class Parameter implements IParameter
 {
 
@@ -60,7 +69,8 @@ public class Parameter implements IParameter
 		return name;
 	}
 
-	public String getType() {
+	public String getType()
+	{
 		return type;
 	}
 }
