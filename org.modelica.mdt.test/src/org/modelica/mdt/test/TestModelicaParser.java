@@ -141,13 +141,9 @@ public class TestModelicaParser extends TestCase
 	 */
 
 	private static final String GET_CLASS_INFO1 = 
-		"{\"model\"," +
-		"\"Chua's circuit, ns, V, A\"," +
-		"C:\\OpenModelica132\\ModelicaLibrary\\Modelica\\Electrical\\Anal" +
-		"og\\Examples\\ChuaCircuit.mo\"," +
-		"{false,false,true}," +
-		"{\"writable\",1,1,65,16}}";
-
+	"{\"model\",\"Chua's circuit, ns, V, A\",\"/home/x05andre/ex/Modelica " +
+	"Library/Modelica/Electrical/Analog/Examples/ChuaCircuit.mo\",{false,f" +
+	"alse,true},{\"writable\",1,1,65,16}}";
 	/*
 	 * The expected results when getElements() output is parsed 
 	 */
@@ -413,30 +409,36 @@ public class TestModelicaParser extends TestCase
 		List list;
 
 		parsedList = ModelicaParser.parseList(GET_CLASS_INFO1);
-		
-		assertEquals("parse resuls if of wrong length", 4, parsedList.size());
+
+		assertEquals("Parse resuls is of wrong length", 5, parsedList.size());
 		
 		listElement = parsedList.elementAt(0);
-		assertTrue("expected simple element found list",
+		assertTrue("Expected simple element found list",
 				listElement instanceof Element);
-		assertEquals("wrong string", "\"model\"",
+		assertEquals("Wrong string", "\"model\"",
 				((Element)listElement).toString());
 
 		listElement = parsedList.elementAt(1);
 		assertTrue("expected simple element found list",
 				listElement instanceof Element);
-		assertEquals("wrong string",
-				"Chua's circuit, ns, V, A\",\"C:\\OpenModelica132\\Modelica" +
-				"Library\\Modelica\\Electrical\\Analog\\Examples\\ChuaCircuit.mo",
+		assertEquals("Wrong string",
+				"\"Chua's circuit, ns, V, A\"",
 				((Element)listElement).toString());
-
 		
 		listElement = parsedList.elementAt(2);
+		assertTrue("Expected simple element found list",
+				listElement instanceof Element);
+		assertEquals("Wrong string",
+				"\"/home/x05andre/ex/Modelica Library/Modelica/Electrical/Anal" +
+				"og/Examples/ChuaCircuit.mo\"",
+				((Element)listElement).toString());
+		
+		listElement = parsedList.elementAt(3);
 		assertTrue("expected list found simple element",
 				listElement instanceof List);
 		list = (List)listElement;
 		
-		assertEquals("parse resuls if of wrong length", 3, parsedList.size());
+		assertEquals("parse resuls if of wrong length", 3, list.size());
 		
 		listElement = list.elementAt(0);
 		assertTrue("expected simple element found list",
@@ -457,17 +459,17 @@ public class TestModelicaParser extends TestCase
 				((Element)listElement).toString());
 
 
-		listElement = parsedList.elementAt(3);
+		listElement = parsedList.elementAt(4);
 		assertTrue("expected list found simple element",
 				listElement instanceof List);
 		list = (List)listElement;
 		
-		assertEquals("parse resuls if of wrong length", 5, parsedList.size());
+		assertEquals("parse resuls if of wrong length", 5, list.size());
 		
 		listElement = list.elementAt(0);
 		assertTrue("expected simple element found list",
 				listElement instanceof Element);
-		assertEquals("wrong string", "writeable",
+		assertEquals("wrong string", "\"writable\"",
 				((Element)listElement).toString());
 		
 		listElement = list.elementAt(1);

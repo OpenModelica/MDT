@@ -94,20 +94,58 @@ public class ModelicaParser
 		
 		/*
 		 * Go through the string character by character, looking for commas (,)
-		 * and start ({) and end (}) of lists. 
+		 * and start ({) and end (}) of lists. Take special note of " as they
+		 * start and end strings. Inside a string, there can be , { and }
+		 * characters and also escaped characters (for example \").
 		 */
+		
+		// TODO Rewrite this using a better way of acumulating the characters.
+		// Right now, it uses string += otherString, which generates alot of
+		// strings that later are thrown away. Slowness, the slowness!
 		String subString = "";
 		int depth = 0;
 		boolean listFound = false;
+		boolean insideString = false;
 		for(int characterPosition = 0;characterPosition < str.length()
 			;characterPosition++)
 		{
-			if(str.charAt(characterPosition) == '{')
+			if(str.charAt(characterPosition) == '\\' && insideString == true)
+			{
+				/* Read this \ and the escaped character */
+				characterPosition++;
+				
+				if(characterPosition >= str.length())
+				{
+					/* This is some kind of error*/
+					throw new ModelicaParserException("String ends in \\: " 
+							+ str);
+				}
+
+				subString += "\\" + str.charAt(characterPosition);
+			}
+			else if(str.charAt(characterPosition) == '"')
+			{
+				/* If we're not inside a string, enter string mode*/
+				if(insideString == false)
+				{
+					insideString = true;
+				}
+				/* else exit it */
+				else
+				{
+					insideString = false;
+				}
+				
+				subString += '"';
+			}
+			else if(str.charAt(characterPosition) == '{' && insideString == false)
 			{
 				listFound = true;
 				depth++;
+				
+				subString += '{';
 			}
-			if(str.charAt(characterPosition) == ',' && depth == 0)
+			else if(str.charAt(characterPosition) == ',' && depth == 0 && insideString == false)
 			{
 				/*
 				 * If we're at depth 0, then we've found a list (or element)
@@ -157,19 +195,21 @@ public class ModelicaParser
 				elements.append(element);
 				subString = "";
  			}
-			else
-			{
-				subString += str.charAt(characterPosition);
-			}
-			if(str.charAt(characterPosition) == '}')
+			else if(str.charAt(characterPosition) == '}' && insideString == false)
 			{
 				depth--;
+				
+				subString += '}';
 				
 				/* Unmatched } */
 				if(depth < 0)
 				{
 					throw new ModelicaParserException("Unmatched }: ["+str+"]");
 				}
+			}
+			else
+			{
+				subString += str.charAt(characterPosition);
 			}
 		}
 		
@@ -218,6 +258,12 @@ public class ModelicaParser
 			{
 				elements.append(element);
 			}
+		}
+		
+		if(insideString == true)
+		{
+			/* We should not be inside a string at the end of the list */
+			throw new ModelicaParserException("Unterminated string: ["+str+"]");
 		}
 		
 		return elements;
