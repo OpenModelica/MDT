@@ -220,7 +220,7 @@ public class TestNewClassWizard extends TestCase
 	public void testSelectionRetention()
 	{
 		/*
-		 * pop-up wizard, change class restriction type to 'type',
+		 * pop-up wizard, change class restriction to 'type',
 		 * check that check boxes were updated and close wizard
 		 */
 		openWizardAndFetchWidgets();		
@@ -247,7 +247,7 @@ public class TestNewClassWizard extends TestCase
 					externalBody.getEnabled());
 		
 		/*
-		 * change class restriction type to 'model',
+		 * change class restriction to 'model',
 		 * check that check boxes were updated and close dialog
 		 */
 		ctester.actionSelectItem(classType, "model");
@@ -273,7 +273,7 @@ public class TestNewClassWizard extends TestCase
 					externalBody.getEnabled());
 		
 		/*
-		 * change class restriction type to 'connector',
+		 * change class restriction to 'connector',
 		 * check that check boxes were updated and close dialog
 		 */
 		ctester.actionSelectItem(classType, "connector");
@@ -300,7 +300,7 @@ public class TestNewClassWizard extends TestCase
 					externalBody.getEnabled());
 		
 		/*
-		 * change class restriction type to 'block',
+		 * change class restriction to 'block',
 		 * check that check boxes were updated and close dialog
 		 */
 		ctester.actionSelectItem(classType, "block");
@@ -327,7 +327,7 @@ public class TestNewClassWizard extends TestCase
 					externalBody.getEnabled());
 
 		/*
-		 * change class restriction type to 'record',
+		 * change class restriction to 'record',
 		 * check that check boxes were updated and close dialog
 		 */
 		ctester.actionSelectItem(classType, "record");
@@ -354,7 +354,7 @@ public class TestNewClassWizard extends TestCase
 					externalBody.getEnabled());
 
 		/*
-		 * change class restriction type to 'class',
+		 * change class restriction to 'class',
 		 * check that check boxes were updated and close dialog
 		 */
 		ctester.actionSelectItem(classType, "class");
@@ -382,7 +382,7 @@ public class TestNewClassWizard extends TestCase
 					externalBody.getEnabled());
 
 		/*
-		 * change class restriction type to 'function', check that 
+		 * change class restriction to 'function', check that 
 		 * check boxes were updated and close dialog
 		 */
 		ctester.actionSelectItem(classType, "function");

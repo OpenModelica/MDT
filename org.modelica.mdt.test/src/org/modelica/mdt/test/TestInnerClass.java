@@ -192,7 +192,7 @@ public class TestInnerClass extends TestCase
 			}
 			else if (elm instanceof IModelicaClass)
 			{
-				switch (((IModelicaClass)elm).getRestrictionType())
+				switch (((IModelicaClass)elm).getRestriction())
 				{
 				case PACKAGE:
 					a_package = (IModelicaClass)elm;

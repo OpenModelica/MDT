@@ -183,7 +183,7 @@ public class ModelicaImages
 		{
 			try
 			{
-				switch (((IModelicaClass)element).getRestrictionType())
+				switch (((IModelicaClass)element).getRestriction())
 				{
 				case PACKAGE:
 					return ModelicaImages.IMG_OBJS_PACKAGE;
@@ -204,8 +204,7 @@ public class ModelicaImages
 				default:
 					ErrorManager.logBug(UIPlugin.getSymbolicName(),
 							"IModelicaClass object of unexpected restriction " + 
-							"type " + 
-							((IModelicaClass)element).getRestrictionType() +
+							((IModelicaClass)element).getRestriction() +
 							" encountered.");
 				}
 			}

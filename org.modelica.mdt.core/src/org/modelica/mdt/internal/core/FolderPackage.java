@@ -344,10 +344,10 @@ public class FolderPackage extends ModelicaClass
 
 	}
 
-	public RestrictionType getRestrictionType() throws ConnectException
+	public Restriction getRestriction() throws ConnectException
 	{
 		/* we are a package !*/
-		return IModelicaClass.RestrictionType.PACKAGE;
+		return IModelicaClass.Restriction.PACKAGE;
 	}
 
 	public Collection<IModelicaImport> getImports()

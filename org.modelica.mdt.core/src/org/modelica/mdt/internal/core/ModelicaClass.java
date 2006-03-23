@@ -92,7 +92,7 @@ abstract public class ModelicaClass extends ModelicaElement
 	 */
 	private IFile container;
 
-	/* class attributes (restriction type, encapsulated status, etc) */
+	/* class attributes (type of restriction, encapsulated status, etc) */
 	private IClassInfo classAttributes = null;
 
 	
@@ -179,11 +179,11 @@ abstract public class ModelicaClass extends ModelicaElement
 		return getAttributes().getDefinitionLocation().getPath();
 	}
 	
-	public RestrictionType getRestrictionType() 
+	public Restriction getRestriction() 
 		throws ConnectException, CompilerInstantiationException,
 			UnexpectedReplyException, CoreException, InvocationError
 	{
-		return getAttributes().getRestrictionType();
+		return getAttributes().getRestriction();
 	}
 	
 	public boolean isEncapsulated()

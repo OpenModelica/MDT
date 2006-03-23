@@ -52,7 +52,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.core.IModelicaClass;
-import org.modelica.mdt.core.IllegalRestrictionTypeException;
+import org.modelica.mdt.core.IllegalRestrictionException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.ModelicaParserException;
@@ -650,15 +650,15 @@ public class OMCProxy implements IModelicaCompiler
 	}
 
 	/**
-	 * Gets the restriction type of a class.
+	 * Gets the type of restriction of a class.
 	 * 
 	 * @param className fully qualified class name
-	 * @return the restriction type of the class or Type.CLASS if 
+	 * @return the type of restriction of the class or Type.CLASS if 
 	 *         type can't be determined
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */
-	public IModelicaClass.RestrictionType getRestrictionType(String className)
+	public IModelicaClass.Restriction getRestriction(String className)
 		throws ConnectException, UnexpectedReplyException
 	{
 		String reply = 
@@ -678,12 +678,12 @@ public class OMCProxy implements IModelicaCompiler
 		/* fetch error string but ignore it */
 		getErrorString();
 		
-		IModelicaClass.RestrictionType type = null;
+		IModelicaClass.Restriction type = null;
 		try
 		{
-			type = IModelicaClass.RestrictionType.parse(reply);
+			type = IModelicaClass.Restriction.parse(reply);
 		}
-		catch(IllegalRestrictionTypeException e)
+		catch(IllegalRestrictionException e)
 		{
 			throw new UnexpectedReplyException("Illegal type: "
 					+ e.getMessage());
@@ -961,7 +961,7 @@ public class OMCProxy implements IModelicaCompiler
 		{
 			throw new UnexpectedReplyException(retval);
 		}
-		catch (IllegalRestrictionTypeException e)
+		catch (IllegalRestrictionException e)
 		{
 			throw new UnexpectedReplyException(retval);
 		}

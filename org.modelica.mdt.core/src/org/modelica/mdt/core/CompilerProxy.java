@@ -180,11 +180,11 @@ public class CompilerProxy
 		return getCompiler().getClassLocation(className);
 	}
 	
-	public static IModelicaClass.RestrictionType getRestrictionType(String className)
+	public static IModelicaClass.Restriction getRestriction(String className)
 		throws ConnectException, CompilerInstantiationException,
 			   UnexpectedReplyException
 	{
-		return getCompiler().getRestrictionType(className);
+		return getCompiler().getRestriction(className);
 	}
 	
 	/**

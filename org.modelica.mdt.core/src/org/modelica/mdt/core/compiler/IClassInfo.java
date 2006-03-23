@@ -41,7 +41,7 @@
 
 package org.modelica.mdt.core.compiler;
 
-import org.modelica.mdt.core.IModelicaClass.RestrictionType;
+import org.modelica.mdt.core.IModelicaClass.Restriction;
 
 /**
  * Provide abstract interface to convay information about a modelica class.
@@ -51,7 +51,7 @@ public interface IClassInfo
 	/**
 	 * @return restriction type of the class
 	 */
-	public RestrictionType getRestrictionType();
+	public Restriction getRestriction();
 	
 	/**
 	 * @return true if the class is encapsulated false otherwise

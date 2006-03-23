@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -42,11 +42,11 @@
 package org.modelica.mdt.omc.internal;
 
 import org.modelica.mdt.core.Element;
-import org.modelica.mdt.core.IllegalRestrictionTypeException;
+import org.modelica.mdt.core.IllegalRestrictionException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.ModelicaParserException;
-import org.modelica.mdt.core.IModelicaClass.RestrictionType;
+import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.ModelicaParser;
@@ -61,7 +61,7 @@ import org.modelica.mdt.internal.core.DefinitionLocation;
  */
 public class ClassInfo implements IClassInfo
 {
-	private RestrictionType restrictionType;
+	private Restriction restrictionType;
 	private boolean isEncapsulated;
 	private DefinitionLocation defLocation;
 	
@@ -71,11 +71,11 @@ public class ClassInfo implements IClassInfo
 	 * 
 	 * @param rawList the row output
 	 * @throws ModelicaParserException if could not parse rawList
-	 * @throws IllegalRestrictionTypeException if could not parse provided restriction type
+	 * @throws IllegalRestrictionException if could not parse provided restriction type
 	 * @throws UnexpectedReplyException if the contents of the list are wierd
 	 */
 	public ClassInfo(String rawList) throws ModelicaParserException,
-		IllegalRestrictionTypeException, UnexpectedReplyException
+		IllegalRestrictionException, UnexpectedReplyException
 	{
 		String sourceFilePath = null;
 		List defLocList = null;
@@ -144,7 +144,7 @@ public class ClassInfo implements IClassInfo
 	 * Parse the element that represent restriction type
 	 */
 	private void parseRestrictionType(ListElement le)
-		throws UnexpectedReplyException, IllegalRestrictionTypeException
+		throws UnexpectedReplyException, IllegalRestrictionException
 	{
 		if (!(le instanceof Element))
 		{
@@ -167,7 +167,7 @@ public class ClassInfo implements IClassInfo
 		}
 		str = str.substring(1, str.length() - 1);
 		
-		restrictionType = RestrictionType.parse(str);
+		restrictionType = Restriction.parse(str);
 	}
 	
 	/**
@@ -250,9 +250,9 @@ public class ClassInfo implements IClassInfo
 
 
 	/**
-	 * @see org.modelica.mdt.core.compiler.IClassInfo#getRestrictionType()
+	 * @see org.modelica.mdt.core.compiler.IClassInfo#getRestriction()
 	 */
-	public RestrictionType getRestrictionType()
+	public Restriction getRestriction()
 	{
 		return restrictionType;
 	}

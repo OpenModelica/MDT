@@ -50,7 +50,7 @@ import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IStandardLibrary;
-import org.modelica.mdt.core.IModelicaClass.RestrictionType;
+import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
 
@@ -87,8 +87,8 @@ public class ModelicaElementSorter extends ViewerSorter
 			 */
 			try
 			{
-				if (((IModelicaClass)element).getRestrictionType() 
-						== RestrictionType.PACKAGE)
+				if (((IModelicaClass)element).getRestriction() 
+						== Restriction.PACKAGE)
 				{
 					return PACKAGE_ORDER;
 				}

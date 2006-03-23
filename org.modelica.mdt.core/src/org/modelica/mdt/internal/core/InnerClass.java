@@ -82,7 +82,7 @@ public class InnerClass extends ModelicaClass
 	 * 
 	 * currently following contens of a modelica class are available for queries:
 	 * 
-	 * - restriction type of the class
+	 * - restriction of the class
 	 * - encapsulated status of the class
 	 * - class definition location in the source file
 	 * - subclasses/subpackages
@@ -101,7 +101,7 @@ public class InnerClass extends ModelicaClass
 	 * This information is callectively called for 'class components'.
 	 * 
 	 *  getClassInfo() provides:
-	 * 		- restriction type of the class
+	 * 		- restriction of the class
 	 * 		- encapsulated status of the class
 	 * 		- class definition location in the source file
 	 * This information is callectively called for 'class attributes'.
@@ -141,7 +141,7 @@ public class InnerClass extends ModelicaClass
 	 * @param name
 	 */
 	public InnerClass(IModelicaClass parentNamespace, 
-			String name, RestrictionType restrictionType)
+			String name, Restriction restriction)
 	{
 		this(null, parentNamespace, name);
 	}

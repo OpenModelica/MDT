@@ -45,7 +45,7 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.modelica.mdt.core.List;
-import org.modelica.mdt.core.IModelicaClass.RestrictionType;
+import org.modelica.mdt.core.IModelicaClass.Restriction;
 
 /**
  * The interface to a modelica compiler.
@@ -111,7 +111,7 @@ public interface IModelicaCompiler
 	 * @return the restriction type of the class
 	 * @throws UnexpectedReplyException 
 	 */
-	public RestrictionType getRestrictionType(String className)
+	public Restriction getRestriction(String className)
 			throws ConnectException, UnexpectedReplyException;
 	/**
 	 * The method returns a list of top level packages in the standard library.

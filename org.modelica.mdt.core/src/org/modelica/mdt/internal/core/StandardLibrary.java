@@ -75,7 +75,7 @@ public class StandardLibrary  extends PlatformObject
 			for (String packageName : CompilerProxy.getStandardLibrary())
 			{
 				packages.add(new InnerClass(null, packageName, 
-							IModelicaClass.RestrictionType.PACKAGE));
+							IModelicaClass.Restriction.PACKAGE));
 			}
 		}
 		

@@ -48,7 +48,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
-import org.modelica.mdt.core.IModelicaClass.RestrictionType;
+import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -62,8 +62,8 @@ import org.modelica.mdt.test.util.Utility;
 
 import junit.framework.TestCase;
 
-import static org.modelica.mdt.core.IModelicaClass.RestrictionType.MODEL;
-import static org.modelica.mdt.core.IModelicaClass.RestrictionType.PACKAGE;
+import static org.modelica.mdt.core.IModelicaClass.Restriction.MODEL;
+import static org.modelica.mdt.core.IModelicaClass.Restriction.PACKAGE;
 
 /**
  * test org.modelica.mdt.core.CompilerProxy class' code 
@@ -105,10 +105,10 @@ public class TestCompilerProxy extends TestCase
 	}
 	
 	/**
-	 * test CompilerProxy.getRestrictionType() 
+	 * test CompilerProxy.getRestriction() 
 	 * @throws CompilerInstantiationException 
 	 */
-	public void testGetRestrictionType() 
+	public void testGetRestriction() 
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
@@ -125,49 +125,49 @@ public class TestCompilerProxy extends TestCase
 		assertTrue(v.size() >= 1);
 		assertTrue(v.contains("Modelica"));
 		
-		if (CompilerProxy.getRestrictionType("Modelica") != RestrictionType.PACKAGE)
+		if (CompilerProxy.getRestriction("Modelica") != Restriction.PACKAGE)
 		{
-			fail("Modelica class' restriction type is wrong");
+			fail("Modelica class' restriction is wrong");
 		}
-		if (CompilerProxy.getRestrictionType("Modelica.Blocks.Examples.BusUsage") 
-				!= RestrictionType.MODEL)
+		if (CompilerProxy.getRestriction("Modelica.Blocks.Examples.BusUsage") 
+				!= Restriction.MODEL)
 		{
 			fail("Modelica.Blocks.Examples.BusUsage class' " + 
-					"restriction type is wrong");
+					"restriction is wrong");
 		}
-		if (CompilerProxy.getRestrictionType("Modelica.Math.log") 
-				!= RestrictionType.FUNCTION)
+		if (CompilerProxy.getRestriction("Modelica.Math.log") 
+				!= Restriction.FUNCTION)
 		{
-			fail("Modelica.Math.log class' restriction type is wrong");
+			fail("Modelica.Math.log class' restriction is wrong");
 		}
-		if (CompilerProxy.getRestrictionType("Modelica.Icons.Record") 
-				!= RestrictionType.RECORD)
+		if (CompilerProxy.getRestriction("Modelica.Icons.Record") 
+				!= Restriction.RECORD)
 		{
-			fail("Modelica.Icons.Record class' restriction type is wrong");
+			fail("Modelica.Icons.Record class' restriction is wrong");
 		}
-		if (CompilerProxy.getRestrictionType("Modelica.Electrical.Analog.Interfaces.Pin") 
-				!= RestrictionType.CONNECTOR)
+		if (CompilerProxy.getRestriction("Modelica.Electrical.Analog.Interfaces.Pin") 
+				!= Restriction.CONNECTOR)
 		{
 			fail("Modelica.Blocks.Interfaces.BooleanPort class' " + 
-					"restriction type is wrong");
+					"restriction is wrong");
 		}
-		if (CompilerProxy.getRestrictionType("Modelica.Blocks.Continuous.Der") 
-				!= RestrictionType.BLOCK)
+		if (CompilerProxy.getRestriction("Modelica.Blocks.Continuous.Der") 
+				!= Restriction.BLOCK)
 		{
 			fail("Modelica.Blocks.Continuous.Der class' " + 
-					"restriction type is wrong");
+					"restriction is wrong");
 		}
-		if (CompilerProxy.getRestrictionType("Modelica.SIunits.Lethargy") 
-				!= RestrictionType.TYPE)
+		if (CompilerProxy.getRestriction("Modelica.SIunits.Lethargy") 
+				!= Restriction.TYPE)
 		{
-			fail("Modelica.SIunits.Lethargy class' restriction type is wrong");
+			fail("Modelica.SIunits.Lethargy class' restriction is wrong");
 		}
 		
 		CompilerProxy.loadSourceFile(nested_models_mo);
-		if (CompilerProxy.getRestrictionType("hepp.hehehe") 
-				!= RestrictionType.CLASS)
+		if (CompilerProxy.getRestriction("hepp.hehehe") 
+				!= Restriction.CLASS)
 		{
-			fail("hepp.hehehe class' restriction type is wrong");
+			fail("hepp.hehehe class' restriction is wrong");
 		}
 	}
 	
@@ -289,7 +289,7 @@ public class TestCompilerProxy extends TestCase
 		 * and make sure the returned info checks out
 		 */
 		ci = CompilerProxy.getClassInfo("nested_models");
-		assertEquals("wrong restriction type", MODEL, ci.getRestrictionType());
+		assertEquals("wrong type of restriction", MODEL, ci.getRestriction());
 		assertFalse("wrong encapsulated status", ci.getEncapsulated());
 		loc = ci.getDefinitionLocation();
 		assertTrue("fishy path", loc.getPath().endsWith("nested_models.mo"));
@@ -301,7 +301,7 @@ public class TestCompilerProxy extends TestCase
 		 * and make sure the returned info checks out
 		 */
 		ci = CompilerProxy.getClassInfo("file_package1");
-		assertEquals("wrong restriction type", PACKAGE, ci.getRestrictionType());
+		assertEquals("wrong type of restriction", PACKAGE, ci.getRestriction());
 		assertFalse("wrong encapsulated status", ci.getEncapsulated());
 		loc = ci.getDefinitionLocation();
 		assertTrue("fishy path", loc.getPath().endsWith("file_package.mo"));
@@ -309,7 +309,7 @@ public class TestCompilerProxy extends TestCase
 		assertEquals("wring start offset", 61, loc.getRegion().getLength());
 		
 		ci = CompilerProxy.getClassInfo("file_package2");
-		assertEquals("wrong restriction type", PACKAGE, ci.getRestrictionType());
+		assertEquals("wrong type of restriction", PACKAGE, ci.getRestriction());
 		assertTrue("wrong encapsulated status", ci.getEncapsulated());
 		loc = ci.getDefinitionLocation();
 		assertTrue("fishy path", loc.getPath().endsWith("file_package.mo"));

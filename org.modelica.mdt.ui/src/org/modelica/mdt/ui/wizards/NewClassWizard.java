@@ -171,7 +171,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 	        /* class type field */
 	        l = new Label(composite, SWT.LEFT | SWT.WRAP);
-	        l.setText("Type:");
+	        l.setText("Restriction:");
 	        gd = new GridData();
 	        gd.horizontalAlignment = GridData.BEGINNING;
 	        l.setLayoutData(gd);
@@ -191,7 +191,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 				public void widgetSelected(SelectionEvent e)
 				{
-					restrictionTypeChanged();
+					restrictionChanged();
 	        		lastClassTypeSelected = classType.getSelectionIndex();
 				}
 
@@ -257,7 +257,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	         * affects thiers status (can't set status on unexsiting widgets)
 	         */
 	        classType.select(lastClassTypeSelected);
-	        restrictionTypeChanged();
+	        restrictionChanged();
 		}
 
 		/**
@@ -267,7 +267,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 		 * This method should be called whenever changes are made to the
 		 * combo's selection.
 		 */
-		private void restrictionTypeChanged()
+		private void restrictionChanged()
 		{
 			/*
 			 * update state of the modifiers checkboxes

@@ -41,11 +41,11 @@
 
 package org.modelica.mdt.core;
 
-public class IllegalRestrictionTypeException extends Exception
+public class IllegalRestrictionException extends Exception
 {
 	private static final long serialVersionUID = 4144616765888453524L;
 
-	public IllegalRestrictionTypeException(String error)
+	public IllegalRestrictionException(String error)
 	{
 		super(error);
 	}

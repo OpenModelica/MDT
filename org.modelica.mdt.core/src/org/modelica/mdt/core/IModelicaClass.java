@@ -53,18 +53,18 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public interface IModelicaClass extends IModelicaElement, IParent
 {
-	public enum RestrictionType 
+	public enum Restriction 
 	{ 
 		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE;
 		
 		/**
-		 * @param text the name of restriction type
-		 * @return the restriction type provied
-		 * @throws IllegalRestrictionTypeException if could not parse 
-		 * restriction type
+		 * @param text the type of restriction
+		 * @return the restriction provided
+		 * @throws IllegalRestrictionException if unable to parse
+		 * restriction
 		 */
-		public static RestrictionType parse(String text) 
-			throws IllegalRestrictionTypeException
+		public static Restriction parse(String text) 
+			throws IllegalRestrictionException
 		{
 			if (text.equalsIgnoreCase("CLASS"))
 			{
@@ -103,7 +103,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 			 * this is an error condition, classRestriction is of unexpected
 			 * type
 			 */
-			throw new IllegalRestrictionTypeException(text);
+			throw new IllegalRestrictionException(text);
 		}
 	};
 
@@ -118,7 +118,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	/**
 	 * @return the restriction type of this class
 	 */
-	public RestrictionType getRestrictionType()
+	public Restriction getRestriction()
 		throws ConnectException, CompilerInstantiationException,
 				UnexpectedReplyException, CoreException, InvocationError;
 
