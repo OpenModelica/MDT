@@ -46,7 +46,9 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -100,7 +102,7 @@ public class ModelicaEditor extends TextEditor
 		super.initializeEditor();
 		setSourceViewerConfiguration(new ModelicaSourceViewerConfig(this));
 	}
-	
+		
 	protected void createActions() 
 	{
 		super.createActions();
@@ -132,6 +134,15 @@ public class ModelicaEditor extends TextEditor
         			getSharedColors());
 		projectionSupport.install();
 		
+		/* adrpo: add an auto edit strategy */
+		ITextViewerExtension2 extension = (ITextViewerExtension2)viewer;
+		if (extension != null)
+		{
+	 		extension.prependAutoEditStrategy(
+	 				new ModelicaAutoIdentStrategy(), 
+	 				IDocument.DEFAULT_CONTENT_TYPE);
+		}
+				
 		/* turn projection mode on */
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 		
@@ -162,7 +173,7 @@ public class ModelicaEditor extends TextEditor
 		
 		return ((ModelicaElementEditorInput) input).getSourceFile();
 	}
-
+	
 	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, 
 			IVerticalRuler ruler, int styles)
@@ -170,7 +181,7 @@ public class ModelicaEditor extends TextEditor
 		/*
 		 * setup the viewer that is capable of text folding
 		 */
-        ISourceViewer viewer = 
+		ISourceViewer viewer = 
         		new ProjectionViewer(parent, ruler, getOverviewRuler(), 
         				isOverviewRulerVisible(), styles);
 

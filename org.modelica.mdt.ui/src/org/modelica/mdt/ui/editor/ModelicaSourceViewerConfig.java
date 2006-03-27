@@ -54,7 +54,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-
 /**
  * @author Peter Bunus
  */
@@ -90,10 +89,9 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getTagScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-		
 		return reconciler;
 	}
-
+	
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
 	{
 		ContentAssistant assistant = new ContentAssistant();
@@ -115,6 +113,7 @@ public class ModelicaSourceViewerConfig extends SourceViewerConfiguration
 		return assistant;
 	}
 	
+	//TODO Adrian Pop, please add the tab length to the Modelica Preferences page!
 	public int getTabWidth(ISourceViewer sourceViewer) 
 	{
 		/* return the peter fritzson constant */

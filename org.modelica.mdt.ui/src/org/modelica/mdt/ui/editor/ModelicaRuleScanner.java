@@ -66,6 +66,8 @@ import org.eclipse.swt.widgets.Display;
  * 
  * 2005-09-14, Andreas Remar
  *    Recoded from scratch, most code abducted from PyDev
+ * 2006-03-27, Adrian Pop
+ *    Changed so that bold is used only for keywords and error tokens.
  */
 public class ModelicaRuleScanner extends RuleBasedScanner 
 {
@@ -117,8 +119,8 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 			"then","time","true","type","when","while","within",
 			
 			/* The following are Meta-Modelica Keywords */
-			"as", "case", "list", "local", "match", "matchcontinue" ,
-			"tuple", "uniontype"
+			"as", "case", "equality", "failure", "list", "local", "match", 
+			"matchcontinue" , "tuple", "uniontype"
 		};
 		
 		public ModelicaKeywordDetector() 
@@ -144,7 +146,11 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 		/* keywords list has to be alphabetized for this to work properly */
 		static public String[] keywords = 
 		{
-			"Boolean","Integer","Real","String"
+			"Boolean",
+			"Integer",
+			"Option" /* Option is in MetaModelica */,
+			"Real",
+			"String"
 		};
 
 		public ModelicaTypeDetector() 
@@ -191,15 +197,15 @@ public class ModelicaRuleScanner extends RuleBasedScanner
 	private void setupRules()
 	{
 		IToken commentToken = 
-			new Token(new TextAttribute(COMMENT_COLOR,null,SWT.BOLD));
+			new Token(new TextAttribute(COMMENT_COLOR,null,SWT.NORMAL));
 		IToken keywordToken = 
 			new Token(new TextAttribute(KEYWORD_COLOR,null,SWT.BOLD));
 		IToken defaultToken = 
-			new Token(new TextAttribute(CODE_COLOR,null,SWT.BOLD));
+			new Token(new TextAttribute(CODE_COLOR,null,SWT.NORMAL));
 		IToken typeToken = 
-			new Token(new TextAttribute(TYPE_COLOR,null,SWT.BOLD));
+			new Token(new TextAttribute(TYPE_COLOR,null,SWT.NORMAL));
 		IToken numberToken = 
-			new Token(new TextAttribute(NUMBER_COLOR,null,SWT.BOLD));
+			new Token(new TextAttribute(NUMBER_COLOR,null,SWT.NORMAL));
 		IToken errorToken = 
 			new Token(new TextAttribute(ERROR_COLOR,null,SWT.BOLD));
 
