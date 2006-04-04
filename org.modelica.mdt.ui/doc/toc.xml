@@ -17,5 +17,9 @@
   <topic label="Building modelica projects" href="doc/ch3.html">
       <topic label="Creating a builder" href="doc/ch3.html#creating_a_builder"/>
   </topic>
+  
+  <topic label="Troubleshooting" href="doc/ch4.html">
+  
+  </topic>
 
 </toc>

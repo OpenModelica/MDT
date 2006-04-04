@@ -1,0 +1,42 @@
+<html>
+<body>
+<h1>Troubleshooting</h1>
+
+<div align="right">
+<i>Nobody is gonna read this section.</i><br>&#8211; Elmir Jagudin
+</div>
+
+The following are some common problems and officially proposed solutions.
+
+<h2>Problems using the Modelica perspective</h2>
+<p><i>Problem: You have problems switching to the Modelica perspective, or have
+problems with using any of the Modelica views.</i></p>
+<p>Solution: Make sure that you have Java 5.0 (aka 1.5) installed on your
+system. If you get an error message that says "Unsupported major.minor version
+49.0" then that is a strong indication that you have an old version of Java.</p>
+
+<h2>An error message reporting that a compatibility problem when communicating
+with OMC has occured</h2>
+<p><i>Problem: <img src="pix/compatibility_error_dialog.png"></i></p>
+<p>Solution: Make sure that you have a correct version of OMC installed. See
+<a href="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/">
+http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/</a> for information
+about the currently supported OMC version.</p>
+
+<h2>You are sure that you have the right version of OMC but there are still
+problems</h2>
+<p><i>Problem: This problem can arise if you have upgraded OMC but an old version
+of OMC is still running in the background.</i></p>
+<p>Solution: Terminate all OMC processes. They're typically named after the OMC
+binary, i.e. omc.exe or omc. If the problem persists, as a last resort, restart
+your computer.</p>
+
+<h2>Other strange errors happen when using MDT</h2>
+<p><i>Problem: If you, for example, can choose from two different Modelica
+perspectives when choosing perspective.</i></p>
+<p>Solution: This probably means that you have two or more versions of MDT
+installed. To remove any old versions, go into the eclipse/plugins folder and
+remove all folders labeled with older versions of MDT.</p>
+
+</body>
+</html>
