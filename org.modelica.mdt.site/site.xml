@@ -15,6 +15,9 @@
    <feature url="features/org.modelica.mdt_0.6.0.jar" id="org.modelica.mdt" version="0.6.0">
       <category name="modelica"/>
    </feature>
+   <feature url="features/org.modelica.mdt_0.6.1.jar" id="org.modelica.mdt" version="0.6.1">
+      <category name="modelica"/>
+   </feature>
    <category-def name="modelica" label="Modelica Tools">
       <description>
          Tools for  Modelica
