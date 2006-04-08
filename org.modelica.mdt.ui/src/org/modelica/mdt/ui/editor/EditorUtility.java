@@ -141,6 +141,11 @@ public class EditorUtility
 		}		
 	}
 	
+	/**
+	 * Opens a file located in the workspace in it's default editor
+	 * 
+	 * @param file the file to open
+	 */
 	private static IEditorPart openInEditor(IFile file) 
 		throws PartInitException 
 	{

@@ -95,8 +95,6 @@ public interface IModelicaElement extends IAdaptable
 	 * 
 	 * If the element is not defined in a file, null is returned.
 	 * 
-	 * Remark: due to limitations in the OMC, the actual region returned is
-	 * the begining and end of first line of the elements definition.
 	 * @throws UnexpectedReplyException 
 	 * @throws ConnectException 
 	 * @throws CoreException 
