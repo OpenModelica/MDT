@@ -55,7 +55,7 @@ import org.eclipse.jface.text.TextUtilities;
  * @author: Adrian Pop
  */
 
-class ModelicaAutoIdentStrategy implements IAutoEditStrategy
+class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 {
 
 	static public class key 

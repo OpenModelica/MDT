@@ -84,7 +84,7 @@ import org.modelica.mdt.internal.core.ErrorManager;
  *  - modelica syntax highlighting
  *  - content assiastant
  *  - info-pops
- *  - action that invokes contet assisten on ctrl+space
+ *  - action that invokes content assist on ctrl+space
  *  - folding(collapsing) of blocks of source code
  * 
  * @author Peter Bunus
@@ -139,7 +139,7 @@ public class ModelicaEditor extends TextEditor
 		if (extension != null)
 		{
 	 		extension.prependAutoEditStrategy(
-	 				new ModelicaAutoIdentStrategy(), 
+	 				new ModelicaAutoIndentStrategy(), 
 	 				IDocument.DEFAULT_CONTENT_TYPE);
 		}
 				
