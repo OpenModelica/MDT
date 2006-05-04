@@ -43,6 +43,8 @@ package org.modelica.mdt.core.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.graphics.RGB;
 
 import org.modelica.mdt.internal.core.CorePlugin;
 
@@ -81,6 +83,13 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String CUSTOM_OMC_PATH = 
 		"CustomOmcPath";	
 	
+	protected final static String 
+		EDITOR_MATCHING_BRACKETS="matchingBrackets";
+	protected final static String 
+		EDITOR_MATCHING_BRACKETS_COLOR=  "matchingBracketsColor";
+	protected final static String 
+		EDITOR_TAB_WIDTH =  "tabWidth";	
+	
 	private static IPreferenceStore store = null;
 	
 	/**
@@ -96,6 +105,11 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		store.setDefault(DISPLAY_COMPATIBILTY_ERRORS, true);
 		store.setDefault(USE_STANDARD_OMC_PATH, true);
 		store.setDefault(CUSTOM_OMC_PATH, "");
+		
+		store.setDefault(EDITOR_MATCHING_BRACKETS, true);
+		PreferenceConverter.setDefault(store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB(192, 192, 192));		
+
+		store.setDefault(EDITOR_TAB_WIDTH, 2);
 	}
 	
 	private static IPreferenceStore getStore() 

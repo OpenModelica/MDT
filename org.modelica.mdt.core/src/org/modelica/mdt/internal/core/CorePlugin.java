@@ -207,5 +207,7 @@ public class CorePlugin extends AbstractUIPlugin
 		return res;
 	}
 
+	public static final String TAB = "tab"; //$NON-NLS-1$
+	public static final String SPACE = "space"; //$NON-NLS-1$
 	
 }
