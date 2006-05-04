@@ -100,6 +100,12 @@
             id="org.modelica.mdt.ui.modelica"
             name="Modelica"/>
    </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.modelica.mdt.ui.text.ModelicaDocumentSetupParticipant"
+            extensions="mo"/>
+   </extension>
    
    
 </plugin>

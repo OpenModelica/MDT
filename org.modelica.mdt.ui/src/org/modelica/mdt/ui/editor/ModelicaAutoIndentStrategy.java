@@ -41,12 +41,18 @@
 
 package org.modelica.mdt.ui.editor;
 
+import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.ui.text.ModelicaHeuristicScanner;
+import org.modelica.mdt.ui.text.ModelicaIndenter;
+import org.modelica.mdt.ui.text.Symbols;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * This class implements the auto indent strategy for modelica source
@@ -62,12 +68,27 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 	{
 		protected String name;
 		protected boolean indentPlus;
-		protected boolean indentMinus;		
-		public key(String name, boolean indentPlus, boolean indentMinus)
+		protected boolean indentMinus;
+		/* these specify what should we do with the current line when
+		 * pressing \n. Example: end Ident;\n should indent this line with a -
+		 */
+		protected boolean indentCurrentPlus; 
+		protected boolean indentCurrentMinus;
+		public key(
+			String name, 
+			boolean indentPlus, 
+			boolean indentMinus,
+			boolean indentCurrentPlus,
+			boolean indentCurrentMinus)
 		{
-			this.name        = name;
-			this.indentPlus  = indentPlus;  /* should we indent++ */
-			this.indentMinus = indentMinus; /* should we indent-- */
+			this.name               = name; /* the name of the key */
+			this.indentPlus         = indentPlus;  /* should we indent++ */
+			this.indentMinus        = indentMinus; /* should we indent-- */
+			/* these specify what should we do with the current line when
+			 * pressing \n 
+			 */
+			this.indentCurrentPlus  = indentCurrentPlus;
+			this.indentCurrentMinus = indentCurrentMinus;
 		}
 		
 		String getName() { return name; }
@@ -78,75 +99,75 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 	/* keywords that influence indenting */
 	static public key[] keywords = 
 		{
-			new key("algorithm", true, false),
-			new key("and", false, false),
-			new key("annotation", false, false), 
-			new key("assert", false, false), 
-			new key("block", true, false), 
-			new key("break", false, false),
-			new key("class", true, false), 
-			new key("connect", false, false), 
-			new key("connector", true, false), 
-			new key("constant", false, false), 
-			new key("der", false, false),
-			new key("discrete", false, false),
-			new key("each", false, false), 
-			new key("else", false, false), 
-			new key("elseif", false, false), 
-			new key("elsewhen", false, false), 
-			new key("encapsulated", false, false), 
-			new key("end", false, true),
-			new key("enumeration", false, false), 
-			new key("equation", true, false), 
-			new key("extends", false, false), 
-			new key("external", false, false), 
-			new key("false", false, false), 
-			new key("final", false, false),
-			new key("flow", false, false), 
-			new key("for", false, false), 
-			new key("function", true, false), 
-			new key("if", false, false), 
-			new key("import", false, false), 
-			new key("in", false, false), 
-			new key("initial", false, false), 
-			new key("inner", false, false),
-			new key("input", false, false), 
-			new key("loop", false, false), 
-			new key("model", true, false), 
-			new key("not", false, false), 
-			new key("or", false, false), 
-			new key("outer", false, false),	
-			new key("output", false, false), 
-			new key("overload", false, false), 
-			new key("package", true, false), 
-			new key("parameter", false, false), 
-			new key("partial", false, false), 
-			new key("protected", false, false), 
-			new key("public", false, false), 
-			new key("record", true, false), 
-			new key("redeclare", false, false), 
-			new key("replacable", false, false), 
-			new key("return", false, false),
-			new key("terminate", false, false), 
-			new key("then", true, false), 
-			new key("time", false, false), 
-			new key("true", false, false), 
-			new key("type", true, false), 
-			new key("when", false, false), 
-			new key("while", true, false),
-			new key("within", true, false),
+			new key("algorithm", true, false, false, false),
+			new key("and", false, false, false, false),
+			new key("annotation", false, false, false, false), 
+			new key("assert", false, false, false, false), 
+			new key("block", true, false, false, false), 
+			new key("break", false, false, false, false),
+			new key("class", true, false, false, false), 
+			new key("connect", false, false, false, false), 
+			new key("connector", true, false, false, false), 
+			new key("constant", false, false, false, false), 
+			new key("der", false, false, false, false),
+			new key("discrete", false, false, false, false),
+			new key("each", false, false, false, false), 
+			new key("else", false, false, false, false), 
+			new key("elseif", false, false, false, false), 
+			new key("elsewhen", false, false, false, false), 
+			new key("encapsulated", false, false, false, false), 
+			new key("end", false, true, false, true),
+			new key("enumeration", false, false, false, false), 
+			new key("equation", true, false, false, false), 
+			new key("extends", false, false, false, false), 
+			new key("external", false, false, false, false), 
+			new key("false", false, false, false, false), 
+			new key("final", false, false, false, false),
+			new key("flow", false, false, false, false), 
+			new key("for", false, false, false, false), 
+			new key("function", true, false, false, false), 
+			new key("if", false, false, false, false), 
+			new key("import", false, false, false, false), 
+			new key("in", false, false, false, false), 
+			new key("initial", false, false, false, false), 
+			new key("inner", false, false, false, false),
+			new key("input", false, false, false, false), 
+			new key("loop", false, false, false, false), 
+			new key("model", true, false, false, false), 
+			new key("not", false, false, false, false), 
+			new key("or", false, false, false, false), 
+			new key("outer", false, false, false, false),	
+			new key("output", false, false, false, false), 
+			new key("overload", false, false, false, false), 
+			new key("package", true, false, false, false), 
+			new key("parameter", false, false, false, false), 
+			new key("partial", false, false, false, false), 
+			new key("protected", false, false, false, false), 
+			new key("public", false, false, false, false), 
+			new key("record", true, false, false, false), 
+			new key("redeclare", false, false, false, false), 
+			new key("replacable", false, false, false, false), 
+			new key("return", false, false, false, false),
+			new key("terminate", false, false, false, false), 
+			new key("then", true, false, false, false), 
+			new key("time", false, false, false, false), 
+			new key("true", false, false, false, false), 
+			new key("type", true, false, false, false), 
+			new key("when", false, false, false, false), 
+			new key("while", true, false, false, false),
+			new key("within", true, false, false, false),
 			
 			/* The following are Meta-Modelica Keywords */
-			new key("as", false, false), 
-			new key("case", true, false), 
-			new key("equality", false, false), 
-			new key("failure", false, false), 
-			new key("list", false, false), 
-			new key("local", true, false), 
-			new key("match", true, false), 
-			new key("matchcontinue", true, false),
-			new key("tuple", false, false), 
-			new key("uniontype", true, false)
+			new key("as", false, false, false, false), 
+			new key("case", true, false, false, true), 
+			new key("equality", false, false, false, false), 
+			new key("failure", false, false, false, false), 
+			new key("list", false, false, false, false), 
+			new key("local", true, false, false, false), 
+			new key("match", true, false, false, false), 
+			new key("matchcontinue", true, false, false, false),
+			new key("tuple", false, false, false, false), 
+			new key("uniontype", true, false, false, false)
 		};
 
 
@@ -192,13 +213,14 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 
 
 	/**
+	 * First sees if the previous line contains the "end" keyword and if it does
+	 * it decreases the indent and then:
 	 * Copies the indentation of the previous line and
 	 * adds a \t if we have one of these keywords in the previous line:
 	 *   class|model|package|function|algorithm|equation|match|matchcontinue|case|
 	 *   then|else|public|protected|record|uniontype|block|local.
 	 * Decrease indent with \t if the inserted text contains: 
-	 *   class|model|package|function|algorithm|equation|match|matchcontinue|case|
-	 *   else|public|protected|record|uniontype|block
+	 *   end|case.
 	 * 
 	 * @param d
 	 *            the document to work on
@@ -217,25 +239,18 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 		try 
 		{
 			/* find start of line */
-
-
 			int p = (c.offset == d.getLength() ? c.offset - 1 : c.offset);
 			IRegion info = d.getLineInformationOfOffset(p);
 			int start = info.getOffset();
 
-
 			/* find white spaces */
-
 			int end = findEndOfWhiteSpace(d, start, c.offset);
-
-
+			
 			StringBuffer buf = new StringBuffer(c.text);
-
-
+			
+			
 			if (end > start) 
 			{
-
-
 				/* append to input */
 				buf.append(d.get(start, end - start));
 			}
@@ -243,7 +258,7 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 			/* adrpo --
 			 *  we copy the indentation from line above.
 			 *  and now we need to decide if we increase/decrease 
-			 *  the indent
+			 *  the indent 
 			 */
 			/* take the text appearing in this line and do some
 			 * checking on it. 
@@ -313,13 +328,129 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 		case '\t':
 			smartIndentOnTab(document, command);
 			break;
-
-
-			/* add more here if needed */
-			/* ok */
+		case 'e':
+			smartIndentUponE(document, command);
+			break;
+		}
+	}
+	
+	private String getIndentOfLine(IDocument d, int line) throws BadLocationException {
+		if (line > -1) {
+			int start= d.getLineOffset(line);
+			int end= start + d.getLineLength(line) - 1;
+			int whiteEnd= findEndOfWhiteSpace(d, start, end);
+			return d.get(start, whiteEnd - start);
+		} else {
+			return ""; //$NON-NLS-1$
 		}
 	}
 
+	private int getStringEnd(IDocument d, int offset, int endOffset, char ch) throws BadLocationException {
+		while (offset < endOffset) {
+			char curr= d.getChar(offset);
+			offset++;
+			if (curr == '\\') {
+				// ignore escaped characters
+				offset++;
+			} else if (curr == ch) {
+				return offset;
+			}
+		}
+		return endOffset;
+	}
+	
+	private void smartIndentUponE(IDocument d, DocumentCommand c) {
+		if (c.offset < 4 || d.getLength() == 0)
+			return;
+
+		try {
+			String content= d.get(c.offset - 3, 3);
+			if (content.equals("els")) { //$NON-NLS-1$
+				ModelicaHeuristicScanner scanner= new ModelicaHeuristicScanner(d);
+				int p= c.offset - 3;
+
+				// current line
+				int line= d.getLineOfOffset(p);
+				int lineOffset= d.getLineOffset(line);
+
+				// make sure we don't have any leading comments etc.
+				if (d.get(lineOffset, p - lineOffset).trim().length() != 0)
+					return;
+
+				// line of last javacode
+				int pos= scanner.findNonWhitespaceBackward(p - 1, ModelicaHeuristicScanner.UNBOUND);
+				if (pos == -1)
+					return;
+				int lastLine= d.getLineOfOffset(pos);
+
+				// only shift if the last java line is further up and is a braceless block candidate
+				if (lastLine < line) {
+
+					ModelicaIndenter indenter= new ModelicaIndenter(d, scanner);
+					int ref= indenter.findReferencePosition(p, true, false, false, false);
+					if (ref == ModelicaHeuristicScanner.NOT_FOUND)
+						return;
+					int refLine= d.getLineOfOffset(ref);
+					String indent= getIndentOfLine(d, refLine);
+
+					if (indent != null) {
+						c.text= indent.toString() + "else"; //$NON-NLS-1$
+						c.length += c.offset - lineOffset;
+						c.offset= lineOffset;
+					}
+				}
+
+				return;
+			}
+
+			if (content.equals("cas")) { //$NON-NLS-1$
+				ModelicaHeuristicScanner scanner= new ModelicaHeuristicScanner(d);
+				int p= c.offset - 3;
+
+				// current line
+				int line= d.getLineOfOffset(p);
+				int lineOffset= d.getLineOffset(line);
+
+				// make sure we don't have any leading comments etc.
+				if (d.get(lineOffset, p - lineOffset).trim().length() != 0)
+					return;
+
+				// line of last javacode
+				int pos= scanner.findNonWhitespaceBackward(p - 1, ModelicaHeuristicScanner.UNBOUND);
+				if (pos == -1)
+					return;
+				int lastLine= d.getLineOfOffset(pos);
+
+				// only shift if the last java line is further up and is a braceless block candidate
+				if (lastLine < line) {
+
+					ModelicaIndenter indenter= new ModelicaIndenter(d, scanner);
+					int ref= indenter.findReferencePosition(p, false, false, false, true);
+					if (ref == ModelicaHeuristicScanner.NOT_FOUND)
+						return;
+					int refLine= d.getLineOfOffset(ref);
+					int nextToken= scanner.nextToken(ref, ModelicaHeuristicScanner.UNBOUND);
+					String indent;
+					if (nextToken == Symbols.TokenCASE || nextToken == Symbols.TokenELSE)
+						indent= getIndentOfLine(d, refLine);
+					else // at the brace of the switch
+						indent= indenter.computeIndentation(p).toString();
+
+					if (indent != null) {
+						c.text= indent.toString() + "case"; //$NON-NLS-1$
+						c.length += c.offset - lineOffset;
+						c.offset= lineOffset;
+					}
+				}
+
+				return;
+			}
+
+		} catch (BadLocationException e) {
+			//ModelicaPlugin.log(e);
+		}
+	}
+	
 	private void smartPaste(IDocument document, DocumentCommand command) 
 	{
 
@@ -351,7 +482,6 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 
 		else if (c.text.length() == 1)
 		{
-
 			smartIndentOnKeypress(d, c);
 		}
 

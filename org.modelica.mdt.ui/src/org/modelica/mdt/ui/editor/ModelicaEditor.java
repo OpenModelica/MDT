@@ -75,6 +75,11 @@ import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.ui.text.IModelicaPartitions;
+import org.modelica.mdt.ui.text.ModelicaPairMatcher;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
+import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * Creates an editor for modelica source code.
@@ -88,6 +93,8 @@ import org.modelica.mdt.internal.core.ErrorManager;
  *  - folding(collapsing) of blocks of source code
  * 
  * @author Peter Bunus
+ * @author MDT team
+ * @author Adrian Pop
  */
 public class ModelicaEditor extends TextEditor
 	implements IModelicaElementChangeListener
@@ -96,13 +103,29 @@ public class ModelicaEditor extends TextEditor
 		"org.modelica.mdt.ui.editor.ContentAssist";
 
     private ProjectionSupport projectionSupport;
+    private ISourceViewer viewer;
+	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
+	protected final static String EDITOR_MATCHING_BRACKETS_COLOR=  "matchingBracketsColor";
+	protected final static char[] BRACKETS= { '{', '}', '(', ')', '[', ']', '<', '>' };
+	protected ModelicaPairMatcher fBracketMatcher= new ModelicaPairMatcher(BRACKETS);
+	private ModelicaDocumentProvider fDocumentProvider = null;
 	
 	protected void initializeEditor() 
 	{
 		super.initializeEditor();
-		setSourceViewerConfiguration(new ModelicaSourceViewerConfig(this));
+		if (getPreferenceStore() != null) /* TODO!! fix this later */
+			getPreferenceStore().setValue(EDITOR_MATCHING_BRACKETS, true);
+		// setDocumentProvider(getDocumentProvider());
+		setSourceViewerConfiguration(new ModelicaSourceViewerConfig(this, IModelicaPartitions.MODELICA_PARTITIONING));
+	}	
+	
+	public IDocumentProvider getDocumentProvider()
+	{
+		if (fDocumentProvider == null)
+			fDocumentProvider = new ModelicaDocumentProvider();
+		return fDocumentProvider;
 	}
-		
+	
 	protected void createActions() 
 	{
 		super.createActions();
@@ -130,7 +153,7 @@ public class ModelicaEditor extends TextEditor
          */
         ProjectionViewer viewer = (ProjectionViewer)getSourceViewer();        
         projectionSupport = 
-        	new ProjectionSupport(viewer,getAnnotationAccess(),
+        	new ProjectionSupport(viewer, getAnnotationAccess(),
         			getSharedColors());
 		projectionSupport.install();
 		
@@ -181,19 +204,28 @@ public class ModelicaEditor extends TextEditor
 		/*
 		 * setup the viewer that is capable of text folding
 		 */
-		ISourceViewer viewer = 
+		viewer = 
         		new ProjectionViewer(parent, ruler, getOverviewRuler(), 
         				isOverviewRulerVisible(), styles);
-
     	/* ensure decoration support has been created and configured */
-    	getSourceViewerDecorationSupport(viewer);
-    	
+		/*
+		SourceViewerDecorationSupport s = getSourceViewerDecorationSupport(viewer);
+		System.out.println("CharPairMatcher set in create viewer");
+    	s.setCharacterPairMatcher(fBracketMatcher);
+    	*/
+		getSourceViewerDecorationSupport(viewer);
     	return viewer;
+	}
+	
+	public ISourceViewer getViewer()
+	{
+		return viewer;
 	}
 	
 	public void dispose()
 	{
 		super.dispose();
+		
 		ModelicaCore.getModelicaRoot().removeModelicaElementChangeListener(this);
 	}
 
@@ -287,4 +319,18 @@ public class ModelicaEditor extends TextEditor
 			}
 		}		
 	}
+	
+		
+	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) 
+	{	
+		//System.out.println("CharPairMatcher set in configureSourceViewerDecorationSupport");
+		support.setCharacterPairMatcher(fBracketMatcher);
+		support.setMatchingCharacterPainterPreferenceKeys(
+				EDITOR_MATCHING_BRACKETS, 
+				EDITOR_MATCHING_BRACKETS_COLOR);
+		support.setSymbolicFontName(getFontPropertyPreferenceKey());
+		
+		super.configureSourceViewerDecorationSupport(support);		
+	}	
+	
 }

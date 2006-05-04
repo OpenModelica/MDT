@@ -8,13 +8,15 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.modelica.mdt.core.IModelicaElement;
 import org.osgi.framework.BundleContext;
+import org.modelica.mdt.ui.text.ModelicaTextTools;
 
 /**
  * The main plugin class for the org.modelica.mdt.ui plugin
  */
 public class UIPlugin extends AbstractUIPlugin 
 {
-
+	private ModelicaTextTools fModelicaTextTools;
+	
 	/* the shared instance */
 	private static UIPlugin plugin;
 	
@@ -86,4 +88,11 @@ public class UIPlugin extends AbstractUIPlugin
 	{
 		widget.setData("name", tag);
 	}		
+	
+	public synchronized ModelicaTextTools getModelicaTextTools() {
+		if (fModelicaTextTools == null)
+			fModelicaTextTools= new ModelicaTextTools();
+		return fModelicaTextTools;
+	}
+	
 }
