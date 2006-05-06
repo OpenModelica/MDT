@@ -304,6 +304,7 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 	 * @throws BadLocationException if the document got changed concurrently 
 	 */
 	private boolean indentLine(IDocument document, int line, int caret, ModelicaIndenter indenter, ModelicaHeuristicScanner scanner) throws BadLocationException {
+		//System.out.println("Line: " + line);
 		IRegion currentLine= document.getLineInformation(line);
 		int offset= currentLine.getOffset();
 		int wsStart= offset;  // where we start searching for non-WS; after the "" in single line comments
@@ -314,8 +315,8 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 			ITypedRegion partition= TextUtilities.getPartition(document, IModelicaPartitions.MODELICA_PARTITIONING, offset, true);
 			ITypedRegion startingPartition= TextUtilities.getPartition(document, IModelicaPartitions.MODELICA_PARTITIONING, offset, false);
 			String type= partition.getType();
-			System.out.print("["+startingPartition.getType()+"] ");
-			System.out.println(document.get(offset, currentLine.getLength()));			
+			//System.out.print("["+startingPartition.getType()+"] ");
+			//System.out.println(document.get(offset, currentLine.getLength()));			
 			/* do not indent multiline strings! */			
 			if (type.equals(IModelicaPartitions.MODELICA_STRING) ||
 				startingPartition.getType().equals(IModelicaPartitions.MODELICA_STRING))

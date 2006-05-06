@@ -26,6 +26,8 @@ import org.eclipse.jface.text.TypedRegion;
 public final class ModelicaHeuristicScanner implements Symbols 
 {
 
+	String fLastIdent = null;
+		
 	static public class key 
 	{
 		String token;
@@ -400,6 +402,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 
 		fPos++;
 
+		/* here we check only for 1 char symbols */
 		for(int i = 0; i < keywords.length; i++)
 		{
 			if (keywords[i].token.equals(String.valueOf(fChar)))
@@ -407,8 +410,9 @@ public final class ModelicaHeuristicScanner implements Symbols
 		}
 		
 		
-		// else
-		if (Character.isJavaIdentifierPart(fChar)) {
+		// else 
+		if (Character.isJavaIdentifierPart(fChar)) 
+		{
 			// assume an ident or keyword
 			int from= pos, to;
 			pos= scanForward(pos + 1, bound, fNonIdent);
@@ -418,7 +422,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 				to= pos;
 
 			String identOrKeyword;
-			try {
+			try 
+			{
 				identOrKeyword= fDocument.get(from, to - from);
 			} catch (BadLocationException e) {
 				return TokenEOF;
@@ -427,7 +432,9 @@ public final class ModelicaHeuristicScanner implements Symbols
 			return getToken(identOrKeyword);
 
 
-		} else {
+		} 
+		else 
+		{
 			// operators, number literals etc
 			return TokenOTHER;
 		}
@@ -450,6 +457,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 
 		fPos--;
 
+		/* here we check only for 1 char symbols */
 		for(int i = 0; i < keywords.length; i++)
 		{
 			if (keywords[i].token.equals(String.valueOf(fChar)))
@@ -457,7 +465,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 		}
 
 		// else
-		if (Character.isJavaIdentifierPart(fChar)) {
+		if (Character.isJavaIdentifierPart(fChar)) 
+		{
 			// assume an ident or keyword
 			int from, to= pos + 1;
 			pos= scanBackward(pos - 1, bound, fNonIdent);
@@ -472,10 +481,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 			} catch (BadLocationException e) {
 				return TokenEOF;
 			}
-
 			return getToken(identOrKeyword);
-
-
 		} 
 		else 
 		{
@@ -499,6 +505,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 			if (keywords[i].token.equals(s))
 				return keywords[i].tokenID;
 		}
+		fLastIdent = s;
 		return TokenIDENT;
 	}
 

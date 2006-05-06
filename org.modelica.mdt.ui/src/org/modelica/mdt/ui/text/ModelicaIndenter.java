@@ -7,9 +7,7 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-
-import org.modelica.mdt.core.IModelicaProject;
-
+import java.util.Stack;
 
 /**
  * Uses the {@link org.modelica.mdt.ui.text.ModelicaHeuristicScanner}to
@@ -343,21 +341,25 @@ public class ModelicaIndenter {
 	 * @return the reference statement relative to which <code>offset</code>
 	 *         should be indented, or {@link ModelicaHeuristicScanner#NOT_FOUND}
 	 */
-	public int findReferencePosition(int offset, int nextToken) {
+	public int findReferencePosition(int offset, int nextToken) 
+	{
 		boolean danglingElse= false;
 		boolean unindent= false;
 		boolean indent= false;
 		boolean matchEnd= false;
 		boolean matchParen= false;
 		boolean matchCase= false;
+		boolean matchCaseOrScope= false;
 
 		// account for unindenation characters already typed in, but after position
 		// if they are on a line by themselves, the indentation gets adjusted
 		// accordingly
 		//
 		// also account for a dangling else
-		if (offset < fDocument.getLength()) {
-			try {
+		if (offset < fDocument.getLength()) 
+		{
+			try 
+			{
 				IRegion line= fDocument.getLineInformationOfOffset(offset);
 				int lineOffset= line.getOffset();
 				int prevPos= Math.max(offset - 1, 0);
@@ -365,7 +367,14 @@ public class ModelicaIndenter {
 				int prevToken= fScanner.previousToken(prevPos, ModelicaHeuristicScanner.UNBOUND);
 				boolean bracelessBlockStart= true;
 
-				switch (nextToken) {
+				switch (nextToken) 
+				{
+					case Symbols.TokenPACKAGE:
+						break;
+					case Symbols.TokenMODEL:
+						indent= true;						
+						break;
+						
 					case Symbols.TokenELSE:
 						danglingElse= true;
 						break;
@@ -373,17 +382,31 @@ public class ModelicaIndenter {
 						if (isFirstTokenOnLine)
 							matchCase= true;
 						break;
-					case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
-						if (bracelessBlockStart && !prefIndentBracesForBlocks())
-							unindent= true;
-						else if ((prevToken == Symbols.TokenCOLON || prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !prefIndentBracesForArrays())
-							unindent= true;
-						else if (!bracelessBlockStart && prefIndentBracesForMethods())
-							indent= true;
-						break;
+					
+					//case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
+					//	if (bracelessBlockStart && !prefIndentBracesForBlocks())
+					//		unindent= true;
+					//	else if ((prevToken == Symbols.TokenCOLON || prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !prefIndentBracesForArrays())
+					//		unindent= true;
+					//	else if (!bracelessBlockStart && prefIndentBracesForMethods())
+					//		indent= true;
+					//	break;
+						
 					case Symbols.TokenEND: // closing braces get unindented
 						if (isFirstTokenOnLine)
 							matchEnd= true;
+						break;
+					case Symbols.TokenTHEN: // then gets unindented
+						if (isFirstTokenOnLine)
+							unindent= true;
+						break;						
+					case Symbols.TokenEQUATION:
+						if (isFirstTokenOnLine)						
+							matchCaseOrScope= true;
+						break;
+					case Symbols.TokenALGORITHM:
+						if (isFirstTokenOnLine)
+							unindent= true;
 						break;
 					case Symbols.TokenRPAREN:
 						if (isFirstTokenOnLine)
@@ -392,12 +415,14 @@ public class ModelicaIndenter {
 				}
 			} catch (BadLocationException e) {
 			}
-		} else {
+		} 
+		else 
+		{
 			// don't assume an else could come if we are at the end of file
 			danglingElse= false;
 		}
 
-		int ref= findReferencePosition(offset, danglingElse, matchEnd, matchParen, matchCase);
+		int ref= findReferencePosition(offset, danglingElse, matchEnd, matchParen, matchCase, matchCaseOrScope);
 		if (unindent)
 			fIndent--;
 		if (indent)
@@ -426,7 +451,11 @@ public class ModelicaIndenter {
 	 * @return the reference statement relative to which <code>position</code>
 	 *         should be indented, or {@link ModelicaHeuristicScanner#NOT_FOUND}
 	 */
-	public int findReferencePosition(int offset, boolean danglingElse, boolean matchEnd, boolean matchParen, boolean matchCase) {
+	public int findReferencePosition(
+			int offset, boolean danglingElse, 
+			boolean matchEnd, boolean matchParen, 
+			boolean matchCase, boolean matchCaseOrScope) 
+	{
 		fIndent= 0; // the indentation modification
 		fAlign= ModelicaHeuristicScanner.NOT_FOUND;
 		fPosition= offset;
@@ -435,43 +464,18 @@ public class ModelicaIndenter {
 		// an unindentation happens sometimes if the next token is special, namely on braces, parens and case labels
 		// align braces, but handle the case where we align with the method declaration start instead of
 		// the opening brace.
-		if (matchEnd) {
-			if (skipScope(Symbols.TokenMATCHCONTINUE, Symbols.TokenEND)) {
-				try {
-					// align with the opening brace that is on a line by its own
+		if (matchEnd) 
+		{
+			if (skipModelicaScope()) 
+			{
+				try 
+				{
+					// align with the opening scope that is on a line by its own
 					int lineOffset= fDocument.getLineOffset(fLine);
-					if (lineOffset <= fPosition && fDocument.get(lineOffset, fPosition - lineOffset).trim().length() == 0)
-						return fPosition;
-				} catch (BadLocationException e) {
-					// concurrent modification - walk default path
-				}
-				// if the opening brace is not on the start of the line, skip to the start
-				int pos= skipToStatementStart(true, true);
-				fIndent= 0; // indent is aligned with reference position
-				return pos;
-			} 
-			else
-			if (skipScope(Symbols.TokenMATCH, Symbols.TokenEND)) {
-				try {
-					// align with the opening brace that is on a line by its own
-					int lineOffset= fDocument.getLineOffset(fLine);
-					if (lineOffset <= fPosition && fDocument.get(lineOffset, fPosition - lineOffset).trim().length() == 0)
-						return fPosition;
-				} catch (BadLocationException e) {
-					// concurrent modification - walk default path
-				}
-				// if the opening brace is not on the start of the line, skip to the start
-				int pos= skipToStatementStart(true, true);
-				fIndent= 0; // indent is aligned with reference position
-				return pos;
-			} 
-			else
-			if (skipScope(Symbols.TokenFUNCTION, Symbols.TokenEND)) {
-				try {
-					// align with the opening brace that is on a line by its own
-					int lineOffset= fDocument.getLineOffset(fLine);
-					if (lineOffset <= fPosition && fDocument.get(lineOffset, fPosition - lineOffset).trim().length() == 0)
-						return fPosition;
+					// return the position of the first token on the line.
+					return findReferencePosition(lineOffset);  
+					//if (lineOffset <= fPosition && fDocument.get(lineOffset, fPosition - lineOffset).trim().length() == 0)
+					//	return fPosition;
 				} 
 				catch (BadLocationException e) 
 				{
@@ -481,19 +485,20 @@ public class ModelicaIndenter {
 				int pos= skipToStatementStart(true, true);
 				fIndent= 0; // indent is aligned with reference position
 				return pos;
-			} 			
+			} 
 			else 
 			{
 				// if we can't find the matching brace, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, false, matchParen, matchCase);
+				int pos= findReferencePosition(offset, danglingElse, false, matchParen, matchCase, matchCaseOrScope);
 				fIndent--;
 				return pos;
 			}
 		}
 
 		// align parenthesis'
-		if (matchParen) {
+		if (matchParen) 
+		{
 			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN))
 			{
 				return fPosition;
@@ -501,7 +506,7 @@ public class ModelicaIndenter {
 			else {
 				// if we can't find the matching paren, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, matchEnd, false, matchCase);
+				int pos= findReferencePosition(offset, danglingElse, matchEnd, false, matchCase, matchCaseOrScope);
 				fIndent--;
 				return pos;
 			}
@@ -509,12 +514,23 @@ public class ModelicaIndenter {
 
 		// the only reliable way to get case labels aligned (due to many different styles of using braces in a block)
 		// is to go for another case statement, or the scope opening brace
-		if (matchCase) {
+		if (matchCase) 
+		{
 			return matchCaseAlignment();
 		}
 
+		// forward cases
+		// an unindentation happens if we are at the start of an equation section and not within
+		// an algorithm section.
+		// search upwards for case or statement start
+		if (matchCaseOrScope) 
+		{
+			return matchCaseOrScopeAlignment();
+		}
+		
 		nextToken();
-		switch (fToken) {
+		switch (fToken) 
+		{
 			case Symbols.TokenGREATERTHAN:
 			case Symbols.TokenEND:
 				// skip the block and fall through
@@ -526,7 +542,30 @@ public class ModelicaIndenter {
 				// this is the 90% case: after a statement block
 				// the end of the previous statement / block previous.end
 				// search to the end of the statement / block before the previous; the token just after that is previous.start
-				return skipToStatementStart(danglingElse, false);
+				return skipToStatementStart(danglingElse, true);
+
+			// scope introduction: special treat who special is
+			case Symbols.TokenEQUATION:
+			case Symbols.TokenALGORITHM:
+			case Symbols.TokenLOCAL:
+			case Symbols.TokenMATCH:
+			case Symbols.TokenMATCHCONTINUE:
+				return handleScopeIntroduction(offset + 1);
+			case Symbols.TokenTHEN:
+				try
+				{
+					IRegion thenLine= fDocument.getLineInformationOfOffset(offset);
+					int lineOffset= thenLine.getOffset();
+					int prevPos= Math.max(offset - 1, 0);
+					boolean isFirstTokenOnLine= fDocument.get(lineOffset, prevPos + 1 - lineOffset).trim().length() == 0;
+					if (isFirstTokenOnLine)
+						return handleScopeIntroduction(offset + 1);
+					else
+						return skipToPreviousListItemOrListStart();
+				}
+				catch (BadLocationException e) {
+					return skipToPreviousListItemOrListStart();
+				}
 
 			// scope introduction: special treat who special is
 			case Symbols.TokenLPAREN:
@@ -543,10 +582,11 @@ public class ModelicaIndenter {
 				fIndent= prefAssignmentIndent();
 				return fPosition;
 
-			case Symbols.TokenCOLON:
-				// TODO handle ternary deep indentation
-				fIndent= prefCaseBlockIndent();
-				return fPosition;
+			// no colon in modelica	
+			//case Symbols.TokenCOLON:
+			// TODO handle ternary deep indentation
+			//	fIndent= prefCaseBlockIndent();
+			//	return fPosition;
 				
 			// indentation for blockless introducers:
 			case Symbols.TokenWHILE:
@@ -559,7 +599,10 @@ public class ModelicaIndenter {
 				if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
 					int scope= fPosition;
 					nextToken();
-					if (fToken == Symbols.TokenIF || fToken == Symbols.TokenWHILE || fToken == Symbols.TokenFOR) 
+					if (fToken == Symbols.TokenCASE || fToken == Symbols.TokenMATCH ||
+						fToken == Symbols.TokenMATCHCONTINUE ||
+						fToken == Symbols.TokenIF || fToken == Symbols.TokenWHILE || 
+						fToken == Symbols.TokenFOR) 
 					{
 						fIndent= prefSimpleIndent();
 						return fPosition;
@@ -618,7 +661,8 @@ public class ModelicaIndenter {
 					// exit on all block introducers
 					case Symbols.TokenIF:
 					case Symbols.TokenELSE:
-					case Symbols.TokenCOLON:
+					// not a scope introducer in modelica
+					//case Symbols.TokenCOLON: 
 					case Symbols.TokenWHILE:
 					case Symbols.TokenFOR:
 					case Symbols.TokenCLASS:
@@ -628,6 +672,7 @@ public class ModelicaIndenter {
 					case Symbols.TokenRECORD:
 					case Symbols.TokenALGORITHM:
 					case Symbols.TokenEQUATION:
+					case Symbols.TokenLOCAL:						
 						fIndent++;
 						return fPosition;
 						
@@ -650,26 +695,34 @@ public class ModelicaIndenter {
 				case Symbols.TokenLPAREN:
 				case Symbols.TokenLBRACE:
 				case Symbols.TokenLBRACKET:
-				case Symbols.TokenSEMICOLON:
+				// doen't work in modelica as we may have a comment before the ';'	
+				//case Symbols.TokenSEMICOLON: 
 				case Symbols.TokenEOF:
 					if (isInBlock)
 						fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
 					// else: fIndent set by previous calls
 					return fPreviousPos;
+					
+				//case Symbols.TokenCOLON:
+				//	int pos= fPreviousPos;
+				//	if (!isConditional())
+				//		return pos;
+				//	break;
 
-				case Symbols.TokenCOLON:
-					int pos= fPreviousPos;
-					if (!isConditional())
-						return pos;
-					break;
-
+				case Symbols.TokenEND:
+					if (skipModelicaScope())
+						continue;
+					
 				case Symbols.TokenRBRACE:
 					// RBRACE is a little tricky: it can be the end of an array definition, but
 					// usually it is the end of a previous block
-					pos= fPreviousPos; // store state
-					if (skipScope() && looksLikeArrayInitializerIntro()) {
+					int pos= fPreviousPos; // store state
+					if(skipScope())
+					{
 						continue; // it's an array
-					} else {
+					} 
+					else 
+					{
 						if (isInBlock)
 							fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
 						return pos; // it's not - do as with all the above
@@ -779,7 +832,8 @@ public class ModelicaIndenter {
 				case Symbols.TokenLBRACKET:
 				case Symbols.TokenEOF:
 					return fPosition;
-				case Symbols.TokenLOCAL:
+				case Symbols.TokenMATCHCONTINUE:
+				case Symbols.TokenMATCH:					
 					fIndent= prefCaseIndent() + 1;
 					return fPosition;					
 				case Symbols.TokenCASE:
@@ -792,6 +846,7 @@ public class ModelicaIndenter {
 				case Symbols.TokenRBRACKET:
 				case Symbols.TokenRBRACE:
 				case Symbols.TokenGREATERTHAN:
+				case Symbols.TokenEND:					
 					skipScope();
 					break;
 
@@ -804,6 +859,58 @@ public class ModelicaIndenter {
 	}
 
 	/**
+	 * Returns as a reference any previous <code>switch</code> labels (<code>case</code>
+	 * or <code>default</code>) or the offset of the brace that scopes the switch
+	 * statement. Sets <code>fIndent</code> to <code>prefCaseIndent</code> upon
+	 * a match.
+	 *
+	 * @return the reference offset for a <code>switch</code> label
+	 */
+	private int matchCaseOrScopeAlignment() 
+	{
+		while (true) 
+		{
+			nextToken();
+			switch (fToken) 
+			{
+				// -> bail out with the current position
+				case Symbols.TokenEOF:
+					return fPosition;
+				case Symbols.TokenMATCHCONTINUE:
+				case Symbols.TokenMATCH:					
+					fIndent= prefCaseIndent() + 1;
+					return fPosition;					
+				case Symbols.TokenCASE:
+					// align with previous label
+					fIndent= 1;
+					return fPosition;
+
+				// scopes: skip them
+				case Symbols.TokenRPAREN:
+				case Symbols.TokenRBRACKET:
+				case Symbols.TokenRBRACE:
+				case Symbols.TokenGREATERTHAN:
+				case Symbols.TokenEND:					
+					skipScope();
+					break;
+				
+				// scope start, align with it.
+				case Symbols.TokenFUNCTION:
+				case Symbols.TokenMODEL:
+				case Symbols.TokenPACKAGE:
+				case Symbols.TokenCLASS:
+					fIndent= 0;
+					return fPosition;
+
+				default:
+					// keep searching
+					continue;
+
+			}
+		}
+	}
+	
+	/**
 	 * Returns the reference position for a list element. The algorithm
 	 * tries to match any previous indentation on the same list. If there is none,
 	 * the reference position returned is determined depending on the type of list:
@@ -814,19 +921,25 @@ public class ModelicaIndenter {
 	 * @return the reference position for a list item: either a previous list item
 	 * that has its own indentation, or the list introduction start.
 	 */
-	private int skipToPreviousListItemOrListStart() {
+	private int skipToPreviousListItemOrListStart() 
+	{
 		int startLine= fLine;
 		int startPosition= fPosition;
-		while (true) {
+		while (true) 
+		{
 			nextToken();
 
 			// if any line item comes with its own indentation, adapt to it
-			if (fLine < startLine) {
-				try {
+			if (fLine < startLine) 
+			{
+				try 
+				{
 					int lineOffset= fDocument.getLineOffset(startLine);
 					int bound= Math.min(fDocument.getLength(), startPosition + 1);
 					fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
-				} catch (BadLocationException e) {
+				} 
+				catch (BadLocationException e) 
+				{
 					// ignore and return just the position
 				}
 				return startPosition;
@@ -840,7 +953,11 @@ public class ModelicaIndenter {
 				case Symbols.TokenGREATERTHAN:
 					skipScope();
 					break;
-
+					
+				case Symbols.TokenEND:
+					skipModelicaScope();
+					break;
+					
 				// scope introduction: special treat who special is
 				case Symbols.TokenLPAREN:
 				case Symbols.TokenLBRACE:
@@ -851,6 +968,24 @@ public class ModelicaIndenter {
 					return fPosition;
 				case Symbols.TokenEOF:
 					return 0;
+					
+				case Symbols.TokenPACKAGE:					
+					return handleScopeIntroduction(startPosition + 1);
+					
+				// scope introduction: special treat who special is
+				case Symbols.TokenMODEL:
+				case Symbols.TokenRECORD:
+				case Symbols.TokenUNIONTYPE:
+				case Symbols.TokenFUNCTION:
+				case Symbols.TokenALGORITHM:
+				case Symbols.TokenEQUATION:
+				case Symbols.TokenCLASS:
+				case Symbols.TokenMATCH:
+				case Symbols.TokenMATCHCONTINUE:
+				case Symbols.TokenLOCAL:
+				case Symbols.TokenBLOCK:
+				case Symbols.TokenCONNECTOR:					
+					return handleScopeIntroduction(startPosition + 1);
 
 			}
 		}
@@ -889,6 +1024,9 @@ public class ModelicaIndenter {
 				fPosition= storedPosition;
 				fToken= storedToken;
 				return false;
+				
+			case Symbols.TokenEND:
+				return skipModelicaScope();
 
 			default:
 				Assert.isTrue(false);
@@ -954,26 +1092,32 @@ public class ModelicaIndenter {
 	 * introduction.
 	 * @return the indent
 	 */
-	private int handleScopeIntroduction(int bound) {
-		switch (fToken) {
+	private int handleScopeIntroduction(int bound) 
+	{
+		switch (fToken) 
+		{
 			// scope introduction: special treat who special is
 			case Symbols.TokenLPAREN:
 				int pos= fPosition; // store
-
 				// special: method declaration deep indentation
-				if (looksLikeMethodDecl()) {
+				if (looksLikeMethodDecl()) 
+				{
 					if (prefMethodDeclDeepIndent())
 						return setFirstElementAlignment(pos, bound);
 					else {
 						fIndent= prefMethodDeclIndent();
 						return pos;
 					}
-				} else {
+				} 
+				else 
+				{
 					fPosition= pos;
-					if (looksLikeMethodCall()) {
+					if (looksLikeMethodCall()) 
+					{
 						if (prefMethodCallDeepIndent())
 							return setFirstElementAlignment(pos, bound);
-						else {
+						else 
+						{
 							fIndent= prefMethodCallIndent();
 							return pos;
 						}
@@ -985,17 +1129,31 @@ public class ModelicaIndenter {
 				fIndent= prefParenthesisIndent();
 				return pos;
 
+			case Symbols.TokenPACKAGE:				
+				pos= fPosition; // store
+				fIndent= 0; // do not indent on package
+				return pos;				
+				
 			case Symbols.TokenFUNCTION:
-			case Symbols.TokenPACKAGE:
+			case Symbols.TokenMODEL:
 			case Symbols.TokenCLASS:
 			case Symbols.TokenRECORD:
 			case Symbols.TokenUNIONTYPE:
 			case Symbols.TokenMATCH:
-			case Symbols.TokenMATCHCONTINUE:				
+			case Symbols.TokenMATCHCONTINUE:
+			case Symbols.TokenEQUATION:
+			case Symbols.TokenALGORITHM:
+			case Symbols.TokenLOCAL:
+			case Symbols.TokenTHEN:				
 				pos= fPosition; // store
 				fIndent= prefBlockIndent();
 				return pos;
 
+			case Symbols.TokenLBRACE:
+				pos= fPosition; // store
+				fIndent= prefBlockIndent();
+				return pos;
+				
 			case Symbols.TokenLBRACKET:
 				pos= fPosition; // store
 
@@ -1150,13 +1308,38 @@ public class ModelicaIndenter {
 		fToken= fScanner.previousToken(start - 1, ModelicaHeuristicScanner.UNBOUND);
 		fPreviousPos= start;
 		fPosition= fScanner.getPosition() + 1;
-		try {
+		try 
+		{
 			fLine= fDocument.getLineOfOffset(fPosition);
-		} catch (BadLocationException e) {
+		} 
+		catch (BadLocationException e) 
+		{
 			fLine= -1;
 		}
 	}
 
+	/**
+	 * Reads the next token in forward direction of <code>start</code> from
+	 * the heuristic scanner and sets the fields <code>fToken, fPreviousPosition</code>
+	 * and <code>fPosition</code> accordingly.
+	 *
+	 * @param start the start offset from which to scan forward
+	 */
+	private void previousToken(int start) 
+	{
+		fToken= fScanner.nextToken(start, ModelicaHeuristicScanner.UNBOUND);
+		fPreviousPos= start;
+		fPosition= fScanner.getPosition() + 1;
+		try 
+		{
+			fLine= fDocument.getLineOfOffset(fPosition);
+		} 
+		catch (BadLocationException e) 
+		{
+			fLine= -1;
+		}
+	}
+	
 	/**
 	 * Returns <code>true</code> if the current tokens look like a method
 	 * declaration header (i.e. only the return type and method name). The
@@ -1216,7 +1399,8 @@ public class ModelicaIndenter {
 
 		int depth= 1;
 
-		while (true) {
+		while (true) 
+		{
 			nextToken();
 
 			if (fToken == closeToken) {
@@ -1231,6 +1415,137 @@ public class ModelicaIndenter {
 		}
 	}
 
+	class Scope
+	{
+		String afterEnd      = null;
+		int    afterEndToken = -1;
+		
+		public Scope(String ae, int aft)
+		{
+			this.afterEnd = ae;
+			this.afterEndToken = aft;
+			// System.out.println("push->[" + afterEnd + ", " + afterEndToken + "]");
+		}
+	}
+	
+	/**
+	 * Scans tokens for the matching opening peer. The internal cursor
+	 * (<code>fPosition</code>) is set to the offset of the opening peer if found.
+	 *
+	 * @param openToken the opening peer token
+	 * @param closeToken the closing peer token
+	 * @return <code>true</code> if a matching token was found, <code>false</code>
+	 *         otherwise
+	 */
+	private boolean skipModelicaScope() 
+	{
+		Stack<Scope> s = new Stack<Scope>(); 
+		/* save the state if we need it */
+		int fSavedToken = fToken;
+		int fSavedPos   = fPosition;
+		/* see what is after 'end' */
+		previousToken(fPosition); /* skip 'end' */
+		previousToken(fPosition); /* move past end */		
+		int fEndPrevToken = fToken;
+		int fEndPos = fPosition;
+		String afterEnd = null;
+		if (fToken == Symbols.TokenIDENT) 
+			afterEnd = fScanner.fLastIdent;		
+		s.push(new Scope(afterEnd, fToken));
+		
+		/* go back to the start of 'end' */
+		nextToken(fPosition);
+		nextToken(fPosition);
+		
+		boolean skip = false;
+		
+		int depth = 1;
+
+		while (true) 
+		{
+			if (!skip)
+				nextToken();
+			switch (fToken) 
+			{
+			case Symbols.TokenIDENT:
+				/* save the token */
+				String token = fScanner.fLastIdent;
+				if (s.peek().afterEnd != null && s.peek().afterEnd.equals(fScanner.fLastIdent))
+				{
+					/* if the next token is a scope introducer, pop the stack */
+					nextToken();					
+					if (fToken == Symbols.TokenEOF)
+						return false;
+					switch (fToken)
+					{
+						case Symbols.TokenFUNCTION:
+						case Symbols.TokenMODEL:
+						case Symbols.TokenPACKAGE:
+						case Symbols.TokenCLASS:
+						case Symbols.TokenBLOCK:
+						case Symbols.TokenCONNECTOR:
+						case Symbols.TokenRECORD:
+						case Symbols.TokenUNIONTYPE:
+							depth--;
+							s.pop();
+							if (depth == 0)
+								return true;
+					}
+					//	skip the reading of next token if we haven't consumed this one
+					skip = true; 
+				}
+				else
+				{
+					/* if the next token is 'end' push another scope */					
+					nextToken();					
+					if (fToken == Symbols.TokenEOF)
+						return false;
+					if (fToken == Symbols.TokenEND)
+					{
+						depth++;
+						s.push(new Scope(token, Symbols.TokenIDENT));
+					}
+					skip = true; 						
+				}
+				break;
+				
+			case Symbols.TokenMATCH:
+			case Symbols.TokenMATCHCONTINUE:
+			case Symbols.TokenFOR:
+			case Symbols.TokenWHILE:
+			case Symbols.TokenIF:
+			case Symbols.TokenWHEN:
+				int tokenID = fToken;
+				nextToken();
+				if (fToken == Symbols.TokenEOF) 
+					return false;
+				if (fToken == Symbols.TokenEND) 
+				{
+					depth++;
+					s.push(new Scope(null, tokenID));
+				}
+				else  
+				{
+					if (s.peek().afterEndToken == tokenID)
+						s.pop();
+					depth--;
+					/* go back to the token after */
+					previousToken(fPosition);
+					if (depth == 0)
+						return true;
+				}
+				skip = true;
+				break;
+				
+			case Symbols.TokenEOF: 
+					return false;
+					
+			default:
+				skip = false;
+			}
+		}
+	}
+	
 	/**
 	 * Returns the possibly project-specific core preference defined under <code>key</code>.
 	 *
@@ -1280,7 +1595,7 @@ public class ModelicaIndenter {
 	}
 
 	private int prefAssignmentIndent() {
-		return prefBlockIndent();
+		return 0; // prefBlockIndent();
 	}
 
 	private int prefCaseBlockIndent() {

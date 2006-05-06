@@ -387,7 +387,7 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 				if (lastLine < line) {
 
 					ModelicaIndenter indenter= new ModelicaIndenter(d, scanner);
-					int ref= indenter.findReferencePosition(p, true, false, false, false);
+					int ref= indenter.findReferencePosition(p, true, false, false, false, false);
 					if (ref == ModelicaHeuristicScanner.NOT_FOUND)
 						return;
 					int refLine= d.getLineOfOffset(ref);
@@ -425,7 +425,7 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 				if (lastLine < line) {
 
 					ModelicaIndenter indenter= new ModelicaIndenter(d, scanner);
-					int ref= indenter.findReferencePosition(p, false, false, false, true);
+					int ref= indenter.findReferencePosition(p, false, false, false, true, false);
 					if (ref == ModelicaHeuristicScanner.NOT_FOUND)
 						return;
 					int refLine= d.getLineOfOffset(ref);
