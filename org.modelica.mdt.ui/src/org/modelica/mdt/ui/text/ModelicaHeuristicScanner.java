@@ -587,7 +587,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 				if (start == NOT_FOUND)
 					return NOT_FOUND;
 
-				if (fDocument.get(start-closingPeer.length(), closingPeer.length()).equals(closingPeer))
+				if (fDocument.get(start,closingPeer.length()).equals(closingPeer))
 					depth++;
 				else
 					depth--;
