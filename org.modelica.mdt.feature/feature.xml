@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.6.2"
+      version="0.6.4"
       provider-name="PELAB">
 
    <description url="http://www.ida.liu.se/~pelab/modelica/">
@@ -68,6 +68,7 @@ SUCH DAMAGE.
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.debug.ui"/>
    </requires>
 
    <plugin
