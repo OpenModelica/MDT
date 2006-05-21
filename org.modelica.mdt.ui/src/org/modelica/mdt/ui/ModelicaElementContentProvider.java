@@ -45,7 +45,9 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -60,6 +62,8 @@ import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.eclipse.jface.util.Assert;
+import org.modelica.mdt.core.IModelicaElement;
 
 /**
  * Content provider for a tree viewer. This content provider works only
@@ -269,9 +273,12 @@ public class ModelicaElementContentProvider
 	protected void handleChanges(Collection<IModelicaElementChange> changes)
 	{
 		  for (IModelicaElementChange change : changes)
-		  {
+		  {			  
+			  Assert.isNotNull(change);			  
+			  if (change == null) continue;
 			  Object element = change.getElement();
-
+			  Assert.isNotNull(element);			  
+			  if (element == null) continue;
 			  switch (change.getChangeType())
 			  {
 			  case ADDED:

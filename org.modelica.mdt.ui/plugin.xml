@@ -106,6 +106,24 @@
             class="org.modelica.mdt.ui.text.ModelicaDocumentSetupParticipant"
             extensions="mo"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePatternMatchListeners">
+      <consolePatternMatchListener
+            class="org.modelica.mdt.ui.console.MetaModelicaPatternMatchListener"
+            id="org.modelica.mdt.ui.console.MetaModelicaPatternMatchListener"
+            regex="\n([^:]+)\\:([0-9]+)(.*)">
+         <enablement>
+            <instanceof value="org.eclipse.ui.console.TextConsole"/>
+         </enablement>
+      </consolePatternMatchListener>
+   </extension>
+   <extension
+         id="MetaModelicaBuildMarker"
+         name="MetaModelica Build Error"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true"/>
+   </extension>
    
    
 </plugin>

@@ -44,6 +44,7 @@ package org.modelica.mdt.ui;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.modelica.mdt.core.IModelicaElement;
@@ -85,11 +86,20 @@ public class ModelicaElementFactory implements IElementFactory
 
 	public IAdaptable createElement(IMemento memento)
 	{
+		Assert.isNotNull(memento);
+		if (memento == null) 
+		{
+			ErrorManager.logBug(UIPlugin.getSymbolicName(),
+			"the memento is null");			
+			return null;
+		}
 		Integer storedClass = memento.getInteger(STORED_CLASS_KEY);
 		
 		if (storedClass == null)
 		{
 			/* we don't know what class is stored in this memento, fail */
+			ErrorManager.logBug(UIPlugin.getSymbolicName(),
+			"class stored in the memento is null");
 			return null;
 		}
 		
@@ -99,6 +109,9 @@ public class ModelicaElementFactory implements IElementFactory
 			return restoreModelicaElementEditorInput(memento);
 		case SYSTEM_FILE_EDITOR_INPUT:
 			return restoreSystemFileEditorInput(memento);
+		default:
+			ErrorManager.logBug(UIPlugin.getSymbolicName(),
+			"unknow class stored in the memento");			
 		}
 		
 		ErrorManager.logBug(UIPlugin.getSymbolicName(),
