@@ -71,7 +71,7 @@ public class MarkProblemsVisitor implements IResourceVisitor
 	protected String strMsg;
 	protected int offset;
 	protected TextConsole console;
-    private boolean DEBUG = true;	
+    private boolean DEBUG = false;	
 	
 	public MarkProblemsVisitor(
 			String problemFileName, 
@@ -115,8 +115,9 @@ public class MarkProblemsVisitor implements IResourceVisitor
 			IPath path = iResource.getProjectRelativePath();
 			IFile iFile = iResource.getProject().getFile(path);
 			//iFile = (IFile) iResource;
-			iFile.deleteMarkers(UIPlugin.METAMODELICA_BULD_MARKER_ID, false,
-					IResource.DEPTH_INFINITE);
+			// do not delete any markers, they are deleted someplace else
+			//iFile.deleteMarkers(UIPlugin.METAMODELICA_BULD_MARKER_ID, false,
+			//		IResource.DEPTH_INFINITE);
 	    	try
 	    	{
 	        	int lineNumber = Integer.parseInt(strLine);

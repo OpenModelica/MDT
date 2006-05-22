@@ -2,6 +2,7 @@
 package org.modelica.mdt.ui;
 
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.core.resources.*;
@@ -12,7 +13,11 @@ public class MetaModelicaBuildLaunchListener implements ILaunchListener
 	public void launchAdded(ILaunch launch)
 	{
 		// TODO Auto-generated method stub
-		IFile launchFile = launch.getLaunchConfiguration().getFile();
+		if (launch == null) return;
+		ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
+		if (launchConfig == null) return;		
+		IFile launchFile = launchConfig.getFile();
+		if (launchFile == null) return; 
 		if (launchFile.getName().contains("OMDev") &&
 		    launchFile.getName().endsWith(".launch"))
 		{

@@ -31,8 +31,8 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 {
 	public static String ID = "org.modelica.mdt.ui.console.MetaModelicaPatternMatchListener";	
 
-	private String regexpMetaModelica = "\n(.*)\\:([0-9]*)\\.[0-9]*\\-[0-9]*\\.[0-9]*(.*)";
-	private String regexpGeneral = "\n([^:]+)\\:([0-9]+):(.*)";    	
+	private String regexpMetaModelica = "^([^:]+)\\:([0-9]*)\\.[0-9]*\\-[0-9]*\\.[0-9]*(.*)";
+	private String regexpGeneral = "^([^:]+)\\:([0-9]+):(.*)";    	
 
     private Pattern patternMetaModelica = Pattern.compile(regexpMetaModelica);
     private Matcher matcherMetaModelica; 
@@ -40,7 +40,7 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
     private Pattern patternGeneral = Pattern.compile(regexpGeneral);
     private Matcher matcherGeneral;	
     
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
     private TextConsole omdevConsole;
     
     public MetaModelicaPatternMatchListener()
@@ -82,6 +82,12 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 			e.printStackTrace();
 		}
 		
+		while(line.charAt(0) == '\n' || line.charAt(0) == '\r')
+		{
+			line = line.substring(1);
+			offset++;
+		}
+		
 		try
 		{
 			matcherMetaModelica = patternMetaModelica.matcher(line);        
@@ -117,7 +123,7 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 						strFileName, 
 						strLine, 
 						strMsg, 
-						offset+1, // +1 for \n 
+						offset,  
 						console);
 			IModelicaProject[] projects = ModelicaCore.getModelicaRoot().getProjects();
 			for (IModelicaProject project: projects)
@@ -174,6 +180,6 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 	public String getPattern()
 	{
 		debug("getPattern");		
-		return "\n([^:]+)\\:([0-9]+)(.*)";
+		return "\n([^:\n\r]+)\\:([0-9]+)(.*)";
 	}	
 }
