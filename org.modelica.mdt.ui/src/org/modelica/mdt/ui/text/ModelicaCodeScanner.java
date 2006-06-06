@@ -106,7 +106,7 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 			"loop","model","not","or","outer",
 			"output","overload","package","parameter",
 			"partial","protected","public","record",
-			"redeclare","replacable","return", "terminate",
+			"redeclare","replaceable","return", "terminate",
 			"then","time","true","type","when","while","within",
 			
 			/* The following are Meta-Modelica Keywords */

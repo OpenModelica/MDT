@@ -29,7 +29,13 @@ public class UIPlugin extends AbstractUIPlugin
 	//private List<IFile> markedFiles;
 	//private MetaModelicaJobListener jobListener;
 	private MetaModelicaBuildLaunchListener buildMetaModelicaLanuchListner;
+    private boolean DEBUG = false;
 
+    protected void debug(String message)
+    {
+    	if (DEBUG) System.out.println("UIPlugin: " + message);
+    }
+    
 	
 	public static final String METAMODELICA_BULD_MARKER_ID =
 		"org.modelica.mdt.ui.MetaModelicaBuildMarker";
@@ -39,6 +45,13 @@ public class UIPlugin extends AbstractUIPlugin
 	
 	public UIPlugin() 
 	{
+		String value = Platform.getDebugOption  /*load trace/ConsolePatternMatching flag */
+		("org.modelica.mdt.ui/trace/UIPlugin");
+		if (value != null && value.equalsIgnoreCase("true"))
+		{
+			DEBUG = true;
+		}
+		
 		plugin = this;
 	}
 
@@ -123,7 +136,7 @@ public class UIPlugin extends AbstractUIPlugin
 	
 	public void deleteMarkers()
 	{
-		System.out.println("DeleteMarkers Called!");
+		debug("DeleteMarkers Called!");
 		IModelicaProject[] projects = ModelicaCore.getModelicaRoot().getProjects();
 		for (IModelicaProject project: projects)
 		{

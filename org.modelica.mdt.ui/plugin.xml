@@ -111,7 +111,7 @@
       <consolePatternMatchListener
             class="org.modelica.mdt.ui.console.MetaModelicaPatternMatchListener"
             id="org.modelica.mdt.ui.console.MetaModelicaPatternMatchListener"
-            regex="\n([^:]+)\\:([0-9]+)(.*)">
+            regex="([^:\n\r]+)\\:([0-9]+)(.*)">
          <enablement>
             <instanceof value="org.eclipse.ui.console.TextConsole"/>
          </enablement>

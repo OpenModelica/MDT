@@ -47,7 +47,7 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
     {
     	super();
 		String value = Platform.getDebugOption  /*load trace/ConsolePatternMatching flag */
-		("org.modelica.mdt.omc/trace/ConsolePatternMatching");
+		("org.modelica.mdt.ui/trace/MetaModelicaPatternMatchListener");
 		if (value != null && value.equalsIgnoreCase("true"))
 		{
 			DEBUG = true;
@@ -129,7 +129,11 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 			for (IModelicaProject project: projects)
 			{
 				IProject pro = project.getWrappedProject();
-				if (pro != null) pro.accept(problemsVisitor);
+				if (pro != null && pro.isOpen()) 
+				{
+					debug("ProjectName:"+pro.getName()+" path:" + pro.getFullPath());
+					pro.accept(problemsVisitor);
+				}
 			}
 		}
 		catch (Exception e)
@@ -180,6 +184,6 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 	public String getPattern()
 	{
 		debug("getPattern");		
-		return "\n([^:\n\r]+)\\:([0-9]+)(.*)";
+		return "([^:\n\r]+)\\:([0-9]+)(.*)";
 	}	
 }

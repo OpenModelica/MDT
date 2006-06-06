@@ -46,6 +46,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
@@ -86,7 +88,7 @@ public class MarkProblemsVisitor implements IResourceVisitor
 		offset = problemOffset;
 		console = problemConsole;
 		String value = Platform.getDebugOption  /*load trace/ConsolePatternMatching flag */
-		("org.modelica.mdt.omc/trace/MarkProblemsVisitor");
+		("org.modelica.mdt.ui/trace/MarkProblemsVisitor");
 		if (value != null && value.equalsIgnoreCase("true"))
 		{
 			DEBUG = true;
@@ -104,12 +106,23 @@ public class MarkProblemsVisitor implements IResourceVisitor
 	 */
 	public boolean visit(IResource resource) throws CoreException
 	{
+		debug("VisitResName:"+ resource.getName() + " typ:" + resource.getType());
 		IResource iResource = null;		
-		if (resource.getType() == IResource.FOLDER)
+		switch (resource.getType())
 		{
-			IFolder f = (IFolder)resource;
-			iResource = f.findMember(strFileName);
+		case IResource.FOLDER: 
+			iResource = ((IFolder)resource).findMember(strFileName);
+			break;
+		case IResource.PROJECT:
+			iResource = ((IProject)resource).findMember(strFileName);
+			break;
+		case IResource.ROOT:
+			iResource = ((IWorkspace)resource).getRoot().findMember(strFileName);
+			break;
+		default:
+			return true;
 		}
+		
 		if (iResource != null)
 		{			
 			IPath path = iResource.getProjectRelativePath();
@@ -200,6 +213,18 @@ public class MarkProblemsVisitor implements IResourceVisitor
         else
             attributes.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_INFO));
     
+        /* do not set the marker if already set */
+		IMarker[] markers = in_file.findMarkers(UIPlugin.METAMODELICA_BULD_MARKER_ID, false, IResource.DEPTH_INFINITE);
+		for (IMarker marker : markers)
+		{
+			if (message.equals(MarkerUtilities.getMessage(marker)) &&
+				MarkerUtilities.getLineNumber(marker) == lineNumber)
+			{
+				debug("Marker NOT SET as is already there!");
+				return;
+			}
+		}
+
         debug("Creating marker: "+in_file.getName()+":"+lineNumber+" "+message);
         MarkerUtilities.setLineNumber(attributes, lineNumber);
         MarkerUtilities.setMessage(attributes, message);
