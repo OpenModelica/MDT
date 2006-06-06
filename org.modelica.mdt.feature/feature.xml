@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.6.5"
+      version="0.6.6"
       provider-name="PELAB">
 
    <description url="http://www.ida.liu.se/~pelab/modelica/">
@@ -75,18 +75,18 @@ SUCH DAMAGE.
          id="org.modelica.mdt.core"
          download-size="0"
          install-size="0"
-         version="0.6.5"/>
+         version="0.6.6"/>
 
    <plugin
          id="org.modelica.mdt.ui"
          download-size="0"
          install-size="0"
-         version="0.6.5"/>
+         version="0.6.6"/>
 
    <plugin
          id="org.modelica.mdt.omc"
          download-size="0"
          install-size="0"
-         version="0.6.5"/>
+         version="0.6.6"/>
 
 </feature>
