@@ -806,16 +806,13 @@ public class OMCProxy implements IModelicaCompiler
 		/*
 		 * The getCrefInfo reply has the following format:
 		 * 
-		 * <file path>,<something>,<start line>,<start column>,<end line>,<end column>
+		 * {<file path>,<something>,<start line>,<start column>,<end line>,<end column>}
 		 * 
 		 * for example:
-		 * /foo/Modelica/package.mo,writable,1,1,1029,13
+		 * {/foo/Modelica/package.mo,writable,1,1,1029,13}
 		 */
-
-		/* For some reason, the list returned doesn't contain curly braces. */
 		retval = retval.trim();
-		retval = "{" + retval + "}"; 
-
+		
 		List tokens = null;
 		try
 		{
