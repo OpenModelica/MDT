@@ -74,6 +74,11 @@ public class ModelicaParser
 			throw new ModelicaParserException("Empty list: [" + str + "]");
 		}
 		
+		if (str.startsWith("{ rec("))
+		{
+			str = "{"+str.substring(6, str.length()-3) + "}";
+		}
+		
 		/* Make sure this is a list */
 		if(str.charAt(0) != '{' || str.charAt(str.length() - 1) != '}')
 		{
@@ -81,6 +86,14 @@ public class ModelicaParser
 		}
 		/* Remove { and } */
 		str = str.substring(1, str.length() - 1);
+		
+		str.trim();
+		
+		if (str.startsWith("rec("))
+		{
+			str = str.substring(4, str.length()-1);
+		}
+				
 		
 		if(str.trim().equals(""))
 		{
@@ -142,7 +155,6 @@ public class ModelicaParser
 			{
 				listFound = true;
 				depth++;
-				
 				subString += '{';
 			}
 			else if(str.charAt(characterPosition) == ',' && depth == 0 && insideString == false)
