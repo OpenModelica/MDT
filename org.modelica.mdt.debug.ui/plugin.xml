@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.modelica.mdt.debug.core.launchConfigurationType.mdt"
+            description="Run or Debug a MetaModelica program"
+            class="org.modelica.mdt.debug.ui.launcher.MDTTabGroup"
+            id="org.modelica.mdt.debug.ui.launchConfigurationTabGroup.mdt">
+      </launchConfigurationTabGroup>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            class="org.modelica.mdt.debug.ui.presentation.MDTModelPresentation"
+            id="org.modelica.mdt.debug.ui.presentation">
+      </debugModelPresentation>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.modelica.mdt.debug.ui.breakpoints.MDTBreakpointAdapterFactory"
+            adaptableType="org.eclipse.ui.texteditor.ITextEditor">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
+         </adapter>
+      </factory>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Data Stack"
+            icon="icons/full/cview16/datastack_view.gif"
+            class="org.modelica.mdt.debug.ui.views.DataStackView"
+            id="org.modelica.mdt.debug.ui.view.DataStackView">
+      </view>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.debug.ui.VariableView"
+               visible="false"
+               relationship="stack"
+               id="org.modelica.mdt.debug.ui.view.DataStackView">
+         </view>
+         <viewShortcut
+               id="org.modelica.mdt.debug.ui.view.DataStackView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="Debugging MetaModelica"
+            description="Debugging MetaModelica"
+            id="org.modelica.mdt.debug.ui.debugging"
+            parentId="org.eclipse.debug.ui.debugging">
+      </context>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.debugModelContextBindings">
+      <modelContextBinding
+            debugModelId="org.modelica.mdt.debug"
+            contextId="org.modelica.mdt.debug.ui.debugging">
+      </modelContextBinding>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.contextViewBindings">
+      <contextViewBinding
+            viewId="org.modelica.mdt.debug.ui.view.DataStackView"
+            contextId="org.modelica.mdt.debug.ui.debugging"
+            autoClose="true"
+            autoOpen="true">
+      </contextViewBinding>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/cview16/rml.gif"
+            configTypeID="org.modelica.mdt.debug.core.launchConfigurationType.rml"
+            id="org.modelica.mdt.debug.ui.launchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+
+</plugin>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.modelica.mdt.debug.core.launcher.MDTLaunchDelegate"
+            id="org.modelica.mdt.debug.core.launchConfigurationType.mdt"
+            modes="run, debug"
+            name="MDT"
+            public="true"
+            sourceLocatorId="org.modelica.mdt.debug.core.sourceLookupDirector.mdt"
+            sourcePathComputerId="org.modelica.mdt.debug.core.sourcePathComputer.mdt">
+      </launchConfigurationType>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="MDT Source Lookup Director"
+            class="org.modelica.mdt.debug.core.sourcelookup.MDTSourceLookupDirector"
+            id="org.modelica.mdt.debug.core.sourceLookupDirector.mdt">
+      </sourceLocator>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="org.modelica.mdt.debug.core.sourcelookup.MDTSourcePathComputerDelegate"
+            id="org.modelica.mdt.debug.core.sourcePathComputer.mdt">
+      </sourcePathComputer>
+   </extension>
+   
+   
+   <extension
+         point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+            markerType="org.modelica.mdt.debug.core.lineBreakpoint.marker"
+            class="org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint"
+            id="org.modelica.mdt.debug.core.lineBreakpoint">
+      </breakpoint>
+   </extension>
+   
+   <extension
+         id="lineBreakpoint.marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.debug.core.lineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+
+</plugin>
