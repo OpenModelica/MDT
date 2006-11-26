@@ -109,9 +109,15 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		throws CoreException, ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		for (IResource member :  container.members())
+		// load children only if the project is open!
+		if (container != null &&
+			container.getProject() != null &&
+			container.getProject().isOpen())
 		{
-			children.put(member, wrap(member));
+			for (IResource member :  container.members())
+			{
+				children.put(member, wrap(member));
+			}
 		}
 	}
 
@@ -417,4 +423,5 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 }

@@ -256,4 +256,5 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 	{
 		return this;
 	}
+	
 }

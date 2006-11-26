@@ -42,11 +42,15 @@
 package org.modelica.mdt.core;
 
 import java.util.Collection;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se]
  * @author Elmir Jagudin
  */
 public interface IModelicaElementChangeListener
 {
 	public void elementsChanged(Collection<IModelicaElementChange> changes);
+	
+	public void setViewer(Viewer viewer);
 }

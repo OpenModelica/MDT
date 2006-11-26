@@ -54,7 +54,6 @@ import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
-import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -64,7 +63,7 @@ import org.modelica.mdt.internal.core.CorePlugin;
 
 
 /**
- * This class provides one to one mapping to IModelicaComiler interface,
+ * This class provides one to one mapping to IModelicaCompiler interface,
  * however it hides the details of lazy loading and instansiating of the
  * compiler object via the extension points.
  * 
@@ -76,7 +75,7 @@ public class CompilerProxy
 {
 	private static IModelicaCompiler compiler = null;
 	
-	private static IModelicaCompiler getCompiler() 
+	public static IModelicaCompiler getCompiler() 
 		throws CompilerInstantiationException
 	{
 		if (compiler == null)
@@ -201,5 +200,27 @@ public class CompilerProxy
 			UnexpectedReplyException 
 	{
 		return getCompiler().getClassInfo(className);
+	}
+	
+	public static String getClassString(String className) 
+		throws CompilerInstantiationException, ConnectException,
+			UnexpectedReplyException 
+	{
+		return getCompiler().getClassString(className);
+	}	
+	
+	/**
+	 * @author Adrian Pop
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */
+	public static synchronized String sendExpression(String command, boolean showInConsole) 
+	throws CompilerInstantiationException, ConnectException,
+	UnexpectedReplyException 
+	{
+		return getCompiler().sendExpression(command, showInConsole);
 	}
 }

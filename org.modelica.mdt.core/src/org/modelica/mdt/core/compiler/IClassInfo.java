@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.core.compiler;
 
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass.Restriction;
 
 /**

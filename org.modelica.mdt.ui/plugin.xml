@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point id="modelicaElementFilters" name="Modelica Element Filters" schema="schema/org.modelica.mdt.ui.modelicaElementFilters.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -8,10 +9,16 @@
             name="Modelica"/>
       <view
             category="org.modelica.mdt.ModelicaCategory"
-            class="org.modelica.mdt.ui.view.ProjectsView"
-            icon="icons/etool16/newproject_wiz.png"
-            id="org.modelica.mdt.ProjectsView"
+            class="org.modelica.mdt.ui.view.ModelicaProjectsView"
+            icon="icons/etool16/newproject_wiz.gif"
+            id="org.modelica.mdt.ui.view.ModelicaProjectsView"
             name="Modelica Projects"/>
+      <view
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.view.ModelicaConsoleView"
+            icon="icons/obj16/mo_file.gif"
+            id="org.modelica.mdt.ui.view.ModelicaConsoleView"
+            name="OpenModelica Console"/>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -21,7 +28,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewProjectWizard"
-            icon="icons/etool16/newproject_wiz.png"
+            icon="icons/etool16/newproject_wiz.gif"
             id="org.modelica.mdt.NewProjectWizard"
             name="Modelica Project"
             project="true">
@@ -32,7 +39,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewClassWizard"
-            icon="icons/obj16/class_obj.png"
+            icon="icons/obj16/class_obj.gif"
             id="org.modelica.mdt.NewClassWizard"
             name="Modelica Class">
          <description>
@@ -43,7 +50,7 @@
       <wizard
             category="org.modelica.mdt.ModelicaCategory"
             class="org.modelica.mdt.ui.wizards.NewPackageWizard"
-            icon="icons/obj16/package_obj.png"
+            icon="icons/obj16/package_obj.gif"
             id="org.modelica.mdt.NewPackageWizard"
             name="Modelica Package">
          <description>
@@ -60,21 +67,21 @@
             contributorClass="org.modelica.mdt.ui.editor.ModelicaActionContributor"
             default="true"
             extensions="mo"
-            icon="icons/obj16/mo_file.png"
+            icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.editor"
             name="Modelica Editor"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="org.modelica.mdt.ui.PerspectiveFactory"
+            class="org.modelica.mdt.ui.ModelicaPerspectiveFactory"
             id="org.modelica.mdt.perspective"
             name="Modelica"/>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/ovr16/modelica_ovr.png"
+            icon="icons/ovr16/modelica_ovr.gif"
             id="org.modelica.mdt.modelicaNatureImage"
             natureId="org.modelica.mdt.core.ModelicaNature"/>
    </extension>
@@ -124,6 +131,56 @@
       <super type="org.eclipse.core.resources.problemmarker"/>
       <persistent value="true"/>
    </extension>
-   
-   
+   <extension
+         point="org.eclipse.ui.ide.resourceFilters">
+      <filter
+            pattern="*.c"
+            selected="false"/>
+      <filter
+            pattern="*.srz"
+            selected="false"/>
+      <filter
+            pattern="*.sig"
+            selected="false"/>
+      <filter
+            pattern="*.h"
+            selected="false"/>
+      <filter
+            pattern="*.cpp"
+            selected="false"/>
+      <filter
+            pattern="*.cc"
+            selected="false"/>
+      <filter
+            pattern="*.hpp"
+            selected="false"/>
+      <filter
+            pattern="*.hpp"
+            selected="false"/>
+      <filter
+            pattern="*.o"
+            selected="false"/>
+      <filter
+            pattern="*.obj"
+            selected="false"/>
+      <filter
+            pattern="*.lib"
+            selected="false"/>
+      <filter
+            pattern="*.a"
+            selected="false"/>
+      <filter
+            pattern="*.pdb"
+            selected="false"/>
+      <filter
+            pattern="StandardLibrary"
+            selected="false"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="org.modelica.mdt.ui.console.ModelicaConsoleFactory"
+            icon="icons/obj16/mo_file.gif"
+            label="MDT Console"/>
+   </extension>   
 </plugin>

@@ -166,7 +166,8 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 			new key("local", true, false, false, false), 
 			new key("match", true, false, false, false), 
 			new key("matchcontinue", true, false, false, false),
-			new key("tuple", false, false, false, false), 
+			new key("tuple", false, false, false, false),
+			new key("subtypeof", false, false, false, false),			
 			new key("uniontype", true, false, false, false)
 		};
 

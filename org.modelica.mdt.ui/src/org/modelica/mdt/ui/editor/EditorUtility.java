@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -46,6 +46,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -56,6 +57,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -131,11 +133,11 @@ public class EditorUtility
 				 * for all elements except modelica files goto the line
 				 * where the definition of the element begins
 				 */
-				IRegion reg = ((IModelicaElement)element).getLocation();
+				ISourceRegion reg = ((IModelicaElement)element).getLocation().getSourceRegion();
 				
 				if (reg != null)
 				{
-					editor.setHighlightRange(reg.getOffset(), reg.getLength(), true);
+					((ModelicaEditor)editor).setHighlightRange(reg, true);
 				}
 			}
 		}		
@@ -177,4 +179,25 @@ public class EditorUtility
 		}
 		return null;
 	}
+
+	/**
+	 * Returns the given editor's input as Modelica element.
+	 *
+	 * @param editor the editor
+	 * @return the given editor's input as Modelica element or <code>null</code> if none
+	 */
+	public static IModelicaElement getEditorInputModelicaElement(IEditorPart editor) {
+		Assert.isNotNull(editor);
+		IEditorInput editorInput= editor.getEditorInput();
+		if (editorInput == null)
+			return null;
+		
+		if (!(editorInput instanceof ModelicaElementEditorInput)) return null;
+		IModelicaElement me = ((ModelicaElementEditorInput)editorInput).getSourceFile();
+		if (me != null) 
+			return (IModelicaElement)me;
+		else return null;
+	}
+	
+	
 }

@@ -58,6 +58,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public class ModelicaImport implements IModelicaImport
 {
+	protected boolean DEBUG = false;
 	/* the import type this class is representing */ 
 	private Type type;
 	/* the imported package, loaded lazily to improve latency and be more eclipsish */
@@ -161,7 +162,7 @@ public class ModelicaImport implements IModelicaImport
 		{
 			/* the package specified in this import statment does not exists */
 			//TODO throw an exception or something
-			System.out.println("omg, omg, omg ! " + importedPackageName);
+			if (DEBUG) System.out.println("omg, omg, omg ! " + importedPackageName);
 		}
 		
 		/*

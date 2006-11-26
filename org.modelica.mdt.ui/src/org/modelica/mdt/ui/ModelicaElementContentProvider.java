@@ -48,13 +48,13 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.modelica.mdt.core.IModelicaElementChange;
-import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
@@ -64,23 +64,25 @@ import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.eclipse.jface.util.Assert;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaElementChangeListener;
+import org.modelica.mdt.ui.ModelicaElementChangeListener;
+
+import com.sun.org.apache.bcel.internal.generic.StoreInstruction;
 
 /**
  * Content provider for a tree viewer. This content provider works only
  * whith TreeViewer:s to keep things simple. If you want to use it for
  * other viewers some addditional hacking is required on this class.
- *  
+ * 
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se]
  * @author Elmir Jagudin
  */
-public class ModelicaElementContentProvider 
-	implements ITreeContentProvider, IModelicaElementChangeListener 
+public class ModelicaElementContentProvider extends ModelicaElementChangeListener implements ITreeContentProvider
 {
-	private TreeViewer viewer;
 	
 	public ModelicaElementContentProvider()
 	{
-		/* we are interested in changes to modelica elements tree */
-		ModelicaCore.getModelicaRoot().addModelicaElementChangeListener(this);
+		
 	}
 	
 	public Object[] getElements(Object inputElement)
@@ -88,7 +90,12 @@ public class ModelicaElementContentProvider
 		if (inputElement instanceof IModelicaRoot)
 		{
 			return ((IModelicaRoot)inputElement).getProjects();
-		}
+		}		
+		if (inputElement instanceof IWorkspaceRoot)
+		{
+			return ((IWorkspaceRoot)inputElement).getProjects();
+		}		
+		
 		
 		ErrorManager.logBug(UIPlugin.getSymbolicName(),
 				"Elements of an object of unexpected type " + 
@@ -100,9 +107,12 @@ public class ModelicaElementContentProvider
 	{
 	}
 
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+	public void inputChanged(Viewer fViewer, Object oldInput, Object newInput)
 	{
-		this.viewer = (TreeViewer)viewer;
+		/* we are interested in changes to modelica elements tree */
+		setViewer(fViewer);
+		// TODO! see about oldInput!
+		ModelicaCore.getModelicaRoot().addModelicaElementChangeListener(this);
 	}
 
 	public Object[] getChildren(Object parent)
@@ -111,7 +121,35 @@ public class ModelicaElementContentProvider
 		{
 			try
 			{
-				return ((IContainer)parent).members();
+				IResource[] files = ((IContainer)parent).members();
+				// sort so package.mo is the first!!!!
+				int i = 0;
+				for (i=0; i < files.length; i++)
+				{
+					//System.out.print(" " + files[i].getName());
+					if (files[i].getName().equals("package.mo"))
+						break;
+				}
+				// we know here that package.mo has index i
+				IResource[] sortedFiles	= null; 
+				if (i > 0 && i < files.length)
+				{
+					sortedFiles = new IResource[files.length];
+					sortedFiles[0] = files[i];
+					int j = 1;
+					while (j < files.length)
+					{
+						if (j != i) 
+							sortedFiles[j] = files[j];
+						else
+							sortedFiles[j] = files[0];
+						j++;
+					}
+				}
+				else // no package.mo, don't bother! 
+					sortedFiles = files;
+				
+				 return sortedFiles;
 			}
 			catch (CoreException e)
 			{
@@ -171,7 +209,41 @@ public class ModelicaElementContentProvider
 		{
 			try
 			{
-				return ((IParent)parent).getChildren().toArray();
+				Collection<? extends IModelicaElement> childs = ((IParent)parent).getChildren();
+				
+				Object[] sortedFiles = new Object[childs.size()];
+				IModelicaElement pkg = null;
+
+				for (IModelicaElement e : childs)
+				{
+					if (e.getElementName().equals("package.mo")) 
+						pkg = e;
+				}
+				
+				if (pkg != null)
+				{
+					sortedFiles[0] = pkg;
+					int j = 1;
+					for (IModelicaElement e : childs)
+					{
+						if (e.equals(pkg)) continue;
+						else {
+							sortedFiles[j] = e;
+							j++;
+						}
+					}
+				}
+				else // no package.mo, don't bother! 
+				{
+					int j = 0;
+					for (IModelicaElement e : childs)
+					{
+						sortedFiles[j] = e;
+						j++;
+					}
+				}				
+				
+				return sortedFiles;
 			}
 			catch (CompilerException e)
 			{
@@ -235,66 +307,5 @@ public class ModelicaElementContentProvider
 		}
 		return false;
 	}
-
-	/*
-	 * IModelicaElementChangeListener interface method
-	 */
-	public void elementsChanged(final Collection<IModelicaElementChange> changes)
-	{
-		Control ctrl = viewer.getControl();
-
-		if (ctrl == null || ctrl.isDisposed())
-		{
-			return;
-		}
-				
-		if (ctrl.getDisplay().getThread() == Thread.currentThread()) 
-		{
-			handleChanges(changes);
-		}
-		else
-		{			
-			ctrl.getDisplay().asyncExec(new Runnable()
-			{
-				public void run() 
-				{
-					/* Abort if this happens after disposes */
-					Control ctrl = viewer.getControl();
-					if (ctrl == null || ctrl.isDisposed())
-					{
-						return;
-					}
-					handleChanges(changes);
-				}
-			});
-		}
-	}
-
-	protected void handleChanges(Collection<IModelicaElementChange> changes)
-	{
-		  for (IModelicaElementChange change : changes)
-		  {			  
-			  Assert.isNotNull(change);			  
-			  if (change == null) continue;
-			  Object element = change.getElement();
-			  Assert.isNotNull(element);			  
-			  if (element == null) continue;
-			  switch (change.getChangeType())
-			  {
-			  case ADDED:
-				  viewer.add(change.getParent(), element);
-				  break;
-			  case MODIFIED:
-				  viewer.update(element, null);
-				  break;
-			  case REMOVED:
-				  viewer.remove(element);
-				  break;
-			  case OPENED:
-			  case CLOSED:
-				  viewer.refresh(element);
-				  break;
-			  }
-		  }
-	}
+	
 }

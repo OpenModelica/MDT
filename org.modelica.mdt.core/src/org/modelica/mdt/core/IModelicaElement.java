@@ -55,10 +55,11 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @author adrpo
  * @author Elmir Jagudin
  *
  */
-public interface IModelicaElement extends IAdaptable 
+public interface IModelicaElement extends IAdaptable
 {
 	public String getElementName();
 
@@ -101,7 +102,7 @@ public interface IModelicaElement extends IAdaptable
 	 * @throws CompilerInstantiationException 
 	 * 
 	 */
-	public IRegion getLocation() 
+	public IDefinitionLocation getLocation() 
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException;
 
@@ -128,10 +129,11 @@ public interface IModelicaElement extends IAdaptable
 	
 	
 	public IModelicaElement getParent();
-	
+		
 	/**
 	 * @return the project where this element is defined,
 	 * elements from standard library returns null here
 	 */
 	public IModelicaProject getProject();
+		
 }

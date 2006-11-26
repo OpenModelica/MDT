@@ -48,6 +48,7 @@ import java.util.LinkedList;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
@@ -59,6 +60,7 @@ import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.ISignature;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -151,7 +153,35 @@ public class FolderPackage extends ModelicaClass
 			CompilerInstantiationException
 	{
 		IModelicaElement modElement;
-		for (IResource member : container.members())
+		IResource[] files = container.members();
+		// sort so package.mo is the first!!!!
+		int i = 0;
+		for (i=0; i < files.length; i++)
+		{
+			//System.out.print(" " + files[i].getName());
+			if (files[i].getName().equals("package.mo"))
+				break;
+		}
+		// we know here that package.mo has index i
+		IResource[] sortedFiles	= null; 
+		if (i > 0 && i < files.length)
+		{
+			sortedFiles = new IResource[files.length];
+			sortedFiles[0] = files[i];
+			int j = 1;
+			while (j < files.length)
+			{
+				if (j != i) 
+					sortedFiles[j] = files[j];
+				else
+					sortedFiles[j] = files[0];
+				j++;
+			}
+		}
+		else // no package.mo, don't bother! 
+			sortedFiles = files;
+		
+		for (IResource member : sortedFiles)
 		{
 			modElement = wrap(member);
 			children.put(member, modElement);
@@ -387,4 +417,5 @@ public class FolderPackage extends ModelicaClass
 		packageMo.getChildren();
 		return super.getAttributes();
 	}
+	
 }

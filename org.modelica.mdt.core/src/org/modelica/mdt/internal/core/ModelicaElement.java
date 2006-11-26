@@ -48,16 +48,19 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
  * @author Elmir Jagudin
  */
 abstract public class ModelicaElement extends PlatformObject 
@@ -117,7 +120,7 @@ abstract public class ModelicaElement extends PlatformObject
 
 	/**
 	 * This method will be invoked on modelica elements, that do not have
-	 * a direct mapping to a IResource, when it is suspected that thier 
+	 * a direct mapping to a IResource, when it is suspected that their 
 	 * representation in the compiler have changed.
 	 *  
 	 * The element should requery the compiler and return the difference as
@@ -131,10 +134,10 @@ abstract public class ModelicaElement extends PlatformObject
 			CompilerInstantiationException, CoreException
 	{
 		/* return an empty list by default */
-		return new LinkedList<IModelicaElementChange>();		
+		return new LinkedList<IModelicaElementChange>();
 	}
 
-	public IRegion getLocation()
+	public IDefinitionLocation getLocation()
 		throws CoreException, ConnectException, 
 			UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException

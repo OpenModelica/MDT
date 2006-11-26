@@ -47,6 +47,7 @@ import org.modelica.mdt.internal.core.ModelicaRoot;
 
 public class ModelicaCore 
 {
+	static String PLUGIN_ID = "ModelicaCorePlugin";
 	private static ModelicaRoot modelicaRoot = null;
 
 

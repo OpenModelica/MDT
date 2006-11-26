@@ -119,8 +119,7 @@ public class ModelicaParser
 		int depth = 0;
 		boolean listFound = false;
 		boolean insideString = false;
-		for(int characterPosition = 0;characterPosition < str.length()
-			;characterPosition++)
+		for(int characterPosition = 0; characterPosition < str.length(); characterPosition++)
 		{
 			if(str.charAt(characterPosition) == '\\' && insideString == true)
 			{
@@ -130,8 +129,7 @@ public class ModelicaParser
 				if(characterPosition >= str.length())
 				{
 					/* This is some kind of error*/
-					throw new ModelicaParserException("String ends in \\: " 
-							+ str);
+					throw new ModelicaParserException("String ends in \\: " + str);
 				}
 
 				subString += "\\" + str.charAt(characterPosition);
@@ -199,8 +197,9 @@ public class ModelicaParser
 				listFound = false;
 				if(element instanceof Element && ((Element)element).toString().equals(""))
 				{
-					/* An empty string denotes an empty list element, which
-					 * is an error. */
+					/* An empty string denotes an empty 
+					 * list element, which is an error. 
+					 */
 					throw new ModelicaParserException("Element is empty");
 				}
 				
@@ -210,7 +209,6 @@ public class ModelicaParser
 			else if(str.charAt(characterPosition) == '}' && insideString == false)
 			{
 				depth--;
-				
 				subString += '}';
 				
 				/* Unmatched } */

@@ -113,7 +113,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 			new key("local", 		TokenLOCAL), 
 			new key("match", 		TokenMATCH), 
 			new key("matchcontinue",TokenMATCHCONTINUE),
-			new key("tuple", 		TokenTUPLE), 
+			new key("tuple", 		TokenTUPLE),
+			new key("subtypeof",    TokenSUBTYPEOF),
 			new key("uniontype", 	TokenUNIONTYPE),
 			
 			new key("{", 			TokenLBRACE),

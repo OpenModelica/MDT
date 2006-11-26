@@ -167,8 +167,7 @@ public class OMCParser
 					Integer.parseInt(errorLocationParts[1+infoOffset]);
 
 				// Split the 12-34 (start column & end line)
-				String startColumnAndEndLine[] = 
-					errorLocationParts[2+infoOffset].split("-");
+				String startColumnAndEndLine[] = errorLocationParts[2+infoOffset].split("-");
 				
 				if(startColumnAndEndLine.length != 2)
 				{
@@ -199,8 +198,7 @@ public class OMCParser
 			 * second colon
 			 */					
 			int firstColon = errorMessage.indexOf(":");
-			int secondColon = 
-					errorMessage.substring(firstColon+1).indexOf(":");
+			int secondColon = errorMessage.substring(firstColon+1).indexOf(":");
 			/* we need global position on errorMessage string */
 			secondColon += firstColon+1;
 			

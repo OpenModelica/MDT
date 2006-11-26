@@ -199,9 +199,13 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			{
 				return false;
 			}
+			
+			//StyleRange x = presentation.getDefaultStyleRange();
 
 			presentation.addStyleRange(new StyleRange(functionNameStart, 
-					functionNameEnd - functionNameStart, null, null, SWT.BOLD));
+					functionNameEnd - functionNameStart, 
+					null, null, //x.foreground, x.background, 
+					SWT.BOLD));
 			
 			return true;
 		}
@@ -370,6 +374,26 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		
 		try
 		{
+			for (IModelicaElement pkg : file.getChildren())
+			if (pkg instanceof IModelicaClass)
+			for (IModelicaElement element : ((IModelicaClass)pkg).getChildren())
+			{
+				if(element instanceof IModelicaClass && 
+				   //(element.getElementName().startsWith(prefix) ||
+					element.getElementName().equals(prefix))
+				{
+					String proposal = 
+						constructProposalString((IModelicaClass)element);
+	
+					if(information.size() == 0)
+					{
+						information.add(new ContextInformation(proposal, proposal));
+						/* save what the user typed to get this context
+						 * information */
+						functionProposal = prefix;
+					}
+				}
+			}
 			/* Fetch information about what class we're typing inside */
 			IModelicaClass modelicaClass = file.getClassAt(offset);
 			if(modelicaClass != null)

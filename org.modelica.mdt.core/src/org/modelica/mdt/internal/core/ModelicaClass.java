@@ -48,6 +48,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
@@ -61,6 +62,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  * Superclass of all modelica class/package representation, collects 
  * generic package handling code.
  * 
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
  * @author Elmir Jagudin
  * @author Andreas Remar
  * @author Kent Beck
@@ -164,11 +166,11 @@ abstract public class ModelicaClass extends ModelicaElement
 		return classAttributes;
 	}
 
-	public IRegion getLocation()
+	public IDefinitionLocation getLocation()
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException
 	{
-		return getAttributes().getDefinitionLocation().getRegion();
+		return getAttributes().getDefinitionLocation();
 	}
 	
 	@Override

@@ -2,23 +2,41 @@ package org.modelica.mdt.ui;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.core.OpenModelicaCompiler;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.osgi.framework.BundleContext;
+import org.modelica.mdt.ui.UIPlugin;
+import org.modelica.mdt.ui.view.ModelicaConsoleView;
+import org.modelica.mdt.ui.console.ModelicaTextConsole;
 import org.modelica.mdt.ui.text.ModelicaTextTools;
+
+import java.io.OutputStream;
 import java.util.*;
+
+import javax.swing.text.Document;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.IDocument;
 
 /**
  * The main plugin class for the org.modelica.mdt.ui plugin
@@ -26,10 +44,12 @@ import org.eclipse.debug.core.DebugPlugin;
 public class UIPlugin extends AbstractUIPlugin 
 {
 	private ModelicaTextTools fModelicaTextTools;
-	//private List<IFile> markedFiles;
-	//private MetaModelicaJobListener jobListener;
+	private ModelicaTextConsole fConsole;
 	private MetaModelicaBuildLaunchListener buildMetaModelicaLanuchListner;
     private boolean DEBUG = false;
+    public static String PLUGIN_ID = "org.modelica.mdt.ui";
+    public static String ID_PROJECTSVIEW = "org.modelica.mdt.ui.views.ProjectsView";
+    private OpenModelicaCompiler omc = null;
 
     protected void debug(String message)
     {
@@ -51,7 +71,6 @@ public class UIPlugin extends AbstractUIPlugin
 		{
 			DEBUG = true;
 		}
-		
 		plugin = this;
 	}
 
@@ -66,11 +85,8 @@ public class UIPlugin extends AbstractUIPlugin
 		IAdapterFactory factory = new ModelicaElementAdapterFactory();
 
 		manager.registerAdapters(factory, IModelicaElement.class);
-		//jobListener = new MetaModelicaJobListener();
-		//Platform.getJobManager().addJobChangeListener(jobListener);
 		buildMetaModelicaLanuchListner = new MetaModelicaBuildLaunchListener();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(buildMetaModelicaLanuchListner);
-		//markedFiles = new Vector<IFile>();
 	}
 
 	/**
@@ -78,12 +94,10 @@ public class UIPlugin extends AbstractUIPlugin
 	 */
 	public void stop(BundleContext context) throws Exception 
 	{
-		super.stop(context);			
+		super.stop(context);
+		fConsole = null;
 		plugin = null;
-		//markedFiles.clear();
-		//markedFiles = null;
-		//Platform.getJobManager().removeJobChangeListener(jobListener);
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(buildMetaModelicaLanuchListner);		
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(buildMetaModelicaLanuchListner);
 	}
 
 	/**
@@ -154,34 +168,88 @@ public class UIPlugin extends AbstractUIPlugin
 				c.printStackTrace();
 			}
 		}
-		/*
-		if (markedFiles == null) return;
-		for (IFile file : markedFiles)
-		{	
-			try
-			{
-				file.deleteMarkers(UIPlugin.METAMODELICA_BULD_MARKER_ID, false, IResource.DEPTH_INFINITE);			
-			}
-			catch(Exception e)
-			{	
-			}
-		}
-		markedFiles.clear();
-		*/
 	}
 	
-//	public void addMarkedFile(IFile file)
-//	{
-//		markedFiles.add(file);
-//	}
-//	
-//	public void deleteMarkedFile(IFile file)
-//	{
-//		markedFiles.remove(file);
-//	}
-//
-//	public boolean containsMarkedFile(IFile file)
-//	{
-//		return markedFiles.contains(file);
-//	}
+	/**
+	 * Creates the MDT plug-in's standard groups for view context menus.
+	 * 
+	 * @param menu the menu manager to be populated
+	 */
+	public static void createStandardGroups(IMenuManager menu) {
+		if (!menu.isEmpty())
+			return;
+			
+		menu.add(new Separator("group.new"));
+		menu.add(new GroupMarker("group.goto"));
+		menu.add(new Separator("group.open"));
+		menu.add(new GroupMarker("group.show"));
+		menu.add(new Separator("group.edit"));
+		menu.add(new Separator("group.reorganize"));
+		menu.add(new Separator("group.generate"));
+		menu.add(new Separator("group.search"));
+		menu.add(new Separator("group.build"));
+		menu.add(new Separator("additions"));
+		menu.add(new Separator("group.viewerSetup"));
+		menu.add(new Separator("group.properties"));
+	}
+	
+//    public ModelicaConsoleView getModelicaConsole()
+//    {
+//		try 
+//		{
+//			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+//			fConsole = (ModelicaConsoleView)page.findView(ModelicaConsoleView.CONSOLE_ID);
+//			//boolean show = ModelicaPlugin.getDefault().getPreferenceStore().getBoolean(ModelicaPreferencePage.SHOW_OUTPUT_IN_CONSOLE);			
+//			if (fConsole != null) 
+//			{
+//				return fConsole;
+//			} 
+//			else  
+//			{
+//				page.showView(ModelicaConsoleView.CONSOLE_ID);
+//				fConsole = (ModelicaConsoleView)page.findView(ModelicaConsoleView.CONSOLE_ID);			
+//				return fConsole;
+//			}
+//		} 
+//		catch (PartInitException e) 
+//		{
+//			e.printStackTrace();
+//			UIPlugin.getDefault().getLog().log(
+//				new Status(
+//					IStatus.ERROR,
+//					UIPlugin.PLUGIN_ID,
+//					0,
+//					"Error opening MDT Console",
+//					e));
+//			return null;
+//		}    	
+//    }		
+	
+	public ModelicaTextConsole getModelicaTextConsole()
+	{
+		if (fConsole == null)
+		{
+			fConsole = new ModelicaTextConsole();
+		}
+		return fConsole;
+	}
+	
+    public OutputStream getModelicaConsoleOutputStream()
+    {
+    	if (fConsole == null) getModelicaTextConsole();
+    	if (fConsole != null)
+    	{
+    		return fConsole.getOutputStream();
+    	}
+    	return null;
+    }
+    
+    public OpenModelicaCompiler getCompiler() throws CompilerInstantiationException
+    {
+    	if (omc == null)
+    	{
+    		omc = new OpenModelicaCompiler();
+    	}
+    	return omc;
+    }
 }

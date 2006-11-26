@@ -87,6 +87,7 @@ public interface Symbols
 	int TokenMATCHCONTINUE	= 65;
 	int TokenTUPLE			= 66; 
 	int TokenUNIONTYPE		= 67;
+	int TokenSUBTYPEOF      = 68;
 	
 	int TokenLBRACE			= 1001;
 	int TokenRBRACE			= 1002;

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Modelica Development Tooling UI
 Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true
-Bundle-Version: 0.6.6
+Bundle-Version: 0.6.9
 Bundle-Activator: org.modelica.mdt.ui.UIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.modelica.mdt.core,
@@ -15,9 +15,11 @@ Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.debug.core,
  org.eclipse.ui.console,
- org.eclipse.debug.ui
+ org.eclipse.debug.ui,
+ org.eclipse.ui.navigator,
+ org.eclipse.ui.views
 Eclipse-AutoStart: true
-Bundle-Vendor: PELAB
-Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test",
+Bundle-Vendor: Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University
+Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modelica.mdt.ui",
  org.modelica.mdt.ui.editor;x-friends:="org.modelica.mdt.test",
  org.modelica.mdt.ui.wizards;x-friends:="org.modelica.mdt.test"

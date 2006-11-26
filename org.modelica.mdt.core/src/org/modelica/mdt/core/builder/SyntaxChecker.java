@@ -90,6 +90,8 @@ import org.modelica.mdt.internal.core.FolderPackage;
 public class SyntaxChecker extends IncrementalProjectBuilder
 {
 
+	public static boolean DEBUG = false;
+	
 	public static final String BUILDER_ID = 
 			"org.modelica.mdt.core.syntaxChecker";
 
@@ -449,7 +451,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * @throws UnexpectedReplyException
 	 * @throws CompilerInstantiationException 
 	 */
-	protected static void loadFileAndReportErrors(IFile file)
+	public static IParseResults loadFileAndReportErrors(IFile file)
 		throws ConnectException, UnexpectedReplyException, 
 				CompilerInstantiationException
 	{
@@ -470,6 +472,8 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		 * Make sure that everything was defined in the correct namespace.
 		 */
 		checkForNamespaceProblems(file, res);
+		
+		return res;
 	}
 
 	/**
@@ -519,6 +523,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			{
 				for(String name : res.getClasses())
 				{
+					if (DEBUG) System.out.println("name:"+name+" ppname:"+ppName);
 					if(name.equals(ppName) == false)
 					{
 						reportNamespaceProblem(file, name);
@@ -539,14 +544,15 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 					}
 					else
 					{
-						prefix = "";
+						prefix = null;
 					}
 		
 					/*
 					 * If the prefix doesn't match the parent packages name,
 					 * then the 'within' statement is bad. 
 					 */
-					if(prefix.equals(ppName) == false)
+					if (DEBUG) System.out.println("prefix:"+prefix+" ppname:"+ppName);					
+					if(prefix != null && prefix.equals(ppName) == false)
 					{
 						reportNamespaceProblem(file, name);
 					}

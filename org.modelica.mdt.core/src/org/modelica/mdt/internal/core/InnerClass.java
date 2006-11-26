@@ -48,6 +48,7 @@ import java.util.LinkedList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
@@ -64,7 +65,6 @@ import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
-import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
@@ -173,6 +173,20 @@ public class InnerClass extends ModelicaClass
 		
 		inputParams = new LinkedList<IParameter>();
 		outputParams = new LinkedList<IParameter>();
+		
+		Restriction restriction = getRestriction();
+		if(restriction == IModelicaClass.Restriction.RECORD)
+		{
+			IModelicaElement p = getParentNamespace();
+			if (p != null && p instanceof IModelicaClass)
+			{
+				String typeName = p.getElementName();
+				Restriction parentRestriction = ((IModelicaClass)p).getRestriction();
+				if (parentRestriction == IModelicaClass.Restriction.UNIONTYPE)
+					outputParams.add(new Parameter("parent", typeName));
+			}
+		}
+		
 	
 		for (ElementInfo info : CompilerProxy.getElements(fullName))
 		{
@@ -220,6 +234,7 @@ public class InnerClass extends ModelicaClass
 							new ModelicaComponent(
 									this,
 									componentName,
+									info.getTypeName(),
 									IModelicaComponent.Visibility.parse
 										(info.getElementVisibility()),
 									location));					
@@ -230,16 +245,28 @@ public class InnerClass extends ModelicaClass
 							+ e.getMessage());
 				}
 				
-				String typeName = info.getTypeName();
-				if(info.getElementVisibility().equals("public")
-						&& info.getDirection().equals("input"))
+				
+				if (restriction == IModelicaClass.Restriction.FUNCTION)
 				{
-					inputParams.add(new Parameter(componentName, typeName));
+					String typeName = info.getTypeName();
+					if(info.getElementVisibility().equals("public")
+							&& info.getDirection().equals("input"))
+					{
+						inputParams.add(new Parameter(componentName, typeName));
+					}
+					else if(info.getElementVisibility().equals("public")
+							&& info.getDirection().equals("output"))
+					{
+						outputParams.add(new Parameter(componentName, typeName));
+					}
 				}
-				else if(info.getElementVisibility().equals("public")
-						&& info.getDirection().equals("output"))
+				else if(restriction == IModelicaClass.Restriction.RECORD)
 				{
-					outputParams.add(new Parameter(componentName, typeName));
+					String typeName = info.getTypeName();
+					if(info.getElementVisibility().equals("public"))
+					{
+						inputParams.add(new Parameter(componentName, typeName));
+					}
 				}
 			}			
 			/* an import statment */
@@ -338,6 +365,15 @@ public class InnerClass extends ModelicaClass
 			else
 			{
 				/* element present before, refresh ! */
+				// adrpo 2006-10-16 
+				// - the IModelicaComponent doesn't have reload
+				//   so whe have to set it here!
+				// - otherwise the image doesn't get updated
+				if (oldElement instanceof IModelicaComponent && 
+					element instanceof IModelicaComponent)
+				{
+					((ModelicaComponent)oldElement).setModelicaComponent((ModelicaComponent)element);
+				}
 				changes.addAll(oldElement.reload());
 			}
 		}
@@ -402,4 +438,5 @@ public class InnerClass extends ModelicaClass
 				new IParameter[inputParams.size()]),
 				outputParams.toArray(new IParameter[outputParams.size()]));
 	}
+	
 }

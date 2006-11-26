@@ -44,6 +44,7 @@ package org.modelica.mdt.core.compiler;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaClass.Restriction;
 
@@ -130,4 +131,21 @@ public interface IModelicaCompiler
 	 */
 	public IClassInfo getClassInfo(String className) 
 		throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the listing of a class	 
+	 *  
+	 * @param className the full name of the class get the string for
+	 */
+	public String getClassString(String className) 
+		throws ConnectException, UnexpectedReplyException;	
+	
+	/**
+	 * Sends a command to the compiler and gets the result string	 
+	 *  
+	 * @param command
+	 */
+	public String sendExpression(String command, boolean showInConsole) 
+		throws ConnectException, UnexpectedReplyException;	
+	
 }

@@ -101,4 +101,5 @@ public class ModelicaElementEditorInput extends FileEditorInput
 				getSourceFile().getResource().getProjectRelativePath().
 					toOSString());
 	}
+	
 }

@@ -299,18 +299,18 @@ public class ErrorManager
 		logError(status);
 		
 		/* display error to the user */
-		if (showErrorDialog)
-		{
-			Display display = CorePlugin.getDisplay();
-			display.asyncExec(new Runnable()
-			{
-				public void run()
-				{
-					ErrorDialog.openError(CorePlugin.getShell(),	
-							"Error", null, status);
-				}
-			});
-		}
+//		if (showErrorDialog)
+//		{
+//			Display display = CorePlugin.getDisplay();
+//			display.asyncExec(new Runnable()
+//			{
+//				public void run()
+//				{
+//					ErrorDialog.openError(CorePlugin.getShell(),	
+//							"Error", null, status);
+//				}
+//			});
+//		}
 	}
 
 	/**

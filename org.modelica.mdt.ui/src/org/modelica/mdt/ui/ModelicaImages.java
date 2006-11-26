@@ -4,6 +4,10 @@
 
 package org.modelica.mdt.ui;
 
+/*
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
+ * @author MDT Team
+ */
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,7 +29,6 @@ import org.modelica.mdt.internal.core.ErrorManager;
  */
 public class ModelicaImages 
 {
-
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
 
@@ -41,7 +44,7 @@ public class ModelicaImages
 	/*
 	 * Available cached Images in the Mdt plug-in image registry.
 	 */	
-	public static final String IMG_OBJS_PACKAGE = "IMG_OBJS_EXCEPTION";
+	public static final String IMG_OBJS_PACKAGE = "IMG_OBJS_PACKAGE";
 	public static final String IMG_OBJS_CLASS = "IMG_OBJS_CLASS";
 	public static final String IMG_OBJS_MODEL = "IMG_OBJS_MODEL";
 	public static final String IMG_OBJS_FUNCTION = "IMG_OBJS_FUNCTION";
@@ -49,12 +52,20 @@ public class ModelicaImages
 	public static final String IMG_OBJS_CONNECTOR = "IMG_OBJS_CONNECTOR";
 	public static final String IMG_OBJS_BLOCK = "IMG_OBJS_BLOCK";	
 	public static final String IMG_OBJS_TYPE = "IMG_OBJS_TYPE";
+	public static final String IMG_OBJS_UNIONTYPE = "IMG_OBJS_UNIONTYPE";	
 	public static final String IMG_OBJS_LIBRARY = "IMG_OBJS_LIBRARY";
 	public static final String IMG_OBJS_MO_FILE = "IMG_OBJS_MO_FILE";
-	public static final String IMG_OBJS_PROTECTED_COMPONENT 
-			= "IMG_OBJS_PROTECTED_COMPONENT";
-	public static final String  IMG_OBJS_PUBLIC_COMPONENT 
-			= "IMG_OBJS_PUBLIC_COMPONENT";
+	public static final String IMG_OBJS_PROTECTED_COMPONENT = "IMG_OBJS_PROTECTED_COMPONENT";
+	public static final String IMG_OBJS_PUBLIC_COMPONENT = "IMG_OBJS_PUBLIC_COMPONENT";
+	
+	public static final String IMG_OUTLINE_SYNCED = "IMG_OUTLINE_SYNCED";
+	public static final String IMG_OUTLINE_FILTER = "IMG_OUTLINE_FILTER";
+	public static final String IMG_OUTLINE_SORT = "IMG_OUTLINE_SORT";		
+	public static final String IMG_OUTLINE_HIDE_COMPONENTS = "IMG_OUTLINE_HIDE_COMPONENTS";
+	public static final String IMG_OUTLINE_HIDE_PARAMETERS = "IMG_OUTLINE_HIDE_PARAMETERS";
+	public static final String IMG_OUTLINE_HIDE_PROTECTED = "IMG_OUTLINE_HIDE_PROTECTED";	
+	public static final String IMG_OUTLINE_HIDE_TYPES = "IMG_OUTLINE_HIDE_TYPES";
+
 	
 	public static final String IMG_WIZBAN_PACKAGE = "IMG_WIZBAN_PACKAGE";
 	public static final String IMG_WIZBAN_PROJECT = "IMG_WIZBAN_PROJECT";
@@ -65,11 +76,11 @@ public class ModelicaImages
 	 * Set of predefined Image Descriptors.
 	 */
 	private static final String T_OBJ= "obj16/"; 		//$NON-NLS-1$
-//	private static final String T_OVR= "ovr16/"; 		//$NON-NLS-1$
+    private static final String T_OVR= "ovr16/"; 		//$NON-NLS-1$
 	private static final String T_WIZBAN= "wizban/"; 	//$NON-NLS-1$
 //	private static final String T_EVIEW= "eview16/"; 	//$NON-NLS-1$
 //	private static final String T_DLCL= "dtool16/"; 	//$NON-NLS-1$
-//	private static final String T_ELCL= "etool16/"; 	//$NON-NLS-1$
+    private static final String T_ELCL= "elcl16/"; 	//$NON-NLS-1$
 
 
 	
@@ -94,7 +105,7 @@ public class ModelicaImages
 	}	
 	
 	/*
-	 * Helper method to access the image registry from the JDIDebugUIPlugin class.
+	 * Helper method to access the image registry from the MDT UIPlugin class.
 	 */
 	/* package */ static ImageRegistry getImageRegistry() 
 	{
@@ -113,25 +124,32 @@ public class ModelicaImages
 	
 	private static void declareImages() 
 	{
-		declareRegistryImage(IMG_OBJS_PACKAGE, T_OBJ + "package_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_PACKAGE, T_OBJ + "package_obj.gif"); //$NON-NLS-1$
 		
-		declareRegistryImage(IMG_OBJS_CLASS, T_OBJ + "class_obj.png");
-		declareRegistryImage(IMG_OBJS_MODEL, T_OBJ + "model_obj.png");
-		declareRegistryImage(IMG_OBJS_FUNCTION, T_OBJ + "function_obj.png");
-		declareRegistryImage(IMG_OBJS_RECORD, T_OBJ + "record_obj.png");
-		declareRegistryImage(IMG_OBJS_CONNECTOR, T_OBJ + "connector_obj.png");
-		declareRegistryImage(IMG_OBJS_BLOCK, T_OBJ + "block_obj.png");
-		declareRegistryImage(IMG_OBJS_TYPE, T_OBJ + "type_obj.png");
-		declareRegistryImage(IMG_OBJS_MO_FILE, T_OBJ + "mo_file.png");
-		declareRegistryImage(IMG_OBJS_LIBRARY, T_OBJ + "library_obj.png");
-		declareRegistryImage(IMG_OBJS_PROTECTED_COMPONENT, 
-				T_OBJ + "protected_component_obj.png");
-		declareRegistryImage(IMG_OBJS_PUBLIC_COMPONENT, 
-				T_OBJ + "public_component_obj.png");
+		declareRegistryImage(IMG_OBJS_CLASS, T_OBJ + "class_obj.gif");
+		declareRegistryImage(IMG_OBJS_MODEL, T_OBJ + "model_obj.gif");
+		declareRegistryImage(IMG_OBJS_FUNCTION, T_OBJ + "function_obj.gif");
+		declareRegistryImage(IMG_OBJS_RECORD, T_OBJ + "record_obj.gif");
+		declareRegistryImage(IMG_OBJS_CONNECTOR, T_OBJ + "connector_obj.gif");
+		declareRegistryImage(IMG_OBJS_BLOCK, T_OBJ + "block_obj.gif");
+		declareRegistryImage(IMG_OBJS_MO_FILE, T_OBJ + "mo_file.gif");
+		declareRegistryImage(IMG_OBJS_LIBRARY, T_OBJ + "library_obj.gif");
+		declareRegistryImage(IMG_OBJS_PROTECTED_COMPONENT, T_OBJ + "protected_component_obj.gif");
+		declareRegistryImage(IMG_OBJS_PUBLIC_COMPONENT,  T_OBJ + "public_component_obj.gif");
+		declareRegistryImage(IMG_OBJS_TYPE, T_OBJ + "type_obj.gif");
+		declareRegistryImage(IMG_OBJS_UNIONTYPE, T_OBJ + "uniontype_obj.gif");
+
+		declareRegistryImage(IMG_OUTLINE_SYNCED, T_ELCL + "synced.gif");
+		declareRegistryImage(IMG_OUTLINE_FILTER, T_ELCL + "filter_ps.gif");
+		declareRegistryImage(IMG_OUTLINE_SORT,   T_ELCL + "sort.gif");
+		declareRegistryImage(IMG_OUTLINE_HIDE_COMPONENTS, T_ELCL + "hide_components.gif");
+		declareRegistryImage(IMG_OUTLINE_HIDE_PARAMETERS,  T_ELCL + "hide_parameters.gif");
+		declareRegistryImage(IMG_OUTLINE_HIDE_PROTECTED, T_ELCL + "hide_protected.gif");
+		declareRegistryImage(IMG_OUTLINE_HIDE_TYPES, T_ELCL + "hide_types.gif");		
 		
-		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.png");
-		declareRegistryImage(IMG_WIZBAN_PROJECT, T_WIZBAN + "project_wiz.png");
-		declareRegistryImage(IMG_WIZBAN_CLASS, T_WIZBAN + "class_wiz.png");
+		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.gif");
+		declareRegistryImage(IMG_WIZBAN_PROJECT, T_WIZBAN + "project_wiz.gif");
+		declareRegistryImage(IMG_WIZBAN_CLASS, T_WIZBAN + "class_wiz.gif");
 				
 	}
 	
@@ -195,6 +213,8 @@ public class ModelicaImages
 					return ModelicaImages.IMG_OBJS_BLOCK;
 				case TYPE:
 					return ModelicaImages.IMG_OBJS_TYPE;
+				case UNIONTYPE:
+					return ModelicaImages.IMG_OBJS_UNIONTYPE;
 				default:
 					ErrorManager.logBug(UIPlugin.getSymbolicName(),
 							"IModelicaClass object of unexpected restriction " + 

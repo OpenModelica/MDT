@@ -50,12 +50,13 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * @author Elmir Jagudin
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
  */
 public interface IModelicaClass extends IModelicaElement, IParent
 {
 	public enum Restriction 
 	{ 
-		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE;
+		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE, UNIONTYPE;
 		
 		/**
 		 * @param text the type of restriction
@@ -98,6 +99,10 @@ public interface IModelicaClass extends IModelicaElement, IParent
 			{
 				return TYPE;
 			}
+			else if (text.equalsIgnoreCase("UNIONTYPE"))
+			{
+				return UNIONTYPE;
+			}
 			
 			/* 
 			 * this is an error condition, classRestriction is of unexpected
@@ -130,7 +135,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 			CompilerInstantiationException, CoreException;
 	
 	/**
-	 * @return the class that defines tha parent namespace or null if this class
+	 * @return the class that defines the parent namespace or null if this class
 	 * is defined in top namespace
 	 */
 	public IModelicaClass getParentNamespace();

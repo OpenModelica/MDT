@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaProject;
@@ -60,11 +61,16 @@ import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
-public class StandardLibrary  extends PlatformObject 
+public class StandardLibrary  extends ModelicaElement 
 	implements IStandardLibrary, IParent
 {
 	LinkedList<IModelicaClass> packages = null;
 
+	protected StandardLibrary()
+	{
+		super(null);
+	}
+	
 	public Collection<IModelicaClass> getPackages()
 		throws ConnectException, CompilerInstantiationException
 	{
@@ -97,7 +103,7 @@ public class StandardLibrary  extends PlatformObject
 		return null;
 	}
 
-	public IRegion getLocation()
+	public IDefinitionLocation getLocation()
 	{
 		return null;
 	}
@@ -139,5 +145,4 @@ public class StandardLibrary  extends PlatformObject
 	{
 		return true;
 	}
-
 }

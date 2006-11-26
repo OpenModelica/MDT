@@ -42,13 +42,13 @@
 package org.modelica.mdt.omc.internal;
 
 import org.modelica.mdt.core.Element;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IllegalRestrictionException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.compiler.IClassInfo;
-import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.DefinitionLocation;

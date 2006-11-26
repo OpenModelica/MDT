@@ -41,8 +41,14 @@
 
 package org.modelica.mdt.ui;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaFile;
@@ -60,7 +66,7 @@ import org.modelica.mdt.internal.core.ErrorManager;
  * 
  * @author Homer Simpson
  */
-public class ModelicaElementSorter extends ViewerSorter
+public class ModelicaElementSorter extends ResourceSorter
 {
 	private static int PROJECT_ORDER 				= 1;
 	private static int FOLDER_ORDER 				= 2;
@@ -72,7 +78,37 @@ public class ModelicaElementSorter extends ViewerSorter
 	private static int PLAIN_FILE_ORDER 			= 8;
 	private static int STANDARD_LIBRARY_ORDER 		= 9;
 	private static int UNKOWN_TYPE_ORDER 			= Integer.MAX_VALUE;
+	
+    /**
+     * Constructor argument value that indicates to sort items by name.
+     */
+    public final static int NAME = 1;
 
+    /**
+     * Constructor argument value that indicates to sort items by extension.
+     */
+    public final static int TYPE = 2;
+	
+    /**
+     * Constructor argument value that indicates to sort items by extension.
+     */
+    public final static int MODELICA = 3;
+
+    
+    private int criteria;
+
+    /**
+     * Creates a resource sorter that will use the given sort criteria.
+     *
+     * @param criteria the sort criterion to use: one of <code>NAME</code> or 
+     *   <code>TYPE</code>
+     */
+    public ModelicaElementSorter(int criteria) 
+    {
+        super(criteria);
+        this.criteria = criteria;
+    }
+	
 	@Override
 	public int category(Object element)
 	{
@@ -133,9 +169,77 @@ public class ModelicaElementSorter extends ViewerSorter
 		{
 			return PROJECT_ORDER;
 		}
+		else if (element instanceof IResource)
+		{
+			return PLAIN_FILE_ORDER;
+		}
 
 		ErrorManager.logBug(UIPlugin.getSymbolicName(),
 				"element of unknow type encountered");
 		return UNKOWN_TYPE_ORDER;
 	}
+	
+    /**
+     * Returns a negative, zero, or positive number depending on whether
+     * the first element is less than, equal to, or greater than
+     * the second element.
+     * <p>
+     * The default implementation of this method is based on
+     * comparing the elements' categories as computed by the <code>category</code>
+     * framework method. Elements within the same category are further 
+     * subjected to a case insensitive compare of their label strings, either
+     * as computed by the content viewer's label provider, or their 
+     * <code>toString</code> values in other cases. Subclasses may override.
+     * </p>
+     * 
+     * @param viewer the viewer
+     * @param e1 the first element
+     * @param e2 the second element
+     * @return a negative number if the first element is less  than the 
+     *  second element; the value <code>0</code> if the first element is
+     *  equal to the second element; and a positive number if the first
+     *  element is greater than the second element
+     */
+    public int compare(Viewer viewer, Object e1, Object e2) 
+    {
+    	if (criteria != MODELICA)
+    	{
+    		return super.compare(viewer, e1, e2);
+    	}
+        int cat1 = category(e1);
+        int cat2 = category(e2);
+
+        if (cat1 != cat2) {
+			return cat1 - cat2;
+		}
+    	
+        String name1;
+        String name2;
+
+        if (viewer == null || !(viewer instanceof ContentViewer)) {
+            name1 = e1.toString();
+            name2 = e2.toString();
+        } else {
+            IBaseLabelProvider prov = ((ContentViewer) viewer)
+                    .getLabelProvider();
+            if (prov instanceof ILabelProvider) {
+                ILabelProvider lprov = (ILabelProvider) prov;
+                name1 = lprov.getText(e1);
+                name2 = lprov.getText(e2);
+            } else {
+                name1 = e1.toString();
+                name2 = e2.toString();
+            }
+        }
+        if (name1 == null) {
+			name1 = "";//$NON-NLS-1$
+		}
+        if (name2 == null) {
+			name2 = "";//$NON-NLS-1$
+		}
+
+        // use the comparator to compare the strings
+        return getComparator().compare(name1, name2);
+    }
+	
 }

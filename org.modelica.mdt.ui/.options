@@ -1,0 +1,3 @@
+org.modelica.mdt.ui/trace/UIPlugin=false
+org.modelica.mdt.ui/trace/MarkProblemsVisitor=false
+org.modelica.mdt.ui/trace/MetaModelicaPatternMatchListener=false

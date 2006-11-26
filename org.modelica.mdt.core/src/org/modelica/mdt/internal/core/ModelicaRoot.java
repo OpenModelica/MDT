@@ -122,6 +122,8 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 			projectsTable.put(projects[i], 
 					new ModelicaProject((IProject)projects[i]));
 		}
+		
+		
 	}
 
 	

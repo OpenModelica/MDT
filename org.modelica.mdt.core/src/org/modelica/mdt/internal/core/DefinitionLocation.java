@@ -51,20 +51,17 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-import org.modelica.mdt.core.compiler.IDefinitionLocation;
+import org.modelica.mdt.core.IDefinitionLocation;
+import org.modelica.mdt.core.ISourceRegion;
 
 /**
  * This class implements IElementLocation on behalf of OMC proxy plugin.
  */
 public class DefinitionLocation implements IDefinitionLocation
-{
+{	
 	private File path;
+	private ISourceRegion sourceRegion;
 	
-	private int startLine;
-	private int startColumn;
-	private int endLine;
-	private int endColumn;
-
 	private Region region = null;
 	
 	public DefinitionLocation(String path, int startLine, int startColumn,
@@ -77,17 +74,23 @@ public class DefinitionLocation implements IDefinitionLocation
 			//TODO this should not be, throw an exception
 		}
 
-		this.startLine = startLine;
-		this.startColumn = startColumn;
-		this.endLine = endLine;
-		this.endColumn = endColumn;
+		this.sourceRegion = new DefinitionSourceRegion(startLine,startColumn,endLine,endColumn);
 	}
 	
 	public String getPath()
 	{
 		return path.getAbsolutePath();
 	}
+	
+	public ISourceRegion getSourceRegion()
+	{
+		return sourceRegion;
+	}
 
+	/**
+	 * @author Adrian Pop
+	 * @deprecated
+	 */
 	public IRegion getRegion()
 	{
 		if (region == null)
@@ -151,8 +154,8 @@ public class DefinitionLocation implements IDefinitionLocation
 		int endChar = 1;
 		try
 		{
-			startChar = doc.getLineOffset(startLine-1) + startColumn-1;
-			endChar = doc.getLineOffset(endLine-1) + endColumn;
+			startChar = doc.getLineOffset(sourceRegion.getStartLine()-1) + sourceRegion.getStartColumn()-1;
+			endChar = doc.getLineOffset(sourceRegion.getEndLine()-1) + sourceRegion.getEndColumn();
 		}
 		catch(BadLocationException e)
 		{

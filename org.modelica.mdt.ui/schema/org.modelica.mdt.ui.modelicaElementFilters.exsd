@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.modelica.mdt.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.modelica.mdt.ui" id="modelicaFilterElements" name="Modelica Element Filters"/>
+      </appInfo>
+      <documentation>
+         Modelica Element Filters: This extension point is used to extend MDT Plugin UI views with filters.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filter">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  a unique id that will be used to identify this filter.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  a unique name that allows to identify this filter in the UI. This attribute should be a translated string. Though this attribute is not required for pattern filters (i.e. those using the &lt;samp&gt;pattern&lt;/samp&gt; attribute) we suggest to provide a name anyway, otherwise the pattern string itself would be used to represent the filter in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  a short description for this filter.  This attribute should be a translated string.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="targetId" type="string">
+            <annotation>
+               <documentation>
+                  the id of the target where this filter is contributed.  If this attribute is missing, then the filter will
+be contributed to all views which use the &lt;samp&gt;org.modelica.mdt.ui.actions.customFiltersActionGroup&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="enabled" type="boolean">
+            <annotation>
+               <documentation>
+                  the filter will be enabled if this attribute is present and its value is &quot;true&quot;. Most likely the user will be able to override this setting in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pattern" type="string">
+            <annotation>
+               <documentation>
+                  elements whose name matches this pattern will be hidden. This attribute is here for backward compatibility and should no longer be used. All views that allow to plug-in a filter also allow to add pattern filters directly via UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  the name of the class used to filter the view.  The class must extend &lt;samp&gt;org.eclipse.jface.viewers.ViewerFilter&lt;/samp&gt;. If this attribute is here
+then the pattern attribute must not provided.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerFilter"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of Modelica element filter definition.  It filters out inner classes and is initially selected.
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.jdt.ui.javaElementFilters&quot;&gt;
+  &lt;filter
+   id=&quot;org.eclipse.jdt.ui.PackageExplorer.LibraryFilter&quot;
+   name=&quot;%HideReferencedLibraries.label&quot;
+   description=&quot;%HideReferencedLibraries.description&quot;
+   targetId=&quot;org.eclipse.jdt.ui.PackageExplorer&quot;
+   class=&quot;org.eclipse.jdt.internal.ui.filters.LibraryFilter&quot;
+   enabled=&quot;false&quot;&gt;
+  &lt;/filter&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         0.6.8
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         /******************************************************************************&lt;br&gt;
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]&lt;br&gt;
+ * Copyright (c) 2002-2006, Adrian Pop [adrpo@ida.liu.se],&lt;br&gt;
+ * Programming Environments Laboratory (PELAB),&lt;br&gt;
+ * Department of Computer and Information Science (IDA),&lt;br&gt;
+ * Linköpings University (LiU).&lt;br&gt;
+ * All rights reserved.&lt;br&gt;
+ *&lt;br&gt;
+ * &lt;a href=&quot;http://www.ida.liu.se/~adrpo/license/&quot;&gt;http://www.ida.liu.se/~adrpo/license/&lt;/a&gt;&lt;br&gt;
+ *&lt;br&gt;
+ * NON-COMMERCIAL terms and conditions [NON-COMMERCIAL setting]:&lt;br&gt;
+ * Permission to use, copy, modify, and distribute this software and&lt;br&gt;
+ * its documentation in source or binary form (including products&lt;br&gt;
+ * developed or generated using this software) for NON-COMMERCIAL&lt;br&gt;
+ * purposes and without fee is hereby granted, provided that this&lt;br&gt;
+ * copyright notice appear in all copies and that both the copyright&lt;br&gt;
+ * notice and this permission notice and warranty disclaimer appear&lt;br&gt;
+ * in supporting documentation, and that the name of The Author is not&lt;br&gt;
+ * to be used in advertising or publicity pertaining to distribution&lt;br&gt;
+ * of the software without specific, prior written permission.&lt;br&gt;
+ * &lt;br&gt;
+ * COMMERCIAL terms and conditions [COMMERCIAL setting]:&lt;br&gt;
+ * COMMERCIAL use, copy, modification and distribution in source&lt;br&gt;
+ * or binary form (including products developed or generated using&lt;br&gt;
+ * this software) is NOT permitted without prior written agreement&lt;br&gt;
+ * from Adrian Pop [adrpo@ida.liu.se].&lt;br&gt;
+ * &lt;br&gt;
+ * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,&lt;br&gt;
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.&lt;br&gt;
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR&lt;br&gt;
+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS&lt;br&gt;
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE&lt;br&gt;
+ * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE&lt;br&gt;
+ * USE OR PERFORMANCE OF THIS SOFTWARE.&lt;br&gt;
+ *****************************************************************************/&lt;br&gt;
+      </documentation>
+   </annotation>
+
+</schema>

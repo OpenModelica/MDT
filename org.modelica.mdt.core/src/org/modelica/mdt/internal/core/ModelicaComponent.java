@@ -41,25 +41,33 @@
 
 package org.modelica.mdt.internal.core;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
  * @author Homer Simpson
  */
-public class ModelicaComponent extends ModelicaElement 
-	implements IModelicaComponent
+public class ModelicaComponent extends ModelicaElement implements IModelicaComponent
 {
 	private String name;
 	private Visibility visibility;
 	private IDefinitionLocation location;
+	private String typeName;
 	
 	/**
 	 * Create class component
@@ -69,15 +77,35 @@ public class ModelicaComponent extends ModelicaElement
 	 * @param visibility whatever this component is public or protected
 	 * @param location location in the source code file
 	 */
-	public ModelicaComponent(IModelicaClass parent, String name, 
+	public ModelicaComponent(IModelicaClass parent, String name, String typeName,
 				Visibility visibility, IDefinitionLocation location)
 	{
 		super(parent);
 		this.name = name;
 		this.visibility = visibility;
 		this.location = location;
+		this.typeName = typeName;
 	}
 
+	/**
+	 * Set the values from the class component from another component!!
+	 * 
+	 * @param IModelicaComponent
+	 */
+	public void setModelicaComponent(ModelicaComponent changedComponent)
+	{
+		this.visibility = changedComponent.getVisbility();
+		this.typeName = changedComponent.getTypeName();
+		try
+		{
+			this.location = changedComponent.getLocation();
+		}
+		catch(CoreException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public String getElementName()
 	{
 		return name;
@@ -96,10 +124,10 @@ public class ModelicaComponent extends ModelicaElement
 	/**
 	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
 	 */
-	public IRegion getLocation()
+	public IDefinitionLocation getLocation()
 		throws CoreException
 	{
-		return location.getRegion();
+		return location;
 	}
 
 	@Override
@@ -113,4 +141,52 @@ public class ModelicaComponent extends ModelicaElement
 	{
 		return getParent().getFullName() + "." + name;
 	}
+	
+	
+	public String getTypeName()
+	{
+		return typeName;
+	}
+	
+	/**
+	 * All modelica elements that have a direct mapping between the IResource
+	 * (e.g. ModelicaFile -> IFile, FolderPackage -> IFolder) will recive a
+	 * call on this method when it have been detected that the underlying 
+	 * IResouce have been changed.
+	 * 
+	 *  @param delta The resource delta which is rooted at the IResource of
+	 *  this element 
+	 */
+	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException
+	{
+		/* return an MODIFIED by default */
+		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
+		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED));
+		return changes;
+	}
+
+	/**
+	 * This method will be invoked on modelica elements, that do not have
+	 * a direct mapping to a IResource, when it is suspected that their 
+	 * representation in the compiler have changed.
+	 *  
+	 * The element should requery the compiler and return the difference as
+	 * a collection of IModelicaElementChange:s.
+	 * 
+	 * @return the changes to the element and it's children, or empty collection
+	 * if the element and it's children are not changed.
+	 */
+	public Collection<IModelicaElementChange> reload()
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException
+	{
+		/* return an MODIFIED by default */
+		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
+		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED));
+		return changes;
+	}
+	
+	
 }

@@ -3,12 +3,12 @@
    <description url="http://www.ida.liu.se/labs/pelab/modelica/OpenModelica/MDT">
       Modelica Development Tooling
    </description>
-   <feature url="features/org.modelica.mdt_0.6.6.jar" id="org.modelica.mdt" version="0.6.6">
+   <feature url="features/org.modelica.mdt_0.6.9.jar" id="org.modelica.mdt" version="0.6.9">
       <category name="modelica"/>
    </feature>
-   <category-def name="modelica" label="Modelica Tools">
+   <category-def name="modelica" label="Modelica and MetaModelica Tools">
       <description>
-         Tools for  Modelica
+         Tools for  Modelica and MetaModelica
       </description>
    </category-def>
 </site>

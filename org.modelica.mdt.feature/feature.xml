@@ -2,60 +2,60 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.6.6"
-      provider-name="PELAB">
+      version="0.6.9"
+      provider-name="Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University">
 
    <description url="http://www.ida.liu.se/~pelab/modelica/">
-      Contributes an environment for working with modelica projects.
-
-This software package is developed at PELAB at the Linköpings
-University. Visit http://www.ida.liu.se/~pelab/modelica/ for more 
-information about this software and other related projects.
+      Contributes an environment for working with Modelica and MetaModelica projects.
+This software package is developed by Adrian Pop [adrpo@ida.liu.se] 
+at Programming Environments Laboratory (PELAB) at Linköping University (LiU). 
+Visit http://www.ida.liu.se/~pelab/modelica/ for more information about this 
+software and other related projects.
    </description>
 
    <copyright>
-      Copyright (c) 2005, Linköpings universitet, Department of Computer
-and Information Science, PELAB
-All rights reserved.
+      Copyright (c) 2005-2006, 
+      Adrian Pop [adrpo@ida.liu.se], Elmir Jaguding, Andreas Remar
+      Programming Environments Laboratory (PELAB),
+      Department of Computer and Information Science (IDA), 
+      Linköpings University (LiU). 
+      All rights reserved.
    </copyright>
 
-   <license url="http://www.opensource.org/licenses/bsd-license.php">
-      Copyright (c) 2005, Linköpings universitet, Department of Computer
-and Information Science, PELAB
-
+   <license url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html">
+The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.
+Copyright (c) 2005-2006, 
+The MDT Team (Authors): Adrian Pop [adrpo@ida.liu.se], Elmir Jagudin, Andreas Remar, 
+Programming Environments Laboratory (PELAB),
+Department of Computer and Information Science (IDA), 
+Linköping University (LiU).
 All rights reserved.
 
-(The new BSD license, 
-see also http://www.opensource.org/licenses/bsd-license.php)
+(The new BSD license, see also http://www.opensource.org/licenses/bsd-license.php)
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-
- * Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the
-   distribution.
-
- * Neither the name of Linköpings universitet nor the names of its
-   contributors may be used to endorse or promote products derived 
-   from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-&quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
-OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
-AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
-SUCH DAMAGE.
+* Redistributions of source code must retain the above copyright notice, 
+  this list of conditions and the following disclaimer. 
+  
+* Redistributions in binary form must reproduce the above copyright notice, 
+  this list of conditions and the following disclaimer in the documentation 
+  and/or other materials provided with the distribution. 
+* Neither the name of the Authors and Linköping University nor the names of its 
+  contributors may be used to endorse or promote products derived from this 
+  software without specific prior written permission. 
+  
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+OF THE POSSIBILITY OF SUCH DAMAGE.
    </license>
 
    <requires>
@@ -69,24 +69,41 @@ SUCH DAMAGE.
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.ui.navigator"/>
    </requires>
 
    <plugin
          id="org.modelica.mdt.core"
          download-size="0"
          install-size="0"
-         version="0.6.6"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.modelica.mdt.ui"
          download-size="0"
          install-size="0"
-         version="0.6.6"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.modelica.mdt.omc"
          download-size="0"
          install-size="0"
-         version="0.6.6"/>
+         version="0.0.0"/>
+
+   <plugin
+         id="org.modelica.mdt.debug.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.modelica.mdt.debug.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

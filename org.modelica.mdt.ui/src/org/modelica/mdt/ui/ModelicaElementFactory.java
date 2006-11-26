@@ -139,6 +139,8 @@ public class ModelicaElementFactory implements IElementFactory
 		IModelicaProject proj = 
 				root.getProject(memento.getString(ELEMENT_PROJECT_NAME_KEY));
 		
+		if (!proj.getResource().isAccessible()) return null;
+			
 		IModelicaElement elem = null;
 		
 		try
@@ -158,7 +160,8 @@ public class ModelicaElementFactory implements IElementFactory
 			ErrorManager.showCoreError(e);
 			return null;
 		}
-		return new ModelicaElementEditorInput(elem);
+		if (elem != null) return new ModelicaElementEditorInput(elem);
+		else return null;
 	}
 
 }

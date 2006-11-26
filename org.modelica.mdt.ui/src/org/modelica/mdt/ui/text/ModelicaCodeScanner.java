@@ -60,6 +60,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.modelica.mdt.ui.editor.ModelicaEditorColors;
 
 /**
+ * @author Adrian Pop
  * @author Peter Bunus
  * @author Andreas Remar, x05andre@ida.liu.se
  * 
@@ -93,26 +94,7 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 	static private class ModelicaKeywordDetector implements IWordDetector
 	{
 		/* keywords list has to be alphabetized for this to work properly */
-		static public String[] keywords = {
-			"algorithm","and","annotation","assert",
-			"block","break",
-			"class","connect","connector","constant",
-			"der","discrete",
-			"each","else","elseif","elsewhen","encapsulated","end",
-			"enumeration","equation",
-			"extends","external","false","final",
-			"flow","for","function",
-			"if","import","in","initial","inner","input",
-			"loop","model","not","or","outer",
-			"output","overload","package","parameter",
-			"partial","protected","public","record",
-			"redeclare","replaceable","return", "terminate",
-			"then","time","true","type","when","while","within",
-			
-			/* The following are Meta-Modelica Keywords */
-			"as", "case", "equality", "failure", "list", "local", "match", 
-			"matchcontinue" , "tuple", "uniontype", "lvar", "fail"
-		};
+		static public String[] keywords = ModelicaKeywords.keywords;
 		
 		public ModelicaKeywordDetector() 
 		{
@@ -137,9 +119,10 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 		/* keywords list has to be alphabetized for this to work properly */
 		static public String[] keywords = 
 		{
+			"Any", /* Any is in MetaModelica */
 			"Boolean",
 			"Integer",
-			"Option" /* Option is in MetaModelica */,
+			"Option", /* Option is in MetaModelica */
 			"Real",
 			"String"
 		};

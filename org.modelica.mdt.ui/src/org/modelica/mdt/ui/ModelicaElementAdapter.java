@@ -85,7 +85,7 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 		}
 		/* 
 		 * this check uggly must be done couse 
-		 * IModelciaFile is superclass of IModelicaSourceFile
+		 * IModelicaFile is superclass of IModelicaSourceFile
 		 */
 		else if ((object instanceof IModelicaFile) 
 				&& !(object instanceof IModelicaSourceFile))

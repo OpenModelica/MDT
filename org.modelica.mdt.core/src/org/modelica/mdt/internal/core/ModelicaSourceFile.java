@@ -1,43 +1,38 @@
-/*
- * This file is part of Modelica Development Tooling.
- *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
- * Computer and Information Science, PELAB
- *
+/******************************************************************************
+ * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
+ * Copyright (c) 2002-2006, Adrian Pop [adrpo@ida.liu.se],
+ * Programming Environments Laboratory (PELAB),
+ * Department of Computer and Information Science (IDA), 
+ * Linköpings University (LiU). 
  * All rights reserved.
  *
- * (The new BSD license, see also
- * http://www.opensource.org/licenses/bsd-license.php)
+ * http://www.ida.liu.se/~adrpo/license/
  *
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *
- * * Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in
- *   the documentation and/or other materials provided with the
- *   distribution.
- *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
- *   contributors may be used to endorse or promote products derived from
- *   this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+ * NON-COMMERCIAL terms and conditions [NON-COMMERCIAL setting]:
+ * Permission to use, copy, modify, and distribute this software and
+ * its documentation in source or binary form (including products 
+ * developed or generated using this software) for NON-COMMERCIAL 
+ * purposes and without fee is hereby granted, provided that this 
+ * copyright notice appear in all copies and that both the copyright 
+ * notice and this permission notice and warranty disclaimer appear 
+ * in supporting documentation, and that the name of The Author is not 
+ * to be used in advertising or publicity pertaining to distribution 
+ * of the software without specific, prior written permission.
+ * 
+ * COMMERCIAL terms and conditions [COMMERCIAL setting]:
+ * COMMERCIAL use, copy, modification and distribution in source 
+ * or binary form (including products developed or generated using
+ * this software) is NOT permitted without prior written agreement 
+ * from Adrian Pop [adrpo@ida.liu.se].
+ * 
+ * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
+ * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
+ * USE OR PERFORMANCE OF THIS SOFTWARE.
+ *****************************************************************************/
 package org.modelica.mdt.internal.core;
 
 import java.io.File;
@@ -47,6 +42,8 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
@@ -55,16 +52,20 @@ import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.ICompileError;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
+ * @author Adrian Pop
  * @author Elmir Jagudin
  */
 public class ModelicaSourceFile extends ModelicaElement 
@@ -86,7 +87,7 @@ public class ModelicaSourceFile extends ModelicaElement
 	}
 
 	/**
-	 * Creagte a modelica source file that is inside a folder. All the 
+	 * Create a modelica source file that is inside a folder. All the 
 	 * definitions in the file are placed in the root namespace.
 	 */
 	public ModelicaSourceFile(ModelicaFolder parent, IFile file) 
@@ -121,14 +122,14 @@ public class ModelicaSourceFile extends ModelicaElement
 		return children.values();
 	}
 
-	private Hashtable<String, IModelicaElement> loadElements() 
+	private Hashtable<String, IModelicaElement> loadElements()
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
 		Hashtable<String, IModelicaElement> elements = 
 			new Hashtable<String, IModelicaElement>();
-
-		IParseResults res = CompilerProxy.loadSourceFile(file);
+		
+		IParseResults res = CompilerProxy.loadSourceFile(file);		
 		
 		IModelicaElement parent = getParent();
 		FolderPackage parentPackage = null;
@@ -151,7 +152,7 @@ public class ModelicaSourceFile extends ModelicaElement
 					List list = null;
 					try
 					{
-						CompilerProxy.getClassNames(name);
+						list = CompilerProxy.getClassNames(name);
 					}
 					catch(UnexpectedReplyException e)
 					{
@@ -215,7 +216,8 @@ public class ModelicaSourceFile extends ModelicaElement
 		throws CoreException, ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		return !getChildren().isEmpty();
+		return true;
+		//return !getChildren().isEmpty();
 	}
 
 
@@ -310,11 +312,10 @@ public class ModelicaSourceFile extends ModelicaElement
 	}
 
 	/**
-	 * @see IModelicaSourceFile#getClassAt(int) 
+	 * @see IModelicaSourceFile#getClassAt(int position) 
 	 */
 	public IModelicaClass getClassAt(int position)
-		throws ConnectException, UnexpectedReplyException,
-			CompilerInstantiationException, InvocationError, CoreException
+	throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException
 	{
 		/* load children if needed */
 		if (children == null)
@@ -323,6 +324,21 @@ public class ModelicaSourceFile extends ModelicaElement
 		}
 		
 		return findClassDefAt(children.values(), position);
+	}
+	
+	/**
+	 * @see IModelicaSourceFile#getClassAt(ISourceRegion sourceRegion) 
+	 */
+	public IModelicaClass getClassAt(ISourceRegion sourceRegion)
+	throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException
+	{
+		/* load children if needed */
+		if (children == null)
+		{
+			children = loadElements();
+		}
+		
+		return findClassDefAt(children.values(), sourceRegion);
 	}
 
 	/**
@@ -334,8 +350,7 @@ public class ModelicaSourceFile extends ModelicaElement
 	 * @return the innermost class definition found or null if no class
 	 * definitions region overlaps position
 	 */
-	private IModelicaClass findClassDefAt
-		(Collection<? extends IModelicaElement> elements, int position)
+	private IModelicaClass findClassDefAt(Collection<? extends IModelicaElement> elements, int position)
 	
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
 			CompilerInstantiationException, CoreException
@@ -354,7 +369,7 @@ public class ModelicaSourceFile extends ModelicaElement
 			}
 
 			IModelicaClass clazz = (IModelicaClass)el;
-			IRegion reg = clazz.getLocation();
+			IRegion reg = clazz.getLocation().getRegion();
 			int start = reg.getOffset();
 			int end = start + reg.getLength() - 1;
 			
@@ -377,8 +392,56 @@ public class ModelicaSourceFile extends ModelicaElement
 	}
 
 
+	/**
+	 * Checks if there is a class definition at specified position
+	 * among provided classes.
+	 * 
+	 * @param elements the elements among which look for class definitions
+	 * @param position the character at which look for the class definiton
+	 * @return the innermost class definition found or null if no class
+	 * definitions region overlaps position
+	 */
+	private IModelicaClass findClassDefAt(Collection<? extends IModelicaElement> elements, ISourceRegion sourceRegion)
+	
+		throws ConnectException, UnexpectedReplyException, InvocationError, 
+			CompilerInstantiationException, CoreException
+	{
+		/*
+		 * do basicaly an optimized tree search for the innermost
+		 * class definition around queried position
+		 */
+
+		for (IModelicaElement el : elements)
+		{
+			/* skip non-class elements */
+			if (!(el instanceof IModelicaClass))
+			{
+				continue;
+			}
+
+			IModelicaClass clazz = (IModelicaClass)el;
+			ISourceRegion reg = clazz.getLocation().getSourceRegion();
+			
+			if (reg.contains(sourceRegion))
+			{
+				/* check if position is inside a subclass definition */
+				IModelicaClass subclazz = findClassDefAt(clazz.getChildren(), sourceRegion);
+				
+				if (subclazz != null)
+				{
+					return subclazz;
+				}
+				return clazz;
+			}
+			
+		}
+		
+		return null; /* no definition found at position */
+	}
+	
 	public String getFullName() 
 	{
 		return getElementName();
 	}
+
 }
