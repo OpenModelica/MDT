@@ -8,7 +8,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * RML stack frame.
+ * MDT stack frame.
  */
 public class MDTStackFrame extends MDTDebugElement implements IStackFrame {
 
@@ -59,7 +59,7 @@ public class MDTStackFrame extends MDTDebugElement implements IStackFrame {
 		//fPC = Integer.parseInt(pc) + 1; fName = strings[2]; int
 		//numVars = strings.length - 3; fVariables = new IVariable[numVars];
 		/* for (int i = 0; i < numVars; i++) { fVariables[i] = new
-		 * RmlVariable(this, strings[i + 3]); }
+		 * MDTVariable(this, strings[i + 3]); }
 		 */
 	}
 

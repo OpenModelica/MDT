@@ -26,7 +26,6 @@ package org.modelica.mdt.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IFile;
@@ -42,15 +41,12 @@ import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.modelica.mdt.ui.ModelicaLookupException;
 import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.modelica.mdt.ui.util.ExceptionHandler;
 import org.modelica.mdt.ui.text.ModelicaCodeResolver;
 
@@ -84,7 +80,7 @@ public class OpenAction extends SelectionDispatchAction
 	{
 		this(editor.getEditorSite());
 		fEditor= editor;
-		setEnabled(EditorUtility.getEditorInputModelicaElement(fEditor) != null);
+		setEnabled(editor.getEditorInput() != null); // EditorUtility.getEditorInputModelicaElement(fEditor) != null
 	}
 	
 	/* (non-Modelicadoc)
@@ -92,6 +88,7 @@ public class OpenAction extends SelectionDispatchAction
 	 */
 	public void selectionChanged(ITextSelection selection) 
 	{
+		super.selectionChanged(selection);
 	}
 
 	/* (non-Modelicadoc)

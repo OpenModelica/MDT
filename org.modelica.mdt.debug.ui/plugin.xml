@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="org.modelica.mdt.debug.core.launchConfigurationType.mdt"
+            type="org.modelica.mdt.debug.core.launchConfigurationType"
             description="Run or Debug a MetaModelica program"
             class="org.modelica.mdt.debug.ui.launcher.MDTTabGroup"
             id="org.modelica.mdt.debug.ui.launchConfigurationTabGroup.mdt">
@@ -16,7 +16,7 @@
          point="org.eclipse.debug.ui.debugModelPresentations">
       <debugModelPresentation
             class="org.modelica.mdt.debug.ui.presentation.MDTModelPresentation"
-            id="org.modelica.mdt.debug.ui.presentation">
+            id="mdt.debugModel">
       </debugModelPresentation>
    </extension>
    
@@ -70,7 +70,7 @@
    <extension
          point="org.eclipse.debug.ui.debugModelContextBindings">
       <modelContextBinding
-            debugModelId="org.modelica.mdt.debug"
+            debugModelId="mdt.debugModel"
             contextId="org.modelica.mdt.debug.ui.debugging">
       </modelContextBinding>
    </extension>
@@ -88,10 +88,28 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/full/cview16/rml.gif"
-            configTypeID="org.modelica.mdt.debug.core.launchConfigurationType.rml"
+            icon="icons/full/cview16/mdt.gif"
+            configTypeID="org.modelica.mdt.debug.core.launchConfigurationType"
             id="org.modelica.mdt.debug.ui.launchConfigurationTypeImage">
       </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.modelica.mdt.debug.ui.shortcuts.MDTLaunchShortcut"
+            icon="icons/full/cview16/mdt.gif"
+            id="org.modelica.mdt.debug.ui.shortcuts.MDTLaunchShortcut"
+            label="MetaModelica Debug"
+            modes="debug, run">
+         <perspective id="org.modelica.mdt.ui.ModelicaPerspective"/>
+      </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.debug.ui.LaunchActionSet"
+            label="Launch action set"
+            visible="true"/>
    </extension>
 
 </plugin>

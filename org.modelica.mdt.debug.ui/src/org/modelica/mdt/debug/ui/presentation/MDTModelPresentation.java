@@ -12,7 +12,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
- * Renders RML debug elements
+ * Renders MDT debug elements
  */
 public class MDTModelPresentation extends LabelProvider implements
 		IDebugModelPresentation {
@@ -83,7 +83,7 @@ public class MDTModelPresentation extends LabelProvider implements
 	 */
 	public String getEditorId(IEditorInput input, Object element) {
 		if (element instanceof IFile || element instanceof ILineBreakpoint) {
-			return "org.eclipse.ui.DefaultTextEditor";
+			return "org.modelica.mdt.editor";
 		}
 		return null;
 	}

@@ -46,19 +46,22 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.core.IStandardLibrary;
+import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -191,12 +194,40 @@ public class EditorUtility
 		IEditorInput editorInput= editor.getEditorInput();
 		if (editorInput == null)
 			return null;
-		
-		if (!(editorInput instanceof ModelicaElementEditorInput)) return null;
-		IModelicaElement me = ((ModelicaElementEditorInput)editorInput).getSourceFile();
-		if (me != null) 
-			return (IModelicaElement)me;
-		else return null;
+
+		if (editorInput instanceof ModelicaElementEditorInput) 
+		{
+			IModelicaElement me = ((ModelicaElementEditorInput)editorInput).getSourceFile();
+			if (me != null) 
+				return (IModelicaElement)me;
+		}
+
+		if (editorInput instanceof FileEditorInput)
+		{
+			// search for the ModelicaElement that has this file!
+			for(IModelicaProject mproj : ModelicaCore.getModelicaRoot().getProjects())
+			{
+				IProject proj = mproj.getWrappedProject();
+				if (proj.isOpen())
+				{
+					IPath p = ((FileEditorInput)editorInput).getPath();
+					IPath projPath = proj.getLocation();
+					// we matched
+					if (projPath.isPrefixOf(p))
+					{
+						p = p.removeFirstSegments(projPath.segmentCount());
+						try	{
+							IModelicaElement me = mproj.findElement(p);
+							if (me != null) return me;
+						} 
+						catch(Exception x) {
+							x.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	

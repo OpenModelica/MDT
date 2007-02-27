@@ -41,8 +41,6 @@
 
 package org.modelica.mdt.ui.editor;
 
-import org.modelica.mdt.core.IModelicaProject;
-import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.ui.text.ModelicaHeuristicScanner;
 import org.modelica.mdt.ui.text.ModelicaIndenter;
 import org.modelica.mdt.ui.text.Symbols;
@@ -52,7 +50,6 @@ import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * This class implements the auto indent strategy for modelica source

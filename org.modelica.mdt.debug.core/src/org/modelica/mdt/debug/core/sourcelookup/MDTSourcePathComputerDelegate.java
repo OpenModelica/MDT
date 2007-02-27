@@ -17,8 +17,8 @@ import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 
 /**
- * Computes the default source lookup path for a RML launch configuration. The
- * default source lookup path is the folder or project containing the RML
+ * Computes the default source lookup path for a MDT launch configuration. The
+ * default source lookup path is the folder or project containing the MDT
  * program being launched. If the program is not specified, the workspace is
  * searched by default.
  */

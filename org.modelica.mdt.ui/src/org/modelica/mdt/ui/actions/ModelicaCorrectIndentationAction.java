@@ -2,14 +2,11 @@
  * (c) Copyright MDT Team, PELAB, 2006
  */
 
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.actions;
 
 import java.util.ResourceBundle;
 import org.eclipse.ui.texteditor.TextEditorAction;
-import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.internal.core.CorePlugin;
-import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
 
 /**
@@ -73,15 +70,6 @@ import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
 
 
 
-import java.util.ResourceBundle;
-
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
@@ -91,31 +79,23 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
-import org.eclipse.ui.texteditor.TextEditorAction;
-
-
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 
 import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.text.ModelicaHeuristicScanner;
 import org.modelica.mdt.ui.text.ModelicaIndenter;
-import org.modelica.mdt.ui.text.ModelicaPartitionScanner;
 
 
 /**

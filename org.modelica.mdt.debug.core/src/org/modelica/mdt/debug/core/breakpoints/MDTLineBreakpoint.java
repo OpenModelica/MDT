@@ -8,7 +8,7 @@ import org.eclipse.debug.core.model.LineBreakpoint;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 
 /**
- * RML line breakpoint
+ * MDT line breakpoint
  */
 public class MDTLineBreakpoint extends LineBreakpoint {
 
@@ -24,7 +24,7 @@ public class MDTLineBreakpoint extends LineBreakpoint {
 	/**
 	 * Constructs a line breakpoint on the given resource at the given line
 	 * number. The line number is 1-based (i.e. the first line of a file is line
-	 * number 1). The RML VM uses 0-based line numbers, so this line number
+	 * number 1). The MDT VM uses 0-based line numbers, so this line number
 	 * translation is done at breakpoint install time.
 	 * 
 	 * @param resource
@@ -34,15 +34,13 @@ public class MDTLineBreakpoint extends LineBreakpoint {
 	 * @throws CoreException
 	 *             if unable to create the breakpoint
 	 */
-	public MDTLineBreakpoint(IResource resource, int lineNumber)
-			throws CoreException {
-		IMarker marker = resource
-				.createMarker("org.pelab.rml.debug.core.lineBreakpoint.marker");
+	public MDTLineBreakpoint(IResource resource, int lineNumber) throws CoreException 
+	{
+		IMarker marker = resource.createMarker("org.modelica.mdt.debug.core.lineBreakpoint.marker");
 		setMarker(marker);
 		setEnabled(true);
 		ensureMarker().setAttribute(IMarker.LINE_NUMBER, lineNumber);
-		ensureMarker().setAttribute(IBreakpoint.ID,
-				IMDTConstants.ID_MDT_DEBUG_MODEL);
+		ensureMarker().setAttribute(IBreakpoint.ID, IMDTConstants.ID_MDT_DEBUG_MODEL);
 	}
 
 	/*

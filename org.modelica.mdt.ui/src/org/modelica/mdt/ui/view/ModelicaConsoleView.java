@@ -8,20 +8,12 @@
 
 package org.modelica.mdt.ui.view;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.console.*;
 import org.eclipse.ui.part.*;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.console.ModelicaTextConsole;
 import org.modelica.mdt.ui.console.ModelicaTextConsoleViewer;
-import org.modelica.mdt.ui.console.OpenModelicaCommandHandler;
 
 /**
  * @author Adrian Pop

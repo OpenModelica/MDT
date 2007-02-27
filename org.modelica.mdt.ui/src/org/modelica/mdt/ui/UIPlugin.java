@@ -2,16 +2,11 @@ package org.modelica.mdt.ui;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
@@ -19,16 +14,10 @@ import org.modelica.mdt.core.OpenModelicaCompiler;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.osgi.framework.BundleContext;
 import org.modelica.mdt.ui.UIPlugin;
-import org.modelica.mdt.ui.view.ModelicaConsoleView;
 import org.modelica.mdt.ui.console.ModelicaTextConsole;
 import org.modelica.mdt.ui.text.ModelicaTextTools;
 
 import java.io.OutputStream;
-import java.util.*;
-
-import javax.swing.text.Document;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IProject;
@@ -36,7 +25,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.text.IDocument;
 
 /**
  * The main plugin class for the org.modelica.mdt.ui plugin
@@ -188,6 +176,7 @@ public class UIPlugin extends AbstractUIPlugin
 		menu.add(new Separator("group.generate"));
 		menu.add(new Separator("group.search"));
 		menu.add(new Separator("group.build"));
+		menu.add(new Separator("group.build"));		
 		menu.add(new Separator("additions"));
 		menu.add(new Separator("group.viewerSetup"));
 		menu.add(new Separator("group.properties"));

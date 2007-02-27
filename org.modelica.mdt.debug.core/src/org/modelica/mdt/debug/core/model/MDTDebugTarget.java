@@ -8,13 +8,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
@@ -93,7 +90,10 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 
 						fThread.setBreakpoints(null);
 						fThread.setStepping(false);
-						if (event.equals("started")) {
+						
+						if (event.startsWith("@")) {
+							breakpointHit(event);							
+						} else if (event.equals("started")) {
 							started();
 						} else if (event.equals("terminated")) {
 							terminated();
@@ -139,8 +139,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @exception CoreException
 	 *                if unable to connect to host
 	 */
-	public MDTDebugTarget(ILaunch launch, IProcess process, int commandPort,
-			int eventPort) throws CoreException {
+	public MDTDebugTarget(ILaunch launch, IProcess process, int commandPort, int eventPort) throws CoreException {
 		super(null);
 		fLaunch = launch;
 		fTarget = this;
@@ -149,25 +148,24 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 		{
 			fCommandSocket = new Socket("localhost", commandPort);
 			fCommandWriter = new PrintWriter(fCommandSocket.getOutputStream());
-			fCommandReader = new BufferedReader(new InputStreamReader(
-					fCommandSocket.getInputStream()));
+			fCommandReader = new BufferedReader(new InputStreamReader(fCommandSocket.getInputStream()));
 
 			fEventSocket = new Socket("localhost", eventPort);
-			fEventReader = new BufferedReader(new InputStreamReader(
-					fEventSocket.getInputStream()));
-			
+			fEventReader = new BufferedReader(new InputStreamReader(fEventSocket.getInputStream()));
 		} catch (UnknownHostException e) {
 			abort("Unable to connect to MDT Debugger", e);
 		} catch (IOException e) {
 			abort("Unable to connect to MDT Debugger", e);
 		}
-
+		
 		fThread = new MDTThread(this);
 		fThreads = new IThread[] { fThread };
 		fEventDispatch = new EventDispatchJob();
 		fEventDispatch.schedule();
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(
-				this);
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+		
+		//sendCommand("break on main");
+		//sendCommand("run");		
 	}
 
 	/*
@@ -206,8 +204,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 		if (fName == null) {
 			fName = "MetaModelica Program";
 			try {
-				fName = getLaunch().getLaunchConfiguration().getAttribute(
-						IMDTConstants.ATTR_MDT_PROGRAM, "MetaModelica Debugger");
+				fName = getLaunch().getLaunchConfiguration().getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, "MetaModelica Debugger");
 			} catch (CoreException e) {
 			}
 		}
@@ -219,13 +216,13 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(org.eclipse.debug.core.model.IBreakpoint)
 	 */
-	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
-		if (breakpoint.getModelIdentifier().equals(
-				IMDTConstants.ID_MDT_DEBUG_MODEL)) {
+	public boolean supportsBreakpoint(IBreakpoint breakpoint) 
+	{
+		return true;
+		/*
+		if (breakpoint.getModelIdentifier().equals(IMDTConstants.ID_MDT_DEBUG_MODEL)) {
 			try {
-				String program = getLaunch().getLaunchConfiguration()
-						.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM,
-								(String) null);
+				String program = getLaunch().getLaunchConfiguration().getAttribute(IMDTConstants.ATTR_MDT_PROGRAM,(String) null);
 				if (program != null) {
 					IMarker marker = breakpoint.getMarker();
 					if (marker != null) {
@@ -233,10 +230,13 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 						return marker.getResource().getFullPath().equals(p);
 					}
 				}
-			} catch (CoreException e) {
+			} 
+			catch (CoreException e) 
+			{
 			}
 		}
 		return false;
+		*/
 	}
 
 	/*
@@ -363,12 +363,11 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 		if (supportsBreakpoint(breakpoint)) {
 			try {
 				if (breakpoint.isEnabled()) {
-					try {
-						sendCommand("break on "
-								+ (((ILineBreakpoint) breakpoint)
-										.getLineNumber() - 1));
-					} catch (CoreException e) {
-					}
+					try 
+					{
+						sendCommand("break on "+ breakpoint.getMarker().getResource().getName() + ":" + (((ILineBreakpoint) breakpoint).getLineNumber()));
+					} 
+					catch (CoreException e) { }
 				}
 			} catch (CoreException e) {
 			}
@@ -384,8 +383,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
 			try {
-				sendCommand("break off "
-						+ ((ILineBreakpoint) breakpoint).getLineNumber());
+				sendCommand("break off "+ breakpoint.getMarker().getResource().getName() + ":" + (((ILineBreakpoint) breakpoint).getLineNumber()));
 			} catch (CoreException e) {
 			}
 		}
@@ -551,9 +549,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 				String value = fCommandReader.readLine();
 				return new MDTValue(this, value);
 			} catch (IOException e) {
-				abort(MessageFormat.format(
-						"Unable to retrieve value for variable {0}",
-						new String[] { variable.getName() }), e);
+				abort(MessageFormat.format("Unable to retrieve value for variable {0}", new String[] { variable.getName() }), e);
 			}
 		}
 		return null;
@@ -596,14 +592,18 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 */
 	private void sendCommand(String request) throws DebugException {
 		synchronized (fCommandSocket) {
+			System.out.println("Sending command:" + request);
 			fCommandWriter.println(request);
 			fCommandWriter.flush();
-			try {
+			//try 
+			//{
 				// wait for "ok"
-				String response = fCommandReader.readLine();
-			} catch (IOException e) {
-				abort("Command failed: " + request, e);
-			}
+				//String response = fCommandReader.readLine();
+			//} 
+			//catch (IOException e) 
+			//{
+			//	abort("Command failed: " + request, e);
+			//}
 		}
 	}
 
@@ -614,15 +614,18 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @param event
 	 *            debug event
 	 */
-	private void breakpointHit(String event) {
+	private void breakpointHit(String event) 
+	{
 		// determine which breakpoint was hit, and set the thread's breakpoint
+		int column = event.indexOf(':');
+		String file = event.substring(1,column);
+		event=event.substring(column+1);
+		String line = event.substring(0,event.indexOf('.'));
 		int lastSpace = event.lastIndexOf(' ');
-		if (lastSpace > 0) {
-			String line = event.substring(lastSpace + 1);
+		//if (lastSpace > 0) {
+		//	String line = event.substring(lastSpace + 1);
 			int lineNumber = Integer.parseInt(line);
-			IBreakpoint[] breakpoints = DebugPlugin.getDefault()
-					.getBreakpointManager().getBreakpoints(
-							IMDTConstants.ID_MDT_DEBUG_MODEL);
+			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IMDTConstants.ID_MDT_DEBUG_MODEL);
 
 			for (int i = 0; i < breakpoints.length; i++) {
 				IBreakpoint breakpoint = breakpoints[i];
@@ -632,8 +635,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 						try {
 							System.out.println("Line number "+ lineBreakpoint.getLineNumber());
 							if (lineBreakpoint.getLineNumber()-1 == lineNumber) {
-								fThread
-										.setBreakpoints(new IBreakpoint[] { breakpoint });
+								fThread.setBreakpoints(new IBreakpoint[] { breakpoint });
 								break;
 							}
 						} catch (CoreException e) {
@@ -641,7 +643,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 					}
 				}
 			}
-		}
+		//}
 		suspended(DebugEvent.BREAKPOINT);
 	}
 

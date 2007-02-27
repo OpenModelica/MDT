@@ -63,20 +63,20 @@ public class MDTLineBreakpointAdapter implements IToggleBreakpointsTarget {
 	}
 
 	/**
-	 * Returns the editor being used to edit a RML file, associated with the
+	 * Returns the editor being used to edit a MDT file, associated with the
 	 * given part, or <code>null</code> if none.
 	 * 
 	 * @param part
 	 *            workbench part
-	 * @return the editor being used to edit a RML file, associated with the
+	 * @return the editor being used to edit a MDT file, associated with the
 	 *         given part, or <code>null</code> if none
 	 */
 	private ITextEditor getEditor(IWorkbenchPart part) {
 		if (part instanceof ITextEditor) {
 			ITextEditor editorPart = (ITextEditor) part;
-			IResource resource = (IResource) editorPart.getEditorInput()
-					.getAdapter(IResource.class);
-			if (resource != null) {
+			IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
+			if (resource != null) 
+			{
 				String extension = resource.getFileExtension();
 				if (extension != null && extension.equals("mo")) {
 					return editorPart;

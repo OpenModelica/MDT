@@ -13,7 +13,7 @@ import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 
 /**
- * Common function of RML debug model elements
+ * Common function of MDT debug model elements
  */
 public class MDTDebugElement  extends PlatformObject implements IDebugElement {
 
@@ -24,7 +24,7 @@ public class MDTDebugElement  extends PlatformObject implements IDebugElement {
 	 * Constructs a new debug element contained in the given
 	 * debug target.
 	 * 
-	 * @param target debug target (RML VM)
+	 * @param target debug target (MDT VM)
 	 */
 	public MDTDebugElement(MDTDebugTarget target) {
 		fTarget = target;

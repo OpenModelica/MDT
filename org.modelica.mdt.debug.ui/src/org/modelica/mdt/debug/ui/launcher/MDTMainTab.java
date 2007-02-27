@@ -30,12 +30,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 
 /**
- * Tab to specify the RML program to run/debug.
+ * Tab to specify the MDT program to run/debug.
  */
 public class MDTMainTab extends AbstractLaunchConfigurationTab {
 
 	private Text fProgramText;
-
+	private Text fProgramArguments;
+	
 	private Button fProgramButton;
 
 	/*
@@ -45,24 +46,31 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		GridLayout topLayout = new GridLayout();
-		topLayout.verticalSpacing = 0;
-		topLayout.numColumns = 3;
-		comp.setLayout(topLayout);
+		GridLayout compLayout = new GridLayout();
+		comp.setLayout(compLayout);
+		comp.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		comp.setFont(font);
-
-		createVerticalSpacer(comp, 3);
-
-		Label programLabel = new Label(comp, SWT.NONE);
+		createVerticalSpacer(comp, 1);
+		
+		Composite top = new Composite(comp, SWT.NONE);
+		GridLayout topLayout = new GridLayout();
+		topLayout.verticalSpacing   = 0;
+		topLayout.horizontalSpacing = 2;		
+		topLayout.numColumns = 3;
+		top.setLayout(topLayout);
+		top.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		top.setFont(font);
+		createVerticalSpacer(top, 3);
+		
+		Label programLabel = new Label(top, SWT.NONE);
 		programLabel.setText("&Program:");
 		GridData gd = new GridData(GridData.BEGINNING);
 		programLabel.setLayoutData(gd);
 		programLabel.setFont(font);
 
-		fProgramText = new Text(comp, SWT.SINGLE | SWT.BORDER);
+		fProgramText = new Text(top, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProgramText.setLayoutData(gd);
 		fProgramText.setFont(font);
@@ -71,17 +79,43 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-
-		fProgramButton = createPushButton(comp, "&Browse...", null); //$NON-NLS-1$
+		
+		fProgramButton = createPushButton(top, "&Browse...", null); //$NON-NLS-1$
 		fProgramButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				browseEXEFiles();
+			}
+		});	
+
+		createSeparator(comp, 1);
+		
+		Composite bottom = new Composite(comp, SWT.NONE);
+		GridLayout bottomLayout = new GridLayout(1, false);
+		bottom.setLayout(bottomLayout);
+		bottom.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+		bottom.setFont(font);
+		createVerticalSpacer(bottom, 3);
+		
+		Label programArgumentsLabel = new Label(bottom, SWT.NONE);
+		gd = new GridData(GridData.BEGINNING);				
+		programArgumentsLabel.setText("&Arguments:");		
+		programArgumentsLabel.setLayoutData(gd);
+		programArgumentsLabel.setFont(font);
+
+		gd = new GridData(GridData.FILL, GridData.FILL, true, true);	
+		gd.grabExcessVerticalSpace = true;
+		fProgramArguments = new Text(bottom, SWT.MULTI | SWT.BORDER);
+		fProgramArguments.setLayoutData(gd);
+		fProgramArguments.setFont(font);
+		fProgramArguments.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
 			}
 		});
 	}
 
 	/**
-	 * Open a resource chooser to select a RML program
+	 * Open a resource chooser to select a MDT program
 	 */
 	protected void browseEXEFiles() 
 	{
@@ -107,6 +141,7 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) 
 	{
+		// fProgramArguments.setText("+d = interactiveCorba");
 	}
 
 	/*
@@ -118,11 +153,14 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 	{
 		try 
 		{
-			String program = configuration.getAttribute(
-					IMDTConstants.ATTR_MDT_PROGRAM, (String) null);
+			String program = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String) null);
 			if (program != null) {
 				fProgramText.setText(program);
 			}
+			String programArguments = configuration.getAttribute(IMDTConstants.ATTR_MDT_ARGUMENTS, (String) null);
+			if (programArguments != null) {
+				fProgramArguments.setText(programArguments);
+			}			
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
 		}
@@ -141,6 +179,12 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 			program = null;
 		}
 		configuration.setAttribute(IMDTConstants.ATTR_MDT_PROGRAM, program);
+		String programArguments = fProgramArguments.getText().trim();
+		if (programArguments.length() == 0) 
+		{
+			programArguments = null;
+		}
+		configuration.setAttribute(IMDTConstants.ATTR_MDT_ARGUMENTS, programArguments);
 	}
 
 	/*
@@ -171,5 +215,4 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 		}
 		return super.isValid(launchConfig);
 	}
-
 }

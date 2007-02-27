@@ -6,7 +6,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 
 /**
- * A RML Debugger thread. A RML Debugger is single threaded.
+ * A MDT Debugger thread. A MDT Debugger is single threaded.
  */
 public class MDTThread extends MDTDebugElement implements IThread {
 

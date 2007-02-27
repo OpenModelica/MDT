@@ -55,16 +55,9 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -74,7 +67,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.NewWizardMenu;
@@ -86,7 +78,6 @@ import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.ViewPart;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -97,8 +88,6 @@ import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
-import org.eclipse.ui.views.navigator.NavigatorFrameSource;
-import org.eclipse.ui.views.navigator.SortAndFilterActionGroup;
 
 public class ModelicaProjectsView extends ResourceNavigator
 {
@@ -133,12 +122,6 @@ public class ModelicaProjectsView extends ResourceNavigator
 		getViewer().setInput(ModelicaCore.getModelicaRoot());
 		getViewer().setSorter(new ModelicaElementSorter(ModelicaElementSorter.MODELICA));
 		UIPlugin.tag(getViewer().getTree(), TREE_TAG);
-
-//        getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-//            public void selectionChanged(SelectionChangedEvent event) {
-//                handleSelectionChanged(event);
-//            }
-//        });
 		
 		drillDownAdapter = new DrillDownAdapter(getViewer());
 		
@@ -176,15 +159,15 @@ public class ModelicaProjectsView extends ResourceNavigator
 		
 		hookDoubleClickAction();
 		
-		getViewer().getTree().addKeyListener(new KeyAdapter()
-		{
-			@Override
-			public void keyPressed(KeyEvent e) 
-			{
-				ModelicaProjectsView.this.handleKeyPressed(e);
-			}
-			
-		});
+//		getViewer().getTree().addKeyListener(new KeyAdapter()
+//		{
+//			@Override
+//			public void keyPressed(KeyEvent e) 
+//			{
+//				ModelicaProjectsView.this.handleKeyPressed(e);
+//			}
+//			
+//		});
 	}
 
 	protected void handleOpen(OpenEvent event)
@@ -209,31 +192,20 @@ public class ModelicaProjectsView extends ResourceNavigator
 		}
 	}
 
-//	protected void handleSelectionChanged(SelectionChangedEvent event)
+
+//	protected void handleKeyPressed(KeyEvent e) 
 //	{
-//		super.handleSelectionChanged(event);
-//		getViewSite().getActionBars().updateActionBars();
+//		switch(e.character)
+//		{
+//		case SWT.DEL:
+//			deleteAction.selectionChanged((IStructuredSelection) getViewer().getSelection());
+//			if (deleteAction.isEnabled())
+//			{
+//				deleteAction.run();
+//			}
+//			break;
+//		}
 //	}
-
-	protected void handleKeyPressed(KeyEvent e) 
-	{
-		switch(e.character)
-		{
-		case SWT.DEL:
-			deleteAction.selectionChanged((IStructuredSelection) getViewer().getSelection());
-			if (deleteAction.isEnabled())
-			{
-				deleteAction.run();
-			}
-			break;
-		}
-	}
-
-	//@Override
-	//public void setFocus()
-	//{
-	//	getViewer().getTree().setFocus();
-	//}
 	
 	
 	public void makeActions() 
@@ -300,7 +272,6 @@ public class ModelicaProjectsView extends ResourceNavigator
 
 		Menu menu = contextMenu.createContextMenu(getViewer().getTree());
 		getViewer().getTree().setMenu(menu);
-	
 	}
 	
 	public void fillContextMenu(IMenuManager manager) 

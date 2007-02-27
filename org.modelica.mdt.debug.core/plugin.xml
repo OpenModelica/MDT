@@ -6,10 +6,9 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.modelica.mdt.debug.core.launcher.MDTLaunchDelegate"
-            id="org.modelica.mdt.debug.core.launchConfigurationType.mdt"
+            id="org.modelica.mdt.debug.core.launchConfigurationType"
             modes="run, debug"
-            name="MDT"
-            public="true"
+            name="Modelica Developement Tooling (MDT)"
             sourceLocatorId="org.modelica.mdt.debug.core.sourceLookupDirector.mdt"
             sourcePathComputerId="org.modelica.mdt.debug.core.sourcePathComputer.mdt">
       </launchConfigurationType>
@@ -36,9 +35,10 @@
    <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
-            markerType="org.modelica.mdt.debug.core.lineBreakpoint.marker"
             class="org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint"
-            id="org.modelica.mdt.debug.core.lineBreakpoint">
+            id="org.modelica.mdt.debug.core.lineBreakpoint"
+            markerType="org.modelica.mdt.debug.core.lineBreakpoint.marker"
+            name="MDT Breakpoint">
       </breakpoint>
    </extension>
    

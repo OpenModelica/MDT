@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * View of the RML VM data stack
+ * View of the MDT VM data stack
  */
 public class DataStackView extends AbstractDebugView implements
 		ISelectionListener {

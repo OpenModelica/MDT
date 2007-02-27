@@ -66,7 +66,7 @@
             class="org.modelica.mdt.ui.editor.ModelicaEditor"
             contributorClass="org.modelica.mdt.ui.editor.ModelicaActionContributor"
             default="true"
-            extensions="mo"
+            extensions="mo, mos"
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.editor"
             name="Modelica Editor"/>
@@ -74,8 +74,8 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="org.modelica.mdt.ui.ModelicaPerspectiveFactory"
-            id="org.modelica.mdt.perspective"
+            class="org.modelica.mdt.ui.ModelicaPerspective"
+            id="org.modelica.mdt.ui.ModelicaPerspective"
             name="Modelica"/>
    </extension>
    <extension
@@ -124,6 +124,39 @@
          </enablement>
       </consolePatternMatchListener>
    </extension>
+   
+   <extension point="org.eclipse.ui.contexts">
+      <context
+  		name="Editing Modelica Source"
+  		description="Editing Modelica Source Context"
+  		parentId="org.eclipse.ui.textEditorScope"
+  		id="org.modelica.mdt.ui.modelicaEditorScope">
+  	  </context>
+   </extension>
+   
+   <extension point="org.eclipse.ui.commands">
+   <category 
+   		name="Source"
+   		description="Modelica Source Actions"
+   		id="org.modelica.mdt.ui.category.source" >
+   </category>
+   <command
+   		name="Show Tooltip Description"
+   		description="Shows the tooltip description for the element at the cursor"
+   		categoryId="org.eclipse.ui.category.edit"
+   		id="org.modelica.mdt.ui.edit.text.show.modelicadoc"
+   >
+   </command>
+   </extension>
+   
+   <extension point="org.eclipse.ui.bindings">   
+	  <key
+	  	sequence="F2"
+	  	contextId="org.modelica.mdt.ui.modelicaEditorScope"
+	  	commandId="org.modelica.mdt.ui.edit.text.show.modelicadoc"
+	  	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+  </extension>   
+   
    <extension
          id="MetaModelicaBuildMarker"
          name="MetaModelica Build Error"
@@ -182,5 +215,46 @@
             class="org.modelica.mdt.ui.console.ModelicaConsoleFactory"
             icon="icons/obj16/mo_file.gif"
             label="MDT Console"/>
-   </extension>   
+   </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <perspectiveShortcut id="org.modelica.mdt.ui.ModelicaPerspective"></perspectiveShortcut>
+    	 <view id="org.modelica.mdt.ui.view.ModelicaProjectsView" 
+                relative="org.eclipse.ui.views.ResourceNavigator" 
+                relationship="stack"/>          
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.modelica.mdt.ui.ModelicaPerspective">
+         <perspectiveShortcut id="org.modelica.mdt.ui.ModelicaPerspective"></perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.modelica.mdt.ui.ModelicaPerspective">
+         <perspectiveShortcut id="org.eclipse.debug.ui.DebugPerspective"></perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
+         <perspectiveShortcut id="org.modelica.mdt.ui.ModelicaPerspective"></perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
+         <actionSet
+               id="org.modelica.mdt.ui.ModelicaActionSet">
+         </actionSet>
+      </perspectiveExtension>
+      
+      <perspectiveExtension targetID="org.modelica.mdt.ui.ModelicaPerspective">
+         <showInPart id="org.modelica.mdt.ui.view.ModelicaProjectsView"/>
+         <showInPart id="org.eclipse.team.ui.GenericHistoryView"/>
+         <showInPart id="org.eclipse.ui.views.ResourceNavigator"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.modelica.mdt.ui.ModelicaPerspective">
+         <showInPart id="org.modelica.mdt.ui.view.ModelicaProjectsView"/>
+         <showInPart id="org.eclipse.team.ui.GenericHistoryView"/>
+         <showInPart id="org.eclipse.ui.views.ResourceNavigator"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.modelica.mdt.ui.ModelicaPerspective">
+         <showInPart id="org.modelica.mdt.ui.view.ModelicaProjectsView"/>
+         <showInPart id="org.eclipse.team.ui.GenericHistoryView"/>        
+         <showInPart id="org.eclipse.ui.views.ResourceNavigator"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
+         <showInPart id="org.modelica.mdt.ui.view.ModelicaProjectsView"/>
+      </perspectiveExtension>      
+   </extension>
 </plugin>

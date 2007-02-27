@@ -56,9 +56,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.ui.console.TextConsole;
-import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.UIPlugin;
 
 /**

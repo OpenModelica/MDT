@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
-public class MDTDebugCorePlugin extends Plugin {
+public class MDTDebugCorePlugin extends Plugin 
+{
 
+	static private boolean DEBUG = false;
+	
 	// The shared instance.
 	private static MDTDebugCorePlugin plugin;
 
@@ -19,37 +23,42 @@ public class MDTDebugCorePlugin extends Plugin {
 	private ResourceBundle resourceBundle;
 
 	/**
-	 * Unique identifier for the RML debug model (value
-	 * <code>rml.debugModel</code>).
+	 * Unique identifier for the MDT debug model (value
+	 * <code>mdt.debugModel</code>).
 	 */
-	public static final String ID_RML_DEBUG_MODEL = "rml.debugModel";
+	public static final String ID_MDT_DEBUG_MODEL = "mdt.debugModel";
 
 	/**
-	 * Name of the string substitution variable that resolves to the location of
-	 * a local Perl executable (value <code>perlExecutable</code>).
-	 */
-	public static final String VARIALBE_PERL_EXECUTABLE = "perlExecutable";
-
-	/**
-	 * Launch configuration attribute key. Value is a path to a perl program.
-	 * The path is a string representing a full path to a perl program in the
+	 * Launch configuration attribute key. Value is a path to an exe program.
+	 * The path is a string representing a full path to an exe program in the
 	 * workspace.
 	 */
-	public static final String ATTR_RML_PROGRAM = ID_RML_DEBUG_MODEL
-			+ ".ATTR_RML_PROGRAM";
+	public static final String ATTR_MDT_PROGRAM = ID_MDT_DEBUG_MODEL + ".ATTR_MDT_PROGRAM";
 
 	/**
-	 * Identifier for the RML launch configuration type (value
-	 * <code>rml.launchType</code>)
+	 * Identifier for the MDT launch configuration type (value
+	 * <code>mdt.launchType</code>)
 	 */
-	public static final String ID_RML_LAUNCH_CONFIGURATION_TYPE = "rml.launchType";
+	public static final String ID_MDT_LAUNCH_CONFIGURATION_TYPE = "org.modelica.mdt.debug.core.launchConfigurationType";
+	
+	{
+		/* load debug options and set debug flag variables accordingly */
+		/*load trace/omcCalls flag */
+		String value = Platform.getDebugOption("org.modelica.mdt.debug.core/debug");
+		if (value != null && value.equalsIgnoreCase("true"))
+		{
+			DEBUG = true;
+		}
+	}
 
 	/**
 	 * The constructor.
 	 */
-	public MDTDebugCorePlugin() {
+	public MDTDebugCorePlugin() 
+	{
 		super();
 		plugin = this;
+		if (DEBUG) System.out.println("MDTDebugCorePlugin() initializing");
 	}
 
 	/**
@@ -57,6 +66,7 @@ public class MDTDebugCorePlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		if (DEBUG) System.out.println("MDTDebugCorePlugin() starting");		
 	}
 
 	/**
@@ -66,6 +76,7 @@ public class MDTDebugCorePlugin extends Plugin {
 		super.stop(context);
 		plugin = null;
 		resourceBundle = null;
+		if (DEBUG) System.out.println("MDTDebugCorePlugin() stop");
 	}
 
 	/**
@@ -80,8 +91,7 @@ public class MDTDebugCorePlugin extends Plugin {
 	 * found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = MDTDebugCorePlugin.getDefault()
-				.getResourceBundle();
+		ResourceBundle bundle = MDTDebugCorePlugin.getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
 		} catch (MissingResourceException e) {
@@ -95,8 +105,7 @@ public class MDTDebugCorePlugin extends Plugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle
-						.getBundle("example.debug.core.DebugCorePluginResources");
+				resourceBundle = ResourceBundle.getBundle("org.modelica.mdt.debug.core.MDTDebugCorePluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -110,9 +119,8 @@ public class MDTDebugCorePlugin extends Plugin {
 	 */
 	public static File getFileInPlugin(IPath path) {
 		try {
-			URL installURL = new URL(getDefault().getDescriptor()
-					.getInstallURL(), path.toString());
-			URL localURL = Platform.asLocalURL(installURL);
+			URL installURL = new URL(getDefault().getBundle().getEntry("/"), path.toString());
+			URL localURL = FileLocator.toFileURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException ioe) {
 			return null;

@@ -5,7 +5,7 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
 import org.modelica.mdt.debug.core.model.MDTStackFrame;
 
 /**
- * The RML source lookup participant knows how to translate a RML stack frame
+ * The MDT source lookup participant knows how to translate a MDT stack frame
  * into a source file name
  */
 public class MDTSourceLookupParticipant extends AbstractSourceLookupParticipant {

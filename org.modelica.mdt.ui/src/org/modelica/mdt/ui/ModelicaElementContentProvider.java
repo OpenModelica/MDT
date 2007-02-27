@@ -45,16 +45,12 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Control;
-import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IParent;
@@ -62,12 +58,8 @@ import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.eclipse.jface.util.Assert;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.ui.ModelicaElementChangeListener;
-
-import com.sun.org.apache.bcel.internal.generic.StoreInstruction;
 
 /**
  * Content provider for a tree viewer. This content provider works only

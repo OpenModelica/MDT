@@ -4,7 +4,7 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
- * RML source lookup director. For RML source lookup there is one source
+ * MDT source lookup director. For MDT source lookup there is one source
  * lookup participant. 
  */
 public class MDTSourceLookupDirector  extends AbstractSourceLookupDirector  {

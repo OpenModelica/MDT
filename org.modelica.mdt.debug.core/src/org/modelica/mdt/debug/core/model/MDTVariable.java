@@ -5,7 +5,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * A variable in a RML stack frame
+ * A variable in a MDT stack frame
  */
 public class MDTVariable extends MDTDebugElement implements IVariable {
 

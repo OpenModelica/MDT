@@ -23,7 +23,7 @@ software and other related projects.
    </copyright>
 
    <license url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html">
-The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.
+      The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.
 Copyright (c) 2005-2006, 
 The MDT Team (Authors): Adrian Pop [adrpo@ida.liu.se], Elmir Jagudin, Andreas Remar, 
 Programming Environments Laboratory (PELAB),
@@ -46,7 +46,7 @@ modification, are permitted provided that the following conditions are met:
   contributors may be used to endorse or promote products derived from this 
   software without specific prior written permission. 
   
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND 
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
 IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
@@ -78,19 +78,22 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
          id="org.modelica.mdt.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.ui"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.omc"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.debug.core"

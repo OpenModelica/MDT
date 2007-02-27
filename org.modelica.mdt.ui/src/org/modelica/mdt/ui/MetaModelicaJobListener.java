@@ -1,8 +1,7 @@
 
 package org.modelica.mdt.ui;
 
-import org.eclipse.core.runtime.jobs.*; 
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.runtime.jobs.*;
 
 public class MetaModelicaJobListener implements IJobChangeListener
 {

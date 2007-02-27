@@ -23,30 +23,22 @@
 *******************************************************************************/
 package org.modelica.mdt.ui.text;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.modelica.mdt.ui.ModelicaLookupException;
 import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.editor.ModelicaElementEditorInput;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.core.compiler.CompilerException;
-import org.modelica.mdt.core.compiler.IClassInfo;
-import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.ModelicaComponent;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorInput;
 
 public class ModelicaCodeResolver

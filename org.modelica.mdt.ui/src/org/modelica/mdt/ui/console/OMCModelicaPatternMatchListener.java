@@ -2,29 +2,11 @@
 package org.modelica.mdt.ui.console;
 
 import org.eclipse.ui.console.IPatternMatchListener;
-import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.jface.text.BadLocationException;
 import java.util.regex.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.ui.console.FileLink;
-import org.modelica.mdt.core.*;
-import org.modelica.mdt.ui.UIPlugin;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.MarkerUtilities;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 
 public class OMCModelicaPatternMatchListener implements IPatternMatchListener

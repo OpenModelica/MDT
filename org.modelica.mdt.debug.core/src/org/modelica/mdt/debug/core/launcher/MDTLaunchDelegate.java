@@ -3,19 +3,13 @@ package org.modelica.mdt.debug.core.launcher;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.variables.IValueVariable;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -23,12 +17,10 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
-import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.core.model.MDTDebugTarget;
-import org.modelica.mdt.debug.server.MDTDebugServer;
 
 /**
- * Launches RML program on a RML Debugger
+ * Launches MDT program on a MDT Debugger
  */
 public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -42,19 +34,19 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 	 *      java.lang.String, org.eclipse.debug.core.ILaunch,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */	
-	public void launch(ILaunchConfiguration configuration, String mode,
-			ILaunch launch, IProgressMonitor monitor) throws CoreException 
-	{
-		
-		/* first launch the MDTDebugServer */
-		//MDTDebugServer debugServer = new MDTDebugServer();
-		//debugServer.run();
-		
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException 
+	{		
 		// get the program to be launched
 		String debugTargetProgram = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String)null);
+		String debugTargetCommandLineArguments = configuration.getAttribute(IMDTConstants.ATTR_MDT_ARGUMENTS, (String)null);
+		/* TODO: USE THESE IN THE PROCESS exec(); 
+		ILaunchManager.ATTR_ENVIRONMENT_VARIABLES;
+		ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES;
+		*/
 		
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-								
+		
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) 
+		{						
 			List commandList = new ArrayList();
 			//configuration.
 			commandList.add(debugTargetProgram);
@@ -64,21 +56,28 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 			if (commandPort == -1 || eventPort == -1) {
 				abort("Unable to find free port", null);
 			}
-			commandList.add("-dbgterminal=socket");
 			commandList.add("-dbgcmdport=" + commandPort);
 			commandList.add("-dbgeventport=" + eventPort);
-			commandList.add("-dbgsocket");			
+			commandList.add("-dbgsocket");
+			String[] extraArgs = DebugPlugin.parseArguments(debugTargetCommandLineArguments);
+			for (String x : extraArgs) commandList.add(x);
 			debugTargetProgram = "";
-			for (int i = 0; i < commandList.size(); i++)
-				debugTargetProgram += " " + commandList.get(i);
+			for (int i = 0; i < commandList.size(); i++) debugTargetProgram += " " + commandList.get(i);
 			
 			String[] commandLine = (String[]) commandList.toArray(new String[commandList.size()]);
 			
-			Process process = DebugPlugin.exec(commandLine, null);
+			Process process = DebugPlugin.exec(
+					commandLine, 
+					new File("C:\\bin\\cygwin\\home\\adrpo\\runtime-EclipseApplication\\OpenModelica\\build\\bin\\"), 
+					null);
 			if (process == null)
 			{
 				abort("Unable to run the executable: ", null);
 			}
+			/* wait a bit for the process */
+			try { Thread.sleep(3000); }
+			catch(InterruptedException e) { /* ignore */ }			
+			
 			IProcess p = DebugPlugin.newProcess(launch, process, debugTargetProgram);
 			
 			IDebugTarget target = new MDTDebugTarget(launch, p, commandPort, eventPort);
@@ -134,5 +133,4 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 		}
 		return -1;
 	}
-
 }

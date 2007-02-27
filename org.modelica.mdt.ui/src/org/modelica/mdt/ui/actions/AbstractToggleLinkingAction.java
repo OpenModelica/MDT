@@ -12,7 +12,6 @@ package org.modelica.mdt.ui.actions;
 
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.ui.PlatformUI;
 import org.modelica.mdt.ui.ModelicaImages;
 
 /**

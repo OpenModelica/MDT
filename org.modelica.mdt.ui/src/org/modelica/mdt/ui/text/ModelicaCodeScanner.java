@@ -163,7 +163,7 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 	}	
 
 	/**
-	 * RML builtin relation detector
+	 * MDT builtin relation detector
 	 */
 	static private class ModelicaBuiltinRelationsDetector implements IWordDetector 
 	{
@@ -199,9 +199,10 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 			  "string_append","string_int","string_length","string_list_string_char",
 			  "string_nth","string_nth_string_char","string_get","string_get_string_char",
 			  "string_setnth","string_setnth_string_char","string_update","string_update_string_char",
+			  "string_equal","string_compare",
 			  "stringAppend","stringInt","stringLength","stringListStringChar","stringNth",
 			  "stringNthStringChar","stringGet","stringGetStringChar","stringSetNth","stringSetNthStringChar",
-			  "stringUpdate","stringUpdateStringChar",
+			  "stringUpdate","stringUpdateStringChar","stringEqual","stringCompare",
 			  /* mutable arrays */      
 			  "array_length","array_list","array_nth","array_get","array_setnth",
 			  "array_update","array_create","array_add","array_vector","array_copy",      

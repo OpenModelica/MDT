@@ -1,15 +1,21 @@
 package org.modelica.mdt.debug.ui;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.plugin.*;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import java.net.URL;
 import java.util.*;
 
-public class MDTDebugUIPlugin  extends AbstractUIPlugin  {
+public class MDTDebugUIPlugin  extends AbstractUIPlugin  
+{
+	
+	static private boolean DEBUG = false;
 
 	//	The shared instance.
 	private static MDTDebugUIPlugin plugin;
@@ -34,23 +40,37 @@ public class MDTDebugUIPlugin  extends AbstractUIPlugin  {
     public final static String IMG_DLCL_PUSH = "IMG_DLCL_PUSH";
     
     /**
-     * RML program image
+     * MDT program image
      */
-    public final static String IMG_OBJ_RML = "IMB_OBJ_RML";
-    	
+    public final static String IMG_OBJ_MDT = "IMB_OBJ_MDT";
+
+	{
+		/* load debug options and set debug flag variables accordingly */
+		/*load trace/omcCalls flag */
+		String value = Platform.getDebugOption("org.modelica.mdt.debug.ui/debug");
+		if (value != null && value.equalsIgnoreCase("true"))
+		{
+			DEBUG = true;
+		}
+	}    
+    
 	/**
 	 * The constructor.
 	 */
-	public MDTDebugUIPlugin() {
+	public MDTDebugUIPlugin() 
+	{
 		super();
 		plugin = this;
+		if (DEBUG) System.out.println("MDTDebugUIPlugin() initializing");
 	}
 
 	/**
 	 * This method is called upon plug-in activation
 	 */
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception 
+	{
 		super.start(context);
+		if (DEBUG) System.out.println("MDTDebugUIPlugin() start");		
 	}
 
 	/**
@@ -60,12 +80,14 @@ public class MDTDebugUIPlugin  extends AbstractUIPlugin  {
 		super.stop(context);
 		plugin = null;
 		resourceBundle = null;
+		if (DEBUG) System.out.println("MDTDebugUIPlugin() stop");		
 	}
 
 	/**
 	 * Returns the shared instance.
 	 */
-	public static MDTDebugUIPlugin getDefault() {
+	public static MDTDebugUIPlugin getDefault() 
+	{
 		return plugin;
 	}
 
@@ -73,7 +95,8 @@ public class MDTDebugUIPlugin  extends AbstractUIPlugin  {
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
 	 */
-	public static String getResourceString(String key) {
+	public static String getResourceString(String key) 
+	{
 		ResourceBundle bundle = MDTDebugUIPlugin.getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
@@ -85,10 +108,11 @@ public class MDTDebugUIPlugin  extends AbstractUIPlugin  {
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
-	public ResourceBundle getResourceBundle() {
+	public ResourceBundle getResourceBundle() 
+	{
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("example.debug.ui.DebugUIPluginResources");
+				resourceBundle = ResourceBundle.getBundle("org.modelica.mdt.debug.ui.MDTDebugUIPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -100,7 +124,7 @@ public class MDTDebugUIPlugin  extends AbstractUIPlugin  {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
 	 */
 	protected void initializeImageRegistry(ImageRegistry reg) {
-		declareImage(IMG_OBJ_RML, PATH_OBJECT + "rml.gif");
+		declareImage(IMG_OBJ_MDT, PATH_OBJECT + "mdt.gif");
 	    declareImage(IMG_ELCL_POP, PATH_ELOCALTOOL + "pop.gif");
 	    declareImage(IMG_DLCL_POP, PATH_DLOCALTOOL + "pop.gif");
 	    declareImage(IMG_ELCL_PUSH, PATH_ELOCALTOOL + "push.gif");
@@ -117,8 +141,13 @@ public class MDTDebugUIPlugin  extends AbstractUIPlugin  {
      * plug-ins install directory
      * <code>false</code> if this is not a shared image
      */
-    private void declareImage(String key, String path) {
-        URL url = BundleUtility.find("example.debug.ui", path);
+    private void declareImage(String key, String path) 
+    {
+    	Bundle bundle = Platform.getBundle("org.modelica.mdt.debug.ui");
+        if (bundle == null) {
+			return;
+		}    	
+        URL url = FileLocator.find(bundle, new Path(path), null);
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
         getImageRegistry().put(key, desc);
     }    	

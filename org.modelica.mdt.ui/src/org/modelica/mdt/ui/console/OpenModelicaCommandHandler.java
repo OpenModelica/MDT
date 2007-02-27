@@ -65,21 +65,4 @@ public class OpenModelicaCommandHandler extends Thread
 		}
 	}
 	
-//	public void start()
-//	{
-//		try
-//		{
-//			writer.write(ModelicaTextConsoleMessages.WELCOME);
-//			writer.flush();
-//		}
-//		catch(IOException e)
-//		{
-//			//e.printStackTrace();
-//			// if the stream is closed then don't start the thread.
-//			this.interrupt(); 
-//			return;
-//		}
-//		super.start();
-//	}
-
 }

@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 

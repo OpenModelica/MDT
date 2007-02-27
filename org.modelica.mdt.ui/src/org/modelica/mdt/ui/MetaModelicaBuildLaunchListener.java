@@ -4,7 +4,6 @@ package org.modelica.mdt.ui;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.core.resources.*;
 
 public class MetaModelicaBuildLaunchListener implements ILaunchListener

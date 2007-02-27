@@ -47,13 +47,25 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.IInformationProviderExtension;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -65,17 +77,25 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.modelica.mdt.ui.actions.IModelicaEditorActionDefinitionIds;
 import org.modelica.mdt.ui.actions.OpenAction;
-import org.eclipse.ui.editors.text.IEncodingSupport;
+import org.modelica.mdt.ui.hover.HTMLTextPresenter;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.ResourceAction;
+import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
@@ -84,11 +104,9 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.modelica.mdt.ui.UIPlugin;
-import org.modelica.mdt.ui.ModelicaLookupException;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
@@ -126,7 +144,7 @@ import org.modelica.mdt.ui.text.ModelicaPairMatcher;
  * @author Adrian Pop
  * @author MDT team
  */
-public class ModelicaEditor extends TextEditor implements IModelicaElementChangeListener
+public class ModelicaEditor extends TextEditor implements IModelicaElementChangeListener, IPropertyListener
 {
 	private static final String RESOURCE_BUNDLE = 
 		"org.modelica.mdt.ui.editor.ContentAssist";
@@ -143,12 +161,29 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	protected ModelicaContentOutlinePage fOutlinePage;
 	/** Outliner context menu Id */
 	protected String fOutlinerContextMenuId;
-	
+	/** The information presenter. */
+	private InformationPresenter fInformationPresenter;
+		
 	public ModelicaEditor()
 	{
 		super();
-		setOutlinerContextMenuId("#ModelicaOutlinerContext"); //$NON-NLS-1$	
+		setOutlinerContextMenuId("#ModelicaOutlinerContext"); //$NON-NLS-1$
+		addPropertyListener(this);
 	}
+	
+
+	/* deals with opening the second file in the editor and notifying the outline page*/
+	public void propertyChanged(Object obj, int prop)
+	{
+		if (prop == IEditorPart.PROP_INPUT)
+		{
+			if (obj == this && fOutlinePage != null)
+			{
+				setOutlinePageInput(fOutlinePage, getEditorInput());
+			}
+		}
+	}
+	
 	
 	/**
 	 * The editor selection changed listener.
@@ -185,15 +220,17 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 
 		this.setAction("OpenAction", new OpenAction(this));
 		
+		ResourceAction resAction= new TextOperationAction(ModelicaEditorMessages.getBundleForConstructedKeys(), "ShowModelicaDoc.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
+		resAction= new InformationDispatchAction(ModelicaEditorMessages.getBundleForConstructedKeys(), "ShowModelicaDoc.", (TextOperationAction) resAction); //$NON-NLS-1$
+		resAction.setActionDefinitionId(IModelicaEditorActionDefinitionIds.SHOW_MODELICADOC);
+		setAction("ShowModelicaDoc", resAction); //$NON-NLS-1$
+		
 		/*
 		 * create the action that activates the content assist on CTRL+SPACE
 		 */
-		IAction a = 
-			new TextOperationAction(ResourceBundle.getBundle(RESOURCE_BUNDLE),
-					"ContentAssistProposal.", this, 
-					ISourceViewer.CONTENTASSIST_PROPOSALS);
-		a.setActionDefinitionId
-			(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		IAction a = new TextOperationAction(
+				ResourceBundle.getBundle(RESOURCE_BUNDLE), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS);
+		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", a);
 		
 	}
@@ -202,6 +239,19 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	public void createPartControl(Composite parent)
 	{
         super.createPartControl(parent);
+        
+		IInformationControlCreator informationControlCreator= new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				boolean cutDown= false;
+				int style= cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
+				return new DefaultInformationControl(shell, SWT.RESIZE | SWT.TOOL, style, new HTMLTextPresenter(cutDown), "BLA MOTHER!");
+			}
+		};
+
+		fInformationPresenter= new InformationPresenter(informationControlCreator);
+		fInformationPresenter.setSizeConstraints(60, 10, true, true);
+		fInformationPresenter.install(getSourceViewer());
+		fInformationPresenter.setDocumentPartitioning(IModelicaPartitions.MODELICA_PARTITIONING);
         
         /*
          * install the gadgets that enable text folding
@@ -288,7 +338,8 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
-		}		
+		}
+		fInformationPresenter.uninstall();
 	}
 
 	public void elementsChanged(Collection<IModelicaElementChange> changes)
@@ -592,8 +643,15 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	 * @return the Modelica element wrapped by this editors input.
 	 * @since 0.6.8
 	 */	
-	IModelicaElement getEditorInputModelicaElement()
+	public IModelicaElement getEditorInputModelicaElement()
 	{
+		IEditorInput i = getEditorInput();
+		if (i != null && i instanceof ModelicaElementEditorInput) 
+		{
+			IModelicaElement me = ((ModelicaElementEditorInput)i).getSourceFile();
+			if (me != null) 
+				return (IModelicaElement)me;
+		}
 		return EditorUtility.getEditorInputModelicaElement(this);
 	}
 	
@@ -833,6 +891,176 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	{
 		IRegion region = getRegionFromSourceRegion(sourceRegion, getViewer().getDocument());
 		setHighlightRange(region.getOffset(), region.getLength(), moveCursor);
+	}
+	
+	private static final class InformationProvider implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
+		
+		private IRegion fHoverRegion;
+		private Object fHoverInfo;
+		private IInformationControlCreator fControlCreator;
+		
+		InformationProvider(IRegion hoverRegion, Object hoverInfo, IInformationControlCreator controlCreator) {
+			fHoverRegion= hoverRegion;
+			fHoverInfo= hoverInfo;
+			fControlCreator= controlCreator;
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
+		 */
+		public IRegion getSubject(ITextViewer textViewer, int invocationOffset) {
+			return fHoverRegion;
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+		 */
+		public String getInformation(ITextViewer textViewer, IRegion subject) {
+			return fHoverInfo.toString();
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+		 * @since 3.2
+		 */
+		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
+			return fHoverInfo;
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+		 */
+		public IInformationControlCreator getInformationPresenterControlCreator() {
+			return fControlCreator;
+		}
+	}
+	
+	
+	/**
+	 * This action behaves in two different ways: If there is no current text
+	 * hover, the javadoc is displayed using information presenter. If there is
+	 * a current text hover, it is converted into a information presenter in
+	 * order to make it sticky.
+	 */
+	class InformationDispatchAction extends TextEditorAction {
+
+		/** The wrapped text operation action. */
+		private final TextOperationAction fTextOperationAction;
+
+		/**
+		 * Creates a dispatch action.
+		 *
+		 * @param resourceBundle the resource bundle
+		 * @param prefix the prefix
+		 * @param textOperationAction the text operation action
+		 */
+		public InformationDispatchAction(ResourceBundle resourceBundle, String prefix, final TextOperationAction textOperationAction) {
+			super(resourceBundle, prefix, ModelicaEditor.this);
+			if (textOperationAction == null)
+				throw new IllegalArgumentException();
+			fTextOperationAction= textOperationAction;
+		}
+
+		/*
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer == null) {
+				fTextOperationAction.run();
+				return;
+			}
+
+			if (sourceViewer instanceof ITextViewerExtension4)  {
+				ITextViewerExtension4 extension4= (ITextViewerExtension4) sourceViewer;
+				if (extension4.moveFocusToWidgetToken())
+					return;
+			}
+
+			if (sourceViewer instanceof ITextViewerExtension2) {
+				// does a text hover exist?
+				ITextHover textHover= ((ITextViewerExtension2) sourceViewer).getCurrentTextHover();
+				if (textHover != null && makeTextHoverFocusable(sourceViewer, textHover))
+					return;
+			}
+			
+			// otherwise, just run the action
+			fTextOperationAction.run();
+		}
+
+	
+		/**
+		 * Tries to make a text hover focusable (or "sticky").
+		 * 
+		 * @param sourceViewer the source viewer to display the hover over
+		 * @param textHover the hover to make focusable
+		 * @return <code>true</code> if successful, <code>false</code> otherwise
+		 * @since 3.2
+		 */
+		public boolean makeTextHoverFocusable(ISourceViewer sourceViewer, ITextHover textHover) {
+			Point hoverEventLocation= ((ITextViewerExtension2) sourceViewer).getHoverEventLocation();
+			int offset= computeOffsetAtLocation(sourceViewer, hoverEventLocation.x, hoverEventLocation.y);
+			if (offset == -1)
+				return false;
+
+			try {
+				IRegion hoverRegion= textHover.getHoverRegion(sourceViewer, offset);
+				if (hoverRegion == null)
+					return false;
+
+				String hoverInfo= textHover.getHoverInfo(sourceViewer, hoverRegion);
+
+				IInformationControlCreator controlCreator= null;
+				if (textHover instanceof IInformationProviderExtension2)
+					controlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
+
+				IInformationProvider informationProvider= new InformationProvider(hoverRegion, hoverInfo, controlCreator);
+
+				fInformationPresenter.setOffset(offset);
+				fInformationPresenter.setAnchor(AbstractInformationControlManager.ANCHOR_BOTTOM);
+				fInformationPresenter.setMargins(6, 6); // default values from AbstractInformationControlManager
+				String contentType= TextUtilities.getContentType(sourceViewer.getDocument(), IModelicaPartitions.MODELICA_PARTITIONING, offset, true);
+				fInformationPresenter.setInformationProvider(informationProvider, contentType);
+				fInformationPresenter.showInformation();
+
+				return true;
+
+			} catch (BadLocationException e) {
+				return false;
+			}
+		}
+
+		// modified version from TextViewer
+		private int computeOffsetAtLocation(ITextViewer textViewer, int x, int y) {
+
+			StyledText styledText= textViewer.getTextWidget();
+			IDocument document= textViewer.getDocument();
+
+			if (document == null)
+				return -1;
+
+			try {
+				int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
+				Point p= styledText.getLocationAtOffset(widgetOffset);
+				if (p.x > x)
+					widgetOffset--;
+
+				if (textViewer instanceof ITextViewerExtension5) {
+					ITextViewerExtension5 extension= (ITextViewerExtension5) textViewer;
+					return extension.widgetOffset2ModelOffset(widgetOffset);
+				} else {
+					IRegion visibleRegion= textViewer.getVisibleRegion();
+					return widgetOffset + visibleRegion.getOffset();
+				}
+			} catch (IllegalArgumentException e) {
+				return -1;
+			}
+
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
+	 */
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String[] { "org.modelica.mdt.ui.modelicaEditorScope" });  //$NON-NLS-1$
 	}
 	
 }

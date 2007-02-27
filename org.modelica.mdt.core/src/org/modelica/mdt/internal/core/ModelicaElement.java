@@ -47,13 +47,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
-import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -66,6 +64,9 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 abstract public class ModelicaElement extends PlatformObject 
 	implements IModelicaElement 
 {
+	public static ModelicaElement[] NO_ELEMENTS = new ModelicaElement[0];
+	protected static final Object NO_INFO = new Object();
+	
 	private IModelicaElement parent;
 	
 	protected ModelicaElement(IModelicaElement parent)
@@ -153,4 +154,5 @@ abstract public class ModelicaElement extends PlatformObject
 		/* we are not defined in an external file by default */
 		return null;
 	}	
+
 }

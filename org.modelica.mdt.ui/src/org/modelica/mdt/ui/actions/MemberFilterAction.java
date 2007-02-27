@@ -12,8 +12,6 @@ package org.modelica.mdt.ui.actions;
 
 import org.eclipse.jface.action.Action;
 
-import org.modelica.mdt.ui.actions.*;
-
 /**
  * Action used to enable / disable method filter properties
  */

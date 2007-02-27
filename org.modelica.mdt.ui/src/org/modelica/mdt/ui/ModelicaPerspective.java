@@ -45,12 +45,10 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.part.IPage;
-import org.eclipse.ui.part.IPageSite;
 import org.modelica.mdt.ui.view.ModelicaConsoleView;
 import org.modelica.mdt.ui.view.ModelicaProjectsView;
 
-public class ModelicaPerspectiveFactory implements IPerspectiveFactory
+public class ModelicaPerspective implements IPerspectiveFactory
 {
 
 	public void createInitialLayout(IPageLayout layout)
@@ -92,4 +90,6 @@ public class ModelicaPerspectiveFactory implements IPerspectiveFactory
 		layout.addShowViewShortcut(IPageLayout.ID_BOOKMARKS);
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 	}
+	
+	
 }

@@ -24,29 +24,38 @@
 package org.modelica.mdt.ui.editor;
 
 import org.eclipse.jface.text.hyperlink.*;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.IInformationPresenter;
+import org.eclipse.jface.text.information.InformationPresenter;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.modelica.mdt.ui.hover.HTMLTextPresenter;
+import org.modelica.mdt.ui.hover.ModelicaInformationProvider;
+import org.modelica.mdt.ui.hover.ModelicaSourceHover;
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 import org.modelica.mdt.ui.text.ModelicaCodeScanner;
 import org.modelica.mdt.ui.text.ModelicaMultilineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaSinglelineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaStringScanner;
 import org.eclipse.jface.text.ITextHover;
-import org.modelica.mdt.ui.text.ModelicaTextHover;
 
 /**
  * 
@@ -61,11 +70,11 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	private ModelicaSinglelineCommentScanner fSinglelineCommentScanner; /* for single line comments */
 	private ModelicaStringScanner            fStringScanner;            /* for strings and comment strings */
 	
-	private ModelicaEditor textEditor;
+	private ITextEditor textEditor;
 		
 	private String fDocumentPartitioning;
 
-	public ModelicaSourceViewerConfig(ModelicaEditor textEditor, String partitioning) 
+	public ModelicaSourceViewerConfig(ITextEditor textEditor, String partitioning) 
 	{
 		this.textEditor = textEditor;
 		this.fDocumentPartitioning = partitioning;
@@ -206,16 +215,78 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		return detectors;
 	}
 
-	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) 
+	
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) 
 	{
 		if (contentType.equals(IDocument.DEFAULT_CONTENT_TYPE))
 		{
-			ModelicaTextHover textHover = new ModelicaTextHover();
+			ModelicaSourceHover textHover = new ModelicaSourceHover();
 			textHover.setEditor(textEditor);
 			return textHover;
 		}
-		else return null;
+		else return super.getTextHover(sourceViewer, contentType);
 	}
 	
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		return getTextHover(sourceViewer, contentType, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
+	}
+	
+	
+	/**
+	 * Returns the information presenter control creator. The creator is a factory creating the
+	 * presenter controls for the given source viewer. This implementation always returns a creator
+	 * for <code>DefaultInformationControl</code> instances.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return an information control creator
+	 * @since 2.1
+	 */
+	private IInformationControlCreator getInformationPresenterControlCreator(ISourceViewer sourceViewer) {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int shellStyle= SWT.RESIZE | SWT.TOOL;
+				int style= SWT.V_SCROLL | SWT.H_SCROLL;
+				return new DefaultInformationControl(parent, shellStyle, style, new HTMLTextPresenter(false));
+			}
+		};
+	}
+	
+	
+	/*
+	 * @see SourceViewerConfiguration#getInformationPresenter(ISourceViewer)
+	 * @since 2.0
+	 */
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) 
+	{
+		InformationPresenter presenter= new InformationPresenter(getInformationPresenterControlCreator(sourceViewer));
+		presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		IInformationProvider provider= new ModelicaInformationProvider(textEditor);
+		presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
+		presenter.setInformationProvider(provider, IModelicaPartitions.MODELICA_PARTITIONING);
+		presenter.setInformationProvider(provider, IModelicaPartitions.MODELICA_MULTI_LINE_COMMENT);
+		presenter.setSizeConstraints(60, 10, true, true);
+		return presenter;
+	}
+	
+	/*
+	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
+	 */
+	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+		return null;
+	}
+
+	/*
+	 * @see SourceViewerConfiguration#getOverviewRulerAnnotationHover(ISourceViewer)
+	 */
+	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
+		return null;
+	}
+
+	/*
+	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
+	 */
+	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
+		return null;
+	}
 	
 }

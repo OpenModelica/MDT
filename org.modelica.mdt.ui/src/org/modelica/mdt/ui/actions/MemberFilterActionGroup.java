@@ -41,7 +41,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.StructuredViewer;
 
