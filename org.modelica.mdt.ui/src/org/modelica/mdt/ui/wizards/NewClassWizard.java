@@ -177,8 +177,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        classType = new Combo(composite, SWT.READ_ONLY);
-	        classType.setItems(new String [] {"model", "class", "connector", 
-	        		"record", "block", "type", "function"});
+	        classType.setItems(new String [] {"model", "class", "connector", "record", "block", "type", "function", "package"});
 	        classType.setVisibleItemCount(7);
 	        UIPlugin.tag(classType, CLASS_TYPE_TAG);
 	        
@@ -319,8 +318,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	public static boolean canBePartial(String classType)
 	{
 		return 	
-		(!(classType.equals("type") 
-				|| classType.equals("function"))); 
+		(!(classType.equals("type") || classType.equals("function"))); 
 	}
 
 	
@@ -340,8 +338,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) 
-			                    throws InvocationTargetException
+			public void run(IProgressMonitor monitor) throws InvocationTargetException
 			 {
 				try 
 				{

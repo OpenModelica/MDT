@@ -13,8 +13,11 @@ public class ModelicaDocumentProvider extends TextFileDocumentProvider
 	public ModelicaDocumentProvider()
 	{
 		super();		
-		IDocumentProvider provider= new TextFileDocumentProvider();
-		provider= new ForwardingDocumentProvider(IModelicaPartitions.MODELICA_PARTITIONING, new ModelicaDocumentSetupParticipant(), provider);
+		IDocumentProvider provider= new 
+			ForwardingDocumentProvider(
+					IModelicaPartitions.MODELICA_PARTITIONING, 
+					new ModelicaDocumentSetupParticipant(), 
+					new TextFileDocumentProvider());
 		setParentDocumentProvider(provider);
 	}
 	

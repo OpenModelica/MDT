@@ -22,7 +22,7 @@
  * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
  * USE OR PERFORMANCE OF THIS SOFTWARE.
  *****************************************************************************/
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.view;
 
 import java.util.Collection;
 import java.util.Hashtable;
@@ -73,13 +73,14 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
 import org.modelica.mdt.ui.ModelicaImages;
 import org.modelica.mdt.ui.actions.*;
+import org.modelica.mdt.ui.editor.EditorUtility;
+import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.core.*;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.CorePlugin;
@@ -103,7 +104,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 
 	private ListenerList fSelectionChangedListeners= new ListenerList(ListenerList.IDENTITY);
 	private ListenerList fPostSelectionChangedListeners= new ListenerList(ListenerList.IDENTITY);
-	private Hashtable fActions= new Hashtable();
+	private Hashtable<String, IAction> fActions= new Hashtable<String, IAction>();
 
 	private ToggleLinkingAction fToggleLinkingAction;
 
@@ -154,7 +155,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			if (!initializers)
 				return children;
 
-			Vector v= new Vector();
+			Vector<IModelicaElement> v= new Vector<IModelicaElement>();
 			for (int i= 0; i < children.length; i++) {
 				if (matches(children[i]))
 					continue;
@@ -234,7 +235,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 
 			if (isMO && fListener == null) 
 			{
-				fListener= new ModelicaElementChangeListener();
+				fListener= new ModelicaElementChangeListener(true);
 				fListener.setViewer(viewer);
 				ModelicaCore.getModelicaRoot().addModelicaElementChangeListener(fListener);
 			} 
@@ -271,7 +272,8 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		 *
 		 * @param delta the Modelica element delta used to reconcile the Modelica outline
 		 */
-		public void reconcile(IModelicaElementChange delta) {
+		public void reconcile(IModelicaElementChange delta) 
+		{
 			fReorderedMembers= false;
 			fForceFireSelectionChanged= false;
 			if (getSorter() == null) {
@@ -352,21 +354,6 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			return super.isExpandable(element);
 		}
 
-//		protected IRegion getSourceRange(IModelicaElement element) 
-//		{
-//			try
-//			{
-//			if (element instanceof IModelicaElement)
-//				return ((IModelicaElement) element).getLocation().getRegion();
-//			}
-//			catch(Exception e)
-//			{
-//				// do nothing
-//				e.printStackTrace();
-//			}
-//			return null;
-//		}
-
 		protected boolean overlaps(IRegion range, int start, int end) {
 			return start <= (range.getOffset() + range.getLength() - 1) && range.getOffset() <= end;
 		}
@@ -385,10 +372,9 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 
 		protected void update(Widget w, IModelicaElementChange delta) {
 
-			Item item;
-
-			IModelicaElement parent= delta.getElement();
-			Item[] children= getChildren(w);
+			//Item item;
+			//IModelicaElement parent= delta.getElement();
+			//Item[] children= getChildren(w);
 
 			boolean doUpdateParent= false;
 			boolean doUpdateParentsPlus= false;
@@ -399,15 +385,15 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 				updatePlus((Item)w, delta.getElement());
 		}
 
-		private IResource getUnderlyingResource() {
-			Object input= getInput();
-			if (input instanceof IModelicaElement) 
-			{
-				IModelicaElement me= (IModelicaElement) input;
-				return me.getResource();
-			}
-			return null;
-		}
+//		private IResource getUnderlyingResource() {
+//			Object input= getInput();
+//			if (input instanceof IModelicaElement) 
+//			{
+//				IModelicaElement me= (IModelicaElement) input;
+//				return me.getResource();
+//			}
+//			return null;
+//		}
 
 
 	}
@@ -483,22 +469,22 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 
 	}
 
-	/**
-	 * Empty selection provider.
-	 * 
-	 * @since 0.6.8
-	 */
-	private static final class EmptySelectionProvider implements ISelectionProvider {
-		public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		}
-		public ISelection getSelection() {
-			return StructuredSelection.EMPTY;
-		}
-		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		}
-		public void setSelection(ISelection selection) {
-		}
-	}
+//	/**
+//	 * Empty selection provider.
+//	 * 
+//	 * @since 0.6.8
+//	 */
+//	private static final class EmptySelectionProvider implements ISelectionProvider {
+//		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+//		}
+//		public ISelection getSelection() {
+//			return StructuredSelection.EMPTY;
+//		}
+//		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+//		}
+//		public void setSelection(ISelection selection) {
+//		}
+//	}
 
 	private IPropertyChangeListener fPropertyChangeListener;	
 
@@ -526,43 +512,6 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		}
 	}
 	
-//	/**
-//	 * Returns the primary type of a compilation unit (has the same
-//	 * name as the compilation unit).
-//	 *
-//	 * @param compilationUnit the compilation unit
-//	 * @return returns the primary type of the compilation unit, or
-//	 * <code>null</code> if is does not have one
-//	 */
-//	protected IType getMainType(ICompilationUnit compilationUnit) {
-//
-//		if (compilationUnit == null)
-//			return null;
-//
-//		String name= compilationUnit.getElementName();
-//		int index= name.indexOf('.');
-//		if (index != -1)
-//			name= name.substring(0, index);
-//		IType type= compilationUnit.getType(name);
-//		return type.exists() ? type : null;
-//	}
-//
-//	/**
-//	 * Returns the primary type of a class file.
-//	 *
-//	 * @param classFile the class file
-//	 * @return returns the primary type of the class file, or <code>null</code>
-//	 * if is does not have one
-//	 */
-//	protected IType getMainType(IClassFile classFile) {
-//		try {
-//			IType type= classFile.getType();
-//			return type != null && type.exists() ? type : null;
-//		} catch (ModelicaModelException e) {
-//			return null;
-//		}
-//	}
-
 	/* (non-Modelicadoc)
 	 * Method declared on Page
 	 */
@@ -631,7 +580,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();
 		toolBarManager.add(new LexicalSortingAction());
 
-		fMemberFilterActionGroup= new MemberFilterActionGroup(fOutlineViewer, "org.eclipse.jdt.ui.ModelicaOutlinePage"); //$NON-NLS-1$
+		fMemberFilterActionGroup= new MemberFilterActionGroup(fOutlineViewer, "org.modelica.mdt.ui.ModelicaContentOutlinePage"); //$NON-NLS-1$
 		fMemberFilterActionGroup.contributeToToolBar(toolBarManager);
 
 		fCustomFiltersActionGroup.fillActionBars(actionBars);
@@ -681,7 +630,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		tree.setMenu(fMenu);
 
 		IPageSite site= getSite();
-		site.registerContextMenu("org.modelica.mdt.ui.outline", manager, fOutlineViewer); //$NON-NLS-1$
+		site.registerContextMenu("org.modelica.mdt.ui.ModelicaContentOutlinePage", manager, fOutlineViewer); //$NON-NLS-1$
 
 		updateSelectionProvider(site);
 
@@ -703,7 +652,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		fActionGroups.fillActionBars(actionBars);
 
 //		Custom filter group
-		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.modelica.mdt.ui.ModelicaOutlinePage", fOutlineViewer); //$NON-NLS-1$
+		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.modelica.mdt.ui.ModelicaContentOutlinePage", fOutlineViewer); //$NON-NLS-1$
 
 		registerToolbarActions(actionBars);
 
@@ -858,18 +807,17 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	/**
 	 * Checks whether a given Modelica element is an inner type.
 	 *
-	 * @param element the java element
+	 * @param element the Modelica element
 	 * @return <code>true</code> iff the given element is an inner type
 	 */
 	private boolean isInnerType(IModelicaElement element) 
 	{
 		try 
 		{
-			if (element != null && 
-				element instanceof IModelicaClass && 
-				((IModelicaClass)element).getRestriction() == 
-					IModelicaClass.Restriction.TYPE) 
-				return true;
+			if (element != null && element instanceof IModelicaClass)
+				if(((IModelicaClass)element).getRestriction() == IModelicaClass.Restriction.TYPE ||
+				   ((IModelicaClass)element).getRestriction() == IModelicaClass.Restriction.UNIONTYPE) 
+				       return true;
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -885,9 +833,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	protected IShowInSource getShowInSource() {
 		return new IShowInSource() {
 			public ShowInContext getShowInContext() {
-				return new ShowInContext(
-						null,
-						getSite().getSelectionProvider().getSelection());
+				return new ShowInContext(null, getSite().getSelectionProvider().getSelection());
 			}
 		};
 	}

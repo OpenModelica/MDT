@@ -51,6 +51,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.ui.ModelicaElementFactory;
 
 /**
@@ -61,10 +62,12 @@ public class SystemFileEditorInput implements
 {
 
 	private LocalFileStorage fileStorage;
+	private IModelicaElement element;
 
-	public SystemFileEditorInput(String path)
+	public SystemFileEditorInput(String path, IModelicaElement modelicaElement)
 	{
 		fileStorage = new LocalFileStorage(new File(path));
+		element = modelicaElement;
 	}
 	
 	public boolean equals(Object obj) 
@@ -82,6 +85,10 @@ public class SystemFileEditorInput implements
 		return fileStorage.equals(other.fileStorage);
 	}
 
+	public IModelicaElement getElement()
+	{
+		return element;
+	}
 	/**
 	 * @see IEditorInput#getName()
 	 */
@@ -119,11 +126,8 @@ public class SystemFileEditorInput implements
 	 */
 	public ImageDescriptor getImageDescriptor() 
 	{
-		IEditorRegistry registry 
-			= PlatformUI.getWorkbench().getEditorRegistry();
-		return 
-			registry.getImageDescriptor
-				(fileStorage.getFullPath().getFileExtension());
+		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+		return registry.getImageDescriptor(fileStorage.getFullPath().getFileExtension());
 	}
 
 	/**
@@ -166,11 +170,7 @@ public class SystemFileEditorInput implements
 
 	public void saveState(IMemento memento)
 	{
-		memento.putInteger(ModelicaElementFactory.STORED_CLASS_KEY,
-				ModelicaElementFactory.SYSTEM_FILE_EDITOR_INPUT);
-		
-		memento.putString(ModelicaElementFactory.FILE_PATH_KEY,
-				getFullPath());
-
+		memento.putInteger(ModelicaElementFactory.STORED_CLASS_KEY, ModelicaElementFactory.SYSTEM_FILE_EDITOR_INPUT);
+		memento.putString(ModelicaElementFactory.FILE_PATH_KEY, getFullPath());
 	}
 }

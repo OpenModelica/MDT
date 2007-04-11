@@ -10,8 +10,9 @@ import java.io.PrintStream;
 
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.compiler.CompilerException;
-import org.modelica.mdt.ui.UIPlugin;
 
 public class OpenModelicaCommandHandler extends Thread
 {
@@ -41,8 +42,8 @@ public class OpenModelicaCommandHandler extends Thread
 				{
 					if (line != null && line.length() > 0)
 					{
-						result = UIPlugin.getDefault().getCompiler().sendExpression(line, false);
-						result = result.trim();
+						ICompilerResult res = CompilerProxy.sendExpression(line, false);
+						result = res.getFirstResult().trim();
 						writer.write(result + "\n");
 					}
 				}

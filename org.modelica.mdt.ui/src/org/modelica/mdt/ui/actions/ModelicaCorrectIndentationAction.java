@@ -47,7 +47,7 @@ import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
 //		}
 //		catch (Exception e) 
 //		{
-//			ErrorManager.logBug("org.modelica.mdt.editor",
+//			ErrorManager.logBug("org.modelica.mdt.ui.editor",
 //			"Correct Indentation Failed!");			
 //		}
 //	}
@@ -272,7 +272,7 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 	}
 
 	/**
-	 * Indents a single line using the java heuristic scanner. 
+	 * Indents a single line using the modelica heuristic scanner. 
 	 * Modelica comments and multiline comments are indented also
 	 * 
 	 * @param document the document
@@ -295,8 +295,6 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 			ITypedRegion partition= TextUtilities.getPartition(document, IModelicaPartitions.MODELICA_PARTITIONING, offset, true);
 			ITypedRegion startingPartition= TextUtilities.getPartition(document, IModelicaPartitions.MODELICA_PARTITIONING, offset, false);
 			String type= partition.getType();
-			//System.out.print("["+startingPartition.getType()+"] ");
-			//System.out.println(document.get(offset, currentLine.getLength()));			
 			/* do not indent multiline strings! */			
 			if (type.equals(IModelicaPartitions.MODELICA_STRING) ||
 				startingPartition.getType().equals(IModelicaPartitions.MODELICA_STRING))
@@ -309,7 +307,7 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 			} 
 		} 
 		
-		// standard java indentation
+		// standard modelica indentation
 		if (indent == null) 
 		{
 			StringBuffer computed= indenter.computeIndentation(offset);
@@ -347,16 +345,16 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 		// only change the document if it is a real change
 		if (!indent.equals(currentIndent)) 
 		{
-			String deletedText= document.get(offset, length);
+//			String deletedText= document.get(offset, length);
 			document.replace(offset, length, indent);
 			
-			if (fIsTabAction && indent.length() > currentIndent.length() && true) 
-			{
-				ITextEditor editor= getTextEditor();
-			}
+//			if (fIsTabAction && indent.length() > currentIndent.length() && true) 
+//			{
+//				ITextEditor editor= getTextEditor();
+//			}
 			return true;
-		} else
-			return false;
+		} 
+		else return false;
 	}
 
 	/**
@@ -430,7 +428,7 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 	}
 	
 	/**
-	 * Returns the tab size used by the java editor, which is deduced from the
+	 * Returns the tab size used by the modelica editor, which is deduced from the
 	 * formatter preferences.
 	 * 
 	 * @return the tab size as defined in the current formatter preferences

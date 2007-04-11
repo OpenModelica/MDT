@@ -136,7 +136,7 @@ public class MarkProblemsVisitor implements IResourceVisitor
 	        	if (iFile != null)
 	        	{
 	            	debug("FileInProject:"+iResource.getName());        		
-		        	String editorID = null;
+//		        	String editorID = null;
 //			        	if (iFile.getName().endsWith(".mo")) 
 //			        		editorID = "org.modelica.mdt.ui.editor.ModelicaEditor";
 //			        	if (iFile.getName().endsWith(".c")   || 
@@ -187,6 +187,7 @@ public class MarkProblemsVisitor implements IResourceVisitor
      * @param lineNumber
      * @throws CoreException
      */
+    @SuppressWarnings("unchecked")
     protected void setMarker(IFile in_file, String message, int lineNumber) throws CoreException 
     {
     	debug("MetaModelicaPaternMatchListener.setMarker:");

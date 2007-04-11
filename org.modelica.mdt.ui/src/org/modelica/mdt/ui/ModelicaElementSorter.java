@@ -50,7 +50,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
+import org.modelica.mdt.core.IModelicaExtends;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
@@ -65,17 +67,20 @@ import org.modelica.mdt.internal.core.ErrorManager;
  * 
  * @author Homer Simpson
  */
+@SuppressWarnings("unchecked")
 public class ModelicaElementSorter extends ResourceSorter
 {
 	private static int PROJECT_ORDER 				= 1;
 	private static int FOLDER_ORDER 				= 2;
-	private static int PACKAGE_ORDER 				= 3;
-	private static int CLASS_ORDER 					= 4;
-	private static int PUBLIC_COMPONENT_ORDER   	= 5;
-	private static int PROTECTED_COMPONENT_ORDER   	= 6;
-	private static int MODELICA_FILE_ORDER			= 7;
-	private static int PLAIN_FILE_ORDER 			= 8;
-	private static int STANDARD_LIBRARY_ORDER 		= 9;
+	private static int EXTENDS_ORDER 				= 4;	
+	private static int PACKAGE_ORDER 				= 5;
+	private static int PUBLIC_COMPONENT_ORDER   	= 7;
+	private static int PROTECTED_COMPONENT_ORDER   	= 8;
+	private static int CLASS_ORDER 					= 6;
+	private static int MODELICA_FILE_ORDER			= 9;
+	private static int PLAIN_FILE_ORDER 			= 10;
+	private static int IMPORT_ORDER 				= 11;	
+	private static int STANDARD_LIBRARY_ORDER 		= 12;
 	private static int UNKOWN_TYPE_ORDER 			= Integer.MAX_VALUE;
 	
     /**
@@ -122,8 +127,7 @@ public class ModelicaElementSorter extends ResourceSorter
 			 */
 			try
 			{
-				if (((IModelicaClass)element).getRestriction() 
-						== Restriction.PACKAGE)
+				if (((IModelicaClass)element).getRestriction() == Restriction.PACKAGE)
 				{
 					return PACKAGE_ORDER;
 				}
@@ -144,13 +148,23 @@ public class ModelicaElementSorter extends ResourceSorter
 		}
 		else if (element instanceof IModelicaComponent)
 		{
-			switch (((IModelicaComponent)element).getVisbility())
+			switch (((IModelicaComponent)element).getVisibility())
 			{
 			case PUBLIC:
 				return PUBLIC_COMPONENT_ORDER;
 			case PROTECTED:
 				return PROTECTED_COMPONENT_ORDER;
+			default:
+				return CLASS_ORDER;
 			}
+		}
+		else if (element instanceof IModelicaImport)
+		{
+			return IMPORT_ORDER;
+		}
+		else if (element instanceof IModelicaExtends)
+		{
+			return EXTENDS_ORDER;			
 		}
 		else if (element instanceof IModelicaSourceFile)
 		{

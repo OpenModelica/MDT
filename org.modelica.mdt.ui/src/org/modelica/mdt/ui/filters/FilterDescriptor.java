@@ -26,6 +26,7 @@ import org.modelica.mdt.ui.UIPlugin;
  * 
  * since 0.6.8
  */
+@SuppressWarnings("unchecked")
 public class FilterDescriptor implements Comparable, IPluginContribution {
 
 	private static String PATTERN_FILTER_ID_PREFIX= "_patternFilterId_"; //$NON-NLS-1$

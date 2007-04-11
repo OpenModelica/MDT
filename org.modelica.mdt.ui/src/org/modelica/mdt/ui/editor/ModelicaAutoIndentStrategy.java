@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.ui.editor;
 
+import org.modelica.mdt.ui.actions.ModelicaCorrectIndentationAction;
 import org.modelica.mdt.ui.text.ModelicaHeuristicScanner;
 import org.modelica.mdt.ui.text.ModelicaIndenter;
 import org.modelica.mdt.ui.text.Symbols;
@@ -232,7 +233,7 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 		{
 			return;
 		}
-
+		
 
 		try 
 		{
@@ -309,17 +310,19 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 	private void smartIndentOnTab(IDocument document, DocumentCommand command) 
 	{
 
+		
 		/*
 		 * see here what ident has the line before 
 		 * and apply the needed indenting.
 		 * 
 		 * -- nothing for now
 		 */
+		command.text = "";
+		ModelicaCorrectIndentationAction.getInstance().run();
 	}
 
 
-	private void smartIndentOnKeypress(IDocument document, 
-			DocumentCommand command) 
+	private void smartIndentOnKeypress(IDocument document, DocumentCommand command) 
 	{
 		switch (command.text.charAt(0)) 
 		{
@@ -343,19 +346,19 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 		}
 	}
 
-	private int getStringEnd(IDocument d, int offset, int endOffset, char ch) throws BadLocationException {
-		while (offset < endOffset) {
-			char curr= d.getChar(offset);
-			offset++;
-			if (curr == '\\') {
-				// ignore escaped characters
-				offset++;
-			} else if (curr == ch) {
-				return offset;
-			}
-		}
-		return endOffset;
-	}
+//	private int getStringEnd(IDocument d, int offset, int endOffset, char ch) throws BadLocationException {
+//		while (offset < endOffset) {
+//			char curr= d.getChar(offset);
+//			offset++;
+//			if (curr == '\\') {
+//				// ignore escaped characters
+//				offset++;
+//			} else if (curr == ch) {
+//				return offset;
+//			}
+//		}
+//		return endOffset;
+//	}
 	
 	private void smartIndentUponE(IDocument d, DocumentCommand c) {
 		if (c.offset < 4 || d.getLength() == 0)
@@ -476,8 +479,8 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 		if (c.length == 0 && c.text != null && isLineDelimiter(d, c.text))
 		{
 			autoIndentAfterNewLine(d, c);
+			ModelicaCorrectIndentationAction.getInstance().run();
 		}
-
 		else if (c.text.length() == 1)
 		{
 			smartIndentOnKeypress(d, c);
@@ -485,7 +488,6 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 
 		else if (c.text.length() > 1)
 		{
-
 			smartPaste(d, c); 
 		}
 	}

@@ -1,22 +1,22 @@
 package org.modelica.mdt.ui;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.core.OpenModelicaCompiler;
-import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.osgi.framework.BundleContext;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.console.ModelicaTextConsole;
 import org.modelica.mdt.ui.text.ModelicaTextTools;
-
 import java.io.OutputStream;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -37,7 +37,6 @@ public class UIPlugin extends AbstractUIPlugin
     private boolean DEBUG = false;
     public static String PLUGIN_ID = "org.modelica.mdt.ui";
     public static String ID_PROJECTSVIEW = "org.modelica.mdt.ui.views.ProjectsView";
-    private OpenModelicaCompiler omc = null;
 
     protected void debug(String message)
     {
@@ -45,16 +44,15 @@ public class UIPlugin extends AbstractUIPlugin
     }
     
 	
-	public static final String METAMODELICA_BULD_MARKER_ID =
-		"org.modelica.mdt.ui.MetaModelicaBuildMarker";
+	public static final String METAMODELICA_BULD_MARKER_ID = "org.modelica.mdt.ui.MetaModelicaBuildMarker";
 	
 	/* the shared instance */
 	private static UIPlugin plugin;
 	
 	public UIPlugin() 
 	{
-		String value = Platform.getDebugOption  /*load trace/ConsolePatternMatching flag */
-		("org.modelica.mdt.ui/trace/UIPlugin");
+		/*load trace/ConsolePatternMatching flag */		
+		String value = Platform.getDebugOption("org.modelica.mdt.ui/trace/UIPlugin");
 		if (value != null && value.equalsIgnoreCase("true"))
 		{
 			DEBUG = true;
@@ -75,6 +73,8 @@ public class UIPlugin extends AbstractUIPlugin
 		manager.registerAdapters(factory, IModelicaElement.class);
 		buildMetaModelicaLanuchListner = new MetaModelicaBuildLaunchListener();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(buildMetaModelicaLanuchListner);
+		
+		CompilerProxy.setConsoleOutputStream(getModelicaConsoleOutputStream());
 	}
 
 	/**
@@ -182,38 +182,6 @@ public class UIPlugin extends AbstractUIPlugin
 		menu.add(new Separator("group.properties"));
 	}
 	
-//    public ModelicaConsoleView getModelicaConsole()
-//    {
-//		try 
-//		{
-//			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-//			fConsole = (ModelicaConsoleView)page.findView(ModelicaConsoleView.CONSOLE_ID);
-//			//boolean show = ModelicaPlugin.getDefault().getPreferenceStore().getBoolean(ModelicaPreferencePage.SHOW_OUTPUT_IN_CONSOLE);			
-//			if (fConsole != null) 
-//			{
-//				return fConsole;
-//			} 
-//			else  
-//			{
-//				page.showView(ModelicaConsoleView.CONSOLE_ID);
-//				fConsole = (ModelicaConsoleView)page.findView(ModelicaConsoleView.CONSOLE_ID);			
-//				return fConsole;
-//			}
-//		} 
-//		catch (PartInitException e) 
-//		{
-//			e.printStackTrace();
-//			UIPlugin.getDefault().getLog().log(
-//				new Status(
-//					IStatus.ERROR,
-//					UIPlugin.PLUGIN_ID,
-//					0,
-//					"Error opening MDT Console",
-//					e));
-//			return null;
-//		}    	
-//    }		
-	
 	public ModelicaTextConsole getModelicaTextConsole()
 	{
 		if (fConsole == null)
@@ -233,12 +201,16 @@ public class UIPlugin extends AbstractUIPlugin
     	return null;
     }
     
-    public OpenModelicaCompiler getCompiler() throws CompilerInstantiationException
-    {
-    	if (omc == null)
-    	{
-    		omc = new OpenModelicaCompiler();
-    	}
-    	return omc;
-    }
+    
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+	
+	public static Shell getActiveWorkbenchShell() {
+		 IWorkbenchWindow window= getActiveWorkbenchWindow();
+		 if (window != null) {
+		 	return window.getShell();
+		 }
+		 return null;
+	}    
 }

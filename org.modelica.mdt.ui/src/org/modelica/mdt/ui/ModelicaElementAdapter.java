@@ -46,11 +46,13 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IModelicaSourceFile;
+import org.modelica.mdt.ui.text.ModelicaLabelBuilder;
 
 /**
  * This class mapps modelica objects (Modelica packages, classes, etc) to icons 
@@ -66,6 +68,17 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 	@Override
 	public String getLabel(Object object)
 	{
+		if (object instanceof IModelicaClass)
+		{
+			IModelicaClass cls = ((IModelicaClass)object);
+			try
+			{
+				return ModelicaLabelBuilder.constructSignature(cls);
+			}
+			catch(Exception e){
+				/* ignore */
+			}
+		}		
 		return ((IModelicaElement)object).getElementName();
 	}
 
@@ -75,11 +88,10 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 		if (object instanceof IModelicaProject)
 		{
 			/*
-			 * Isn't patterns beautifull ?
+			 * Aren't patterns beautiful ?
 			 */
 			IModelicaProject mproj = (IModelicaProject) object;
-			IWorkbenchAdapter wadap = 
-				(IWorkbenchAdapter) mproj.getWrappedProject().getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter wadap = (IWorkbenchAdapter) mproj.getWrappedProject().getAdapter(IWorkbenchAdapter.class);
 			return wadap.getImageDescriptor(mproj.getWrappedProject());
 			
 		}
@@ -87,27 +99,23 @@ public class ModelicaElementAdapter extends WorkbenchAdapter
 		 * this check uggly must be done couse 
 		 * IModelicaFile is superclass of IModelicaSourceFile
 		 */
-		else if ((object instanceof IModelicaFile) 
-				&& !(object instanceof IModelicaSourceFile))
+		else if ((object instanceof IModelicaFile) && !(object instanceof IModelicaSourceFile))
 		{
 			/*
 			 * pattern beauty continued...
 			 */
 			IModelicaFile mfile = (IModelicaFile) object;
-			IWorkbenchAdapter wadap = 
-				(IWorkbenchAdapter) mfile.getResource().getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter wadap = (IWorkbenchAdapter) mfile.getResource().getAdapter(IWorkbenchAdapter.class);
 			return wadap.getImageDescriptor(mfile.getResource());
 			
 		}
 		else if (object instanceof IModelicaFolder)
 		{
-			return PlatformUI.getWorkbench().getSharedImages().
-					getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+			return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		}
 		else if (object instanceof IModelicaElement)
 		{
-			String key = 
-				ModelicaImages.getModelicaElementKey((IModelicaElement)object);
+			String key = ModelicaImages.getModelicaElementKey((IModelicaElement)object);
 			if (key != null)
 			{
 				return ModelicaImages.getImageDescriptor(key);

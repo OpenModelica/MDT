@@ -41,15 +41,10 @@
 
 package org.modelica.mdt.ui.wizards;
 
-import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.ui.ModelicaImages;
-import org.modelica.mdt.ui.UIPlugin;
-
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -66,6 +61,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.modelica.mdt.core.ModelicaCore;
+import org.modelica.mdt.ui.ModelicaImages;
+import org.modelica.mdt.ui.UIPlugin;
 
 public class NewProjectWizard extends Wizard implements INewWizard
 {
@@ -89,8 +87,7 @@ public class NewProjectWizard extends Wizard implements INewWizard
 			setTitle("Create a Modelica project");
 			setDescription("Create a Modelica project in the workspace.");
 			
-			setImageDescriptor(ModelicaImages.getImageDescriptor(
-		             ModelicaImages.IMG_WIZBAN_PROJECT));
+			setImageDescriptor(ModelicaImages.getImageDescriptor(ModelicaImages.IMG_WIZBAN_PROJECT));
 			
 			/*
 			 * setup widgets for this page
@@ -167,15 +164,25 @@ public class NewProjectWizard extends Wizard implements INewWizard
 		 */
 		try
 		{
+			final IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectPage.projectName.getText());
+			if (ModelicaCore.getModelicaRoot().createProject(newProject) == null)
+				return false;
+			/* TODO! FIXME! adrpo - 2007-03-11 if i run it on a runable i get the event twice.
 			IWorkspaceRunnable wr = new IWorkspaceRunnable()
 			{
 				public void run(IProgressMonitor monitor) throws CoreException
 				{
-					ModelicaCore.getModelicaRoot().createProject
-						(projectPage.projectName.getText());
+					ModelicaCore.getModelicaRoot().createProject(newProject);
 				}
 			};
-			ResourcesPlugin.getWorkspace().run(wr, null);
+
+			ISchedulingRule rule = null;
+	        if (newProject != null) {
+	            IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+	            rule = ruleFactory.markerRule(newProject);
+	        }			
+			ResourcesPlugin.getWorkspace().run(wr, rule, IWorkspace.AVOID_UPDATE, null);
+			 */
 		}
 		catch (CoreException e)
 		{

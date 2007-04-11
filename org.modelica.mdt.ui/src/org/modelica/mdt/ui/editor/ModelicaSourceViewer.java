@@ -46,8 +46,10 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.modelica.mdt.ui.PreferenceConstants;
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 
+@SuppressWarnings("unchecked")
 public class ModelicaSourceViewer extends ProjectionViewer implements IPropertyChangeListener {
 
 	/**
@@ -351,17 +353,6 @@ public class ModelicaSourceViewer extends ProjectionViewer implements IPropertyC
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.ITextViewer#resetVisibleRegion()
-	 * @since 3.1
-	 */
-	public void resetVisibleRegion() {
-		super.resetVisibleRegion();
-		// re-enable folding if ProjectionViewer failed to due so
-		if (fPreferenceStore != null && !isProjectionMode())
-			enableProjection();
-	}
-
-	/*
 	 * @see org.eclipse.jface.text.source.SourceViewer#createControl(org.eclipse.swt.widgets.Composite, int)
 	 */
 	protected void createControl(Composite parent, int styles) {
@@ -562,4 +553,12 @@ public class ModelicaSourceViewer extends ProjectionViewer implements IPropertyC
 		}
 		return null;
 	}
+	
+	public void resetVisibleRegion() {
+		super.resetVisibleRegion();
+		// re-enable folding if ProjectionViewer failed to due so
+		if (fPreferenceStore != null && fPreferenceStore.getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED) && !isProjectionMode())
+			enableProjection();
+	}	
+	
 }

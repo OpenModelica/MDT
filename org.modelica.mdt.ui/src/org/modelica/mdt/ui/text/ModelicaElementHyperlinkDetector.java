@@ -21,7 +21,7 @@
  * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
  * USE OR PERFORMANCE OF THIS SOFTWARE.
  *****************************************************************************/
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.text;
 
 import org.eclipse.jface.action.IAction;
 
@@ -35,7 +35,8 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.core.IModelicaElement;
 
-import org.modelica.mdt.ui.text.ModelicaWordFinder;
+import org.modelica.mdt.ui.editor.EditorUtility;
+import org.modelica.mdt.ui.editor.ModelicaEditor;
 
 /**
  * Modelica element hyperlink detector.

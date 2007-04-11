@@ -74,7 +74,7 @@ public class ModelicaElementContentProvider extends ModelicaElementChangeListene
 	
 	public ModelicaElementContentProvider()
 	{
-		
+		super(false);
 	}
 	
 	public Object[] getElements(Object inputElement)
@@ -88,10 +88,8 @@ public class ModelicaElementContentProvider extends ModelicaElementChangeListene
 			return ((IWorkspaceRoot)inputElement).getProjects();
 		}		
 		
+		ErrorManager.logBug(UIPlugin.getSymbolicName(),	"Elements of an object of unexpected type " + inputElement.getClass().getName() + " requested.");
 		
-		ErrorManager.logBug(UIPlugin.getSymbolicName(),
-				"Elements of an object of unexpected type " + 
-				inputElement.getClass().getName() + " requested.");
 		return new Object[] {};
 	}
 	
@@ -118,9 +116,7 @@ public class ModelicaElementContentProvider extends ModelicaElementChangeListene
 				int i = 0;
 				for (i=0; i < files.length; i++)
 				{
-					//System.out.print(" " + files[i].getName());
-					if (files[i].getName().equals("package.mo"))
-						break;
+					if (files[i].getName().equals("package.mo")) break;
 				}
 				// we know here that package.mo has index i
 				IResource[] sortedFiles	= null; 
@@ -150,8 +146,7 @@ public class ModelicaElementContentProvider extends ModelicaElementChangeListene
 		}
 		else if (parent instanceof IModelicaProject)
 		{
-			IModelicaProject modelicaProj = 
-				(IModelicaProject)parent;
+			IModelicaProject modelicaProj = (IModelicaProject)parent;
 			if ( !modelicaProj.getWrappedProject().isOpen())
 			{
 				/* we have no children if we are closed */
@@ -162,11 +157,8 @@ public class ModelicaElementContentProvider extends ModelicaElementChangeListene
 			boolean hasModelicaNature = false;
 			try
 			{
-				list = 
-					modelicaProj.getRootFolder().getChildren();
-				
-				hasModelicaNature = modelicaProj.getWrappedProject().
-					getDescription().hasNature(CorePlugin.MODELICA_NATURE);
+				list = modelicaProj.getRootFolder().getChildren();
+				hasModelicaNature = modelicaProj.getWrappedProject().getDescription().hasNature(CorePlugin.MODELICA_NATURE);
 			}
 			catch (CompilerException e)
 			{
@@ -187,13 +179,13 @@ public class ModelicaElementContentProvider extends ModelicaElementChangeListene
 				return list.toArray();
 			}
 			
-			Object[] children = new Object[list.size()+1];
+			/* TODO! FIXME! IF WE ALREADY HAVE MODELICA, DON'T ADD THE STANDARD LIBRARY! */
 			/*
 			 * add as last element system library
-			 */
+			 */			
+			Object[] children = new Object[list.size()+1];
 			list.toArray(children);
-			children[children.length-1] = 
-				ModelicaCore.getModelicaRoot().getStandardLibrary();
+			children[children.length-1] = ModelicaCore.getModelicaRoot().getStandardLibrary((IModelicaElement)parent);	
 
 			return children; 			
 		}
@@ -208,8 +200,7 @@ public class ModelicaElementContentProvider extends ModelicaElementChangeListene
 
 				for (IModelicaElement e : childs)
 				{
-					if (e.getElementName().equals("package.mo")) 
-						pkg = e;
+					if (e.getElementName().equals("package.mo")) pkg = e;
 				}
 				
 				if (pkg != null)

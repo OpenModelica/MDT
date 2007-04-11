@@ -95,8 +95,7 @@ public class EditorUtility
 			/* don't open standard library node */
 			return;
 		}
-		if (element instanceof IModelicaFile && 
-				!(element instanceof IModelicaSourceFile)) /* yeah, this is uggly */
+		if (element instanceof IModelicaFile && !(element instanceof IModelicaSourceFile)) /* yeah, this is uggly */
 		{
 			openInEditor((IFile)element.getResource());
 		}
@@ -114,15 +113,20 @@ public class EditorUtility
 				 * Fetch the path to the source file and wrap it into
 				 * a system file editor input converter 
 				 */
-				editor = (ITextEditor)openInEditor(
-							 new SystemFileEditorInput(
-									 modelicaElement.getFilePath()));
+				
+				//editor = (ITextEditor) openInEditor(new ModelicaElementEditorInput(modelicaElement));
+				String fp = modelicaElement.getFilePath();
+				while (modelicaElement.getParent() != null)
+				{
+					if (modelicaElement.getParent() instanceof IStandardLibrary) break;
+					modelicaElement = modelicaElement.getParent();
+				}
+				editor = (ITextEditor)openInEditor(new SystemFileEditorInput(fp, modelicaElement));
 			} 
 			else if (res instanceof IFile)
 			{
 				/* a element defined inside a file in the workspace */
-				editor = 
-					(ITextEditor) openInEditor(new ModelicaElementEditorInput(modelicaElement));
+				editor = (ITextEditor) openInEditor(new ModelicaElementEditorInput(modelicaElement));
 			}
 			else if ((res instanceof IFolder) || (res instanceof IProject))
 			{
@@ -166,16 +170,14 @@ public class EditorUtility
 		return null;
 	}
 	
-	private static IEditorPart openInEditor(IEditorInput input)
-		throws PartInitException 
+	private static IEditorPart openInEditor(IEditorInput input) throws PartInitException 
 	{
 		if (input != null) 
 		{
 			IWorkbenchPage p = CorePlugin.getActivePage();
 			if (p != null) 
 			{
-				IEditorPart editorPart = 
-						p.openEditor(input, "org.modelica.mdt.editor", true);
+				IEditorPart editorPart = p.openEditor(input, "org.modelica.mdt.ui.editor", true);
 
 				return editorPart;
 			}
@@ -227,6 +229,11 @@ public class EditorUtility
 				}
 			}
 		}
+		if (editorInput instanceof SystemFileEditorInput)
+		{
+			return ((SystemFileEditorInput)editorInput).getElement();
+		}
+		
 		return null;
 	}
 	

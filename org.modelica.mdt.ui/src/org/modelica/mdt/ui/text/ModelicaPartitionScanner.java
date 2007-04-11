@@ -28,6 +28,7 @@ import org.modelica.mdt.ui.text.IModelicaPartitions;
  *  - Modelica strings
  *  - Modelica code
  */
+@SuppressWarnings("unchecked")
 public class ModelicaPartitionScanner extends RuleBasedPartitionScanner implements IModelicaPartitions {
 
 	/**

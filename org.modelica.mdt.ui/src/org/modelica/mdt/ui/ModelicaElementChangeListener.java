@@ -18,10 +18,11 @@ public class ModelicaElementChangeListener implements IModelicaElementChangeList
 {
 	
 	private TreeViewer fViewer;	
+	private boolean bShouldExpand = false;
 	
-	public ModelicaElementChangeListener()
-	{
-		
+	public ModelicaElementChangeListener(boolean shouldExpand)
+	{ 
+		bShouldExpand = shouldExpand;
 	}
 	
 	public void setViewer(Viewer viewer)
@@ -81,8 +82,8 @@ public class ModelicaElementChangeListener implements IModelicaElementChangeList
 			Assert.isNotNull(change);			  
 			if (change == null) continue;
 			Object element = change.getElement();
-			Assert.isNotNull(element);			  
-			if (element == null) continue;
+			//Assert.isNotNull(element);			  
+			//if (element == null) continue;
 			switch (change.getChangeType())
 			{
 			case ADDED:
@@ -100,6 +101,8 @@ public class ModelicaElementChangeListener implements IModelicaElementChangeList
 				break;
 			}
 		}
+		if (bShouldExpand)
+			fViewer.expandToLevel(2);
 	}	
 }
 

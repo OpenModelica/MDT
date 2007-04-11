@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.assist;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -49,12 +49,12 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaExtends;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaImport;
@@ -69,7 +69,9 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.ModelicaImages;
-import org.modelica.mdt.ui.UIPlugin;
+import org.modelica.mdt.ui.editor.ModelicaEditor;
+import org.modelica.mdt.ui.text.ModelicaLabelBuilder;
+//import org.eclipse.ui.IEditorInput;
 
 /**
  * An object of this class handles generation of completion proposals
@@ -81,46 +83,32 @@ import org.modelica.mdt.ui.UIPlugin;
  */
 public class CompletionProposalsGenerator
 {
-	private IEditorInput input;
+	//private IEditorInput input;
+	private IEditorPart editor;
 	private ITextViewer viewer;
 	private int offset;
 	private String prefix;
 	
-	private LinkedList<ICompletionProposal> proposals = 
-		new LinkedList<ICompletionProposal>();
+	private LinkedList<ICompletionProposal> proposals = new LinkedList<ICompletionProposal>();
 	
 	
-	public CompletionProposalsGenerator(ITextViewer viewer, 
-			IEditorPart editor, int offset)
+	public CompletionProposalsGenerator(ITextViewer viewer, IEditorPart editor, int offset)
 	{
 		this.viewer = viewer;
-		this.input = editor.getEditorInput();
+		//this.input = editor.getEditorInput();
+		this.editor = editor;
 		this.offset = offset;
 	}
 	
 	public ICompletionProposal[] getProposals()
-	{
-		if (!(input instanceof ModelicaElementEditorInput))
-		{
-			/*
-			 * we should never be attached to an editor on anything else
-			 * but a modelica source file (a modelica element)
-			 */
-			ErrorManager.logBug(UIPlugin.getSymbolicName(),
-					"completion prossesor invoked on a non-modelica content");
-			/* no completion if there is a bug ! */
-			return new ICompletionProposal[0];
-		}
-		
-		
-		prefix = 
-			ModelicaCompletionProcessor.getPrefix(viewer.getDocument(), offset);
+	{		
+		prefix = ModelicaCompletionProcessor.getPrefix(viewer.getDocument(), offset);
+		if (prefix.equals("")) /* if we have no prefix, go one char before */
+			prefix = ModelicaCompletionProcessor.getPrefix(viewer.getDocument(), offset-1);
 
-		IModelicaSourceFile file = 
-			((ModelicaElementEditorInput)input).getSourceFile();
 		try
 		{
-			IModelicaClass clazz = file.getClassAt(offset);
+			IModelicaClass clazz = (IModelicaClass)((ModelicaEditor)editor).getElementAt(offset, false);
 			/* only do proposals inside class definitions */
 			if (clazz != null)
 			{
@@ -145,11 +133,9 @@ public class CompletionProposalsGenerator
 	{
 		Collections.sort(proposals, new Comparator<ICompletionProposal>()
 		{
-			public int compare(ICompletionProposal arg0, 
-					ICompletionProposal arg1)
+			public int compare(ICompletionProposal arg0, ICompletionProposal arg1)
 			{
-				return 
-					arg0.getDisplayString().compareToIgnoreCase(arg1.getDisplayString());
+				return arg0.getDisplayString().compareToIgnoreCase(arg1.getDisplayString());
 			}
 		});
 		
@@ -164,21 +150,22 @@ public class CompletionProposalsGenerator
 		 * and add all possible names with respect to current
 		 * prefix
 		 */
+		IModelicaClass clasz = clazz;
 		boolean lastClassEncapsulated = false;
 		boolean onlyConstantVariables = false;
-		while (clazz != null)
+		while (clasz != null)
 		{
 			 /* compute proposals in current scope */
-			computePropsIn(clazz, onlyConstantVariables);
+			computePropsIn(clasz, onlyConstantVariables);
 			/* 
 			 * include non constant variables only on first iteration,
 			 * that is only in the inner most scope
 			 */
 			onlyConstantVariables = true;
 			/* move on to next scope unless we are encapsulated */
-			if (!clazz.isEncapsulated())
+			if (!clasz.isEncapsulated())
 			{
-				clazz = clazz.getParentNamespace();
+				clasz = clasz.getParentNamespace();
 			}
 			else
 			{
@@ -194,7 +181,8 @@ public class CompletionProposalsGenerator
 			 * add classes from the global unnamed scope
 			 * if we have not bumped into encapsulated class
 			 */
-			computeCompPropsFromStdLib();
+			if (clazz != null)
+				computeCompPropsFromStdLib(clazz.getProject());
 			//TODO we should also compute proposals from top-level
 			// packages in this project
 		}
@@ -206,8 +194,7 @@ public class CompletionProposalsGenerator
 	 * @param clazz
 	 * @param onlyConstantVariables
 	 */
-	private void computePropsIn(IModelicaClass clazz, 
-			boolean onlyConstantVariables) 
+	private void computePropsIn(IModelicaClass clazz, boolean onlyConstantVariables) 
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException
 	{
@@ -215,26 +202,43 @@ public class CompletionProposalsGenerator
 		computeCompPropsFromImports(clazz);
 	}
 
-	private void computePropsFromElements(IModelicaClass clazz, 
-			boolean onlyConstantVariables)
+	private void computePropsFromElements(IModelicaClass clazz, boolean onlyConstantVariables)
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
 			CompilerInstantiationException, CoreException
 	{
-		String elementName;
+		String elementName = null;
+		String elementDisplayName = null;
+		int elementLength = -1;
+		String elementDocumentation = null;
 		for (IModelicaElement element : clazz.getChildren())
 		{
-			elementName = element.getElementName();
-			//TODO we should also filter out element based on onlyCOnstantVariables flag
+			if (element instanceof IModelicaImport || element instanceof IModelicaExtends) continue;
+			elementName = element.getElementName();			
 			if (elementName.startsWith(prefix))
 			{
-				proposals.add(new CompletionProposal(elementName,
-						offset-prefix.length(),
-						prefix.length(),
-						elementName.length(),
-						ModelicaImages.get
-							(ModelicaImages.getModelicaElementKey(element)),
-							elementName, 
-						null, null));
+				elementName = ModelicaLabelBuilder.constructProposalSignature(element);
+				elementDisplayName = elementName;
+				elementLength = elementName.length();
+				if (element instanceof IModelicaClass)
+				{
+					elementDisplayName = ModelicaLabelBuilder.constructSignature((IModelicaClass)element);
+					elementDocumentation = ((IModelicaClass)element).getDocumentation();
+					int iofLPAR = elementName.indexOf("("); 
+					if (iofLPAR != -1)
+					{
+						elementLength = iofLPAR+1;
+					}
+				}
+				String contextProposalInfo = ModelicaLabelBuilder.constructContextSignature(element); 
+				proposals.add(
+						new ModelicaCompletionProposal(elementName,
+								offset-prefix.length(),
+								prefix.length(),
+								elementLength,
+								ModelicaImages.get(ModelicaImages.getModelicaElementKey(element)), 
+								elementDisplayName,
+								new ContextInformation(contextProposalInfo, contextProposalInfo),
+								elementDocumentation));
 			}
 		}
 	}
@@ -253,22 +257,20 @@ public class CompletionProposalsGenerator
 		for (IModelicaImport imp : clazz.getImports())
 		{
 			IModelicaClass importedPackage = imp.getImportedPackage();
+			if (importedPackage == null) continue;
 			switch (imp.getType())
 			{
 			case QUALIFIED:
-				computeProposalsFromPackage(importedPackage, null,
-						prefix, offset, proposals);
+				computeProposalsFromPackage(importedPackage, null, prefix, offset, proposals);
 				break;
 			case UNQUALIFIED:
 				for (IModelicaElement child : importedPackage.getChildren())
 				{
-					computeProposalsFromPackage(((IModelicaClass)child), null,
-							prefix, offset, proposals);
+					computeProposalsFromPackage(((IModelicaClass)child), null, prefix, offset, proposals);
 				}
 				break;
 			case RENAMING:
-				computeProposalsFromPackage(importedPackage, imp.getAlias(),
-						prefix, offset, proposals);				
+				computeProposalsFromPackage(importedPackage, imp.getAlias(), prefix, offset, proposals);				
 				break;
 			}
 		}
@@ -310,12 +312,13 @@ public class CompletionProposalsGenerator
 		else
 		{
 			packageName = importedPackage.getElementName();
+			if (packageName == null) return;
 		}
 
 		if (firstDot == -1)
 		{
 			/* 
-			 * there is not dots in the currnet prefix
+			 * there are not dots in the current prefix
 			 *
 			 * prefix must match the begining of our name otherwise
 			 * the user is typing something else
@@ -333,14 +336,14 @@ public class CompletionProposalsGenerator
 			 * if there are no dots in the prefix then we can
 			 * only propose our own name
 			 */ 
-			proposals.add(new CompletionProposal(packageName,
+			proposals.add(new ModelicaCompletionProposal(packageName,
 					offset-prefix.length(),
 					prefix.length(),
 					packageName.length(),
-					ModelicaImages.get
-						(ModelicaImages.getModelicaElementKey(importedPackage)),
+					ModelicaImages.get(ModelicaImages.getModelicaElementKey(importedPackage)),
 					packageName, 
-					null, null));
+					null,  					
+					importedPackage.getDocumentation()));
 			return;
 		}
 		else
@@ -360,12 +363,10 @@ public class CompletionProposalsGenerator
 		}
 
 		int lastDot = prefix.lastIndexOf('.');
-		String levelName = 
-			prefix.substring(0, lastDot);
+		String levelName = prefix.substring(0, lastDot);
 
 		/* child prefix is begins past last dot */
-		String childPrefix =
-			prefix.substring(lastDot + 1);
+		String childPrefix = prefix.substring(lastDot + 1);
 		
 		StringTokenizer st = new StringTokenizer(levelName, ".");
 		String token;
@@ -388,7 +389,7 @@ public class CompletionProposalsGenerator
 					(child instanceof IModelicaSourceFile) ||
 					(child instanceof IModelicaFolder))
 				{
-					/* don't propose files, source files and folders */
+					/* don't propose files, source files and folders, TODO! FIXME! imports and extends. */
 					continue;
 				}
 				if (child.getElementName().equals(token))
@@ -428,33 +429,47 @@ public class CompletionProposalsGenerator
 		 */
 		for (IModelicaElement element : currLevel.getChildren())
 		{
-			String elementName = element.getElementName();
-			
-			
 			/* filter out children by type */ 
 			if ((element instanceof IModelicaFile) ||
 					(element instanceof IModelicaSourceFile) ||
-					(element instanceof IModelicaFolder))
+					(element instanceof IModelicaFolder) ||
+					(element instanceof IModelicaImport) ||
+					(element instanceof IModelicaExtends)
+					)
 			{
 					/* don't propose files, source files and folders */
 					continue;
 			}
-
+			String elementName = element.getElementName();
+			/* don't propose children with non-matching prefix */			
 			/* filter out children by child prefix */
-			if (!elementName.startsWith(childPrefix))
-			{
-				/* don't propose children with non-matching prefix */
+			if (!elementName.startsWith(childPrefix)) 
 				continue;
-			}
 			
-			proposals.add(new CompletionProposal(elementName,
+			elementName = ModelicaLabelBuilder.constructProposalSignature(element);
+			String elementDisplayName = elementName;
+			String elementDocumentation = null;
+			int elementLength = elementName.length();
+			if (element instanceof IModelicaClass)
+			{
+				elementDisplayName = ModelicaLabelBuilder.constructSignature((IModelicaClass)element);
+				elementDocumentation = ((IModelicaClass)element).getDocumentation();
+				int iofLPAR = elementName.indexOf("("); 
+				if (iofLPAR != -1)
+				{
+					
+					elementLength = iofLPAR+1;
+				}
+			}
+			String contextProposalInfo = ModelicaLabelBuilder.constructContextSignature(element);
+			proposals.add(new ModelicaCompletionProposal(elementName,
 					offset - childPrefix.length(),
 					childPrefix.length(),
-					elementName.length(), 
-					ModelicaImages.get
-						(ModelicaImages.getModelicaElementKey(element)),
-					elementName, 
-					null, null));
+					elementLength, 
+					ModelicaImages.get(ModelicaImages.getModelicaElementKey(element)),
+					elementDisplayName, 
+					new ContextInformation(contextProposalInfo, contextProposalInfo),  
+					elementDocumentation));
 		}
 	}
 	
@@ -467,12 +482,11 @@ public class CompletionProposalsGenerator
 	 * @param offset
 	 * @param proposals the container where the proposals will be added
 	 */
-	private void computeCompPropsFromStdLib() 
+	private void computeCompPropsFromStdLib(IModelicaElement parent) 
 		throws ConnectException, CompilerInstantiationException, 
 			UnexpectedReplyException, InvocationError, CoreException
 	{
-		IStandardLibrary stdLib =
-			ModelicaCore.getModelicaRoot().getStandardLibrary();
+		IStandardLibrary stdLib = ModelicaCore.getModelicaRoot().getStandardLibrary(parent);
 		
 		for (IModelicaClass pkg : stdLib.getPackages())
 		{

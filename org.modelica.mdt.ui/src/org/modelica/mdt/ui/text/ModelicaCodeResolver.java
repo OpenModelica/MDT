@@ -27,6 +27,7 @@ import java.util.Collection;
 import org.modelica.mdt.ui.ModelicaLookupException;
 import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.editor.ModelicaElementEditorInput;
+import org.modelica.mdt.ui.editor.SystemFileEditorInput;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
@@ -40,7 +41,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.part.FileEditorInput;
 
+@SuppressWarnings("unchecked")
 public class ModelicaCodeResolver
 {	
 	private static boolean DEBUG = false;
@@ -90,10 +93,29 @@ public class ModelicaCodeResolver
 		IModelicaElement[] result = null;
 		// first look into the class!
 		IEditorInput input = editor.getEditorInput();
-		if (input instanceof ModelicaElementEditorInput)
+		IModelicaSourceFile file = null;	
+		if (editor instanceof ModelicaEditor)
 		{
-			IModelicaSourceFile file = 
-				((ModelicaElementEditorInput)input).getSourceFile();		
+			IModelicaElement me = ((ModelicaEditor)editor).getEditorInputModelicaElement();
+			if (me != null)
+				file = me.getSourceFile();
+		}
+		if (file == null)
+		{
+			if (input instanceof ModelicaElementEditorInput)
+			{
+				file = ((ModelicaElementEditorInput)input).getSourceFile();
+			}
+			if (input instanceof SystemFileEditorInput || input instanceof FileEditorInput)
+			{
+				file = null;
+				//IPath path = ((SystemFileEditorInput)input).getStorage().getFullPath();
+				//IFile f = path.toFile();
+				//file = new ModelicaSourceFile((FolderPackage)null, (IFile)path);
+			}			
+		}
+		if (file != null)
+		{
 			try
 			{
 				IModelicaClass c = (IModelicaClass)editor.getElementAt(selection.getOffset()); //file.getClassAt(selection.getOffset());
@@ -186,8 +208,7 @@ public class ModelicaCodeResolver
 		for (IModelicaElement comp : kids)
 		{
 			if (DEBUG) System.err.println("BottomUp: Searching childen:" + comp.getElementName());								
-			if (comp.getElementName().equals(id) || 
-					id.equals(theClass.getFullName() + "." + comp.getElementName()))
+			if (comp.getElementName().equals(id) || id.equals(theClass.getFullName() + "." + comp.getElementName()))
 			{
 				if (comp instanceof IModelicaComponent)
 				{
@@ -312,10 +333,21 @@ public class ModelicaCodeResolver
 	public static IModelicaClass getClassAt(ModelicaEditor editor, ISourceRegion sourceRegion)
 	{
 		IEditorInput input = editor.getEditorInput();
-		if (input instanceof ModelicaElementEditorInput)
+		IModelicaSourceFile file = null;
+		if (!(input instanceof ModelicaElementEditorInput))
 		{
-			IModelicaSourceFile file = 
-				((ModelicaElementEditorInput)input).getSourceFile();		
+			/* try some other way */
+			IModelicaElement me = editor.getEditorInputModelicaElement();
+			file = me.getSourceFile();
+		}
+		else
+		{
+			 file = ((ModelicaElementEditorInput)input).getSourceFile();	
+		}
+
+		if (file != null)
+		{
+	
 			try
 			{
 				IModelicaClass c = file.getClassAt(sourceRegion);
@@ -330,6 +362,7 @@ public class ModelicaCodeResolver
 				ErrorManager.showCompilerError(e);
 			}
 		}
+		
 		return null;
 	}	
 	

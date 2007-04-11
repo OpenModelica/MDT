@@ -41,15 +41,16 @@
 
 package org.modelica.mdt.ui.editor;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -60,17 +61,13 @@ import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.information.InformationPresenter;
-import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -84,15 +81,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.modelica.mdt.ui.actions.FoldingActionGroup;
 import org.modelica.mdt.ui.actions.IModelicaEditorActionDefinitionIds;
 import org.modelica.mdt.ui.actions.OpenAction;
-import org.modelica.mdt.ui.hover.HTMLTextPresenter;
+import org.modelica.mdt.ui.hover.ModelicaSourceHover;
+import org.modelica.mdt.ui.hover.SourceViewerInformationControl;
+import org.eclipse.ui.editors.text.DefaultEncodingSupport;
+import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextEditorAction;
@@ -104,29 +110,22 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.modelica.mdt.ui.PreferenceConstants;
 import org.modelica.mdt.ui.UIPlugin;
-import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.IModelicaElementChange;
-import org.modelica.mdt.core.IModelicaElementChangeListener;
 import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.core.IModelicaSourceFile;
-import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.ISourceRegion;
-import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.core.compiler.CompilerException;
-import org.modelica.mdt.core.compiler.CompilerInstantiationException;
-import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.InvocationError;
-import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.DefinitionSourceRegion;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 import org.modelica.mdt.ui.text.ModelicaCodeResolver;
+import org.modelica.mdt.ui.text.ModelicaFoldingStructureProvider;
 import org.modelica.mdt.ui.text.ModelicaPairMatcher;
+import org.modelica.mdt.ui.view.ModelicaContentOutlinePage;
 
 /**
  * Creates an editor for modelica source code.
@@ -144,30 +143,29 @@ import org.modelica.mdt.ui.text.ModelicaPairMatcher;
  * @author Adrian Pop
  * @author MDT team
  */
-public class ModelicaEditor extends TextEditor implements IModelicaElementChangeListener, IPropertyListener
+public class ModelicaEditor extends TextEditor implements /* IModelicaElementChangeListener, */ IPropertyListener
 {
-	private static final String RESOURCE_BUNDLE = 
-		"org.modelica.mdt.ui.editor.ContentAssist";
+	private static final String RESOURCE_BUNDLE = "org.modelica.mdt.ui.editor.ContentAssist";
 
-    private ProjectionSupport projectionSupport;
-    private ISourceViewer viewer;
+    private ProjectionSupport fProjectionSupport;
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
 	protected final static String EDITOR_MATCHING_BRACKETS_COLOR=  "matchingBracketsColor";
 	protected final static char[] BRACKETS= { '{', '}', '(', ')', '[', ']', '<', '>' };
 	protected ModelicaPairMatcher fBracketMatcher= new ModelicaPairMatcher(BRACKETS);
 	private ModelicaDocumentProvider fDocumentProvider = null;
 	
+	private FoldingActionGroup fFoldingGroup;	
+	
 	/** The outline page */
 	protected ModelicaContentOutlinePage fOutlinePage;
 	/** Outliner context menu Id */
 	protected String fOutlinerContextMenuId;
 	/** The information presenter. */
-	private InformationPresenter fInformationPresenter;
+	private InformationPresenter fInformationPresenter;	
 		
 	public ModelicaEditor()
 	{
 		super();
-		setOutlinerContextMenuId("#ModelicaOutlinerContext"); //$NON-NLS-1$
 		addPropertyListener(this);
 	}
 	
@@ -194,17 +192,54 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	/** The selection changed listener */
 	protected AbstractSelectionChangedListener fOutlineSelectionChangedListener= new OutlineSelectionChangedListener();
 	
+
+	/**
+	 * Returns the folding action group, or <code>null</code> if there is none.
+	 *
+	 * @return the folding action group, or <code>null</code> if there is none
+	 * @since 3.0
+	 */
+	protected FoldingActionGroup getFoldingActionGroup() {
+		return fFoldingGroup;
+	}
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		super.rulerContextMenuAboutToShow(menu);
+		IMenuManager foldingMenu= new MenuManager("Folding", "projection"); //$NON-NLS-1$
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
+
+		IAction action= getAction("FoldingToggle"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingExpandAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingCollapseAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingRestore"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingCollapseMembers"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		//action= getAction("FoldingCollapseModelicaDoc"); //$NON-NLS-1$
+		//foldingMenu.add(action);
+		action= getAction("FoldingCollapseComments"); //$NON-NLS-1$
+		foldingMenu.add(action);
+	}
+	
 	
 	protected void initializeEditor() 
 	{
 		super.initializeEditor();
+		setOutlinerContextMenuId("#ModelicaOutlinerContext"); //$NON-NLS-1$
+		/*
+        setRulerContextMenuId("org.modelica.mdt.ui.editor.rulerMenu");
+        setEditorContextMenuId("org.modelica.mdt.ui.editor.contextMenu");
+        */
+		
 		if (getPreferenceStore() != null) /* TODO!! fix this later */
 			getPreferenceStore().setValue(EDITOR_MATCHING_BRACKETS, true);
 		// setDocumentProvider(getDocumentProvider());
-		setSourceViewerConfiguration(
-				new ModelicaSourceViewerConfig(
-						this, 
-						IModelicaPartitions.MODELICA_PARTITIONING));
+		setSourceViewerConfiguration(new ModelicaSourceViewerConfig(this, IModelicaPartitions.MODELICA_PARTITIONING));
 	}	
 	
 	public IDocumentProvider getDocumentProvider()
@@ -233,6 +268,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", a);
 		
+		fFoldingGroup= new FoldingActionGroup(this, getViewer());		
 	}
 
 	@Override
@@ -240,198 +276,261 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	{
         super.createPartControl(parent);
         
-		IInformationControlCreator informationControlCreator= new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell shell) {
-				boolean cutDown= false;
-				int style= cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
-				return new DefaultInformationControl(shell, SWT.RESIZE | SWT.TOOL, style, new HTMLTextPresenter(cutDown), "BLA MOTHER!");
-			}
-		};
-
+        /* reuse the hover control from ModelicaSourceViewer */
+        ITextHover textHover = getSourceViewerConfiguration().getTextHover(getSourceViewer(), IDocument.DEFAULT_CONTENT_TYPE);
+		IInformationControlCreator informationControlCreator = ((ModelicaSourceHover)textHover).getHoverControlCreator();
+		
 		fInformationPresenter= new InformationPresenter(informationControlCreator);
-		fInformationPresenter.setSizeConstraints(60, 10, true, true);
+		fInformationPresenter.setSizeConstraints(80, 10, true, false);
 		fInformationPresenter.install(getSourceViewer());
 		fInformationPresenter.setDocumentPartitioning(IModelicaPartitions.MODELICA_PARTITIONING);
         
         /*
          * install the gadgets that enable text folding
          */
-        ProjectionViewer viewer = (ProjectionViewer)getSourceViewer();        
-        projectionSupport = 
-        	new ProjectionSupport(viewer, getAnnotationAccess(),
-        			getSharedColors());
-		projectionSupport.install();
+		/*
+        ProjectionViewer fViewer = (ProjectionViewer)getSourceViewer();        
+        fProjectionSupport = new ProjectionSupport(fViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport.install();
+		*/
 		
 		/* adrpo: add an auto edit strategy */
-		ITextViewerExtension2 extension = (ITextViewerExtension2)viewer;
+		ITextViewerExtension2 extension = (ITextViewerExtension2)getViewer();
 		if (extension != null)
 		{
-	 		extension.prependAutoEditStrategy(
-	 				new ModelicaAutoIndentStrategy(), 
-	 				IDocument.DEFAULT_CONTENT_TYPE);
+	 		extension.prependAutoEditStrategy(new ModelicaAutoIndentStrategy(), IDocument.DEFAULT_CONTENT_TYPE);
 		}
-				
-		/* turn projection mode on */
-		viewer.doOperation(ProjectionViewer.TOGGLE);
 		
-		IModelicaSourceFile file = getSourceFile();				
-//		if (file != null)
-//		{
-//			/* don't do folding unless we are invoked on a modelica element */
-//			updateAnnotations(file);
-//			ModelicaCore.getModelicaRoot().
-//				addModelicaElementChangeListener(this);
-//		}
+		/* toggle the first projection */
+		if (((ProjectionViewer)getSourceViewer()).canDoOperation(ProjectionViewer.TOGGLE))
+			((ProjectionViewer)getSourceViewer()).doOperation(ProjectionViewer.TOGGLE);
 		
 		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
-		
 	}
 
-	/**
-	 * Find the modelica source file this editor is opened on.
-	 * 
-	 * @return the source file this editor is opened on or null
-	 * 	if the editor is not opened on modelica source file
-	 */
-	private IModelicaSourceFile getSourceFile()
-	{
-		IEditorInput input = getEditorInput();
-
-		if (!(input instanceof ModelicaElementEditorInput))
-		{
-			return null;
-		}
-		
-		return ((ModelicaElementEditorInput) input).getSourceFile();
-	}
+//	/**
+//	 * Find the modelica source file this editor is opened on.
+//	 * 
+//	 * @return the source file this editor is opened on or null
+//	 * 	if the editor is not opened on modelica source file
+//	 */
+//	private IModelicaSourceFile getSourceFile()
+//	{
+//		IModelicaElement input = getEditorInputModelicaElement();
+//		return input.getSourceFile();
+//	}
 	
 	@Override
-	protected ISourceViewer createSourceViewer(Composite parent, 
-			IVerticalRuler ruler, int styles)
+	protected final ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
 	{
 		/*
-		 * setup the viewer that is capable of text folding
-		 */
-		viewer = 
-        		new ProjectionViewer(parent, ruler, getOverviewRuler(), 
-        				isOverviewRulerVisible(), styles);
-    	/* ensure decoration support has been created and configured */
-		/*
-		SourceViewerDecorationSupport s = getSourceViewerDecorationSupport(viewer);
-		System.out.println("CharPairMatcher set in create viewer");
-    	s.setCharacterPairMatcher(fBracketMatcher);
-    	*/
-		getSourceViewerDecorationSupport(viewer);
+		 * setup the fViewer that is capable of text folding
+		 */		
+		IPreferenceStore store= getPreferenceStore();
+		ISourceViewer viewer = new ModelicaSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+		
+		if (viewer != null && isFoldingEnabled() && (store == null))
+			((ModelicaSourceViewer)viewer).prepareDelayedProjection();
+        
+		ProjectionViewer projectionViewer = (ProjectionViewer)viewer;
+		
+		fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				return new SourceViewerInformationControl(shell, SWT.TOOL | SWT.NO_TRIM | getOrientation(), SWT.NONE);
+			}
+		});
+		
+		fProjectionSupport.install();
+
+		fProjectionModelUpdater= new ModelicaFoldingStructureProvider();
+		if (fProjectionModelUpdater != null)
+			fProjectionModelUpdater.install(this, (ProjectionViewer)projectionViewer);
+
+		// ensure source fViewer decoration support has been created and configured
+		SourceViewerDecorationSupport svds = getSourceViewerDecorationSupport(viewer);
+		svds.setCharacterPairMatcher(fBracketMatcher);
+		
     	return viewer;
 	}
 	
 	public ISourceViewer getViewer()
 	{
-		return viewer;
+		return getSourceViewer();
 	}
 	
 	public void dispose()
 	{
 		super.dispose();
-		ModelicaCore.getModelicaRoot().removeModelicaElementChangeListener(this);
+		
+		if (fEncodingSupport != null) {
+			fEncodingSupport.dispose();
+			fEncodingSupport= null;
+		}
+		
+		//ModelicaCore.getModelicaRoot().removeModelicaElementChangeListener(this);
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
 		}
-		fInformationPresenter.uninstall();
+		if (fInformationPresenter != null)
+		{
+			fInformationPresenter.uninstall();
+			fInformationPresenter = null;
+		}
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.uninstall();
+			fProjectionModelUpdater= null;
+		}
+
+		if (fProjectionSupport != null) {
+			fProjectionSupport.dispose();
+			fProjectionSupport= null;
+		}		
 	}
 
-	public void elementsChanged(Collection<IModelicaElementChange> changes)
-	{
-		IModelicaSourceFile file = getSourceFile();
-		
-		/*
-		 * check among change list if the file we are open
-		 * on have been changed, and in that case
-		 * update folding annotations
-		 */
+//	public void elementsChanged(Collection<IModelicaElementChange> changes)
+//	{
+//		IModelicaSourceFile file = getSourceFile();
+//		/*
+//		 * check among change list if the file we are open
+//		 * on have been changed, and in that case
+//		 * update folding annotations
+//		 */
 //		for (IModelicaElementChange change : changes)
 //		{
 //			IModelicaElement elm = change.getElement();
 //			
 //			if (elm == file)
 //			{
+//				try{
+//					if (file.getChildren().size() == 0) return;					
+//				}
+//				catch(Exception e)
+//				{
+//					ErrorManager.logError(e);
+//					break;
+//				}
 //				updateAnnotations(file);
 //				break;
 //			}
 //		}
-	}
+//	}
 
-	/**
-	 * updates the folding annotations in this editr based
-	 * on the contents of the provided modelica source file.
-	 * old annotations are removed.
-	 * 
-	 * @param file the source file to create annotations from
-	 */
-	private void updateAnnotations(IModelicaSourceFile file)
-	{
-		try
-		{
-			/*
-			 * remove old annotations and call helper function
-			 * to create new annotations
-			 */
-			ProjectionAnnotationModel annotationModel = 
-				((ProjectionViewer)getSourceViewer()).getProjectionAnnotationModel();
-			annotationModel.removeAllAnnotations();
-			
-			int docLength = getSourceViewer().getDocument().getLength();
-			updateAnnotationsIter(file, docLength, annotationModel);
-		} 
-		catch (CompilerException e)
-		{
-			ErrorManager.showCompilerError(e);
-		}
-		catch (CoreException e)
-		{
-			ErrorManager.showCoreError(e);
-		}
-	}
+//	/**
+//	 * updates the folding annotations in this editr based
+//	 * on the contents of the provided modelica source file.
+//	 * old annotations are removed.
+//	 * 
+//	 * @param file the source file to create annotations from
+//	 */
+//	private void updateAnnotations(IModelicaSourceFile file)
+//	{
+//		try
+//		{
+//			/*
+//			 * remove old annotations and call helper function
+//			 * to create new annotations
+//			 */
+//			ProjectionAnnotationModel annotationModel = ((ProjectionViewer)getSourceViewer()).getProjectionAnnotationModel();
+//			if (annotationModel == null) return;
+//			annotationModel.removeAllAnnotations();
+//			
+//			/* add colapse of the freaking LICENSE! */
+//			int offset = 0; int length = 0; IDocument d = null;
+//			try{		
+//				d = getSourceViewer().getDocument();
+//				/* search for multiline comments at the start of the file */
+//				// eat whitespace!
+//				while (Character.isWhitespace((d.getChar(offset)))) offset++;
+//				if (d.getChar(offset) == '/' && d.getChar(offset+1) == '*')
+//				{
+//					// found the /* start, search fot the end!
+//					while (!(d.getChar(offset+length) == '*' && d.getChar(offset+length+1) == '/')) length++;
+//					annotationModel.addAnnotation(new ProjectionAnnotation(true), new Position(offset, length+2));
+//				}
+//			}
+//			catch (BadLocationException e){ /* ignore */ }			
+//			
+//			
+//			int docLength = getSourceViewer().getDocument().getLength();
+//			updateAnnotationsIter(file, docLength, annotationModel);
+//		} 
+//		catch (CompilerException e)
+//		{
+//			ErrorManager.showCompilerError(e);
+//		}
+//		catch (CoreException e)
+//		{
+//			ErrorManager.showCoreError(e);
+//		}
+//		catch (Exception e)
+//		{
+//			ErrorManager.logError(e);
+//		}
+//	}
 
-	/**
-	 * this is helper function for updateAnnotationsIter() that
-	 * recursivly creates folding annotations based on class
-	 * definition regions
-	 */
-	private void updateAnnotationsIter(IParent parentElement,
-			int docLength,
-			IAnnotationModel annotationModel) 
-		throws ConnectException, UnexpectedReplyException, InvocationError, 
-			CompilerInstantiationException, CoreException
-	{
-		/*
-		 * go over the children of provided element,
-		 * add folding annotation for each subclass found
-		 * and invoke annotations creations based on that class
-		 */
-		IRegion reg;
-		for (IModelicaElement elm : parentElement.getChildren())
-		{
-			reg = getRegionFromSourceRegion(elm.getLocation().getSourceRegion(), getViewer().getDocument());
-			/* make only class definitions collapsable */
-			if (elm instanceof IModelicaClass) 
-			{
-				int offset = reg.getOffset();
-				int length = reg.getLength();
-
-				if (offset + length < docLength)
-				{
-					length += 1;
-				}
-				annotationModel.addAnnotation(new ProjectionAnnotation(false),
-						new Position(offset, length));
-
-				updateAnnotationsIter((IParent)elm, docLength, annotationModel);
-			}
-		}		
-	}
+//	/**
+//	 * this is helper function for updateAnnotationsIter() that
+//	 * recursivly creates folding annotations based on class
+//	 * definition regions
+//	 */
+//	private void updateAnnotationsIter(IParent parentElement, int docLength, IAnnotationModel annotationModel) 
+//		throws ConnectException, UnexpectedReplyException, InvocationError, 
+//			CompilerInstantiationException, CoreException
+//	{
+//		/*
+//		 * go over the children of provided element,
+//		 * add folding annotation for each subclass found
+//		 * and invoke annotations creations based on that class
+//		 */
+//		
+//		IRegion reg = null;
+//		int offset = 0;
+//		int length = 0;
+//		IDocument d = null;		
+//		
+//		for (IModelicaElement elm : parentElement.getChildren())
+//		{			
+//			/* make only class definitions collapsable */
+//			if (elm instanceof IModelicaClass) 
+//			{
+//				reg = getRegionFromSourceRegion(elm.getLocation().getSourceRegion(), getViewer().getDocument());				
+//				offset = reg.getOffset();
+//				length = reg.getLength();
+//				if (offset + length < docLength) { length += 1; }
+//				
+//				annotationModel.addAnnotation(new ProjectionAnnotation(false), new Position(offset, length));
+//				
+//				updateAnnotationsIter((IParent)elm, docLength, annotationModel);
+//			}				
+//		}
+//		/*
+//		Object[] kids = childrens.toArray();
+//		SortedMap x = new ();
+//		
+//		for (int i=0; i < kids.length-1; i++)
+//		{		
+//			IModelicaElement elm = (IModelicaElement)kids[i];
+//			IModelicaElement elmNext = (IModelicaElement)kids[i+1];
+//			if (elm instanceof IModelicaImport)
+//			{
+//				IRegion reg1, reg2;
+//				reg1 = getRegionFromSourceRegion(elm.getLocation().getSourceRegion(), getViewer().getDocument());				
+//				int offset1 = reg1.getOffset();
+//				int length1 = reg1.getLength();
+//				if (offset1 + length1 < docLength) { length1 += 1; }
+//				importList.add(new Position(offset1, length1));
+//			}
+//		}
+//		if (offsetImportMax != 0 && offsetImportMin != docLength)
+//			annotationModel.addAnnotation(new ProjectionAnnotation(true), 
+//					new Position(offsetImportMin, offsetImportMax-offsetImportMin+lengthImportMax));
+//		*/
+//	}
 	
 		
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) 
@@ -462,6 +561,19 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 			ErrorManager.logError(e);
 		}
 		
+		if (IEncodingSupport.class.equals(adapter))
+			return fEncodingSupport;
+		
+		if (adapter == ModelicaFoldingStructureProvider.class)
+			return fProjectionModelUpdater;
+
+		if (fProjectionSupport != null) {
+			Object newAdapter = fProjectionSupport.getAdapter(getSourceViewer(), adapter);
+			if (newAdapter != null)
+				return newAdapter;
+		}
+		
+		
 		return super.getAdapter(adapter);
 	}
 	
@@ -471,8 +583,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	 * @return the created Modelica outline page
 	 */
 	protected ModelicaContentOutlinePage createOutlinePage() {
-		ModelicaContentOutlinePage page= 
-			new ModelicaContentOutlinePage(fOutlinerContextMenuId, this);
+		ModelicaContentOutlinePage page= new ModelicaContentOutlinePage(fOutlinerContextMenuId, this);
 		fOutlineSelectionChangedListener.install(page);
 		setOutlinePageInput(page, getEditorInput());
 		return page;
@@ -515,7 +626,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	 * @param element the Modelica element to select
 	 * @param checkIfOutlinePageActive <code>true</code> if check for active outline page needs to be done
 	 */
-	protected void synchronizeOutlinePage(IModelicaElement element, boolean checkIfOutlinePageActive) {
+	public void synchronizeOutlinePage(IModelicaElement element, boolean checkIfOutlinePageActive) {
 		if (fOutlinePage != null && element != null && 
 			!(checkIfOutlinePageActive && isModelicaContentOutlinePageActive())) {
 			fOutlineSelectionChangedListener.uninstall(fOutlinePage);
@@ -626,14 +737,10 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	 * @param input the editor input
 	 */
 	protected void setOutlinePageInput(ModelicaContentOutlinePage page, IEditorInput input) {
-		if (page == null)
-			return;
-		
-		IModelicaElement me= getEditorInputModelicaElement();
-		if (me != null)
-			page.setInput(me);
-		else
-			page.setInput(null);
+		if (page == null) return;
+		IModelicaElement me = getEditorInputModelicaElement();
+		if (me != null) page.setInput(me);
+		else page.setInput(null);
 		
 	}
 	
@@ -649,8 +756,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 		if (i != null && i instanceof ModelicaElementEditorInput) 
 		{
 			IModelicaElement me = ((ModelicaElementEditorInput)i).getSourceFile();
-			if (me != null) 
-				return (IModelicaElement)me;
+			if (me != null) return (IModelicaElement)me;
 		}
 		return EditorUtility.getEditorInputModelicaElement(this);
 	}
@@ -663,16 +769,26 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	 * @return the computed source reference
 	 * @since 0.6.8
 	 */
-	protected IModelicaElement computeHighlightRangeSourceReference() {
+	public IModelicaElement computeHighlightRangeSourceReference() {
+		int caret = getCarretOffset();
+		if (caret == -1) return null;
+
+		IModelicaElement element= getElementAt(caret, false);
+		if (element == null) return null;
+		return element;
+	}
+
+	public int getCarretOffset()
+	{
+		int caret =-1;		
 		ISourceViewer sourceViewer= getSourceViewer();
 		if (sourceViewer == null)
-			return null;
+			return caret;
 
 		StyledText styledText= sourceViewer.getTextWidget();
 		if (styledText == null)
-			return null;
+			return caret;
 
-		int caret= 0;
 		if (sourceViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5)sourceViewer;
 			caret= extension.widgetOffset2ModelOffset(styledText.getCaretOffset());
@@ -680,45 +796,40 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 			int offset= sourceViewer.getVisibleRegion().getOffset();
 			caret= offset + styledText.getCaretOffset();
 		}
-
-		IModelicaElement element= getElementAt(caret, false);
-		if (element == null) return null;
-		return element;
+		return caret;
 	}
-
+	
 	/**
-	 * Returns the most narrow java element including the given offset.
+	 * Returns the most narrow modelica element including the given offset.
 	 *
 	 * @param offset the offset inside of the requested element
 	 * @param reconcile <code>true</code> if editor input should be reconciled in advance
 	 * @return the most narrow Modelica element
 	 * @since 0.6.8
 	 */
-	protected IModelicaElement getElementAt(int offset, boolean reconcile) 
+	public IModelicaElement getElementAt(int offset, boolean reconcile) 
 	{
 		ISourceRegion sourceRegion = null;
 		try
 		{
-			sourceRegion = 
-				new DefinitionSourceRegion(
-						getViewer().getDocument().getLineOfOffset(offset),
-						0,
-						getViewer().getDocument().getLineOfOffset(offset),
-						1);
+			int line = getViewer().getDocument().getLineOfOffset(offset);
+			int firstOffset = getViewer().getDocument().getLineOffset(line);
+			int realColumn = offset - firstOffset;
+			sourceRegion = new DefinitionSourceRegion(line+1, realColumn, line+1, realColumn+1);
 						
 		}
 		catch(BadLocationException e)
 		{
-			ErrorManager.logError(e);
+			//ErrorManager.logError(e);
 		}
 		return ModelicaCodeResolver.getClassAt(this, sourceRegion);
 	}
 	
 	/**
-	 * Returns the most narrow java element including the given offset.
+	 * Returns the most narrow modelica element including the given offset.
 	 *
 	 * @param offset the offset inside of the requested element
-	 * @return the most narrow java element
+	 * @return the most narrow modelica element
 	 */
 	public IModelicaElement getElementAt(int offset) 
 	{
@@ -753,9 +864,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 			try 
 			{
 				IRegion range= null;
-				range = getRegionFromSourceRegion(
-							reference.getLocation().getSourceRegion(),
-							getViewer().getDocument());
+				range = getRegionFromSourceRegion(reference.getLocation().getSourceRegion(), getViewer().getDocument());
 
 				if (range == null)
 					return;
@@ -829,9 +938,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 		{
 			IModelicaElement element= getElementAt(offset);
 			while (element instanceof IModelicaElement) {
-				IRegion range= getRegionFromSourceRegion(
-						element.getLocation().getSourceRegion(), 
-						getViewer().getDocument());
+				IRegion range= getRegionFromSourceRegion(element.getLocation().getSourceRegion(), getViewer().getDocument());
 				if (offset < range.getOffset() + range.getLength() && range.getOffset() < offset + length) {
 
 					ISourceViewer viewer= getSourceViewer();
@@ -882,7 +989,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 		}
 		catch(BadLocationException e)
 		{
-			ErrorManager.logError(e);
+			//ErrorManager.logError(e);
 		}
 		return new Region(startChar, endChar - startChar);
 	}
@@ -1011,6 +1118,7 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 				if (textHover instanceof IInformationProviderExtension2)
 					controlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
 
+				/* TODO! TODO! FIXME! - when opened on a normal file, the control creator is NULL! */
 				IInformationProvider informationProvider= new InformationProvider(hoverRegion, hoverInfo, controlCreator);
 
 				fInformationPresenter.setOffset(offset);
@@ -1061,6 +1169,279 @@ public class ModelicaEditor extends TextEditor implements IModelicaElementChange
 	 */
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { "org.modelica.mdt.ui.modelicaEditorScope" });  //$NON-NLS-1$
+	}
+	
+	private Point fCachedSelectedRange;	
+	
+	public Point getCachedSelectedRange() {
+		return fCachedSelectedRange;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handleCursorPositionChanged()
+	 * @since 3.3
+	 */
+	protected void handleCursorPositionChanged() {
+		super.handleCursorPositionChanged();
+		fCachedSelectedRange= getViewer().getSelectedRange();
+	}
+	
+	private ModelicaFoldingStructureProvider fProjectionModelUpdater;
+	
+	/**
+	 * Resets the foldings structure according to the folding
+	 * preferences.
+	 * 
+	 * @since 3.2
+	 */
+	public void resetProjection() {
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.initialize();
+		}
+	}
+	
+	/**
+	 * The folding runner.
+	 * @since 3.1
+	 */
+	private ToggleFoldingRunner fFoldingRunner;
+	private final class ToggleFoldingRunner implements IPartListener2 {
+		/**
+		 * The workbench page we registered the part listener with, or
+		 * <code>null</code>.
+		 */
+		private IWorkbenchPage fPage;
+
+		/**
+		 * Does the actual toggling of projection.
+		 */
+		private void toggleFolding() {
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer instanceof ProjectionViewer) {
+				ProjectionViewer pv= (ProjectionViewer) sourceViewer;
+				if (pv.canDoOperation(ProjectionViewer.TOGGLE))
+					pv.doOperation(ProjectionViewer.TOGGLE);
+			}
+		}
+
+		/**
+		 * Makes sure that the editor's folding state is correct the next time
+		 * it becomes visible. If it already is visible, it toggles the folding
+		 * state. If not, it either registers a part listener to toggle folding
+		 * when the editor becomes visible, or cancels an already registered
+		 * runner.
+		 */
+		public void runWhenNextVisible() {
+			// if there is one already: toggling twice is the identity
+			if (fFoldingRunner != null) {
+				fFoldingRunner.cancel();
+				return;
+			}
+			IWorkbenchPartSite site= getSite();
+			if (site != null) {
+				IWorkbenchPage page= site.getPage();
+				if (!page.isPartVisible(ModelicaEditor.this)) {
+					// if we're not visible - defer until visible
+					fPage= page;
+					fFoldingRunner= this;
+					page.addPartListener(this);
+					return;
+				}
+			}
+			// we're visible - run now
+			toggleFolding();
+		}
+
+		/**
+		 * Remove the listener and clear the field.
+		 */
+		private void cancel() {
+			if (fPage != null) {
+				fPage.removePartListener(this);
+				fPage= null;
+			}
+			if (fFoldingRunner == this)
+				fFoldingRunner= null;
+		}
+
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partVisible(IWorkbenchPartReference partRef) {
+			if (ModelicaEditor.this.equals(partRef.getPart(false))) {
+				cancel();
+				toggleFolding();
+			}
+		}
+
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partClosed(IWorkbenchPartReference partRef) {
+			if (ModelicaEditor.this.equals(partRef.getPart(false))) {
+				cancel();
+			}
+		}
+
+		public void partActivated(IWorkbenchPartReference partRef) {}
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
+		public void partDeactivated(IWorkbenchPartReference partRef) {}
+		public void partOpened(IWorkbenchPartReference partRef) {}
+		public void partHidden(IWorkbenchPartReference partRef) {}
+		public void partInputChanged(IWorkbenchPartReference partRef) {}
+	}
+	
+	/**
+	 * Collapses all foldable members if supported by the folding
+	 * structure provider.
+	 * 
+	 * @since 3.2
+	 */
+	public void collapseMembers() {
+		fProjectionModelUpdater.collapseMembers();
+	}
+	
+	/**
+	 * Collapses all foldable comments if supported by the folding
+	 * structure provider.
+	 * 
+	 * @since 3.2
+	 */
+	public void collapseComments() {
+		fProjectionModelUpdater.collapseComments();
+	}
+	
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+
+		String property= event.getProperty();
+
+		try {
+
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer == null)
+				return;
+
+			boolean newBooleanValue= false;
+			Object newValue= event.getNewValue();
+			if (newValue != null)
+				newBooleanValue= Boolean.valueOf(newValue.toString()).booleanValue();
+			
+			if (PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE.equals(property)) {
+				if (newBooleanValue)
+					selectionChanged();
+				return;
+			}
+
+			if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
+				if (sourceViewer instanceof ProjectionViewer) {
+					ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
+					if (fProjectionModelUpdater != null)
+						fProjectionModelUpdater.uninstall();
+					// either freshly enabled or provider changed
+					fProjectionModelUpdater= new ModelicaFoldingStructureProvider();
+					if (fProjectionModelUpdater != null) {
+						fProjectionModelUpdater.install(this, projectionViewer);
+					}
+				}
+				return;
+			}
+			if (PreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
+				if (sourceViewer instanceof ProjectionViewer) {
+					new ToggleFoldingRunner().runWhenNextVisible();
+				}
+				return;
+			}
+
+		} finally {
+			super.handlePreferenceStoreChanged(event);
+		}
+		
+		if (AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR.equals(property)) {
+			// superclass already installed the range indicator
+			Object newValue= event.getNewValue();
+			ISourceViewer viewer= getSourceViewer();
+			if (newValue != null && viewer != null) {
+				if (Boolean.valueOf(newValue.toString()).booleanValue()) {
+					// adjust the highlightrange in order to get the magnet right after changing the selection
+					Point selection= viewer.getSelectedRange();
+					adjustHighlightRange(selection.x, selection.y);
+				}
+			}			
+		}
+	}
+	
+	boolean isFoldingEnabled() {
+		return true;
+		//return UIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
+	}	
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
+	 */
+	protected void performRevert() {
+		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
+		projectionViewer.setRedraw(false);
+		try {
+
+			boolean projectionMode= projectionViewer.isProjectionMode();
+			if (projectionMode) {
+				projectionViewer.disableProjection();
+				if (fProjectionModelUpdater != null)
+					fProjectionModelUpdater.uninstall();
+			}
+
+			super.performRevert();
+
+			if (projectionMode) {
+				if (fProjectionModelUpdater != null)
+					fProjectionModelUpdater.install(this, projectionViewer);
+				projectionViewer.enableProjection();
+			}
+
+		} finally {
+			projectionViewer.setRedraw(true);
+		}
+	}
+
+	protected void installEncodingSupport() {
+		fEncodingSupport= new DefaultEncodingSupport();
+		fEncodingSupport.initialize(this);
+	}
+	
+	/*
+	 * @see StatusTextEditor#getStatusHeader(IStatus)
+	 */
+	protected String getStatusHeader(IStatus status) {
+		if (fEncodingSupport != null) {
+			String message= fEncodingSupport.getStatusHeader(status);
+			if (message != null)
+				return message;
+		}
+		return super.getStatusHeader(status);
+	}
+
+	/*
+	 * @see StatusTextEditor#getStatusBanner(IStatus)
+	 */
+	protected String getStatusBanner(IStatus status) {
+		if (fEncodingSupport != null) {
+			String message= fEncodingSupport.getStatusBanner(status);
+			if (message != null)
+				return message;
+		}
+		return super.getStatusBanner(status);
+	}
+
+	/*
+	 * @see StatusTextEditor#getStatusMessage(IStatus)
+	 */
+	protected String getStatusMessage(IStatus status) {
+		if (fEncodingSupport != null) {
+			String message= fEncodingSupport.getStatusMessage(status);
+			if (message != null)
+				return message;
+		}
+		return super.getStatusMessage(status);
 	}
 	
 }

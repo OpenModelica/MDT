@@ -59,16 +59,14 @@
       </wizard>        
    </extension>
    <extension
-         id="org.modelica.mdt.editor"
-         name="Modelica Editor"
          point="org.eclipse.ui.editors">
       <editor
             class="org.modelica.mdt.ui.editor.ModelicaEditor"
-            contributorClass="org.modelica.mdt.ui.editor.ModelicaActionContributor"
+            contributorClass="org.modelica.mdt.ui.actions.ModelicaActionContributor"
             default="true"
-            extensions="mo, mos"
+            extensions="mo, mof, mos"
             icon="icons/obj16/mo_file.gif"
-            id="org.modelica.mdt.editor"
+            id="org.modelica.mdt.ui.editor"
             name="Modelica Editor"/>
    </extension>
    <extension
@@ -232,11 +230,6 @@
       <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
          <perspectiveShortcut id="org.modelica.mdt.ui.ModelicaPerspective"></perspectiveShortcut>
       </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
-         <actionSet
-               id="org.modelica.mdt.ui.ModelicaActionSet">
-         </actionSet>
-      </perspectiveExtension>
       
       <perspectiveExtension targetID="org.modelica.mdt.ui.ModelicaPerspective">
          <showInPart id="org.modelica.mdt.ui.view.ModelicaProjectsView"/>
@@ -257,4 +250,26 @@
          <showInPart id="org.modelica.mdt.ui.view.ModelicaProjectsView"/>
       </perspectiveExtension>      
    </extension>
+   
+  <extension point="org.eclipse.core.runtime.adapters">
+		<factory class="org.modelica.mdt.ui.ModelicaElementAdapterFactory" 
+            adaptableType="org.modelica.mdt.core.IModelicaElement">        
+            <adapter type="org.eclipse.core.resources.IResource"/>           
+            <adapter type="org.eclipse.ui.IPersistableElement"/>
+            <adapter type="org.eclipse.ui.IContributorResourceAdapter"/>
+            <adapter type="org.eclipse.ui.ide.IContributorResourceAdapter2"/>
+            <adapter type="org.eclipse.ui.IContainmentAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+            <adapter type="org.eclipse.ui.views.tasklist.ITaskListResourceAdapter"/>            
+		</factory>		
+	</extension>
+  <extension
+        point="org.eclipse.ui.editors.templates">
+     <template
+           autoinsert="true"
+           contextTypeId="org.modelica.mdt.ui.template1"
+           id="org.modelica.mdt.ui.template1"
+           name="org.modelica.mdt.ui.template1"/>
+  </extension>
 </plugin>

@@ -63,6 +63,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -77,6 +78,7 @@ import org.eclipse.ui.actions.ActionGroup;
 
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.ui.ModelicaImages;
+import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.filters.CustomFiltersDialog;
 import org.modelica.mdt.ui.filters.FilterDescriptor;
 import org.modelica.mdt.ui.filters.FilterMessages;
@@ -91,6 +93,7 @@ import org.modelica.mdt.ui.filters.NamePatternFilter;
  * 
  * @since 0.6.8
  */
+@SuppressWarnings("unchecked")
 public class CustomFiltersActionGroup extends ActionGroup {
 
 	class ShowFilterDialogAction extends Action {
@@ -574,32 +577,29 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		}
 	}
 
-//	private void storeViewDefaults() {
-//		// get default values for view
-//		IPreferenceStore store= JavaPlugin.getDefault().getPreferenceStore();
-//
-//		// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=22533
-//		store.setValue(getPreferenceKey(TAG_DUMMY_TO_TEST_EXISTENCE), "storedViewPreferences");//$NON-NLS-1$
-//		
-//		store.setValue(getPreferenceKey(TAG_USER_DEFINED_PATTERNS_ENABLED), fUserDefinedPatternsEnabled);
-//		store.setValue(getPreferenceKey(TAG_USER_DEFINED_PATTERNS), CustomFiltersDialog.convertToString(fUserDefinedPatterns ,SEPARATOR));
-//
-//		Iterator iter= fEnabledFilterIds.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry entry= (Map.Entry)iter.next();
-//			String id= (String)entry.getKey();
-//			boolean isEnabled= ((Boolean)entry.getValue()).booleanValue();
-//			store.setValue(id, isEnabled);
-//		}
-//
-//		StringBuffer buf= new StringBuffer(fLRUFilterIdsStack.size() * 20);
-//		iter= fLRUFilterIdsStack.iterator();
-//		while (iter.hasNext()) {
-//			buf.append((String)iter.next());
-//			buf.append(SEPARATOR);
-//		}
-//		store.setValue(TAG_LRU_FILTERS, buf.toString());
-//	}
+	private void storeViewDefaults() {
+		// get default values for view
+		IPreferenceStore store= UIPlugin.getDefault().getPreferenceStore();
+		
+		store.setValue(getPreferenceKey(TAG_USER_DEFINED_PATTERNS_ENABLED), fUserDefinedPatternsEnabled);
+		store.setValue(getPreferenceKey(TAG_USER_DEFINED_PATTERNS), CustomFiltersDialog.convertToString(fUserDefinedPatterns ,SEPARATOR));
+
+		Iterator iter= fEnabledFilterIds.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry entry= (Map.Entry)iter.next();
+			String id= (String)entry.getKey();
+			boolean isEnabled= ((Boolean)entry.getValue()).booleanValue();
+			store.setValue(id, isEnabled);
+		}
+
+		StringBuffer buf= new StringBuffer(fLRUFilterIdsStack.size() * 20);
+		iter= fLRUFilterIdsStack.iterator();
+		while (iter.hasNext()) {
+			buf.append((String)iter.next());
+			buf.append(SEPARATOR);
+		}
+		store.setValue(TAG_LRU_FILTERS, buf.toString());
+	}
 	
 	private String getPreferenceKey(String tag) {
 		return "CustomFiltersActionGroup." + fTargetId + '.' + tag; //$NON-NLS-1$
@@ -770,7 +770,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 			setUserDefinedPatterns(dialog.getUserDefinedPatterns());
 			setRecentlyChangedFilters(dialog.getFilterDescriptorChangeHistory());
 
-			//storeViewDefaults();
+			storeViewDefaults();
 
 			updateViewerFilters(true);
 		}

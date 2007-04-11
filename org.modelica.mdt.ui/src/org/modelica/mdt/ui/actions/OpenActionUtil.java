@@ -25,6 +25,7 @@ import org.modelica.mdt.ui.ModelicaLookupException;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.eclipse.jface.viewers.LabelProvider;
 
+@SuppressWarnings("unchecked")
 public class OpenActionUtil {
 	
 	private OpenActionUtil() {
@@ -44,9 +45,6 @@ public class OpenActionUtil {
 	public static void open(Object element, boolean activate) throws ModelicaLookupException, PartInitException {
 		try
 		{
-			//System.out.println("Opening in Editor:" + 
-			//		((IModelicaElement)element).getElementName() + 
-			//		" location: " + ((IModelicaElement)element).getLocation().getOffset());
 			EditorUtility.openInEditor((IModelicaElement)element);
 		}
 		catch(Exception e)

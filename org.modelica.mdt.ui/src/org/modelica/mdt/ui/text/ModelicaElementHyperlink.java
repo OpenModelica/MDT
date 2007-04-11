@@ -22,7 +22,7 @@
  * USE OR PERFORMANCE OF THIS SOFTWARE.
  *****************************************************************************/
 
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.text;
 
 import org.eclipse.jface.action.IAction;
 

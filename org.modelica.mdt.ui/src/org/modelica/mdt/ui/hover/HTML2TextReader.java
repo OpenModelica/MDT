@@ -27,6 +27,7 @@ import org.eclipse.jface.text.TextPresentation;
  * Reads the text contents from a reader of HTML contents and translates
  * the tags or cut them out.
  */
+@SuppressWarnings("unchecked")
 public class HTML2TextReader extends SubstitutionTextReader {
 
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$

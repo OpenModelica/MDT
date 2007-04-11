@@ -41,10 +41,12 @@
 
 package org.modelica.mdt.ui;
 
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.modelica.mdt.ui.view.ModelicaConsoleView;
 import org.modelica.mdt.ui.view.ModelicaProjectsView;
 
@@ -53,16 +55,18 @@ public class ModelicaPerspective implements IPerspectiveFactory
 
 	public void createInitialLayout(IPageLayout layout)
 	{
+		String editorArea = layout.getEditorArea();		
 		/* add 'modelica projects' view */
 		IFolderLayout resources = 
 			layout.createFolder("org.modelica.mdt.resourcesArea", 
-					IPageLayout.LEFT, 0.26f, IPageLayout.ID_EDITOR_AREA);
+					IPageLayout.LEFT, 0.25f, editorArea);
 		resources.addView(ModelicaProjectsView.ID);
+		resources.addPlaceholder(IPageLayout.ID_RES_NAV);
 		
 		/* add outline view */
 		IFolderLayout outlineArea = 
 			layout.createFolder("org.modelica.mdt.outlineArea", 
-					IPageLayout.BOTTOM, 0.26f, "org.modelica.mdt.resourcesArea");
+					IPageLayout.BOTTOM, 0.50f, "org.modelica.mdt.resourcesArea");
 		outlineArea.addView(IPageLayout.ID_OUTLINE);		
 		
 		/* add console view */
@@ -70,10 +74,11 @@ public class ModelicaPerspective implements IPerspectiveFactory
 			layout.createFolder("org.modelica.mdt.consoleArea", 
 					IPageLayout.BOTTOM, 0.75f, IPageLayout.ID_EDITOR_AREA);
 		consoleArea.addView(IPageLayout.ID_PROBLEM_VIEW);
-		
 		/* add modelica console view */
-		consoleArea.addView(IConsoleConstants.ID_CONSOLE_VIEW);		
-		
+		consoleArea.addView(IConsoleConstants.ID_CONSOLE_VIEW);
+		consoleArea.addView(IPageLayout.ID_BOOKMARKS);
+		consoleArea.addView(IProgressConstants.PROGRESS_VIEW_ID);		
+						
 		/* add new wizards */
 		layout.addNewWizardShortcut("org.modelica.mdt.NewProjectWizard");		
 		layout.addNewWizardShortcut("org.modelica.mdt.NewPackageWizard");
@@ -83,12 +88,18 @@ public class ModelicaPerspective implements IPerspectiveFactory
 		
 		/* add view shortcuts */
 		layout.addShowViewShortcut(ModelicaProjectsView.ID);
-		layout.addShowViewShortcut(ModelicaConsoleView.ID);		
-		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
-		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
-		layout.addShowViewShortcut(IPageLayout.ID_BOOKMARKS);
+		layout.addShowViewShortcut(ModelicaConsoleView.ID);	
+		// views - debugging
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
+		// views - standard workbench
+		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
+		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
+		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
+		layout.addShowViewShortcut(IProgressConstants.PROGRESS_VIEW_ID);		
+		layout.addShowViewShortcut(IPageLayout.ID_BOOKMARKS);
+		
+		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 	}
 	
 	

@@ -41,6 +41,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.StructuredViewer;
 
@@ -49,6 +50,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionGroup;
 
 import org.modelica.mdt.ui.ModelicaImages;
+import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.actions.MemberFilter;
 import org.modelica.mdt.ui.actions.MemberFilterAction;
 
@@ -67,6 +69,7 @@ import org.modelica.mdt.ui.actions.MemberFilterAction;
  * 
  * @since 0.6.8
  */
+@SuppressWarnings("unchecked")
 public class MemberFilterActionGroup extends ActionGroup {
 
 	public static final int FILTER_PROTECTED= MemberFilter.FILTER_PROTECTED;
@@ -235,14 +238,14 @@ public class MemberFilterActionGroup extends ActionGroup {
 			int filterProperty= propertyKeys[i];
 			boolean set= propertyValues[i];
 
-			//IPreferenceStore store= JavaPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store= UIPlugin.getDefault().getPreferenceStore();
 			boolean found= false;
 			for (int j= 0; j < fFilterActions.length; j++) {
 				int currProperty= fFilterActions[j].getFilterProperty();
 				if (currProperty == filterProperty) {
 					fFilterActions[j].setChecked(set);
 					found= true;
-					//store.setValue(getPreferenceKey(filterProperty), set);
+					store.setValue(getPreferenceKey(filterProperty), set);
 				}
 			}
 			if (found) {

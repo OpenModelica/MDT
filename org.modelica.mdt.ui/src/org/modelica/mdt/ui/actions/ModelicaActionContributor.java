@@ -2,32 +2,34 @@
  * (c) Copyright MDT Team, PELAB, 2006
  */
 
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.actions;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.modelica.mdt.ui.actions.ModelicaCorrectIndentationAction;
+import org.modelica.mdt.ui.view.ModelicaStatusLineContributor;
 
 
 /**
  * Contributes actions to the desktop's Edit menu and the toolbar.
- * org.modelica.mdt.ui.editor.ModelicaActionContributor
+ * org.modelica.mdt.ui.actions.ModelicaActionContributor
  */
 public class ModelicaActionContributor extends BasicTextEditorActionContributor
 {
 	protected ModelicaCorrectIndentationAction correctIndentationAction;
-
+	protected ModelicaStatusLineContributor mdtStatus;
 	/**
 	 * Default constructor.
 	 */
 	public ModelicaActionContributor() {
 		super();
 		correctIndentationAction = ModelicaCorrectIndentationAction.getInstance();
+		mdtStatus = new ModelicaStatusLineContributor();
 	}
 	
 	/* (non-Javadoc)
@@ -63,5 +65,16 @@ public class ModelicaActionContributor extends BasicTextEditorActionContributor
 		
 		correctIndentationAction.setEditor(editor);
 		correctIndentationAction.update();
+		
+		mdtStatus.update();
 	}
+	
+	@Override
+	public void contributeToStatusLine(IStatusLineManager statusLineManager)
+	{
+		super.contributeToStatusLine(statusLineManager);
+		statusLineManager.add(new Separator());
+		statusLineManager.add(mdtStatus);
+	}
+	
 }

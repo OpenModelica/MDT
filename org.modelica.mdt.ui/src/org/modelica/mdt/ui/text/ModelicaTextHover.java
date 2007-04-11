@@ -24,30 +24,25 @@
 
 package org.modelica.mdt.ui.text;
 
-import java.io.File;
 import java.util.Collection;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorInput;
+import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.compiler.CompilerException;
-import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.internal.core.FolderPackage;
 import org.modelica.mdt.internal.core.ModelicaComponent;
 import org.modelica.mdt.internal.core.ModelicaElement;
-import org.modelica.mdt.internal.core.ModelicaSourceFile;
-import org.modelica.mdt.ui.UIPlugin;
+import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.editor.ModelicaElementEditorInput;
 import org.modelica.mdt.ui.editor.SystemFileEditorInput;
 import org.modelica.mdt.core.compiler.IClassInfo;
@@ -123,7 +118,7 @@ public class ModelicaTextHover implements ITextHover
 				{
 					try
 					{
-						ModelicaElement c = (ModelicaElement)file.getClassAt(hoverRegion.getOffset());
+						IModelicaElement c = ((ModelicaEditor)fEditor).getElementAt(hoverRegion.getOffset());
 						while (c != null)
 						{
 							if (c != null) 
@@ -153,7 +148,7 @@ public class ModelicaTextHover implements ITextHover
 											info = getInformation(c.getFullName() + "." + word);						
 											if (info != null) return info;
 											ModelicaComponent cmp = (ModelicaComponent)comp;
-											return cmp.getVisbility().name().toLowerCase() + " " + cmp.getTypeName();
+											return cmp.getVisibility().name().toLowerCase() + " " + cmp.getTypeName();
 										}
 										if (comp instanceof IModelicaClass)
 										{
@@ -221,14 +216,14 @@ public class ModelicaTextHover implements ITextHover
 		
 		try
 		{
-			String info = UIPlugin.getDefault().getCompiler().getClassString(className);
-			info = info.trim();
+			ICompilerResult res = CompilerProxy.getClassString(className);
+			String info = res.getFirstResult().trim();
 			if (info.startsWith("\"")) info = info.substring(1);
 			if (info.endsWith("\"")) info = info.substring(0, info.length()-1);
 			info = info.trim();
 			if (!info.equals("")) return info + "\n";
 
-			IClassInfo classAttributes = UIPlugin.getDefault().getCompiler().getClassInfo(className);
+			IClassInfo classAttributes = CompilerProxy.getClassInfo(className);
 			return classAttributes.getRestriction().name();			
 		}
 		catch(UnexpectedReplyException e)

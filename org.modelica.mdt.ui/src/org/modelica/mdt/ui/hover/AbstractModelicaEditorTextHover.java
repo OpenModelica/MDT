@@ -28,6 +28,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
 
+import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
@@ -59,7 +61,7 @@ public abstract class AbstractModelicaEditorTextHover implements IModelicaEditor
 	 * @since 3.2
 	 */
 	private static String fgStyleSheet;
-	private IEditorPart fEditor;
+	private ModelicaEditor fEditor;
 	
 	private boolean DEBUG = false;	
 	
@@ -72,7 +74,7 @@ public abstract class AbstractModelicaEditorTextHover implements IModelicaEditor
 	 * @see IModelicaEditorTextHover#setEditor(IEditorPart)
 	 */
 	public void setEditor(IEditorPart editor) {
-		fEditor= editor;
+		fEditor= (ModelicaEditor)editor;
 	}
 
 	protected IEditorPart getEditor() {
@@ -149,7 +151,8 @@ public abstract class AbstractModelicaEditorTextHover implements IModelicaEditor
 					{
 						try
 						{
-							ModelicaElement c = (ModelicaElement)file.getClassAt(hoverRegion.getOffset());
+							IModelicaElement c = fEditor.getElementAt(hoverRegion.getOffset());
+							// (ModelicaElement)file.getClassAt(hoverRegion.getOffset());
 							while (c != null)
 							{
 								if (c != null) 
@@ -179,7 +182,7 @@ public abstract class AbstractModelicaEditorTextHover implements IModelicaEditor
 												info = getInformation(c.getFullName() + "." + word);						
 												if (info != null) return info;
 												ModelicaComponent cmp = (ModelicaComponent)comp;
-												return cmp.getVisbility().name().toLowerCase() + " " + cmp.getTypeName();
+												return cmp.getVisibility().name().toLowerCase() + " " + cmp.getTypeName();
 											}
 											if (comp instanceof IModelicaClass)
 											{
@@ -247,14 +250,14 @@ public abstract class AbstractModelicaEditorTextHover implements IModelicaEditor
 			
 			try
 			{
-				String info = UIPlugin.getDefault().getCompiler().getClassString(className);
-				info = info.trim();
+				 ICompilerResult res = CompilerProxy.getClassString(className);
+				 String info = res.getFirstResult().trim();
 				if (info.startsWith("\"")) info = info.substring(1);
 				if (info.endsWith("\"")) info = info.substring(0, info.length()-1);
 				info = info.trim();
 				if (!info.equals("")) return info + "\n";
 
-				IClassInfo classAttributes = UIPlugin.getDefault().getCompiler().getClassInfo(className);
+				IClassInfo classAttributes = CompilerProxy.getClassInfo(className);
 				return classAttributes.getRestriction().name();			
 			}
 			catch(UnexpectedReplyException e)

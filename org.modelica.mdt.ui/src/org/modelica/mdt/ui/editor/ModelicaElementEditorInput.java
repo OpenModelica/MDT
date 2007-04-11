@@ -67,7 +67,7 @@ public class ModelicaElementEditorInput extends FileEditorInput
 		super((IFile)element.getResource());
 		this.element = element;		
 	}
-
+	
 	/**
 	 * @return the modelica source file reference that this input represents
 	 */
@@ -93,13 +93,9 @@ public class ModelicaElementEditorInput extends FileEditorInput
 	{
 		IModelicaProject proj = element.getProject();
 		
-		memento.putInteger(ModelicaElementFactory.STORED_CLASS_KEY,
-				ModelicaElementFactory.MODELICA_ELEMENT_EDITOR_INPUT_CLASS);
-		memento.putString(ModelicaElementFactory.ELEMENT_PROJECT_NAME_KEY,
-				proj.getElementName());			
-		memento.putString(ModelicaElementFactory.ELEMENT_SOURCE_FILE_KEY, 
-				getSourceFile().getResource().getProjectRelativePath().
-					toOSString());
+		memento.putInteger(ModelicaElementFactory.STORED_CLASS_KEY, ModelicaElementFactory.MODELICA_ELEMENT_EDITOR_INPUT_CLASS);
+		memento.putString(ModelicaElementFactory.ELEMENT_PROJECT_NAME_KEY, proj.getElementName());			
+		memento.putString(ModelicaElementFactory.ELEMENT_SOURCE_FILE_KEY, getSourceFile().getResource().getProjectRelativePath().toOSString());
 	}
 	
 }

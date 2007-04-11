@@ -313,10 +313,9 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 		IToken typeToken        = new Token(ModelicaEditorColors.TYPE_ATTRIBUTE);
 		IToken numberToken      = new Token(ModelicaEditorColors.NUMBER_ATTRIBUTE);
 		IToken errorToken       = new Token(ModelicaEditorColors.ERROR_ATTRIBUTE);
-		IToken constructorToken = new Token(ModelicaEditorColors.CONSTRUCTOR_ATTRIBUTE);
 		IToken builtinToken     = new Token(ModelicaEditorColors.BUILTIN_ATTRIBUTE);
-		IToken functionToken    = new Token(ModelicaEditorColors.FUNCTION_ATTRIBUTE);		
-		IToken operatorsToken   = new Token(ModelicaEditorColors.OPERATORS_ATTRIBUTE);
+		//IToken functionToken    = new Token(ModelicaEditorColors.FUNCTION_ATTRIBUTE);		
+		//IToken operatorsToken   = new Token(ModelicaEditorColors.OPERATORS_ATTRIBUTE);
 		
 		setDefaultReturnToken(errorToken);
 		List<IRule> rules = new ArrayList<IRule>();

@@ -74,7 +74,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.modelica.mdt.ui.util.SWTUtil;
 
-
+@SuppressWarnings("unchecked")
 public class CustomFiltersDialog extends SelectionDialog {
 
 	private static final String SEPARATOR= ",";  //$NON-NLS-1$

@@ -22,7 +22,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.ui.editor.ModelicaSourceViewerConfig;
 
 /**
- * A simple {@linkplain org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration Java source viewer configuration}.
+ * A simple {@linkplain org.modelica.mdt.ui.editor.SourceViewerConfiguration Modelica source viewer configuration}.
  * <p>
  * This simple source viewer configuration basically provides syntax coloring
  * and disables all other features like code assist, quick outlines, hyperlinking, etc.
@@ -103,14 +103,14 @@ public class SimpleModelicaSourceViewerConfig extends ModelicaSourceViewerConfig
 	}
 
 	/*
-	 * @see org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration#getOutlinePresenter(org.eclipse.jface.text.source.ISourceViewer, boolean)
+	 * @see org.modelica.mdt.ui.editor.SourceViewerConfiguration#getOutlinePresenter(org.eclipse.jface.text.source.ISourceViewer, boolean)
 	 */
 	public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer, boolean doCodeResolve) {
 		return null;
 	}
 
 	/*
-	 * @see org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration#getHierarchyPresenter(org.eclipse.jface.text.source.ISourceViewer, boolean)
+	 * @see org.modelica.mdt.ui.editor.SourceViewerConfiguration#getHierarchyPresenter(org.eclipse.jface.text.source.ISourceViewer, boolean)
 	 */
 	public IInformationPresenter getHierarchyPresenter(ISourceViewer sourceViewer, boolean doCodeResolve) {
 		return null;

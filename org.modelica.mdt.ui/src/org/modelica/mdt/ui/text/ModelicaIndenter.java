@@ -364,8 +364,8 @@ public class ModelicaIndenter {
 				int lineOffset= line.getOffset();
 				int prevPos= Math.max(offset - 1, 0);
 				boolean isFirstTokenOnLine= fDocument.get(lineOffset, prevPos + 1 - lineOffset).trim().length() == 0;
-				int prevToken= fScanner.previousToken(prevPos, ModelicaHeuristicScanner.UNBOUND);
-				boolean bracelessBlockStart= true;
+				//int prevToken= fScanner.previousToken(prevPos, ModelicaHeuristicScanner.UNBOUND);
+				//boolean bracelessBlockStart= true;
 
 				switch (nextToken) 
 				{
@@ -382,16 +382,7 @@ public class ModelicaIndenter {
 						if (isFirstTokenOnLine)
 							matchCase= true;
 						break;
-					
-					//case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
-					//	if (bracelessBlockStart && !prefIndentBracesForBlocks())
-					//		unindent= true;
-					//	else if ((prevToken == Symbols.TokenCOLON || prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !prefIndentBracesForArrays())
-					//		unindent= true;
-					//	else if (!bracelessBlockStart && prefIndentBracesForMethods())
-					//		indent= true;
-					//	break;
-						
+											
 					case Symbols.TokenEND: // closing braces get unindented
 						if (isFirstTokenOnLine)
 							matchEnd= true;
@@ -581,12 +572,6 @@ public class ModelicaIndenter {
 				// indent assignments
 				fIndent= prefAssignmentIndent();
 				return fPosition;
-
-			// no colon in modelica	
-			//case Symbols.TokenCOLON:
-			// TODO handle ternary deep indentation
-			//	fIndent= prefCaseBlockIndent();
-			//	return fPosition;
 				
 			// indentation for blockless introducers:
 			case Symbols.TokenWHILE:
@@ -703,12 +688,6 @@ public class ModelicaIndenter {
 					// else: fIndent set by previous calls
 					return fPreviousPos;
 					
-				//case Symbols.TokenCOLON:
-				//	int pos= fPreviousPos;
-				//	if (!isConditional())
-				//		return pos;
-				//	break;
-
 				case Symbols.TokenEND:
 					if (skipModelicaScope())
 						continue;
@@ -788,30 +767,6 @@ public class ModelicaIndenter {
 			return prefMethodBodyIndent() + (prefIndentBracesForMethods() ? 1 : 0);
 		else
 			return fIndent;
-	}
-
-	/**
-	 * Returns true if the colon at the current position is part of a conditional
-	 * (ternary) expression, false otherwise.
-	 *
-	 * @return true if the colon at the current position is part of a conditional
-	 */
-	private boolean isConditional() {
-		while (true) {
-			nextToken();
-			switch (fToken) {
-
-				// search for case labels, which consist of (possibly qualified) identifiers or numbers
-				case Symbols.TokenIDENT:
-				case Symbols.TokenOTHER: // dots for qualified constants
-					continue;
-				case Symbols.TokenCASE:
-					return false;
-
-				default:
-					return true;
-			}
-		}
 	}
 
 	/**
@@ -1192,20 +1147,6 @@ public class ModelicaIndenter {
 
 
 	/**
-	 * Returns <code>true</code> if the next token received after calling
-	 * <code>nextToken</code> is either an equal sign or an array designator ('[]').
-	 *
-	 * @return <code>true</code> if the next elements look like the start of an array definition
-	 */
-	private boolean looksLikeArrayInitializerIntro() {
-		nextToken();
-		if (fToken == Symbols.TokenEQUAL || skipBrackets()) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Skips over the next <code>if</code> keyword. The current token when calling
 	 * this method must be an <code>else</code> keyword. Returns <code>true</code>
 	 * if a matching <code>if</code> could be found, <code>false</code> otherwise.
@@ -1441,13 +1382,13 @@ public class ModelicaIndenter {
 	{
 		Stack<Scope> s = new Stack<Scope>(); 
 		/* save the state if we need it */
-		int fSavedToken = fToken;
-		int fSavedPos   = fPosition;
+//		int fSavedToken = fToken;
+//		int fSavedPos   = fPosition;
 		/* see what is after 'end' */
 		previousToken(fPosition); /* skip 'end' */
 		previousToken(fPosition); /* move past end */		
-		int fEndPrevToken = fToken;
-		int fEndPos = fPosition;
+//		int fEndPrevToken = fToken;
+//		int fEndPos = fPosition;
 		String afterEnd = null;
 		if (fToken == Symbols.TokenIDENT) 
 			afterEnd = fScanner.fLastIdent;		
@@ -1546,17 +1487,6 @@ public class ModelicaIndenter {
 		}
 	}
 	
-	/**
-	 * Returns the possibly project-specific core preference defined under <code>key</code>.
-	 *
-	 * @param key the key of the preference
-	 * @return the value of the preference
-	 * @since 3.1
-	 */
-	private String getCoreFormatterOption(String key) {
-		return null;
-	}
-
 	private boolean prefUseTabs() {
 		/* return useTabs; */
 		return true;
@@ -1574,21 +1504,6 @@ public class ModelicaIndenter {
 		return true; // sensible default, no formatter setting
 	}
 
-	private int prefArrayIndent() {
-		return prefContinuationIndent(); // default
-	}
-
-	private boolean prefArrayDeepIndent() {
-		return true;
-	}
-
-	private boolean prefTernaryDeepAlign() {
-		return false;
-	}
-
-	private int prefTernaryIndent() {
-		return prefContinuationIndent();
-	}
 
 	private int prefCaseIndent() {
 		return 0; // sun standard
@@ -1596,12 +1511,6 @@ public class ModelicaIndenter {
 
 	private int prefAssignmentIndent() {
 		return 0; // prefBlockIndent();
-	}
-
-	private int prefCaseBlockIndent() {
-		if (true)
-			return prefBlockIndent();
-		return prefBlockIndent(); // sun standard
 	}
 
 	private int prefSimpleIndent() 
@@ -1655,10 +1564,6 @@ public class ModelicaIndenter {
 		return false; // sensible default
 	}
 
-	private boolean prefIndentBracesForArrays() {
-		return false; // sensible default
-	}
-
 	private boolean prefIndentBracesForMethods() {
 		return false; // sensible default
 	}
@@ -1671,13 +1576,4 @@ public class ModelicaIndenter {
 		return 2; // sensible default
 	}
 
-	/**
-	 * Returns <code>true</code> if the class is used outside the workbench,
-	 * <code>false</code> in normal mode
-	 *
-	 * @return <code>true</code> if the plug-ins are not available
-	 */
-	private boolean isStandalone() {
-		return true;
-	}
 }

@@ -39,7 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.assist;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -49,24 +49,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
-import org.modelica.mdt.core.IParameter;
 import org.modelica.mdt.core.IParent;
-import org.modelica.mdt.core.ISignature;
 import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -76,6 +70,9 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.UIPlugin;
+import org.modelica.mdt.ui.editor.ModelicaEditor;
+import org.modelica.mdt.ui.editor.ModelicaElementEditorInput;
+import org.modelica.mdt.ui.text.ModelicaLabelBuilder;
 
 /**
  * This class is responsible for proposing completions and giving
@@ -89,6 +86,7 @@ import org.modelica.mdt.ui.UIPlugin;
  * the parameters of classes that have parameters. Shows this information
  * after ( has been typed.
  * 
+ * @author Adrian Pop
  * @author Tyler Durden
  */
 public class ModelicaCompletionProcessor implements IContentAssistProcessor
@@ -96,122 +94,13 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	private IEditorPart editor;
 	
 	private static String functionProposal = "";
-	
-	/* Remember where in the context information the name of the function is.
-	 * This is used to highlight the function name in the context information.*/
-	private static int functionNameStart = 0;
-	private static int functionNameEnd = 0;
-	
+		
 	public ModelicaCompletionProcessor(IEditorPart editor) 
 	{
 		this.editor = editor;
 	}
-	
-	/*
-	 * This Validator makes sure that the context information should still be
-	 * visible. 
-	 */
-	protected static class Validator implements IContextInformationValidator,
-		IContextInformationPresenter
-	{
-		protected ITextViewer fViewer;
-		protected int fInstallOffset;
 		
-		/**
-		 * Check if the context information should still be displayed. Do this
-		 * by counting opening '(' and closing ')' parens and see if they match
-		 * up.
-		 */
-		public boolean isContextInformationValid(int offset)
-		{
-			/* If we've backed over the (, we're done with this information. */
-			if(offset - fInstallOffset < 0)
-			{
-				return false;
-			}
-			
-			String stringTyped =
-				ModelicaCompletionProcessor.getTypedString(fViewer, offset);
-			
-			/* Get start of parameter list. */
-			int pos = stringTyped.indexOf('(');
-			
-			/* If no ( was found, something is wrong and the context information
-			 * should not be displayed. */
-			if(pos == -1)
-			{
-				return false;
-			}
-			
-			/* Match parens to see if we're done typing. */
-			int pardepth = 0;
-			for(;pos < stringTyped.length();pos++)
-			{
-				if(stringTyped.charAt(pos) == '(')
-				{
-					pardepth++;
-				}
-				else if(stringTyped.charAt(pos) == ')')
-				{
-					pardepth--;
-				}
-			}
-			
-			/* The TYPING will go on as long as it has to! */
-			/* (or somebody yells stop, goes limb, passes out) */
-			if(pardepth == 0)
-			{
-				return false;
-			}
-			else if(pardepth < 0)
-			{
-				/* This is a bug */
-				
-				ErrorManager.logBug(UIPlugin.getSymbolicName(),
-						"The user typed too many ) and we don't even noticed.");
-				
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-		
-		public void install(IContextInformation info, ITextViewer viewer,
-				int offset)
-		{
-			fViewer = viewer;
-			fInstallOffset = offset;
-		}
-		
-		/**
-		 * Whenever the user types a character, the presentation can be updated.
-		 * We just update the presentation at the start, by formatting the
-		 * function name as BOLD.
-		 */
-		public boolean updatePresentation(int documentPosition,
-				TextPresentation presentation)
-		{
-			/* Only apply the style range as we start displaying this
-			 * information. */
-			if(fInstallOffset != documentPosition)
-			{
-				return false;
-			}
-			
-			//StyleRange x = presentation.getDefaultStyleRange();
-
-			presentation.addStyleRange(new StyleRange(functionNameStart, 
-					functionNameEnd - functionNameStart, 
-					null, null, //x.foreground, x.background, 
-					SWT.BOLD));
-			
-			return true;
-		}
-	}
-	
-	protected IContextInformationValidator validator = new Validator();
+	protected IContextInformationValidator fValidator = null;
 	
 	/**
 	 * Calculates the prefix of possible class/package/component names
@@ -248,58 +137,57 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			while
 			(	/* the characters we are looking for */
 				c != '\n' && c != '\t' && c != ' ' && c != '(' && c != ';'
-				&& c != ')');
+				&& c != ')' && c != '=');
 
 			offset++; /* exclude the charachter we looked at lastly */
 			return doc.get(offset, (end - offset));
 		}
 		catch (BadLocationException e)
 		{
-			ErrorManager.logBug(UIPlugin.getSymbolicName(),
-					"illegal position encountered while calculating prefix");
+			ErrorManager.logBug(UIPlugin.getSymbolicName(), "illegal position encountered while calculating prefix");
 		}
 		return ""; /* this will happend only if our code is broken somehow */
 	}
 
-	/**
-	 * Fetches the string that has been typed since the start of the function
-	 * name. For example if the user has typed:
-	 * 
-	 * x = Modelica.Math.sin(a
-	 * 
-	 * then this function will return
-	 * 
-	 * Modelica.Math.sin(a
-	 * 
-	 */
-	private static String getTypedString(ITextViewer viewer, int offset)
-	{
-		IDocument document = viewer.getDocument();
-		
-		int tempCounter = offset;
-		char ch = '\n';
-		String foundString = "";
-
-		while(true)
-		{
-			try
-			{
-				ch = document.getChar(--tempCounter);
-			}
-			catch(BadLocationException e)
-			{
-				return "";
-			}
-			if(ch == '\n' || ch == '\r')
-				break;
-			else if(foundString.startsWith(functionProposal))
-				break;
-			else
-				foundString = ch + foundString;
-		}
-		
-		return foundString;
-	}
+//	/**
+//	 * Fetches the string that has been typed since the start of the function
+//	 * name. For example if the user has typed:
+//	 * 
+//	 * x = Modelica.Math.sin(a
+//	 * 
+//	 * then this function will return
+//	 * 
+//	 * Modelica.Math.sin(a
+//	 * 
+//	 */
+//	private static String getTypedString(ITextViewer viewer, int offset)
+//	{
+//		IDocument document = viewer.getDocument();
+//		
+//		int tempCounter = offset;
+//		char ch = '\n';
+//		String foundString = "";
+//
+//		while(true)
+//		{
+//			try
+//			{
+//				ch = document.getChar(--tempCounter);
+//			}
+//			catch(BadLocationException e)
+//			{
+//				return "";
+//			}
+//			if(ch == '\n' || ch == '\r')
+//				break;
+//			else if(foundString.startsWith(functionProposal))
+//				break;
+//			else
+//				foundString = ch + foundString;
+//		}
+//		
+//		return foundString;
+//	}
 	
 	/**
 	 * Compute completion proposals by finding a class name and send that to
@@ -309,13 +197,9 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @param offset the offset into the document where we're editing
 	 * @return the proposed completions given the contents of the document
 	 */
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
-			int offset)
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset)
 	{
-		
-		CompletionProposalsGenerator propGen =
-			new CompletionProposalsGenerator(viewer, editor, offset);
-		
+		CompletionProposalsGenerator propGen = new CompletionProposalsGenerator(viewer, editor, offset);
 		return propGen.getProposals();
 	}
 
@@ -329,8 +213,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @return the context information given the function name that has been
 	 *         typed
 	 */
-	public IContextInformation[] computeContextInformation(ITextViewer viewer,
-			int offset)
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset)
 	{
 		/* If the offset is 0, there is no prefix and there can be no
 		 * context information */
@@ -339,22 +222,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			return new ContextInformation[0];
 		}
 		
-		IEditorInput input = editor.getEditorInput();
-		
-		if((input instanceof ModelicaElementEditorInput) == false)
-		{
-			/*
-			 * we should never be attached to an editor on anything else
-			 * but a modelica source file (a modelica element)
-			 */
-			ErrorManager.logBug(UIPlugin.getSymbolicName(),
-					"Context information prossesor invoked on a non-Modelica " +
-					"content");
-			
-			/* no context information if there is a bug ! */
-			return new ContextInformation[0];
-		}
-		
+		IEditorInput input = editor.getEditorInput();		
 		
 		/* get prefix from offset-1 to skip the first ( */
 		String prefix = getPrefix(viewer.getDocument(), offset - 1);
@@ -366,11 +234,22 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 			return new ContextInformation[0];
 		}
 		
-		LinkedList<IContextInformation> information =
-			new LinkedList<IContextInformation>();
+		LinkedList<IContextInformation> information = new LinkedList<IContextInformation>();
 		
-		IModelicaSourceFile file = 
-			((ModelicaElementEditorInput)input).getSourceFile();
+		
+		
+		IModelicaSourceFile file = null;
+		if((input instanceof ModelicaElementEditorInput) == false)
+		{
+			IModelicaElement me = ((ModelicaEditor)editor).getElementAt(offset, false);
+			if (me != null) file = me.getSourceFile(); 
+		}
+		else
+		{
+			file = ((ModelicaElementEditorInput)input).getSourceFile();
+		}
+		
+		if (file == null) return new ContextInformation[0];
 		
 		try
 		{
@@ -382,8 +261,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				   //(element.getElementName().startsWith(prefix) ||
 					element.getElementName().equals(prefix))
 				{
-					String proposal = 
-						constructProposalString((IModelicaClass)element);
+					String proposal = constructProposalString((IModelicaClass)element);
 	
 					if(information.size() == 0)
 					{
@@ -395,13 +273,11 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				}
 			}
 			/* Fetch information about what class we're typing inside */
-			IModelicaClass modelicaClass = file.getClassAt(offset);
+			IModelicaClass modelicaClass = (IModelicaClass)((ModelicaEditor)editor).getElementAt(offset, false); //file.getClassAt(offset);
 			if(modelicaClass != null)
 			{
-				computeContextInformationFromImports(modelicaClass, prefix,
-						offset, information);
-				computeContextInformationFromStdLib(modelicaClass, prefix,
-						offset, information);
+				computeContextInformationFromImports(modelicaClass, prefix, offset, information);
+				computeContextInformationFromStdLib(modelicaClass, prefix, offset, information);
 			}
 			else
 			{
@@ -449,24 +325,21 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		for(IModelicaImport imp : imports)
 		{
 			IModelicaClass importedPackage = imp.getImportedPackage();
-
+			if (importedPackage == null) continue; 
 			switch(imp.getType())
 			{
 			case QUALIFIED:
-				computeContextInformationFromPackage(importedPackage, null,
-						prefix, offset, info);
+				computeContextInformationFromPackage(importedPackage, null, prefix, offset, info);
 				break;
 			case UNQUALIFIED:
 				for(IModelicaElement child : importedPackage.getChildren())
 				{
-					computeContextInformationFromPackage((IModelicaClass)child,
-							null, prefix, offset, info);
+					computeContextInformationFromPackage((IModelicaClass)child, null, prefix, offset, info);
 				}
 				break;
 				
 			case RENAMING:
-				computeContextInformationFromPackage(importedPackage,
-						imp.getAlias(),	prefix, offset, info);
+				computeContextInformationFromPackage(importedPackage, imp.getAlias(),	prefix, offset, info);
 				break;
 			}
 		}
@@ -626,89 +499,12 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		throws ConnectException, CompilerInstantiationException,
 			UnexpectedReplyException, InvocationError, CoreException
 	{
-		IStandardLibrary stdLib = 
-			ModelicaCore.getModelicaRoot().getStandardLibrary();
+		IStandardLibrary stdLib = ModelicaCore.getModelicaRoot().getStandardLibrary(modelicaClass.getProject());
 		
 		for(IModelicaClass pkg : stdLib.getPackages())
 		{
-			computeContextInformationFromPackage(pkg, null, prefix, offset,
-					info);
+			computeContextInformationFromPackage(pkg, null, prefix, offset, info);
 		}
-	}
-
-	
-	/**
-	 * Constructs a textual representation of a functions signature.
-	 *  
-	 * @param modelicaClass the class that will have its input and output
-	 * parameters displayed
-	 * @return the constructed <code>String</code>
-	 */
-	private String constructProposalString(IModelicaClass modelicaClass)
-		throws ConnectException, InvocationError, UnexpectedReplyException,
-			CompilerInstantiationException, CoreException
-	{
-		ISignature signature = modelicaClass.getSignature();
-		if(signature == null)
-		{
-			return "";
-		}
-		
-		/*
-		 * If a function has several return values it will look like this:
-		 * 
-		 *  (Real, Integer) foo(Real a, Real b)
-		 *  
-		 * if a function only has one return value it will look like this:
-		 * 
-		 *  Real bar(Integer a)
-		 */
-		
-		String proposal;
-		
-		IParameter[] outputs = signature.getOutputs();
-
-		if(outputs.length >= 2)
-		{
-			proposal = "(";
-			
-			int i = 0;
-			for(;i < outputs.length - 1;i++)
-			{
-				proposal += outputs[i].getType() + ", ";
-			}
-			
-			proposal += outputs[i].getType() + ") ";
-		}
-		else if(outputs.length == 1)
-		{
-			proposal = outputs[0].getType() + " ";
-		}
-		else
-		{
-			proposal = "";
-		}
-		
-		functionNameStart = proposal.length();
-		
-		proposal += modelicaClass.getElementName() + "(";
-		
-		functionNameEnd = proposal.length() - 1;
-		
-		IParameter[] inputs = signature.getInputs();
-		if(inputs.length >= 1)
-		{
-			int i = 0;
-			for(;i < inputs.length - 1;i++)
-			{
-				proposal += inputs[i].getType() + " "
-					+ inputs[i].getName() + ", ";
-			}
-			proposal += inputs[i].getType() + " " + inputs[i].getName();
-		}
-		proposal += ")";
-
-		return proposal;
 	}
 	
 	/**
@@ -736,6 +532,23 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 
 	public IContextInformationValidator getContextInformationValidator()
 	{
-		return validator;
+		if (fValidator == null)
+			fValidator = new ModelicaParameterListValidator();
+		return fValidator;
 	}
+	
+	/**
+	 * Constructs a textual representation of a functions signature.
+	 *  
+	 * @param modelicaClass the class that will have its input and output
+	 * parameters displayed
+	 * @return the constructed <code>String</code>
+	 */
+	public String constructProposalString(IModelicaClass modelicaClass)
+		throws ConnectException, InvocationError, UnexpectedReplyException,
+			CompilerInstantiationException, CoreException
+	{
+		return ModelicaLabelBuilder.constructContextSignature(modelicaClass);
+	}
+	
 }

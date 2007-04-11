@@ -19,6 +19,8 @@ import org.eclipse.swt.graphics.Image;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaExtends;
+import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.compiler.CompilerException;
@@ -71,16 +73,16 @@ public class ModelicaImages
 	public static final String IMG_WIZBAN_PROJECT = "IMG_WIZBAN_PROJECT";
 	public static final String IMG_WIZBAN_CLASS = "IMG_WIZBAN_CLASS";
 	
+	public static final String IMG_MDT_STATUS_ONLINE = "IMG_MDT_STATUS_ONLINE";
+	public static final String IMG_MDT_STATUS_OFFLINE = "IMG_MDT_STATUS_OFFLINE";		
 	
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
 	private static final String T_OBJ= "obj16/"; 		//$NON-NLS-1$
-    private static final String T_OVR= "ovr16/"; 		//$NON-NLS-1$
 	private static final String T_WIZBAN= "wizban/"; 	//$NON-NLS-1$
-//	private static final String T_EVIEW= "eview16/"; 	//$NON-NLS-1$
-//	private static final String T_DLCL= "dtool16/"; 	//$NON-NLS-1$
     private static final String T_ELCL= "elcl16/"; 	//$NON-NLS-1$
+    private static final String T_ETOOL= "etool16/"; 	//$NON-NLS-1$    
 
 
 	
@@ -150,7 +152,8 @@ public class ModelicaImages
 		declareRegistryImage(IMG_WIZBAN_PACKAGE, T_WIZBAN + "package_wiz.gif");
 		declareRegistryImage(IMG_WIZBAN_PROJECT, T_WIZBAN + "project_wiz.gif");
 		declareRegistryImage(IMG_WIZBAN_CLASS, T_WIZBAN + "class_wiz.gif");
-				
+		declareRegistryImage(IMG_MDT_STATUS_ONLINE, T_ETOOL + "mdt_online.gif");
+		declareRegistryImage(IMG_MDT_STATUS_OFFLINE, T_ETOOL + "mdt_offline.gif");		
 	}
 	
 	/**
@@ -234,7 +237,27 @@ public class ModelicaImages
 		}
 		else if (element instanceof IModelicaComponent)
 		{
-			switch (((IModelicaComponent)element).getVisbility())
+			switch (((IModelicaComponent)element).getVisibility())
+			{
+			case PUBLIC:
+				return ModelicaImages.IMG_OBJS_PUBLIC_COMPONENT;
+			case PROTECTED:
+				return ModelicaImages.IMG_OBJS_PROTECTED_COMPONENT;
+			}
+		}
+		else if (element instanceof IModelicaImport)
+		{
+			switch (((IModelicaImport)element).getVisibility())
+			{
+			case PUBLIC:
+				return ModelicaImages.IMG_OBJS_PUBLIC_COMPONENT;
+			case PROTECTED:
+				return ModelicaImages.IMG_OBJS_PROTECTED_COMPONENT;
+			}
+		}
+		else if (element instanceof IModelicaExtends)
+		{
+			switch (((IModelicaExtends)element).getVisibility())
 			{
 			case PUBLIC:
 				return ModelicaImages.IMG_OBJS_PUBLIC_COMPONENT;

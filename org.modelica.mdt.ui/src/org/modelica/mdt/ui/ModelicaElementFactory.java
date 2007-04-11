@@ -128,7 +128,7 @@ public class ModelicaElementFactory implements IElementFactory
 		{
 			/* can't restore system file editor input without a path */
 		}
-		return new SystemFileEditorInput(path);
+		return new SystemFileEditorInput(path, null);
 	}
 
 

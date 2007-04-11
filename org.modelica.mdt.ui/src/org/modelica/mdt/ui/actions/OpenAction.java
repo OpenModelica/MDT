@@ -23,7 +23,6 @@
  *****************************************************************************/
 package org.modelica.mdt.ui.actions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Status;
@@ -47,7 +46,7 @@ import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.ui.util.ExceptionHandler;
+//import org.modelica.mdt.ui.util.ExceptionHandler;
 import org.modelica.mdt.ui.text.ModelicaCodeResolver;
 
 /**
@@ -216,7 +215,7 @@ public class OpenAction extends SelectionDispatchAction
 		return "Error opening"; 
 	}
 	
-	private void showError(InvocationTargetException e) {
-		ExceptionHandler.handle(e, getShell(), getDialogTitle(), "Error opening"); 
-	}
+//	private void showError(InvocationTargetException e) {
+//		ExceptionHandler.handle(e, getShell(), getDialogTitle(), "Error opening"); 
+//	}
 }

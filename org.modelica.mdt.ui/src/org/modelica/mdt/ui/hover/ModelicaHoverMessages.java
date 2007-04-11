@@ -14,11 +14,7 @@ final class ModelicaHoverMessages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String ModelicaHover_noAttachedInformation;
-	public static String ModelicaTextHover_createTextHover;
 	public static String ModelicaTextHover_makeStickyHint;
-	public static String NoBreakpointAnnotation_addBreakpoint;
-	public static String NLSStringHover_NLSStringHover_missingKeyWarning;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, ModelicaHoverMessages.class);

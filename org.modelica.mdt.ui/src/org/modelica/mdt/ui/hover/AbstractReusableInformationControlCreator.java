@@ -29,7 +29,7 @@ import org.eclipse.jface.text.IInformationControlCreatorExtension;
  */
 public abstract class AbstractReusableInformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension, DisposeListener {
 
-	private Map fInformationControls= new HashMap();
+	private Map<Shell, IInformationControl> fInformationControls= new HashMap<Shell, IInformationControl>();
 
 	/**
 	 * Creates the control.

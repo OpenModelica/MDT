@@ -248,7 +248,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @since 3.2
 	 */
 	private void initializeFont() {
-		Font font= JFaceResources.getFont("org.eclipse.jdt.ui.editors.textfont"); //$NON-NLS-1$
+		Font font= JFaceResources.getTextFont();
 		StyledText styledText= getViewer().getTextWidget();
 		styledText.setFont(font);
 	}

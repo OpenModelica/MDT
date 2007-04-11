@@ -122,7 +122,7 @@ public class ModelicaProjectsView extends ResourceNavigator
 		getViewer().setInput(ModelicaCore.getModelicaRoot());
 		getViewer().setSorter(new ModelicaElementSorter(ModelicaElementSorter.MODELICA));
 		UIPlugin.tag(getViewer().getTree(), TREE_TAG);
-		
+
 		drillDownAdapter = new DrillDownAdapter(getViewer());
 		
 		makeContextMenu();
@@ -134,6 +134,7 @@ public class ModelicaProjectsView extends ResourceNavigator
 		IWorkbenchPartSite site = getSite();
 		site.registerContextMenu(contextMenu, getViewer());
 		site.setSelectionProvider(getViewer());
+		
 		
 		getViewer().addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) 
@@ -150,26 +151,13 @@ public class ModelicaProjectsView extends ResourceNavigator
 		 * work in this view also, hehe
 		 */
 		IActionBars actionBars = getViewSite().getActionBars();
-		actionBars.setGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId(),
-				openProjectAction);		
-		actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId(),
-				closeProjectAction);
-		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT.getId(),
-				fullBuildAction);
+		actionBars.setGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId(),  openProjectAction);		
+		actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId(), closeProjectAction);
+		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT.getId(), fullBuildAction);
 		
 		hookDoubleClickAction();
-		
-//		getViewer().getTree().addKeyListener(new KeyAdapter()
-//		{
-//			@Override
-//			public void keyPressed(KeyEvent e) 
-//			{
-//				ModelicaProjectsView.this.handleKeyPressed(e);
-//			}
-//			
-//		});
 	}
-
+		
 	protected void handleOpen(OpenEvent event)
 	{
 		/*
@@ -191,21 +179,6 @@ public class ModelicaProjectsView extends ResourceNavigator
 			ErrorManager.showCoreError(e);
 		}
 	}
-
-
-//	protected void handleKeyPressed(KeyEvent e) 
-//	{
-//		switch(e.character)
-//		{
-//		case SWT.DEL:
-//			deleteAction.selectionChanged((IStructuredSelection) getViewer().getSelection());
-//			if (deleteAction.isEnabled())
-//			{
-//				deleteAction.run();
-//			}
-//			break;
-//		}
-//	}
 	
 	
 	public void makeActions() 
@@ -231,10 +204,8 @@ public class ModelicaProjectsView extends ResourceNavigator
 					
 		deleteAction = new DeleteResourceAction(shell);
 		
-		deleteAction.setDisabledImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-		deleteAction.setImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 
 		fullBuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 		getViewer().addSelectionChangedListener(fullBuildAction);
@@ -307,7 +278,9 @@ public class ModelicaProjectsView extends ResourceNavigator
 		manager.add(fullBuildAction);
 		fullBuildAction.selectionChanged((IStructuredSelection) getViewer().getSelection());
 		manager.add(openProjectAction);
+		openProjectAction.selectionChanged((IStructuredSelection) getViewer().getSelection());
 		manager.add(closeProjectAction);
+		closeProjectAction.selectionChanged((IStructuredSelection) getViewer().getSelection());
 		manager.add(new Separator());
 		manager.add(deleteAction);
 		deleteAction.selectionChanged((IStructuredSelection) getViewer().getSelection());
@@ -327,7 +300,6 @@ public class ModelicaProjectsView extends ResourceNavigator
         if (!isLinkingEnabled()) {
             return;
         }
-
         IFile file = ResourceUtil.getFile(editor.getEditorInput());
         if (file != null) {
             ISelection newSelection = new StructuredSelection(file);
@@ -340,7 +312,6 @@ public class ModelicaProjectsView extends ResourceNavigator
     }
 	
 	
-	/*
 	@Override
 	public void dispose()
 	{
@@ -350,5 +321,4 @@ public class ModelicaProjectsView extends ResourceNavigator
 		workspace.removeResourceChangeListener(openProjectAction);
 		workspace.removeResourceChangeListener(closeProjectAction);
 	}
-	*/
 }

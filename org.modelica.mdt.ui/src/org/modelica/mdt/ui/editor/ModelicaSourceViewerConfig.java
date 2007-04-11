@@ -23,6 +23,7 @@
 *******************************************************************************/
 package org.modelica.mdt.ui.editor;
 
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.text.hyperlink.*;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationPresenter;
@@ -38,6 +39,7 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
@@ -47,11 +49,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.modelica.mdt.ui.assist.ModelicaCompletionProcessor;
+import org.modelica.mdt.ui.hover.ModelicaAnnotationHover;
 import org.modelica.mdt.ui.hover.HTMLTextPresenter;
 import org.modelica.mdt.ui.hover.ModelicaInformationProvider;
 import org.modelica.mdt.ui.hover.ModelicaSourceHover;
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 import org.modelica.mdt.ui.text.ModelicaCodeScanner;
+import org.modelica.mdt.ui.text.ModelicaElementHyperlinkDetector;
 import org.modelica.mdt.ui.text.ModelicaMultilineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaSinglelineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaStringScanner;
@@ -153,19 +158,20 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	{
 		ContentAssistant assistant = new ContentAssistant();
 		
-		assistant.setContentAssistProcessor(new ModelicaCompletionProcessor(textEditor),
-				IDocument.DEFAULT_CONTENT_TYPE);
-		
+		assistant.setContentAssistProcessor(new ModelicaCompletionProcessor(textEditor), IDocument.DEFAULT_CONTENT_TYPE);
+		DialogSettings s = new DialogSettings("completion_proposal_size");
+		s.put(ContentAssistant.STORE_SIZE_X, "550");
+		s.put(ContentAssistant.STORE_SIZE_Y, "280");		
+		assistant.setRestoreCompletionProposalSize(s);
 		assistant.enableAutoActivation(true);
-		assistant.setAutoActivationDelay(100);
-		assistant.setProposalPopupOrientation(IContentAssistant
-				.PROPOSAL_OVERLAY);
-		assistant.setContextInformationPopupOrientation(IContentAssistant
-				.CONTEXT_INFO_ABOVE);
-		assistant.setProposalSelectorBackground(new Color(Display.getCurrent(),
-				new RGB(255, 255, 255)));
-		assistant.setContextInformationPopupBackground(new Color(Display.getCurrent(),
-				new RGB(255, 255, 255)));
+		assistant.setAutoActivationDelay(500);
+		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+		assistant.setProposalSelectorBackground(new Color(Display.getCurrent(), new RGB(255, 255, 255)));
+		assistant.setContextInformationPopupBackground(new Color(Display.getCurrent(), new RGB(255, 255, 255)));
+		assistant.setInformationControlCreator(getInformationPresenterControlCreator(sourceViewer));
+		assistant.setRepeatedInvocationMode(true);
+		
 
 		return assistant;
 	}
@@ -218,6 +224,7 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) 
 	{
+		
 		if (contentType.equals(IDocument.DEFAULT_CONTENT_TYPE))
 		{
 			ModelicaSourceHover textHover = new ModelicaSourceHover();
@@ -264,7 +271,7 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
 		presenter.setInformationProvider(provider, IModelicaPartitions.MODELICA_PARTITIONING);
 		presenter.setInformationProvider(provider, IModelicaPartitions.MODELICA_MULTI_LINE_COMMENT);
-		presenter.setSizeConstraints(60, 10, true, true);
+		presenter.setSizeConstraints(80, 10, true, false);
 		return presenter;
 	}
 	
@@ -272,14 +279,25 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		return null;
+		return new ModelicaAnnotationHover() {
+			protected boolean isIncluded(Annotation annotation) 
+			{
+				return isShowInVerticalRuler(annotation);
+			}			
+		};
 	}
 
 	/*
 	 * @see SourceViewerConfiguration#getOverviewRulerAnnotationHover(ISourceViewer)
+	 * @since 3.0
 	 */
 	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
-		return null;
+		return new ModelicaAnnotationHover() {
+			protected boolean isIncluded(Annotation annotation) 
+			{
+				return isShowInOverviewRuler(annotation);
+			}
+		};
 	}
 
 	/*

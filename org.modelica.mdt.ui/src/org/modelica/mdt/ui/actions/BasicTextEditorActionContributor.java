@@ -39,18 +39,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.ui.editor;
+package org.modelica.mdt.ui.actions;
 
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 /**
+ * @author Adrian Pop
  * @author Peter Bunus
  */
-public class BasicTextEditorActionContributor extends
-		EditorActionBarContributor 
+public class BasicTextEditorActionContributor extends EditorActionBarContributor 
 {
 	public BasicTextEditorActionContributor() 
 	{
 		super();
-	}
+	}	
 }

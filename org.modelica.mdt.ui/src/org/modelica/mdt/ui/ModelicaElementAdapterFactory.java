@@ -77,8 +77,7 @@ public class ModelicaElementAdapterFactory implements IAdapterFactory
 		{
 			return getWorkbenchAdapter();
 		}
-		else if (IResource.class.equals(adapterType) && 
-				(adaptableObject instanceof IModelicaElement))
+		else if (IResource.class.equals(adapterType) && (adaptableObject instanceof IModelicaElement))
 		{
 			return ((IModelicaElement)adaptableObject).getResource();
 		}

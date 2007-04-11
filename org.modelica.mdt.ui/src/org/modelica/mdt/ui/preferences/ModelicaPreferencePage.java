@@ -158,8 +158,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		useCustomOmcPath.setLayoutData(data);
 		
 		customOmcPath = new Text(group, SWT.SINGLE | SWT.BORDER | SWT.LEFT);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL |
-					GridData.GRAB_HORIZONTAL);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		customOmcPath.setLayoutData(data);
 
 		customOmcPath.setText(PreferenceManager.getCustomOmcPath());
