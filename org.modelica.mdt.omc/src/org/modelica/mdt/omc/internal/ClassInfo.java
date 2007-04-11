@@ -64,6 +64,7 @@ public class ClassInfo implements IClassInfo
 	private Restriction restrictionType;
 	private boolean isEncapsulated;
 	private DefinitionLocation defLocation;
+	private String documentation;
 	
 	/**
 	 * Create a ClassInfo object from the raw output of
@@ -74,11 +75,11 @@ public class ClassInfo implements IClassInfo
 	 * @throws IllegalRestrictionException if could not parse provided restriction type
 	 * @throws UnexpectedReplyException if the contents of the list are wierd
 	 */
-	public ClassInfo(String rawList) throws ModelicaParserException,
-		IllegalRestrictionException, UnexpectedReplyException
+	public ClassInfo(String rawList) throws ModelicaParserException, IllegalRestrictionException, UnexpectedReplyException
 	{
 		String sourceFilePath = null;
 		List defLocList = null;
+		documentation = null;
 
 		/* 
 		 * parse the interesting bits of getClassInformation() output, it's
@@ -108,6 +109,9 @@ public class ClassInfo implements IClassInfo
 			case 0: /* class restriction */
 				parseRestrictionType(le);
 				break;
+			case 1: /* class documentation */
+				parseDocumentation(le);
+				break;
 			case 2: /* source file path */
 				sourceFilePath = parseSourceFilePath(le);
 				break;
@@ -127,18 +131,42 @@ public class ClassInfo implements IClassInfo
 		}
 		
 		/* parse file coordinates and 'assemble' the definition location object */
-		int startLine = 
-				Integer.parseInt(((Element)defLocList.elementAt(1)).toString());
-		int startColumn = 
-			Integer.parseInt(((Element)defLocList.elementAt(2)).toString());
-		int endLine = 
-			Integer.parseInt(((Element)defLocList.elementAt(3)).toString());
-		int endColumn = 
-			Integer.parseInt(((Element)defLocList.elementAt(4)).toString());
+		int startLine = Integer.parseInt(((Element)defLocList.elementAt(1)).toString());
+		int startColumn = Integer.parseInt(((Element)defLocList.elementAt(2)).toString());
+		int endLine =  Integer.parseInt(((Element)defLocList.elementAt(3)).toString());
+		int endColumn = Integer.parseInt(((Element)defLocList.elementAt(4)).toString());
 		
-		defLocation = new DefinitionLocation(sourceFilePath,
-				startLine, startColumn, endLine, endColumn);
+		defLocation = new DefinitionLocation(sourceFilePath, startLine, startColumn, endLine, endColumn);
 	}
+
+	/**
+	 * Parse the element that represent restriction type
+	 */
+	private void parseDocumentation(ListElement le) throws UnexpectedReplyException, IllegalRestrictionException
+	{
+		if (!(le instanceof Element))
+		{
+			throw new UnexpectedReplyException("expected simple element, got a list");
+		}
+		
+		String str = ((Element)le).toString();
+		
+		/*
+		 * remove " around restriction type name 
+		 */
+		if (str.length() < 2) 
+		{
+			/* 
+			 * can't be two " around anything in a string with length
+			 * less then 2, we don't quite expect this
+			 */
+			throw new UnexpectedReplyException(str);
+		}
+		str = str.substring(1, str.length() - 1);
+		
+		documentation = str;
+	}
+	
 	
 	/**
 	 * Parse the element that represent restriction type
@@ -148,8 +176,7 @@ public class ClassInfo implements IClassInfo
 	{
 		if (!(le instanceof Element))
 		{
-			throw new UnexpectedReplyException("expected simple element, " +
-					"got a list");
+			throw new UnexpectedReplyException("expected simple element, got a list");
 		}
 		
 		String str = ((Element)le).toString();
@@ -178,8 +205,7 @@ public class ClassInfo implements IClassInfo
 	{
 		if (!(le instanceof List))
 		{
-			throw new UnexpectedReplyException("expected list, " +
-					"got a simple element");
+			throw new UnexpectedReplyException("expected list, got a simple element");
 		}
 		
 		if (((List)le).size() < 5)
@@ -198,8 +224,7 @@ public class ClassInfo implements IClassInfo
 	{
 		if (!(le instanceof List))
 		{
-			throw new UnexpectedReplyException("expected list, " +
-					"got a simple element");
+			throw new UnexpectedReplyException("expected list, got a simple element");
 		}
 		
 		Element element = null;
@@ -213,8 +238,7 @@ public class ClassInfo implements IClassInfo
 		}
 		catch (ClassCastException e)
 		{
-			throw new UnexpectedReplyException("expected simple element, " +
-				"got a list");
+			throw new UnexpectedReplyException("expected simple element, " + "got a list");
 		}
 		isEncapsulated = element.toString().equalsIgnoreCase("true");
 	}
@@ -228,8 +252,7 @@ public class ClassInfo implements IClassInfo
 	{
 		if (!(le instanceof Element))
 		{
-			throw new UnexpectedReplyException("expected simple element, " +
-					"got a list");
+			throw new UnexpectedReplyException("expected simple element, got a list");
 		}
 		
 		String str = ((Element)le).toString();
@@ -272,4 +295,13 @@ public class ClassInfo implements IClassInfo
 	{
 		return defLocation;
 	}
+	
+	/**
+	 * @author Adrian Pop
+	 * @return the documentation for this element or null if there isn't any.
+	 */
+ 	public String getDocumentation()
+	{
+		return documentation;
+	}	
 }
