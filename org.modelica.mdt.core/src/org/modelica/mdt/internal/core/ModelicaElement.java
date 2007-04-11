@@ -61,8 +61,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
  * @author Elmir Jagudin
  */
-abstract public class ModelicaElement extends PlatformObject 
-	implements IModelicaElement 
+abstract public class ModelicaElement extends PlatformObject implements IModelicaElement 
 {
 	public static ModelicaElement[] NO_ELEMENTS = new ModelicaElement[0];
 	protected static final Object NO_INFO = new Object();
@@ -154,5 +153,20 @@ abstract public class ModelicaElement extends PlatformObject
 		/* we are not defined in an external file by default */
 		return null;
 	}	
+	
+	public Visibility getVisibility()
+	{
+		return Visibility.NONE;
+	}
+	
+	/**
+	 * @author Adrian Pop
+	 * @return the documentation for this element or null if there isn't any.
+	 */
+	public String getDocumentation() throws ConnectException, UnexpectedReplyException, InvocationError,
+	CompilerInstantiationException, CoreException
+	{
+		return null;
+	}
 
 }

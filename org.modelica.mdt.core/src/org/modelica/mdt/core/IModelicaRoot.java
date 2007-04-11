@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.core;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -72,16 +73,14 @@ public interface IModelicaRoot
 	 * @return the handle to the new project
 	 * @throws CoreException on errors while creating the project
 	 */
-	public IModelicaProject createProject(String name)
-		throws CoreException;
+	public IModelicaProject createProject(IProject project) throws CoreException;
 	
 	/**
 	 * add a listener that will be notified on changes to the modelica elements
 	 * 
 	 * @param listener the listener object to notify of changes
 	 */
-	public void 
-		addModelicaElementChangeListener(IModelicaElementChangeListener listener);
+	public void addModelicaElementChangeListener(IModelicaElementChangeListener listener);
 	
 	/**
 	 * remove a listener, the specified listener will no longer be notified on
@@ -91,12 +90,10 @@ public interface IModelicaRoot
 	 * 
 	 * @param listener the listener to remove
 	 */
-	public void 
-		removeModelicaElementChangeListener
-			(IModelicaElementChangeListener listener);
+	public void removeModelicaElementChangeListener(IModelicaElementChangeListener listener);
 
 	/**
 	 * @return the reference to the standard library
 	 */
-	public IStandardLibrary getStandardLibrary();
+	public IStandardLibrary getStandardLibrary(IModelicaElement parent);
 }

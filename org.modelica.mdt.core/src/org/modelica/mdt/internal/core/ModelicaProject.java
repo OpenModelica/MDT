@@ -68,6 +68,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 /**
  * Wrappper around IProject to provide Modelica specific view.
  * 
+ * @author Adrian Pop
  * @author Elmir Jagudin
  */
 public class ModelicaProject extends ModelicaElement implements IModelicaProject 
@@ -122,25 +123,27 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException
 	{
-		LinkedList<IModelicaElementChange> changes = 
-			new LinkedList<IModelicaElementChange>();
+		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 
 		if ((delta.getFlags() & IResourceDelta.OPEN) != 0)
 		{
 			if (project.isOpen()) /* project was opened */
 			{
-				changes.add(new ModelicaElementChange(this, 
-						ChangeType.OPENED));
+				changes.add(new ModelicaElementChange(this, ChangeType.OPENED, delta));
 			}
 			else /* project was closed */
 			{
-				changes.add(new ModelicaElementChange(this, 
-						ChangeType.CLOSED));
+				changes.add(new ModelicaElementChange(this, ChangeType.CLOSED, delta));
 				rootFolder = null;
 			}
 		}
 		else
 		{
+			/* if only the markers have changed, don't bother! */
+			if ((delta.getFlags() & IResourceDelta.MARKERS) != 0 &&
+				(delta.getFlags() & IResourceDelta.OPEN) == 0	
+			) return changes;
+			
 			if (rootFolder != null)
 			{
 				changes.addAll(rootFolder.update(this, delta));
@@ -161,11 +164,9 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		 * start looking among local root packages and 
 		 * standard library root packages
 		 */
-		Collection<IModelicaClass> currentChildren =
-			new LinkedList<IModelicaClass>();
+		Collection<IModelicaClass> currentChildren = new LinkedList<IModelicaClass>();
 		currentChildren.addAll(getRootClasses());		
-		currentChildren.addAll
-			(ModelicaCore.getModelicaRoot().getStandardLibrary().getPackages());
+		currentChildren.addAll(ModelicaCore.getModelicaRoot().getStandardLibrary(this).getPackages());
 		
 		return ModelicaRoot.getPackage(currentChildren, packageName);
 	}
@@ -175,7 +176,6 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
  			UnexpectedReplyException, CoreException
 	{
 		getRootFolder(); /* make sure root folder is loaded */
-
 		return rootFolder.getRootClasses();
 	}
 
@@ -190,8 +190,7 @@ public class ModelicaProject extends ModelicaElement implements IModelicaProject
 		 * the resource tree until the desired resource is found
 		 * or some segment of the path does not match exiting children
 		 */
-		Collection<? extends IModelicaElement> currentChildren =
-			rootFolder.getChildren();
+		Collection<? extends IModelicaElement> currentChildren = rootFolder.getChildren();
 		IModelicaElement currentParent = null;
 		
 		for (String segment : resourcePath.segments())

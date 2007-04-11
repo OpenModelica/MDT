@@ -41,8 +41,11 @@
 
 package org.modelica.mdt.internal.core;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ModelicaCore;
@@ -54,9 +57,9 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 /**
  * An implementation of IModelicaImport interface.
  * 
- * This is just a basicaly struct for storning import info.
+ * This is just a basicaly struct for storing import info.
  */
-public class ModelicaImport implements IModelicaImport
+public class ModelicaImport extends ModelicaElement implements IModelicaImport
 {
 	protected boolean DEBUG = false;
 	/* the import type this class is representing */ 
@@ -65,26 +68,35 @@ public class ModelicaImport implements IModelicaImport
 	private IModelicaClass importedPackage = null;
 	/* for renaming inports this is the new name of the imported package */
 	private String alias;
+	private Visibility visibility;
+	private IDefinitionLocation location;
 	
 	/*
 	 * data needed to lazily load the imported package
 	 */
 	IModelicaProject importedPackageContainerProject;
 	String importedPackageName;
-	
+		
 	/**
 	 * Create an import of the qualified or unqualified type
 	 * @param containerProject the project where the import statment is defined
 	 * @param isQualified wheter if this is a qualified import
 	 * @param importedElement the full name if the imported package/class
 	 */
-	public ModelicaImport(IModelicaProject containerProject, 
-			boolean isQualified,
-			String importedElement) 
+	public ModelicaImport(
+			IModelicaElement parent, 
+			IModelicaProject containerProject, 
+			boolean isQualified, 
+			String importedElement,
+			Visibility visibility, 
+			IDefinitionLocation location) 
 	{ 
+		super(parent);
 		this.type = isQualified ? Type.QUALIFIED : Type.UNQUALIFIED;		
 		this.importedPackageContainerProject = containerProject;
 		this.importedPackageName = importedElement;
+		this.visibility = visibility;
+		this.location = location;
 	}
 	
 	/**
@@ -94,16 +106,23 @@ public class ModelicaImport implements IModelicaImport
 	 * @param alias the new name of the imported package
 	 * @param importedElement the full name if the imported package/class
 	 */
-	public ModelicaImport(IModelicaProject containerProject,
-			String alias,
-			String importedElement)
+	public ModelicaImport(
+			IModelicaElement parent, 
+			IModelicaProject containerProject, 
+			String alias, 
+			String importedElement,
+			Visibility visibility, 
+			IDefinitionLocation location) 
 	{ 
+		super(parent);
 		this.type = Type.RENAMING;
 		this.alias = alias;
 		this.importedPackageContainerProject = containerProject;
 		this.importedPackageName = importedElement;
+		this.visibility = visibility;
+		this.location = location;
 	} 
-	
+		
 	/**
 	 * @see org.modelica.mdt.core.IModelicaImport#getType()
 	 */
@@ -112,6 +131,26 @@ public class ModelicaImport implements IModelicaImport
 		return type;
 	}
 
+	/**
+	 * @see org.modelica.mdt.core.IModelicaImport#getElementName()
+	 */
+	public String getElementName()
+	{
+		String importName = importedPackageName;
+		if (type == Type.UNQUALIFIED) importName += ".*";
+		if (type == Type.RENAMING) importName += "=" + alias;
+		return "import " + importName + ";";
+	}
+	
+	/**
+	 * @see org.modelica.mdt.core.IModelicaImport#getFullName()
+	 */
+	public String getFullName()
+	{
+		return getElementName();
+	}
+	
+	
 	/**
 	 * @see org.modelica.mdt.core.IModelicaImport#getImportedPackage()
 	 */
@@ -140,22 +179,20 @@ public class ModelicaImport implements IModelicaImport
 	 * This function is used to implemet lazy loading of imported package
 	 * when it is first requested.
 	 */
-	private void loadImportedPackage() 
+	private synchronized void loadImportedPackage() 
 		throws ConnectException, CompilerInstantiationException, 
 			UnexpectedReplyException, InvocationError, CoreException
 	{
 		if(importedPackageContainerProject != null)
 		{
 			/* a package from some workbench project imported */
-			importedPackage = 
-				importedPackageContainerProject.getClass(importedPackageName);
+			importedPackage = importedPackageContainerProject.getClass(importedPackageName);
 		}
 		else
 		{
 			/* a package from standard library imported */
-			importedPackage = 
-				ModelicaCore.getModelicaRoot().getStandardLibrary().
-					getPackage(importedPackageName);			
+			/* TODO! FIXME! check this shit! fix the state of the compiler */			
+			importedPackage = ModelicaCore.getModelicaRoot().getStandardLibrary(getProject()).getPackage(importedPackageName);			
 		}
 				
 		if (importedPackage == null)
@@ -164,13 +201,29 @@ public class ModelicaImport implements IModelicaImport
 			//TODO throw an exception or something
 			if (DEBUG) System.out.println("omg, omg, omg ! " + importedPackageName);
 		}
-		
-		/*
-		 * remove references to the lazy loading data to allow them 
-		 * be garbage collected
-		 */
-		importedPackageContainerProject = null;
-		importedPackageName = null;
-
+}
+	
+	/**
+	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
+	 */
+	public IDefinitionLocation getLocation() throws CoreException
+	{
+		return location;
 	}
+
+	@Override
+	public String getFilePath() throws ConnectException, UnexpectedReplyException, InvocationError
+	{
+		return location.getPath();
+	}
+	
+	public Visibility getVisibility()
+	{
+		return visibility;
+	}
+	
+	public IResource getResource()
+	{
+		return getParent().getResource();
+	}	
 }

@@ -339,8 +339,7 @@ public class ElementInfo
 				 * remove "" around the path by removing
 				 * first and last character
 				 */
-				elementFile = 
-					elementFile.substring(1, elementFile.length() - 1);
+				elementFile = elementFile.substring(1, elementFile.length() - 1);
 
 			}
 			else if (rawField.startsWith("classrestriction="))

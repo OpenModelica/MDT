@@ -42,31 +42,11 @@
 package org.modelica.mdt.core;
 
 /**
- * A class component, that's like member variables in java lingo.
+ * A class component, that's like member variables in Modelica lingo.
  * 
- * @author Homer Simpson
+ * @author Adrian Pop
  */
 public interface IModelicaComponent extends IModelicaElement
 {
-	enum Visibility 
-	{
-		PUBLIC, PROTECTED;
-		
-		public static Visibility parse(String text)
-			throws IllegalVisibilityException
-		{
-			if (text.equals("public"))
-			{
-				return PUBLIC;
-			}
-			else if (!text.equals("protected"))
-			{
-				throw new IllegalVisibilityException(text + 
-						" is not a valid visibility");
-			}
-			return PROTECTED;	
-		}
-	};
 	
-	public Visibility getVisbility();
 }

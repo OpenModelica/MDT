@@ -64,15 +64,14 @@ public class DefinitionLocation implements IDefinitionLocation
 	
 	private Region region = null;
 	
-	public DefinitionLocation(String path, int startLine, int startColumn,
-							int endLine, int endColumn)
+	public DefinitionLocation(String path, int startLine, int startColumn, int endLine, int endColumn)
 	{
 		this.path = new File(path);
 		
-		if (!this.path.exists())
-		{
-			//TODO this should not be, throw an exception
-		}
+//		if (!this.path.exists())
+//		{
+//			//TODO this should not be, throw an exception
+//		}
 
 		this.sourceRegion = new DefinitionSourceRegion(startLine,startColumn,endLine,endColumn);
 	}
@@ -87,6 +86,7 @@ public class DefinitionLocation implements IDefinitionLocation
 		return sourceRegion;
 	}
 
+	
 	/**
 	 * @author Adrian Pop
 	 * @deprecated
@@ -101,6 +101,10 @@ public class DefinitionLocation implements IDefinitionLocation
 		return region;
 	}
 
+	/**
+	 * @author Adrian Pop
+	 * @deprecated
+	 */	
 	private void computeRegion()
 	{
 		

@@ -42,7 +42,18 @@
 package org.modelica.mdt.core;
 
 import java.util.regex.Pattern;
-
+import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Display;
+import org.modelica.mdt.internal.core.CorePlugin;
+import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.ModelicaRoot;
 
 public class ModelicaCore 
@@ -87,6 +98,37 @@ public class ModelicaCore
 
 	public static void start()
 	{
+	   IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	   IPathVariableManager pathMan = workspace.getPathVariableManager();
+	   String name = "OPENMODELICALIBRARY";
+	   IPath value = new Path(System.getenv(name));
+	   try
+	   {
+		   if (pathMan.validateName(name).isOK() && pathMan.validateValue(value).isOK()) 
+		   {
+		      pathMan.setValue(name, value);
+		   } 
+		   else 
+		   {
+				Display display = CorePlugin.getDisplay();
+				display.asyncExec(new Runnable()
+				{
+					public void run()
+					{
+						ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
+								new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
+										"OPENMODELICALIBRARY environment variable is not set!\n" +
+										"Please exit Eclipse and set the variable if you want to be able " +
+										"to browse the Modelica Library", null));
+					}
+				});
+		   }
+	   }
+	   catch(CoreException e)
+	   {
+		   ErrorManager.logError(e);
+	   }
+		
 		modelicaRoot = new ModelicaRoot();
 		modelicaRoot.start();
 	}

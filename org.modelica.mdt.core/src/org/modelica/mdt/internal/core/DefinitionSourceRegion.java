@@ -103,9 +103,9 @@ public class DefinitionSourceRegion implements ISourceRegion
 		// lines are equal
 		if (startLine == otherRegion.getStartLine() && endLine == otherRegion.getEndLine())
 		{
-			// all equal, return false!
+			// all equal, return true!
 			if (startColumn == otherRegion.getStartColumn() && endColumn == otherRegion.getEndColumn())
-				return false;
+				return true;
 		
 			if (startColumn <= otherRegion.getStartColumn() && endColumn > otherRegion.getEndColumn())
 				return true;

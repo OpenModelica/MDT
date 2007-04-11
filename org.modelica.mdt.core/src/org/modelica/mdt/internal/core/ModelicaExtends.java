@@ -39,39 +39,91 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.modelica.mdt.core;
+package org.modelica.mdt.internal.core;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.core.IDefinitionLocation;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaExtends;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
- * A representation of the imported statment, provides methods to
- * to query information about the imported elements and so on.
+ * An implementation of IModelicaExtends interface.
+ * 
+ * This is just a basicaly struct for storning extends info.
  */
-public interface IModelicaImport extends IModelicaElement
+public class ModelicaExtends extends ModelicaElement implements IModelicaExtends
 {
-	public enum Type 
-		{ QUALIFIED, UNQUALIFIED, RENAMING };
-		
-	/**
-	 * @return the type of the import statment
+	protected boolean DEBUG = false;
+	private Visibility visibility;
+	private IDefinitionLocation location;
+	
+	
+	/*
+	 * data needed to lazily load the extendsed package
 	 */
-	public Type getType();
+	String extendedName;
 	
 	/**
-	 * @return the package/class that this statment imports
+	 * Create an extends of the qualified or unqualified type
+	 * @param containerProject the project where the extends statment is defined
+	 * @param isQualified wheter if this is a qualified extends
+	 * @param extendsedElement the full name if the extendsed package/class
 	 */
-	public IModelicaClass getImportedPackage()
-		throws ConnectException, CompilerInstantiationException,
-			UnexpectedReplyException, InvocationError, CoreException;
+	public ModelicaExtends(
+			IModelicaElement parent, 
+			String extendedName,
+			Visibility visibility, 
+			IDefinitionLocation location) 
+	{ 
+		super(parent);
+		this.extendedName = "extends " + extendedName + ";";
+		this.visibility = visibility;
+		this.location = location;
+	}
 		
 	/**
-	 * @return for renaming import returns the name to which the imported
-	 * elemetns is renamed, for other types of imports this method is not 
-	 * defined
+	 * @see org.modelica.mdt.core.IModelicaExtends#getType()
 	 */
-	public String getAlias(); 
+	public String getElementName()
+	{
+		return extendedName;
+	}
+	
+	/**
+	 * @see org.modelica.mdt.core.IModelicaExtends#getType()
+	 */
+	public String getFullName()
+	{
+		return extendedName;
+	}
+	
+	public Visibility getVisibility()
+	{
+		return visibility;
+	}	
+	
+	/**
+	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
+	 */
+	public IDefinitionLocation getLocation()
+		throws CoreException
+	{
+		return location;
+	}
+
+	@Override
+	public String getFilePath() 
+		throws ConnectException, UnexpectedReplyException, InvocationError
+	{
+		return location.getPath();
+	}
+	
+	public IResource getResource()
+	{
+		return getParent().getResource();
+	}	
 }

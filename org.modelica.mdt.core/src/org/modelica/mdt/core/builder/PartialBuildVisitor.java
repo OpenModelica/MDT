@@ -75,17 +75,13 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 		/*
 		 * Perform the build on .mo files that have either been added or changed
 		 */
-		if(extension != null && extension.equals("mo")
-				&& (kind == IResourceDelta.ADDED
-						|| kind == IResourceDelta.CHANGED))
+		if(extension != null && extension.equals("mo") && (kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED))
 		{
 			IPath path = delta.getProjectRelativePath();
 			IFile file = delta.getResource().getProject().getFile(path);
 
-			file.deleteMarkers(IMarker.PROBLEM, false,
-					IResource.DEPTH_INFINITE);
-			file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false,
-					IResource.DEPTH_INFINITE);
+			file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_INFINITE);
+			file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false, IResource.DEPTH_INFINITE);
 			
 			try
 			{
@@ -93,7 +89,7 @@ public class PartialBuildVisitor implements IResourceDeltaVisitor
 				 * Try loading the file into OMC, and report errors if any
 				 * are found.
 				 */
-				SyntaxChecker.loadFileAndReportErrors(file);
+				SyntaxChecker.loadFileAndReportErrors(file, true);
 			}
 			catch(CompilerException e)
 			{

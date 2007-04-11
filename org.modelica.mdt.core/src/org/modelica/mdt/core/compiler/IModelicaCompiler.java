@@ -41,9 +41,11 @@
 
 package org.modelica.mdt.core.compiler;
 
+import java.io.OutputStream;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
+import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.IModelicaClass.Restriction;
@@ -120,8 +122,7 @@ public interface IModelicaCompiler
 	 * @return the list of names of top-level packages in the standard library
 	 * @throws ConnectException
 	 */	
-	public String[] getStandardLibrary()
-			throws ConnectException;
+	public String[] getStandardLibrary() throws ConnectException;
 
 	/**
 	 * Fetches information about a class, such as encapusulated status,
@@ -137,7 +138,7 @@ public interface IModelicaCompiler
 	 *  
 	 * @param className the full name of the class get the string for
 	 */
-	public String getClassString(String className) 
+	public ICompilerResult getClassString(String className) 
 		throws ConnectException, UnexpectedReplyException;	
 	
 	/**
@@ -145,7 +146,20 @@ public interface IModelicaCompiler
 	 *  
 	 * @param command
 	 */
-	public String sendExpression(String command, boolean showInConsole) 
+	public ICompilerResult sendExpression(String command, boolean showInConsole) 
 		throws ConnectException, UnexpectedReplyException;	
-	
+
+	/**
+	 * @author Adrian Pop
+	 * query if the OpenModelica compiler is running in the background.	 
+	 * @return <code>true</code> if the compiler is running.
+	 */
+	public boolean isRunning();	
+
+	/**
+	 * @author Adrian Pop
+	 * set the output console from the UI thread to print debug messages to it. 
+	 * 
+	 */	
+	public void setConsoleOutputStream(OutputStream outputStream);	
 }

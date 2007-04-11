@@ -75,8 +75,7 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	 * @param visibility whatever this component is public or protected
 	 * @param location location in the source code file
 	 */
-	public ModelicaComponent(IModelicaClass parent, String name, String typeName,
-				Visibility visibility, IDefinitionLocation location)
+	public ModelicaComponent(IModelicaClass parent, String name, String typeName, Visibility visibility, IDefinitionLocation location)
 	{
 		super(parent);
 		this.name = name;
@@ -92,7 +91,7 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	 */
 	public void setModelicaComponent(ModelicaComponent changedComponent)
 	{
-		this.visibility = changedComponent.getVisbility();
+		this.visibility = changedComponent.getVisibility();
 		this.typeName = changedComponent.getTypeName();
 		try
 		{
@@ -109,7 +108,7 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 		return name;
 	}
 
-	public Visibility getVisbility()
+	public Visibility getVisibility()
 	{
 		return visibility;
 	}
@@ -161,7 +160,12 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	{
 		/* return an MODIFIED by default */
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
-		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED));
+		/* if only the markers have changed, don't bother! */
+		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0 &&
+			(delta.getFlags() & IResourceDelta.OPEN) == 0	
+		) return changes;	
+		
+		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED, delta));
 		return changes;
 	}
 
@@ -182,9 +186,8 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	{
 		/* return an MODIFIED by default */
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
-		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED));
+		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED, null));
 		return changes;
-	}
-	
+	}	
 	
 }

@@ -57,8 +57,7 @@ public interface IStandardLibrary extends IModelicaElement
 	/**
 	 * @return the top classes in the standard library
 	 */
-	public Collection<IModelicaClass> getPackages() 
-		throws ConnectException, CompilerInstantiationException;
+	public Collection<IModelicaClass> getPackages() throws ConnectException, CompilerInstantiationException;
 
 	/**
 	 * get package in the standard library by name

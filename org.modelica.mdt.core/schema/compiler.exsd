@@ -6,7 +6,7 @@
          <meta.schema plugin="org.modelica.mdt" id="compiler" name="Modelica Compiler"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         Extension point for the OpenModelica Compiler
       </documentation>
    </annotation>
 
@@ -47,7 +47,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-               Here goes documentation.
+                  Here goes documentation.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.modelica.mdt.compiler.IModelicaCompiler"/>

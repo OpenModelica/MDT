@@ -64,8 +64,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 		 * @throws IllegalRestrictionException if unable to parse
 		 * restriction
 		 */
-		public static Restriction parse(String text) 
-			throws IllegalRestrictionException
+		public static Restriction parse(String text) throws IllegalRestrictionException
 		{
 			if (text.equalsIgnoreCase("CLASS"))
 			{
@@ -131,6 +130,13 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	 * @return the imports made in this class
 	 */
 	public Collection<IModelicaImport> getImports()
+		throws ConnectException, UnexpectedReplyException, InvocationError,
+			CompilerInstantiationException, CoreException;
+
+	/**
+	 * @return the imports made in this class
+	 */
+	public Collection<IModelicaExtends> getExtends()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException;
 	

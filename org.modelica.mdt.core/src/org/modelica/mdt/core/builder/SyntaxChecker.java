@@ -57,10 +57,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
@@ -92,12 +98,10 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 
 	public static boolean DEBUG = false;
 	
-	public static final String BUILDER_ID = 
-			"org.modelica.mdt.core.syntaxChecker";
+	public static final String BUILDER_ID = "org.modelica.mdt.core.syntaxChecker";
 
 	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-			throws CoreException
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
 	{
 		switch(kind)
 		{
@@ -140,8 +144,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * Performs an incremental build on a project given a resource delta of
 	 * changes.
 	 */
-	protected void incrementalBuild(IResourceDelta delta,
-			IProgressMonitor monitor)
+	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor)
 	{
 		try
 		{
@@ -285,7 +288,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 
 	/**
 	 * Calculate where the particular line begins and how long it stretches.
-	 *  
+	 *  @deprecated
 	 * @param filePath the full path to the file where to look for lines
 	 * @param lineno line number to find
 	 * @return region which line occupies or null if the does not 
@@ -315,6 +318,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	
 	/**
 	 * Wrapper function to get the region given an IFile and a line number
+	 * @deprecated
 	 * @param file the file that contains the line we're interested in
 	 * @param lineno the line number to find
 	 * @return region that this line occupies, or <code>null</code> if no such
@@ -330,7 +334,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	
 	/**
 	 * Tries to calculate a region for a given file and line number.
-	 * 
+	 * @deprecated
 	 * @param fileContents contents of the file that we want to search for line
 	 * @param lineno the line number to find
 	 * @return region that this line occupies, or <code>null</code> if no such
@@ -374,8 +378,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		 */
 		try
 		{
-			return new Region(d.getLineOffset(lineno - 1), 
-					d.getLineLength(lineno - 1));
+			return new Region(d.getLineOffset(lineno - 1), d.getLineLength(lineno - 1));
 		}
 		catch(BadLocationException e)
 		{
@@ -397,43 +400,95 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * @return the created marker, or <code>null</code> if marker couldn't
 	 * 		   be created
 	 */
-	public static void createMarkerAtLocation(final IFile file,
+	public static void createMarkerAtLocation(final IResource resource,
 			final int startLineNumber, final int startColumnNumber,
 			final int endLineNumber, final int endColumnNumber,
 			final String message, final String type)
 	{
-		IMarker marker = null;
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IMarker marker = null;
+					marker = resource.createMarker(type);
 
+					/*
+					IRegion startLineReg = null;
+					IRegion endLineReg = null;
+					try
+					{
+					 startLineReg = getLineRegion(resource.getLocation().toOSString(), startLineNumber);
+					 endLineReg = getLineRegion(resource.getLocation().toOSString(), endLineNumber);
+					}
+					catch(FileNotFoundException e)
+					{
+						throw 
+							new CoreException(
+									new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, "File Not Found", (Throwable)e));
+					}						
+
+					int start = startLineReg.getOffset() + startColumnNumber - 1;
+					int end = endLineReg.getOffset() + endColumnNumber - 1;
+					if(startLineNumber == endLineNumber
+							&& startColumnNumber == endColumnNumber)
+					{
+						end++;
+					}
+
+
+
+					marker.setAttribute(IMarker.CHAR_START, start);					
+					marker.setAttribute(IMarker.CHAR_END, end);
+					*/
+					marker.setAttribute(IMarker.LINE_NUMBER, startLineNumber);
+					marker.setAttribute(IMarker.MESSAGE, message);
+					marker.setAttribute(IMarker.LINE_NUMBER, startLineNumber);
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+					marker.setAttribute(IMarker.LOCATION, Integer.toString(startLineNumber));
+				}
+			};
+			
 		try
-		{
-			IRegion startLineReg = getLineRegion(file, startLineNumber);
-			IRegion endLineReg = getLineRegion(file, endLineNumber);
-			int start = startLineReg.getOffset() + startColumnNumber - 1;
-			int end = endLineReg.getOffset() + endColumnNumber - 1;
-			if(startLineNumber == endLineNumber
-					&& startColumnNumber == endColumnNumber)
-			{
-				end++;
-			}
-			
-			marker = file.createMarker(type);
-
-			marker.setAttribute(IMarker.CHAR_START, start);
-			marker.setAttribute(IMarker.CHAR_END, end);
-			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.LINE_NUMBER, startLineNumber);
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-			marker.setAttribute(IMarker.LOCATION, Integer.toString(startLineNumber));
-			
-			marker.setAttribute(IMarker.CHAR_START, start);
-			marker.setAttribute(IMarker.CHAR_END, end);
-		}
+		{			
+			run(getMarkerRule(resource), runnable);		
+		}		
 		catch(CoreException e)
 		{
 			ErrorManager.logError(e);
-		}
+		}				
 	}
 		
+    protected static ISchedulingRule getMarkerRule(IResource resource) {
+        ISchedulingRule rule = null;
+        if (resource != null) {
+            IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+            rule = ruleFactory.markerRule(resource);
+        }
+        return rule;
+    }
+
+    /**
+	 * Execute the given workspace runnable with the scheduling rule to use when running the operation.
+	 * 
+	 * @param rule the rule to use when running the operation
+     * @param wr the runnable operation
+     * @throws DebugException If a core exception occurs performing the operation
+	 * @since 3.1
+	 */
+    protected static void run(final ISchedulingRule rule, final IWorkspaceRunnable wr) throws CoreException {
+    	Thread t = new Thread()
+    	{
+    		public void run()
+    		{
+    			try{
+    			ResourcesPlugin.getWorkspace().run(wr, rule, IWorkspace.AVOID_UPDATE, null);
+    			}
+    			catch (CoreException e) {
+    				ErrorManager.logError(e);
+				}
+    		}
+    	};
+    	t.start();
+    }  
+    
 	protected void startupOnInitialization()
 	{
 		/* NOP */
@@ -451,15 +506,32 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * @throws UnexpectedReplyException
 	 * @throws CompilerInstantiationException 
 	 */
-	public static IParseResults loadFileAndReportErrors(IFile file)
+	public static IParseResults loadFileAndReportErrors(final IFile file, boolean checkForNamespaceProblems)
 		throws ConnectException, UnexpectedReplyException, 
 				CompilerInstantiationException
 	{
+		/* schedule a marker delete */
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_INFINITE);
+				file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false, IResource.DEPTH_INFINITE);
+			}
+		};
+		
+		try
+		{			
+			run(getMarkerRule(file), runnable);		
+		}		
+		catch(CoreException e)
+		{
+			ErrorManager.logError(e);
+		}				
+		
 		/*
 		 * Try loading the file into OMC and get the results.
 		 */
 		IParseResults res = CompilerProxy.loadSourceFile(file);
-
+		
 		/*
 		 * If there were any compile errors, report them as problems.
 		 */
@@ -471,7 +543,8 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		/*
 		 * Make sure that everything was defined in the correct namespace.
 		 */
-		checkForNamespaceProblems(file, res);
+		if (checkForNamespaceProblems)
+			checkForNamespaceProblems(file, res);
 		
 		return res;
 	}
@@ -491,9 +564,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		IModelicaProject project = 
-			ModelicaCore.getModelicaRoot()
-				.getProject(file.getProject().getName());
+		IModelicaProject project = ModelicaCore.getModelicaRoot().getProject(file.getProject().getName());
 
 		IModelicaElement element = null;
 		try 

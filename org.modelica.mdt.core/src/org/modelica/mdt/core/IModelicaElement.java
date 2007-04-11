@@ -60,6 +60,27 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public interface IModelicaElement extends IAdaptable
 {
+	enum Visibility 
+	{
+		PUBLIC, PROTECTED, NONE;
+		
+		public static Visibility parse(String text, boolean forceCorrect) throws IllegalVisibilityException
+		{
+			if (text.equals("public"))
+			{
+				return PUBLIC;
+			}
+			else if (text.equals("protected"))
+			{
+				return PROTECTED;
+			}
+			if (forceCorrect) throw new IllegalVisibilityException("Unknown visibility qualifier");
+			return NONE;	
+		}
+	};
+	
+	public Visibility getVisibility();
+	
 	public String getElementName();
 
 	/**
@@ -91,7 +112,7 @@ public interface IModelicaElement extends IAdaptable
 	
 	/**
 	 * For elements that are defined inside a file this method returns
-	 * the region of the file where the file is defined.
+	 * the region of the file where the location is is defined.
 	 * 
 	 * If the element is not defined in a file, null is returned.
 	 * 
@@ -134,5 +155,12 @@ public interface IModelicaElement extends IAdaptable
 	 * elements from standard library returns null here
 	 */
 	public IModelicaProject getProject();
-		
+
+	/**
+	 * @author Adrian Pop
+	 * @return the documentation for this element or null if there isn't any.
+	 */
+	public String getDocumentation()  throws ConnectException, UnexpectedReplyException, InvocationError,
+	CompilerInstantiationException, CoreException;
+	
 }

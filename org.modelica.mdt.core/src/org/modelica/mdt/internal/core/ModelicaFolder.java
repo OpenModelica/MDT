@@ -74,8 +74,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	
 	private boolean childrenLoaded = false;
 	
-	private Hashtable<IResource, IModelicaElement> children = 
-			new Hashtable<IResource, IModelicaElement>();
+	private Hashtable<IResource, IModelicaElement> children = new Hashtable<IResource, IModelicaElement>();
 	
 	protected ModelicaFolder(IModelicaElement parent, IContainer cont)
 	{
@@ -105,14 +104,10 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 		return children.values();
 	}
 
-	private void loadChildren() 
-		throws CoreException, ConnectException, UnexpectedReplyException,
-			CompilerInstantiationException
+	private void loadChildren() throws CoreException, ConnectException, UnexpectedReplyException, CompilerInstantiationException
 	{
 		// load children only if the project is open!
-		if (container != null &&
-			container.getProject() != null &&
-			container.getProject().isOpen())
+		if (container != null && container.getProject() != null && container.getProject().isOpen())
 		{
 			for (IResource member :  container.members())
 			{
@@ -151,13 +146,13 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	 * @throws InvocationError 
 	 * @throws CompilerInstantiationException 
 	 */
-	public List<IModelicaElementChange> update(IModelicaElement root, 
-			IResourceDelta delta) 
-			throws ConnectException, UnexpectedReplyException, InvocationError,
-				CompilerInstantiationException, CoreException
+	public List<IModelicaElementChange> update(IModelicaElement root, IResourceDelta delta) 
+			throws ConnectException, UnexpectedReplyException, InvocationError,	CompilerInstantiationException, CoreException
 	{
-		LinkedList<IModelicaElementChange> changes = 
-			new LinkedList<IModelicaElementChange>();
+		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
+
+		/* if only the markers have changed, don't bother! */
+		//if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) return changes;
 
 		if (!childrenLoaded)
 		{
@@ -182,7 +177,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 				{
 					element = wrap(res);
 					children.put(res, element);
-					changes.add(new ModelicaElementChange(parent, element));
+					changes.add(new ModelicaElementChange(parent, element, d));
 				} 
 				catch (CompilerException e)
 				{
@@ -192,8 +187,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 				break;
 			case IResourceDelta.REMOVED:
 				children.remove(res);
-				changes.add(new ModelicaElementChange(element,
-						ChangeType.REMOVED));
+				changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, d));
 				break;
 			case IResourceDelta.CHANGED:
 				if (element instanceof ModelicaFolder)
@@ -207,13 +201,12 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 						
 						/* remove folder object */
 						children.remove(res);
-						changes.add(new ModelicaElementChange(element,
-								ChangeType.REMOVED));
+						changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, d));
 
 						/* add package object */
 						element = wrap(res);
 						children.put(res, element);
-						changes.add(new ModelicaElementChange(parent, element));
+						changes.add(new ModelicaElementChange(parent, element, d));
 					}
 					else
 					{
@@ -231,13 +224,12 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 						
 						/* remove folder object */
 						children.remove(res);
-						changes.add(new ModelicaElementChange(element,
-								ChangeType.REMOVED));
+						changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, d));
 
 						/* add package object */
 						element = wrap(res);
 						children.put(res, element);
-						changes.add(new ModelicaElementChange(parent, element));
+						changes.add(new ModelicaElementChange(parent, element, d));
 					}
 					else
 					{
@@ -250,8 +242,8 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 				}
 				else
 				{
-					changes.add(new ModelicaElementChange(element, 
-							ChangeType.MODIFIED));
+					if ((d.getFlags() & IResourceDelta.CONTENT) != 0) 
+						changes.add(new ModelicaElementChange(element, ChangeType.MODIFIED, d));
 				}
 				break;
 				
@@ -263,13 +255,14 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 	
 	public static boolean checkIfMorphedIntoPackage(IResourceDelta delta)
 	{
-		for (IResourceDelta d : 
-			delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.CHANGED))
+		/* if only the markers have changed, don't bother! */
+		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) return false;
+		
+		for (IResourceDelta d : delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.CHANGED))
 		{
 			IResource res = d.getResource();
 			
-			if (res.getType() == IResource.FILE && 
-					res.getName().equals("package.mo"))
+			if (res.getType() == IResource.FILE && res.getName().equals("package.mo"))
 			{
 				try
 				{
@@ -288,13 +281,14 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 
 	public static boolean checkIfMorphedIntoFolder(IResourceDelta delta)
 	{
-		for (IResourceDelta d : 
-			delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.CHANGED))
+		/* if only the markers have changed, don't bother! */
+		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) return false;
+		
+		for (IResourceDelta d : delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.CHANGED))
 		{
 			IResource res = d.getResource();
 			
-			if (res.getType() == IResource.FILE && 
-					res.getName().equals("package.mo"))
+			if (res.getType() == IResource.FILE && res.getName().equals("package.mo"))
 			{
 				switch (d.getKind())
 				{
@@ -403,7 +397,15 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			}
 			else if (element instanceof ModelicaFolder)
 			{
-				pkgs.addAll(((ModelicaFolder)element).getRootClasses());
+				/* filter here! */
+				IModelicaFolder fe = (ModelicaFolder)element;
+				if (fe.getElementName().equalsIgnoreCase("omc_release") || 
+					fe.getElementName().equalsIgnoreCase("omc_debug") ||	
+					fe.getElementName().equalsIgnoreCase("testsuite"))
+				{
+					/* nothing */
+				}
+				else pkgs.addAll(((ModelicaFolder)element).getRootClasses());
 			}
 			else if (element instanceof IModelicaSourceFile)
 			{

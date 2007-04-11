@@ -117,6 +117,7 @@ public class ModelicaParser
 		// strings that later are thrown away. Slowness, the slowness!
 		String subString = "";
 		int depth = 0;
+		int tupleDepth = 0;
 		boolean listFound = false;
 		boolean insideString = false;
 		for(int characterPosition = 0; characterPosition < str.length(); characterPosition++)
@@ -134,6 +135,7 @@ public class ModelicaParser
 
 				subString += "\\" + str.charAt(characterPosition);
 			}
+			
 			else if(str.charAt(characterPosition) == '"')
 			{
 				/* If we're not inside a string, enter string mode*/
@@ -149,13 +151,23 @@ public class ModelicaParser
 				
 				subString += '"';
 			}
+			else if(str.charAt(characterPosition) == '<')
+			{
+				if(!insideString) tupleDepth++;
+				subString += '<';
+			}			
+			else if(str.charAt(characterPosition) == '>')
+			{
+				if(!insideString) tupleDepth--;
+				subString += '>';
+			}			
 			else if(str.charAt(characterPosition) == '{' && insideString == false)
 			{
 				listFound = true;
 				depth++;
 				subString += '{';
 			}
-			else if(str.charAt(characterPosition) == ',' && depth == 0 && insideString == false)
+			else if(str.charAt(characterPosition) == ',' && depth == 0 && insideString == false && tupleDepth == 0)
 			{
 				/*
 				 * If we're at depth 0, then we've found a list (or element)

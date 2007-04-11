@@ -47,14 +47,14 @@ import org.eclipse.jface.text.IRegion;
 public interface IDefinitionLocation
 {
 	/**
-	 * @return the region in the source file where this elements is defined
+	 * @return the region in the source file where this element is defined
 	 */
 	public ISourceRegion getSourceRegion();
 	
 	/**
 	 * @author Adrian Pop
 	 * @deprecated
-	 * @return the region in the source file where this elements is defined
+	 * @return the region in the source file where this element is defined
 	 * @see IDefinitionLocation#getSourceRegion
 	 */
 	public IRegion getRegion();	

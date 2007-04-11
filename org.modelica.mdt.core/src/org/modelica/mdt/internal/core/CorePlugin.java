@@ -41,15 +41,21 @@
 
 package org.modelica.mdt.internal.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ModelicaCore;
 import org.osgi.framework.BundleContext;
 
@@ -61,20 +67,16 @@ import org.osgi.framework.BundleContext;
 
 public class CorePlugin extends AbstractUIPlugin
 {
-	public static final String MODELICA_NATURE = 
-		"org.modelica.mdt.core.ModelicaNature";
+	public static final String MODELICA_NATURE = "org.modelica.mdt.core.ModelicaNature";
 
 	/* human readable name of the plugin */
-	public static final String PLUGIN_HUMAN_NAME = 
-		"Modelica Development Tooling Plugin";
+	public static final String PLUGIN_HUMAN_NAME = "Modelica Development Tooling Plugin";
 
 	/* extension point ID for modelica compilers */
-	public static final String COMPILER_EXTENSION_ID = 
-		"org.modelica.mdt.core.compiler";
+	public static final String COMPILER_EXTENSION_ID = "org.modelica.mdt.core.compiler";
 	
-	public static final String UNEXPECTED_NAMESPACE_MARKER_ID =
-		"org.modelica.mdt.core.unexpectednamespacemarker";
-	
+	public static final String UNEXPECTED_NAMESPACE_MARKER_ID = "org.modelica.mdt.core.unexpectednamespacemarker";
+		
 	/* The shared instance. */
 	private static CorePlugin plugin;
 	
@@ -86,6 +88,54 @@ public class CorePlugin extends AbstractUIPlugin
 		plugin = this;
 	}
 
+//	class LazyLoadThread extends Thread
+//	{
+//		private Vector<IModelicaImport> imports = null;;
+//		
+//		public LazyLoadThread()
+//		{
+//			super("LazyLoading for Class:" + getElementName());
+//			this.imports = imports;
+//			setPriority(Thread.MIN_PRIORITY);
+//		}
+//				
+//		public void run()
+//		{
+//			/* wait a bit before loading imports */
+//			try{ Thread.sleep(10000);} catch(InterruptedException e) {/* ignore */}			
+//			try
+//			{
+//				for (IModelicaImport i : this.imports)
+//				{
+//					/* wait a bit between import loading */
+//					try{ Thread.sleep(100);} catch(InterruptedException e) {/* ignore */}					
+//					i.getImportedPackage();
+//				}
+//
+//			}
+//			catch(Exception e)
+//			{
+//				ErrorManager.logError(e);
+//			}
+//		}
+//	}
+//	
+//	LazyLoadImport lazyLoadImports = new LazyLoadImport(new Vector<IModelicaImport>(imports));
+//	lazyLoadImports.start();
+	
+	
+	private static Map lazyLoadList = new HashMap(); 
+	
+	public Map getLazyLoadList()
+	{
+		return lazyLoadList;
+	}
+
+	public void addToLazyLoadList()
+	{
+		//return lazyLoadList;
+	}
+	
 	/**
 	 * 
 	 * @param project the project that should be marked as Modelica project
@@ -114,6 +164,37 @@ public class CorePlugin extends AbstractUIPlugin
 		return plugin;
 	}
 	
+	IWorkbenchListener onExitListener = new IWorkbenchListener()
+	{
+
+		public void postShutdown(IWorkbench workbench) {
+			/* do nothing */
+		}
+
+		public boolean preShutdown(IWorkbench workbench, boolean forced) {
+			try
+			{
+				if (!CompilerProxy.isRunning()) return true;
+			}
+			catch (Exception e) { }
+			
+			boolean choice = 
+				MessageDialog.openConfirm(
+					getShell(), 
+					"Modelica Development Tooling", 
+					"The OpenModelica compiler is running in the background.\n " +
+					"Should we stop it? If you have other clients connected choose 'Cancel'.");
+			try
+			{
+				if (choice) CompilerProxy.sendExpression("quit()", true);
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+			}
+			return true;
+		}
+	};
+	
 	/**
 	 * This method is called upon plug-in activation
 	 * @param context
@@ -122,6 +203,7 @@ public class CorePlugin extends AbstractUIPlugin
 	{
 		super.start(context);
 		ModelicaCore.start();
+		getWorkbench().addWorkbenchListener(onExitListener);
 	}
 
 	/**
@@ -132,6 +214,7 @@ public class CorePlugin extends AbstractUIPlugin
 		ModelicaCore.stop();
 		plugin = null;
 		super.stop(context);
+		getWorkbench().removeWorkbenchListener(onExitListener);		
 	}
 
 	/**
@@ -156,7 +239,7 @@ public class CorePlugin extends AbstractUIPlugin
 	public static IWorkbenchPage getActivePage() 
 	{
 		return getDefault().internalGetActivePage();
-	}
+	}	
 	
 	public static Shell getShell()
 	{

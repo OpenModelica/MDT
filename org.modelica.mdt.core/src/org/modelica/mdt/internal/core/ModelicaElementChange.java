@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.internal.core;
 
+import org.eclipse.core.resources.IResourceDelta;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
 
@@ -54,6 +55,7 @@ public class ModelicaElementChange implements IModelicaElementChange
 	private IModelicaElement element;
 	private Object parent;
 	private ChangeType type;
+	private IResourceDelta delta;
 	
 
 	/**
@@ -62,10 +64,11 @@ public class ModelicaElementChange implements IModelicaElementChange
 	 * @param parent the parent where element was added
 	 * @param element the element that was added
 	 */
-	protected ModelicaElementChange(Object parent, IModelicaElement element)
+	protected ModelicaElementChange(Object parent, IModelicaElement element, IResourceDelta delta)
 	{
 		this.parent = parent;
 		this.element = element;
+		this.delta = delta;		
 		type = ChangeType.ADDED;
 	}
 	
@@ -81,10 +84,11 @@ public class ModelicaElementChange implements IModelicaElementChange
 	 * @param type the type of change (don't use ADDED type here)
 	 * @see ModelicaElementChange#ModelicaElementChange(IModelicaElement, ChangeType)
 	 */
-	protected ModelicaElementChange(IModelicaElement element, ChangeType type)
+	protected ModelicaElementChange(IModelicaElement element, ChangeType type, IResourceDelta delta)
 	{
 		this.element = element;
 		this.type = type;
+		this.delta = delta;
 	}
 	
 	/**
@@ -103,6 +107,14 @@ public class ModelicaElementChange implements IModelicaElementChange
 		return type;
 	}
 
+	/**
+	 * @see org.modelica.mdt.core.IModelicaElementChange#getDelta()
+	 */
+	public IResourceDelta getDelta()
+	{
+		return delta;
+	}
+	
 	public Object getParent()
 	{
 		return parent;

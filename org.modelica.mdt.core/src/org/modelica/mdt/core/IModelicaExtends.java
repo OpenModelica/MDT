@@ -41,37 +41,11 @@
 
 package org.modelica.mdt.core;
 
-import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.compiler.CompilerInstantiationException;
-import org.modelica.mdt.core.compiler.ConnectException;
-import org.modelica.mdt.core.compiler.InvocationError;
-import org.modelica.mdt.core.compiler.UnexpectedReplyException;
-
 /**
  * A representation of the imported statment, provides methods to
  * to query information about the imported elements and so on.
  */
-public interface IModelicaImport extends IModelicaElement
-{
-	public enum Type 
-		{ QUALIFIED, UNQUALIFIED, RENAMING };
-		
-	/**
-	 * @return the type of the import statment
-	 */
-	public Type getType();
+public interface IModelicaExtends extends IModelicaElement
+{		
 	
-	/**
-	 * @return the package/class that this statment imports
-	 */
-	public IModelicaClass getImportedPackage()
-		throws ConnectException, CompilerInstantiationException,
-			UnexpectedReplyException, InvocationError, CoreException;
-		
-	/**
-	 * @return for renaming import returns the name to which the imported
-	 * elemetns is renamed, for other types of imports this method is not 
-	 * defined
-	 */
-	public String getAlias(); 
 }

@@ -62,6 +62,8 @@ import org.modelica.mdt.core.preferences.PreferenceManager;
  * Provides methods to log errors, warning and to display error to the
  * user.
  * 
+ * @author Adrian Pop
+ * @author MDT Team
  * @author Homer Simpson
  */
 public class ErrorManager
@@ -254,7 +256,7 @@ public class ErrorManager
 		}
 		else if (exception instanceof UnexpectedReplyException)
 		{
-			message = "Compatibility problems while communicating with the " +
+			message = "Problems while communicating with the " +
 				compilerName + ". " + upgrade_your_software +
 				" You can also try to consult the plugins project homepage " +
 				"for compatibility problems.";
@@ -270,8 +272,7 @@ public class ErrorManager
 				/* it is time to bug user again */
 				showErrorDialog = true;
 
-				nextUnexpectedReplyErrorShown = 
-					now + BUG_USER_WITH_ERRORS_INTERVAL;
+				nextUnexpectedReplyErrorShown = now + BUG_USER_WITH_ERRORS_INTERVAL;
 			}
 			else
 			{
@@ -299,18 +300,18 @@ public class ErrorManager
 		logError(status);
 		
 		/* display error to the user */
-//		if (showErrorDialog)
-//		{
-//			Display display = CorePlugin.getDisplay();
-//			display.asyncExec(new Runnable()
-//			{
-//				public void run()
-//				{
-//					ErrorDialog.openError(CorePlugin.getShell(),	
-//							"Error", null, status);
-//				}
-//			});
-//		}
+		if (showErrorDialog)
+		{
+			Display display = CorePlugin.getDisplay();
+			display.asyncExec(new Runnable()
+			{
+				public void run()
+				{
+					ErrorDialog.openError(CorePlugin.getShell(),	
+							"Error", null, status);
+				}
+			});
+		}
 	}
 
 	/**
@@ -324,15 +325,18 @@ public class ErrorManager
 		/* log error */
 		logError(exception);
 		
-		Display display = CorePlugin.getDisplay();
-		display.asyncExec(new Runnable()
+		if (PreferenceManager.getDisplayCompErrors())
 		{
-			public void run()
+			Display display = CorePlugin.getDisplay();
+			display.asyncExec(new Runnable()
 			{
-				ErrorDialog.openError(CorePlugin.getShell(),	
-						"Error", null, exception.getStatus());
-			}
-		});
+				public void run()
+				{
+					ErrorDialog.openError(CorePlugin.getShell(),	
+							"Error", null, exception.getStatus());
+				}
+			});
+		}
 	}
 
 	/**

@@ -41,7 +41,10 @@
 
 package org.modelica.mdt.core;
 
+import org.eclipse.core.resources.IResourceDelta;
+
 /**
+ * @author Adrian Pop
  * @author Elmir Jagudin
  */
 
@@ -66,5 +69,7 @@ public interface IModelicaElementChange
 	 * @return the type of the change
 	 */
 	public ChangeType getChangeType();
+	
+	public IResourceDelta getDelta();
 
 }

@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.core;
 
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Vector;
 
@@ -50,10 +51,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.modelica.mdt.core.compiler.IClassInfo;
+import org.eclipse.core.runtime.jobs.ILock;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
+import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -71,16 +73,62 @@ import org.modelica.mdt.internal.core.CorePlugin;
  * 
  */
 //TODO move this to org.modelica.mdt.internal.core package !
-public class CompilerProxy
+public class CompilerProxy //implements IModelicaCompiler
 {
 	private static IModelicaCompiler compiler = null;
+	final static ILock lock = Platform.getJobManager().newLock();	
 	
-	public static IModelicaCompiler getCompiler() 
-		throws CompilerInstantiationException
+	public static IModelicaCompiler getCompiler() throws CompilerInstantiationException
 	{
 		if (compiler == null)
 		{
 			compiler = loadCompiler();
+			
+//			if (!getCompiler().isRunning())
+//			{
+//				// make an interactive job for running the compiler				
+//				Job compilerJob = new Job("Starting the OpenModelica Compiler")
+//				{
+//					public IStatus run(IProgressMonitor monitor)
+//					{
+//						try
+//						{
+//							lock.acquire(100);
+//
+//							monitor.beginTask("Trying sending 'getVersion()'", 10);
+//							while (!monitor.isCanceled())
+//							{
+//								Thread.sleep(100);
+//								// Access or modify data structure
+//								try
+//								{
+//									compiler.sendExpression("getVersion()", true);
+//									monitor.subTask("Sending 'getVersion()'"); monitor.worked(1);
+//								}
+//								catch(Exception e)
+//								{
+//									ErrorManager.logError(e);
+//								}
+//
+//								if (compiler.isRunning()) break;							
+//							}
+//						}
+//						catch(InterruptedException e)
+//						{
+//							ErrorManager.logError(e);
+//						} finally {
+//							lock.release();
+//						}													
+//						if (monitor.isCanceled()) 
+//							return Status.CANCEL_STATUS;
+//						monitor.done();
+//						return Status.OK_STATUS;
+//					}
+//				};
+//				compilerJob.setUser(true);
+//				compilerJob.setPriority(Job.INTERACTIVE);
+//				compilerJob.schedule();
+//			}	
 		}
 		
 		return compiler;
@@ -93,11 +141,9 @@ public class CompilerProxy
 	 * @return
 	 * @throws CompilerInstantiationException 
 	 */
-	private static IModelicaCompiler loadCompiler() 
-		throws CompilerInstantiationException
+	private static IModelicaCompiler loadCompiler() throws CompilerInstantiationException
 	{		
-		IExtensionPoint extensionPoint = 
-			Platform.getExtensionRegistry().getExtensionPoint(CorePlugin.COMPILER_EXTENSION_ID);		
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CorePlugin.COMPILER_EXTENSION_ID);		
 		
 		IExtension[] extensions = extensionPoint.getExtensions();
 		
@@ -115,11 +161,10 @@ public class CompilerProxy
 			
 			for (IExtension ext : extensions)
 			{
-				compilerPlugins.add(ext.getNamespace());
+				compilerPlugins.add(ext.getNamespaceIdentifier());
 			}
 
-			throw new 
-				CompilerInstantiationException(compilerPlugins);
+			throw new CompilerInstantiationException(compilerPlugins);
 		}
 
 		/* here we know that extensions array is one element long */
@@ -136,8 +181,7 @@ public class CompilerProxy
 			}
 			catch (CoreException e)
 			{
-				throw new CompilerInstantiationException(e,
-						extensions[0].getNamespace());
+				throw new CompilerInstantiationException(e, extensions[0].getNamespaceIdentifier());
 			}
 		}
 	
@@ -145,41 +189,41 @@ public class CompilerProxy
 		return null;
 	}
 	
-	public static String getCompilerName() 
+	public synchronized static String getCompilerName() 
 		throws CompilerInstantiationException
 	{
 		return getCompiler().getCompilerName();
 	}
 
-	public static IParseResults loadSourceFile(IFile file) 
+	public synchronized static IParseResults loadSourceFile(IFile file) 
 		throws ConnectException, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
 		return getCompiler().loadSourceFile(file);
 	}
 	
-	public static List getClassNames(String className)
+	public synchronized static List getClassNames(String className)
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
 		return getCompiler().getClassNames(className);
 	}
 	
-	public static Collection<ElementInfo> getElements(String className)
+	public synchronized static Collection<ElementInfo> getElements(String className)
 		throws ConnectException, InvocationError, UnexpectedReplyException, 
 			CompilerInstantiationException
 	{
 		return getCompiler().getElements(className);
 	}
 
-	public static IDefinitionLocation getClassLocation(String className)
+	public synchronized static IDefinitionLocation getClassLocation(String className)
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException 
 	{
 		return getCompiler().getClassLocation(className);
 	}
 	
-	public static IModelicaClass.Restriction getRestriction(String className)
+	public synchronized static IModelicaClass.Restriction getRestriction(String className)
 		throws ConnectException, CompilerInstantiationException,
 			   UnexpectedReplyException
 	{
@@ -189,20 +233,20 @@ public class CompilerProxy
 	/**
 	 * @return the top classes in the standard library
 	 */
-	public static String[] getStandardLibrary()
+	public synchronized static String[] getStandardLibrary()
 		throws ConnectException, CompilerInstantiationException
 	{
 		return getCompiler().getStandardLibrary();
 	}
 
-	public static IClassInfo getClassInfo(String className) 
+	public synchronized static IClassInfo getClassInfo(String className) 
 		throws CompilerInstantiationException, ConnectException,
 			UnexpectedReplyException 
 	{
 		return getCompiler().getClassInfo(className);
 	}
 	
-	public static String getClassString(String className) 
+	public synchronized static ICompilerResult getClassString(String className) 
 		throws CompilerInstantiationException, ConnectException,
 			UnexpectedReplyException 
 	{
@@ -217,10 +261,39 @@ public class CompilerProxy
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */
-	public static synchronized String sendExpression(String command, boolean showInConsole) 
+	public synchronized static ICompilerResult sendExpression(String command, boolean showInConsole) 
 	throws CompilerInstantiationException, ConnectException,
 	UnexpectedReplyException 
 	{
 		return getCompiler().sendExpression(command, showInConsole);
 	}
+	
+	/**
+	 * @author Adrian Pop
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */
+	public synchronized static boolean isRunning() 
+	throws CompilerInstantiationException, ConnectException,
+	UnexpectedReplyException 	
+	{
+		return getCompiler().isRunning();
+	}
+
+	/**
+	 * @author Adrian Pop
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	public static void setConsoleOutputStream(OutputStream outputStream) throws CompilerInstantiationException
+	{
+		getCompiler().setConsoleOutputStream(outputStream);
+	}
+	
 }

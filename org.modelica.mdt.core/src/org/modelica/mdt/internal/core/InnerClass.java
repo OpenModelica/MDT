@@ -42,21 +42,30 @@
 package org.modelica.mdt.internal.core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElementChange;
 import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaExtends;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParameter;
 import org.modelica.mdt.core.ISignature;
+import org.modelica.mdt.core.IllegalRestrictionException;
 import org.modelica.mdt.core.IllegalVisibilityException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ModelicaCore;
@@ -72,6 +81,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 /**
  * A package that is defined inside a modelica file or in the system library.
  * 
+ * @author Adrian Pop
  * @author Elmir Jagudin
  */
 public class InnerClass extends ModelicaClass
@@ -114,22 +124,57 @@ public class InnerClass extends ModelicaClass
 	/* subpackages and subclasses hashed by the thier's shortname */
 	private Hashtable<String, IModelicaElement> children = null;
 	
+	IDefinitionLocation fLocation = null;
+	Restriction fRestriction;
 	/* the import statments */
 	private Collection<IModelicaImport> imports;
+	/* the extends statments */
+	private Collection<IModelicaExtends> extendsStmt;	
 	
 	/* input and output parameters found in the signature */
 	private LinkedList<IParameter> inputParams = null;
 	private LinkedList<IParameter> outputParams = null;
 
-	public InnerClass(IModelicaSourceFile container,
-					IModelicaClass parentNamespace,
-					String name)
+	class LazyLoadImports extends Thread
 	{
-		super(container);
+		private Vector<IModelicaImport> imports = null;;
 		
+		public LazyLoadImports(Vector<IModelicaImport> imports) {
+			super("LazyLoadingImports for Class:" + getElementName());
+			this.imports = imports;
+			setPriority(Thread.MIN_PRIORITY);
+		}
+				
+		public void run()
+		{
+			/* wait a bit before loading imports */
+			try{ Thread.sleep(10000);} catch(InterruptedException e) {/* ignore */}			
+			try
+			{
+				for (IModelicaImport i : this.imports)
+				{
+					/* wait a bit between import loading */
+					try{ Thread.sleep(100);} catch(InterruptedException e) {/* ignore */}					
+					i.getImportedPackage();
+				}
+
+			}
+			catch(Exception e)
+			{
+				ErrorManager.logError(e);
+			}
+		}
+	}	
+	
+	public InnerClass(IModelicaSourceFile container, IModelicaClass parentNamespace, String name, 
+			Restriction restriction, IDefinitionLocation location)
+	{
+		super(container, restriction, location);
 		this.parentNamespace = parentNamespace;
 		this.name = name;
 		setFullName();
+		fLocation = location;
+		fRestriction = restriction;
 	}
 	
 	/**
@@ -140,10 +185,9 @@ public class InnerClass extends ModelicaClass
 	 * @param prefix
 	 * @param name
 	 */
-	public InnerClass(IModelicaClass parentNamespace, 
-			String name, Restriction restriction)
+	public InnerClass(IModelicaClass parentNamespace, String name, Restriction restriction, IDefinitionLocation location)
 	{
-		this(null, parentNamespace, name);
+		this(null, parentNamespace, name, restriction, location);
 	}
 
 
@@ -157,6 +201,13 @@ public class InnerClass extends ModelicaClass
 		if (children == null)
 		{
 			children = loadElements();
+			/* load attributes also */
+			//getAttributes();
+			if (imports.size() > 0)
+			{
+				LazyLoadImports lazyLoadImports = new LazyLoadImports(new Vector<IModelicaImport>(imports));
+				lazyLoadImports.start();				
+			}
 		}
 		
 		return children.values();
@@ -169,10 +220,15 @@ public class InnerClass extends ModelicaClass
 		Hashtable<String, IModelicaElement> elements = 
 			new Hashtable<String, IModelicaElement>();
 		
-		imports = new LinkedList<IModelicaImport>();
+		imports = Collections.synchronizedList(new LinkedList<IModelicaImport>());
 		
 		inputParams = new LinkedList<IParameter>();
 		outputParams = new LinkedList<IParameter>();
+		
+		extendsStmt = new LinkedList<IModelicaExtends>();
+		
+		int tickImport = 0;
+		int tickExtends = 0;
 		
 		Restriction restriction = getRestriction();
 		if(restriction == IModelicaClass.Restriction.RECORD)
@@ -187,17 +243,33 @@ public class InnerClass extends ModelicaClass
 			}
 		}
 		
-	
+		IModelicaElement.Visibility vis;
 		for (ElementInfo info : CompilerProxy.getElements(fullName))
 		{
 			String elementType = info.getElementType();
+			try
+			{
+				 vis = IModelicaElement.Visibility.parse(info.getElementVisibility(), true);
+			}
+			catch(IllegalVisibilityException e)
+			{
+				throw new UnexpectedReplyException("Unexpected visibility: " + e.getMessage());
+			}
+			
 			
 			/* a sub package */
 			if (elementType.equals("classdef"))
 			{
 				String className = info.getClassName();
-				elements.put(className, 
-					new InnerClass(getSourceFile(), this, info.getClassName()));
+				String elementFile = info.getElementFile();
+				Restriction restr = null;
+				try { restr = Restriction.parse(info.getClassRestriction()); }
+				catch(IllegalRestrictionException e) { restr = null; }
+				IDefinitionLocation location = 
+					new DefinitionLocation(elementFile, 
+							info.getElementStartLine(), info.getElementStartColumn(),
+							info.getElementEndLine(), info.getElementEndColumn());				
+				elements.put(className, new InnerClass(getSourceFile(), this, info.getClassName(), restr, location));
 			}
 			/* a component */
 			else if (elementType.equals("component"))
@@ -215,47 +287,28 @@ public class InnerClass extends ModelicaClass
 				}
 				catch(ModelicaParserException e)
 				{
-					throw new UnexpectedReplyException("Unable to parse " +
-							"returned list: " + e.getMessage());
+					throw new UnexpectedReplyException("Unable to parse " + "returned list: " + e.getMessage());
 				}
 				
 				String componentName = comp.elementAt(0).toString();
 				String elementFile = info.getElementFile();
-				IDefinitionLocation location =
+				IDefinitionLocation location = 
 					new DefinitionLocation(elementFile, 
-							info.getElementStartLine(),
-							info.getElementStartColumn(),
-							info.getElementEndLine(),
-							info.getElementEndColumn());
+							info.getElementStartLine(), info.getElementStartColumn(),
+							info.getElementEndLine(), info.getElementEndColumn());
 
-				try
-				{
-					elements.put(componentName, 
-							new ModelicaComponent(
-									this,
-									componentName,
-									info.getTypeName(),
-									IModelicaComponent.Visibility.parse
-										(info.getElementVisibility()),
-									location));					
-				}
-				catch(IllegalVisibilityException e)
-				{
-					throw new UnexpectedReplyException("Unexpected visibility: "
-							+ e.getMessage());
-				}
+				elements.put(componentName, new ModelicaComponent(this, componentName, info.getTypeName(), vis, location));					
 				
 				
-				if (restriction == IModelicaClass.Restriction.FUNCTION)
+				if (restriction == IModelicaClass.Restriction.FUNCTION || 
+					restriction == IModelicaClass.Restriction.BLOCK)
 				{
 					String typeName = info.getTypeName();
-					if(info.getElementVisibility().equals("public")
-							&& info.getDirection().equals("input"))
+					if(info.getElementVisibility().equals("public") && info.getDirection().equals("input"))
 					{
 						inputParams.add(new Parameter(componentName, typeName));
 					}
-					else if(info.getElementVisibility().equals("public")
-							&& info.getDirection().equals("output"))
+					else if(info.getElementVisibility().equals("public") && info.getDirection().equals("output"))
 					{
 						outputParams.add(new Parameter(componentName, typeName));
 					}
@@ -273,29 +326,54 @@ public class InnerClass extends ModelicaClass
 			else if (elementType.equals("import"))
 			{
 				String importType = info.getKind();
-				
+				IModelicaImport imp = null;
+				String elementFile = info.getElementFile();
+				IDefinitionLocation location = 
+					new DefinitionLocation(elementFile, 
+							info.getElementStartLine(), info.getElementStartColumn(),
+							info.getElementEndLine(), info.getElementEndColumn());
+				String path = info.getPath();
 				if (importType.equals("qualified"))
 				{
-					imports.add(new ModelicaImport
-							(getProject(), true, info.getPath()));
+					imp = new ModelicaImport(this, getProject(), true, path, vis, location);
 				}
 				else if (importType.equals("unqualified"))
 				{
-					imports.add(new ModelicaImport
-							(getProject(), false, info.getPath()));
+					imp = new ModelicaImport(this, getProject(), false, path, vis, location);
 				}
 				else if (importType.equals("named"))
 				{
-					imports.add(new ModelicaImport
-							(getProject(), info.getId(), info.getPath()));
+					imp = new ModelicaImport(this, getProject(), info.getId(), path, vis, location);
 				}
 				else
 				{
-					ErrorManager.logBug(CorePlugin.getSymbolicName(),
-							"import statment of unexpected type '" +
-							importType + "' encountered");
+					ErrorManager.logBug(CorePlugin.getSymbolicName(), "import statment of unexpected type '" + importType + "' encountered");
+				}
+				if (imp != null)
+				{
+					imports.add(imp);
+					elements.put(imp.getElementName(), imp);
+					tickImport++;
 				}
 			}
+			/* an extends statment */
+			else if (elementType.equals("extends"))
+			{
+				IModelicaExtends ext = null;
+				String elementFile = info.getElementFile();
+				IDefinitionLocation location = 
+					new DefinitionLocation(elementFile, 
+							info.getElementStartLine(), info.getElementStartColumn(),
+							info.getElementEndLine(), info.getElementEndColumn());				
+				ext = new ModelicaExtends(this, info.getPath(), vis, location);
+				if (ext != null)
+				{
+					extendsStmt.add(ext);
+					elements.put(ext.getElementName(), ext);
+					tickExtends++;
+				}
+			}
+			
 		}
 
 		return elements;
@@ -313,8 +391,7 @@ public class InnerClass extends ModelicaClass
 
 	@Override
 	public Collection<IModelicaElementChange> reload()
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException
+		throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException
 	{
 		/*
 		 * the reload strategy is as follows:
@@ -333,8 +410,7 @@ public class InnerClass extends ModelicaClass
 		  * components that are not new or were removed are notified
 		  * of the change to give them a chance to update thier's state
 		  */
-		LinkedList<IModelicaElementChange> changes = 
-			new LinkedList<IModelicaElementChange>();
+		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 		
 		if (children == null)
 		{
@@ -352,15 +428,13 @@ public class InnerClass extends ModelicaClass
 		
 		for (IModelicaElement element : newChildren.values())
 		{
-			ModelicaElement oldElement =
-				(ModelicaElement)
-					oldChildren.remove(element.getElementName());
+			ModelicaElement oldElement = (ModelicaElement)oldChildren.remove(element.getElementName());
 		
 			if (oldElement == null)
 			{
 				/* new element added */
 				children.put(element.getElementName(), element);
-				changes.add(new ModelicaElementChange(this, element));
+				changes.add(new ModelicaElementChange(this, element, null));
 			}
 			else
 			{
@@ -369,8 +443,7 @@ public class InnerClass extends ModelicaClass
 				// - the IModelicaComponent doesn't have reload
 				//   so whe have to set it here!
 				// - otherwise the image doesn't get updated
-				if (oldElement instanceof IModelicaComponent && 
-					element instanceof IModelicaComponent)
+				if (oldElement instanceof IModelicaComponent && element instanceof IModelicaComponent)
 				{
 					((ModelicaComponent)oldElement).setModelicaComponent((ModelicaComponent)element);
 				}
@@ -382,7 +455,7 @@ public class InnerClass extends ModelicaClass
 		for (IModelicaElement element : oldChildren.values())
 		{
 			children.remove(element.getElementName());
-			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED));
+			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, null));
 		}
 		
 		return changes;
@@ -395,7 +468,14 @@ public class InnerClass extends ModelicaClass
 		{
 			return sourceFile.getResource();
 		}
-		return null;
+		/* try some magic :) */
+		IPath p = null;
+		try { p = new Path(getFilePath()); }
+		catch(Exception e) { ErrorManager.logError(e); }
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		if (p == null) /* no joy */ { return null; }
+		IFile f = workspace.getRoot().getFileForLocation(p);
+		return f;
 	}
 	
 	public Collection<IModelicaImport> getImports() 
@@ -410,6 +490,19 @@ public class InnerClass extends ModelicaClass
 		return imports;
 	}
 
+	public Collection<IModelicaExtends> getExtends() 
+	throws ConnectException, UnexpectedReplyException, InvocationError, 
+		CompilerInstantiationException, CoreException
+    {
+		if (children == null)
+		{
+			children = loadElements();
+		}
+
+		return extendsStmt;
+    }
+	
+	
 	@Override
 	public IModelicaElement getParent()
 	{
@@ -420,7 +513,7 @@ public class InnerClass extends ModelicaClass
 			 * the only way we can have a null parent is if we are a
 			 * top-level class in the standard library
 			 */
-			return ModelicaCore.getModelicaRoot().getStandardLibrary();
+			return ModelicaCore.getModelicaRoot().getStandardLibrary(getProject());
 		}
 		return p;
 	}
@@ -437,6 +530,16 @@ public class InnerClass extends ModelicaClass
 		return new Signature(inputParams.toArray(
 				new IParameter[inputParams.size()]),
 				outputParams.toArray(new IParameter[outputParams.size()]));
+	}
+		
+	
+	public IDefinitionLocation getLocation()
+	throws ConnectException, UnexpectedReplyException, 
+		InvocationError, CoreException, CompilerInstantiationException
+	{
+		if (fLocation == null)
+			return super.getLocation();
+		return fLocation;
 	}
 	
 }

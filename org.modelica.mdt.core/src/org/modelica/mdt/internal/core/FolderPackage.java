@@ -51,14 +51,15 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaExtends;
 import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.ISignature;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -74,6 +75,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public class FolderPackage extends ModelicaClass
 {
+	
 	private IFolder container;
 	private boolean childrenLoaded = false;
 	
@@ -83,8 +85,7 @@ public class FolderPackage extends ModelicaClass
 	 */
 	private IModelicaSourceFile packageMo = null;
 	
-	private Hashtable<IResource, IModelicaElement> children = 
-			new Hashtable<IResource, IModelicaElement>();
+	private Hashtable<IResource, IModelicaElement> children = new Hashtable<IResource, IModelicaElement>();
 
 	/**
 	 * Create a root package, a package that is defined in the unnamed root
@@ -94,7 +95,7 @@ public class FolderPackage extends ModelicaClass
 	 */
 	public FolderPackage(ModelicaFolder parent, IFolder container)
 	{
-		super(parent);
+		super(parent, Restriction.PACKAGE, null);
 		this.container = container;
 		parentNamespace = null;
 		name = container.getName();
@@ -108,7 +109,7 @@ public class FolderPackage extends ModelicaClass
 	 */
 	public FolderPackage(FolderPackage parent, IFolder container)
 	{
-		super(parent);
+		super(parent, Restriction.PACKAGE, null);
 		this.container = container;
 		parentNamespace = parent;
 		name = container.getName();
@@ -198,8 +199,13 @@ public class FolderPackage extends ModelicaClass
 			CompilerInstantiationException, CoreException
 	{
 		super.reload();
-		LinkedList<IModelicaElementChange> changes = 
-			new LinkedList<IModelicaElementChange>();
+		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
+		
+		/* if only the markers have changed, don't bother! */
+		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0 &&
+			(delta.getFlags() & IResourceDelta.OPEN) == 0	
+		) return changes;
+
 		
 		if (!childrenLoaded)
 		{
@@ -227,12 +233,11 @@ public class FolderPackage extends ModelicaClass
 					ErrorManager.showCompilerError(e);
 				}
 				children.put(res, element);
-				changes.add(new ModelicaElementChange(this, element));
+				changes.add(new ModelicaElementChange(this, element, d));
 				break;
 			case IResourceDelta.REMOVED:
 				children.remove(res);
-				changes.add(new ModelicaElementChange(element,
-						ChangeType.REMOVED));
+				changes.add(new ModelicaElementChange(element,	ChangeType.REMOVED, d));
 				break;
 			case IResourceDelta.CHANGED:
 				if (element instanceof ModelicaFolder)
@@ -246,13 +251,12 @@ public class FolderPackage extends ModelicaClass
 						
 						/* remove folder object */
 						children.remove(res);
-						changes.add(new ModelicaElementChange(element,
-								ChangeType.REMOVED));
+						changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, d));
 
 						/* add package object */
 						element = wrap(res);
 						children.put(res, element);
-						changes.add(new ModelicaElementChange(this, element));
+						changes.add(new ModelicaElementChange(this, element, d));
 					}
 					else
 					{
@@ -270,13 +274,12 @@ public class FolderPackage extends ModelicaClass
 						
 						/* remove folder object */
 						children.remove(res);
-						changes.add(new ModelicaElementChange(element,
-								ChangeType.REMOVED));
+						changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, d));
 
 						/* add package object */
 						element = wrap(res);
 						children.put(res, element);
-						changes.add(new ModelicaElementChange(this, element));
+						changes.add(new ModelicaElementChange(this, element, d));
 					}
 					else
 					{
@@ -322,7 +325,7 @@ public class FolderPackage extends ModelicaClass
 				 * check if package.mo defines a package (aka class) 
 				 * with the same name as the parent folder
 				 */
-				IParseResults results = CompilerProxy.loadSourceFile(file);
+				IParseResults results = SyntaxChecker.loadFileAndReportErrors(file, false);
 				
 				for (String name : results.getClasses())
 				{
@@ -383,6 +386,13 @@ public class FolderPackage extends ModelicaClass
 		// TODO implement me
 		return new LinkedList<IModelicaImport>();
 	}
+	
+	public Collection<IModelicaExtends> getExtends()
+	{
+		// TODO implement me
+		return new LinkedList<IModelicaExtends>();
+	}
+	
 
 	public IModelicaClass getParentNamespace() 
 	{
@@ -416,4 +426,11 @@ public class FolderPackage extends ModelicaClass
 		return super.getAttributes();
 	}
 	
+	public String getDocumentation() 
+	{
+		// TODO implement me
+		return null;
+	}
+	
+		
 }

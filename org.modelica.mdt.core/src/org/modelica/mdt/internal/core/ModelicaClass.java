@@ -45,7 +45,11 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
@@ -66,8 +70,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  * @author Andreas Remar
  * @author Kent Beck
  */
-abstract public class ModelicaClass extends ModelicaElement 
-	implements IModelicaClass
+abstract public class ModelicaClass extends ModelicaElement implements IModelicaClass
 {
 	/**
 	 * The namespace where this class is defined or null if 
@@ -95,11 +98,17 @@ abstract public class ModelicaClass extends ModelicaElement
 
 	/* class attributes (type of restriction, encapsulated status, etc) */
 	private IClassInfo classAttributes = null;
+	
+	private IDefinitionLocation fLocation = null;
+	
+	private Restriction fRestriction = null;
 
 	
-	public ModelicaClass(IModelicaElement parent)
+	public ModelicaClass(IModelicaElement parent, Restriction restriction, IDefinitionLocation location)
 	{
 		super(parent);
+		fLocation = location;
+		fRestriction = restriction;
 	}
 
 	/**
@@ -142,6 +151,25 @@ abstract public class ModelicaClass extends ModelicaElement
 	
 	public IResource getResource() 
 	{
+		if (container == null)
+		{
+			IPath p = null;
+			try
+			{
+				p = new Path(getFilePath());
+			}
+			catch(Exception e)
+			{
+				ErrorManager.logError(e);
+			}
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			if (p == null) /* no joy */
+			{
+				return null;
+			}
+			IFile f = workspace.getRoot().getFileForLocation(p);
+			container = f;
+		}
 		return container;
 	}
 	
@@ -169,6 +197,7 @@ abstract public class ModelicaClass extends ModelicaElement
 		throws ConnectException, UnexpectedReplyException, 
 			InvocationError, CoreException, CompilerInstantiationException
 	{
+		if (fLocation != null) return fLocation;
 		return getAttributes().getDefinitionLocation();
 	}
 	
@@ -184,6 +213,7 @@ abstract public class ModelicaClass extends ModelicaElement
 		throws ConnectException, CompilerInstantiationException,
 			UnexpectedReplyException, CoreException, InvocationError
 	{
+		if (fRestriction != null) return fRestriction;
 		return getAttributes().getRestriction();
 	}
 	
@@ -203,5 +233,11 @@ abstract public class ModelicaClass extends ModelicaElement
 		return super.reload();
 	}
 
+	public String getDocumentation() 
+	throws ConnectException, InvocationError, UnexpectedReplyException,
+	CompilerInstantiationException, CoreException
+	{
+		return getAttributes().getDocumentation();
+	}
 
 }

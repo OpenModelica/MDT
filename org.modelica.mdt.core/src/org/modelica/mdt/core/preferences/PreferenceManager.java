@@ -76,19 +76,13 @@ import org.modelica.mdt.internal.core.CorePlugin;
 public class PreferenceManager extends AbstractPreferenceInitializer 
 {
 	/* settings tags in the preference store */
-	public static final String DISPLAY_COMPATIBILTY_ERRORS = 
-		"DisplayCompatibilityErrors";
-	public static final String USE_STANDARD_OMC_PATH = 
-		"UseStandardOmcPath";
-	public static final String CUSTOM_OMC_PATH = 
-		"CustomOmcPath";	
+	public static final String DISPLAY_COMPATIBILTY_ERRORS = "DisplayCompatibilityErrors";
+	public static final String USE_STANDARD_OMC_PATH = "UseStandardOmcPath";
+	public static final String CUSTOM_OMC_PATH = "CustomOmcPath";	
 	
-	protected final static String 
-		EDITOR_MATCHING_BRACKETS="matchingBrackets";
-	protected final static String 
-		EDITOR_MATCHING_BRACKETS_COLOR=  "matchingBracketsColor";
-	protected final static String 
-		EDITOR_TAB_WIDTH =  "tabWidth";	
+	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
+	protected final static String EDITOR_MATCHING_BRACKETS_COLOR="matchingBracketsColor";
+	protected final static String EDITOR_TAB_WIDTH = "tabWidth";	
 	
 	private static IPreferenceStore store = null;
 	
@@ -102,13 +96,12 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		 */
 		IPreferenceStore store = getStore();
 
-		store.setDefault(DISPLAY_COMPATIBILTY_ERRORS, true);
+		store.setDefault(DISPLAY_COMPATIBILTY_ERRORS, false);
 		store.setDefault(USE_STANDARD_OMC_PATH, true);
 		store.setDefault(CUSTOM_OMC_PATH, "");
 		
 		store.setDefault(EDITOR_MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB(192, 192, 192));		
-
 		store.setDefault(EDITOR_TAB_WIDTH, 2);
 	}
 	

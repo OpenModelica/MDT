@@ -73,17 +73,15 @@ public class FullBuildVisitor implements IResourceVisitor
 			IPath path = resource.getProjectRelativePath();
 			IFile file = resource.getProject().getFile(path);
 			
-			file.deleteMarkers(IMarker.PROBLEM, false,
-					IResource.DEPTH_INFINITE);
-			file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false, 
-					IResource.DEPTH_INFINITE);
+			file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_INFINITE);
+			file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false, IResource.DEPTH_INFINITE);
 			try
 			{
 				/*
 				 * Try loading the file into OMC, and report errors if any
 				 * are found.
 				 */
-				SyntaxChecker.loadFileAndReportErrors(file);
+				SyntaxChecker.loadFileAndReportErrors(file, true);
 			}
 			catch(CompilerException e)
 			{

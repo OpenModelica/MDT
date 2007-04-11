@@ -62,5 +62,12 @@ public interface IClassInfo
 	/**
 	 * @return the definition location of the class
 	 */
-	public IDefinitionLocation getDefinitionLocation(); 
+	public IDefinitionLocation getDefinitionLocation();
+	
+	/**
+	 * @author Adrian Pop
+	 * @return the documentation for this element or null if there isn't any.
+	 */
+	public String getDocumentation();
+	
 }

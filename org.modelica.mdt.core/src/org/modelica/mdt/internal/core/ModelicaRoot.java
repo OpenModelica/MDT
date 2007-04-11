@@ -87,8 +87,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	 */
 	public IModelicaProject[] getProjects() 
 	{
-		IModelicaProject[] res = 
-			new IModelicaProject[projectsTable.values().size()];
+		IModelicaProject[] res = new IModelicaProject[projectsTable.values().size()];
 		projectsTable.values().toArray(res);
 
 		return res;	
@@ -119,11 +118,8 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		 */
 		for (int i = 0; i < projects.length; i++)
 		{
-			projectsTable.put(projects[i], 
-					new ModelicaProject((IProject)projects[i]));
+			projectsTable.put(projects[i], new ModelicaProject((IProject)projects[i]));
 		}
-		
-		
 	}
 
 	
@@ -132,8 +128,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		loadProjects();
 
 		listeners = new LinkedList<IModelicaElementChangeListener>();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
-					IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	public void stop()
@@ -148,8 +143,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	 */
 	public void resourceChanged(IResourceChangeEvent event)
 	{
-		List<IModelicaElementChange> changes = 
-				new LinkedList<IModelicaElementChange>();
+		List<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 		
 		for (IResourceDelta delta : event.getDelta().getAffectedChildren())
 		{			
@@ -158,10 +152,10 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 			switch (delta.getKind())
 			{
 			case IResourceDelta.ADDED:
-				changes.addAll(handleResourceAdded(project));
+				changes.addAll(handleResourceAdded(project, delta));
 				break;
 			case IResourceDelta.REMOVED:
-				changes.addAll(handleResourceRemoved(project));
+				changes.addAll(handleResourceRemoved(project, delta));
 				break;				
 			case IResourceDelta.CHANGED:
 				changes.addAll(handleResourceChanged(project, delta));
@@ -175,35 +169,33 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		}
 	}
 
-	private List<IModelicaElementChange> handleResourceAdded(IProject project)
+	private List<IModelicaElementChange> handleResourceAdded(IProject project, IResourceDelta delta)
 	{
-		List<IModelicaElementChange> changes = 
-				new LinkedList<IModelicaElementChange>();
+		List<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 		ModelicaProject modelicaProject = new ModelicaProject(project);
 
 		projectsTable.put(project, modelicaProject);
-		changes.add(new ModelicaElementChange(this, modelicaProject));
+		changes.add(new ModelicaElementChange(this, modelicaProject, delta));
 
 		return changes;
 	}
 
-	private List<IModelicaElementChange> handleResourceRemoved(IProject project)
+	private List<IModelicaElementChange> handleResourceRemoved(IProject project, IResourceDelta delta)
 	{
-		List<IModelicaElementChange> changes = 
-			new LinkedList<IModelicaElementChange>();
+		List<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 
 		IModelicaProject wrappedProject = projectsTable.remove(project);
-		changes.add(new ModelicaElementChange(wrappedProject, 
-						IModelicaElementChange.ChangeType.REMOVED));
-
+		changes.add(new ModelicaElementChange(wrappedProject, IModelicaElementChange.ChangeType.REMOVED, delta));
 		return changes;
 	}
 
-	private List<IModelicaElementChange> handleResourceChanged(IProject project,
-			IResourceDelta delta)
+	private List<IModelicaElementChange> handleResourceChanged(IProject project, IResourceDelta delta)
 	{
-		List<IModelicaElementChange> changes = 
-			new LinkedList<IModelicaElementChange>();
+		List<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
+		/* if only the markers have changed, don't bother! */
+		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0 &&
+			(delta.getFlags() & IResourceDelta.OPEN) == 0	
+			) return changes;
 				
 		if (projectsTable == null)
 		{
@@ -213,14 +205,13 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 
 		try
 		{
-			ModelicaProject modelicaProject = 
-				(ModelicaProject) projectsTable.get(project);
+			ModelicaProject modelicaProject = (ModelicaProject) projectsTable.get(project);
 			changes.addAll(modelicaProject.update(delta));
 		} 
 		catch (CompilerException e)
 		{
 			/*
-			 * display error and return whatever changes was added before
+			 * display error and return whatever changes were added before
 			 * the error struck
 			 */
 			ErrorManager.showCompilerError(e);
@@ -250,23 +241,18 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		}
 	}
 	
-	public void addModelicaElementChangeListener
-			(IModelicaElementChangeListener listener)
+	public void addModelicaElementChangeListener(IModelicaElementChangeListener listener)
 	{
 		listeners.add(listener);
 	}
 
-	public void removeModelicaElementChangeListener
-			(IModelicaElementChangeListener listener)
+	public void removeModelicaElementChangeListener(IModelicaElementChangeListener listener)
 	{
 		listeners.remove(listener);
 	}
 
-	public IModelicaProject createProject(String name)	throws CoreException
-	{
-		IProject newProject = 
-			ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-		
+	public IModelicaProject createProject(IProject newProject)	throws CoreException
+	{	
 		/* create the project */
 		newProject.create(null);
 		
@@ -280,11 +266,11 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		return new ModelicaProject(newProject);
 	}
 
-	public IStandardLibrary getStandardLibrary() 
+	public IStandardLibrary getStandardLibrary(IModelicaElement parent) 
 	{
 		if (standardLibrary  == null)
 		{
-			standardLibrary = new StandardLibrary();
+			standardLibrary = new StandardLibrary(parent);
 		}
 		return standardLibrary;
 	}
@@ -299,9 +285,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	 * @param packageName the package's full name that we want to locate
 	 * @return the package found or null if there were no such package
 	 */
-	protected static IModelicaClass getPackage
-		(Collection<? extends IModelicaElement> topElements, String packageName)
-	
+	protected static IModelicaClass getPackage(Collection<? extends IModelicaElement> topElements, String packageName)
 		throws ConnectException, CompilerInstantiationException, 
 			UnexpectedReplyException, CoreException, InvocationError
 	{
@@ -312,8 +296,7 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		 * look up then foo package among the root packages, bar
 		 * among the foo's children and gazonk among bar's offspring 
 		 */
-		LinkedList<? super IModelicaElement> currentChildren =
-			new LinkedList<IModelicaElement>();
+		LinkedList<? super IModelicaElement> currentChildren =	new LinkedList<IModelicaElement>();
 		currentChildren.addAll(topElements);
 
 		/* iterate over separate package names */
@@ -376,7 +359,6 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 		}
 		
 		return currentParent;
-
 	}
 
 }

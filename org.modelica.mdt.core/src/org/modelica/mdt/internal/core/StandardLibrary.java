@@ -50,7 +50,6 @@ import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IParent;
 import org.modelica.mdt.core.IStandardLibrary;
@@ -59,27 +58,24 @@ import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
-public class StandardLibrary  extends ModelicaElement 
-	implements IStandardLibrary, IParent
+public class StandardLibrary  extends ModelicaElement implements IStandardLibrary, IParent
 {
 	LinkedList<IModelicaClass> packages = null;
 
-	protected StandardLibrary()
+	protected StandardLibrary(IModelicaElement parent)
 	{
-		super(null);
+		super(parent);
 	}
 	
-	public Collection<IModelicaClass> getPackages()
-		throws ConnectException, CompilerInstantiationException
+	public Collection<IModelicaClass> getPackages() throws ConnectException, CompilerInstantiationException
 	{
 		if (packages == null)
 		{
 			packages = new LinkedList<IModelicaClass>();
-			
+						
 			for (String packageName : CompilerProxy.getStandardLibrary())
 			{
-				packages.add(new InnerClass(null, packageName, 
-							IModelicaClass.Restriction.PACKAGE));
+				packages.add(new InnerClass(null, packageName, IModelicaClass.Restriction.PACKAGE, null));
 			}
 		}
 		
@@ -88,7 +84,10 @@ public class StandardLibrary  extends ModelicaElement
 
 	public String getElementName() 
 	{
-		return "Standard Library";
+		String oml = System.getenv("OPENMODELICALIBRARY");
+		if (oml == null)
+			return "Libraries";
+		return "Libraries: " + oml;
 	}
 
 	public String getFullName() 
@@ -112,16 +111,6 @@ public class StandardLibrary  extends ModelicaElement
 	}
 
 	public IModelicaSourceFile getSourceFile() 
-	{
-		return null;
-	}
-
-	public IModelicaElement getParent()
-	{
-		return null;
-	}
-
-	public IModelicaProject getProject() 
 	{
 		return null;
 	}

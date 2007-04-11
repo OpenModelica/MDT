@@ -54,6 +54,7 @@ import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
+import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IParseResults;
@@ -64,8 +65,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  * @author Adrian Pop
  * @author Elmir Jagudin
  */
-public class ModelicaSourceFile extends ModelicaElement 
-	implements IModelicaSourceFile 
+public class ModelicaSourceFile extends ModelicaElement implements IModelicaSourceFile 
 {
 	private IFile file;
 
@@ -125,7 +125,7 @@ public class ModelicaSourceFile extends ModelicaElement
 		Hashtable<String, IModelicaElement> elements = 
 			new Hashtable<String, IModelicaElement>();
 		
-		IParseResults res = CompilerProxy.loadSourceFile(file);		
+		IParseResults res = SyntaxChecker.loadFileAndReportErrors(file, false);		
 		
 		IModelicaElement parent = getParent();
 		FolderPackage parentPackage = null;
@@ -142,8 +142,7 @@ public class ModelicaSourceFile extends ModelicaElement
 
 			for(String name : res.getClasses())
 			{
-				if(name.equals(ppName)
-						&& (filePath.endsWith(File.separator + "package.mo")))
+				if(name.equals(ppName) && (filePath.endsWith(File.separator + "package.mo")))
 				{
 					List list = null;
 					try
@@ -160,9 +159,7 @@ public class ModelicaSourceFile extends ModelicaElement
 					{
 						for(ListElement element : list)
 						{
-							elements.put(element.toString(),
-									new InnerClass(this, parentPackage,
-											element.toString()));
+							elements.put(element.toString(), new InnerClass(this, parentPackage, element.toString(), null, null));
 						}
 					}
 					
@@ -183,8 +180,7 @@ public class ModelicaSourceFile extends ModelicaElement
 				if(prefix.equals(ppName))
 				{
 					name = name.substring(ppName.length()+1);
-					elements.put(name, new InnerClass(this, parentPackage,
-							name));
+					elements.put(name, new InnerClass(this, parentPackage, name, null, null));
 				}
 				else
 				{
@@ -201,7 +197,7 @@ public class ModelicaSourceFile extends ModelicaElement
 		{
 			for(String name : res.getClasses())
 			{
-				elements.put(name, new InnerClass(this, null, name));				
+				elements.put(name, new InnerClass(this, null, name, null, null));
 			}
 		}	
 		
@@ -222,12 +218,16 @@ public class ModelicaSourceFile extends ModelicaElement
 	public Collection<IModelicaElementChange> update(IResourceDelta delta)
 		throws ConnectException, UnexpectedReplyException, InvocationError, 
 			CompilerInstantiationException, CoreException
-	{
-		LinkedList<IModelicaElementChange> changes = 
-			new LinkedList<IModelicaElementChange>();
+	{	
+		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
+		
+		if ((delta.getFlags() & IResourceDelta.CONTENT) == 0)
+		{
+			return changes;
+		}
 		
 		/* this file have been change, add an the event that describes that */
-		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED));
+		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED, delta));
 		
 		if (children == null)
 		{
@@ -237,21 +237,19 @@ public class ModelicaSourceFile extends ModelicaElement
 
 		Hashtable<String, IModelicaElement> newChildren = loadElements();
 		@SuppressWarnings("unchecked")
-		Hashtable<String, IModelicaElement> oldChildren = 
-			(Hashtable<String, IModelicaElement>) children.clone();
+		Hashtable<String, IModelicaElement> oldChildren = (Hashtable<String, IModelicaElement>) children.clone();
 		
 		
 		for (IModelicaElement element : newChildren.values())
 		{
 		
-			ModelicaElement oldElement = (ModelicaElement)
-				oldChildren.remove(element.getElementName());
+			ModelicaElement oldElement = (ModelicaElement)oldChildren.remove(element.getElementName());
 			
 			if (oldElement == null)
 			{
 				/* new element added */
 				children.put(element.getElementName(), element);
-				changes.add(new ModelicaElementChange(this, element));
+				changes.add(new ModelicaElementChange(this, element, delta));
 			}
 			else
 			{
@@ -264,16 +262,14 @@ public class ModelicaSourceFile extends ModelicaElement
 		for (IModelicaElement element : oldChildren.values())
 		{
 			children.remove(element.getElementName());
-			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED));
+			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, delta));
 		}
 		
 		return changes;
 	}
 
 
-	public IModelicaClass[] getRootClasses() 
-		throws ConnectException, UnexpectedReplyException, 
-			CompilerInstantiationException
+	public IModelicaClass[] getRootClasses() throws ConnectException, UnexpectedReplyException, CompilerInstantiationException
 	{
 		/* make sure the children are loaded */
 		if (children == null)
@@ -308,6 +304,7 @@ public class ModelicaSourceFile extends ModelicaElement
 	}
 
 	/**
+	 * @deprecated
 	 * @see IModelicaSourceFile#getClassAt(int position) 
 	 */
 	public IModelicaClass getClassAt(int position)
@@ -340,7 +337,7 @@ public class ModelicaSourceFile extends ModelicaElement
 	/**
 	 * Checks if there is a class definition at specified position
 	 * among provided classes.
-	 * 
+	 * @deprecated
 	 * @param elements the elements among which look for class definitions
 	 * @param position the character at which look for the class definiton
 	 * @return the innermost class definition found or null if no class
@@ -372,8 +369,7 @@ public class ModelicaSourceFile extends ModelicaElement
 			if (position >= start && position <= end)
 			{
 				/* check if position is inside a subclass definition */
-				IModelicaClass subclazz = 
-					findClassDefAt(clazz.getChildren(), position);
+				IModelicaClass subclazz = findClassDefAt(clazz.getChildren(), position);
 				
 				if (subclazz != null)
 				{
@@ -439,5 +435,5 @@ public class ModelicaSourceFile extends ModelicaElement
 	{
 		return getElementName();
 	}
-
+	
 }
