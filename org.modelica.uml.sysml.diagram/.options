@@ -1,0 +1,7 @@
+# Debugging options for the org.modelica.uml.sysml.diagram plug-in
+
+# Turn on general debugging for the org.modelica.uml.sysml.diagram plug-in
+org.modelica.uml.sysml.diagram/debug=false
+
+# Turn on debugging of visualID processing
+org.modelica.uml.sysml.diagram/debug/visualID=true

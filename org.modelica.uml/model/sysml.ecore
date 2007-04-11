@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sysml"
+    nsURI="http://modelica.org/mml" nsPrefix="mml">
+  <eClassifiers xsi:type="ecore:EClass" name="Block" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Class">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEncapsulated" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BlockProperty" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Property"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DistributedProperty" eSuperTypes="#//BlockProperty"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ValueType" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//DataType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="unit" eType="#//Unit"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dimension" eType="#//Dimension"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Unit" eSuperTypes="#//ValueType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Dimension" eSuperTypes="#//ValueType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Conform" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Rationale" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Comment"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Problem" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Comment"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="FlowDirection">
+    <eLiterals name="in"/>
+    <eLiterals name="out" value="1"/>
+    <eLiterals name="inout" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FlowPort" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Port">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isAtomic" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"
+        derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" eType="#//FlowDirection"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isConjugated" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FlowProperty" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Property">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" eType="#//FlowDirection"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="access" eType="#//AccessKind"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FlowSpecification" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Interface">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ownedFlowProperty" upperBound="-1"
+        eType="#//FlowProperty" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ItemFlow" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//InformationFlow">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="itemProperty" eType="#//BlockProperty"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaType" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType #//ModelicaClassifier"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaReal" eSuperTypes="#//ModelicaType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="quantity" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="displayUnit" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixed" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nominal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaInteger" eSuperTypes="#//ModelicaType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixed" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaString" eSuperTypes="#//ModelicaType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaBoolean" eSuperTypes="#//ModelicaType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixed" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaClass" eSuperTypes="#//Block #//ModelicaClassifier">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEncapsulatedClass" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaModel" eSuperTypes="#//ModelicaClass"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaBlock" eSuperTypes="#//ModelicaClass"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaConnector" eSuperTypes="#//ModelicaClass"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaRecord" eSuperTypes="#//ModelicaClass"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaFunction" eSuperTypes="#//ModelicaClass"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaProperty" eSuperTypes="#//BlockProperty">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="variability" eType="#//VariabilityKind"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isFlow" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" eType="#//FlowDirection"
+        defaultValueLiteral="inout"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertyKind" eType="#//PropertyKind"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="arrayDimension" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="access" eType="#//AccessKind"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dataType" eType="#//ModelicaClassifier"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaConnectorProperty" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Port #//ModelicaProperty"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaEquationProperty" eSuperTypes="#//ModelicaProperty">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="equation" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaComposition" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Association">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isFlow" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" eType="#//FlowDirection"
+        defaultValueLiteral="inout"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="arrayDimension" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="access" eType="#//AccessKind"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="default" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="VariabilityKind">
+    <eLiterals name="none"/>
+    <eLiterals name="constant" value="2"/>
+    <eLiterals name="discrete" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="PropertyKind">
+    <eLiterals name="parameter"/>
+    <eLiterals name="part" value="1"/>
+    <eLiterals name="variable" value="2"/>
+    <eLiterals name="equation" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AccessKind">
+    <eLiterals name="public"/>
+    <eLiterals name="protected" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaConnection" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Connector"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaClassifier" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Classifier"/>
+</ecore:EPackage>

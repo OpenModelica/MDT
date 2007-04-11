@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.modelica.uml.sysml.diagram2.part.SysmlDiagramPreferenceInitializer"/>
+   </extension>
+
+  <extension point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+         type="text"
+         extension="mci">
+      </fileTypes>
+  </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+         type="mci"
+         class="org.eclipse.gmf.runtime.emf.core.resources.GMFResourceFactory">
+      </parser>
+   </extension>
+
+  <extension point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+         type="text"
+         extension="sysml">
+      </fileTypes>
+  </extension>
+  
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+         type="sysml"
+         class="org.eclipse.gmf.runtime.emf.core.resources.GMFResourceFactory">
+      </parser>
+   </extension>
+
+ 
+<!--  
+ <extension point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+         type="sysml"
+         class="org.eclipse.uml2.uml.internal.resource.UMLResourceFactoryImpl">
+      </parser>
+   </extension>
+-->
+
+   <extension point="org.eclipse.ui.editors">
+     <editor
+        id="org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorID"
+        name="Modelica Class Internal Diagram Editor"
+        icon="icons/obj16/UMLDiagramFile.gif"
+        extensions="mci"
+        default="true"
+        class="org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditor"
+        matchingStrategy="org.modelica.uml.sysml.diagram2.part.SysmlMatchingStrategy"
+        contributorClass="org.modelica.uml.sysml.diagram2.part.SysmlDiagramActionBarContributor">
+     </editor>
+   </extension>
+
+   <extension point="org.eclipse.ui.newWizards">
+  	  <wizard
+  	     name="Modelica Class Internal Diagram"
+  	     icon="icons/obj16/UMLDiagramFile.gif"
+  	     category="org.eclipse.ui.Examples"
+  	     class="org.modelica.uml.sysml.diagram2.part.SysmlCreationWizard"
+  	     id="org.modelica.uml.sysml.diagram2.part.SysmlCreationWizardID">
+  	  	 <description>
+  	  		Creates Modelica Class Internal diagram.
+  	  	 </description>  
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="org.modelica.uml.sysml.diagram2.ui.objectContribution.IFile1"
+            nameFilter="*.sysml"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               label="Initialize mci diagram file"
+               class="org.modelica.uml.sysml.diagram2.part.SysmlInitDiagramFileAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.modelica.uml.sysml.diagram2.part.SysmlInitDiagramFileActionID">
+         </action>
+      </objectContribution>  
+      <objectContribution
+            adaptable="false"
+            id="org.modelica.uml.sysml.diagram2.ui.objectContribution.ModelEditPart2"
+            objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelEditPart">
+         <action
+               class="org.modelica.uml.sysml.diagram2.part.SysmlLoadResourceAction"
+               enablesFor="1"
+               id="org.modelica.uml.sysml.diagram2.part.SysmlLoadResourceActionID"
+               label="Load Resource..."
+               menubarPath="additions">
+         </action>
+      </objectContribution>                      
+  </extension>
+
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.action.contributionItemProviders">
+      <contributionItemProvider
+            class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContributionItemProvider"
+            checkPluginLoaded="false">
+         <Priority name="Low"/>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty2EditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty3EditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty4EditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyNameEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClass2EditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassNameEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaEquationPropertyEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassName2EditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.GeneralizationEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaCompositionEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+         </popupContribution>
+         <popupContribution class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+            <popupStructuredContributionCriteria objectClass="org.modelica.uml.sysml.diagram2.edit.parts.ModelicaCompositionNameEditPart"/>
+            <popupPredefinedItem id="deleteFromDiagramAction" remove="true"/>
+            <popupPredefinedItem id="deleteFromModelAction" remove="true"/>
+         </popupContribution>
+      </contributionItemProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.action.globalActionHandlerProviders">
+      <GlobalActionHandlerProvider
+         class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramGlobalActionHandlerProvider"
+         id="Modelica Class InternalPresentation">
+         <Priority name="Lowest"/>
+         <ViewId id="org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorID">
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+               <GlobalActionId actionId="delete"/>
+            </ElementType>
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart">
+               <GlobalActionId actionId="save"/>
+            </ElementType>
+         </ViewId>
+      </GlobalActionHandlerProvider>
+      <GlobalActionHandlerProvider
+         class="org.eclipse.gmf.runtime.diagram.ui.providers.ide.providers.DiagramIDEGlobalActionHandlerProvider"
+         id="Modelica Class InternalPresentationIDE">
+         <Priority name="Lowest"/>
+         <ViewId id="org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorID">
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+               <GlobalActionId actionId="bookmark"/>
+            </ElementType>
+         </ViewId>
+      </GlobalActionHandlerProvider>
+      <GlobalActionHandlerProvider
+            class="org.eclipse.gmf.runtime.diagram.ui.render.providers.DiagramUIRenderGlobalActionHandlerProvider"
+            id="Modelica Class InternalRender">
+         <Priority name="Lowest"/>
+         <ViewId id="org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorID">
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+               <GlobalActionId actionId="cut"/>
+               <GlobalActionId actionId="copy"/>
+               <GlobalActionId actionId="paste"/>
+            </ElementType>
+         </ViewId>
+      </GlobalActionHandlerProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.diagram.core.viewProviders">
+      <viewProvider class="org.modelica.uml.sysml.diagram2.providers.SysmlViewProvider">
+         <Priority name="Lowest"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Diagram" semanticHints="Modelica Class Internal"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints=""/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Edge" semanticHints=""/>
+      </viewProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.diagram.ui.editpartProviders">
+      <editpartProvider class="org.modelica.uml.sysml.diagram2.providers.SysmlEditPartProvider">
+         <Priority name="Lowest"/>
+      </editpartProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.diagram.ui.paletteProviders">
+      <paletteProvider class="org.modelica.uml.sysml.diagram2.providers.SysmlPaletteProvider">
+         <Priority name="Lowest"/>
+         <editor id="org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorID"/>
+      </paletteProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.emf.ui.modelingAssistantProviders">
+      <modelingAssistantProvider class="org.modelica.uml.sysml.diagram2.providers.SysmlModelingAssistantProvider">
+         <Priority name="Lowest"/>
+      </modelingAssistantProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.properties.propertiesProviders">
+      <PropertiesProvider
+            verifyPluginLoaded="false"
+            class="org.modelica.uml.sysml.diagram2.providers.SysmlPropertyProvider">
+         <Priority name="Lowest"/>
+      </PropertiesProvider>
+   </extension>
+
+  <!-- Begin Property modifier profider  -->
+  <extension 
+      id="org.modelica.uml.SysmlPropertyModifier2" 
+      name="Sysml property modifier2"
+      point="org.eclipse.gmf.runtime.common.ui.services.properties.propertyModifiers">
+      <PropertyModifier class="org.modelica.uml.sysml.diagram2.properties.SysmlPropertyModifier">
+         <Priority name="Highest">
+         </Priority>
+            <Provider class="*">
+         </Provider>
+      </PropertyModifier>
+   </extension> 
+  <!-- End Property modifier profider  --> 
+
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.iconProviders">
+      <IconProvider class="org.modelica.uml.sysml.diagram2.providers.SysmlIconProvider">
+         <Priority name="Low"/>
+      </IconProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.parserProviders">
+      <ParserProvider class="org.modelica.uml.sysml.diagram2.providers.SysmlParserProvider">
+         <Priority name="Lowest"/>
+      </ParserProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.emf.type.core.elementTypes">
+
+      <metamodel nsURI="http://www.eclipse.org/uml2/2.0.0/UML">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.Model_79"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="Model"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelEditHelper">
+            <param name="semanticHint" value="79"/>
+         </metamodelType>
+      </metamodel>
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaProperty_2001"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaProperty"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaPropertyEditHelper">
+            <param name="semanticHint" value="2001"/>
+         </metamodelType>
+      </metamodel>
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaProperty_2002"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaPropertyEditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaProperty_2001"/>
+            <param name="semanticHint" value="2002"/>
+         </specializationType>
+      </metamodel>
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaProperty_2003"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaProperty2EditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaProperty_2001"/>
+            <param name="semanticHint" value="2003"/>
+         </specializationType>
+      </metamodel>
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaProperty_2004"
+               name="Class part"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaProperty3EditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaProperty_2001"/>
+            <param name="semanticHint" value="2004"/>
+         </specializationType>
+      </metamodel>
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaClass_2005"
+               name="Class"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaClass_1001"/>
+            <param name="semanticHint" value="2005"/>
+         </specializationType>
+      </metamodel>
+
+    <metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaModel_2005"
+               name="Model"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaModel_1001"/>
+            <param name="semanticHint" value="2005"/>
+         </specializationType>
+      </metamodel>
+      
+	<metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaBlock_2005"
+               name="Block"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaBlock_1001"/>
+            <param name="semanticHint" value="2005"/>
+         </specializationType>
+      </metamodel>      
+      
+	<metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaRecord_2005"
+               name="Record"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaRecord_1001"/>
+            <param name="semanticHint" value="2005"/>
+         </specializationType>
+      </metamodel>
+      
+	<metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaConnector_2005"
+               name="Connector"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaConnector_1001"/>
+            <param name="semanticHint" value="2005"/>
+         </specializationType>
+      </metamodel>
+      
+	<metamodel nsURI="http://modelica.org/mml">
+         <specializationType
+               id="org.modelica.uml.sysml.diagram2.ModelicaFunction_2005"
+               name="Function"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               edithelperadvice="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelperAdvice">
+            <specializes id="org.modelica.uml.sysml.diagram2.ModelicaFunction_1001"/>
+            <param name="semanticHint" value="2005"/>
+         </specializationType>
+      </metamodel>
+
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaEquationProperty_2006"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaEquationProperty"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaEquationPropertyEditHelper">
+            <param name="semanticHint" value="2006"/>
+         </metamodelType>
+      </metamodel>
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaClass_1001"
+               name="Class"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaClass"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelper">
+            <param name="semanticHint" value="1001"/>
+         </metamodelType>
+      </metamodel>
+
+	 <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaModel_1001"
+               name="Model"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaModel"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelper">
+            <param name="semanticHint" value="1001"/>
+         </metamodelType>
+      </metamodel>            
+      
+      <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaBlock_1001"
+               name="Block"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaBlock"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelper">
+            <param name="semanticHint" value="1001"/>
+         </metamodelType>
+      </metamodel> 
+            
+	 <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaRecord_1001"
+               name="Record"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaRecord"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelper">
+            <param name="semanticHint" value="1001"/>
+         </metamodelType>
+      </metamodel>
+            
+	 <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaConnector_1001"
+               name="Connector"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaConnector"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelper">
+            <param name="semanticHint" value="1001"/>
+         </metamodelType>
+      </metamodel>
+      
+      <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaFunction_1001"
+               name="Function"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaFunction"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaClassEditHelper">
+            <param name="semanticHint" value="1001"/>
+         </metamodelType>
+      </metamodel>
+
+     <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaConnection_3009"
+               name="Connection"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaConnection"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaConnectionEditHelper">
+            <param name="semanticHint" value="3009"/>
+         </metamodelType>
+      </metamodel>
+
+      <metamodel nsURI="http://www.eclipse.org/uml2/2.0.0/UML">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.Generalization_3001"
+               name="Generalization"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="Generalization"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.GeneralizationEditHelper">
+            <param name="semanticHint" value="3001"/>
+         </metamodelType>
+      </metamodel>
+
+      <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               id="org.modelica.uml.sysml.diagram2.ModelicaComposition_3002"
+               name="Composition"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="ModelicaComposition"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaCompositionEditHelper">
+            <param name="semanticHint" value="3002"/>
+         </metamodelType>
+      </metamodel>      
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.emf.type.core.elementTypeBindings">
+      <clientContext id="Modelica Class InternalClientContext">
+         <enablement>
+            <test
+               property="org.eclipse.gmf.runtime.emf.core.editingDomain"
+               value="org.modelica.uml.sysml.diagram2.EditingDomain"/>
+         </enablement>
+      </clientContext> 
+      <binding context="Modelica Class InternalClientContext">
+         <elementType ref="org.modelica.uml.sysml.diagram2.Model_79"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaProperty_2001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaProperty_2002"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaProperty_2003"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaProperty_2004"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaClass_2005"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaModel_2005"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaRecord_2005"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaBlock_2005"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaConnector_2005"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaFunction_2005"/>         
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaEquationProperty_2006"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaClass_1001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaModel_1001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaRecord_1001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaBlock_1001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaConnector_1001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaFunction_1001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaConnection_3009"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.Generalization_3001"/>
+         <elementType ref="org.modelica.uml.sysml.diagram2.ModelicaComposition_3002"/>
+         <advice ref="org.eclipse.gmf.runtime.diagram.core.advice.notationDepdendents"/>
+      </binding>
+   </extension>
+
+</plugin>
