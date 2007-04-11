@@ -6,7 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
@@ -16,19 +19,22 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
+import org.modelica.mdt.internal.core.ErrorManager;
 
-public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
+
+public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget, IBreakpointManagerListener, IMDTEventListener
+{
 
 	// associated system process (VM)
 	private IProcess fProcess;
@@ -41,28 +47,23 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 
 	// sockets to communicate with MDT Debuger
 	private Socket fCommandSocket;
-
 	private PrintWriter fCommandWriter;
-
-	private BufferedReader fCommandReader;
-
+	private Socket fReplySocket;
+	private BufferedReader fReplyReader;	
 	private Socket fEventSocket;
-
 	private BufferedReader fEventReader;
-
-	// suspend state
-	private boolean fSuspended = true;
-
+	private Socket fSignalSocket;
+	private PrintWriter fSignalWriter;
+	
 	// terminated state
 	private boolean fTerminated = false;
 
-	// threads
-	private MDTThread fThread;
-
-	private IThread[] fThreads;
+	private ArrayList fThreads;
 
 	// event dispatch job
 	private EventDispatchJob fEventDispatch;
+	// event listeners
+	private Vector<IMDTEventListener> fEventListeners = new Vector<IMDTEventListener>();
 
 	/**
 	 * Listens to events from the MDT Debuger and fires corresponding debug
@@ -86,37 +87,21 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 				try {
 					event = fEventReader.readLine();
 					if (event != null) {
-						System.out.println("RECEIVED EVENT: " + event);
-
-						fThread.setBreakpoints(null);
-						fThread.setStepping(false);
-						
-						if (event.startsWith("@")) {
-							breakpointHit(event);							
-						} else if (event.equals("started")) {
-							started();
-						} else if (event.equals("terminated")) {
-							terminated();
-						} else if (event.startsWith("run")) {
-							if (event.endsWith("step")) {
-								fThread.setStepping(true);
-								resumed(DebugEvent.STEP_OVER);
-							} else if (event.endsWith("client")) {
-								resumed(DebugEvent.CLIENT_REQUEST);
-							}
-						} else if (event.startsWith("suspend")) {
-							if (event.endsWith("client")) {
-								suspended(DebugEvent.CLIENT_REQUEST);
-							} else if (event.endsWith("step")) {
-								suspended(DebugEvent.STEP_END);
-							} else if (event.indexOf("breakpoint") >= 0) {
-								breakpointHit(event);
-							}
+						Object[] listeners = fEventListeners.toArray();
+						for (int i = 0; i < listeners.length; i++) 
+						{
+							((IMDTEventListener)listeners[i]).handleEvent(event);	
 						}
 					}
 				} catch (IOException e) {
-					System.out.println("EXCEPTION IN RUN:" + e.getMessage());
-					terminated();
+					try
+					{
+						terminate();
+					}
+					catch(DebugException ex)
+					{
+						ErrorManager.logError(ex);
+					}
 				}
 			}
 			return Status.OK_STATUS;
@@ -136,36 +121,78 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 *            port to send requests to the VM
 	 * @param eventPort
 	 *            port to read events from
+	 * @param signalPort
+	 *            port to send async suspend to the VM
 	 * @exception CoreException
 	 *                if unable to connect to host
 	 */
-	public MDTDebugTarget(ILaunch launch, IProcess process, int commandPort, int eventPort) throws CoreException {
+	public MDTDebugTarget(
+			ILaunch launch, 
+			IProcess process, 
+			int commandPort, 
+			int replyPort,
+			int eventPort, 
+			int signalPort) throws CoreException 
+	{
 		super(null);
+		fThreads = new ArrayList();		
 		fLaunch = launch;
-		fTarget = this;
 		fProcess = process;
-		try 
+		addEventListener(this);
+		boolean tryAgain = true;
+		int noOfTries = -1;
+		int maxNoOfTries = 3;
+		while (tryAgain)
 		{
-			fCommandSocket = new Socket("localhost", commandPort);
-			fCommandWriter = new PrintWriter(fCommandSocket.getOutputStream());
-			fCommandReader = new BufferedReader(new InputStreamReader(fCommandSocket.getInputStream()));
-
-			fEventSocket = new Socket("localhost", eventPort);
-			fEventReader = new BufferedReader(new InputStreamReader(fEventSocket.getInputStream()));
-		} catch (UnknownHostException e) {
-			abort("Unable to connect to MDT Debugger", e);
-		} catch (IOException e) {
-			abort("Unable to connect to MDT Debugger", e);
+			noOfTries++;
+			tryAgain = false;
+			try 
+			{
+				// give interpreter a chance to start			
+				try { Thread.sleep(100); } catch (InterruptedException e) {}			
+				fCommandSocket = new Socket("localhost", commandPort);
+				fCommandWriter = new PrintWriter(fCommandSocket.getOutputStream());
+				
+				// give interpreter a chance to open next socket
+				try { Thread.sleep(100); } catch (InterruptedException e) {}
+				
+				fReplySocket = new Socket("localhost", replyPort);
+				fReplyReader = new BufferedReader(new InputStreamReader(fReplySocket.getInputStream()));
+				
+				// give interpreter a chance to open next socket
+				try { Thread.sleep(100); } catch (InterruptedException e) {}
+	
+				fEventSocket = new Socket("localhost", eventPort);
+				fEventReader = new BufferedReader(new InputStreamReader(fEventSocket.getInputStream()));
+	
+				// give interpreter a chance to open next socket
+				try { Thread.sleep(100); } catch (InterruptedException e) {}
+				
+				fSignalSocket = new Socket("localhost", signalPort);
+				fSignalWriter = new PrintWriter(fSignalSocket.getOutputStream());
+				
+				
+			} catch (UnknownHostException e) {
+				// if we could not connect it may be because the debugger was not yet ready
+				tryAgain = true;
+				if (noOfTries > maxNoOfTries)
+					requestFailed("Unable to connect to MDT Debugger", e);
+			} catch (IOException e) {
+				// if we could not connect it may be because the debugger was not yet ready
+				tryAgain = true;
+				if (noOfTries > maxNoOfTries)				
+					requestFailed("Unable to connect to MDT Debugger", e);
+			}
 		}
 		
-		fThread = new MDTThread(this);
-		fThreads = new IThread[] { fThread };
+		MDTThread x = new MDTThread(this);
+		x.fireCreationEvent();
+		fThreads.add(x);
 		fEventDispatch = new EventDispatchJob();
 		fEventDispatch.schedule();
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
-		
-		//sendCommand("break on main");
-		//sendCommand("run");		
+		IBreakpointManager breakpointManager = getBreakpointManager();
+        breakpointManager.addBreakpointListener(this);
+		breakpointManager.addBreakpointManagerListener(this);		
 	}
 
 	/*
@@ -183,16 +210,48 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.IDebugTarget#getThreads()
 	 */
 	public IThread[] getThreads() throws DebugException {
-		return fThreads;
+		synchronized (fThreads) {
+			return (IThread[])fThreads.toArray(new IThread[0]);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IDebugTarget#getThreads()
+	 */
+	public IThread getThread() {
+		synchronized (fThreads) {
+			if (fThreads.size() > 0)
+				return (IThread)fThreads.get(0);
+			else
+				return null;
+		}
+	}
+	
+	
+	/**
+	 * Returns an iterator over the collection of threads. The
+	 * returned iterator is made on a copy of the thread list
+	 * so that it is thread safe. This method should always be
+	 * used instead of getThreadList().iterator()
+	 * @return an iterator over the collection of threads
+	 */
+	private Iterator getThreadIterator() {
+		List threadList;
+		synchronized (fThreads) {
+			threadList= (List) fThreads.clone();
+		}
+		return threadList.iterator();
+	}	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugTarget#hasThreads()
 	 */
 	public boolean hasThreads() throws DebugException {
-		return false;
+		return true;
 	}
 
 	/*
@@ -218,25 +277,11 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 */
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) 
 	{
-		return true;
-		/*
-		if (breakpoint.getModelIdentifier().equals(IMDTConstants.ID_MDT_DEBUG_MODEL)) {
-			try {
-				String program = getLaunch().getLaunchConfiguration().getAttribute(IMDTConstants.ATTR_MDT_PROGRAM,(String) null);
-				if (program != null) {
-					IMarker marker = breakpoint.getMarker();
-					if (marker != null) {
-						IPath p = new Path(program);
-						return marker.getResource().getFullPath().equals(p);
-					}
-				}
-			} 
-			catch (CoreException e) 
-			{
-			}
+		if (!isTerminated() && breakpoint.getModelIdentifier().equals(getModelIdentifier())) 
+		{
+			return true;
 		}
 		return false;
-		*/
 	}
 
 	/*
@@ -272,19 +317,38 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return getProcess().isTerminated();
+		return fTerminated || getProcess().isTerminated();
 	}
 
+	/**
+	 * Removes all threads from this target's collection
+	 * of threads, firing a terminate event for each.
+	 */
+	protected void removeAllThreads() {
+		Iterator itr= getThreadIterator();
+		while (itr.hasNext()) {
+			MDTThread child= (MDTThread) itr.next();
+			child.terminated();
+		}
+		synchronized (fThreads) {
+		    fThreads.clear();
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
-	public void terminate() throws DebugException {
-		synchronized (fCommandSocket) {
-			fCommandWriter.println("exit");
-			fCommandWriter.flush();
-		}
+	public void terminate() throws DebugException 
+	{
+		fTerminated = true;
+		removeAllThreads();
+		IBreakpointManager breakpointManager = getBreakpointManager();
+        breakpointManager.removeBreakpointListener(this);
+		breakpointManager.removeBreakpointManagerListener(this);
+		fireTerminateEvent();		
+		removeEventListener(this);
 	}
 
 	/*
@@ -312,7 +376,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
-		return fSuspended;
+		return !isTerminated() && getThread().isSuspended();
 	}
 
 	/*
@@ -321,29 +385,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-		sendCommand("run");
-	}
-
-	/**
-	 * Notification the target has resumed for the given reason
-	 * 
-	 * @param detail
-	 *            reason for the resume
-	 */
-	private void resumed(int detail) {
-		fSuspended = false;
-		fThread.fireResumeEvent(detail);
-	}
-
-	/**
-	 * Notification the target has suspended for the given reason
-	 * 
-	 * @param detail
-	 *            reason for the suspend
-	 */
-	private void suspended(int detail) {
-		fSuspended = true;
-		fThread.fireSuspendEvent(detail);
+		getThread().resume();		
 	}
 
 	/*
@@ -352,8 +394,9 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
+		getThread().suspend();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -362,12 +405,9 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		if (supportsBreakpoint(breakpoint)) {
 			try {
-				if (breakpoint.isEnabled()) {
-					try 
-					{
-						sendCommand("break on "+ breakpoint.getMarker().getResource().getName() + ":" + (((ILineBreakpoint) breakpoint).getLineNumber()));
-					} 
-					catch (CoreException e) { }
+					if ((breakpoint.isEnabled() && getBreakpointManager().isEnabled()) || !breakpoint.isRegistered()) {
+						MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
+					    mdtBreakpoint.install(this);
 				}
 			} catch (CoreException e) {
 			}
@@ -382,9 +422,13 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
-			try {
-				sendCommand("break off "+ breakpoint.getMarker().getResource().getName() + ":" + (((ILineBreakpoint) breakpoint).getLineNumber()));
-			} catch (CoreException e) {
+			try 
+			{
+			    MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
+				mdtBreakpoint.remove(this);
+			} 
+			catch (CoreException e) 
+			{
 			}
 		}
 	}
@@ -398,7 +442,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
 			try {
-				if (breakpoint.isEnabled()) {
+				if (breakpoint.isEnabled() && getBreakpointManager().isEnabled()) {
 					breakpointAdded(breakpoint);
 				} else {
 					breakpointRemoved(breakpoint, null);
@@ -431,7 +475,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
 	 */
 	public boolean isDisconnected() {
-		return false;
+		return isTerminated();
 	}
 
 	/*
@@ -472,87 +516,10 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * manager.
 	 */
 	private void installDeferredBreakpoints() {
-		IBreakpoint[] breakpoints = DebugPlugin.getDefault()
-				.getBreakpointManager().getBreakpoints(
-						IMDTConstants.ID_MDT_DEBUG_MODEL);
+		IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints(getModelIdentifier());
 		for (int i = 0; i < breakpoints.length; i++) {
 			breakpointAdded(breakpoints[i]);
 		}
-	}
-
-	/**
-	 * Called when this debug target terminates.
-	 */
-	private void terminated() {
-		fTerminated = true;
-		fSuspended = false;
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-		fireTerminateEvent();
-	}
-
-	/**
-	 * Returns the current stack frames in the target.
-	 * 
-	 * @return the current stack frames in the target
-	 * @throws DebugException
-	 *             if unable to perform the request
-	 */
-	protected IStackFrame[] getStackFrames() throws DebugException {
-		synchronized (fCommandSocket) {
-			fCommandWriter.println("livevars");
-			fCommandWriter.flush();
-			try {
-				String framesData = fCommandReader.readLine();
-				if (framesData != null) {
-					String[] frames = framesData.split("#");
-					IStackFrame[] theFrames = new IStackFrame[frames.length];
-					for (int i = 0; i < frames.length; i++) {
-						String data = frames[i];
-						theFrames[frames.length - i - 1] = new MDTStackFrame(
-								fThread, data, i);
-					}
-					return theFrames;
-				}
-			} catch (IOException e) {
-				abort("Unable to retrieve stack frames", e);
-			}
-		}
-		
-		return new IStackFrame[0];
-	}
-
-	/**
-	 * Single step the interpreter.
-	 * 
-	 * @throws DebugException
-	 *             if the request fails
-	 */
-	protected void step() throws DebugException {
-		sendCommand("step");
-	}
-
-	/**
-	 * Returns the current value of the given variable.
-	 * 
-	 * @param variable
-	 * @return variable value
-	 * @throws DebugException
-	 *             if the request fails
-	 */
-	protected IValue getVariableValue(MDTVariable variable)
-			throws DebugException {
-		synchronized (fCommandSocket) {
-			fCommandWriter.println("var " + variable.getName());
-			// + variable.getStackFrame().getIdentifier() + " "
-			fCommandWriter.flush();
-			try {
-				String value = fCommandReader.readLine();
-				return new MDTValue(this, value);
-			} catch (IOException e) {
-				abort(MessageFormat.format("Unable to retrieve value for variable {0}", new String[] { variable.getName() }), e);
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -561,90 +528,196 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget {
 	 * @return the values on the data stack (top down)
 	 */
 	public IValue[] getDataStack() throws DebugException {
-		synchronized (fCommandSocket) {
-			fCommandWriter.println("data");
-			fCommandWriter.flush();
-			try {
-				String valueString = fCommandReader.readLine();
-				if (valueString != null && valueString.length() > 0) {
-					String[] values = valueString.split("\\|");
-					IValue[] theValues = new IValue[values.length];
-					for (int i = 0; i < values.length; i++) {
-						String value = values[values.length - i - 1];
-						theValues[i] = new MDTValue(this, value);
-					}
-					return theValues;
-				}
-			} catch (IOException e) {
-				abort("Unable to retrieve data stack", e);
+		/*
+		String dataStack = "1|2|3";//sendRequest("data");
+		if (dataStack != null && dataStack.length() > 0) {
+			String[] values = dataStack.split("\\|");
+			IValue[] theValues = new IValue[values.length];
+			for (int i = 0; i < values.length; i++) {
+				String value = values[values.length - i - 1];
+				theValues[i] = new MDTStackValue(this, value, i);
 			}
+			return theValues;
 		}
-		return new IValue[0];
+		*/
+		return new IValue[0];		
 	}
-
+	
 	/**
-	 * Sends a request to the MDT Debugger and waits for an OK.
+	 * Sends a request to the MDT Debugger and will get one of IMDTDebugCommands.EVENT_*
 	 * 
-	 * @param request
+	 * @param cmd
 	 *            debug command
 	 * @throws DebugException
 	 *             if the request fails
 	 */
-	private void sendCommand(String request) throws DebugException {
-		synchronized (fCommandSocket) {
-			System.out.println("Sending command:" + request);
-			fCommandWriter.println(request);
-			fCommandWriter.flush();
-			//try 
-			//{
-				// wait for "ok"
-				//String response = fCommandReader.readLine();
-			//} 
-			//catch (IOException e) 
-			//{
-			//	abort("Command failed: " + request, e);
-			//}
+	public String sendRequest(String cmd) throws DebugException 
+	{
+		/*
+		if (!isSuspended()) 
+		{
+			sendSignal(IMDTDebugCommands.EVENT_SUSPEND);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 		}
+		*/
+		synchronized (fCommandSocket) {
+			System.out.println("Sending command:" + cmd);
+			fCommandWriter.println(cmd);
+			fCommandWriter.flush();
+			try {
+				// wait for reply
+				String reply = fReplyReader.readLine();
+				System.out.println("Got reply:" + reply);
+				System.out.flush();
+				return reply;
+			} catch (IOException e) {
+				requestFailed("Request failed: " + cmd, e);
+			}
+		}
+		return null;
 	}
 
 	/**
-	 * Notification a breakpoint was encountered. Determine which breakpoint was
-	 * hit and fire a suspend event.
+	 * Sends a signal to the MDT Debugger.
 	 * 
-	 * @param event
-	 *            debug event
+	 * @param signal
+	 *            debug signal
+	 * @throws DebugException
+	 *             if the request fails
 	 */
-	private void breakpointHit(String event) 
+	public void sendSignal(String signal) throws DebugException 
 	{
-		// determine which breakpoint was hit, and set the thread's breakpoint
-		int column = event.indexOf(':');
-		String file = event.substring(1,column);
-		event=event.substring(column+1);
-		String line = event.substring(0,event.indexOf('.'));
-		int lastSpace = event.lastIndexOf(' ');
-		//if (lastSpace > 0) {
-		//	String line = event.substring(lastSpace + 1);
-			int lineNumber = Integer.parseInt(line);
-			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IMDTConstants.ID_MDT_DEBUG_MODEL);
-
-			for (int i = 0; i < breakpoints.length; i++) {
-				IBreakpoint breakpoint = breakpoints[i];
-				if (supportsBreakpoint(breakpoint)) {
-					if (breakpoint instanceof ILineBreakpoint) {
-						ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;						
-						try {
-							System.out.println("Line number "+ lineBreakpoint.getLineNumber());
-							if (lineBreakpoint.getLineNumber()-1 == lineNumber) {
-								fThread.setBreakpoints(new IBreakpoint[] { breakpoint });
-								break;
-							}
-						} catch (CoreException e) {
-						}
-					}
-				}
+			System.out.println("Sending signal:" + signal);
+			fSignalWriter.println(signal);
+			fSignalWriter.flush();
+	}
+	
+	/**
+	 * When the breakpoint manager disables, remove all registered breakpoints
+	 * requests from the VM. When it enables, reinstall them.
+	 */
+	public void breakpointManagerEnablementChanged(boolean enabled) {
+		IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints(getModelIdentifier());
+		for (int i = 0; i < breakpoints.length; i++) {
+			if (enabled) {
+				breakpointAdded(breakpoints[i]);
+			} else {
+				breakpointRemoved(breakpoints[i], null);
 			}
-		//}
-		suspended(DebugEvent.BREAKPOINT);
+        }
+	}	
+
+	/**
+	 * Returns whether popping the data stack is currently permitted
+	 *  
+	 * @return whether popping the data stack is currently permitted
+	 */
+	public boolean canPop() {
+	    try {
+            return !isTerminated() && isSuspended() && getDataStack().length > 0;
+        } catch (DebugException e) {
+        }
+        return false;
+	}
+	
+	/**
+	 * Pops and returns the top of the data stack
+	 * 
+	 * @return the top value on the stack 
+	 * @throws DebugException if the stack is empty or the request fails
+	 */
+	public IValue pop() throws DebugException {
+	    IValue[] dataStack = getDataStack();
+	    if (dataStack.length > 0) {
+	        sendRequest("popdata");
+	        return dataStack[0];
+	    }
+	    requestFailed("Empty stack", null);
+	    return null;
+	}
+	
+	/**
+	 * Returns whether pushing a value is currently supported.
+	 * 
+	 * @return whether pushing a value is currently supported
+	 */
+	public boolean canPush() {
+	    return !isTerminated() && isSuspended();
+	}
+	
+	/**
+	 * Pushes a value onto the stack.
+	 * 
+	 * @param value value to push
+	 * @throws DebugException on failure
+	 */
+	public void push(String value) throws DebugException {
+	    sendRequest("pushdata " + value);
 	}
 
+	/* (non-Javadoc)
+	 * @see example.debug.core.model.IMDTEventListener#handleEvent(java.lang.String)
+	 */
+	public void handleEvent(String event) 
+	{		
+		System.out.println("MDTDebugTarget RECEIVED EVENT: " + event); System.out.flush();		
+		if (event.equals(IMDTDebugCommands.EVENT_START)) 
+		{
+			started();
+		} 
+		else if (event.equals(IMDTDebugCommands.EVENT_QUIT)) 
+		{
+			try
+			{
+				terminate();
+			}
+			catch(DebugException e)
+			{
+				ErrorManager.logError(e);
+			}
+		}
+	}
+		
+	/**
+	 * Registers the given event listener. The listener will be notified of
+	 * events in the program being interpretted. Has no effect if the listener
+	 * is already registered.
+	 *  
+	 * @param listener event listener
+	 */
+	public void addEventListener(IMDTEventListener listener) {
+		if (!fEventListeners.contains(listener)) {
+			fEventListeners.add(listener);
+		}
+	}
+	
+	/**
+	 * Deregisters the given event listener. Has no effect if the listener is
+	 * not currently registered.
+	 *  
+	 * @param listener event listener
+	 */
+	public void removeEventListener(IMDTEventListener listener) {
+		fEventListeners.remove(listener);
+	}
+
+	public PrintWriter getCommandWriter()
+	{
+		return fCommandWriter;
+	}
+	
+	public Socket getCommandSocket()
+	{
+		return fCommandSocket;
+	}	
+
+	public BufferedReader getReplyReader()
+	{
+		return fReplyReader;
+	}	
+	
+	
+	
+	
 }
+

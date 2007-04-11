@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -22,10 +24,13 @@ import org.modelica.mdt.debug.core.model.MDTDebugTarget;
 /**
  * Launches MDT program on a MDT Debugger
  */
+@SuppressWarnings("unchecked")
 public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 
-	private static int commandPort = -1;	
-	private static int eventPort = -1;
+	private static int commandPort = -1;
+	private static int replyPort   = -1;
+	private static int eventPort   = -1;
+	private static int signalPort  = -1;
 	
 	/*
 	 * (non-Javadoc)
@@ -38,6 +43,18 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 	{		
 		// get the program to be launched
 		String debugTargetProgram = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String)null);
+		if (debugTargetProgram == null)
+		{
+			abort("The executable to debug is not set.\nPlease check the debug configuration!", null);			
+		}
+		IPath progPath = new Path(debugTargetProgram);
+		if (!progPath.toFile().exists())
+		{
+			abort("The executable to debug does not exist: " + progPath.toOSString() + 
+					"\nPlease build/rebuild the executable before debugging!", null);
+		}
+		// remove the file
+		progPath = progPath.removeLastSegments(1);
 		String debugTargetCommandLineArguments = configuration.getAttribute(IMDTConstants.ATTR_MDT_ARGUMENTS, (String)null);
 		/* TODO: USE THESE IN THE PROCESS exec(); 
 		ILaunchManager.ATTR_ENVIRONMENT_VARIABLES;
@@ -52,13 +69,16 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 			commandList.add(debugTargetProgram);
 
 			commandPort = findFreePort();
-			eventPort = findFreePort();
-			if (commandPort == -1 || eventPort == -1) {
-				abort("Unable to find free port", null);
+			replyPort   = findFreePort();
+			eventPort   = findFreePort();
+			signalPort  = findFreePort();
+			if (commandPort == -1 || eventPort == -1 || signalPort == -1 || replyPort == -1) {
+				abort("Unable to find free ports to use for debugging connection.", null);
 			}
-			commandList.add("-dbgcmdport=" + commandPort);
-			commandList.add("-dbgeventport=" + eventPort);
-			commandList.add("-dbgsocket");
+			commandList.add("-dbgCmdPort="    + commandPort);
+			commandList.add("-dbgReplyPort="  + replyPort);			
+			commandList.add("-dbgEventPort="  + eventPort);
+			commandList.add("-dbgSignalPort=" + signalPort);
 			String[] extraArgs = DebugPlugin.parseArguments(debugTargetCommandLineArguments);
 			for (String x : extraArgs) commandList.add(x);
 			debugTargetProgram = "";
@@ -68,19 +88,19 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 			
 			Process process = DebugPlugin.exec(
 					commandLine, 
-					new File("C:\\bin\\cygwin\\home\\adrpo\\runtime-EclipseApplication\\OpenModelica\\build\\bin\\"), 
+					new File(progPath.toOSString()), 
 					null);
 			if (process == null)
 			{
-				abort("Unable to run the executable: ", null);
+				abort("Unable to run the executable: " + commandLine, null);
 			}
-			/* wait a bit for the process */
-			try { Thread.sleep(3000); }
+			/* wait a bit of 10 seconds for the process to start */
+			try { Thread.sleep(1000); }
 			catch(InterruptedException e) { /* ignore */ }			
 			
 			IProcess p = DebugPlugin.newProcess(launch, process, debugTargetProgram);
 			
-			IDebugTarget target = new MDTDebugTarget(launch, p, commandPort, eventPort);
+			IDebugTarget target = new MDTDebugTarget(launch, p, commandPort, replyPort, eventPort, signalPort);
 			launch.addDebugTarget(target);
 		}
 	}
@@ -132,5 +152,10 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 			}
 		}
 		return -1;
+	}
+	
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		// do NOT build for lunch when debugging MetaModelica
+		return false;
 	}
 }

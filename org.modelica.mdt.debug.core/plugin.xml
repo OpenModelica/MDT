@@ -37,20 +37,29 @@
       <breakpoint
             class="org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint"
             id="org.modelica.mdt.debug.core.lineBreakpoint"
-            markerType="org.modelica.mdt.debug.core.lineBreakpoint.marker"
-            name="MDT Breakpoint">
-      </breakpoint>
+            markerType="org.modelica.mdt.debug.core.markerType.lineBreakpoint"
+            name="MDT Line Breakpoints" />            
+      <breakpoint 
+      		class="org.modelica.mdt.debug.core.breakpoints.MDTWatchpoint"
+            name="MDT Watchpoints"
+            markerType="org.modelica.mdt.debug.core.markerType.watchpoint"
+            id="org.modelica.mdt.debug.core.watchpoint"/>
    </extension>
    
-   <extension
-         id="lineBreakpoint.marker"
-         point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.debug.core.lineBreakpointMarker">
-      </super>
-      <persistent
-            value="true">
-      </persistent>
+   <extension 
+   		point="org.eclipse.core.resources.markers"
+   		id="markerType.lineBreakpoint"
+        name = "MDT Line Breakpoint Marker">
+      <super type="org.eclipse.debug.core.lineBreakpointMarker" />
+      <persistent value="true" />
    </extension>
+   <extension 
+   		point="org.eclipse.core.resources.markers"
+   		id="markerType.watchpoint"
+        name = "MDT Watchpoint Marker">
+      <super type="org.modelica.mdt.debug.core.markerType.lineBreakpoint" />
+      <persistent value="true" />
+   </extension>
+
 
 </plugin>

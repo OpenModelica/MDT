@@ -29,7 +29,6 @@
 package org.modelica.mdt.debug.server;
 
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.tree.*;
@@ -74,12 +73,6 @@ public class MDTDebugServer extends Thread
 	DefaultMutableTreeNode parent = null; 
 
 	DefaultTreeModel treeModel = null;
-
-	LinkedList variableFromMOD = null;
-	
-	static String modelicaFilesPrefix = null;
-
-	FileInputStream fis; 
 
     public MDTDebugServer() 
 	{
