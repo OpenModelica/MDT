@@ -11,6 +11,39 @@
             id="org.modelica.mdt.debug.ui.launchConfigurationTabGroup.mdt">
       </launchConfigurationTabGroup>
    </extension>
+
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/cview16/mdt.gif"
+            configTypeID="org.modelica.mdt.debug.core.launchConfigurationType"
+            id="org.modelica.mdt.debug.ui.launchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.modelica.mdt.debug.ui.shortcuts.MDTLaunchShortcut"
+            icon="icons/full/cview16/mdt.gif"
+            id="org.modelica.mdt.debug.ui.shortcuts.MDTLaunchShortcut"
+            label="MetaModelica Debug"
+            modes="debug, run">
+         <perspective id="org.modelica.mdt.ui.ModelicaPerspective"/>
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <instanceof value="org.eclipse.core.resources.IFile"/>
+                     <test
+                           value="*.exe"
+                           property="org.eclipse.debug.ui.matchesPattern"/>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>         
+      </shortcut>
+   </extension>
    
    <extension
          point="org.eclipse.debug.ui.debugModelPresentations">
@@ -20,21 +53,22 @@
       </debugModelPresentation>
    </extension>
    
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            class="org.modelica.mdt.debug.ui.breakpoints.MDTBreakpointAdapterFactory"
-            adaptableType="org.eclipse.ui.texteditor.ITextEditor">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
-         </adapter>
-      </factory>
+   <extension point="org.eclipse.ui.editorActions">
+      <editorContribution targetID="org.modelica.mdt.ui.editor" id="org.modelica.mdt.ui.editor.rulerActions">
+         <action
+               label="Not Used"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               style="push"
+               actionID="RulerDoubleClick"
+               id="mdt.doubleClickBreakpointAction"/>
+      </editorContribution>
    </extension>
+      
    
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Data Stack"
+            name="MDT Data Stack"
             icon="icons/full/cview16/datastack_view.gif"
             class="org.modelica.mdt.debug.ui.views.DataStackView"
             id="org.modelica.mdt.debug.ui.view.DataStackView">
@@ -85,31 +119,54 @@
       </contextViewBinding>
    </extension>
    
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            icon="icons/full/cview16/mdt.gif"
-            configTypeID="org.modelica.mdt.debug.core.launchConfigurationType"
-            id="org.modelica.mdt.debug.ui.launchConfigurationTypeImage">
-      </launchConfigurationTypeImage>
+	<extension point="org.eclipse.ui.popupMenus">           
+      <viewerContribution 
+      	 targetID="#TextRulerContext"
+      	 id="org.modelica.mdt.ui.editor.rulerActions">
+         <action
+               label="Toggle Breakpoint"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               menubarPath="debug"
+               id="org.modelica.mdt.ui.editor.ruler.toggleBreakpointAction"/>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#TextEditorContext"
+            id="org.modelica.mdt.ui.editor.menuActions">
+         <action
+               label="Run to Line"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="org.modelica.mdt.uieditor.context.runToLineAction"/>
+      </viewerContribution>
+      <objectContribution
+            adaptable="false"
+            id="mdt.dropToFrame"
+            objectClass="org.modelica.mdt.debug.core.model.MDTStackFrame">
+         <action
+               class="org.modelica.mdt.debug.ui.editor.PopFrameActionDelegate"
+               id="mdt.dropToFrame"
+               label="Pop Frame"/>
+      </objectContribution> 
    </extension>
+   
+      
    <extension
-         point="org.eclipse.debug.ui.launchShortcuts">
-      <shortcut
-            class="org.modelica.mdt.debug.ui.shortcuts.MDTLaunchShortcut"
-            icon="icons/full/cview16/mdt.gif"
-            id="org.modelica.mdt.debug.ui.shortcuts.MDTLaunchShortcut"
-            label="MetaModelica Debug"
-            modes="debug, run">
-         <perspective id="org.modelica.mdt.ui.ModelicaPerspective"/>
-      </shortcut>
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.modelica.mdt.debug.ui.breakpoints.MDTEditorAdapterFactory"
+            adaptableType="org.eclipse.ui.texteditor.ITextEditor">
+			<adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+      </factory>
    </extension>
-   <extension
+   
+  <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             id="org.eclipse.debug.ui.LaunchActionSet"
             label="Launch action set"
             visible="true"/>
    </extension>
+
 
 </plugin>

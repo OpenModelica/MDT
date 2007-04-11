@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MDT Debug UI Plugin
 Bundle-SymbolicName: org.modelica.mdt.debug.ui; singleton:=true
-Bundle-Version: 0.6.9
+Bundle-Version: 0.7.0
 Bundle-Localization: plugin
 Bundle-Vendor: Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University
 Bundle-Activator: org.modelica.mdt.debug.ui.MDTDebugUIPlugin
@@ -15,7 +15,10 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.jface.text,
  org.eclipse.core.runtime,
- org.modelica.mdt.debug.core
+ org.modelica.mdt.debug.core,
+ org.modelica.mdt.ui,
+ org.eclipse.ui.editors,
+ org.modelica.mdt.core
 Export-Package: org.modelica.mdt.debug.ui,
  org.modelica.mdt.debug.ui.breakpoints,
  org.modelica.mdt.debug.ui.launcher,
