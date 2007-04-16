@@ -73,8 +73,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 	public void generateInheritanceDiagramFromFile(String fileName){
 		String[] fileClasses = {""};
 		String command = "loadFileInteractive(\""+ fileName+"\")";
-		CustomNode createdNode = null;
-		EditPart createdEditPart = null;
+		
 		
 		
 		try{
@@ -86,22 +85,28 @@ public class SysmlInheritanceDiagramAction extends Action{
 						
 		}
 		
-		for(int i=0;i<fileClasses.length;i++){
-			if()
-			createdEditPart =  createEmptyNode(fileClasses[i]);
-			if(createdEditPart != null){
-				createdNode = new CustomNode(fileClasses[i],createdEditPart);
-			}
-		}
+		
 		
 	}
+	
+	
 	
 	public void generateInheritanceDiagramFromClass(String className){
 		
 	}
 	
+	protected List<CustomNode> CreateInheritanceNodesList(String[] classes){
+		
+		CustomNode createdNode = null;
+		EditPart createdEditPart = null;
+		
+		for(int i=0; i<classes.length;i++){
+			createdEditPart = createEmptyNodeEditPart(classes[i]);
+		}
+		return createdNodes;
+	}
 	
-	protected EditPart createEmptyNode(String classType){
+	protected EditPart createEmptyNodeEditPart(String classType){
 		if(editPart != null){
 			IElementType nodeType = null;
 			if(classType == "class")
@@ -119,12 +124,12 @@ public class SysmlInheritanceDiagramAction extends Action{
 			if(nodeType == null)
 				return null;
 			else
-				return createEmptyNode(nodeType);
+				return createEmptyNodeEditPart(nodeType);
 		}
 		else return null;
 	}
 	
-	protected EditPart createEmptyNode(IElementType resourceElementType){
+	protected EditPart createEmptyNodeEditPart(IElementType resourceElementType){
 		
 		if(editPart != null && resourceElementType != null){
 		
@@ -165,19 +170,24 @@ public class SysmlInheritanceDiagramAction extends Action{
 		}
 		else return editPart;
 	}
-	
-	protected void createConnection(IElementType resourceElementType, EditPart source, EditPart target){
+	/*
+	protected EditPart createConnectionEditPart(IElementType resourceElementType, EditPart source, EditPart target){
 		
-	}
+	}*/
 	
 	protected class CustomNode{
 		private String name;
+		private String type;
 		private EditPart nodeEditPart;
 		
 		CustomNode(String name,EditPart node){
 			this.name=name;
 			nodeEditPart = node;
 			
+		}
+		
+		public String getType(){
+			return type;
 		}
 		
 		public String getName(){
