@@ -100,7 +100,18 @@ public class SysmlInheritanceDiagramAction extends Action{
 		CustomNode createdNode = null;
 		EditPart createdEditPart = null;
 		
+		String classType = "";
+		String command ;
+		
+		
 		for(int i=0; i<classes.length;i++){
+			command = "getClassRestriction("+ classes[i] +")";
+			try{
+			classType = CompilerProxy.sendExpression(command, true).getFirstResult();
+			}
+			catch(Exception e){
+				
+			}
 			createdEditPart = createEmptyNodeEditPart(classes[i]);
 		}
 		return createdNodes;
@@ -109,7 +120,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 	protected EditPart createEmptyNodeEditPart(String classType){
 		if(editPart != null){
 			IElementType nodeType = null;
-			if(classType == "class")
+			if(classType == "class" || classType == "package")
 				nodeType = SysmlElementTypes.ModelicaClass_1001;
 			else if(classType == "model")
 				nodeType = SysmlElementTypes.ModelicaModel_1001;
@@ -186,12 +197,24 @@ public class SysmlInheritanceDiagramAction extends Action{
 			
 		}
 		
+		public void setType(String type){
+			this.type = type;
+		}
+		
 		public String getType(){
 			return type;
 		}
 		
+		public void setName(String name){
+			this.name = name;
+		}
+		
 		public String getName(){
 			return name;
+		}
+		
+		public void setEditPart(EditPart editPart){
+			this.nodeEditPart = editPart;
 		}
 		
 		public EditPart getNodeEditPart(){
