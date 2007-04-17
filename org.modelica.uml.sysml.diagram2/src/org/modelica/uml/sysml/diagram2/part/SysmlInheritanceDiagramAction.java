@@ -28,95 +28,109 @@ import org.eclipse.draw2d.geometry.Point;
 import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
 
 public class SysmlInheritanceDiagramAction extends Action{
-	
+
 	private IEditorPart activeEditor;
 	private String label;
 	private DiagramEditPart editPart = null;
 	private List<CustomNode> createdNodes;
 	private int actionType;
-	
+
 	public static final int FROM_FILE = 0;
 	public static final int FROM_CLASS = 1;
-	
-	
+
+
 	public SysmlInheritanceDiagramAction(String label,int actionType){
 		super(label);
 		this.label = label;
 		this.actionType = actionType;
 	}
-	
+
 	public void run(){
-		
+
 		String result[] = {""};
 		ICompilerResult  compilerResult;
-		
+
 		boolean showInConsole = true;
 		try{
-			
+
 			String command = "loadModel(Modelica)";
 			compilerResult = CompilerProxy.sendExpression(command,showInConsole);
 			result = compilerResult.getResult();
 		}
 		catch(Exception e){
-			
+
 		}
-		
+
 	}
-	
+
 	public void setActiveEditor(IEditorPart part) {
-       activeEditor = part;
-       
-       if(activeEditor instanceof FileDiagramEditor)
-    	   editPart = ((FileDiagramEditor) activeEditor).getDiagramEditPart();
-    }
+		activeEditor = part;
+
+		if(activeEditor instanceof FileDiagramEditor)
+			editPart = ((FileDiagramEditor) activeEditor).getDiagramEditPart();
+	}
 
 	public void generateInheritanceDiagramFromFile(String fileName){
 		String[] fileClasses = {""};
 		String command = "loadFileInteractive(\""+ fileName+"\")";
-		
-		
-		
+
+
+
 		try{
 			ICompilerResult compilerResult;
 			compilerResult = CompilerProxy.sendExpression(command, true);
 			fileClasses = compilerResult.getResult();
 		}
 		catch(Exception e){
-						
+
 		}
-		
-		
-		
+
+
+
 	}
-	
-	
-	
+
+
+
 	public void generateInheritanceDiagramFromClass(String className){
-		
+
 	}
-	
+
 	protected List<CustomNode> CreateInheritanceNodesList(String[] classes){
-		
+
 		CustomNode createdNode = null;
 		EditPart createdEditPart = null;
-		
+
 		String classType = "";
-		String command ;
-		
-		
+		String command = "";
+
+
 		for(int i=0; i<classes.length;i++){
 			command = "getClassRestriction("+ classes[i] +")";
 			try{
-			classType = CompilerProxy.sendExpression(command, true).getFirstResult();
+				classType = CompilerProxy.sendExpression(command, true).getFirstResult();
 			}
 			catch(Exception e){
-				
+
 			}
-			createdEditPart = createEmptyNodeEditPart(classes[i]);
+
+			createdEditPart = createEmptyNodeEditPart(classType);
+			createdNode = new CustomNode(classType,classes[i],createdEditPart);
+			createdNodes.add(createdNode);
+
+			command = "getClassNames("+ classes[i]+ ")";
+			String[] result = {""};
+
+			try{
+				result = CompilerProxy.sendExpression(command, true).getResult();
+			}
+			catch(Exception e){
+
+			}
+			CreateInheritanceNodesList(result);
 		}
 		return createdNodes;
 	}
-	
+
 	protected EditPart createEmptyNodeEditPart(String classType){
 		if(editPart != null){
 			IElementType nodeType = null;
@@ -139,84 +153,85 @@ public class SysmlInheritanceDiagramAction extends Action{
 		}
 		else return null;
 	}
-	
+
 	protected EditPart createEmptyNodeEditPart(IElementType resourceElementType){
-		
+
 		if(editPart != null && resourceElementType != null){
-		
-//		Get the command to create the new element and its view
-		CreateViewRequest createRequest = CreateViewRequestFactory
-		.getCreateShapeRequest(resourceElementType, 
-				SysmlDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
-		Point p =  new Point(5,5);
-		createRequest.setLocation(p);
-		
 
-		Command command = editPart.getCommand(createRequest);
-		
-		if (command == null || !(command.canExecute())) {
-			// Action enablement criteria expected to prevent this
-			throw new IllegalArgumentException("Command for '" //$NON-NLS-1$
-					+ " new class diagram" + "' is not executable."); 
-//			$NON-NLS-1$
-		}
-		
-		//Get the children list before creation
-		List oldChildrenList = editPart.getChildren();
+//			Get the command to create the new element and its view
+			CreateViewRequest createRequest = CreateViewRequestFactory
+			.getCreateShapeRequest(resourceElementType, 
+					SysmlDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+			Point p =  new Point(5,5);
+			createRequest.setLocation(p);
 
-		// Create the new element
-		DiagramCommandStack commandStack = editPart.getDiagramEditDomain()
-		.getDiagramCommandStack();
-		commandStack.execute(command);
-		//Get the children list after creation 
-		//and remove the old ones
-		List newChildrenList = editPart.getChildren();
-		newChildrenList.removeAll(oldChildrenList);
-		
-		//assumes the remaining children in the list are 1
-		//It should be so if no threads intervene
-		//in the future
-		return (EditPart)newChildrenList.get(0);
-		
+
+			Command command = editPart.getCommand(createRequest);
+
+			if (command == null || !(command.canExecute())) {
+				// Action enablement criteria expected to prevent this
+				throw new IllegalArgumentException("Command for '" //$NON-NLS-1$
+						+ " new class diagram" + "' is not executable."); 
+//				$NON-NLS-1$
+			}
+
+			//Get the children list before creation
+			List oldChildrenList = editPart.getChildren();
+
+			// Create the new element
+			DiagramCommandStack commandStack = editPart.getDiagramEditDomain()
+			.getDiagramCommandStack();
+			commandStack.execute(command);
+			//Get the children list after creation 
+			//and remove the old ones
+			List newChildrenList = editPart.getChildren();
+			newChildrenList.removeAll(oldChildrenList);
+
+			//assumes the remaining children in the list are 1
+			//It should be so if no threads intervene
+			//in the future
+			return (EditPart)newChildrenList.get(0);
+
 		}
 		else return editPart;
 	}
 	/*
 	protected EditPart createConnectionEditPart(IElementType resourceElementType, EditPart source, EditPart target){
-		
+
 	}*/
-	
+
 	protected class CustomNode{
 		private String name;
 		private String type;
 		private EditPart nodeEditPart;
-		
-		CustomNode(String name,EditPart node){
+
+		CustomNode(String type, String name,EditPart node){
 			this.name=name;
+			this.type = type;
 			nodeEditPart = node;
-			
+
 		}
-		
+
 		public void setType(String type){
 			this.type = type;
 		}
-		
+
 		public String getType(){
 			return type;
 		}
-		
+
 		public void setName(String name){
 			this.name = name;
 		}
-		
+
 		public String getName(){
 			return name;
 		}
-		
+
 		public void setEditPart(EditPart editPart){
 			this.nodeEditPart = editPart;
 		}
-		
+
 		public EditPart getNodeEditPart(){
 			return nodeEditPart;
 		}
