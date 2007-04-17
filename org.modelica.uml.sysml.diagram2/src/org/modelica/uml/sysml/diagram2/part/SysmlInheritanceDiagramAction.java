@@ -1,6 +1,7 @@
 package org.modelica.uml.sysml.diagram2.part;
 
 import java.util.List;
+import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
@@ -32,8 +33,9 @@ public class SysmlInheritanceDiagramAction extends Action{
 	private IEditorPart activeEditor;
 	private String label;
 	private DiagramEditPart editPart = null;
-	private List<CustomNode> createdNodes;
+	private List<CustomNode> createdNodes = null;
 	private int actionType;
+	private Point startPoint = new Point(0,0);
 
 	public static final int FROM_FILE = 0;
 	public static final int FROM_CLASS = 1;
@@ -95,7 +97,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 	}
 
-	protected List<CustomNode> CreateInheritanceNodesList(String[] classes){
+	protected List<CustomNode> createInheritanceNodesList(String[] classes){
 
 		CustomNode createdNode = null;
 		EditPart createdEditPart = null;
@@ -126,11 +128,81 @@ public class SysmlInheritanceDiagramAction extends Action{
 			catch(Exception e){
 
 			}
-			CreateInheritanceNodesList(result);
+			createInheritanceNodesList(result);
 		}
 		return createdNodes;
 	}
 
+	protected void createInheritanceConnections(){
+		
+		Iterator listIterator = createdNodes.iterator();
+		CustomNode sourceNode = null;
+		int inheritanceCount;
+		String omcCommand = "";
+		String omcResult = "";
+		
+		while(listIterator.hasNext()){
+			sourceNode = (CustomNode)listIterator.next();
+			omcCommand ="getInheritanceCount("+sourceNode.getName()+")";
+			
+			try{
+				omcResult = CompilerProxy.sendExpression(omcCommand, true).getFirstResult();			
+			}
+			catch(Exception e){
+
+			}
+			
+			inheritanceCount = Integer.parseInt(omcResult.trim());
+			
+			for(int i=0;i<inheritanceCount;i++){
+				omcCommand = "getNthInheritedClass("+ sourceNode.getName()+","+i+")";
+				
+				try{
+					omcResult = CompilerProxy.sendExpression(omcCommand, true).getFirstResult();					
+				}
+				catch(Exception e){
+
+				}
+
+				EditPart targetEditPart = getEditPart(omcResult);
+				
+				createInheritanceConnectionEditPart(sourceNode.getNodeEditPart(),targetEditPart);
+				
+			}
+
+			
+			
+		}
+		
+	}
+	
+	protected void createInheritanceConnectionEditPart(EditPart source, EditPart target){
+		
+		//Create a generalization link
+		IElementType resourceElementType = SysmlElementTypes.Generalization_3001;
+		
+		CreateConnectionViewAndElementRequest connectionRequest =
+			new CreateConnectionViewAndElementRequest(
+					resourceElementType,
+					((IHintedType)resourceElementType).getSemanticHint(),
+					SysmlDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+		
+		Command command = connectionRequest.getCreateCommand(connectionRequest,
+				(EditPart)editPart.getChildren().get(0), 
+				(EditPart)editPart.getChildren().get(1));
+		
+		if (command == null || !(command.canExecute())) {
+			// Action enablement criteria expected to prevent this
+			throw new IllegalArgumentException("Command for '" 
+					+ " new generalization link" + "' is not executable."); 
+
+		}
+		DiagramCommandStack commandStack = editPart.getDiagramEditDomain()
+		.getDiagramCommandStack();
+		commandStack.execute(command);
+		
+	}
+	
 	protected EditPart createEmptyNodeEditPart(String classType){
 		if(editPart != null){
 			IElementType nodeType = null;
@@ -162,17 +234,25 @@ public class SysmlInheritanceDiagramAction extends Action{
 			CreateViewRequest createRequest = CreateViewRequestFactory
 			.getCreateShapeRequest(resourceElementType, 
 					SysmlDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
-			Point p =  new Point(5,5);
-			createRequest.setLocation(p);
+
+			//Set the location of the node in the diagram
+			if(startPoint.y<200)
+				startPoint.x += 100;
+			else{
+				startPoint.y += 100;
+				startPoint.x = 0;
+			}
+				
+			createRequest.setLocation(startPoint);
 
 
 			Command command = editPart.getCommand(createRequest);
 
 			if (command == null || !(command.canExecute())) {
 				// Action enablement criteria expected to prevent this
-				throw new IllegalArgumentException("Command for '" //$NON-NLS-1$
+				throw new IllegalArgumentException("Command for '" 
 						+ " new class diagram" + "' is not executable."); 
-//				$NON-NLS-1$
+
 			}
 
 			//Get the children list before creation
@@ -195,11 +275,19 @@ public class SysmlInheritanceDiagramAction extends Action{
 		}
 		else return editPart;
 	}
-	/*
-	protected EditPart createConnectionEditPart(IElementType resourceElementType, EditPart source, EditPart target){
-
-	}*/
-
+	
+	protected EditPart getEditPart(String name){
+		Iterator listIterator = createdNodes.iterator();
+		
+		while(listIterator.hasNext()){
+			CustomNode tempNode = (CustomNode)listIterator.next();
+			if(tempNode.getName()== name){
+				return tempNode.getNodeEditPart();
+			}
+		}
+		return null;
+	}
+	
 	protected class CustomNode{
 		private String name;
 		private String type;
