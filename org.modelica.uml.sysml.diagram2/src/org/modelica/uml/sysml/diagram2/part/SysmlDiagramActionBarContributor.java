@@ -212,7 +212,7 @@ public class SysmlDiagramActionBarContributor extends
 		MLmenu = new EditorAction("ModelicaML");
 		inheritanceDiagram = new RetargetAction(id1, "Inheritance Diagram");
 		submenu2 = new RetargetAction(id2, "submenu2");
-		inheritanceDiagramHandler = new SysmlInheritanceDiagramAction("Inheritance Diagram" , SysmlInheritanceDiagramAction.FROM_FILE);
+		inheritanceDiagramHandler = new SysmlInheritanceDiagramAction("Inheritance Diagram" , SysmlInheritanceDiagramAction.FROM_CLASS);
 		submenu2Handler = new EditorAction("submenu2");
 	}
 	

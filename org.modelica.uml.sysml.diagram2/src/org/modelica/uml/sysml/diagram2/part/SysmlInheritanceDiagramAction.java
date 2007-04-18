@@ -1,15 +1,20 @@
 package org.modelica.uml.sysml.diagram2.part;
 
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
+import org.modelica.mdt.core.ModelicaParserException;
+import org.modelica.mdt.core.compiler.ModelicaParser;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.eclipse.gef.EditPart;
 
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
+//import org.eclipse.gmf.runtime.diagram.ui.actions.;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewAndElementRequest.ViewAndElementDescriptor;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewAndElementRequest;
@@ -33,7 +38,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 	private IEditorPart activeEditor;
 	private String label;
 	private DiagramEditPart editPart = null;
-	private List<CustomNode> createdNodes = null;
+	private List<CustomNode> createdNodes;
 	private int actionType;
 	private Point startPoint = new Point(0,0);
 
@@ -45,11 +50,12 @@ public class SysmlInheritanceDiagramAction extends Action{
 		super(label);
 		this.label = label;
 		this.actionType = actionType;
+		createdNodes = new LinkedList<CustomNode>();
 	}
 
 	public void run(){
 
-		String result[] = {""};
+		String[] result = {""};
 		ICompilerResult  compilerResult;
 
 		boolean showInConsole = true;
@@ -58,10 +64,18 @@ public class SysmlInheritanceDiagramAction extends Action{
 			String command = "loadModel(Modelica)";
 			compilerResult = CompilerProxy.sendExpression(command,showInConsole);
 			result = compilerResult.getResult();
+			if(Boolean.parseBoolean(result[0].trim()) == true){
+				
+				result =new String[]{"Modelica"}; 
+			}
 		}
 		catch(Exception e){
 
 		}
+		
+		if(actionType == FROM_CLASS)
+			generateInheritanceDiagramFromClasses(result);
+			
 
 	}
 
@@ -87,50 +101,86 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 		}
 
-
-
-	}
-
-
-
-	public void generateInheritanceDiagramFromClass(String className){
+		createInheritanceNodesList(fileClasses);
+		createInheritanceConnections();
 
 	}
 
-	protected List<CustomNode> createInheritanceNodesList(String[] classes){
+
+
+	public void generateInheritanceDiagramFromClasses(String[] classNames){
+		
+		
+		createInheritanceNodesList(classNames);
+		createInheritanceConnections();
+
+	}
+
+	protected void createInheritanceNodesList(String[] classes){
 
 		CustomNode createdNode = null;
 		EditPart createdEditPart = null;
 
 		String classType = "";
+		String[] result = {""};
 		String command = "";
 
 
 		for(int i=0; i<classes.length;i++){
 			command = "getClassRestriction("+ classes[i] +")";
 			try{
-				classType = CompilerProxy.sendExpression(command, true).getFirstResult();
+				ICompilerResult compilerResult;
+				compilerResult = CompilerProxy.sendExpression(command, true);
+				result = compilerResult.getResult();
 			}
 			catch(Exception e){
 
 			}
 
+			classType = result[0].trim();
+			classType = classType.substring(1, classType.length()-1);
+			
 			createdEditPart = createEmptyNodeEditPart(classType);
-			createdNode = new CustomNode(classType,classes[i],createdEditPart);
+			createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
 			createdNodes.add(createdNode);
 
 			command = "getClassNames("+ classes[i]+ ")";
-			String[] result = {""};
+			
+			String retval="";
 
 			try{
-				result = CompilerProxy.sendExpression(command, true).getResult();
+				retval = CompilerProxy.sendExpression(command, true).getFirstResult();
 			}
 			catch(Exception e){
 
 			}
+			
+			org.modelica.mdt.core.List list = null;
+			try{
+				try
+				{
+					list = ModelicaParser.parseList(retval);
+				}
+				catch(ModelicaParserException e)
+				{
+					throw new UnexpectedReplyException("Unable to parse list: " 
+							+ e.getMessage());
+				}
+			}
+			catch(Exception e){
+
+			}
+		
+			result = new String[list.size()];
+			
+			for(int j =0;j<list.size();j++){
+				
+				result[j] = classes[i] + "." + list.elementAt(j).toString();
+				String tmpResult = result[j];
+			}
 			createInheritanceNodesList(result);
 		}
-		return createdNodes;
+		
 	}
 
 	protected void createInheritanceConnections(){
@@ -206,17 +256,19 @@ public class SysmlInheritanceDiagramAction extends Action{
 	protected EditPart createEmptyNodeEditPart(String classType){
 		if(editPart != null){
 			IElementType nodeType = null;
-			if(classType == "class" || classType == "package")
+			if(classType.equals("class"))
 				nodeType = SysmlElementTypes.ModelicaClass_1001;
-			else if(classType == "model")
+			else if (classType.equals("package"))
+				nodeType = SysmlElementTypes.ModelicaClass_1001;
+			else if(classType.equals("model"))
 				nodeType = SysmlElementTypes.ModelicaModel_1001;
-			else if(classType == "block")
+			else if(classType.equals("block"))
 				nodeType = SysmlElementTypes.ModelicaBlock_1001;
-			else if(classType == "function")
+			else if(classType.equals("function"))
 				nodeType = SysmlElementTypes.ModelicaFunction_1001;
-			else if(classType == "record")
+			else if(classType.equals("record"))
 				nodeType = SysmlElementTypes.ModelicaRecord_1001;
-			else if(classType == "connector")
+			else if(classType.equals("connector"))
 				nodeType = SysmlElementTypes.ModelicaConnector_1001;
 			if(nodeType == null)
 				return null;
