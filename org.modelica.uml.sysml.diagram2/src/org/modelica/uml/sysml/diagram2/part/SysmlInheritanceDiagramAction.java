@@ -308,15 +308,17 @@ public class SysmlInheritanceDiagramAction extends Action{
 			}
 
 			//Get the children list before creation
-			List oldChildrenList = editPart.getChildren();
-
+			 List oldChildrenList = new LinkedList();
+			 oldChildrenList.addAll(editPart.getChildren());
+			 
 			// Create the new element
 			DiagramCommandStack commandStack = editPart.getDiagramEditDomain()
 			.getDiagramCommandStack();
 			commandStack.execute(command);
 			//Get the children list after creation 
 			//and remove the old ones
-			List newChildrenList = editPart.getChildren();
+			List newChildrenList = new LinkedList();
+			newChildrenList = editPart.getChildren();;
 			newChildrenList.removeAll(oldChildrenList);
 
 			//assumes the remaining children in the list are 1
