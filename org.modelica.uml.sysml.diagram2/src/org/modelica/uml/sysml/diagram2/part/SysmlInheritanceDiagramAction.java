@@ -2,6 +2,7 @@ package org.modelica.uml.sysml.diagram2.part;
 
 import java.util.List;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
@@ -50,7 +51,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 		super(label);
 		this.label = label;
 		this.actionType = actionType;
-		createdNodes = new LinkedList<CustomNode>();
+		createdNodes = new ArrayList<CustomNode>();
 	}
 
 	public void run(){
@@ -140,8 +141,14 @@ public class SysmlInheritanceDiagramAction extends Action{
 			classType = result[0].trim();
 			classType = classType.substring(1, classType.length()-1);
 			
+			//Out of memory debugging
+			if(createdNodes.size()== 88){
+				int breakp = 0;
+			}
+			
 			createdEditPart = createEmptyNodeEditPart(classType);
 			createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
+				
 			createdNodes.add(createdNode);
 
 			command = "getClassNames("+ classes[i]+ ")";
@@ -318,7 +325,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 			//Get the children list after creation 
 			//and remove the old ones
 			List newChildrenList = new LinkedList();
-			newChildrenList = editPart.getChildren();;
+			newChildrenList.addAll(editPart.getChildren());
 			newChildrenList.removeAll(oldChildrenList);
 
 			//assumes the remaining children in the list are 1
