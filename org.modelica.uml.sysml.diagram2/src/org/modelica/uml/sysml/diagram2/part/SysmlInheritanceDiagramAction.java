@@ -140,19 +140,19 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 			classType = result[0].trim();
 			classType = classType.substring(1, classType.length()-1);
-			
+
 			//Out of memory debugging
-			if(createdNodes.size()== 88){
+			if(classes[i].equals("Modelica.Blocks.Interfaces.RealInput")){
 				int breakp = 0;
 			}
-			
+
 			createdEditPart = createEmptyNodeEditPart(classType);
 			createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
-				
+
 			createdNodes.add(createdNode);
 
 			command = "getClassNames("+ classes[i]+ ")";
-			
+
 			String retval="";
 
 			try{
@@ -161,7 +161,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 			catch(Exception e){
 
 			}
-			
+
 			org.modelica.mdt.core.List list = null;
 			try{
 				try
@@ -177,17 +177,19 @@ public class SysmlInheritanceDiagramAction extends Action{
 			catch(Exception e){
 
 			}
-		
-			result = new String[list.size()];
-			
-			for(int j =0;j<list.size();j++){
-				
-				result[j] = classes[i] + "." + list.elementAt(j).toString();
-				String tmpResult = result[j];
+
+			if(list != null){
+				result = new String[list.size()];
+
+				for(int j =0;j<list.size();j++){
+
+					result[j] = classes[i] + "." + list.elementAt(j).toString();
+					String tmpResult = result[j];
+				}
+				createInheritanceNodesList(result);
 			}
-			createInheritanceNodesList(result);
 		}
-		
+
 	}
 
 	protected void createInheritanceConnections(){
@@ -212,7 +214,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 			inheritanceCount = Integer.parseInt(omcResult.trim());
 			
 			for(int i=0;i<inheritanceCount;i++){
-				omcCommand = "getNthInheritedClass("+ sourceNode.getName()+","+i+")";
+				omcCommand = "getNthInheritedClass("+ sourceNode.getName()+","+(i+1)+")";
 				
 				try{
 					omcResult = CompilerProxy.sendExpression(omcCommand, true).getFirstResult();					
@@ -221,6 +223,9 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 				}
 
+				omcResult = omcResult.trim();
+				//omcResult = omcResult.substring(1, omcResult.length()-1);
+				
 				EditPart targetEditPart = getEditPart(omcResult);
 				
 				createInheritanceConnectionEditPart(sourceNode.getNodeEditPart(),targetEditPart);
@@ -244,9 +249,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 					((IHintedType)resourceElementType).getSemanticHint(),
 					SysmlDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
 		
-		Command command = connectionRequest.getCreateCommand(connectionRequest,
-				(EditPart)editPart.getChildren().get(0), 
-				(EditPart)editPart.getChildren().get(1));
+		Command command = connectionRequest.getCreateCommand(connectionRequest,source, target);
 		
 		if (command == null || !(command.canExecute())) {
 			// Action enablement criteria expected to prevent this
@@ -295,11 +298,12 @@ public class SysmlInheritanceDiagramAction extends Action{
 					SysmlDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
 
 			//Set the location of the node in the diagram
-			if(startPoint.y<200)
+			if(startPoint.x<200)
 				startPoint.x += 100;
 			else{
 				startPoint.y += 100;
 				startPoint.x = 0;
+				
 			}
 				
 			createRequest.setLocation(startPoint);
@@ -342,7 +346,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 		
 		while(listIterator.hasNext()){
 			CustomNode tempNode = (CustomNode)listIterator.next();
-			if(tempNode.getName()== name){
+			if(tempNode.getName().equals(name)){
 				return tempNode.getNodeEditPart();
 			}
 		}
