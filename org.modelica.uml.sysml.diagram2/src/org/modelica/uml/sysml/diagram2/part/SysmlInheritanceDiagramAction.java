@@ -5,8 +5,16 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.uml2.uml.UMLPackage;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.ModelicaParserException;
@@ -14,7 +22,11 @@ import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.eclipse.gef.EditPart;
 
+import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.gmf.runtime.notation.impl.NodeImpl;
+
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
+import org.eclipse.gmf.runtime.emf.type.core.requests.SetRequest;
 //import org.eclipse.gmf.runtime.diagram.ui.actions.;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewAndElementRequest.ViewAndElementDescriptor;
@@ -22,17 +34,26 @@ import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewAndElementRequest;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateConnectionViewAndElementRequest;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequest;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequestFactory;
+import org.eclipse.gmf.runtime.diagram.ui.requests.ChangePropertyValueRequest;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.editor.FileDiagramEditor;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.core.edithelpers.CreateElementRequestAdapter;
+import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
+import org.eclipse.gmf.runtime.emf.type.core.commands.SetValueCommand;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.type.core.IHintedType;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel;
+import org.eclipse.gmf.runtime.common.ui.services.parser.IParser;
 
 import org.eclipse.gef.commands.Command;
 
 import org.eclipse.draw2d.geometry.Point;
 
 import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
+import org.modelica.uml.sysml.diagram2.providers.SysmlStructuralFeatureParser;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassEditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassEditPart.ClassFigure;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassName2EditPart;
 
 public class SysmlInheritanceDiagramAction extends Action{
 
@@ -120,7 +141,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 	protected void createInheritanceNodesList(String[] classes){
 
 		CustomNode createdNode = null;
-		EditPart createdEditPart = null;
+		ModelicaClassEditPart createdEditPart = null;
 
 		String classType = "";
 		String[] result = {""};
@@ -142,52 +163,103 @@ public class SysmlInheritanceDiagramAction extends Action{
 			classType = classType.substring(1, classType.length()-1);
 
 			//Out of memory debugging
-			if(classes[i].equals("Modelica.Blocks.Interfaces.RealInput")){
+			if(classType.equals("package")){
 				int breakp = 0;
 			}
 
-			createdEditPart = createEmptyNodeEditPart(classType);
-			createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
+			createdEditPart = (ModelicaClassEditPart)createEmptyNodeEditPart(classType);
 
-			createdNodes.add(createdNode);
-
-			command = "getClassNames("+ classes[i]+ ")";
-
-			String retval="";
-
-			try{
-				retval = CompilerProxy.sendExpression(command, true).getFirstResult();
-			}
-			catch(Exception e){
-
-			}
-
-			org.modelica.mdt.core.List list = null;
-			try{
-				try
-				{
-					list = ModelicaParser.parseList(retval);
+			if(createdEditPart != null){
+				
+				//Here we change the name of the displayed figure
+				ModelicaClassName2EditPart nameEditPart;
+				nameEditPart = (ModelicaClassName2EditPart)createdEditPart.getPrimaryChildEditPart();
+				if(nameEditPart != null){
+				/*	WrapLabel newName = ((WrapLabel)nameEditPart.getFigure());
+					newName.setText(classes[i]);
+					nameEditPart.setLabel(newName);
+					
+					
+					if(!nameEditPart.isEditModeEnabled())
+						nameEditPart.enableEditMode();
+					
+					nameEditPart.setLabelText(classes[i]);
+					
+					((ClassFigure)createdEditPart.getContentPane()).getFigureClassName().setText(classes[i]);
+					*/
+					
+					EObject elementToEdit = ((NodeImpl)createdEditPart.getModel()).getElement();
+					
+					EStructuralFeature nameFeature = UMLPackage.eINSTANCE.getNamedElement().getEStructuralFeature(
+					"name");
+					
+					
+					
+					SetRequest setNameRequest = new SetRequest(elementToEdit, nameFeature ,classes[i]);
+					SetValueCommand setNameCommand = new SetValueCommand(setNameRequest);
+					DiagramCommandStack commandStack = editPart.getDiagramEditDomain()
+					.getDiagramCommandStack();
+		//			ICommandProxy command = ICommandProxy((ICommand)setNameCommand);
+					//Command command = 
+				//	commandStack.execute(setNameCommand,null);
+					try{
+					setNameCommand.execute(new NullProgressMonitor(), null);
+					}
+					catch(Exception e){
+						
+					}
+					
+					
+				
+					//SetRequest setName = new SetRequest(nameEditPart);
+					
+					//second try to set class names
+				//	TextCellEditor nameCellEditor = new TextCellEditor(nameEditPart);
+					
 				}
-				catch(ModelicaParserException e)
-				{
-					throw new UnexpectedReplyException("Unable to parse list: " 
-							+ e.getMessage());
+				createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
+
+				createdNodes.add(createdNode);
+			}
+
+				command = "getClassNames("+ classes[i]+ ")";
+
+				String retval="";
+
+				try{
+					retval = CompilerProxy.sendExpression(command, true).getFirstResult();
 				}
-			}
-			catch(Exception e){
+				catch(Exception e){
 
-			}
-
-			if(list != null){
-				result = new String[list.size()];
-
-				for(int j =0;j<list.size();j++){
-
-					result[j] = classes[i] + "." + list.elementAt(j).toString();
-					String tmpResult = result[j];
 				}
-				createInheritanceNodesList(result);
-			}
+
+				org.modelica.mdt.core.List list = null;
+				try{
+					try
+					{
+						list = ModelicaParser.parseList(retval);
+					}
+					catch(ModelicaParserException e)
+					{
+						throw new UnexpectedReplyException("Unable to parse list: " 
+								+ e.getMessage());
+					}
+				}
+				catch(Exception e){
+
+				}
+
+				if(list != null){
+					result = new String[list.size()];
+
+					for(int j =0;j<list.size();j++){
+
+						result[j] = classes[i] + "." + list.elementAt(j).toString();
+						String tmpResult = result[j];
+					}
+					createInheritanceNodesList(result);
+				}
+			
 		}
 
 	}
@@ -268,8 +340,8 @@ public class SysmlInheritanceDiagramAction extends Action{
 			IElementType nodeType = null;
 			if(classType.equals("class"))
 				nodeType = SysmlElementTypes.ModelicaClass_1001;
-			else if (classType.equals("package"))
-				nodeType = SysmlElementTypes.ModelicaClass_1001;
+			/*else if (classType.equals("package"))
+				nodeType = SysmlElementTypes.ModelicaClass_1001;*/
 			else if(classType.equals("model"))
 				nodeType = SysmlElementTypes.ModelicaModel_1001;
 			else if(classType.equals("block"))

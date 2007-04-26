@@ -18,6 +18,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
 
@@ -44,7 +45,7 @@ public class SysmlDiagramActionBarContributor extends
 	private String id1 = "Inheritance Diagram";
 	private String id2 = "sub2";
 	//private SysmlDiagramAction diagramAction;
-	
+	private IWorkbenchPage workbenchPage;
 	
 	
 	class EditorAction extends Action{
@@ -76,7 +77,9 @@ public class SysmlDiagramActionBarContributor extends
 			
 			selectAllAction.run();*/
 			
+//			Testing acces to property sheet viewer
 			
+			 IViewReference[] views = workbenchPage.getViewReferences();
 			
 			FileDiagramEditor editor = (FileDiagramEditor) activeEditor;
 			DiagramEditPart editPart = editor.getDiagramEditPart();
@@ -259,6 +262,8 @@ public class SysmlDiagramActionBarContributor extends
 			submenu2.partActivated(activePart);
 			
 		}
+		workbenchPage = page;
+		 
 
 	}
 

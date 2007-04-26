@@ -65,6 +65,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 
 import org.modelica.uml.sysml.diagram2.edit.policies.SysmlTextSelectionEditPolicy;
+import org.modelica.uml.sysml.diagram2.edit.policies.SysmlTextNonResizableEditPolicy;
 
 import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
 
@@ -95,9 +96,9 @@ public class ModelicaClassName2EditPart extends CompartmentEditPart implements
 	private List parserElements;
 
 	/**
-	 * @generated
+	 * @generated NOT
 	 */
-	private String defaultText;
+	protected String defaultText;
 
 	/**
 	 * @generated
@@ -216,7 +217,7 @@ public class ModelicaClassName2EditPart extends CompartmentEditPart implements
 	}
 
 	/**
-	 * @generated
+	 * @generated NOT
 	 */
 	public void setLabelText(String text) {
 		setLabelTextHelper(getFigure(), text);
