@@ -171,52 +171,8 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 			if(createdEditPart != null){
 				
-				//Here we change the name of the displayed figure
-				ModelicaClassName2EditPart nameEditPart;
-				nameEditPart = (ModelicaClassName2EditPart)createdEditPart.getPrimaryChildEditPart();
-				if(nameEditPart != null){
-				/*	WrapLabel newName = ((WrapLabel)nameEditPart.getFigure());
-					newName.setText(classes[i]);
-					nameEditPart.setLabel(newName);
-					
-					
-					if(!nameEditPart.isEditModeEnabled())
-						nameEditPart.enableEditMode();
-					
-					nameEditPart.setLabelText(classes[i]);
-					
-					((ClassFigure)createdEditPart.getContentPane()).getFigureClassName().setText(classes[i]);
-					*/
-					
-					EObject elementToEdit = ((NodeImpl)createdEditPart.getModel()).getElement();
-					
-					EStructuralFeature nameFeature = UMLPackage.eINSTANCE.getNamedElement().getEStructuralFeature(
-					"name");
-					
-					
-					
-					SetRequest setNameRequest = new SetRequest(elementToEdit, nameFeature ,classes[i]);
-					SetValueCommand setNameCommand = new SetValueCommand(setNameRequest);
-					DiagramCommandStack commandStack = editPart.getDiagramEditDomain()
-					.getDiagramCommandStack();
-		//			ICommandProxy command = ICommandProxy((ICommand)setNameCommand);
-					//Command command = 
-				//	commandStack.execute(setNameCommand,null);
-					try{
-					setNameCommand.execute(new NullProgressMonitor(), null);
-					}
-					catch(Exception e){
-						
-					}
-					
-					
+				setClassName(createdEditPart,classes[i]);
 				
-					//SetRequest setName = new SetRequest(nameEditPart);
-					
-					//second try to set class names
-				//	TextCellEditor nameCellEditor = new TextCellEditor(nameEditPart);
-					
-				}
 				createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
 
 				createdNodes.add(createdNode);
@@ -262,6 +218,38 @@ public class SysmlInheritanceDiagramAction extends Action{
 			
 		}
 
+	}
+	
+	protected void setClassName(ModelicaClassEditPart partToEdit, String newName){
+
+		//Here we change the name of the displayed figure
+
+		ModelicaClassName2EditPart nameEditPart;
+
+		nameEditPart = (ModelicaClassName2EditPart)partToEdit.getPrimaryChildEditPart();
+		if(nameEditPart != null){
+
+			EObject elementToEdit = ((NodeImpl)partToEdit.getModel()).getElement();
+
+			EStructuralFeature nameFeature = UMLPackage.eINSTANCE.getNamedElement().getEStructuralFeature(
+					"name");
+
+
+
+			SetRequest setNameRequest = new SetRequest(elementToEdit, nameFeature , newName);
+			SetValueCommand setNameCommand = new SetValueCommand(setNameRequest);
+
+			try{
+				setNameCommand.execute(new NullProgressMonitor(), null);
+			}
+			catch(Exception e){
+
+			}
+
+		}
+
+
+		
 	}
 
 	protected void createInheritanceConnections(){
