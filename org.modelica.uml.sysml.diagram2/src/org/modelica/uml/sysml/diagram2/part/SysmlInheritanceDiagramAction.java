@@ -4,22 +4,30 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
+import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.ModelicaParserException;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.compiler.ElementInfo;
+
+import org.modelica.mdt.internal.core.InnerClass;
+
 import org.eclipse.gef.EditPart;
 
 import org.eclipse.gmf.runtime.notation.View;
@@ -27,6 +35,9 @@ import org.eclipse.gmf.runtime.notation.impl.NodeImpl;
 
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.SetRequest;
+
+import org.eclipse.gmf.runtime.emf.type.core.commands.CreateElementCommand;
+
 //import org.eclipse.gmf.runtime.diagram.ui.actions.;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewAndElementRequest.ViewAndElementDescriptor;
@@ -42,8 +53,10 @@ import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
 import org.eclipse.gmf.runtime.emf.type.core.commands.SetValueCommand;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.type.core.IHintedType;
+import org.eclipse.gmf.runtime.emf.ui.properties.commands.SetModelPropertyValueCommand;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel;
 import org.eclipse.gmf.runtime.common.ui.services.parser.IParser;
+import org.eclipse.gmf.runtime.common.ui.services.properties.extended.PropertySource;
 
 import org.eclipse.gef.commands.Command;
 
@@ -54,6 +67,17 @@ import org.modelica.uml.sysml.diagram2.providers.SysmlStructuralFeatureParser;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassEditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassEditPart.ClassFigure;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassName2EditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaEquationPropertyEditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassParametersEditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty3EditPart;
+
+import org.modelica.uml.sysml.diagram2.util.SetPropertiesUtil;
+
+import org.modelica.uml.sysml.impl.ModelicaClassImpl;
+
+import org.modelica.uml.sysml.AccessKind;
+import org.modelica.uml.sysml.SysmlPackage;
 
 public class SysmlInheritanceDiagramAction extends Action{
 
@@ -88,7 +112,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 			result = compilerResult.getResult();
 			if(Boolean.parseBoolean(result[0].trim()) == true){
 				
-				result =new String[]{"Modelica"}; 
+				result =new String[]{"Modelica.Blocks"}; 
 			}
 		}
 		catch(Exception e){
@@ -104,11 +128,13 @@ public class SysmlInheritanceDiagramAction extends Action{
 	public void setActiveEditor(IEditorPart part) {
 		activeEditor = part;
 
-		if(activeEditor instanceof FileDiagramEditor)
+		if(activeEditor instanceof FileDiagramEditor){
 			editPart = ((FileDiagramEditor) activeEditor).getDiagramEditPart();
+			
+		}
 	}
 
-	public void generateInheritanceDiagramFromFile(String fileName){
+	protected void generateInheritanceDiagramFromFile(String fileName){
 		String[] fileClasses = {""};
 		String command = "loadFileInteractive(\""+ fileName+"\")";
 
@@ -130,7 +156,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 
 
-	public void generateInheritanceDiagramFromClasses(String[] classNames){
+	protected void generateInheritanceDiagramFromClasses(String[] classNames){
 		
 		
 		createInheritanceNodesList(classNames);
@@ -171,7 +197,63 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 			if(createdEditPart != null){
 				
-				setClassName(createdEditPart,classes[i]);
+				SetPropertiesUtil.setClassName(createdEditPart,classes[i]);
+				TransactionalEditingDomain editingDomain = createdEditPart.getEditingDomain();
+				
+				ModelicaPropertyEditPart parameterEDP = SetPropertiesUtil.addParameter(createdEditPart, 0, "");
+				ModelicaProperty3EditPart variableEDP = SetPropertiesUtil.addVariable(createdEditPart);
+				ModelicaEquationPropertyEditPart equationEDP = 
+					SetPropertiesUtil.addEquation(createdEditPart);
+				SetPropertiesUtil.setEquationProperty(editingDomain, equationEDP, "er=5");
+				
+				InnerClass classContent = null;
+				
+				try{
+				classContent = new InnerClass(null,classes[i],IModelicaClass.Restriction.parse(classType),null);
+				}
+				catch(Exception e){
+					
+				}
+				
+				if(classContent != null){
+					
+					try{
+					classContent.getChildren();
+					classContent.getImports();
+					
+					}
+					catch(Exception e){
+						
+					}
+					
+				}
+				
+				LinkedList<ElementInfo> classInfo = null;
+				
+				try{
+				classInfo= (LinkedList<ElementInfo>)CompilerProxy.getElements(classes[i]);
+				}
+				catch(Exception e){
+					
+				}
+				
+				
+				
+				SetPropertiesUtil.setModelProperties(editingDomain, 
+						parameterEDP,
+						SetPropertiesUtil.ProtectedAcces,
+						5,
+						"-345",
+						"out",
+						true,
+						"test",
+						"",
+						(Object)0,
+						"constant");
+				
+				
+				
+			//	SetPropertiesUtil.setAccessFeatureValue(parameterEDP, SetPropertiesUtil.ProtectedAcces);
 				
 				createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
 
@@ -218,40 +300,8 @@ public class SysmlInheritanceDiagramAction extends Action{
 			
 		}
 
-	}
+	}	
 	
-	protected void setClassName(ModelicaClassEditPart partToEdit, String newName){
-
-		//Here we change the name of the displayed figure
-
-		ModelicaClassName2EditPart nameEditPart;
-
-		nameEditPart = (ModelicaClassName2EditPart)partToEdit.getPrimaryChildEditPart();
-		if(nameEditPart != null){
-
-			EObject elementToEdit = ((NodeImpl)partToEdit.getModel()).getElement();
-
-			EStructuralFeature nameFeature = UMLPackage.eINSTANCE.getNamedElement().getEStructuralFeature(
-					"name");
-
-
-
-			SetRequest setNameRequest = new SetRequest(elementToEdit, nameFeature , newName);
-			SetValueCommand setNameCommand = new SetValueCommand(setNameRequest);
-
-			try{
-				setNameCommand.execute(new NullProgressMonitor(), null);
-			}
-			catch(Exception e){
-
-			}
-
-		}
-
-
-		
-	}
-
 	protected void createInheritanceConnections(){
 		
 		Iterator listIterator = createdNodes.iterator();
@@ -400,7 +450,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 		}
 		else return editPart;
 	}
-	
+		
 	protected EditPart getEditPart(String name){
 		Iterator listIterator = createdNodes.iterator();
 		
