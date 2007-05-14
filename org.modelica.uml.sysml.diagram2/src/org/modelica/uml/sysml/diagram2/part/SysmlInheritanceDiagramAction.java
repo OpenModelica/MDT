@@ -72,7 +72,8 @@ import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassParametersEditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty3EditPart;
 
-import org.modelica.uml.sysml.diagram2.util.SetPropertiesUtil;
+import org.modelica.uml.sysml.diagram2.util.ModelicaElementsUtil;
+
 
 import org.modelica.uml.sysml.impl.ModelicaClassImpl;
 
@@ -197,63 +198,7 @@ public class SysmlInheritanceDiagramAction extends Action{
 
 			if(createdEditPart != null){
 				
-				SetPropertiesUtil.setClassName(createdEditPart,classes[i]);
-				TransactionalEditingDomain editingDomain = createdEditPart.getEditingDomain();
-				
-				ModelicaPropertyEditPart parameterEDP = SetPropertiesUtil.addParameter(createdEditPart, 0, "");
-				ModelicaProperty3EditPart variableEDP = SetPropertiesUtil.addVariable(createdEditPart);
-				ModelicaEquationPropertyEditPart equationEDP = 
-					SetPropertiesUtil.addEquation(createdEditPart);
-				SetPropertiesUtil.setEquationProperty(editingDomain, equationEDP, "er=5");
-				
-				InnerClass classContent = null;
-				
-				try{
-				classContent = new InnerClass(null,classes[i],IModelicaClass.Restriction.parse(classType),null);
-				}
-				catch(Exception e){
-					
-				}
-				
-				if(classContent != null){
-					
-					try{
-					classContent.getChildren();
-					classContent.getImports();
-					
-					}
-					catch(Exception e){
-						
-					}
-					
-				}
-				
-				LinkedList<ElementInfo> classInfo = null;
-				
-				try{
-				classInfo= (LinkedList<ElementInfo>)CompilerProxy.getElements(classes[i]);
-				}
-				catch(Exception e){
-					
-				}
-				
-				
-				
-				SetPropertiesUtil.setModelProperties(editingDomain, 
-						parameterEDP,
-						SetPropertiesUtil.ProtectedAcces,
-						5,
-						"-345",
-						"out",
-						true,
-						"test",
-						"",
-						(Object)0,
-						"constant");
-				
-				
-				
-			//	SetPropertiesUtil.setAccessFeatureValue(parameterEDP, SetPropertiesUtil.ProtectedAcces);
+				ModelicaElementsUtil.handleclass(createdEditPart, classes[i]);
 				
 				createdNode = new CustomNode(classType.trim(),classes[i],createdEditPart);
 

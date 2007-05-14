@@ -57,23 +57,18 @@ import org.eclipse.uml2.uml.UMLPackage;
 
 public class SetPropertiesUtil {
 
-	public final static int ProtectedAcces = 0;
-
-	public final static int PublicAcces = 1;
-
 	private SetPropertiesUtil(){
 
 	}
 	
 	public static void setModelProperties(TransactionalEditingDomain editingDomain,
 			EditPart parameterEDP,
-			int access,
+			String access,
 			int arrayDimension,
 			String defaultValue,
 			String direction,
 			boolean isFlow,
 			String name,
-			String propertyKind,
 			Object type,
 			String variability){
 		
@@ -83,27 +78,17 @@ public class SetPropertiesUtil {
 		setDirectionProperty(editingDomain,parameterEDP, direction);
 		setIsFlowProperty(editingDomain, parameterEDP, isFlow);
 		setNameProperty(editingDomain, parameterEDP, name);
-		setPropertyKindProperty(editingDomain, parameterEDP, propertyKind);
 		setVariabilityKindProperty(editingDomain, parameterEDP, variability);
 		
 	}
 
-	public static void setAccessFeatureValue(TransactionalEditingDomain editingDomain, EditPart container, int value){
+	public static void setAccessFeatureValue(TransactionalEditingDomain editingDomain, EditPart container, String value){
 
 		AccessKind newValue = null;
 
 		if(container.getModel() instanceof NodeImpl){
 			
-			switch(value){
-
-			case ProtectedAcces : newValue =  AccessKind.PROTECTED_LITERAL;
-									break;
-
-			case PublicAcces : newValue =  AccessKind.PUBLIC_LITERAL;
-			
-			default:
-			}
-
+			newValue = AccessKind.get(value);
 
 			EObject elementToEdit = ((NodeImpl)container.getModel()).getElement();
 			EStructuralFeature propertyFeature = SysmlPackage.Literals.MODELICA_PROPERTY__ACCESS;
@@ -178,7 +163,7 @@ public class SetPropertiesUtil {
 		}		
 	}
 
-	public static ModelicaPropertyEditPart addParameter(ModelicaClassEditPart parent, int type, String name){
+	public static ModelicaPropertyEditPart addParameter(ModelicaClassEditPart parent){
 
 		if(parent.getModel() instanceof NodeImpl){
 
@@ -395,7 +380,7 @@ public class SetPropertiesUtil {
 			EObject elementToEdit = ((NodeImpl)parameterEDP.getModel()).getElement();
 			EStructuralFeature propertyFeature = SysmlPackage.Literals.MODELICA_PROPERTY__DIRECTION;
 	
-			FlowDirection newDirection = FlowDirection.OUT_LITERAL;
+			FlowDirection newDirection = FlowDirection.get(newValue);
 			
 			IPropertySource propertySource = 
 				new PropertiesServiceAdapterFactory().getPropertySource(parameterEDP);
@@ -486,7 +471,9 @@ public class SetPropertiesUtil {
 
 	}
 
-	public static void setPropertyKindProperty(TransactionalEditingDomain editingDomain, EditPart parameterEDP, String newValue){
+	//not necessary. The property is set when the parameter, variable or equqtion
+	//is created
+	/*public static void setPropertyKindProperty(TransactionalEditingDomain editingDomain, EditPart parameterEDP, String newValue){
 
 		if(parameterEDP.getModel() instanceof NodeImpl){
 
@@ -516,7 +503,7 @@ public class SetPropertiesUtil {
 		}
 
 
-	}
+	}*/
 
 	public static void setVariabilityKindProperty(TransactionalEditingDomain editingDomain, EditPart parameterEDP, String newValue){
 
@@ -549,6 +536,39 @@ public class SetPropertiesUtil {
 
 
 	}
+	
+	public static void setTypeProperty(TransactionalEditingDomain editingDomain, EditPart parameterEDP, String newValue){
+
+		if(parameterEDP.getModel() instanceof NodeImpl){
+
+			EObject elementToEdit = ((NodeImpl)parameterEDP.getModel()).getElement();
+			EStructuralFeature propertyFeature = SysmlPackage.Literals.MODELICA_PROPERTY__DATA_TYPE;
+
+			 
+			
+			SetRequest setPropertyFeatureRequest = new SetRequest(elementToEdit, propertyFeature , newValue);
+			SetValueCommand setPropertyFeatureCommand = new SetValueCommand(setPropertyFeatureRequest);
+			
+			IPropertySource propertySource = 
+				new PropertiesServiceAdapterFactory().getPropertySource(parameterEDP);
+			
+			
+			SetModelPropertyValueCommand setAccessProp = new SetModelPropertyValueCommand( editingDomain, 
+					"Set Property command", parameterEDP,  propertySource, 
+					propertyFeature, newValue);
+
+	
+			try{
+				setAccessProp.execute(new NullProgressMonitor(), null);
+			}
+			catch(Exception e){
+
+			}
+		}
+
+
+	}
+
 	
 	public static void setEquationProperty(TransactionalEditingDomain editingDomain, EditPart parameterEDP, String newValue){
 		
