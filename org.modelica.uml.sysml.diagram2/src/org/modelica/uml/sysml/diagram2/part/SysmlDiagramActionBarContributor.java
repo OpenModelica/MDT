@@ -184,7 +184,7 @@ public class SysmlDiagramActionBarContributor extends
                     shell,"ModelicaML menu",
                     "testing " + label
                   //  +" \n "+ diagramEditPart
-                 //   +"\n" + "editorInputClass: " + editorInputClass
+                 //   +"\n" + "editorInputClass: " + edit	orInputClass
                     +"\n Diagram size "+ diagramPartSize
                    // +"\n rootEditPartChildrenSize: "+ rootEditPartChildrenSize
                     //+"\n" + rootChildren

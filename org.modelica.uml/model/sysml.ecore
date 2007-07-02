@@ -68,7 +68,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixed" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelicaClass" eSuperTypes="#//Block #//ModelicaClassifier">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEncapsulatedClass" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEncapsulatedClass" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"
+        defaultValueLiteral=""/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelicaModel" eSuperTypes="#//ModelicaClass"/>
   <eClassifiers xsi:type="ecore:EClass" name="ModelicaBlock" eSuperTypes="#//ModelicaClass"/>

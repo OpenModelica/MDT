@@ -58,6 +58,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sysml.ecore#//ItemFlow/itemProperty"/>
     </genClasses>
     <genClasses ecoreClass="sysml.ecore#//ModelicaType"/>
+    	
     <genClasses ecoreClass="sysml.ecore#//ModelicaReal">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/quantity"/>
