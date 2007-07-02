@@ -15,24 +15,35 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
+
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
+import org.eclipse.emf.edit.provider.ViewerNotification;
+
+import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 
-import org.modelica.uml.sysml.ModelicaRecord;
+import org.eclipse.uml2.uml.edit.providers.PrimitiveTypeItemProvider;
+
+import org.modelica.uml.sysml.ModelicaPrimitiveType;
+
+import org.modelica.uml.sysml.SysmlFactory;
+import org.modelica.uml.sysml.SysmlPackage;
 
 /**
- * This is the item provider adapter for a {@link org.modelica.uml.sysml.ModelicaRecord} object.
+ * This is the item provider adapter for a {@link org.modelica.uml.sysml.ModelicaPrimitiveType} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ModelicaRecordItemProvider
-	extends ModelicaClassItemProvider
+public class ModelicaPrimitiveTypeItemProvider
+	extends PrimitiveTypeItemProvider
 	implements	
 		IEditingDomainItemProvider,	
 		IStructuredItemContentProvider,	
@@ -45,9 +56,42 @@ public class ModelicaRecordItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModelicaRecordItemProvider(AdapterFactory adapterFactory) {
+	public ModelicaPrimitiveTypeItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
+	
+	@Override
+	protected void addClientDependencyPropertyDescriptor(Object object) {
+	}
+	
+	@Override
+	protected void addIsAbstractPropertyDescriptor(Object object) {
+	}
+
+	@Override
+	protected void addIsLeafPropertyDescriptor(Object object) {
+	}
+
+	@Override
+	protected void addPowertypeExtentPropertyDescriptor(Object object) {
+	}
+
+	@Override
+	protected void addRedefinedClassifierPropertyDescriptor(Object object) {
+	}
+
+	@Override
+	protected void addRepresentationPropertyDescriptor(Object object) {
+	}
+
+	@Override
+	protected void addTemplateParameterPropertyDescriptor(Object object) {
+	}
+	
+	@Override
+	protected void addUseCasePropertyDescriptor(Object object) {
+	}
+	
 
 	/**
 	 * This returns the property descriptors for the adapted class.
@@ -64,13 +108,13 @@ public class ModelicaRecordItemProvider
 	}
 
 	/**
-	 * This returns ModelicaRecord.gif.
+	 * This returns ModelicaPrimitiveType.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ModelicaRecord"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/ModelicaPrimitiveType"));
 	}
 
 	/**
@@ -80,10 +124,10 @@ public class ModelicaRecordItemProvider
 	 * @generated
 	 */
 	public String getText(Object object) {
-		String label = ((ModelicaRecord)object).getName();
+		String label = ((ModelicaPrimitiveType)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_ModelicaRecord_type") :
-			getString("_UI_ModelicaRecord_type") + " " + label;
+			getString("_UI_ModelicaPrimitiveType_type") :
+			getString("_UI_ModelicaPrimitiveType_type") + " " + label;
 	}
 
 	/**
@@ -121,13 +165,7 @@ public class ModelicaRecordItemProvider
 
 		boolean qualify =
 			childFeature == UMLPackage.Literals.CLASSIFIER__REPRESENTATION ||
-			childFeature == UMLPackage.Literals.CLASSIFIER__COLLABORATION_USE ||
-			childFeature == UMLPackage.Literals.CLASSIFIER__OWNED_USE_CASE ||
-			childFeature == UMLPackage.Literals.CLASS__NESTED_CLASSIFIER ||
-			childFeature == UMLPackage.Literals.STRUCTURED_CLASSIFIER__OWNED_ATTRIBUTE ||
-			childFeature == UMLPackage.Literals.ENCAPSULATED_CLASSIFIER__OWNED_PORT ||
-			childFeature == UMLPackage.Literals.BEHAVIORED_CLASSIFIER__OWNED_BEHAVIOR ||
-			childFeature == UMLPackage.Literals.BEHAVIORED_CLASSIFIER__CLASSIFIER_BEHAVIOR;
+			childFeature == UMLPackage.Literals.CLASSIFIER__COLLABORATION_USE;
 
 		if (qualify) {
 			return getString

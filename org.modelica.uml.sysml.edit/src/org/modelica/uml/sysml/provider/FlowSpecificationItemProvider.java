@@ -198,7 +198,17 @@ public class FlowSpecificationItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UMLPackage.Literals.INTERFACE__NESTED_CLASSIFIER,
+				 SysmlFactory.eINSTANCE.createModelicaClassifier()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UMLPackage.Literals.INTERFACE__NESTED_CLASSIFIER,
 				 SysmlFactory.eINSTANCE.createModelicaType()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UMLPackage.Literals.INTERFACE__NESTED_CLASSIFIER,
+				 SysmlFactory.eINSTANCE.createModelicaPrimitiveType()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -257,11 +267,6 @@ public class FlowSpecificationItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UMLPackage.Literals.INTERFACE__NESTED_CLASSIFIER,
-				 SysmlFactory.eINSTANCE.createModelicaClassifier()));
-
-		newChildDescriptors.add
-			(createChildParameter
 				(SysmlPackage.Literals.FLOW_SPECIFICATION__OWNED_FLOW_PROPERTY,
 				 SysmlFactory.eINSTANCE.createFlowProperty()));
 	}
@@ -277,6 +282,8 @@ public class FlowSpecificationItemProvider
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == UMLPackage.Literals.CLASSIFIER__REPRESENTATION ||
+			childFeature == UMLPackage.Literals.CLASSIFIER__COLLABORATION_USE ||
 			childFeature == UMLPackage.Literals.CLASSIFIER__OWNED_USE_CASE ||
 			childFeature == UMLPackage.Literals.INTERFACE__NESTED_CLASSIFIER ||
 			childFeature == UMLPackage.Literals.INTERFACE__OWNED_ATTRIBUTE ||

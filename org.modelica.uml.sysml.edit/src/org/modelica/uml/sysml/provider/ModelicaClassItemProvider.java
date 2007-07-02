@@ -344,9 +344,14 @@ public class ModelicaClassItemProvider extends BlockItemProvider implements
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == UMLPackage.Literals.CLASSIFIER__REPRESENTATION ||
+			childFeature == UMLPackage.Literals.CLASSIFIER__COLLABORATION_USE ||
 			childFeature == UMLPackage.Literals.CLASSIFIER__OWNED_USE_CASE ||
 			childFeature == UMLPackage.Literals.CLASS__NESTED_CLASSIFIER ||
-			childFeature == UMLPackage.Literals.BEHAVIORED_CLASSIFIER__OWNED_BEHAVIOR;
+			childFeature == UMLPackage.Literals.STRUCTURED_CLASSIFIER__OWNED_ATTRIBUTE ||
+			childFeature == UMLPackage.Literals.ENCAPSULATED_CLASSIFIER__OWNED_PORT ||
+			childFeature == UMLPackage.Literals.BEHAVIORED_CLASSIFIER__OWNED_BEHAVIOR ||
+			childFeature == UMLPackage.Literals.BEHAVIORED_CLASSIFIER__CLASSIFIER_BEHAVIOR;
 
 		if (qualify) {
 			return getString

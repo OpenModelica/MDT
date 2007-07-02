@@ -71,7 +71,6 @@ public class ModelicaConnectorPropertyItemProvider
 			addPropertyKindPropertyDescriptor(object);
 			addArrayDimensionPropertyDescriptor(object);
 			addAccessPropertyDescriptor(object);
-			addDataTypePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -204,28 +203,6 @@ public class ModelicaConnectorPropertyItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Data Type feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addDataTypePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ModelicaProperty_dataType_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_ModelicaProperty_dataType_feature", "_UI_ModelicaProperty_type"),
-				 SysmlPackage.Literals.MODELICA_PROPERTY__DATA_TYPE,
-				 true,
-				 false,
-				 true,
-				 null,
 				 null,
 				 null));
 	}

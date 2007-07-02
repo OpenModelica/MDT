@@ -739,6 +739,28 @@ public class SysmlItemProviderAdapterFactory extends SysmlAdapterFactory impleme
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.modelica.uml.sysml.ModelicaPrimitiveType} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ModelicaPrimitiveTypeItemProvider modelicaPrimitiveTypeItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.modelica.uml.sysml.ModelicaPrimitiveType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Adapter createModelicaPrimitiveTypeAdapter() {
+		if (modelicaPrimitiveTypeItemProvider == null) {
+			modelicaPrimitiveTypeItemProvider = new ModelicaPrimitiveTypeItemProvider(this);
+		}
+
+		return modelicaPrimitiveTypeItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -864,6 +886,7 @@ public class SysmlItemProviderAdapterFactory extends SysmlAdapterFactory impleme
 		if (modelicaCompositionItemProvider != null) modelicaCompositionItemProvider.dispose();
 		if (modelicaConnectionItemProvider != null) modelicaConnectionItemProvider.dispose();
 		if (modelicaClassifierItemProvider != null) modelicaClassifierItemProvider.dispose();
+		if (modelicaPrimitiveTypeItemProvider != null) modelicaPrimitiveTypeItemProvider.dispose();
 	}
 
 }

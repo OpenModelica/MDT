@@ -14,16 +14,25 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
 
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
+import org.eclipse.emf.edit.provider.ViewerNotification;
+
+import org.eclipse.uml2.uml.UMLFactory;
+import org.eclipse.uml2.uml.UMLPackage;
+
 import org.eclipse.uml2.uml.edit.providers.PrimitiveTypeItemProvider;
 
 
 import org.modelica.uml.sysml.ModelicaType;
+
+import org.modelica.uml.sysml.SysmlFactory;
+import org.modelica.uml.sysml.SysmlPackage;
 
 /**
  * This is the item provider adapter for a {@link org.modelica.uml.sysml.ModelicaType} object.
@@ -31,7 +40,7 @@ import org.modelica.uml.sysml.ModelicaType;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ModelicaTypeItemProvider extends PrimitiveTypeItemProvider
+public class ModelicaTypeItemProvider extends ModelicaClassifierItemProvider
 		implements IEditingDomainItemProvider, IStructuredItemContentProvider,
 		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
@@ -52,9 +61,9 @@ public class ModelicaTypeItemProvider extends PrimitiveTypeItemProvider
 	protected void addNameExpressionPropertyDescriptor(Object object) {
 	}
 
-	@Override
+	/*@Override
 	protected void addNamePropertyDescriptor(Object object) {
-	}
+	}*/
 
 	@Override
 	protected void addNamespacePropertyDescriptor(Object object) {
@@ -146,8 +155,47 @@ public class ModelicaTypeItemProvider extends PrimitiveTypeItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addTypeDataPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Type Data feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTypeDataPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ModelicaType_typeData_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ModelicaType_typeData_feature", "_UI_ModelicaType_type"),
+				 SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA,
+				 true,
+				 false,
+				 false,
+				 null,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
+	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
+	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Collection getChildrenFeatures(Object object) {
+		if (childrenFeatures == null) {
+			super.getChildrenFeatures(object);
+			childrenFeatures.add(SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA);
+		}
+		return childrenFeatures;
 	}
 
 	/**
@@ -182,6 +230,12 @@ public class ModelicaTypeItemProvider extends PrimitiveTypeItemProvider
 	 */
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
+
+		switch (notification.getFeatureID(ModelicaType.class)) {
+			case SysmlPackage.MODELICA_TYPE__TYPE_DATA:
+				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+				return;
+		}
 		super.notifyChanged(notification);
 	}
 
@@ -192,9 +246,60 @@ public class ModelicaTypeItemProvider extends PrimitiveTypeItemProvider
 	 * --> <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void collectNewChildDescriptors(Collection newChildDescriptors,
-			Object object) {
+	protected void collectNewChildDescriptors(Collection newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA,
+				 SysmlFactory.eINSTANCE.createModelicaPrimitiveType()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA,
+				 SysmlFactory.eINSTANCE.createModelicaReal()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA,
+				 SysmlFactory.eINSTANCE.createModelicaInteger()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA,
+				 SysmlFactory.eINSTANCE.createModelicaString()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA,
+				 SysmlFactory.eINSTANCE.createModelicaBoolean()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA,
+				 UMLFactory.eINSTANCE.createPrimitiveType()));
+	}
+
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == UMLPackage.Literals.CLASSIFIER__REPRESENTATION ||
+			childFeature == UMLPackage.Literals.CLASSIFIER__COLLABORATION_USE;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2",
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**
