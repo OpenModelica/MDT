@@ -542,8 +542,8 @@ public class SetPropertiesUtil {
 		if(parameterEDP.getModel() instanceof NodeImpl){
 
 			EObject elementToEdit = ((NodeImpl)parameterEDP.getModel()).getElement();
-			EStructuralFeature propertyFeature = SysmlPackage.Literals.MODELICA_PROPERTY__DATA_TYPE;
-
+			EStructuralFeature propertyFeature = UMLPackage.Literals.TYPED_ELEMENT__TYPE;
+			
 			 
 			
 			SetRequest setPropertyFeatureRequest = new SetRequest(elementToEdit, propertyFeature , newValue);

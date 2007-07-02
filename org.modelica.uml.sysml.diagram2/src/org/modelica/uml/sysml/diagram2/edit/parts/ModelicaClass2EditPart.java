@@ -311,9 +311,9 @@ public class ModelicaClass2EditPart extends ShapeNodeEditPart {
 		FontStyle style = (FontStyle) this.getPrimaryView().getStyle(
 				NotationPackage.eINSTANCE.getFontStyle());
 		if (style != null) {
-			FontData fontData = new FontData(style.getFontName(), 8,
-					(style.isBold() ? SWT.BOLD : SWT.NORMAL)
-							| (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
+			FontData fontData = new FontData(style.getFontName(), 8, (style
+					.isBold() ? SWT.BOLD : SWT.NORMAL)
+					| (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
 			setFont(fontData);
 		}
 	}

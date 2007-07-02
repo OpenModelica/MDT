@@ -73,7 +73,7 @@ public class ModelicaClassEquationsItemSemanticEditPolicy extends
 			}
 			return container;
 		}
-		
+
 		/**
 		 */
 		protected EObject doDefaultElementCreation() {

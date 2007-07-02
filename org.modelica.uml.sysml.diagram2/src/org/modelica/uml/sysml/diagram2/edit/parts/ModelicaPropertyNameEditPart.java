@@ -1,5 +1,6 @@
 package org.modelica.uml.sysml.diagram2.edit.parts;
 
+import java.util.ArrayList;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ITextAwareEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.LabelDirectEditPolicy;
@@ -25,6 +26,9 @@ import org.eclipse.gef.AccessibleEditPart;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
+import org.eclipse.gef.handles.NonResizableHandleKit;
 import org.eclipse.gef.requests.DirectEditRequest;
 
 import org.eclipse.gef.tools.DirectEditManager;
@@ -124,6 +128,24 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 		super.createDefaultEditPolicies();
 		installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE,
 				new LabelDirectEditPolicy());
+		installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
+				new NonResizableEditPolicy() {
+
+					protected List createSelectionHandles() {
+						List handles = new ArrayList();
+						NonResizableHandleKit.addMoveHandle(
+								(GraphicalEditPart) getHost(), handles);
+						return handles;
+					}
+
+					public Command getCommand(Request request) {
+						return null;
+					}
+
+					public boolean understandsRequest(Request request) {
+						return false;
+					}
+				});
 	}
 
 	/**
@@ -228,7 +250,7 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 		if (text == null || text.length() == 0) {
 			text = defaultText;
 		}
-		
+
 		Node node = (Node) this.getModel();
 		text = ModelicaPropertyUtil.getSignatureStringForPart(text,
 				(ModelicaProperty) node.getElement());
@@ -472,7 +494,8 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 		FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
 				NotationPackage.eINSTANCE.getFontStyle());
 		if (style != null) {
-			FontData fontData = new FontData(style.getFontName(),8, (style.isBold() ? SWT.BOLD : SWT.NORMAL)
+			FontData fontData = new FontData(style.getFontName(), 8, (style
+					.isBold() ? SWT.BOLD : SWT.NORMAL)
 					| (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
 			setFont(fontData);
 		}

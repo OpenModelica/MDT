@@ -145,6 +145,7 @@ public class SysmlElementTypes {
 	 */
 	public static ENamedElement getElement(IAdaptable hint) {
 		Object type = hint.getAdapter(IElementType.class);
+
 		if (elements == null) {
 			elements = new IdentityHashMap();
 			elements.put(Model_79, UMLPackage.eINSTANCE.getModel());
@@ -162,6 +163,10 @@ public class SysmlElementTypes {
 					.getModelicaEquationProperty());
 			elements.put(ModelicaClass_1001, SysmlPackage.eINSTANCE
 					.getModelicaClass());
+			elements.put(ModelicaType_1002, SysmlPackage.eINSTANCE
+					.getModelicaType());
+			//	elements.put(PrimitiveType_2007, SysmlPackage.eINSTANCE
+			//		.getModelicaClassifier());
 			elements.put(Generalization_3001, UMLPackage.eINSTANCE
 					.getGeneralization());
 			elements.put(ModelicaComposition_3002, SysmlPackage.eINSTANCE
@@ -189,11 +194,12 @@ public class SysmlElementTypes {
 					.getModelicaConnector());
 			elements.put(ModelicaFunction_2005, SysmlPackage.eINSTANCE
 					.getModelicaFunction());
-						
-			elements.put(ModelicaConnection_3009, SysmlPackage.eINSTANCE.getModelicaConnection());
-			
-//			elements.put(ModelicaPort_2070, SysmlPackage.eINSTANCE.getModelicaConnectorProperty());
-			
+
+			elements.put(ModelicaConnection_3009, SysmlPackage.eINSTANCE
+					.getModelicaConnection());
+
+			//			elements.put(ModelicaPort_2070, SysmlPackage.eINSTANCE.getModelicaConnectorProperty());
+
 			// contributed code end
 		}
 		return (ENamedElement) elements.get(type);
@@ -262,6 +268,11 @@ public class SysmlElementTypes {
 	 */
 	public static final IElementType ModelicaClass_1001 = getElementType("org.modelica.uml.sysml.diagram2.ModelicaClass_1001"); //$NON-NLS-1$
 
+	/**
+	 * @generated
+	 */
+	public static final IElementType ModelicaType_1002 = getElementType("org.modelica.uml.sysml.diagram2.ModelicaType_1002"); //$NON-NLS-1$
+
 	//contributed code start
 	/**
 	 */
@@ -285,10 +296,9 @@ public class SysmlElementTypes {
 
 	/**
 	 */
-//	public static final IElementType ModelicaPort_2070 = getElementType("org.modelica.uml.sysml.diagram2.ModelicaPort_2070"); //$NON-NLS-1$	
-	
+	//	public static final IElementType ModelicaPort_2070 = getElementType("org.modelica.uml.sysml.diagram2.ModelicaPort_2070"); //$NON-NLS-1$	
 	public static final IElementType ModelicaConnection_3009 = getElementType("org.modelica.uml.sysml.diagram2.ModelicaConnection_3009"); //$NON-NLS-1$
-	
+
 	// contributed code end
 
 	/**
@@ -327,6 +337,8 @@ public class SysmlElementTypes {
 			KNOWN_ELEMENT_TYPES.add(ModelicaClass_2005);
 			KNOWN_ELEMENT_TYPES.add(ModelicaEquationProperty_2006);
 			KNOWN_ELEMENT_TYPES.add(ModelicaClass_1001);
+			KNOWN_ELEMENT_TYPES.add(ModelicaType_1002);
+			//	KNOWN_ELEMENT_TYPES.add(PrimitiveType_2007);
 			KNOWN_ELEMENT_TYPES.add(Generalization_3001);
 			KNOWN_ELEMENT_TYPES.add(ModelicaComposition_3002);
 
@@ -342,9 +354,9 @@ public class SysmlElementTypes {
 			KNOWN_ELEMENT_TYPES.add(ModelicaRecord_2005);
 			KNOWN_ELEMENT_TYPES.add(ModelicaConnector_2005);
 			KNOWN_ELEMENT_TYPES.add(ModelicaFunction_2005);
-			
+
 			KNOWN_ELEMENT_TYPES.add(ModelicaConnection_3009);
-//			KNOWN_ELEMENT_TYPES.add(ModelicaPort_2070);
+			//			KNOWN_ELEMENT_TYPES.add(ModelicaPort_2070);
 			// contributed code end			
 		}
 
@@ -418,7 +430,7 @@ public class SysmlElementTypes {
 								SysmlPackage.eINSTANCE.getModelicaProperty()),
 								SysmlPackage.eINSTANCE
 										.getModelicaProperty_Access()) });
-		
+
 		/**
 		 */
 		public static final ObjectInitializer ModelicaProperty_2004 = new ObjectInitializer(
@@ -437,8 +449,7 @@ public class SysmlElementTypes {
 								"AccessKind::public", //$NON-NLS-1$
 								SysmlPackage.eINSTANCE.getModelicaProperty()),
 								SysmlPackage.eINSTANCE
-										.getModelicaProperty_Access()) });		
-		
+										.getModelicaProperty_Access()) });
 
 		public static final ObjectInitializer ModelicaEquationProperty_2006 = new ObjectInitializer(
 				new FeatureInitializer[] {
@@ -456,7 +467,7 @@ public class SysmlElementTypes {
 								"AccessKind::public", //$NON-NLS-1$
 								SysmlPackage.eINSTANCE.getModelicaProperty()),
 								SysmlPackage.eINSTANCE
-										.getModelicaProperty_Access()) });		
+										.getModelicaProperty_Access()) });
 
 		/** 
 		 * @generated

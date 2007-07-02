@@ -18,7 +18,6 @@ import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
 
-import org.modelica.uml.sysml.ModelicaClass;
 import org.modelica.uml.sysml.ModelicaComposition;
 
 import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
@@ -26,7 +25,7 @@ import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
 /**
  * @generated
  */
-public class ModelicaClassItemSemanticEditPolicy extends
+public class PrimitiveTypeItemSemanticEditPolicy extends
 		SysmlBaseItemSemanticEditPolicy {
 
 	/**
@@ -204,14 +203,15 @@ public class ModelicaClassItemSemanticEditPolicy extends
 		}
 
 		/**
-		 * @generated NOT
+		 * @generated
 		 */
 		protected EObject doDefaultElementCreation() {
-			ModelicaClass sourceClass = (ModelicaClass) getSource();
-			ModelicaClass targetClass = (ModelicaClass) getTarget();
-
-			ModelicaComposition newElement = sourceClass
-					.createModelicaComposition("end1", targetClass, "end2");
+			ModelicaComposition newElement = (ModelicaComposition) super
+					.doDefaultElementCreation();
+			if (newElement != null) {
+				newElement.getEndTypes().add((Type) getTarget());
+				newElement.getEndTypes().add((Type) getSource());
+			}
 			return newElement;
 		}
 	}

@@ -9,8 +9,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.View;
 
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Model;
+import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.UMLPackage;
 
 import org.modelica.uml.sysml.ModelicaBlock;
@@ -21,6 +23,7 @@ import org.modelica.uml.sysml.ModelicaConnector;
 import org.modelica.uml.sysml.ModelicaFunction;
 import org.modelica.uml.sysml.ModelicaModel;
 import org.modelica.uml.sysml.ModelicaProperty;
+import org.modelica.uml.sysml.ModelicaType;
 import org.modelica.uml.sysml.ModelicaRecord;
 import org.modelica.uml.sysml.SysmlPackage;
 
@@ -53,6 +56,10 @@ import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty4EditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart;
 
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyNameEditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeEditPart;
+
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeNameEditPart;
+
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPortEditPart;
 
 /**
@@ -252,6 +259,12 @@ public class SysmlVisualIDRegistry {
 				return ModelicaClassEquations2EditPart.VISUAL_ID;
 			}
 			return getUnrecognizedModelicaClass_2005ChildNodeID(domainElement,
+					semanticHint);
+		case ModelicaTypeEditPart.VISUAL_ID:
+			if (ModelicaTypeNameEditPart.VISUAL_ID == nodeVisualID) {
+				return ModelicaTypeNameEditPart.VISUAL_ID;
+			}
+			return getUnrecognizedModelicaType_1002ChildNodeID(domainElement,
 					semanticHint);
 		case ModelicaEquationPropertyEditPart.VISUAL_ID:
 			return getUnrecognizedModelicaEquationProperty_2006ChildNodeID(
@@ -470,6 +483,12 @@ public class SysmlVisualIDRegistry {
 					&& (domainElement == null || isNodeModelicaClass_1001((ModelicaClass) domainElement))) {
 				return ModelicaClassEditPart.VISUAL_ID;
 			}
+			if ((semanticHint == null || ModelicaTypeEditPart.VISUAL_ID == nodeVisualID)
+					&& SysmlPackage.eINSTANCE.getModelicaType().isSuperTypeOf(
+							domainElementMetaclass)
+					&& (domainElement == null || isNodeModelicaType_1002((ModelicaType) domainElement))) {
+				return ModelicaTypeEditPart.VISUAL_ID;
+			}
 			return getUnrecognizedModel_79ChildNodeID(domainElement,
 					semanticHint);
 		case ModelicaCompositionEditPart.VISUAL_ID:
@@ -490,6 +509,9 @@ public class SysmlVisualIDRegistry {
 	 * @generated
 	 */
 	public static int getLinkWithClassVisualID(EObject domainElement) {
+		if (domainElement == null) {
+			return -1;
+		}
 		EClass domainElementMetaclass = domainElement.eClass();
 		return getLinkWithClassVisualID(domainElement, domainElementMetaclass);
 	}
@@ -542,6 +564,16 @@ public class SysmlVisualIDRegistry {
 	 * @generated
 	 */
 	private static boolean isNodeModelicaClass_1001(ModelicaClass element) {
+		return true;
+	}
+
+	/**
+	 * User can change implementation of this method to check some additional 
+	 * conditions here.
+	 *
+	 * @generated
+	 */
+	private static boolean isNodeModelicaType_1002(ModelicaType element) {
 		return true;
 	}
 
@@ -655,6 +687,17 @@ public class SysmlVisualIDRegistry {
 	 * @generated
 	 */
 	private static int getUnrecognizedModelicaClass_1001ChildNodeID(
+			EObject domainElement, String semanticHint) {
+		return -1;
+	}
+
+	/**
+	 * User can change implementation of this method to handle some specific
+	 * situations not covered by default logic.
+	 *
+	 * @generated
+	 */
+	private static int getUnrecognizedModelicaType_1002ChildNodeID(
 			EObject domainElement, String semanticHint) {
 		return -1;
 	}

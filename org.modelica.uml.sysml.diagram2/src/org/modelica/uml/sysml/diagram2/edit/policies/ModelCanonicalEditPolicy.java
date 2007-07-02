@@ -20,6 +20,9 @@ import org.eclipse.gef.commands.Command;
 
 import org.eclipse.gmf.runtime.diagram.core.util.ViewUtil;
 
+import org.eclipse.gmf.runtime.diagram.ui.commands.DeferredLayoutCommand;
+import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
+
 import org.eclipse.gmf.runtime.diagram.ui.commands.SetViewMutabilityCommand;
 
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -52,6 +55,8 @@ import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty3EditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty4EditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart;
 
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeEditPart;
+
 import org.modelica.uml.sysml.diagram2.part.SysmlVisualIDRegistry;
 
 /**
@@ -73,8 +78,15 @@ public class ModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 			nextValue = (EObject) values.next();
 			nodeVID = SysmlVisualIDRegistry.getNodeVisualID(viewObject,
 					nextValue);
-			if (ModelicaClassEditPart.VISUAL_ID == nodeVID) {
+			switch (nodeVID) {
+			case ModelicaClassEditPart.VISUAL_ID: {
 				result.add(nextValue);
+				break;
+			}
+			case ModelicaTypeEditPart.VISUAL_ID: {
+				result.add(nextValue);
+				break;
+			}
 			}
 		}
 		return result;
@@ -128,8 +140,21 @@ public class ModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 	 * @generated
 	 */
 	protected void refreshSemantic() {
-		super.refreshSemantic();
-		refreshConnections();
+		List createdViews = new LinkedList();
+		createdViews.addAll(refreshSemanticChildren());
+		List createdConnectionViews = new LinkedList();
+		createdConnectionViews.addAll(refreshSemanticConnections());
+		createdConnectionViews.addAll(refreshConnections());
+
+		if (createdViews.size() > 1) {
+			// perform a layout of the container
+			DeferredLayoutCommand layoutCmd = new DeferredLayoutCommand(host()
+					.getEditingDomain(), createdViews, host());
+			executeCommand(new ICommandProxy(layoutCmd));
+		}
+
+		createdViews.addAll(createdConnectionViews);
+		makeViewsImmutable(createdViews);
 	}
 
 	/**
@@ -145,7 +170,7 @@ public class ModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 	/**
 	 * @generated
 	 */
-	private void refreshConnections() {
+	private Collection refreshConnections() {
 		try {
 			collectAllLinks(getDiagram());
 			Collection existingLinks = new LinkedList(getDiagram().getEdges());
@@ -176,7 +201,7 @@ public class ModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 				}
 			}
 			deleteViews(existingLinks.iterator());
-			createConnections(myLinkDescriptors);
+			return createConnections(myLinkDescriptors);
 		} finally {
 			myLinkDescriptors.clear();
 			myEObject2ViewMap.clear();
@@ -191,6 +216,7 @@ public class ModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 		int diagramElementVisualID = SysmlVisualIDRegistry.getVisualID(view);
 		switch (diagramElementVisualID) {
 		case ModelicaClassEditPart.VISUAL_ID:
+		case ModelicaTypeEditPart.VISUAL_ID:
 		case ModelicaPropertyEditPart.VISUAL_ID:
 		case ModelicaProperty2EditPart.VISUAL_ID:
 		case ModelicaProperty3EditPart.VISUAL_ID:
@@ -214,10 +240,11 @@ public class ModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 	/**
 	 * @generated
 	 */
-	private void createConnections(Collection linkDescriptors) {
+	private Collection createConnections(Collection linkDescriptors) {
 		if (linkDescriptors.isEmpty()) {
-			return;
+			return Collections.EMPTY_LIST;
 		}
+		List adapters = new LinkedList();
 		for (Iterator linkDescriptorsIterator = linkDescriptors.iterator(); linkDescriptorsIterator
 				.hasNext();) {
 			final LinkDescriptor nextLinkDescriptor = (LinkDescriptor) linkDescriptorsIterator
@@ -244,9 +271,12 @@ public class ModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 			if (cmd != null && cmd.canExecute()) {
 				executeCommand(cmd);
 				IAdaptable viewAdapter = (IAdaptable) ccr.getNewObject();
-				SetViewMutabilityCommand.makeImmutable(viewAdapter).execute();
+				if (viewAdapter != null) {
+					adapters.add(viewAdapter);
+				}
 			}
 		}
+		return adapters;
 	}
 
 	/**

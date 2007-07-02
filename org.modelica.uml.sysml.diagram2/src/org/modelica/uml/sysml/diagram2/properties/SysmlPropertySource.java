@@ -11,6 +11,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import org.modelica.uml.sysml.ModelicaClass;
 import org.modelica.uml.sysml.ModelicaProperty;
+import org.modelica.uml.sysml.ModelicaType;
 
 
 public class SysmlPropertySource extends EMFCompositePropertySource {
@@ -35,7 +36,11 @@ public class SysmlPropertySource extends EMFCompositePropertySource {
 
 			propertyKind = ((ModelicaProperty) object).getPropertyKind()
 					.toString();
+			
+		}else if (object instanceof ModelicaType) {
+				
 		}
+		
 	}
 
 	public SysmlPropertySource(Object object,

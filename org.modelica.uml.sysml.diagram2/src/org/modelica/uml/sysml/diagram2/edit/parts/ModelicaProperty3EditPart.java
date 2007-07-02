@@ -512,7 +512,8 @@ public class ModelicaProperty3EditPart extends CompartmentEditPart implements
 		FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
 				NotationPackage.eINSTANCE.getFontStyle());
 		if (style != null) {
-			FontData fontData = new FontData(style.getFontName(), 8 , (style.isBold() ? SWT.BOLD : SWT.NORMAL)
+			FontData fontData = new FontData(style.getFontName(), 8, (style
+					.isBold() ? SWT.BOLD : SWT.NORMAL)
 					| (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
 			setFont(fontData);
 		}

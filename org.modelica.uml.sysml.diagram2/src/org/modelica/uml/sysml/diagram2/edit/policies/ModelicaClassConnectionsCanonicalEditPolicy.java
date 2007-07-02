@@ -55,7 +55,7 @@ public class ModelicaClassConnectionsCanonicalEditPolicy extends
 				}
 			}
 		}
-		
+
 		return result;
 	}
 

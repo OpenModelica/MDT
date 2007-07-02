@@ -3,6 +3,7 @@ package org.modelica.uml.sysml.diagram2.edit.util;
 import org.modelica.uml.sysml.AccessKind;
 import org.modelica.uml.sysml.ModelicaComposition;
 import org.modelica.uml.sysml.ModelicaProperty;
+import org.modelica.uml.sysml.ModelicaType;
 import org.modelica.uml.sysml.PropertyKind;
 import org.modelica.uml.sysml.FlowDirection;
 import org.modelica.uml.sysml.VariabilityKind;
@@ -64,6 +65,31 @@ public class ModelicaPropertyUtil {
 			signature += "= " + property.getDefault();
 		}
 		return signature;
+	}
+	
+	public static String getSignatureStringWithDefault(String varName,
+			ModelicaType type) {
+		String signature = getSignatureString(varName, type);
+		if (type.getLabel() != null && !type.getLabel().equals("")) {
+			signature += "= " + type.getLabel();
+		}
+		return signature;
+	}
+	
+	public static String getSignatureString(String varName,
+			ModelicaType type) {
+		StringBuffer signature = new StringBuffer();
+		
+		
+		signature.append("" + varName);
+		
+		if (type.getTypeData() != null) {
+
+			String typeName = type.getTypeData().getName();
+		}
+
+		
+		return signature.toString();
 	}
 
 	public static String getSignatureString(String varName,

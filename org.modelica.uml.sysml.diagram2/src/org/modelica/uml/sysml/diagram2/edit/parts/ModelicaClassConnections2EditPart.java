@@ -44,8 +44,8 @@ public class ModelicaClassConnections2EditPart extends ShapeCompartmentEditPart 
 	public ModelicaClassConnections2EditPart(View view) {
 		super(view);
 	}
-	
-	public IFigure getCompartmentLayer(){
+
+	public IFigure getCompartmentLayer() {
 		return this.getLayer(LayerConstants.PRINTABLE_LAYERS);
 	}
 

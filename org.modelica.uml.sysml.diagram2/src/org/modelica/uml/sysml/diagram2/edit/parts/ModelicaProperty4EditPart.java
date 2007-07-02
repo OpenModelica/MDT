@@ -303,58 +303,56 @@ public class ModelicaProperty4EditPart extends PortOwnerShapeEditPart {
 		super.removeChildVisual(childEditPart);
 	}
 
-	
 	/**
 	 * @generated NOT
 	 */
 	protected void handleNotificationEvent(Notification event) {
 		Object feature = event.getFeature();
-		
+
 		if (feature instanceof EAttribute || feature instanceof EReference) {
 			// refreshLabel();
 		}
-		
+
 		/*
-		
-		if (NotationPackage.eINSTANCE.getFontStyle_FontColor().equals(feature)) {
-			Integer c = (Integer) event.getNewValue();
-			setFontColor(DiagramColorRegistry.getInstance().getColor(c));
-		} else if (NotationPackage.eINSTANCE.getFontStyle_Underline().equals(
-				feature)) {
-			refreshUnderline();
-		} else if (NotationPackage.eINSTANCE.getFontStyle_StrikeThrough()
-				.equals(feature)) {
-			refreshStrikeThrough();
-		} else if (NotationPackage.eINSTANCE.getFontStyle_FontHeight().equals(
-				feature)
-				|| NotationPackage.eINSTANCE.getFontStyle_FontName().equals(
-						feature)
-				|| NotationPackage.eINSTANCE.getFontStyle_Bold()
-						.equals(feature)
-				|| NotationPackage.eINSTANCE.getFontStyle_Italic().equals(
-						feature)) {
-			refreshFont();
-		} else {
-			if (getParser() != null
-					&& getParser().isAffectingEvent(event,
-							getParserOptions().intValue())) {
-				refreshLabel();
-			}
-			if (getParser() instanceof ISemanticParser) {
-				ISemanticParser modelParser = (ISemanticParser) getParser();
-				if (modelParser.areSemanticElementsAffected(null, event)) {
-					removeSemanticListeners();
-					if (resolveSemanticElement() != null) {
-						addSemanticListeners();
-					}
-					refreshLabel();
-				}
-			}		
-		}
-		*/
-		
+		 
+		 if (NotationPackage.eINSTANCE.getFontStyle_FontColor().equals(feature)) {
+		 Integer c = (Integer) event.getNewValue();
+		 setFontColor(DiagramColorRegistry.getInstance().getColor(c));
+		 } else if (NotationPackage.eINSTANCE.getFontStyle_Underline().equals(
+		 feature)) {
+		 refreshUnderline();
+		 } else if (NotationPackage.eINSTANCE.getFontStyle_StrikeThrough()
+		 .equals(feature)) {
+		 refreshStrikeThrough();
+		 } else if (NotationPackage.eINSTANCE.getFontStyle_FontHeight().equals(
+		 feature)
+		 || NotationPackage.eINSTANCE.getFontStyle_FontName().equals(
+		 feature)
+		 || NotationPackage.eINSTANCE.getFontStyle_Bold()
+		 .equals(feature)
+		 || NotationPackage.eINSTANCE.getFontStyle_Italic().equals(
+		 feature)) {
+		 refreshFont();
+		 } else {
+		 if (getParser() != null
+		 && getParser().isAffectingEvent(event,
+		 getParserOptions().intValue())) {
+		 refreshLabel();
+		 }
+		 if (getParser() instanceof ISemanticParser) {
+		 ISemanticParser modelParser = (ISemanticParser) getParser();
+		 if (modelParser.areSemanticElementsAffected(null, event)) {
+		 removeSemanticListeners();
+		 if (resolveSemanticElement() != null) {
+		 addSemanticListeners();
+		 }
+		 refreshLabel();
+		 }
+		 }		
+		 }
+		 */
+
 		super.handleNotificationEvent(event);
 	}
-	
-	
+
 }

@@ -8,12 +8,19 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.editor.FileDiagramEditor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.common.notify.AdapterFactory;
+
 import org.eclipse.core.resources.IFile;
+
+import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.document.StorageDiagramDocumentProvider;
 
 import org.modelica.uml.sysml.diagram2.edit.parts.SysmlEditPartFactory;
+import org.modelica.uml.sysml.provider.SysmlItemProviderAdapterFactory;
 
 /**
  * @generated
@@ -41,11 +48,15 @@ public class SysmlDiagramEditor extends FileDiagramEditor implements
 	}
 
 	/**
-	 * @generated
+	 * @generated NOT
 	 */
 	protected TransactionalEditingDomain createEditingDomain() {
 		TransactionalEditingDomain domain = super.createEditingDomain();
 		domain.setID(getEditingDomainID());
+		AdapterFactory adapterFactory =((AdapterFactoryEditingDomain) domain).getAdapterFactory();
+		if(adapterFactory instanceof ComposedAdapterFactory){
+			((ComposedAdapterFactory)adapterFactory).addAdapterFactory(new SysmlItemProviderAdapterFactory());
+		}
 		return domain;
 	}
 
@@ -81,5 +92,12 @@ public class SysmlDiagramEditor extends FileDiagramEditor implements
 		scalableLayers.addLayerAfter(scaledFeedbackLayer,
 				LayerConstants.SCALED_FEEDBACK_LAYER,
 				DiagramRootEditPart.DECORATION_UNPRINTABLE_LAYER);
+	}
+
+	/**
+	 * @generated
+	 */
+	protected PreferencesHint getPreferencesHint() {
+		return SysmlDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT;
 	}
 }

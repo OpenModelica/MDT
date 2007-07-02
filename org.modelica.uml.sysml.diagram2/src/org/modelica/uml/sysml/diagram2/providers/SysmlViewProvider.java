@@ -35,6 +35,10 @@ import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaProperty4EditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart;
 
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyNameEditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeEditPart;
+
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeNameEditPart;
+
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPortEditPart;
 
 import org.modelica.uml.sysml.diagram2.part.SysmlVisualIDRegistry;
@@ -67,6 +71,9 @@ import org.modelica.uml.sysml.diagram2.view.factories.ModelicaProperty3ViewFacto
 import org.modelica.uml.sysml.diagram2.view.factories.ModelicaProperty4ViewFactory;
 import org.modelica.uml.sysml.diagram2.view.factories.ModelicaPropertyNameViewFactory;
 import org.modelica.uml.sysml.diagram2.view.factories.ModelicaPropertyViewFactory;
+import org.modelica.uml.sysml.diagram2.view.factories.ModelicaTypeNameViewFactory;
+import org.modelica.uml.sysml.diagram2.view.factories.ModelicaTypeViewFactory;
+
 import org.modelica.uml.sysml.diagram2.view.factories.ModelicaPortViewFactory;
 
 /**
@@ -107,6 +114,10 @@ public class SysmlViewProvider extends AbstractViewProvider {
 		switch (nodeVID) {
 		case ModelicaClassEditPart.VISUAL_ID:
 			return ModelicaClassViewFactory.class;
+		case ModelicaTypeNameEditPart.VISUAL_ID:
+			return ModelicaTypeNameViewFactory.class;
+		case ModelicaTypeEditPart.VISUAL_ID:
+			return ModelicaTypeViewFactory.class;
 		case ModelicaClassName2EditPart.VISUAL_ID:
 			return ModelicaClassName2ViewFactory.class;
 		case ModelicaPropertyEditPart.VISUAL_ID:

@@ -1,17 +1,17 @@
 package org.modelica.uml.sysml.diagram2.edit.parts;
 
-import java.util.Collections;
-import org.eclipse.gef.DragTracker;
-import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.Request;
-import org.eclipse.gef.requests.SelectionRequest;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ITextAwareEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.LabelDirectEditPolicy;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ListItemComponentEditPolicy;
-import org.eclipse.gmf.runtime.diagram.ui.tools.DragEditPartsTrackerEx;
-import org.eclipse.gmf.runtime.notation.View;
+import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
+import org.eclipse.gef.handles.NonResizableHandleKit;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ITextAwareEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.LabelDirectEditPolicy;
+import org.eclipse.gmf.runtime.notation.View;
+import java.util.Collections;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -57,6 +57,8 @@ import org.eclipse.gmf.runtime.emf.ui.services.parser.ParserHintAdapter;
 import org.eclipse.gmf.runtime.notation.FontStyle;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -69,22 +71,22 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 
-import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaEquationPropertyItemSemanticEditPolicy;
-import org.modelica.uml.sysml.diagram2.edit.policies.SysmlTextNonResizableEditPolicy;
 import org.modelica.uml.sysml.diagram2.edit.policies.SysmlTextSelectionEditPolicy;
+
+import org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorPlugin;
 
 import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
 
 /**
  * @generated
  */
-public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
-		implements ITextAwareEditPart {
+public class ModelicaTypeNameEditPart extends CompartmentEditPart implements
+		ITextAwareEditPart {
 
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 2006;
+	public static final int VISUAL_ID = 4004;
 
 	/**
 	 * @generated
@@ -109,19 +111,8 @@ public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
 	/**
 	 * @generated
 	 */
-	public ModelicaEquationPropertyEditPart(View view) {
+	public ModelicaTypeNameEditPart(View view) {
 		super(view);
-	}
-
-	/**
-	 * @generated
-	 */
-	public DragTracker getDragTracker(Request request) {
-		if (request instanceof SelectionRequest
-				&& ((SelectionRequest) request).getLastButtonPressed() == 3) {
-			return null;
-		}
-		return new DragEditPartsTrackerEx(this);
 	}
 
 	/**
@@ -129,14 +120,26 @@ public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
 	 */
 	protected void createDefaultEditPolicies() {
 		super.createDefaultEditPolicies();
-		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new ModelicaEquationPropertyItemSemanticEditPolicy());
-		installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
-				new SysmlTextNonResizableEditPolicy());
-		installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new ListItemComponentEditPolicy());
 		installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE,
 				new LabelDirectEditPolicy());
+		installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
+				new NonResizableEditPolicy() {
+
+					protected List createSelectionHandles() {
+						List handles = new ArrayList();
+						NonResizableHandleKit.addMoveHandle(
+								(GraphicalEditPart) getHost(), handles);
+						return handles;
+					}
+
+					public Command getCommand(Request request) {
+						return null;
+					}
+
+					public boolean understandsRequest(Request request) {
+						return false;
+					}
+				});
 	}
 
 	/**
@@ -186,7 +189,7 @@ public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
 	/**
 	 * @generated
 	 */
-	public void setLabel(IFigure figure) {
+	public void setLabel(WrapLabel figure) {
 		unregisterVisuals();
 		setFigure(figure);
 		defaultText = getLabelTextHelper(figure);
@@ -220,7 +223,12 @@ public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
 	 * @generated
 	 */
 	protected Image getLabelIcon() {
-		return null;
+		ImageDescriptor descriptor = SysmlDiagramEditorPlugin.getInstance()
+				.getItemImageDescriptor(getParserElement());
+		if (descriptor == null) {
+			descriptor = ImageDescriptor.getMissingImageDescriptor();
+		}
+		return descriptor.createImage();
 	}
 
 	/**
@@ -331,7 +339,7 @@ public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
 
 				public Object getAdapter(Class adapter) {
 					if (IElementType.class.equals(adapter)) {
-						return SysmlElementTypes.ModelicaEquationProperty_2006;
+						return SysmlElementTypes.ModelicaType_1002;
 					}
 					return super.getAdapter(adapter);
 				}
@@ -470,14 +478,14 @@ public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
 	}
 
 	/**
-	 * @generated NOT
+	 * @generated
 	 */
 	protected void refreshFont() {
 		FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
 				NotationPackage.eINSTANCE.getFontStyle());
 		if (style != null) {
-			FontData fontData = new FontData(style.getFontName(), 8, (style
-					.isBold() ? SWT.BOLD : SWT.NORMAL)
+			FontData fontData = new FontData(style.getFontName(), style
+					.getFontHeight(), (style.isBold() ? SWT.BOLD : SWT.NORMAL)
 					| (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
 			setFont(fontData);
 		}
@@ -605,58 +613,7 @@ public class ModelicaEquationPropertyEditPart extends CompartmentEditPart
 	 * @generated
 	 */
 	protected IFigure createFigure() {
-		IFigure label = createFigurePrim();
-		defaultText = getLabelTextHelper(label);
-		return label;
+		// Parent should assign one using setLabel method
+		return null;
 	}
-
-	/**
-	 * @generated
-	 */
-	protected IFigure createFigurePrim() {
-		return new EquationLabelFigure();
-	}
-
-	/**
-	 * @generated
-	 */
-	public class EquationLabelFigure extends
-			org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel {
-
-		/**
-		 * @generated
-		 */
-		public EquationLabelFigure() {
-
-			this.setText("");
-			createContents();
-		}
-
-		/**
-		 * @generated
-		 */
-		private void createContents() {
-		}
-
-		/**
-		 * @generated
-		 */
-		private boolean myUseLocalCoordinates = false;
-
-		/**
-		 * @generated
-		 */
-		protected boolean useLocalCoordinates() {
-			return myUseLocalCoordinates;
-		}
-
-		/**
-		 * @generated
-		 */
-		protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-			myUseLocalCoordinates = useLocalCoordinates;
-		}
-
-	}
-
 }

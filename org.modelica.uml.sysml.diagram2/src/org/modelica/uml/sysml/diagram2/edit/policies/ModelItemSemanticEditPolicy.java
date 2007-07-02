@@ -35,6 +35,14 @@ public class ModelItemSemanticEditPolicy extends
 			return getMSLWrapper(new CreateModelicaClass_1001Command(req));
 		}
 
+		if (SysmlElementTypes.ModelicaType_1002 == req.getElementType()) {
+			if (req.getContainmentFeature() == null) {
+				req.setContainmentFeature(UMLPackage.eINSTANCE
+						.getPackage_PackagedElement());
+			}
+			return getMSLWrapper(new CreateModelicaType_1002Command(req));
+		}
+
 		// contributed code start
 		if (SysmlElementTypes.ModelicaModel_1001 == req.getElementType()) {
 			if (req.getContainmentFeature() == null) {
@@ -90,6 +98,39 @@ public class ModelItemSemanticEditPolicy extends
 		 * @generated
 		 */
 		public CreateModelicaClass_1001Command(CreateElementRequest req) {
+			super(req);
+		}
+
+		/**
+		 * @generated
+		 */
+		protected EClass getEClassToEdit() {
+			return UMLPackage.eINSTANCE.getModel();
+		};
+
+		/**
+		 * @generated
+		 */
+		protected EObject getElementToEdit() {
+			EObject container = ((CreateElementRequest) getRequest())
+					.getContainer();
+			if (container instanceof View) {
+				container = ((View) container).getElement();
+			}
+			return container;
+		}
+	}
+
+	/**
+	 * @generated
+	 */
+	private static class CreateModelicaType_1002Command extends
+			CreateElementCommand {
+
+		/**
+		 * @generated
+		 */
+		public CreateModelicaType_1002Command(CreateElementRequest req) {
 			super(req);
 		}
 

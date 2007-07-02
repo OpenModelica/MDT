@@ -21,6 +21,10 @@ import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart;
 
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyNameEditPart;
 
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeNameEditPart;
+
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeEditPart;
+
 import org.modelica.uml.sysml.diagram2.part.SysmlVisualIDRegistry;
 
 /**
@@ -207,22 +211,47 @@ public class SysmlParserProvider extends AbstractProvider implements
 	/**
 	 * @generated
 	 */
-	private IParser modelicaCompositionModelicaCompositionName_4004Parser;
+	private IParser modelicaTypeModelicaTypeName_4004Parser;
 
 	/**
 	 * @generated
 	 */
-	private IParser getModelicaCompositionModelicaCompositionName_4004Parser() {
-		if (modelicaCompositionModelicaCompositionName_4004Parser == null) {
-			modelicaCompositionModelicaCompositionName_4004Parser = createModelicaCompositionModelicaCompositionName_4004Parser();
+	private IParser getModelicaTypeModelicaTypeName_4004Parser() {
+		if (modelicaTypeModelicaTypeName_4004Parser == null) {
+			modelicaTypeModelicaTypeName_4004Parser = createModelicaTypeModelicaTypeName_4004Parser();
 		}
-		return modelicaCompositionModelicaCompositionName_4004Parser;
+		return modelicaTypeModelicaTypeName_4004Parser;
 	}
 
 	/**
 	 * @generated
 	 */
-	protected IParser createModelicaCompositionModelicaCompositionName_4004Parser() {
+	protected IParser createModelicaTypeModelicaTypeName_4004Parser() {
+		SysmlStructuralFeatureParser parser = new SysmlStructuralFeatureParser(
+				UMLPackage.eINSTANCE.getNamedElement().getEStructuralFeature(
+						"name")); //$NON-NLS-1$
+		return parser;
+	}
+
+	/**
+	 * @generated
+	 */
+	private IParser modelicaCompositionModelicaCompositionName_4005Parser;
+
+	/**
+	 * @generated
+	 */
+	private IParser getModelicaCompositionModelicaCompositionName_4005Parser() {
+		if (modelicaCompositionModelicaCompositionName_4005Parser == null) {
+			modelicaCompositionModelicaCompositionName_4005Parser = createModelicaCompositionModelicaCompositionName_4005Parser();
+		}
+		return modelicaCompositionModelicaCompositionName_4005Parser;
+	}
+
+	/**
+	 * @generated
+	 */
+	protected IParser createModelicaCompositionModelicaCompositionName_4005Parser() {
 		SysmlStructuralFeatureParser parser = new SysmlStructuralFeatureParser(
 				UMLPackage.eINSTANCE.getNamedElement().getEStructuralFeature(
 						"name")); //$NON-NLS-1$
@@ -248,8 +277,10 @@ public class SysmlParserProvider extends AbstractProvider implements
 			return getModelicaEquationPropertyModelicaEquationProperty_2006Parser();
 		case ModelicaClassName2EditPart.VISUAL_ID:
 			return getModelicaClassModelicaClassName_4003Parser();
+		case ModelicaTypeNameEditPart.VISUAL_ID:
+			return getModelicaTypeModelicaTypeName_4004Parser();
 		case ModelicaCompositionNameEditPart.VISUAL_ID:
-			return getModelicaCompositionModelicaCompositionName_4004Parser();
+			return getModelicaCompositionModelicaCompositionName_4005Parser();
 		}
 		return null;
 	}

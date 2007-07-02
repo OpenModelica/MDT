@@ -39,7 +39,11 @@ public class SysmlPaletteFactory {
 		paletteContainer.add(createClass1CreationTool());
 		paletteContainer.add(createModel2CreationTool());
 		paletteContainer.add(createBlock3CreationTool());
-		paletteContainer.add(createFunction4CreationTool());
+		paletteContainer.add(createFunction6CreationTool());
+		paletteContainer.add(createConnector4CreationTool());
+		paletteContainer.add(createRecord5CreationTool());
+		paletteContainer.add(createType5CreationTool());
+
 		return paletteContainer;
 	}
 
@@ -81,9 +85,8 @@ public class SysmlPaletteFactory {
 		return paletteContainer;
 	}
 
-
 	/**
-	 * @generated NOT
+	 * @generated
 	 */
 	private ToolEntry createClass1CreationTool() {
 		ImageDescriptor smallImage;
@@ -111,7 +114,7 @@ public class SysmlPaletteFactory {
 		ImageDescriptor largeImage;
 
 		smallImage = SysmlElementTypes
-				.getImageDescriptor(SysmlElementTypes.ModelicaModel_1001);
+		.getImageDescriptor(SysmlElementTypes.ModelicaModel_1001);
 
 		largeImage = smallImage;
 
@@ -120,18 +123,18 @@ public class SysmlPaletteFactory {
 		ToolEntry result = new NodeToolEntry("Model", "Create Modelica Model",
 				smallImage, largeImage, elementTypes);
 
-		return result;
-	}
+	return result;
+}
 
 	/**
-	 * @generated NOT
+	 * @generated
 	 */
 	private ToolEntry createBlock3CreationTool() {
 		ImageDescriptor smallImage;
 		ImageDescriptor largeImage;
 
 		smallImage = SysmlElementTypes
-				.getImageDescriptor(SysmlElementTypes.ModelicaBlock_1001);
+		.getImageDescriptor(SysmlElementTypes.ModelicaBlock_1001);
 
 		largeImage = smallImage;
 
@@ -143,56 +146,64 @@ public class SysmlPaletteFactory {
 		return result;
 	}
 
-	/**
-	 * @generated
+	 /**
+	 * @generated NOT
 	 */
 	private ToolEntry createConnector4CreationTool() {
 		ImageDescriptor smallImage;
 		ImageDescriptor largeImage;
 
-		smallImage = null;
+		smallImage = SysmlElementTypes
+		.getImageDescriptor(SysmlElementTypes.ModelicaConnector_1001);
 
 		largeImage = smallImage;
 
-		ToolEntry result = new ToolEntry("Connector",
-				"Create Modelica Connector", smallImage, largeImage) {
-		};
+		final List elementTypes = new ArrayList();
+		elementTypes.add(SysmlElementTypes.ModelicaConnector_1001);
+		ToolEntry result = new NodeToolEntry("Connector", "Create Modelica Block",
+				smallImage, largeImage, elementTypes);
 
 		return result;
 	}
 
 	/**
-	 * @generated
+	 * @generated NOT
 	 */
 	private ToolEntry createRecord5CreationTool() {
 		ImageDescriptor smallImage;
 		ImageDescriptor largeImage;
 
-		smallImage = null;
+		smallImage = SysmlElementTypes
+		.getImageDescriptor(SysmlElementTypes.ModelicaRecord_1001);
 
 		largeImage = smallImage;
 
-		ToolEntry result = new ToolEntry("Record", "Create Modelica Record",
-				smallImage, largeImage) {
-		};
+		final List elementTypes = new ArrayList();
+		elementTypes.add(SysmlElementTypes.ModelicaRecord_1001);
+		ToolEntry result = new NodeToolEntry("Record", "Create Modelica Block",
+				smallImage, largeImage, elementTypes);
+
 
 		return result;
 	}
 
 	/**
-	 * @generated
+	 * @generated NOT
 	 */
 	private ToolEntry createFunction6CreationTool() {
 		ImageDescriptor smallImage;
 		ImageDescriptor largeImage;
 
-		smallImage = null;
+		smallImage = SysmlElementTypes
+		.getImageDescriptor(SysmlElementTypes.ModelicaFunction_1001);
 
 		largeImage = smallImage;
 
-		ToolEntry result = new ToolEntry("Function",
-				"Create Modelica Function", smallImage, largeImage) {
-		};
+		final List elementTypes = new ArrayList();
+		elementTypes.add(SysmlElementTypes.ModelicaFunction_1001);
+		ToolEntry result = new NodeToolEntry("Function",
+				"Create Modelica Function", smallImage, largeImage,
+				elementTypes);
 
 		return result;
 	}
@@ -214,6 +225,26 @@ public class SysmlPaletteFactory {
 		ToolEntry result = new NodeToolEntry("Function",
 				"Create Modelica Function", smallImage, largeImage,
 				elementTypes);
+
+		return result;
+	}
+
+	/**
+	 * @generated
+	 */
+	private ToolEntry createType5CreationTool() {
+		ImageDescriptor smallImage;
+		ImageDescriptor largeImage;
+
+		smallImage = SysmlElementTypes
+				.getImageDescriptor(SysmlElementTypes.ModelicaType_1002);
+
+		largeImage = smallImage;
+
+		final List elementTypes = new ArrayList();
+		elementTypes.add(SysmlElementTypes.ModelicaType_1002);
+		ToolEntry result = new NodeToolEntry("Type", "Create Modelica Type",
+				smallImage, largeImage, elementTypes);
 
 		return result;
 	}

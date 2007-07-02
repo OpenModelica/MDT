@@ -52,7 +52,7 @@ public class SysmlDocumentProvider extends FileDiagramDocumentProvider {
 		for (Iterator it = resources.iterator(); it.hasNext();) {
 			Resource nextResource = (Resource) it.next();
 			monitor.setTaskName("Saving " + nextResource.getURI()); //$NON-NLS-1$
-			if (nextResource != diagramResource) {
+			if (nextResource != diagramResource && nextResource.isLoaded()) {
 				try {
 					nextResource.save(Collections.EMPTY_MAP);
 				} catch (IOException e) {

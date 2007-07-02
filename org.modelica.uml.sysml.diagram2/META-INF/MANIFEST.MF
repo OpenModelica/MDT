@@ -37,10 +37,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore.edit;visibility:=reexport,
  org.eclipse.uml2.uml;visibility:=reexport,
  org.eclipse.uml2.uml.edit;visibility:=reexport,
- org.eclipse.emf.query.ocl;visibility:=reexport,
  org.eclipse.emf.ocl;visibility:=reexport,
+ org.eclipse.emf.query.ocl;visibility:=reexport,
  org.eclipse.gmf.runtime.draw2d.ui;visibility:=reexport,
  org.eclipse.draw2d;visibility:=reexport,
- org.modelica.mdt.core,
- org.modelica.mdt.omc
+ org.modelica.mdt.core
 Eclipse-LazyStart: true

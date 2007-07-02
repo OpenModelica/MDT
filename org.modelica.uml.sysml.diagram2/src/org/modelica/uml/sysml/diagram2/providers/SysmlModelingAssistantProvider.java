@@ -33,6 +33,8 @@ import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassEditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassNested2EditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassNestedEditPart;
 
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeEditPart;
+
 import org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorPlugin;
 
 /**
@@ -95,6 +97,7 @@ public class SysmlModelingAssistantProvider extends ModelingAssistantProvider {
 		if (editPart instanceof ModelEditPart) {
 			List types = new ArrayList();
 			types.add(SysmlElementTypes.ModelicaClass_1001);
+			types.add(SysmlElementTypes.ModelicaType_1002);
 
 			// contributed code start
 			types.add(SysmlElementTypes.ModelicaModel_1001);
@@ -106,6 +109,25 @@ public class SysmlModelingAssistantProvider extends ModelingAssistantProvider {
 
 			return types;
 		}
+		/*if (editPart instanceof ModelicaTypeEditPart) {
+		 List types = new ArrayList();
+		 types.add(SysmlElementTypes.PrimitiveType_2007);
+		 return types;
+		 }
+
+		 //contributed code start
+		 if (editPart instanceof PrimitiveTypeEditPart) {
+		 List types = new ArrayList();
+		 types.add(SysmlElementTypes.PrimitiveType_2007);
+		 return types;
+		 }
+
+		 if (editPart instanceof ModelicaTypeTypeEditPart) {
+		 List types = new ArrayList();
+		 types.add(SysmlElementTypes.PrimitiveType_2007);
+		 return types;
+		 }*/
+		//contrubuted code end
 		return Collections.EMPTY_LIST;
 	}
 

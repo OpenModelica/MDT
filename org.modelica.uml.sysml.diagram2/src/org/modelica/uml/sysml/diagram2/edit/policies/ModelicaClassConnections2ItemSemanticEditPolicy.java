@@ -69,7 +69,7 @@ public class ModelicaClassConnections2ItemSemanticEditPolicy extends
 			}
 			return container;
 		}
-		
+
 		/**
 		 */
 		protected EObject doDefaultElementCreation() {

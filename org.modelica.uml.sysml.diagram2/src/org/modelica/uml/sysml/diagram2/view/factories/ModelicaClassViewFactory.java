@@ -78,13 +78,13 @@ public class ModelicaClassViewFactory extends AbstractShapeViewFactory {
 				SysmlVisualIDRegistry
 						.getType(ModelicaClassParametersEditPart.VISUAL_ID),
 				ViewUtil.APPEND, true, getPreferencesHint());
-/*		getViewService().createNode(
-				semanticAdapter,
-				view,
-				SysmlVisualIDRegistry
-						.getType(ModelicaClassPartsEditPart.VISUAL_ID),
-				ViewUtil.APPEND, true, getPreferencesHint());
-*/				
+		/*		getViewService().createNode(
+		 semanticAdapter,
+		 view,
+		 SysmlVisualIDRegistry
+		 .getType(ModelicaClassPartsEditPart.VISUAL_ID),
+		 ViewUtil.APPEND, true, getPreferencesHint());
+		 */
 		getViewService().createNode(
 				semanticAdapter,
 				view,

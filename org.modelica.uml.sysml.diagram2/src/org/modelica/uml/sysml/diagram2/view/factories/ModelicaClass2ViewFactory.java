@@ -92,32 +92,32 @@ public class ModelicaClass2ViewFactory extends AbstractShapeViewFactory {
 				SysmlVisualIDRegistry
 						.getType(ModelicaClassVariables2EditPart.VISUAL_ID),
 				ViewUtil.APPEND, true, getPreferencesHint());
-		
 
-/*		getViewService().createNode(
-				semanticAdapter,
-				view,
-				SysmlVisualIDRegistry
-						.getType(ModelicaClassConnections2EditPart.VISUAL_ID),
-				ViewUtil.APPEND, true, getPreferencesHint());
-*/				
-/*		getViewService().createNode(
-				semanticAdapter,
-				view,
-				SysmlVisualIDRegistry
-						.getType(ModelicaClassNested2EditPart.VISUAL_ID),
-				ViewUtil.APPEND, true, getPreferencesHint());
-*/				
-		
-		ModelicaClass modelicaClass = (ModelicaClass)view.getElement();
-		if ( !(modelicaClass instanceof ModelicaConnector) &&
-			!(modelicaClass instanceof ModelicaRecord) ) {
-			getViewService().createNode(
-				semanticAdapter,
-				view,
-				SysmlVisualIDRegistry
-						.getType(ModelicaClassEquations2EditPart.VISUAL_ID),
-				ViewUtil.APPEND, true, getPreferencesHint());
+		/*		getViewService().createNode(
+		 semanticAdapter,
+		 view,
+		 SysmlVisualIDRegistry
+		 .getType(ModelicaClassConnections2EditPart.VISUAL_ID),
+		 ViewUtil.APPEND, true, getPreferencesHint());
+		 */
+		/*		getViewService().createNode(
+		 semanticAdapter,
+		 view,
+		 SysmlVisualIDRegistry
+		 .getType(ModelicaClassNested2EditPart.VISUAL_ID),
+		 ViewUtil.APPEND, true, getPreferencesHint());
+		 */
+
+		ModelicaClass modelicaClass = (ModelicaClass) view.getElement();
+		if (!(modelicaClass instanceof ModelicaConnector)
+				&& !(modelicaClass instanceof ModelicaRecord)) {
+			getViewService()
+					.createNode(
+							semanticAdapter,
+							view,
+							SysmlVisualIDRegistry
+									.getType(ModelicaClassEquations2EditPart.VISUAL_ID),
+							ViewUtil.APPEND, true, getPreferencesHint());
 		}
 	}
 

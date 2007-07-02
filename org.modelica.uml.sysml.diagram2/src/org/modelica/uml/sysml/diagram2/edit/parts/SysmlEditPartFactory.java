@@ -38,6 +38,8 @@ public class SysmlEditPartFactory implements EditPartFactory {
 				return new ModelicaClassEditPart(view);
 			case ModelicaClassName2EditPart.VISUAL_ID:
 				return new ModelicaClassName2EditPart(view);
+			case ModelicaTypeNameEditPart.VISUAL_ID:
+				return new ModelicaTypeNameEditPart(view);
 			case ModelicaPropertyEditPart.VISUAL_ID:
 				return new ModelicaPropertyEditPart(view);
 			case ModelicaProperty2EditPart.VISUAL_ID:
@@ -86,15 +88,17 @@ public class SysmlEditPartFactory implements EditPartFactory {
 				return new ModelicaCompositionEditPart(view);
 			case ModelicaCompositionNameEditPart.VISUAL_ID:
 				return new ModelicaCompositionNameEditPart(view);
-			// contributed code begin
+			case ModelicaTypeEditPart.VISUAL_ID:
+				return new ModelicaTypeEditPart(view);
+				// contributed code begin
 			case ModelicaPortEditPart.VISUAL_ID:
 				return new ModelicaPortEditPart(view);
 			case ModelicaConnectionEditPart.VISUAL_ID:
 				return new ModelicaConnectionEditPart(view);
 				//case ModelicaPortNameEditPart.VISUAL_ID:
-					//return new ModelicaPortNameEditPart(view);
-				
-			// contributed code end
+				//return new ModelicaPortNameEditPart(view);
+
+				// contributed code end
 			}
 		}
 		return createUnrecognizedEditPart(context, model);

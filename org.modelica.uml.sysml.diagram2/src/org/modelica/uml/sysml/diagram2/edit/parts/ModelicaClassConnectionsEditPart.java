@@ -47,7 +47,6 @@ public class ModelicaClassConnectionsEditPart extends ShapeCompartmentEditPart {
 	public ModelicaClassConnectionsEditPart(View view) {
 		super(view);
 	}
-	
 
 	/**
 	 * @generated

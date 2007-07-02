@@ -486,6 +486,18 @@
                edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaCompositionEditHelper">
             <param name="semanticHint" value="3002"/>
          </metamodelType>
+      </metamodel>
+      <metamodel nsURI="http://modelica.org/mml">
+         <metamodelType
+               eclass="ModelicaType"
+               edithelper="org.modelica.uml.sysml.diagram2.edit.helpers.ModelicaTypeEditHelper"
+               id="org.modelica.uml.sysml.diagram2.ModelicaType_1002"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               name="Type">
+            <param
+                  name="semanticHint"
+                  value="1002"/>
+         </metamodelType>
       </metamodel>      
    </extension>
 

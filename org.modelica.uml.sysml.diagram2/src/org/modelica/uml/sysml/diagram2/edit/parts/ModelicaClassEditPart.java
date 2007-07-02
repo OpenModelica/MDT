@@ -301,8 +301,7 @@ public class ModelicaClassEditPart extends ShapeNodeEditPart {
 		 */
 		public ClassFigure() {
 
-			this.setPreferredSize(getMapMode().DPtoLP(200), getMapMode()
-					.DPtoLP(300));
+			this.setPreferredSize(200, 300);
 			createContents();
 		}
 
