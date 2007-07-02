@@ -31,7 +31,7 @@ package org.modelica.uml.sysml;
  * @model
  * @generated
  */
-public interface ModelicaReal extends ModelicaType {
+public interface ModelicaReal extends ModelicaPrimitiveType {
 	/**
 	 * Returns the value of the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->

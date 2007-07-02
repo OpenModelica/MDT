@@ -42,7 +42,6 @@ import org.modelica.uml.sysml.VariabilityKind;
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl#getPropertyKind <em>Property Kind</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl#getArrayDimension <em>Array Dimension</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl#getAccess <em>Access</em>}</li>
- *   <li>{@link org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl#getDataType <em>Data Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -168,16 +167,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 	 * @ordered
 	 */
 	protected AccessKind access = ACCESS_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getDataType() <em>Data Type</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDataType()
-	 * @generated
-	 * @ordered
-	 */
-	protected ModelicaClassifier dataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -328,44 +317,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModelicaClassifier getDataType() {
-		if (dataType != null && dataType.eIsProxy()) {
-			InternalEObject oldDataType = (InternalEObject)dataType;
-			dataType = (ModelicaClassifier)eResolveProxy(oldDataType);
-			if (dataType != oldDataType) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE, oldDataType, dataType));
-			}
-		}
-		return dataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ModelicaClassifier basicGetDataType() {
-		return dataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setDataType(ModelicaClassifier newDataType) {
-		ModelicaClassifier oldDataType = dataType;
-		dataType = newDataType;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE, oldDataType, dataType));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__VARIABILITY:
@@ -380,9 +331,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 				return getArrayDimension();
 			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ACCESS:
 				return getAccess();
-			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE:
-				if (resolve) return getDataType();
-				return basicGetDataType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -411,9 +359,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 				return;
 			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ACCESS:
 				setAccess((AccessKind)newValue);
-				return;
-			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE:
-				setDataType((ModelicaClassifier)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -444,9 +389,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ACCESS:
 				setAccess(ACCESS_EDEFAULT);
 				return;
-			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE:
-				setDataType((ModelicaClassifier)null);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -470,8 +412,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 				return ARRAY_DIMENSION_EDEFAULT == null ? arrayDimension != null : !ARRAY_DIMENSION_EDEFAULT.equals(arrayDimension);
 			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ACCESS:
 				return access != ACCESS_EDEFAULT;
-			case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE:
-				return dataType != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -495,7 +435,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 				case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__PROPERTY_KIND: return SysmlPackage.MODELICA_PROPERTY__PROPERTY_KIND;
 				case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ARRAY_DIMENSION: return SysmlPackage.MODELICA_PROPERTY__ARRAY_DIMENSION;
 				case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ACCESS: return SysmlPackage.MODELICA_PROPERTY__ACCESS;
-				case SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE: return SysmlPackage.MODELICA_PROPERTY__DATA_TYPE;
 				default: return -1;
 			}
 		}
@@ -521,7 +460,6 @@ public class ModelicaConnectorPropertyImpl extends PortImpl implements ModelicaC
 				case SysmlPackage.MODELICA_PROPERTY__PROPERTY_KIND: return SysmlPackage.MODELICA_CONNECTOR_PROPERTY__PROPERTY_KIND;
 				case SysmlPackage.MODELICA_PROPERTY__ARRAY_DIMENSION: return SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ARRAY_DIMENSION;
 				case SysmlPackage.MODELICA_PROPERTY__ACCESS: return SysmlPackage.MODELICA_CONNECTOR_PROPERTY__ACCESS;
-				case SysmlPackage.MODELICA_PROPERTY__DATA_TYPE: return SysmlPackage.MODELICA_CONNECTOR_PROPERTY__DATA_TYPE;
 				default: return -1;
 			}
 		}

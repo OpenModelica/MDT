@@ -36,7 +36,7 @@ import org.modelica.uml.sysml.SysmlPackage;
  *
  * @generated
  */
-public class ModelicaRealImpl extends ModelicaTypeImpl implements ModelicaReal {
+public class ModelicaRealImpl extends ModelicaPrimitiveTypeImpl implements ModelicaReal {
 	/**
 	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
 	 * <!-- begin-user-doc -->

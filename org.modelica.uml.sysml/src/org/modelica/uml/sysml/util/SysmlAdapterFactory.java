@@ -192,6 +192,9 @@ public class SysmlAdapterFactory extends AdapterFactoryImpl {
 			public Object caseModelicaClassifier(ModelicaClassifier object) {
 				return createModelicaClassifierAdapter();
 			}
+			public Object caseModelicaPrimitiveType(ModelicaPrimitiveType object) {
+				return createModelicaPrimitiveTypeAdapter();
+			}
 			public Object caseEModelElement(EModelElement object) {
 				return createEModelElementAdapter();
 			}
@@ -723,6 +726,20 @@ public class SysmlAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createModelicaClassifierAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.modelica.uml.sysml.ModelicaPrimitiveType <em>Modelica Primitive Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.modelica.uml.sysml.ModelicaPrimitiveType
+	 * @generated
+	 */
+	public Adapter createModelicaPrimitiveTypeAdapter() {
 		return null;
 	}
 

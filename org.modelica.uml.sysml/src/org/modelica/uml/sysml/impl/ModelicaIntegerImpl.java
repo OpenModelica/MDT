@@ -32,7 +32,7 @@ import org.modelica.uml.sysml.SysmlPackage;
  *
  * @generated
  */
-public class ModelicaIntegerImpl extends ModelicaTypeImpl implements ModelicaInteger {
+public class ModelicaIntegerImpl extends ModelicaPrimitiveTypeImpl implements ModelicaInteger {
 	/**
 	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
 	 * <!-- begin-user-doc -->

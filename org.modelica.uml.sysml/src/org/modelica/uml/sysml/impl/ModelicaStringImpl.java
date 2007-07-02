@@ -29,7 +29,7 @@ import org.modelica.uml.sysml.SysmlPackage;
  *
  * @generated
  */
-public class ModelicaStringImpl extends ModelicaTypeImpl implements ModelicaString {
+public class ModelicaStringImpl extends ModelicaPrimitiveTypeImpl implements ModelicaString {
 	/**
 	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
 	 * <!-- begin-user-doc -->

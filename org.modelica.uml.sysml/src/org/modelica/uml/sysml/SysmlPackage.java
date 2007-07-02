@@ -4487,366 +4487,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_TYPE = 13;
 
 	/**
-	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__EANNOTATIONS = UMLPackage.PRIMITIVE_TYPE__EANNOTATIONS;
-
-	/**
-	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_ELEMENT = UMLPackage.PRIMITIVE_TYPE__OWNED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNER = UMLPackage.PRIMITIVE_TYPE__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_COMMENT = UMLPackage.PRIMITIVE_TYPE__OWNED_COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__NAME = UMLPackage.PRIMITIVE_TYPE__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__VISIBILITY = UMLPackage.PRIMITIVE_TYPE__VISIBILITY;
-
-	/**
-	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__QUALIFIED_NAME = UMLPackage.PRIMITIVE_TYPE__QUALIFIED_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__CLIENT_DEPENDENCY = UMLPackage.PRIMITIVE_TYPE__CLIENT_DEPENDENCY;
-
-	/**
-	 * The feature id for the '<em><b>Namespace</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__NAMESPACE = UMLPackage.PRIMITIVE_TYPE__NAMESPACE;
-
-	/**
-	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__NAME_EXPRESSION = UMLPackage.PRIMITIVE_TYPE__NAME_EXPRESSION;
-
-	/**
-	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__ELEMENT_IMPORT = UMLPackage.PRIMITIVE_TYPE__ELEMENT_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__PACKAGE_IMPORT = UMLPackage.PRIMITIVE_TYPE__PACKAGE_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_RULE = UMLPackage.PRIMITIVE_TYPE__OWNED_RULE;
-
-	/**
-	 * The feature id for the '<em><b>Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__MEMBER = UMLPackage.PRIMITIVE_TYPE__MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__IMPORTED_MEMBER = UMLPackage.PRIMITIVE_TYPE__IMPORTED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_MEMBER = UMLPackage.PRIMITIVE_TYPE__OWNED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__IS_LEAF = UMLPackage.PRIMITIVE_TYPE__IS_LEAF;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__REDEFINED_ELEMENT = UMLPackage.PRIMITIVE_TYPE__REDEFINED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__REDEFINITION_CONTEXT = UMLPackage.PRIMITIVE_TYPE__REDEFINITION_CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNING_TEMPLATE_PARAMETER = UMLPackage.PRIMITIVE_TYPE__OWNING_TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__TEMPLATE_PARAMETER = UMLPackage.PRIMITIVE_TYPE__TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Package</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__PACKAGE = UMLPackage.PRIMITIVE_TYPE__PACKAGE;
-
-	/**
-	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__TEMPLATE_BINDING = UMLPackage.PRIMITIVE_TYPE__TEMPLATE_BINDING;
-
-	/**
-	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_TEMPLATE_SIGNATURE = UMLPackage.PRIMITIVE_TYPE__OWNED_TEMPLATE_SIGNATURE;
-
-	/**
-	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__IS_ABSTRACT = UMLPackage.PRIMITIVE_TYPE__IS_ABSTRACT;
-
-	/**
-	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__GENERALIZATION = UMLPackage.PRIMITIVE_TYPE__GENERALIZATION;
-
-	/**
-	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__POWERTYPE_EXTENT = UMLPackage.PRIMITIVE_TYPE__POWERTYPE_EXTENT;
-
-	/**
-	 * The feature id for the '<em><b>Feature</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__FEATURE = UMLPackage.PRIMITIVE_TYPE__FEATURE;
-
-	/**
-	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__INHERITED_MEMBER = UMLPackage.PRIMITIVE_TYPE__INHERITED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__REDEFINED_CLASSIFIER = UMLPackage.PRIMITIVE_TYPE__REDEFINED_CLASSIFIER;
-
-	/**
-	 * The feature id for the '<em><b>General</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__GENERAL = UMLPackage.PRIMITIVE_TYPE__GENERAL;
-
-	/**
-	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__SUBSTITUTION = UMLPackage.PRIMITIVE_TYPE__SUBSTITUTION;
-
-	/**
-	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__ATTRIBUTE = UMLPackage.PRIMITIVE_TYPE__ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Representation</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__REPRESENTATION = UMLPackage.PRIMITIVE_TYPE__REPRESENTATION;
-
-	/**
-	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__COLLABORATION_USE = UMLPackage.PRIMITIVE_TYPE__COLLABORATION_USE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_USE_CASE = UMLPackage.PRIMITIVE_TYPE__OWNED_USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__USE_CASE = UMLPackage.PRIMITIVE_TYPE__USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_ATTRIBUTE = UMLPackage.PRIMITIVE_TYPE__OWNED_ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE__OWNED_OPERATION = UMLPackage.PRIMITIVE_TYPE__OWNED_OPERATION;
-
-	/**
-	 * The number of structural features of the '<em>Modelica Type</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_TYPE_FEATURE_COUNT = UMLPackage.PRIMITIVE_TYPE_FEATURE_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaRealImpl <em>Modelica Real</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4855,447 +4495,6 @@ public interface SysmlPackage extends EPackage {
 	 * @generated
 	 */
 	int MODELICA_REAL = 14;
-
-	/**
-	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__EANNOTATIONS = MODELICA_TYPE__EANNOTATIONS;
-
-	/**
-	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_ELEMENT = MODELICA_TYPE__OWNED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNER = MODELICA_TYPE__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_COMMENT = MODELICA_TYPE__OWNED_COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__NAME = MODELICA_TYPE__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__VISIBILITY = MODELICA_TYPE__VISIBILITY;
-
-	/**
-	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__QUALIFIED_NAME = MODELICA_TYPE__QUALIFIED_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__CLIENT_DEPENDENCY = MODELICA_TYPE__CLIENT_DEPENDENCY;
-
-	/**
-	 * The feature id for the '<em><b>Namespace</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__NAMESPACE = MODELICA_TYPE__NAMESPACE;
-
-	/**
-	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__NAME_EXPRESSION = MODELICA_TYPE__NAME_EXPRESSION;
-
-	/**
-	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__ELEMENT_IMPORT = MODELICA_TYPE__ELEMENT_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__PACKAGE_IMPORT = MODELICA_TYPE__PACKAGE_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_RULE = MODELICA_TYPE__OWNED_RULE;
-
-	/**
-	 * The feature id for the '<em><b>Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__MEMBER = MODELICA_TYPE__MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__IMPORTED_MEMBER = MODELICA_TYPE__IMPORTED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_MEMBER = MODELICA_TYPE__OWNED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__IS_LEAF = MODELICA_TYPE__IS_LEAF;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__REDEFINED_ELEMENT = MODELICA_TYPE__REDEFINED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__REDEFINITION_CONTEXT = MODELICA_TYPE__REDEFINITION_CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNING_TEMPLATE_PARAMETER = MODELICA_TYPE__OWNING_TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__TEMPLATE_PARAMETER = MODELICA_TYPE__TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Package</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__PACKAGE = MODELICA_TYPE__PACKAGE;
-
-	/**
-	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__TEMPLATE_BINDING = MODELICA_TYPE__TEMPLATE_BINDING;
-
-	/**
-	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_TEMPLATE_SIGNATURE = MODELICA_TYPE__OWNED_TEMPLATE_SIGNATURE;
-
-	/**
-	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__IS_ABSTRACT = MODELICA_TYPE__IS_ABSTRACT;
-
-	/**
-	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__GENERALIZATION = MODELICA_TYPE__GENERALIZATION;
-
-	/**
-	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__POWERTYPE_EXTENT = MODELICA_TYPE__POWERTYPE_EXTENT;
-
-	/**
-	 * The feature id for the '<em><b>Feature</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__FEATURE = MODELICA_TYPE__FEATURE;
-
-	/**
-	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__INHERITED_MEMBER = MODELICA_TYPE__INHERITED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__REDEFINED_CLASSIFIER = MODELICA_TYPE__REDEFINED_CLASSIFIER;
-
-	/**
-	 * The feature id for the '<em><b>General</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__GENERAL = MODELICA_TYPE__GENERAL;
-
-	/**
-	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__SUBSTITUTION = MODELICA_TYPE__SUBSTITUTION;
-
-	/**
-	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__ATTRIBUTE = MODELICA_TYPE__ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Representation</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__REPRESENTATION = MODELICA_TYPE__REPRESENTATION;
-
-	/**
-	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__COLLABORATION_USE = MODELICA_TYPE__COLLABORATION_USE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_USE_CASE = MODELICA_TYPE__OWNED_USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__USE_CASE = MODELICA_TYPE__USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_ATTRIBUTE = MODELICA_TYPE__OWNED_ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__OWNED_OPERATION = MODELICA_TYPE__OWNED_OPERATION;
-
-	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__VALUE = MODELICA_TYPE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Quantity</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__QUANTITY = MODELICA_TYPE_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Unit</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__UNIT = MODELICA_TYPE_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Display Unit</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__DISPLAY_UNIT = MODELICA_TYPE_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Min</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__MIN = MODELICA_TYPE_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Max</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__MAX = MODELICA_TYPE_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__START = MODELICA_TYPE_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__FIXED = MODELICA_TYPE_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Nominal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL__NOMINAL = MODELICA_TYPE_FEATURE_COUNT + 8;
-
-	/**
-	 * The number of structural features of the '<em>Modelica Real</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_REAL_FEATURE_COUNT = MODELICA_TYPE_FEATURE_COUNT + 9;
 
 	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaIntegerImpl <em>Modelica Integer</em>}' class.
@@ -5308,411 +4507,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_INTEGER = 15;
 
 	/**
-	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__EANNOTATIONS = MODELICA_TYPE__EANNOTATIONS;
-
-	/**
-	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_ELEMENT = MODELICA_TYPE__OWNED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNER = MODELICA_TYPE__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_COMMENT = MODELICA_TYPE__OWNED_COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__NAME = MODELICA_TYPE__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__VISIBILITY = MODELICA_TYPE__VISIBILITY;
-
-	/**
-	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__QUALIFIED_NAME = MODELICA_TYPE__QUALIFIED_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__CLIENT_DEPENDENCY = MODELICA_TYPE__CLIENT_DEPENDENCY;
-
-	/**
-	 * The feature id for the '<em><b>Namespace</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__NAMESPACE = MODELICA_TYPE__NAMESPACE;
-
-	/**
-	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__NAME_EXPRESSION = MODELICA_TYPE__NAME_EXPRESSION;
-
-	/**
-	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__ELEMENT_IMPORT = MODELICA_TYPE__ELEMENT_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__PACKAGE_IMPORT = MODELICA_TYPE__PACKAGE_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_RULE = MODELICA_TYPE__OWNED_RULE;
-
-	/**
-	 * The feature id for the '<em><b>Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__MEMBER = MODELICA_TYPE__MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__IMPORTED_MEMBER = MODELICA_TYPE__IMPORTED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_MEMBER = MODELICA_TYPE__OWNED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__IS_LEAF = MODELICA_TYPE__IS_LEAF;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__REDEFINED_ELEMENT = MODELICA_TYPE__REDEFINED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__REDEFINITION_CONTEXT = MODELICA_TYPE__REDEFINITION_CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNING_TEMPLATE_PARAMETER = MODELICA_TYPE__OWNING_TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__TEMPLATE_PARAMETER = MODELICA_TYPE__TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Package</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__PACKAGE = MODELICA_TYPE__PACKAGE;
-
-	/**
-	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__TEMPLATE_BINDING = MODELICA_TYPE__TEMPLATE_BINDING;
-
-	/**
-	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_TEMPLATE_SIGNATURE = MODELICA_TYPE__OWNED_TEMPLATE_SIGNATURE;
-
-	/**
-	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__IS_ABSTRACT = MODELICA_TYPE__IS_ABSTRACT;
-
-	/**
-	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__GENERALIZATION = MODELICA_TYPE__GENERALIZATION;
-
-	/**
-	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__POWERTYPE_EXTENT = MODELICA_TYPE__POWERTYPE_EXTENT;
-
-	/**
-	 * The feature id for the '<em><b>Feature</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__FEATURE = MODELICA_TYPE__FEATURE;
-
-	/**
-	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__INHERITED_MEMBER = MODELICA_TYPE__INHERITED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__REDEFINED_CLASSIFIER = MODELICA_TYPE__REDEFINED_CLASSIFIER;
-
-	/**
-	 * The feature id for the '<em><b>General</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__GENERAL = MODELICA_TYPE__GENERAL;
-
-	/**
-	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__SUBSTITUTION = MODELICA_TYPE__SUBSTITUTION;
-
-	/**
-	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__ATTRIBUTE = MODELICA_TYPE__ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Representation</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__REPRESENTATION = MODELICA_TYPE__REPRESENTATION;
-
-	/**
-	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__COLLABORATION_USE = MODELICA_TYPE__COLLABORATION_USE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_USE_CASE = MODELICA_TYPE__OWNED_USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__USE_CASE = MODELICA_TYPE__USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_ATTRIBUTE = MODELICA_TYPE__OWNED_ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__OWNED_OPERATION = MODELICA_TYPE__OWNED_OPERATION;
-
-	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__VALUE = MODELICA_TYPE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Min</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__MIN = MODELICA_TYPE_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Max</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__MAX = MODELICA_TYPE_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__START = MODELICA_TYPE_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER__FIXED = MODELICA_TYPE_FEATURE_COUNT + 4;
-
-	/**
-	 * The number of structural features of the '<em>Modelica Integer</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_INTEGER_FEATURE_COUNT = MODELICA_TYPE_FEATURE_COUNT + 5;
-
-	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaStringImpl <em>Modelica String</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5721,384 +4515,6 @@ public interface SysmlPackage extends EPackage {
 	 * @generated
 	 */
 	int MODELICA_STRING = 16;
-
-	/**
-	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__EANNOTATIONS = MODELICA_TYPE__EANNOTATIONS;
-
-	/**
-	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_ELEMENT = MODELICA_TYPE__OWNED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNER = MODELICA_TYPE__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_COMMENT = MODELICA_TYPE__OWNED_COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__NAME = MODELICA_TYPE__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__VISIBILITY = MODELICA_TYPE__VISIBILITY;
-
-	/**
-	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__QUALIFIED_NAME = MODELICA_TYPE__QUALIFIED_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__CLIENT_DEPENDENCY = MODELICA_TYPE__CLIENT_DEPENDENCY;
-
-	/**
-	 * The feature id for the '<em><b>Namespace</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__NAMESPACE = MODELICA_TYPE__NAMESPACE;
-
-	/**
-	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__NAME_EXPRESSION = MODELICA_TYPE__NAME_EXPRESSION;
-
-	/**
-	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__ELEMENT_IMPORT = MODELICA_TYPE__ELEMENT_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__PACKAGE_IMPORT = MODELICA_TYPE__PACKAGE_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_RULE = MODELICA_TYPE__OWNED_RULE;
-
-	/**
-	 * The feature id for the '<em><b>Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__MEMBER = MODELICA_TYPE__MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__IMPORTED_MEMBER = MODELICA_TYPE__IMPORTED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_MEMBER = MODELICA_TYPE__OWNED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__IS_LEAF = MODELICA_TYPE__IS_LEAF;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__REDEFINED_ELEMENT = MODELICA_TYPE__REDEFINED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__REDEFINITION_CONTEXT = MODELICA_TYPE__REDEFINITION_CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNING_TEMPLATE_PARAMETER = MODELICA_TYPE__OWNING_TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__TEMPLATE_PARAMETER = MODELICA_TYPE__TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Package</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__PACKAGE = MODELICA_TYPE__PACKAGE;
-
-	/**
-	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__TEMPLATE_BINDING = MODELICA_TYPE__TEMPLATE_BINDING;
-
-	/**
-	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_TEMPLATE_SIGNATURE = MODELICA_TYPE__OWNED_TEMPLATE_SIGNATURE;
-
-	/**
-	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__IS_ABSTRACT = MODELICA_TYPE__IS_ABSTRACT;
-
-	/**
-	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__GENERALIZATION = MODELICA_TYPE__GENERALIZATION;
-
-	/**
-	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__POWERTYPE_EXTENT = MODELICA_TYPE__POWERTYPE_EXTENT;
-
-	/**
-	 * The feature id for the '<em><b>Feature</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__FEATURE = MODELICA_TYPE__FEATURE;
-
-	/**
-	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__INHERITED_MEMBER = MODELICA_TYPE__INHERITED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__REDEFINED_CLASSIFIER = MODELICA_TYPE__REDEFINED_CLASSIFIER;
-
-	/**
-	 * The feature id for the '<em><b>General</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__GENERAL = MODELICA_TYPE__GENERAL;
-
-	/**
-	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__SUBSTITUTION = MODELICA_TYPE__SUBSTITUTION;
-
-	/**
-	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__ATTRIBUTE = MODELICA_TYPE__ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Representation</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__REPRESENTATION = MODELICA_TYPE__REPRESENTATION;
-
-	/**
-	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__COLLABORATION_USE = MODELICA_TYPE__COLLABORATION_USE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_USE_CASE = MODELICA_TYPE__OWNED_USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__USE_CASE = MODELICA_TYPE__USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_ATTRIBUTE = MODELICA_TYPE__OWNED_ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__OWNED_OPERATION = MODELICA_TYPE__OWNED_OPERATION;
-
-	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__VALUE = MODELICA_TYPE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING__START = MODELICA_TYPE_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Modelica String</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_STRING_FEATURE_COUNT = MODELICA_TYPE_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaBooleanImpl <em>Modelica Boolean</em>}' class.
@@ -6111,393 +4527,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_BOOLEAN = 17;
 
 	/**
-	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__EANNOTATIONS = MODELICA_TYPE__EANNOTATIONS;
-
-	/**
-	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_ELEMENT = MODELICA_TYPE__OWNED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNER = MODELICA_TYPE__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_COMMENT = MODELICA_TYPE__OWNED_COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__NAME = MODELICA_TYPE__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__VISIBILITY = MODELICA_TYPE__VISIBILITY;
-
-	/**
-	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__QUALIFIED_NAME = MODELICA_TYPE__QUALIFIED_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__CLIENT_DEPENDENCY = MODELICA_TYPE__CLIENT_DEPENDENCY;
-
-	/**
-	 * The feature id for the '<em><b>Namespace</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__NAMESPACE = MODELICA_TYPE__NAMESPACE;
-
-	/**
-	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__NAME_EXPRESSION = MODELICA_TYPE__NAME_EXPRESSION;
-
-	/**
-	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__ELEMENT_IMPORT = MODELICA_TYPE__ELEMENT_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__PACKAGE_IMPORT = MODELICA_TYPE__PACKAGE_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_RULE = MODELICA_TYPE__OWNED_RULE;
-
-	/**
-	 * The feature id for the '<em><b>Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__MEMBER = MODELICA_TYPE__MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__IMPORTED_MEMBER = MODELICA_TYPE__IMPORTED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_MEMBER = MODELICA_TYPE__OWNED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__IS_LEAF = MODELICA_TYPE__IS_LEAF;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__REDEFINED_ELEMENT = MODELICA_TYPE__REDEFINED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__REDEFINITION_CONTEXT = MODELICA_TYPE__REDEFINITION_CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNING_TEMPLATE_PARAMETER = MODELICA_TYPE__OWNING_TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__TEMPLATE_PARAMETER = MODELICA_TYPE__TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Package</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__PACKAGE = MODELICA_TYPE__PACKAGE;
-
-	/**
-	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__TEMPLATE_BINDING = MODELICA_TYPE__TEMPLATE_BINDING;
-
-	/**
-	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_TEMPLATE_SIGNATURE = MODELICA_TYPE__OWNED_TEMPLATE_SIGNATURE;
-
-	/**
-	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__IS_ABSTRACT = MODELICA_TYPE__IS_ABSTRACT;
-
-	/**
-	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__GENERALIZATION = MODELICA_TYPE__GENERALIZATION;
-
-	/**
-	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__POWERTYPE_EXTENT = MODELICA_TYPE__POWERTYPE_EXTENT;
-
-	/**
-	 * The feature id for the '<em><b>Feature</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__FEATURE = MODELICA_TYPE__FEATURE;
-
-	/**
-	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__INHERITED_MEMBER = MODELICA_TYPE__INHERITED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__REDEFINED_CLASSIFIER = MODELICA_TYPE__REDEFINED_CLASSIFIER;
-
-	/**
-	 * The feature id for the '<em><b>General</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__GENERAL = MODELICA_TYPE__GENERAL;
-
-	/**
-	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__SUBSTITUTION = MODELICA_TYPE__SUBSTITUTION;
-
-	/**
-	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__ATTRIBUTE = MODELICA_TYPE__ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Representation</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__REPRESENTATION = MODELICA_TYPE__REPRESENTATION;
-
-	/**
-	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__COLLABORATION_USE = MODELICA_TYPE__COLLABORATION_USE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_USE_CASE = MODELICA_TYPE__OWNED_USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__USE_CASE = MODELICA_TYPE__USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_ATTRIBUTE = MODELICA_TYPE__OWNED_ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__OWNED_OPERATION = MODELICA_TYPE__OWNED_OPERATION;
-
-	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__VALUE = MODELICA_TYPE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__START = MODELICA_TYPE_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN__FIXED = MODELICA_TYPE_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Modelica Boolean</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_BOOLEAN_FEATURE_COUNT = MODELICA_TYPE_FEATURE_COUNT + 3;
-
-	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaClassImpl <em>Modelica Class</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6506,6 +4535,2790 @@ public interface SysmlPackage extends EPackage {
 	 * @generated
 	 */
 	int MODELICA_CLASS = 18;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaModelImpl <em>Modelica Model</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaModelImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaModel()
+	 * @generated
+	 */
+	int MODELICA_MODEL = 19;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaBlockImpl <em>Modelica Block</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaBlockImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaBlock()
+	 * @generated
+	 */
+	int MODELICA_BLOCK = 20;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaConnectorImpl <em>Modelica Connector</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaConnectorImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaConnector()
+	 * @generated
+	 */
+	int MODELICA_CONNECTOR = 21;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaRecordImpl <em>Modelica Record</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaRecordImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaRecord()
+	 * @generated
+	 */
+	int MODELICA_RECORD = 22;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaFunctionImpl <em>Modelica Function</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaFunctionImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaFunction()
+	 * @generated
+	 */
+	int MODELICA_FUNCTION = 23;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaPropertyImpl <em>Modelica Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaPropertyImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaProperty()
+	 * @generated
+	 */
+	int MODELICA_PROPERTY = 24;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl <em>Modelica Connector Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaConnectorProperty()
+	 * @generated
+	 */
+	int MODELICA_CONNECTOR_PROPERTY = 25;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaEquationPropertyImpl <em>Modelica Equation Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaEquationPropertyImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaEquationProperty()
+	 * @generated
+	 */
+	int MODELICA_EQUATION_PROPERTY = 26;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaCompositionImpl <em>Modelica Composition</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaCompositionImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaComposition()
+	 * @generated
+	 */
+	int MODELICA_COMPOSITION = 27;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaConnectionImpl <em>Modelica Connection</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaConnectionImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaConnection()
+	 * @generated
+	 */
+	int MODELICA_CONNECTION = 28;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaPrimitiveTypeImpl <em>Modelica Primitive Type</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaPrimitiveTypeImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaPrimitiveType()
+	 * @generated
+	 */
+	int MODELICA_PRIMITIVE_TYPE = 30;
+
+	/**
+	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaClassifierImpl <em>Modelica Classifier</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.modelica.uml.sysml.impl.ModelicaClassifierImpl
+	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaClassifier()
+	 * @generated
+	 */
+	int MODELICA_CLASSIFIER = 29;
+
+	/**
+	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__EANNOTATIONS = UMLPackage.CLASSIFIER__EANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNED_ELEMENT = UMLPackage.CLASSIFIER__OWNED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNER = UMLPackage.CLASSIFIER__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNED_COMMENT = UMLPackage.CLASSIFIER__OWNED_COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__NAME = UMLPackage.CLASSIFIER__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__VISIBILITY = UMLPackage.CLASSIFIER__VISIBILITY;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__QUALIFIED_NAME = UMLPackage.CLASSIFIER__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__CLIENT_DEPENDENCY = UMLPackage.CLASSIFIER__CLIENT_DEPENDENCY;
+
+	/**
+	 * The feature id for the '<em><b>Namespace</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__NAMESPACE = UMLPackage.CLASSIFIER__NAMESPACE;
+
+	/**
+	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__NAME_EXPRESSION = UMLPackage.CLASSIFIER__NAME_EXPRESSION;
+
+	/**
+	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__ELEMENT_IMPORT = UMLPackage.CLASSIFIER__ELEMENT_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__PACKAGE_IMPORT = UMLPackage.CLASSIFIER__PACKAGE_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNED_RULE = UMLPackage.CLASSIFIER__OWNED_RULE;
+
+	/**
+	 * The feature id for the '<em><b>Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__MEMBER = UMLPackage.CLASSIFIER__MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__IMPORTED_MEMBER = UMLPackage.CLASSIFIER__IMPORTED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNED_MEMBER = UMLPackage.CLASSIFIER__OWNED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__IS_LEAF = UMLPackage.CLASSIFIER__IS_LEAF;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__REDEFINED_ELEMENT = UMLPackage.CLASSIFIER__REDEFINED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__REDEFINITION_CONTEXT = UMLPackage.CLASSIFIER__REDEFINITION_CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNING_TEMPLATE_PARAMETER = UMLPackage.CLASSIFIER__OWNING_TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__TEMPLATE_PARAMETER = UMLPackage.CLASSIFIER__TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Package</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__PACKAGE = UMLPackage.CLASSIFIER__PACKAGE;
+
+	/**
+	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__TEMPLATE_BINDING = UMLPackage.CLASSIFIER__TEMPLATE_BINDING;
+
+	/**
+	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNED_TEMPLATE_SIGNATURE = UMLPackage.CLASSIFIER__OWNED_TEMPLATE_SIGNATURE;
+
+	/**
+	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__IS_ABSTRACT = UMLPackage.CLASSIFIER__IS_ABSTRACT;
+
+	/**
+	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__GENERALIZATION = UMLPackage.CLASSIFIER__GENERALIZATION;
+
+	/**
+	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__POWERTYPE_EXTENT = UMLPackage.CLASSIFIER__POWERTYPE_EXTENT;
+
+	/**
+	 * The feature id for the '<em><b>Feature</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__FEATURE = UMLPackage.CLASSIFIER__FEATURE;
+
+	/**
+	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__INHERITED_MEMBER = UMLPackage.CLASSIFIER__INHERITED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__REDEFINED_CLASSIFIER = UMLPackage.CLASSIFIER__REDEFINED_CLASSIFIER;
+
+	/**
+	 * The feature id for the '<em><b>General</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__GENERAL = UMLPackage.CLASSIFIER__GENERAL;
+
+	/**
+	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__SUBSTITUTION = UMLPackage.CLASSIFIER__SUBSTITUTION;
+
+	/**
+	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__ATTRIBUTE = UMLPackage.CLASSIFIER__ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Representation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__REPRESENTATION = UMLPackage.CLASSIFIER__REPRESENTATION;
+
+	/**
+	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__COLLABORATION_USE = UMLPackage.CLASSIFIER__COLLABORATION_USE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__OWNED_USE_CASE = UMLPackage.CLASSIFIER__OWNED_USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER__USE_CASE = UMLPackage.CLASSIFIER__USE_CASE;
+
+	/**
+	 * The number of structural features of the '<em>Modelica Classifier</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_CLASSIFIER_FEATURE_COUNT = UMLPackage.CLASSIFIER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__EANNOTATIONS = MODELICA_CLASSIFIER__EANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNED_ELEMENT = MODELICA_CLASSIFIER__OWNED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNER = MODELICA_CLASSIFIER__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNED_COMMENT = MODELICA_CLASSIFIER__OWNED_COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__NAME = MODELICA_CLASSIFIER__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__VISIBILITY = MODELICA_CLASSIFIER__VISIBILITY;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__QUALIFIED_NAME = MODELICA_CLASSIFIER__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__CLIENT_DEPENDENCY = MODELICA_CLASSIFIER__CLIENT_DEPENDENCY;
+
+	/**
+	 * The feature id for the '<em><b>Namespace</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__NAMESPACE = MODELICA_CLASSIFIER__NAMESPACE;
+
+	/**
+	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__NAME_EXPRESSION = MODELICA_CLASSIFIER__NAME_EXPRESSION;
+
+	/**
+	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__ELEMENT_IMPORT = MODELICA_CLASSIFIER__ELEMENT_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__PACKAGE_IMPORT = MODELICA_CLASSIFIER__PACKAGE_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNED_RULE = MODELICA_CLASSIFIER__OWNED_RULE;
+
+	/**
+	 * The feature id for the '<em><b>Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__MEMBER = MODELICA_CLASSIFIER__MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__IMPORTED_MEMBER = MODELICA_CLASSIFIER__IMPORTED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNED_MEMBER = MODELICA_CLASSIFIER__OWNED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__IS_LEAF = MODELICA_CLASSIFIER__IS_LEAF;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__REDEFINED_ELEMENT = MODELICA_CLASSIFIER__REDEFINED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__REDEFINITION_CONTEXT = MODELICA_CLASSIFIER__REDEFINITION_CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNING_TEMPLATE_PARAMETER = MODELICA_CLASSIFIER__OWNING_TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__TEMPLATE_PARAMETER = MODELICA_CLASSIFIER__TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Package</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__PACKAGE = MODELICA_CLASSIFIER__PACKAGE;
+
+	/**
+	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__TEMPLATE_BINDING = MODELICA_CLASSIFIER__TEMPLATE_BINDING;
+
+	/**
+	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNED_TEMPLATE_SIGNATURE = MODELICA_CLASSIFIER__OWNED_TEMPLATE_SIGNATURE;
+
+	/**
+	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__IS_ABSTRACT = MODELICA_CLASSIFIER__IS_ABSTRACT;
+
+	/**
+	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__GENERALIZATION = MODELICA_CLASSIFIER__GENERALIZATION;
+
+	/**
+	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__POWERTYPE_EXTENT = MODELICA_CLASSIFIER__POWERTYPE_EXTENT;
+
+	/**
+	 * The feature id for the '<em><b>Feature</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__FEATURE = MODELICA_CLASSIFIER__FEATURE;
+
+	/**
+	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__INHERITED_MEMBER = MODELICA_CLASSIFIER__INHERITED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__REDEFINED_CLASSIFIER = MODELICA_CLASSIFIER__REDEFINED_CLASSIFIER;
+
+	/**
+	 * The feature id for the '<em><b>General</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__GENERAL = MODELICA_CLASSIFIER__GENERAL;
+
+	/**
+	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__SUBSTITUTION = MODELICA_CLASSIFIER__SUBSTITUTION;
+
+	/**
+	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__ATTRIBUTE = MODELICA_CLASSIFIER__ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Representation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__REPRESENTATION = MODELICA_CLASSIFIER__REPRESENTATION;
+
+	/**
+	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__COLLABORATION_USE = MODELICA_CLASSIFIER__COLLABORATION_USE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__OWNED_USE_CASE = MODELICA_CLASSIFIER__OWNED_USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__USE_CASE = MODELICA_CLASSIFIER__USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Type Data</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE__TYPE_DATA = MODELICA_CLASSIFIER_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Modelica Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_TYPE_FEATURE_COUNT = MODELICA_CLASSIFIER_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__EANNOTATIONS = UMLPackage.PRIMITIVE_TYPE__EANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_ELEMENT = UMLPackage.PRIMITIVE_TYPE__OWNED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNER = UMLPackage.PRIMITIVE_TYPE__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_COMMENT = UMLPackage.PRIMITIVE_TYPE__OWNED_COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__NAME = UMLPackage.PRIMITIVE_TYPE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__VISIBILITY = UMLPackage.PRIMITIVE_TYPE__VISIBILITY;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__QUALIFIED_NAME = UMLPackage.PRIMITIVE_TYPE__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__CLIENT_DEPENDENCY = UMLPackage.PRIMITIVE_TYPE__CLIENT_DEPENDENCY;
+
+	/**
+	 * The feature id for the '<em><b>Namespace</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__NAMESPACE = UMLPackage.PRIMITIVE_TYPE__NAMESPACE;
+
+	/**
+	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__NAME_EXPRESSION = UMLPackage.PRIMITIVE_TYPE__NAME_EXPRESSION;
+
+	/**
+	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__ELEMENT_IMPORT = UMLPackage.PRIMITIVE_TYPE__ELEMENT_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__PACKAGE_IMPORT = UMLPackage.PRIMITIVE_TYPE__PACKAGE_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_RULE = UMLPackage.PRIMITIVE_TYPE__OWNED_RULE;
+
+	/**
+	 * The feature id for the '<em><b>Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__MEMBER = UMLPackage.PRIMITIVE_TYPE__MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__IMPORTED_MEMBER = UMLPackage.PRIMITIVE_TYPE__IMPORTED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_MEMBER = UMLPackage.PRIMITIVE_TYPE__OWNED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__IS_LEAF = UMLPackage.PRIMITIVE_TYPE__IS_LEAF;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__REDEFINED_ELEMENT = UMLPackage.PRIMITIVE_TYPE__REDEFINED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__REDEFINITION_CONTEXT = UMLPackage.PRIMITIVE_TYPE__REDEFINITION_CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNING_TEMPLATE_PARAMETER = UMLPackage.PRIMITIVE_TYPE__OWNING_TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__TEMPLATE_PARAMETER = UMLPackage.PRIMITIVE_TYPE__TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Package</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__PACKAGE = UMLPackage.PRIMITIVE_TYPE__PACKAGE;
+
+	/**
+	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__TEMPLATE_BINDING = UMLPackage.PRIMITIVE_TYPE__TEMPLATE_BINDING;
+
+	/**
+	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_TEMPLATE_SIGNATURE = UMLPackage.PRIMITIVE_TYPE__OWNED_TEMPLATE_SIGNATURE;
+
+	/**
+	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__IS_ABSTRACT = UMLPackage.PRIMITIVE_TYPE__IS_ABSTRACT;
+
+	/**
+	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__GENERALIZATION = UMLPackage.PRIMITIVE_TYPE__GENERALIZATION;
+
+	/**
+	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__POWERTYPE_EXTENT = UMLPackage.PRIMITIVE_TYPE__POWERTYPE_EXTENT;
+
+	/**
+	 * The feature id for the '<em><b>Feature</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__FEATURE = UMLPackage.PRIMITIVE_TYPE__FEATURE;
+
+	/**
+	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__INHERITED_MEMBER = UMLPackage.PRIMITIVE_TYPE__INHERITED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__REDEFINED_CLASSIFIER = UMLPackage.PRIMITIVE_TYPE__REDEFINED_CLASSIFIER;
+
+	/**
+	 * The feature id for the '<em><b>General</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__GENERAL = UMLPackage.PRIMITIVE_TYPE__GENERAL;
+
+	/**
+	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__SUBSTITUTION = UMLPackage.PRIMITIVE_TYPE__SUBSTITUTION;
+
+	/**
+	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__ATTRIBUTE = UMLPackage.PRIMITIVE_TYPE__ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Representation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__REPRESENTATION = UMLPackage.PRIMITIVE_TYPE__REPRESENTATION;
+
+	/**
+	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__COLLABORATION_USE = UMLPackage.PRIMITIVE_TYPE__COLLABORATION_USE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_USE_CASE = UMLPackage.PRIMITIVE_TYPE__OWNED_USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__USE_CASE = UMLPackage.PRIMITIVE_TYPE__USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_ATTRIBUTE = UMLPackage.PRIMITIVE_TYPE__OWNED_ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE__OWNED_OPERATION = UMLPackage.PRIMITIVE_TYPE__OWNED_OPERATION;
+
+	/**
+	 * The number of structural features of the '<em>Modelica Primitive Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT = UMLPackage.PRIMITIVE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__EANNOTATIONS = MODELICA_PRIMITIVE_TYPE__EANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_ELEMENT = MODELICA_PRIMITIVE_TYPE__OWNED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNER = MODELICA_PRIMITIVE_TYPE__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_COMMENT = MODELICA_PRIMITIVE_TYPE__OWNED_COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__NAME = MODELICA_PRIMITIVE_TYPE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__VISIBILITY = MODELICA_PRIMITIVE_TYPE__VISIBILITY;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__QUALIFIED_NAME = MODELICA_PRIMITIVE_TYPE__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__CLIENT_DEPENDENCY = MODELICA_PRIMITIVE_TYPE__CLIENT_DEPENDENCY;
+
+	/**
+	 * The feature id for the '<em><b>Namespace</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__NAMESPACE = MODELICA_PRIMITIVE_TYPE__NAMESPACE;
+
+	/**
+	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__NAME_EXPRESSION = MODELICA_PRIMITIVE_TYPE__NAME_EXPRESSION;
+
+	/**
+	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__ELEMENT_IMPORT = MODELICA_PRIMITIVE_TYPE__ELEMENT_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__PACKAGE_IMPORT = MODELICA_PRIMITIVE_TYPE__PACKAGE_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_RULE = MODELICA_PRIMITIVE_TYPE__OWNED_RULE;
+
+	/**
+	 * The feature id for the '<em><b>Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__MEMBER = MODELICA_PRIMITIVE_TYPE__MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__IMPORTED_MEMBER = MODELICA_PRIMITIVE_TYPE__IMPORTED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_MEMBER = MODELICA_PRIMITIVE_TYPE__OWNED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__IS_LEAF = MODELICA_PRIMITIVE_TYPE__IS_LEAF;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__REDEFINED_ELEMENT = MODELICA_PRIMITIVE_TYPE__REDEFINED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__REDEFINITION_CONTEXT = MODELICA_PRIMITIVE_TYPE__REDEFINITION_CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNING_TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__OWNING_TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Package</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__PACKAGE = MODELICA_PRIMITIVE_TYPE__PACKAGE;
+
+	/**
+	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__TEMPLATE_BINDING = MODELICA_PRIMITIVE_TYPE__TEMPLATE_BINDING;
+
+	/**
+	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_TEMPLATE_SIGNATURE = MODELICA_PRIMITIVE_TYPE__OWNED_TEMPLATE_SIGNATURE;
+
+	/**
+	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__IS_ABSTRACT = MODELICA_PRIMITIVE_TYPE__IS_ABSTRACT;
+
+	/**
+	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__GENERALIZATION = MODELICA_PRIMITIVE_TYPE__GENERALIZATION;
+
+	/**
+	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__POWERTYPE_EXTENT = MODELICA_PRIMITIVE_TYPE__POWERTYPE_EXTENT;
+
+	/**
+	 * The feature id for the '<em><b>Feature</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__FEATURE = MODELICA_PRIMITIVE_TYPE__FEATURE;
+
+	/**
+	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__INHERITED_MEMBER = MODELICA_PRIMITIVE_TYPE__INHERITED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__REDEFINED_CLASSIFIER = MODELICA_PRIMITIVE_TYPE__REDEFINED_CLASSIFIER;
+
+	/**
+	 * The feature id for the '<em><b>General</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__GENERAL = MODELICA_PRIMITIVE_TYPE__GENERAL;
+
+	/**
+	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__SUBSTITUTION = MODELICA_PRIMITIVE_TYPE__SUBSTITUTION;
+
+	/**
+	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Representation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__REPRESENTATION = MODELICA_PRIMITIVE_TYPE__REPRESENTATION;
+
+	/**
+	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__COLLABORATION_USE = MODELICA_PRIMITIVE_TYPE__COLLABORATION_USE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_USE_CASE = MODELICA_PRIMITIVE_TYPE__OWNED_USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__USE_CASE = MODELICA_PRIMITIVE_TYPE__USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__OWNED_ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__OWNED_OPERATION = MODELICA_PRIMITIVE_TYPE__OWNED_OPERATION;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__VALUE = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Quantity</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__QUANTITY = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Unit</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__UNIT = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Display Unit</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__DISPLAY_UNIT = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Min</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__MIN = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Max</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__MAX = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__START = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__FIXED = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Nominal</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL__NOMINAL = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 8;
+
+	/**
+	 * The number of structural features of the '<em>Modelica Real</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_REAL_FEATURE_COUNT = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__EANNOTATIONS = MODELICA_PRIMITIVE_TYPE__EANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_ELEMENT = MODELICA_PRIMITIVE_TYPE__OWNED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNER = MODELICA_PRIMITIVE_TYPE__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_COMMENT = MODELICA_PRIMITIVE_TYPE__OWNED_COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__NAME = MODELICA_PRIMITIVE_TYPE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__VISIBILITY = MODELICA_PRIMITIVE_TYPE__VISIBILITY;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__QUALIFIED_NAME = MODELICA_PRIMITIVE_TYPE__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__CLIENT_DEPENDENCY = MODELICA_PRIMITIVE_TYPE__CLIENT_DEPENDENCY;
+
+	/**
+	 * The feature id for the '<em><b>Namespace</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__NAMESPACE = MODELICA_PRIMITIVE_TYPE__NAMESPACE;
+
+	/**
+	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__NAME_EXPRESSION = MODELICA_PRIMITIVE_TYPE__NAME_EXPRESSION;
+
+	/**
+	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__ELEMENT_IMPORT = MODELICA_PRIMITIVE_TYPE__ELEMENT_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__PACKAGE_IMPORT = MODELICA_PRIMITIVE_TYPE__PACKAGE_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_RULE = MODELICA_PRIMITIVE_TYPE__OWNED_RULE;
+
+	/**
+	 * The feature id for the '<em><b>Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__MEMBER = MODELICA_PRIMITIVE_TYPE__MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__IMPORTED_MEMBER = MODELICA_PRIMITIVE_TYPE__IMPORTED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_MEMBER = MODELICA_PRIMITIVE_TYPE__OWNED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__IS_LEAF = MODELICA_PRIMITIVE_TYPE__IS_LEAF;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__REDEFINED_ELEMENT = MODELICA_PRIMITIVE_TYPE__REDEFINED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__REDEFINITION_CONTEXT = MODELICA_PRIMITIVE_TYPE__REDEFINITION_CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNING_TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__OWNING_TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Package</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__PACKAGE = MODELICA_PRIMITIVE_TYPE__PACKAGE;
+
+	/**
+	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__TEMPLATE_BINDING = MODELICA_PRIMITIVE_TYPE__TEMPLATE_BINDING;
+
+	/**
+	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_TEMPLATE_SIGNATURE = MODELICA_PRIMITIVE_TYPE__OWNED_TEMPLATE_SIGNATURE;
+
+	/**
+	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__IS_ABSTRACT = MODELICA_PRIMITIVE_TYPE__IS_ABSTRACT;
+
+	/**
+	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__GENERALIZATION = MODELICA_PRIMITIVE_TYPE__GENERALIZATION;
+
+	/**
+	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__POWERTYPE_EXTENT = MODELICA_PRIMITIVE_TYPE__POWERTYPE_EXTENT;
+
+	/**
+	 * The feature id for the '<em><b>Feature</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__FEATURE = MODELICA_PRIMITIVE_TYPE__FEATURE;
+
+	/**
+	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__INHERITED_MEMBER = MODELICA_PRIMITIVE_TYPE__INHERITED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__REDEFINED_CLASSIFIER = MODELICA_PRIMITIVE_TYPE__REDEFINED_CLASSIFIER;
+
+	/**
+	 * The feature id for the '<em><b>General</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__GENERAL = MODELICA_PRIMITIVE_TYPE__GENERAL;
+
+	/**
+	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__SUBSTITUTION = MODELICA_PRIMITIVE_TYPE__SUBSTITUTION;
+
+	/**
+	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Representation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__REPRESENTATION = MODELICA_PRIMITIVE_TYPE__REPRESENTATION;
+
+	/**
+	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__COLLABORATION_USE = MODELICA_PRIMITIVE_TYPE__COLLABORATION_USE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_USE_CASE = MODELICA_PRIMITIVE_TYPE__OWNED_USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__USE_CASE = MODELICA_PRIMITIVE_TYPE__USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__OWNED_ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__OWNED_OPERATION = MODELICA_PRIMITIVE_TYPE__OWNED_OPERATION;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__VALUE = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Min</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__MIN = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Max</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__MAX = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__START = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER__FIXED = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of structural features of the '<em>Modelica Integer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_INTEGER_FEATURE_COUNT = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__EANNOTATIONS = MODELICA_PRIMITIVE_TYPE__EANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_ELEMENT = MODELICA_PRIMITIVE_TYPE__OWNED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNER = MODELICA_PRIMITIVE_TYPE__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_COMMENT = MODELICA_PRIMITIVE_TYPE__OWNED_COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__NAME = MODELICA_PRIMITIVE_TYPE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__VISIBILITY = MODELICA_PRIMITIVE_TYPE__VISIBILITY;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__QUALIFIED_NAME = MODELICA_PRIMITIVE_TYPE__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__CLIENT_DEPENDENCY = MODELICA_PRIMITIVE_TYPE__CLIENT_DEPENDENCY;
+
+	/**
+	 * The feature id for the '<em><b>Namespace</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__NAMESPACE = MODELICA_PRIMITIVE_TYPE__NAMESPACE;
+
+	/**
+	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__NAME_EXPRESSION = MODELICA_PRIMITIVE_TYPE__NAME_EXPRESSION;
+
+	/**
+	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__ELEMENT_IMPORT = MODELICA_PRIMITIVE_TYPE__ELEMENT_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__PACKAGE_IMPORT = MODELICA_PRIMITIVE_TYPE__PACKAGE_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_RULE = MODELICA_PRIMITIVE_TYPE__OWNED_RULE;
+
+	/**
+	 * The feature id for the '<em><b>Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__MEMBER = MODELICA_PRIMITIVE_TYPE__MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__IMPORTED_MEMBER = MODELICA_PRIMITIVE_TYPE__IMPORTED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_MEMBER = MODELICA_PRIMITIVE_TYPE__OWNED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__IS_LEAF = MODELICA_PRIMITIVE_TYPE__IS_LEAF;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__REDEFINED_ELEMENT = MODELICA_PRIMITIVE_TYPE__REDEFINED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__REDEFINITION_CONTEXT = MODELICA_PRIMITIVE_TYPE__REDEFINITION_CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNING_TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__OWNING_TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Package</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__PACKAGE = MODELICA_PRIMITIVE_TYPE__PACKAGE;
+
+	/**
+	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__TEMPLATE_BINDING = MODELICA_PRIMITIVE_TYPE__TEMPLATE_BINDING;
+
+	/**
+	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_TEMPLATE_SIGNATURE = MODELICA_PRIMITIVE_TYPE__OWNED_TEMPLATE_SIGNATURE;
+
+	/**
+	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__IS_ABSTRACT = MODELICA_PRIMITIVE_TYPE__IS_ABSTRACT;
+
+	/**
+	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__GENERALIZATION = MODELICA_PRIMITIVE_TYPE__GENERALIZATION;
+
+	/**
+	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__POWERTYPE_EXTENT = MODELICA_PRIMITIVE_TYPE__POWERTYPE_EXTENT;
+
+	/**
+	 * The feature id for the '<em><b>Feature</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__FEATURE = MODELICA_PRIMITIVE_TYPE__FEATURE;
+
+	/**
+	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__INHERITED_MEMBER = MODELICA_PRIMITIVE_TYPE__INHERITED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__REDEFINED_CLASSIFIER = MODELICA_PRIMITIVE_TYPE__REDEFINED_CLASSIFIER;
+
+	/**
+	 * The feature id for the '<em><b>General</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__GENERAL = MODELICA_PRIMITIVE_TYPE__GENERAL;
+
+	/**
+	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__SUBSTITUTION = MODELICA_PRIMITIVE_TYPE__SUBSTITUTION;
+
+	/**
+	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Representation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__REPRESENTATION = MODELICA_PRIMITIVE_TYPE__REPRESENTATION;
+
+	/**
+	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__COLLABORATION_USE = MODELICA_PRIMITIVE_TYPE__COLLABORATION_USE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_USE_CASE = MODELICA_PRIMITIVE_TYPE__OWNED_USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__USE_CASE = MODELICA_PRIMITIVE_TYPE__USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__OWNED_ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__OWNED_OPERATION = MODELICA_PRIMITIVE_TYPE__OWNED_OPERATION;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__VALUE = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING__START = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Modelica String</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_STRING_FEATURE_COUNT = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__EANNOTATIONS = MODELICA_PRIMITIVE_TYPE__EANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_ELEMENT = MODELICA_PRIMITIVE_TYPE__OWNED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNER = MODELICA_PRIMITIVE_TYPE__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_COMMENT = MODELICA_PRIMITIVE_TYPE__OWNED_COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__NAME = MODELICA_PRIMITIVE_TYPE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__VISIBILITY = MODELICA_PRIMITIVE_TYPE__VISIBILITY;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__QUALIFIED_NAME = MODELICA_PRIMITIVE_TYPE__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__CLIENT_DEPENDENCY = MODELICA_PRIMITIVE_TYPE__CLIENT_DEPENDENCY;
+
+	/**
+	 * The feature id for the '<em><b>Namespace</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__NAMESPACE = MODELICA_PRIMITIVE_TYPE__NAMESPACE;
+
+	/**
+	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__NAME_EXPRESSION = MODELICA_PRIMITIVE_TYPE__NAME_EXPRESSION;
+
+	/**
+	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__ELEMENT_IMPORT = MODELICA_PRIMITIVE_TYPE__ELEMENT_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__PACKAGE_IMPORT = MODELICA_PRIMITIVE_TYPE__PACKAGE_IMPORT;
+
+	/**
+	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_RULE = MODELICA_PRIMITIVE_TYPE__OWNED_RULE;
+
+	/**
+	 * The feature id for the '<em><b>Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__MEMBER = MODELICA_PRIMITIVE_TYPE__MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__IMPORTED_MEMBER = MODELICA_PRIMITIVE_TYPE__IMPORTED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_MEMBER = MODELICA_PRIMITIVE_TYPE__OWNED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__IS_LEAF = MODELICA_PRIMITIVE_TYPE__IS_LEAF;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__REDEFINED_ELEMENT = MODELICA_PRIMITIVE_TYPE__REDEFINED_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__REDEFINITION_CONTEXT = MODELICA_PRIMITIVE_TYPE__REDEFINITION_CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNING_TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__OWNING_TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__TEMPLATE_PARAMETER = MODELICA_PRIMITIVE_TYPE__TEMPLATE_PARAMETER;
+
+	/**
+	 * The feature id for the '<em><b>Package</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__PACKAGE = MODELICA_PRIMITIVE_TYPE__PACKAGE;
+
+	/**
+	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__TEMPLATE_BINDING = MODELICA_PRIMITIVE_TYPE__TEMPLATE_BINDING;
+
+	/**
+	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_TEMPLATE_SIGNATURE = MODELICA_PRIMITIVE_TYPE__OWNED_TEMPLATE_SIGNATURE;
+
+	/**
+	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__IS_ABSTRACT = MODELICA_PRIMITIVE_TYPE__IS_ABSTRACT;
+
+	/**
+	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__GENERALIZATION = MODELICA_PRIMITIVE_TYPE__GENERALIZATION;
+
+	/**
+	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__POWERTYPE_EXTENT = MODELICA_PRIMITIVE_TYPE__POWERTYPE_EXTENT;
+
+	/**
+	 * The feature id for the '<em><b>Feature</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__FEATURE = MODELICA_PRIMITIVE_TYPE__FEATURE;
+
+	/**
+	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__INHERITED_MEMBER = MODELICA_PRIMITIVE_TYPE__INHERITED_MEMBER;
+
+	/**
+	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__REDEFINED_CLASSIFIER = MODELICA_PRIMITIVE_TYPE__REDEFINED_CLASSIFIER;
+
+	/**
+	 * The feature id for the '<em><b>General</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__GENERAL = MODELICA_PRIMITIVE_TYPE__GENERAL;
+
+	/**
+	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__SUBSTITUTION = MODELICA_PRIMITIVE_TYPE__SUBSTITUTION;
+
+	/**
+	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Representation</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__REPRESENTATION = MODELICA_PRIMITIVE_TYPE__REPRESENTATION;
+
+	/**
+	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__COLLABORATION_USE = MODELICA_PRIMITIVE_TYPE__COLLABORATION_USE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_USE_CASE = MODELICA_PRIMITIVE_TYPE__OWNED_USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__USE_CASE = MODELICA_PRIMITIVE_TYPE__USE_CASE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Attribute</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_ATTRIBUTE = MODELICA_PRIMITIVE_TYPE__OWNED_ATTRIBUTE;
+
+	/**
+	 * The feature id for the '<em><b>Owned Operation</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__OWNED_OPERATION = MODELICA_PRIMITIVE_TYPE__OWNED_OPERATION;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__VALUE = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__START = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Fixed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN__FIXED = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Modelica Boolean</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODELICA_BOOLEAN_FEATURE_COUNT = MODELICA_PRIMITIVE_TYPE_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
@@ -7003,16 +7816,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_CLASS_FEATURE_COUNT = BLOCK_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaModelImpl <em>Modelica Model</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaModelImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaModel()
-	 * @generated
-	 */
-	int MODELICA_MODEL = 19;
-
-	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -7506,16 +8309,6 @@ public interface SysmlPackage extends EPackage {
 	 * @ordered
 	 */
 	int MODELICA_MODEL_FEATURE_COUNT = MODELICA_CLASS_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaBlockImpl <em>Modelica Block</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaBlockImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaBlock()
-	 * @generated
-	 */
-	int MODELICA_BLOCK = 20;
 
 	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
@@ -8013,16 +8806,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_BLOCK_FEATURE_COUNT = MODELICA_CLASS_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaConnectorImpl <em>Modelica Connector</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaConnectorImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaConnector()
-	 * @generated
-	 */
-	int MODELICA_CONNECTOR = 21;
-
-	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -8516,16 +9299,6 @@ public interface SysmlPackage extends EPackage {
 	 * @ordered
 	 */
 	int MODELICA_CONNECTOR_FEATURE_COUNT = MODELICA_CLASS_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaRecordImpl <em>Modelica Record</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaRecordImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaRecord()
-	 * @generated
-	 */
-	int MODELICA_RECORD = 22;
 
 	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
@@ -9023,16 +9796,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_RECORD_FEATURE_COUNT = MODELICA_CLASS_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaFunctionImpl <em>Modelica Function</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaFunctionImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaFunction()
-	 * @generated
-	 */
-	int MODELICA_FUNCTION = 23;
-
-	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -9528,16 +10291,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_FUNCTION_FEATURE_COUNT = MODELICA_CLASS_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaPropertyImpl <em>Modelica Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaPropertyImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaProperty()
-	 * @generated
-	 */
-	int MODELICA_PROPERTY = 24;
-
-	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -9998,32 +10751,13 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_PROPERTY__ACCESS = BLOCK_PROPERTY_FEATURE_COUNT + 5;
 
 	/**
-	 * The feature id for the '<em><b>Data Type</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_PROPERTY__DATA_TYPE = BLOCK_PROPERTY_FEATURE_COUNT + 6;
-
-	/**
 	 * The number of structural features of the '<em>Modelica Property</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODELICA_PROPERTY_FEATURE_COUNT = BLOCK_PROPERTY_FEATURE_COUNT + 7;
-
-	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl <em>Modelica Connector Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaConnectorProperty()
-	 * @generated
-	 */
-	int MODELICA_CONNECTOR_PROPERTY = 25;
+	int MODELICA_PROPERTY_FEATURE_COUNT = BLOCK_PROPERTY_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
@@ -10540,32 +11274,13 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_CONNECTOR_PROPERTY__ACCESS = UMLPackage.PORT_FEATURE_COUNT + 5;
 
 	/**
-	 * The feature id for the '<em><b>Data Type</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CONNECTOR_PROPERTY__DATA_TYPE = UMLPackage.PORT_FEATURE_COUNT + 6;
-
-	/**
 	 * The number of structural features of the '<em>Modelica Connector Property</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODELICA_CONNECTOR_PROPERTY_FEATURE_COUNT = UMLPackage.PORT_FEATURE_COUNT + 7;
-
-	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaEquationPropertyImpl <em>Modelica Equation Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaEquationPropertyImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaEquationProperty()
-	 * @generated
-	 */
-	int MODELICA_EQUATION_PROPERTY = 26;
+	int MODELICA_CONNECTOR_PROPERTY_FEATURE_COUNT = UMLPackage.PORT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
@@ -11028,15 +11743,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_EQUATION_PROPERTY__ACCESS = MODELICA_PROPERTY__ACCESS;
 
 	/**
-	 * The feature id for the '<em><b>Data Type</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_EQUATION_PROPERTY__DATA_TYPE = MODELICA_PROPERTY__DATA_TYPE;
-
-	/**
 	 * The feature id for the '<em><b>Equation</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -11053,16 +11759,6 @@ public interface SysmlPackage extends EPackage {
 	 * @ordered
 	 */
 	int MODELICA_EQUATION_PROPERTY_FEATURE_COUNT = MODELICA_PROPERTY_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaCompositionImpl <em>Modelica Composition</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaCompositionImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaComposition()
-	 * @generated
-	 */
-	int MODELICA_COMPOSITION = 27;
 
 	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
@@ -11506,16 +12202,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_COMPOSITION_FEATURE_COUNT = UMLPackage.ASSOCIATION_FEATURE_COUNT + 5;
 
 	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaConnectionImpl <em>Modelica Connection</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaConnectionImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaConnection()
-	 * @generated
-	 */
-	int MODELICA_CONNECTION = 28;
-
-	/**
 	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -11705,358 +12391,6 @@ public interface SysmlPackage extends EPackage {
 	int MODELICA_CONNECTION_FEATURE_COUNT = UMLPackage.CONNECTOR_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.modelica.uml.sysml.impl.ModelicaClassifierImpl <em>Modelica Classifier</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.modelica.uml.sysml.impl.ModelicaClassifierImpl
-	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaClassifier()
-	 * @generated
-	 */
-	int MODELICA_CLASSIFIER = 29;
-
-	/**
-	 * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__EANNOTATIONS = UMLPackage.CLASSIFIER__EANNOTATIONS;
-
-	/**
-	 * The feature id for the '<em><b>Owned Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNED_ELEMENT = UMLPackage.CLASSIFIER__OWNED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNER = UMLPackage.CLASSIFIER__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Comment</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNED_COMMENT = UMLPackage.CLASSIFIER__OWNED_COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__NAME = UMLPackage.CLASSIFIER__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Visibility</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__VISIBILITY = UMLPackage.CLASSIFIER__VISIBILITY;
-
-	/**
-	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__QUALIFIED_NAME = UMLPackage.CLASSIFIER__QUALIFIED_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__CLIENT_DEPENDENCY = UMLPackage.CLASSIFIER__CLIENT_DEPENDENCY;
-
-	/**
-	 * The feature id for the '<em><b>Namespace</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__NAMESPACE = UMLPackage.CLASSIFIER__NAMESPACE;
-
-	/**
-	 * The feature id for the '<em><b>Name Expression</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__NAME_EXPRESSION = UMLPackage.CLASSIFIER__NAME_EXPRESSION;
-
-	/**
-	 * The feature id for the '<em><b>Element Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__ELEMENT_IMPORT = UMLPackage.CLASSIFIER__ELEMENT_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Package Import</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__PACKAGE_IMPORT = UMLPackage.CLASSIFIER__PACKAGE_IMPORT;
-
-	/**
-	 * The feature id for the '<em><b>Owned Rule</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNED_RULE = UMLPackage.CLASSIFIER__OWNED_RULE;
-
-	/**
-	 * The feature id for the '<em><b>Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__MEMBER = UMLPackage.CLASSIFIER__MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Imported Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__IMPORTED_MEMBER = UMLPackage.CLASSIFIER__IMPORTED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Owned Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNED_MEMBER = UMLPackage.CLASSIFIER__OWNED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Is Leaf</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__IS_LEAF = UMLPackage.CLASSIFIER__IS_LEAF;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Element</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__REDEFINED_ELEMENT = UMLPackage.CLASSIFIER__REDEFINED_ELEMENT;
-
-	/**
-	 * The feature id for the '<em><b>Redefinition Context</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__REDEFINITION_CONTEXT = UMLPackage.CLASSIFIER__REDEFINITION_CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Template Parameter</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNING_TEMPLATE_PARAMETER = UMLPackage.CLASSIFIER__OWNING_TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Template Parameter</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__TEMPLATE_PARAMETER = UMLPackage.CLASSIFIER__TEMPLATE_PARAMETER;
-
-	/**
-	 * The feature id for the '<em><b>Package</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__PACKAGE = UMLPackage.CLASSIFIER__PACKAGE;
-
-	/**
-	 * The feature id for the '<em><b>Template Binding</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__TEMPLATE_BINDING = UMLPackage.CLASSIFIER__TEMPLATE_BINDING;
-
-	/**
-	 * The feature id for the '<em><b>Owned Template Signature</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNED_TEMPLATE_SIGNATURE = UMLPackage.CLASSIFIER__OWNED_TEMPLATE_SIGNATURE;
-
-	/**
-	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__IS_ABSTRACT = UMLPackage.CLASSIFIER__IS_ABSTRACT;
-
-	/**
-	 * The feature id for the '<em><b>Generalization</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__GENERALIZATION = UMLPackage.CLASSIFIER__GENERALIZATION;
-
-	/**
-	 * The feature id for the '<em><b>Powertype Extent</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__POWERTYPE_EXTENT = UMLPackage.CLASSIFIER__POWERTYPE_EXTENT;
-
-	/**
-	 * The feature id for the '<em><b>Feature</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__FEATURE = UMLPackage.CLASSIFIER__FEATURE;
-
-	/**
-	 * The feature id for the '<em><b>Inherited Member</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__INHERITED_MEMBER = UMLPackage.CLASSIFIER__INHERITED_MEMBER;
-
-	/**
-	 * The feature id for the '<em><b>Redefined Classifier</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__REDEFINED_CLASSIFIER = UMLPackage.CLASSIFIER__REDEFINED_CLASSIFIER;
-
-	/**
-	 * The feature id for the '<em><b>General</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__GENERAL = UMLPackage.CLASSIFIER__GENERAL;
-
-	/**
-	 * The feature id for the '<em><b>Substitution</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__SUBSTITUTION = UMLPackage.CLASSIFIER__SUBSTITUTION;
-
-	/**
-	 * The feature id for the '<em><b>Attribute</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__ATTRIBUTE = UMLPackage.CLASSIFIER__ATTRIBUTE;
-
-	/**
-	 * The feature id for the '<em><b>Representation</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__REPRESENTATION = UMLPackage.CLASSIFIER__REPRESENTATION;
-
-	/**
-	 * The feature id for the '<em><b>Collaboration Use</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__COLLABORATION_USE = UMLPackage.CLASSIFIER__COLLABORATION_USE;
-
-	/**
-	 * The feature id for the '<em><b>Owned Use Case</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__OWNED_USE_CASE = UMLPackage.CLASSIFIER__OWNED_USE_CASE;
-
-	/**
-	 * The feature id for the '<em><b>Use Case</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER__USE_CASE = UMLPackage.CLASSIFIER__USE_CASE;
-
-	/**
-	 * The number of structural features of the '<em>Modelica Classifier</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODELICA_CLASSIFIER_FEATURE_COUNT = UMLPackage.CLASSIFIER_FEATURE_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.FlowDirection <em>Flow Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -12064,7 +12398,7 @@ public interface SysmlPackage extends EPackage {
 	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getFlowDirection()
 	 * @generated
 	 */
-	int FLOW_DIRECTION = 30;
+	int FLOW_DIRECTION = 31;
 
 	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.VariabilityKind <em>Variability Kind</em>}' enum.
@@ -12074,7 +12408,7 @@ public interface SysmlPackage extends EPackage {
 	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getVariabilityKind()
 	 * @generated
 	 */
-	int VARIABILITY_KIND = 31;
+	int VARIABILITY_KIND = 32;
 
 	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.PropertyKind <em>Property Kind</em>}' enum.
@@ -12084,7 +12418,7 @@ public interface SysmlPackage extends EPackage {
 	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getPropertyKind()
 	 * @generated
 	 */
-	int PROPERTY_KIND = 32;
+	int PROPERTY_KIND = 33;
 
 	/**
 	 * The meta object id for the '{@link org.modelica.uml.sysml.AccessKind <em>Access Kind</em>}' enum.
@@ -12094,7 +12428,7 @@ public interface SysmlPackage extends EPackage {
 	 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getAccessKind()
 	 * @generated
 	 */
-	int ACCESS_KIND = 33;
+	int ACCESS_KIND = 34;
 
 
 	/**
@@ -12346,6 +12680,17 @@ public interface SysmlPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getModelicaType();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.modelica.uml.sysml.ModelicaType#getTypeData <em>Type Data</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Type Data</em>'.
+	 * @see org.modelica.uml.sysml.ModelicaType#getTypeData()
+	 * @see #getModelicaType()
+	 * @generated
+	 */
+	EReference getModelicaType_TypeData();
 
 	/**
 	 * Returns the meta object for class '{@link org.modelica.uml.sysml.ModelicaReal <em>Modelica Real</em>}'.
@@ -12744,17 +13089,6 @@ public interface SysmlPackage extends EPackage {
 	EAttribute getModelicaProperty_Access();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.modelica.uml.sysml.ModelicaProperty#getDataType <em>Data Type</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Data Type</em>'.
-	 * @see org.modelica.uml.sysml.ModelicaProperty#getDataType()
-	 * @see #getModelicaProperty()
-	 * @generated
-	 */
-	EReference getModelicaProperty_DataType();
-
-	/**
 	 * Returns the meta object for class '{@link org.modelica.uml.sysml.ModelicaConnectorProperty <em>Modelica Connector Property</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -12869,6 +13203,16 @@ public interface SysmlPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getModelicaClassifier();
+
+	/**
+	 * Returns the meta object for class '{@link org.modelica.uml.sysml.ModelicaPrimitiveType <em>Modelica Primitive Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Modelica Primitive Type</em>'.
+	 * @see org.modelica.uml.sysml.ModelicaPrimitiveType
+	 * @generated
+	 */
+	EClass getModelicaPrimitiveType();
 
 	/**
 	 * Returns the meta object for enum '{@link org.modelica.uml.sysml.FlowDirection <em>Flow Direction</em>}'.
@@ -13152,6 +13496,14 @@ public interface SysmlPackage extends EPackage {
 		 * @generated
 		 */
 		EClass MODELICA_TYPE = eINSTANCE.getModelicaType();
+
+		/**
+		 * The meta object literal for the '<em><b>Type Data</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODELICA_TYPE__TYPE_DATA = eINSTANCE.getModelicaType_TypeData();
 
 		/**
 		 * The meta object literal for the '{@link org.modelica.uml.sysml.impl.ModelicaRealImpl <em>Modelica Real</em>}' class.
@@ -13472,14 +13824,6 @@ public interface SysmlPackage extends EPackage {
 		EAttribute MODELICA_PROPERTY__ACCESS = eINSTANCE.getModelicaProperty_Access();
 
 		/**
-		 * The meta object literal for the '<em><b>Data Type</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference MODELICA_PROPERTY__DATA_TYPE = eINSTANCE.getModelicaProperty_DataType();
-
-		/**
 		 * The meta object literal for the '{@link org.modelica.uml.sysml.impl.ModelicaConnectorPropertyImpl <em>Modelica Connector Property</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -13576,6 +13920,16 @@ public interface SysmlPackage extends EPackage {
 		 * @generated
 		 */
 		EClass MODELICA_CLASSIFIER = eINSTANCE.getModelicaClassifier();
+
+		/**
+		 * The meta object literal for the '{@link org.modelica.uml.sysml.impl.ModelicaPrimitiveTypeImpl <em>Modelica Primitive Type</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.modelica.uml.sysml.impl.ModelicaPrimitiveTypeImpl
+		 * @see org.modelica.uml.sysml.impl.SysmlPackageImpl#getModelicaPrimitiveType()
+		 * @generated
+		 */
+		EClass MODELICA_PRIMITIVE_TYPE = eINSTANCE.getModelicaPrimitiveType();
 
 		/**
 		 * The meta object literal for the '{@link org.modelica.uml.sysml.FlowDirection <em>Flow Direction</em>}' enum.

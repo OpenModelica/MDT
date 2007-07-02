@@ -30,7 +30,7 @@ import org.modelica.uml.sysml.SysmlPackage;
  *
  * @generated
  */
-public class ModelicaBooleanImpl extends ModelicaTypeImpl implements ModelicaBoolean {
+public class ModelicaBooleanImpl extends ModelicaPrimitiveTypeImpl implements ModelicaBoolean {
 	/**
 	 * The default value of the '{@link #isValue() <em>Value</em>}' attribute.
 	 * <!-- begin-user-doc -->

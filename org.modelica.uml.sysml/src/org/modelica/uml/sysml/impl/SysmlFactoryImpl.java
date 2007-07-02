@@ -90,6 +90,7 @@ public class SysmlFactoryImpl extends EFactoryImpl implements SysmlFactory {
 			case SysmlPackage.MODELICA_COMPOSITION: return createModelicaComposition();
 			case SysmlPackage.MODELICA_CONNECTION: return createModelicaConnection();
 			case SysmlPackage.MODELICA_CLASSIFIER: return createModelicaClassifier();
+			case SysmlPackage.MODELICA_PRIMITIVE_TYPE: return createModelicaPrimitiveType();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -433,6 +434,16 @@ public class SysmlFactoryImpl extends EFactoryImpl implements SysmlFactory {
 	public ModelicaClassifier createModelicaClassifier() {
 		ModelicaClassifierImpl modelicaClassifier = new ModelicaClassifierImpl();
 		return modelicaClassifier;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ModelicaPrimitiveType createModelicaPrimitiveType() {
+		ModelicaPrimitiveTypeImpl modelicaPrimitiveType = new ModelicaPrimitiveTypeImpl();
+		return modelicaPrimitiveType;
 	}
 
 	/**

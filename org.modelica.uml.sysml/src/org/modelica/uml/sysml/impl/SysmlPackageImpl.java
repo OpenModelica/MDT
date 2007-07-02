@@ -40,6 +40,7 @@ import org.modelica.uml.sysml.ModelicaEquationProperty;
 import org.modelica.uml.sysml.ModelicaFunction;
 import org.modelica.uml.sysml.ModelicaInteger;
 import org.modelica.uml.sysml.ModelicaModel;
+import org.modelica.uml.sysml.ModelicaPrimitiveType;
 import org.modelica.uml.sysml.ModelicaProperty;
 import org.modelica.uml.sysml.ModelicaReal;
 import org.modelica.uml.sysml.ModelicaRecord;
@@ -270,6 +271,13 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 	 * @generated
 	 */
 	private EClass modelicaClassifierEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass modelicaPrimitiveTypeEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -589,6 +597,15 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 	 */
 	public EClass getModelicaType() {
 		return modelicaTypeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModelicaType_TypeData() {
+		return (EReference)modelicaTypeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -929,15 +946,6 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getModelicaProperty_DataType() {
-		return (EReference)modelicaPropertyEClass.getEStructuralFeatures().get(6);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getModelicaConnectorProperty() {
 		return modelicaConnectorPropertyEClass;
 	}
@@ -1030,6 +1038,15 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 	 */
 	public EClass getModelicaClassifier() {
 		return modelicaClassifierEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getModelicaPrimitiveType() {
+		return modelicaPrimitiveTypeEClass;
 	}
 
 	/**
@@ -1133,6 +1150,7 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		createEReference(itemFlowEClass, ITEM_FLOW__ITEM_PROPERTY);
 
 		modelicaTypeEClass = createEClass(MODELICA_TYPE);
+		createEReference(modelicaTypeEClass, MODELICA_TYPE__TYPE_DATA);
 
 		modelicaRealEClass = createEClass(MODELICA_REAL);
 		createEAttribute(modelicaRealEClass, MODELICA_REAL__VALUE);
@@ -1181,7 +1199,6 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		createEAttribute(modelicaPropertyEClass, MODELICA_PROPERTY__PROPERTY_KIND);
 		createEAttribute(modelicaPropertyEClass, MODELICA_PROPERTY__ARRAY_DIMENSION);
 		createEAttribute(modelicaPropertyEClass, MODELICA_PROPERTY__ACCESS);
-		createEReference(modelicaPropertyEClass, MODELICA_PROPERTY__DATA_TYPE);
 
 		modelicaConnectorPropertyEClass = createEClass(MODELICA_CONNECTOR_PROPERTY);
 
@@ -1198,6 +1215,8 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		modelicaConnectionEClass = createEClass(MODELICA_CONNECTION);
 
 		modelicaClassifierEClass = createEClass(MODELICA_CLASSIFIER);
+
+		modelicaPrimitiveTypeEClass = createEClass(MODELICA_PRIMITIVE_TYPE);
 
 		// Create enums
 		flowDirectionEEnum = createEEnum(FLOW_DIRECTION);
@@ -1246,12 +1265,11 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		flowPropertyEClass.getESuperTypes().add(theUMLPackage.getProperty());
 		flowSpecificationEClass.getESuperTypes().add(theUMLPackage.getInterface());
 		itemFlowEClass.getESuperTypes().add(theUMLPackage.getInformationFlow());
-		modelicaTypeEClass.getESuperTypes().add(theUMLPackage.getPrimitiveType());
 		modelicaTypeEClass.getESuperTypes().add(this.getModelicaClassifier());
-		modelicaRealEClass.getESuperTypes().add(this.getModelicaType());
-		modelicaIntegerEClass.getESuperTypes().add(this.getModelicaType());
-		modelicaStringEClass.getESuperTypes().add(this.getModelicaType());
-		modelicaBooleanEClass.getESuperTypes().add(this.getModelicaType());
+		modelicaRealEClass.getESuperTypes().add(this.getModelicaPrimitiveType());
+		modelicaIntegerEClass.getESuperTypes().add(this.getModelicaPrimitiveType());
+		modelicaStringEClass.getESuperTypes().add(this.getModelicaPrimitiveType());
+		modelicaBooleanEClass.getESuperTypes().add(this.getModelicaPrimitiveType());
 		modelicaClassEClass.getESuperTypes().add(this.getBlock());
 		modelicaClassEClass.getESuperTypes().add(this.getModelicaClassifier());
 		modelicaModelEClass.getESuperTypes().add(this.getModelicaClass());
@@ -1266,6 +1284,8 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		modelicaCompositionEClass.getESuperTypes().add(theUMLPackage.getAssociation());
 		modelicaConnectionEClass.getESuperTypes().add(theUMLPackage.getConnector());
 		modelicaClassifierEClass.getESuperTypes().add(theUMLPackage.getClassifier());
+		modelicaPrimitiveTypeEClass.getESuperTypes().add(theUMLPackage.getPrimitiveType());
+		modelicaPrimitiveTypeEClass.getESuperTypes().add(this.getModelicaClassifier());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(blockEClass, Block.class, "Block", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1305,6 +1325,7 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		initEReference(getItemFlow_ItemProperty(), this.getBlockProperty(), null, "itemProperty", null, 0, 1, ItemFlow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelicaTypeEClass, ModelicaType.class, "ModelicaType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getModelicaType_TypeData(), theUMLPackage.getPrimitiveType(), null, "typeData", null, 0, 1, ModelicaType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelicaRealEClass, ModelicaReal.class, "ModelicaReal", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getModelicaReal_Value(), ecorePackage.getEDouble(), "value", null, 0, 1, ModelicaReal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1334,7 +1355,7 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		initEAttribute(getModelicaBoolean_Fixed(), theUMLPackage.getBoolean(), "fixed", null, 0, 1, ModelicaBoolean.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelicaClassEClass, ModelicaClass.class, "ModelicaClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getModelicaClass_IsEncapsulatedClass(), theUMLPackage.getBoolean(), "isEncapsulatedClass", null, 0, 1, ModelicaClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModelicaClass_IsEncapsulatedClass(), theUMLPackage.getBoolean(), "isEncapsulatedClass", "", 0, 1, ModelicaClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelicaModelEClass, ModelicaModel.class, "ModelicaModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1353,7 +1374,6 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		initEAttribute(getModelicaProperty_PropertyKind(), this.getPropertyKind(), "propertyKind", null, 0, 1, ModelicaProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getModelicaProperty_ArrayDimension(), theUMLPackage.getString(), "arrayDimension", null, 0, 1, ModelicaProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getModelicaProperty_Access(), this.getAccessKind(), "access", null, 0, 1, ModelicaProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModelicaProperty_DataType(), this.getModelicaClassifier(), null, "dataType", null, 0, 1, ModelicaProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelicaConnectorPropertyEClass, ModelicaConnectorProperty.class, "ModelicaConnectorProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1370,6 +1390,8 @@ public class SysmlPackageImpl extends EPackageImpl implements SysmlPackage {
 		initEClass(modelicaConnectionEClass, ModelicaConnection.class, "ModelicaConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(modelicaClassifierEClass, ModelicaClassifier.class, "ModelicaClassifier", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(modelicaPrimitiveTypeEClass, ModelicaPrimitiveType.class, "ModelicaPrimitiveType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize enums and add enum literals
 		initEEnum(flowDirectionEEnum, FlowDirection.class, "FlowDirection");

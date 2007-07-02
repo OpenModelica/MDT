@@ -336,9 +336,7 @@ public class SysmlSwitch {
 			case SysmlPackage.MODELICA_TYPE: {
 				ModelicaType modelicaType = (ModelicaType)theEObject;
 				Object result = caseModelicaType(modelicaType);
-				if (result == null) result = casePrimitiveType(modelicaType);
 				if (result == null) result = caseModelicaClassifier(modelicaType);
-				if (result == null) result = caseDataType(modelicaType);
 				if (result == null) result = caseClassifier(modelicaType);
 				if (result == null) result = caseNamespace(modelicaType);
 				if (result == null) result = caseRedefinableElement(modelicaType);
@@ -355,7 +353,7 @@ public class SysmlSwitch {
 			case SysmlPackage.MODELICA_REAL: {
 				ModelicaReal modelicaReal = (ModelicaReal)theEObject;
 				Object result = caseModelicaReal(modelicaReal);
-				if (result == null) result = caseModelicaType(modelicaReal);
+				if (result == null) result = caseModelicaPrimitiveType(modelicaReal);
 				if (result == null) result = casePrimitiveType(modelicaReal);
 				if (result == null) result = caseModelicaClassifier(modelicaReal);
 				if (result == null) result = caseDataType(modelicaReal);
@@ -375,7 +373,7 @@ public class SysmlSwitch {
 			case SysmlPackage.MODELICA_INTEGER: {
 				ModelicaInteger modelicaInteger = (ModelicaInteger)theEObject;
 				Object result = caseModelicaInteger(modelicaInteger);
-				if (result == null) result = caseModelicaType(modelicaInteger);
+				if (result == null) result = caseModelicaPrimitiveType(modelicaInteger);
 				if (result == null) result = casePrimitiveType(modelicaInteger);
 				if (result == null) result = caseModelicaClassifier(modelicaInteger);
 				if (result == null) result = caseDataType(modelicaInteger);
@@ -395,7 +393,7 @@ public class SysmlSwitch {
 			case SysmlPackage.MODELICA_STRING: {
 				ModelicaString modelicaString = (ModelicaString)theEObject;
 				Object result = caseModelicaString(modelicaString);
-				if (result == null) result = caseModelicaType(modelicaString);
+				if (result == null) result = caseModelicaPrimitiveType(modelicaString);
 				if (result == null) result = casePrimitiveType(modelicaString);
 				if (result == null) result = caseModelicaClassifier(modelicaString);
 				if (result == null) result = caseDataType(modelicaString);
@@ -415,7 +413,7 @@ public class SysmlSwitch {
 			case SysmlPackage.MODELICA_BOOLEAN: {
 				ModelicaBoolean modelicaBoolean = (ModelicaBoolean)theEObject;
 				Object result = caseModelicaBoolean(modelicaBoolean);
-				if (result == null) result = caseModelicaType(modelicaBoolean);
+				if (result == null) result = caseModelicaPrimitiveType(modelicaBoolean);
 				if (result == null) result = casePrimitiveType(modelicaBoolean);
 				if (result == null) result = caseModelicaClassifier(modelicaBoolean);
 				if (result == null) result = caseDataType(modelicaBoolean);
@@ -675,6 +673,25 @@ public class SysmlSwitch {
 				if (result == null) result = caseElement(modelicaClassifier);
 				if (result == null) result = caseParameterableElement(modelicaClassifier);
 				if (result == null) result = caseEModelElement(modelicaClassifier);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SysmlPackage.MODELICA_PRIMITIVE_TYPE: {
+				ModelicaPrimitiveType modelicaPrimitiveType = (ModelicaPrimitiveType)theEObject;
+				Object result = caseModelicaPrimitiveType(modelicaPrimitiveType);
+				if (result == null) result = casePrimitiveType(modelicaPrimitiveType);
+				if (result == null) result = caseModelicaClassifier(modelicaPrimitiveType);
+				if (result == null) result = caseDataType(modelicaPrimitiveType);
+				if (result == null) result = caseClassifier(modelicaPrimitiveType);
+				if (result == null) result = caseNamespace(modelicaPrimitiveType);
+				if (result == null) result = caseRedefinableElement(modelicaPrimitiveType);
+				if (result == null) result = caseType(modelicaPrimitiveType);
+				if (result == null) result = caseTemplateableElement(modelicaPrimitiveType);
+				if (result == null) result = caseNamedElement(modelicaPrimitiveType);
+				if (result == null) result = casePackageableElement(modelicaPrimitiveType);
+				if (result == null) result = caseElement(modelicaPrimitiveType);
+				if (result == null) result = caseParameterableElement(modelicaPrimitiveType);
+				if (result == null) result = caseEModelElement(modelicaPrimitiveType);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -1129,6 +1146,21 @@ public class SysmlSwitch {
 	 * @generated
 	 */
 	public Object caseModelicaClassifier(ModelicaClassifier object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpretting the object as an instance of '<em>Modelica Primitive Type</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpretting the object as an instance of '<em>Modelica Primitive Type</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public Object caseModelicaPrimitiveType(ModelicaPrimitiveType object) {
 		return null;
 	}
 

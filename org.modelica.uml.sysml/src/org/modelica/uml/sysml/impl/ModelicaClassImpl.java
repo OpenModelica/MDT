@@ -33,7 +33,7 @@ import org.modelica.uml.sysml.operations.ModelicaTypeOperations;
  * @generated
  */
 public class ModelicaClassImpl extends BlockImpl implements ModelicaClass {
-	/**
+/**
 	 * The default value of the '{@link #isIsEncapsulatedClass() <em>Is Encapsulated Class</em>}' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @see #isIsEncapsulatedClass()
@@ -42,7 +42,7 @@ public class ModelicaClassImpl extends BlockImpl implements ModelicaClass {
 	 */
 	protected static final boolean IS_ENCAPSULATED_CLASS_EDEFAULT = false;
 
-	/**
+/**
 	 * The cached value of the '{@link #isIsEncapsulatedClass() <em>Is Encapsulated Class</em>}' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @see #isIsEncapsulatedClass()
@@ -51,7 +51,7 @@ public class ModelicaClassImpl extends BlockImpl implements ModelicaClass {
 	 */
 	protected boolean isEncapsulatedClass = IS_ENCAPSULATED_CLASS_EDEFAULT;
 
-	/**
+/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -59,7 +59,7 @@ public class ModelicaClassImpl extends BlockImpl implements ModelicaClass {
 		super();
 	}
 
-	public ModelicaComposition createModelicaComposition(String end1Name,
+										public ModelicaComposition createModelicaComposition(String end1Name,
 			Type end1Type, String end2Name) {
 		
 		return ModelicaTypeOperations.createModelicaComposition(this, end1Name,
@@ -70,7 +70,7 @@ public class ModelicaClassImpl extends BlockImpl implements ModelicaClass {
 		return ModelicaTypeOperations.getCompositionProperties(this);
 	}
 
-	/**
+/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */

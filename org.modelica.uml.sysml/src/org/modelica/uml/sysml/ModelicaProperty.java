@@ -21,7 +21,6 @@ package org.modelica.uml.sysml;
  *   <li>{@link org.modelica.uml.sysml.ModelicaProperty#getPropertyKind <em>Property Kind</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.ModelicaProperty#getArrayDimension <em>Array Dimension</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.ModelicaProperty#getAccess <em>Access</em>}</li>
- *   <li>{@link org.modelica.uml.sysml.ModelicaProperty#getDataType <em>Data Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -198,31 +197,5 @@ public interface ModelicaProperty extends BlockProperty {
 	 * @generated
 	 */
 	void setAccess(AccessKind value);
-
-	/**
-	 * Returns the value of the '<em><b>Data Type</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Data Type</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Data Type</em>' reference.
-	 * @see #setDataType(ModelicaClassifier)
-	 * @see org.modelica.uml.sysml.SysmlPackage#getModelicaProperty_DataType()
-	 * @model
-	 * @generated
-	 */
-	ModelicaClassifier getDataType();
-
-	/**
-	 * Sets the value of the '{@link org.modelica.uml.sysml.ModelicaProperty#getDataType <em>Data Type</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Data Type</em>' reference.
-	 * @see #getDataType()
-	 * @generated
-	 */
-	void setDataType(ModelicaClassifier value);
 
 } // ModelicaProperty

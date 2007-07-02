@@ -45,7 +45,6 @@ import org.modelica.uml.sysml.ModelicaBoolean;
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaPropertyImpl#getPropertyKind <em>Property Kind</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaPropertyImpl#getArrayDimension <em>Array Dimension</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaPropertyImpl#getAccess <em>Access</em>}</li>
- *   <li>{@link org.modelica.uml.sysml.impl.ModelicaPropertyImpl#getDataType <em>Data Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -162,16 +161,6 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 	protected AccessKind access = ACCESS_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getDataType() <em>Data Type</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDataType()
-	 * @generated
-	 * @ordered
-	 */
-	protected ModelicaClassifier dataType = null;
-
-	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -186,35 +175,43 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 		if (newType == null) {
 			return;
 		}
-
+/*
 		if (this.getType() instanceof ModelicaType) {
 			this.getType().destroy();
 		}
-
+*/
 		Type typeInstance = newType;
 		if (newType instanceof PrimitiveType
 				&& newType.getName().equals("Real")) {
+			if(!(typeInstance instanceof ModelicaReal)){
 			ModelicaReal realType = SysmlFactory.eINSTANCE.createModelicaReal();
 			typeInstance = newType.getModel().createOwnedType("Real",
 					realType.eClass());
+			}
 		} else if (newType instanceof PrimitiveType
 				&& newType.getName().equals("String")) {
+			if(!(typeInstance instanceof ModelicaString)){
 			ModelicaString stringType = SysmlFactory.eINSTANCE
 					.createModelicaString();
 			typeInstance = newType.getModel().createOwnedType("String",
 					stringType.eClass());
+			}
 		} else if (newType instanceof PrimitiveType
 				&& newType.getName().equals("Boolean")) {
+			if(!(typeInstance instanceof ModelicaBoolean)){
 			ModelicaBoolean booleanType = SysmlFactory.eINSTANCE
 					.createModelicaBoolean();
 			typeInstance = newType.getModel().createOwnedType("Boolean",
 					booleanType.eClass());
+			}
 		} else if (newType instanceof PrimitiveType
 				&& newType.getName().equals("Integer")) {
+			if(!(typeInstance instanceof ModelicaInteger)){
 			ModelicaInteger integerType = SysmlFactory.eINSTANCE
 					.createModelicaInteger();
 			typeInstance = newType.getModel().createOwnedType("Integer",
 					integerType.eClass());
+			}
 		}
 
 		super.setType(typeInstance);
@@ -343,44 +340,6 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ModelicaClassifier getDataType() {
-		if (dataType != null && dataType.eIsProxy()) {
-			InternalEObject oldDataType = (InternalEObject)dataType;
-			dataType = (ModelicaClassifier)eResolveProxy(oldDataType);
-			if (dataType != oldDataType) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SysmlPackage.MODELICA_PROPERTY__DATA_TYPE, oldDataType, dataType));
-			}
-		}
-		return dataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ModelicaClassifier basicGetDataType() {
-		return dataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setDataType(ModelicaClassifier newDataType) {
-		ModelicaClassifier oldDataType = dataType;
-		dataType = newDataType;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SysmlPackage.MODELICA_PROPERTY__DATA_TYPE, oldDataType, dataType));
-	}
-
-	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -398,9 +357,6 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 				return getArrayDimension();
 			case SysmlPackage.MODELICA_PROPERTY__ACCESS:
 				return getAccess();
-			case SysmlPackage.MODELICA_PROPERTY__DATA_TYPE:
-				if (resolve) return getDataType();
-				return basicGetDataType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -428,9 +384,6 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 				return;
 			case SysmlPackage.MODELICA_PROPERTY__ACCESS:
 				setAccess((AccessKind)newValue);
-				return;
-			case SysmlPackage.MODELICA_PROPERTY__DATA_TYPE:
-				setDataType((ModelicaClassifier)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -460,9 +413,6 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 			case SysmlPackage.MODELICA_PROPERTY__ACCESS:
 				setAccess(ACCESS_EDEFAULT);
 				return;
-			case SysmlPackage.MODELICA_PROPERTY__DATA_TYPE:
-				setDataType((ModelicaClassifier)null);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -485,8 +435,6 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 				return ARRAY_DIMENSION_EDEFAULT == null ? arrayDimension != null : !ARRAY_DIMENSION_EDEFAULT.equals(arrayDimension);
 			case SysmlPackage.MODELICA_PROPERTY__ACCESS:
 				return access != ACCESS_EDEFAULT;
-			case SysmlPackage.MODELICA_PROPERTY__DATA_TYPE:
-				return dataType != null;
 		}
 		return super.eIsSet(featureID);
 	}

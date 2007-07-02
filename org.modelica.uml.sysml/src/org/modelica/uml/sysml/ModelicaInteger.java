@@ -27,7 +27,7 @@ package org.modelica.uml.sysml;
  * @model
  * @generated
  */
-public interface ModelicaInteger extends ModelicaType {
+public interface ModelicaInteger extends ModelicaPrimitiveType {
 	/**
 	 * Returns the value of the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->

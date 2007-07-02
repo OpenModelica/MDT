@@ -37,6 +37,7 @@ public interface ModelicaClass extends Block, ModelicaClassifier {
 	
 	/**
 	 * Returns the value of the '<em><b>Is Encapsulated Class</b></em>' attribute.
+	 * The default value is <code>""</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Is Encapsulated Class</em>' attribute isn't clear,
@@ -46,7 +47,7 @@ public interface ModelicaClass extends Block, ModelicaClassifier {
 	 * @return the value of the '<em>Is Encapsulated Class</em>' attribute.
 	 * @see #setIsEncapsulatedClass(boolean)
 	 * @see org.modelica.uml.sysml.SysmlPackage#getModelicaClass_IsEncapsulatedClass()
-	 * @model dataType="org.eclipse.uml2.uml.Boolean"
+	 * @model default="" dataType="org.eclipse.uml2.uml.Boolean"
 	 * @generated
 	 */
 	boolean isIsEncapsulatedClass();
