@@ -39,8 +39,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="ItemFlow" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//InformationFlow">
     <eStructuralFeatures xsi:type="ecore:EReference" name="itemProperty" eType="#//BlockProperty"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelicaType" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType #//ModelicaClassifier"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelicaReal" eSuperTypes="#//ModelicaType">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaType" eSuperTypes="#//ModelicaClassifier">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeData" eType="ecore:EClass ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaReal" eSuperTypes="#//ModelicaPrimitiveType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="quantity" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
@@ -51,18 +54,18 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixed" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nominal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelicaInteger" eSuperTypes="#//ModelicaType">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaInteger" eSuperTypes="#//ModelicaPrimitiveType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Integer"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixed" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelicaString" eSuperTypes="#//ModelicaType">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaString" eSuperTypes="#//ModelicaPrimitiveType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelicaBoolean" eSuperTypes="#//ModelicaType">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaBoolean" eSuperTypes="#//ModelicaPrimitiveType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixed" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Boolean"/>
@@ -84,7 +87,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertyKind" eType="#//PropertyKind"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="arrayDimension" eType="ecore:EDataType ../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//String"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="access" eType="#//AccessKind"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="dataType" eType="#//ModelicaClassifier"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelicaConnectorProperty" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Port #//ModelicaProperty"/>
   <eClassifiers xsi:type="ecore:EClass" name="ModelicaEquationProperty" eSuperTypes="#//ModelicaProperty">
@@ -115,4 +117,5 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelicaConnection" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Connector"/>
   <eClassifiers xsi:type="ecore:EClass" name="ModelicaClassifier" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Classifier"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelicaPrimitiveType" eSuperTypes="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType #//ModelicaClassifier"/>
 </ecore:EPackage>

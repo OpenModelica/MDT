@@ -12,6 +12,7 @@
       <domainMetaElement
           href="sysml.ecore#//ModelicaClass"/>
       <labelMappings
+          viewPattern=""
           editPattern="">
         <diagramLabel
             href="modelicaClassInternalDiagram.gmfgraph#ClassNameLabel"/>
@@ -212,6 +213,26 @@
         <compartment
             href="modelicaClassInternalDiagram.gmfgraph#Equations"/>
       </compartments>
+    </ownedChild>
+  </nodes>
+  <nodes>
+    <containmentFeature
+        href="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Package/packagedElement"/>
+    <ownedChild>
+      <domainMetaElement
+          href="sysml.ecore#//ModelicaType"/>
+      <labelMappings
+          editPattern="">
+        <diagramLabel
+            href="modelicaClassInternalDiagram.gmfgraph#TypeNameLabel"/>
+        <features
+            href="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//NamedElement/name"/>
+      </labelMappings>
+      <tool
+          xsi:type="gmftool:CreationTool"
+          href="modelicaClassInternalDiagram.gmftool#//@palette/@tools.0/@tools.4"/>
+      <diagramNode
+          href="modelicaClassInternalDiagram.gmfgraph#TypeNode"/>
     </ownedChild>
   </nodes>
   <links>

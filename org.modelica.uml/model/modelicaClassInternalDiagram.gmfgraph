@@ -60,10 +60,55 @@
         xsi:type="gmfgraph:Rectangle"
         referencingElements="Connections Nested"
         name="FiguresCompartment"/>
+    <figures
+        xsi:type="gmfgraph:Rectangle"
+        referencingElements="TypeNode"
+        name="TypeFigure">
+      <children
+          xsi:type="gmfgraph:Label"
+          name="Identifier"
+          text="&lt;&lt;ModelicaType>>"/>
+      <children
+          xsi:type="gmfgraph:Label"
+          referencingElements="TypeNameLabel"
+          name="TypeName"
+          text=""/>
+      <children
+          xsi:type="gmfgraph:Rectangle"
+          name="TypeDisplay">
+        <children
+            xsi:type="gmfgraph:Label"
+            name="TypeIdentifier"
+            text="TypeIdentifier"/>
+      </children>
+      <preferredSize
+          dx="200"
+          dy="160"/>
+    </figures>
+    <figures
+        xsi:type="gmfgraph:Rectangle"
+        referencingElements="Type"
+        name="TypeCompartment">
+      <children
+          xsi:type="gmfgraph:Label"
+          name="TypeIdentifier"
+          text="TypeIdentifier"/>
+    </figures>
+    <figures
+        xsi:type="gmfgraph:Label"
+        referencingElements="TypeChildNode TypeChildLabel"
+        name="TypeChildFigure"
+        text=""/>
   </figures>
+  <nodes
+      name="TypeChildNode"
+      figure="TypeChildFigure"/>
   <nodes
       name="ClassNodeInternal"
       figure="ClassFigure"/>
+  <nodes
+      name="TypeNode"
+      figure="TypeFigure"/>
   <nodes
       name="ModelicaPartNode"
       figure="ClassPartFigure"/>
@@ -83,11 +128,6 @@
       collapsible="true"
       needsTitle="true"/>
   <compartments
-      name="Nested"
-      figure="FiguresCompartment"
-      collapsible="true"
-      needsTitle="true"/>
-  <compartments
       name="Connections"
       figure="FiguresCompartment"
       collapsible="true"
@@ -97,6 +137,21 @@
       figure="ClassCompartmentFigure"
       collapsible="true"
       needsTitle="true"/>
+  <compartments
+      name="Nested"
+      figure="FiguresCompartment"
+      collapsible="true"
+      needsTitle="true"/>
+  <compartments
+      name="Type"
+      figure="TypeCompartment"
+      collapsible="true"
+      needsTitle="true"/>
+  <labels
+      name="TypeNameLabel"
+      figure="TypeName"/>
+  <labels
+      name="DataTypeLabel"/>
   <labels
       name="ClassNameLabel"
       figure="ClassName"
@@ -115,4 +170,7 @@
   <labels
       name="ModelicaPartLabel"
       figure="PartProperyName"/>
+  <labels
+      name="TypeChildLabel"
+      figure="TypeChildFigure"/>
 </gmfgraph:Canvas>
