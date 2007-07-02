@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.modelica.uml.sysml/src"
+    editDirectory="/org.modelica.uml.sysml.edit/src" editorDirectory="/org.modelica.uml.sysml.editor/src"
+    modelPluginID="org.modelica.uml.sysml" modelName="Sysml" modelPluginClass="SysmlPlugin"
+    importerID="org.eclipse.emf.importer.ecore" usedGenPackages="../../../plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml">
+  <foreignModel>sysml.ecore</foreignModel>
+  <genPackages prefix="Sysml" basePackage="org.modelica.uml" resource="XML" disposableProviderFactory="true"
+      ecorePackage="sysml.ecore#/">
+    <genEnums ecoreEnum="sysml.ecore#//FlowDirection">
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//FlowDirection/in"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//FlowDirection/out"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//FlowDirection/inout"/>
+    </genEnums>
+    <genEnums ecoreEnum="sysml.ecore#//VariabilityKind">
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//VariabilityKind/none"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//VariabilityKind/constant"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//VariabilityKind/discrete"/>
+    </genEnums>
+    <genEnums ecoreEnum="sysml.ecore#//PropertyKind">
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//PropertyKind/parameter"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//PropertyKind/part"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//PropertyKind/variable"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//PropertyKind/equation"/>
+    </genEnums>
+    <genEnums ecoreEnum="sysml.ecore#//AccessKind">
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//AccessKind/public"/>
+      <genEnumLiterals ecoreEnumLiteral="sysml.ecore#//AccessKind/protected"/>
+    </genEnums>
+    <genClasses ecoreClass="sysml.ecore#//Block">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//Block/isEncapsulated"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//BlockProperty"/>
+    <genClasses ecoreClass="sysml.ecore#//DistributedProperty"/>
+    <genClasses ecoreClass="sysml.ecore#//ValueType">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sysml.ecore#//ValueType/unit"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sysml.ecore#//ValueType/dimension"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//Unit"/>
+    <genClasses ecoreClass="sysml.ecore#//Dimension"/>
+    <genClasses ecoreClass="sysml.ecore#//Conform"/>
+    <genClasses ecoreClass="sysml.ecore#//Rationale"/>
+    <genClasses ecoreClass="sysml.ecore#//Problem"/>
+    <genClasses ecoreClass="sysml.ecore#//FlowPort">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//FlowPort/isAtomic"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//FlowPort/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//FlowPort/isConjugated"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//FlowProperty">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//FlowProperty/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//FlowProperty/access"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//FlowSpecification">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sysml.ecore#//FlowSpecification/ownedFlowProperty"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ItemFlow">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sysml.ecore#//ItemFlow/itemProperty"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaType">
+      <genFeatures children="true" createChild="true" ecoreFeature="ecore:EReference sysml.ecore#//ModelicaType/typeData"/>
+    </genClasses>
+    	
+    <genClasses ecoreClass="sysml.ecore#//ModelicaReal">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/quantity"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/unit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/displayUnit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/min"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/max"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/fixed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaReal/nominal"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaInteger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaInteger/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaInteger/min"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaInteger/max"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaInteger/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaInteger/fixed"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaString">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaString/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaString/start"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaBoolean">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaBoolean/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaBoolean/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaBoolean/fixed"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaClass">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaClass/isEncapsulatedClass"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaModel"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaBlock"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaConnector"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaRecord"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaFunction"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaProperty">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaProperty/variability"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaProperty/isFlow"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaProperty/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaProperty/propertyKind"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaProperty/arrayDimension"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaProperty/access"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaConnectorProperty"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaEquationProperty" labelFeature="#//sysml/ModelicaEquationProperty/equation">
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaEquationProperty/equation"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaComposition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaComposition/isFlow"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaComposition/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaComposition/arrayDimension"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaComposition/access"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysml.ecore#//ModelicaComposition/default"/>
+    </genClasses>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaConnection"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaClassifier"/>
+    <genClasses ecoreClass="sysml.ecore#//ModelicaPrimitiveType"/>
+  </genPackages>
+</genmodel:GenModel>
