@@ -160,13 +160,53 @@
       </factory>
    </extension>
    
-  <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="org.eclipse.debug.ui.LaunchActionSet"
+  <extension point="org.eclipse.ui.actionSets">
+      <actionSet id="org.eclipse.debug.ui.LaunchActionSet"
             label="Launch action set"
-            visible="true"/>
+            visible="true">
+         <action
+               definitionId="org.modelica.mdt.debug.ui.breakpoints.AddFailureBreakpoint"
+               label="Add MetaModelica Failure Breakpoint..."
+               icon="icons/full/elcl16/failure.gif"
+               class="org.modelica.mdt.debug.ui.breakpoints.AddFailureAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.modelica.mdt.debug.ui.actions.AddFailureBreakpoint">
+         </action>
+      </actionSet>                     
    </extension>
 
+   <extension
+         point="org.eclipse.ui.propertyPages">      
+      <page
+            name="Filtering"
+            class="org.modelica.mdt.debug.ui.propertypages.MDTFailureBreakpointAdvancedPage"
+            id="org.modelica.mdt.debug.ui.propertypages.MDTFailureBreakpointAdvancedPage">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.modelica.mdt.debug.core.IMDTFailureBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.modelica.mdt.debug.core.IMDTFailureBreakpoint">
+               </adapt>
+            </or>
+         </enabledWhen>
+      </page>
+      <page
+            name="Breakpoint Properties"
+            class="org.modelica.mdt.debug.ui.propertypages.MDTFailureBreakpointPage"
+            id="org.modelica.mdt.debug.ui.propertypages.FailureBreakpoint">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.modelica.mdt.debug.core.IMDTFailureBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.modelica.mdt.debug.core.IMDTFailureBreakpoint">
+               </adapt>
+            </or>
+         </enabledWhen>
+      </page>
+   </extension>
 
 </plugin>

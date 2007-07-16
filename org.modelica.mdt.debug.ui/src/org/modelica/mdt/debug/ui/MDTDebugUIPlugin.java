@@ -5,6 +5,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -151,5 +153,16 @@ public class MDTDebugUIPlugin  extends AbstractUIPlugin
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
         getImageRegistry().put(key, desc);
     }    	
-	
+
+    public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}    
+    
+	public static Shell getActiveWorkbenchShell() {
+		 IWorkbenchWindow window= getActiveWorkbenchWindow();
+		 if (window != null) {
+		 	return window.getShell();
+		 }
+		 return null;
+	}        
 }

@@ -104,7 +104,7 @@ public class MDTModelPresentation extends LabelProvider implements
 	       return 
 	       		frame.getName() + 
 	       		" (line: " + frame.getLineNumber() + 
-	       		", SP: " + frame.getMMCStackPointer() + ")"; 
+	       		", SP: " + frame.getMMCStackPointer() + ", call: " + frame.getCallType() + ")"; 
 	    } catch (DebugException e) {
 	    }
 	    return null;
