@@ -61,7 +61,7 @@ import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
-import org.modelica.mdt.ui.editor.ModelicaCompletionProcessor;
+import org.modelica.mdt.ui.assist.ModelicaCompletionProcessor;
 import org.modelica.mdt.ui.editor.ModelicaElementEditorInput;
 
 import junit.framework.TestCase;

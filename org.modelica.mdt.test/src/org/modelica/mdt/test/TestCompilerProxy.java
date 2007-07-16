@@ -53,7 +53,7 @@ import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ICompileError;
-import org.modelica.mdt.core.compiler.IDefinitionLocation;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;

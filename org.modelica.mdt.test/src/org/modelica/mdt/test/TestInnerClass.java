@@ -231,7 +231,7 @@ public class TestInnerClass extends TestCase
 				"components_bananza.a_type", a_type.getFullName());		
 		assertTrue("fishy file path", 
 				a_type.getFilePath().endsWith("component_model.mo"));
-		IRegion reg = a_type.getLocation();
+		IRegion reg = a_type.getLocation().getRegion();
 		assertEquals("wrong start offset", 342, reg.getOffset());
 		assertEquals("wrong length", 364-342+1, reg.getLength());
 		
@@ -260,7 +260,7 @@ public class TestInnerClass extends TestCase
 				a_package.getFullName());
 		assertTrue("fishy file path", 
 				a_package.getFilePath().endsWith("component_model.mo"));
-		reg = a_package.getLocation();
+		reg = a_package.getLocation().getRegion();
 		assertEquals("wrong start offset", 95, reg.getOffset());
 		assertEquals("wrong length", 126-95+1, reg.getLength());
 
@@ -288,7 +288,7 @@ public class TestInnerClass extends TestCase
 				a_block.getFullName());
 		assertTrue("fishy file path", 
 				a_block.getFilePath().endsWith("component_model.mo"));
-		reg = a_block.getLocation();
+		reg = a_block.getLocation().getRegion();
 		assertEquals("wrong start offset", 271, reg.getOffset());
 		assertEquals("wrong length", 296-271+1, reg.getLength());
 
@@ -314,7 +314,7 @@ public class TestInnerClass extends TestCase
 				a_class.getFullName());
 		assertTrue("fishy file path", 
 				a_class.getFilePath().endsWith("component_model.mo"));
-		reg = a_class.getLocation();
+		reg = a_class.getLocation().getRegion();
 		assertEquals("wrong start offset", 132, reg.getOffset());
 		assertEquals("wrong length", 157-132+1, reg.getLength());
 
@@ -341,7 +341,7 @@ public class TestInnerClass extends TestCase
 				a_connector.getFullName());
 		assertTrue("fishy file path", 
 				a_connector.getFilePath().endsWith("component_model.mo"));
-		reg = a_connector.getLocation();
+		reg = a_connector.getLocation().getRegion();
 		assertEquals("wrong start offset", 194, reg.getOffset());
 		assertEquals("wrong length", 231-194+1, reg.getLength());
 
@@ -368,7 +368,7 @@ public class TestInnerClass extends TestCase
 				a_function.getFullName());
 		assertTrue("fishy file path", 
 				a_function.getFilePath().endsWith("component_model.mo"));
-		reg = a_function.getLocation();
+		reg = a_function.getLocation().getRegion();
 		assertEquals("wrong start offset", 302, reg.getOffset());
 		assertEquals("wrong length", 336-302+1, reg.getLength());
 
@@ -394,7 +394,7 @@ public class TestInnerClass extends TestCase
 				a_model.getFullName());
 		assertTrue("fishy file path", 
 				a_model.getFilePath().endsWith("component_model.mo"));
-		reg = a_model.getLocation();
+		reg = a_model.getLocation().getRegion();
 		assertEquals("wrong start offset", 163, reg.getOffset());
 		assertEquals("wrong length", 188-163+1, reg.getLength());
 
@@ -420,7 +420,7 @@ public class TestInnerClass extends TestCase
 				a_record.getFullName());
 		assertTrue("fishy file path", 
 				a_record.getFilePath().endsWith("component_model.mo"));
-		reg = a_record.getLocation();
+		reg = a_record.getLocation().getRegion();
 		assertEquals("wrong start offset", 237, reg.getOffset());
 		assertEquals("wrong length", 265-237+1, reg.getLength());
 
@@ -444,10 +444,10 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong element name", "a_real", a_real.getElementName());
 		assertEquals("wrong element full name", "components_bananza.a_real", 
 				a_real.getFullName());
-		assertEquals("wrong visibility", a_real.getVisbility(),
+		assertEquals("wrong visibility", a_real.getVisibility(),
 				IModelicaComponent.Visibility.PUBLIC);
 
-		reg = a_real.getLocation();
+		reg = a_real.getLocation().getRegion();
 		assertEquals("wrong start offset", 29, reg.getOffset());
 		assertEquals("wrong length", 58-29+1, reg.getLength());
 
@@ -474,9 +474,9 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong element full name", 
 				"components_bananza.an_undocumented_real",
 				an_undocumented_real.getFullName());
-		assertEquals("wrong visibility", an_undocumented_real.getVisbility(),
+		assertEquals("wrong visibility", an_undocumented_real.getVisibility(),
 				IModelicaComponent.Visibility.PUBLIC);
-		reg = an_undocumented_real.getLocation();
+		reg = an_undocumented_real.getLocation().getRegion();
 		assertEquals("wrong start offset", 64, reg.getOffset());
 		assertEquals("wrong length", 89-64+1, reg.getLength());
 		
@@ -504,9 +504,9 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong element full name", 
 				"components_bananza.a_protected_integer", 
 				a_protected_integer.getFullName());
-		assertEquals("wrong visibility", a_protected_integer.getVisbility(),
+		assertEquals("wrong visibility", a_protected_integer.getVisibility(),
 				IModelicaComponent.Visibility.PROTECTED);
-		reg = a_protected_integer.getLocation();
+		reg = a_protected_integer.getLocation().getRegion();
 		assertEquals("wrong start offset", 407, reg.getOffset());
 		assertEquals("wrong length", 451-407+1, reg.getLength());
 
@@ -534,9 +534,9 @@ public class TestInnerClass extends TestCase
 		assertEquals("wrong element full name", 
 				"components_bananza.a_protected_real", 
 				a_protected_real.getFullName());		
-		assertEquals("wrong visibility", a_protected_real.getVisbility(),
+		assertEquals("wrong visibility", a_protected_real.getVisibility(),
 				IModelicaComponent.Visibility.PROTECTED);
-		reg = a_protected_real.getLocation();
+		reg = a_protected_real.getLocation().getRegion();
 		assertEquals("wrong start offset", 380, reg.getOffset());
 		assertEquals("wrong length", 401-380+1, reg.getLength());
 
@@ -638,7 +638,7 @@ public class TestInnerClass extends TestCase
 	{
 		IModelicaClass clazz;
 		IStandardLibrary stdLib = 
-				ModelicaCore.getModelicaRoot().getStandardLibrary();
+				ModelicaCore.getModelicaRoot().getStandardLibrary(null);
 		
 		/*
 		 * check correctness of isEncapsulated() in classes from standard library
@@ -723,7 +723,7 @@ public class TestInnerClass extends TestCase
 		clazz = proj.getClass("EquationComponent"); 
 		assertNotNull(clazz);
 		
-		defReg = clazz.getLocation();
+		defReg = clazz.getLocation().getRegion();
 		assertEquals("wrong start offset", 111, defReg.getOffset());
 		assertEquals("wrong length", 239-111+1, defReg.getLength());
 
@@ -731,7 +731,7 @@ public class TestInnerClass extends TestCase
 		clazz = proj.getClass("EquationComponent.R"); 
 		assertNotNull(clazz);
 		
-		defReg = clazz.getLocation();
+		defReg = clazz.getLocation().getRegion();
 		assertEquals("wrong start offset", 137, defReg.getOffset());
 		assertEquals("wrong length", 167-137+1, defReg.getLength());
 		
@@ -746,7 +746,7 @@ public class TestInnerClass extends TestCase
 		clazz = proj.getClass("EquationComponent"); 
 		assertNotNull(clazz);
 		
-		defReg = clazz.getLocation();
+		defReg = clazz.getLocation().getRegion();
 		assertEquals("wrong start offset", 25, defReg.getOffset());
 		assertEquals("wrong length", 179-25+1, defReg.getLength());
 
@@ -754,7 +754,7 @@ public class TestInnerClass extends TestCase
 		clazz = proj.getClass("EquationComponent.R"); 
 		assertNotNull(clazz);
 		
-		defReg = clazz.getLocation();
+		defReg = clazz.getLocation().getRegion();
 		assertEquals("wrong start offset", 76, defReg.getOffset());
 		assertEquals("wrong length", 106-76+1, defReg.getLength());
 

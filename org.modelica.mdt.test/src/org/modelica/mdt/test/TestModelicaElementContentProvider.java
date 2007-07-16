@@ -136,7 +136,7 @@ public class TestModelicaElementContentProvider extends TestCase
 		throws ConnectException, CompilerInstantiationException
 	{
 		IStandardLibrary standardLibrary =
-			ModelicaCore.getModelicaRoot().getStandardLibrary();
+			ModelicaCore.getModelicaRoot().getStandardLibrary(null);
 		
 		assertTrue("standard library node should have children",
 				provider.hasChildren(standardLibrary));

@@ -67,8 +67,7 @@ public class TestModelicaElementSorter extends TestCase
 {
 
 	/* the test subject */
-	private ModelicaElementSorter sorter = 
-		new ModelicaElementSorter();
+	private ModelicaElementSorter sorter = new ModelicaElementSorter(ModelicaElementSorter.NAME);
 	
 	@Override
 	protected void setUp() throws Exception 

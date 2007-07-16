@@ -52,6 +52,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.jface.viewers.Viewer;
 
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -84,9 +85,15 @@ public class TestModelicaRoot extends TestCase
 	private boolean modelicaProjectRemoved = false;
 
 	
-	public class WorkspaceChangesListener 
-			implements IModelicaElementChangeListener 
+	public class WorkspaceChangesListener implements IModelicaElementChangeListener 
 	{
+		
+		
+
+		public void setViewer(Viewer viewer) {
+			// TODO Auto-generated method stub
+			
+		}
 
 		public void elementsChanged(Collection<IModelicaElementChange> changes) 
 		{
@@ -143,6 +150,11 @@ public class TestModelicaRoot extends TestCase
 		private boolean folderRemoved = false;
 		private boolean packageAdded = false;
 
+		public void setViewer(Viewer viewer) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		public void elementsChanged(Collection<IModelicaElementChange> changes) 
 		{
 			for (IModelicaElementChange ch : changes)
@@ -192,6 +204,11 @@ public class TestModelicaRoot extends TestCase
 	{
 		private boolean packageRemoved = false;
 		private boolean folderAdded = false;
+
+		public void setViewer(Viewer viewer) {
+			// TODO Auto-generated method stub
+			
+		}
 
 		public void elementsChanged(Collection<IModelicaElementChange> changes) 
 		{
@@ -275,8 +292,7 @@ public class TestModelicaRoot extends TestCase
 		IProject project = workspaceRoot.getProject(PROJECT_NAME_1);
 		if (!project.exists())
 		{
-	 		IModelicaProject moProj =
-				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1); 
+	 		IModelicaProject moProj = ModelicaCore.getModelicaRoot().createProject(project); 
 			assertNotNull("failed to create project", moProj);
 			project = moProj.getWrappedProject();
 			/*
@@ -383,14 +399,12 @@ public class TestModelicaRoot extends TestCase
 		/* 
 		 * check if ModelicaRoot picks up additions of projects
 		 */
-		IProject simpleProject = 
-			workspaceRoot.getProject(PROJECT_NAME_SIM_EXTRA);
+		IProject simpleProject = workspaceRoot.getProject(PROJECT_NAME_SIM_EXTRA);
 		simpleProject.create(null);
 		simpleProject.open(null);
 		
 		IProject modelicaProject = 
-			ModelicaCore.getModelicaRoot().
-				createProject(PROJECT_NAME_MOD_EXTRA).getWrappedProject();
+			ModelicaCore.getModelicaRoot().createProject(simpleProject).getWrappedProject();
 		modelicaProject.open(null);
 
 		
