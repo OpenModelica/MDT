@@ -20,6 +20,7 @@ public class MDTStackFrame extends MDTDebugElement implements IStackFrame {
 	private String fFileName;
 	private int fId;
 	private int fMMCStackPointer;	
+	private String fCallType;
 	
 	/**
 	 * Constructs a stack frame in the given thread with the given
@@ -60,10 +61,11 @@ public class MDTStackFrame extends MDTDebugElement implements IStackFrame {
 		}
 		fName = strings[4];
 		fMMCStackPointer = Integer.parseInt(strings[5]);
-		int numVars = strings.length - 6;
+		fCallType = strings[6];
+		int numVars = strings.length - 7;
 		IVariable[] vars = new IVariable[numVars];
 		for (int i = 0; i < numVars; i++) {
-			vars[i] = new MDTVariable(this, strings[i + 6], i);
+			vars[i] = new MDTVariable(this, strings[i + 7], i);
 		}
 		fThread.setVariables(this, vars);
 	}
@@ -115,6 +117,17 @@ public class MDTStackFrame extends MDTDebugElement implements IStackFrame {
 	 */
 	public int getMMCStackPointer() throws DebugException {
 		return fMMCStackPointer;
+	}	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
+	 */
+	public String getCallType() throws DebugException {		
+		if (fCallType.equalsIgnoreCase("f")) return "failure";
+		if (fCallType.equalsIgnoreCase("s")) return "success";
+		if (fCallType.equalsIgnoreCase("n")) return "normal";
+		if (fCallType.equalsIgnoreCase("h")) return "shared";
+		if (fCallType.equalsIgnoreCase("e")) return "extern";
+		return "unknown";
 	}	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
@@ -240,7 +253,9 @@ public class MDTStackFrame extends MDTDebugElement implements IStackFrame {
 				sf.fStartChar == fStartChar &&
 				sf.fEndChar == fEndChar &&
 				sf.fLineNumber == fLineNumber &&
-				sf.fId == fId;
+				sf.fId == fId &&
+				sf.fCallType.equals(fCallType);
+				
 		}
 		return false;
 	}

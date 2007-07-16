@@ -20,7 +20,7 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public class MDTVariable extends MDTDebugElement implements IVariable {
 
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
 	String line;
 	DefaultMutableTreeNode top = null;
 	DefaultMutableTreeNode modelicaVariables = null; 
@@ -149,13 +149,13 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 		Enumeration kids = root.children();
 		ModelicaVariableInfo vi = (ModelicaVariableInfo)root.getUserObject();
 		String type = vi.rmlType; 
-		String value = vi.toString();
+		// String value = vi.toString();
 		if (!kids.hasMoreElements())
 		{
 			return new ComponentVariable(
 					this.getMDTDebugTarget(), 
 					vi.rmlName, 
-					new MDTValue(this.getMDTDebugTarget(), value, new IVariable[0]), type);
+					new MDTValue(this.getMDTDebugTarget(), vi.rmlValue, new IVariable[0]), type);
 		}
 		Vector<IVariable> v = new Vector<IVariable>(); 
 		while (kids.hasMoreElements())
@@ -165,7 +165,7 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 		}
 		IVariable[] vars = new IVariable[v.size()];
 		v.toArray(vars);
-		return new ComponentVariable(this.getMDTDebugTarget(), vi.rmlName, new MDTValue(this.getMDTDebugTarget(),value, vars), type);
+		return new ComponentVariable(this.getMDTDebugTarget(), vi.rmlName, new MDTValue(this.getMDTDebugTarget(), vi.rmlValue, vars), type);
 	}
 	
 	
@@ -273,9 +273,9 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 			ModelicaVariableInfo var = null; 
 			/*
 			 * first reading the variable type\n then the contents:
-			 * depth|vName|vType
+			 * depth|vName|vValue|vType
 			 * false|bool
-			 * true|bool"
+			 * true|bool
 			 * number:enumer:DCONSTRUCTOR|TYPE 
 			 * int|int
 			 * pointer:function (same module)|TYPE
@@ -293,7 +293,7 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 			 * LVAR(UNKNOWN)
 			 */
 			int which = 0;
-			String vName = null, vType = null;
+			String vName = null, vType = null, vValue = null;
 			int nKind = -1;
 			int nDepth = 0;
 			int maxDepth = 0;
@@ -310,19 +310,21 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 				}				
 				if (line.compareTo("value not found") == 0)
 				{
-					node = new DefaultMutableTreeNode(new ModelicaVariableInfo(KIND_VARIABLE, fName, "value not found"));
+					node = new DefaultMutableTreeNode(
+							new ModelicaVariableInfo(KIND_VARIABLE, fName, "value not found", "value not found"));
 					treeModel.insertNodeInto(node, top, top.getChildCount());
 					break;
 				}
 				if (line.compareTo("variable not found") == 0)
 				{
-					node = new DefaultMutableTreeNode(new ModelicaVariableInfo(KIND_VARIABLE, fName, "variable not found"));
+					node = new DefaultMutableTreeNode(
+							new ModelicaVariableInfo(KIND_VARIABLE, fName, "variable not found", "variable not found"));
 					treeModel.insertNodeInto(node, top, top.getChildCount());
 					break;
 				}				
 				if (line.compareTo("variable type not found") == 0)
 				{
-					node = new DefaultMutableTreeNode(new ModelicaVariableInfo(KIND_VARIABLE, fName, "variable type not found"));
+					node = new DefaultMutableTreeNode(new ModelicaVariableInfo(KIND_VARIABLE, fName, "variable type not found", "variable type not found"));
 					treeModel.insertNodeInto(node, top, top.getChildCount());
 					break;
 				}				
@@ -345,7 +347,7 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 							}
 					}
 					
-					((ModelicaVariableInfo)((DefaultMutableTreeNode)stack.lastElement()).getUserObject()).rmlText = text;
+					((ModelicaVariableInfo)((DefaultMutableTreeNode)stack.lastElement()).getUserObject()).rmlValue = "\"" + text + "\"";;
 					((ModelicaVariableInfo)((DefaultMutableTreeNode)stack.lastElement()).getUserObject()).nKind = KIND_STRING;
 					if (DEBUG) System.err.println("Read string:" + text);
 				}
@@ -362,7 +364,7 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 						// everything's read, build the var, put it in the list
 						// "file:///c:/dev/modelica/modeq/"
 						/* variableFromRML.addLast( */
-						node = new DefaultMutableTreeNode(new ModelicaVariableInfo(KIND_VARIABLE, fName, vType));
+						node = new DefaultMutableTreeNode(new ModelicaVariableInfo(KIND_VARIABLE, fName, vValue, vType));
 						treeModel.insertNodeInto(node, top, top.getChildCount());
 						stack.push(node);
 					}
@@ -377,13 +379,15 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 					String sKind = line.substring(0, line.indexOf("|")+1);
 					line = line.substring(line.indexOf("|")+1,line.length());
 					vName = line.substring(0, line.indexOf("|"));
+					line = line.substring(line.indexOf("|")+1,line.length());					
+					vValue = line.substring(0, line.indexOf("|"));
 					line = line.substring(line.indexOf("|")+1,line.length());
 					vType = line;
 					if (sKind == null) nKind = KIND_NORMAL;
 					else
 					{
 						/*java expects this!
-						depth|ty|vName|vType|vFile|sl.sc.el.ec\n
+						depth|ty|vName|vValue|vType|vFile|sl.sc.el.ec\n
 						where ty:
 						  st<ring>,
 						  da<tatype constructor>,
@@ -414,7 +418,7 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 					}
 					if (nDepth > maxDepth) maxDepth = nDepth;
 					// deal with updating the tree model here
-					var = new ModelicaVariableInfo(nKind,vName,vType,nDepth);	
+					var = new ModelicaVariableInfo(nKind,vName, vValue, vType,nDepth);	
 					node = new DefaultMutableTreeNode(var);			
 					if (var.nDepth > currentDepth)
 					{
@@ -458,22 +462,24 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 	{
         int nKind;
     	String rmlName = null;
-        String rmlType = null;
-        String rmlText = null; 
+    	String rmlValue = null;
+        String rmlType = null; 
 		int nDepth = 0;
 
-        public ModelicaVariableInfo(int _nKind, String sName, String sType) 
+        public ModelicaVariableInfo(int _nKind, String sName, String sValue, String sType) 
 		{
             nKind = _nKind;
-        	rmlName = sName; 
+        	rmlName = sName;
+        	rmlValue = sValue;
         	rmlType = sType; 
 			nDepth = -1;
         }
 
-        public ModelicaVariableInfo(int _nKind, String sName, String sType, int depth) 
+        public ModelicaVariableInfo(int _nKind, String sName, String sValue, String sType, int depth) 
 		{
             nKind = _nKind;
         	rmlName = sName; 
+        	rmlValue = sValue;        	
         	rmlType = sType;
 			nDepth = depth;
         }
@@ -487,7 +493,7 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
         	}
         	if (nKind == KIND_STRING)
         	{
-	            return "\"" + rmlText + "\"";
+	            return "\"" + rmlValue + "\"";
         	}        	
 			return rmlName;
         }

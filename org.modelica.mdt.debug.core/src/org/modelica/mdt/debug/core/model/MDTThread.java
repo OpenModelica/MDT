@@ -147,6 +147,7 @@ public class MDTThread extends MDTDebugElement implements IThread, IMDTEventList
 	 */
 	public void resume() throws DebugException {
 		setRunning(true);
+		setSuspended(false);
 		setStepping(false);
 		resumed(DebugEvent.CLIENT_REQUEST);
 		sendRequest(IMDTDebugCommands.CMD_RUN);
