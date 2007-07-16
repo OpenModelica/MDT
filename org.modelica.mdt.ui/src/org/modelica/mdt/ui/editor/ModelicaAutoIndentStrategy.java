@@ -479,7 +479,7 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy
 		if (c.length == 0 && c.text != null && isLineDelimiter(d, c.text))
 		{
 			autoIndentAfterNewLine(d, c);
-			ModelicaCorrectIndentationAction.getInstance().run();
+			/* ModelicaCorrectIndentationAction.getInstance().run(); */
 		}
 		else if (c.text.length() == 1)
 		{

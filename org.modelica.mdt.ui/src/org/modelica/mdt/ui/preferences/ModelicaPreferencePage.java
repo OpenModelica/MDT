@@ -68,10 +68,12 @@ public class ModelicaPreferencePage	extends PreferencePage
 	implements IWorkbenchPreferencePage 
 {
 
+	private Button startOMC;
 	private Button displayCompErrors;
 	private Button useStandardOmcPath;
 	private Button useCustomOmcPath;
 	private Text customOmcPath;
+	
 	private Button browseButton;
 	
 	@Override
@@ -90,6 +92,39 @@ public class ModelicaPreferencePage	extends PreferencePage
 		/* page 'title' */
 		Label label = new Label(parent, SWT.NONE);
 		label.setText("Settings for Modelica development:");
+
+		/*
+		 * 'startOMC' group
+		 */
+		
+		/* dummy label for space */
+		new Label(parent, SWT.NONE);
+		
+		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("General Settings");
+		
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		group.setLayoutData(data);
+		
+		layout = new GridLayout();
+		group.setLayout(layout);
+
+		startOMC = new Button(group, SWT.CHECK);
+		startOMC.setText("&Use OpenModelica Compiler (OMC) from Modelica Development Tooling (MDT)");
+		Label l = new Label(group, SWT.NONE);
+		l.setText("" +
+				"If you disable the use of OMC:\n" +
+				"- the MDT code assist functionality will not work.\n" +
+				"- the outline for Modelica files will not work.\n" +
+				"- the MDT console will not work.\n" +
+				"- the status bar will display 'Empty Compiler is Online'.\n" +
+				"- the editing will be much more responsive.\n" +
+				"You need to restart Eclipse if you enable/disable OMC.");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		startOMC.setLayoutData(data);
+		startOMC.setSelection(PreferenceManager.getStartOMC());
 		
 		/*
 		 * 'error reportting settings' group
@@ -98,7 +133,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		/* dummy label for space */
 		new Label(parent, SWT.NONE);
 		
-		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group = new Group(parent, SWT.SHADOW_ETCHED_IN);
 		group.setText("Error reporting settings");
 		
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -222,6 +257,8 @@ public class ModelicaPreferencePage	extends PreferencePage
 		/*
 		 * reset widgets to default settings 
 		 */
+		startOMC.setSelection
+		(store.getDefaultBoolean(PreferenceManager.START_OMC));		
 		displayCompErrors.setSelection
 			(store.getDefaultBoolean(PreferenceManager.DISPLAY_COMPATIBILTY_ERRORS));
 		useStandardOmcPath.setSelection
@@ -242,6 +279,8 @@ public class ModelicaPreferencePage	extends PreferencePage
 		 */
 		IPreferenceStore store = getPreferenceStore();
 		
+		store.setValue(PreferenceManager.START_OMC,
+				startOMC.getSelection());		
 		store.setValue(PreferenceManager.DISPLAY_COMPATIBILTY_ERRORS,
 				displayCompErrors.getSelection());
 		store.setValue(PreferenceManager.USE_STANDARD_OMC_PATH,

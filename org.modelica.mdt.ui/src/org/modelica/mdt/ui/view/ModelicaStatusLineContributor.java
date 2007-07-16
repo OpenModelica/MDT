@@ -25,11 +25,18 @@ public class ModelicaStatusLineContributor extends StatusLineContributionItem
 			if (name != null && !name.equalsIgnoreCase(""))
 			{
 				setText(name + " Online ");
-				setImage(mdtOnline);
+				if (!name.equalsIgnoreCase("Empty Compiler"))
+				{
+					setImage(mdtOnline);
+				}
+				else
+				{
+					setImage(mdtOffline);					
+				}
 			}
 			else
 			{
-				setText("OpenModelica Compiler is Offline");
+				setText("OpenModelica Compiler is Offline.");
 				setImage(mdtOffline);
 			}
 		}
@@ -39,7 +46,9 @@ public class ModelicaStatusLineContributor extends StatusLineContributionItem
 			setText("OpenModelica Compiler is Offline");
 			setImage(mdtOffline);			
 		}
-		setToolTipText("OpenModelica Compiler Status.");
+		setToolTipText("OpenModelica Compiler Status.\n" +
+				"If 'Empty Compiler' is online, check the Modelica preferences:\n" +
+				"Window->Preferences->Modelica: 'Start OMC from MDT'");
 	}
 	
 	@Override
@@ -102,7 +111,15 @@ public class ModelicaStatusLineContributor extends StatusLineContributionItem
 			if (name != null && !name.equalsIgnoreCase(""))
 			{
 				setText(name + " is Online");
-				setImage(mdtOnline);
+				if (!name.equalsIgnoreCase("Empty Compiler"))
+				{
+					setImage(mdtOnline);
+				}
+				else
+				{
+					setImage(mdtOffline);					
+				}
+
 			}
 			else
 			{

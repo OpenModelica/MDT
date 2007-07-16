@@ -802,8 +802,8 @@ public class ModelicaFoldingStructureProvider {
     }
 	
 	private void computeFoldingStructure(FoldingStructureComputationContext ctx) {
-		IParent parent= (IParent) fInput;
 		try {
+			IParent parent= (IParent) fInput;			
 			IRegion fileHeaderComment = computerFileHeaderComment(ctx);
 			if (fileHeaderComment != null)
 			{

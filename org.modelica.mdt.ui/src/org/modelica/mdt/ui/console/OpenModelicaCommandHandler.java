@@ -43,8 +43,16 @@ public class OpenModelicaCommandHandler extends Thread
 					if (line != null && line.length() > 0)
 					{
 						ICompilerResult res = CompilerProxy.sendExpression(line, false);
-						result = res.getFirstResult().trim();
-						writer.write(result + "\n");
+						if (res != null)
+						{
+							result = res.getFirstResult().trim();
+							writer.write(result + "\n");
+						}
+						else
+						{
+							writer.write("omc> OpenModelica Compiler is not started. Check Modelica preferences page: Window->Preferences->Modelica" + "\n");
+							writer.flush();
+						}
 					}
 				}
 				catch(CompilerException e)
