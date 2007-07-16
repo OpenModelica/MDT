@@ -98,37 +98,40 @@ public class ModelicaCore
 
 	public static void start()
 	{
-	   IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	   IPathVariableManager pathMan = workspace.getPathVariableManager();
-	   String name = "OPENMODELICALIBRARY";
-	   IPath value = new Path(System.getenv(name));
-	   try
-	   {
-		   if (pathMan.validateName(name).isOK() && pathMan.validateValue(value).isOK()) 
-		   {
-		      pathMan.setValue(name, value);
-		   } 
-		   else 
-		   {
-				Display display = CorePlugin.getDisplay();
-				display.asyncExec(new Runnable()
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IPathVariableManager pathMan = workspace.getPathVariableManager();
+		String name = "OPENMODELICALIBRARY";
+		String path = null; path = System.getenv(name);
+		if (path != null)
+		{
+			IPath value = new Path(path);
+			try
+			{
+				if (pathMan.validateName(name).isOK() && pathMan.validateValue(value).isOK()) 
 				{
-					public void run()
+					pathMan.setValue(name, value);
+				} 
+				else 
+				{
+					Display display = CorePlugin.getDisplay();
+					display.asyncExec(new Runnable()
 					{
-						ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
-								new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
-										"OPENMODELICALIBRARY environment variable is not set!\n" +
-										"Please exit Eclipse and set the variable if you want to be able " +
-										"to browse the Modelica Library", null));
-					}
-				});
-		   }
-	   }
-	   catch(CoreException e)
-	   {
-		   ErrorManager.logError(e);
-	   }
-		
+						public void run()
+						{
+							ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
+									new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
+											"OPENMODELICALIBRARY environment variable is not set!\n" +
+											"Please exit Eclipse and set the variable if you want to be able " +
+											"to browse the Modelica Library", null));
+						}
+					});
+				}
+			}
+			catch(CoreException e)
+			{
+				ErrorManager.logError(e);
+			}
+		}
 		modelicaRoot = new ModelicaRoot();
 		modelicaRoot.start();
 	}

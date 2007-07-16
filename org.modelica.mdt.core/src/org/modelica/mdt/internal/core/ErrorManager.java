@@ -234,7 +234,7 @@ public class ErrorManager
 			
 			long now = System.currentTimeMillis();
 			
-			if (!PreferenceManager.getDisplayCompErrors())
+			if (PreferenceManager.getDisplayCompErrors() == false)
 			{
 				/* the user don't want to see this error message */
 				showErrorDialog = false;
@@ -262,7 +262,7 @@ public class ErrorManager
 				"for compatibility problems.";
 
 			long now = System.currentTimeMillis();
-			if (!PreferenceManager.getDisplayCompErrors())
+			if (PreferenceManager.getDisplayCompErrors() == false)
 			{
 				/* the user don't want to see this error message */
 				showErrorDialog = false;
@@ -300,7 +300,7 @@ public class ErrorManager
 		logError(status);
 		
 		/* display error to the user */
-		if (showErrorDialog)
+		if ((PreferenceManager.getDisplayCompErrors() == true) && showErrorDialog)
 		{
 			Display display = CorePlugin.getDisplay();
 			display.asyncExec(new Runnable()
@@ -325,7 +325,7 @@ public class ErrorManager
 		/* log error */
 		logError(exception);
 		
-		if (PreferenceManager.getDisplayCompErrors())
+		if (PreferenceManager.getDisplayCompErrors() == true)
 		{
 			Display display = CorePlugin.getDisplay();
 			display.asyncExec(new Runnable()

@@ -532,6 +532,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		 */
 		IParseResults res = CompilerProxy.loadSourceFile(file);
 		
+		if (res == null) return res;
 		/*
 		 * If there were any compile errors, report them as problems.
 		 */

@@ -79,6 +79,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String DISPLAY_COMPATIBILTY_ERRORS = "DisplayCompatibilityErrors";
 	public static final String USE_STANDARD_OMC_PATH = "UseStandardOmcPath";
 	public static final String CUSTOM_OMC_PATH = "CustomOmcPath";	
+	public static final String START_OMC = "StartOMC";	
 	
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
 	protected final static String EDITOR_MATCHING_BRACKETS_COLOR="matchingBracketsColor";
@@ -99,6 +100,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		store.setDefault(DISPLAY_COMPATIBILTY_ERRORS, false);
 		store.setDefault(USE_STANDARD_OMC_PATH, true);
 		store.setDefault(CUSTOM_OMC_PATH, "");
+		store.setDefault(START_OMC, true);
 		
 		store.setDefault(EDITOR_MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB(192, 192, 192));		
@@ -131,10 +133,19 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	}
 	
 	/**
-	 * @return current settig for 'custom omc path' 
+	 * @return current setting for 'custom omc path' 
 	 */
 	public static String getCustomOmcPath()
 	{
 		return getStore().getString(CUSTOM_OMC_PATH);
 	}
+	
+	/**
+	 * @return current setting for   
+	 */
+	public static boolean getStartOMC()
+	{
+		return getStore().getBoolean(START_OMC);
+	}
+	
 }

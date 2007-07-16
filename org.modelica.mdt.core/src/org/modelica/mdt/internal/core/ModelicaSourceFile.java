@@ -195,9 +195,12 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		 */
 		else
 		{
-			for(String name : res.getClasses())
+			if (res != null)
 			{
-				elements.put(name, new InnerClass(this, null, name, null, null));
+				for(String name : res.getClasses())
+				{
+					elements.put(name, new InnerClass(this, null, name, null, null));
+				}
 			}
 		}	
 		

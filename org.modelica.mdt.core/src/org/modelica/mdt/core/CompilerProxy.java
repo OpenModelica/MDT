@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
@@ -61,8 +62,8 @@ import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException.ProblemType;
+import org.modelica.mdt.core.preferences.PreferenceManager;
 import org.modelica.mdt.internal.core.CorePlugin;
-
 
 /**
  * This class provides one to one mapping to IModelicaCompiler interface,
@@ -133,7 +134,7 @@ public class CompilerProxy //implements IModelicaCompiler
 		
 		return compiler;
 	}
-	
+		
 	/**
 	 * Load the first best modelica compiler proxy contributed by 
 	 * some other plugin via the org.modelica.mdt.core.compiler extension point.
@@ -143,6 +144,10 @@ public class CompilerProxy //implements IModelicaCompiler
 	 */
 	private static IModelicaCompiler loadCompiler() throws CompilerInstantiationException
 	{		
+		if (!PreferenceManager.getStartOMC())
+		{
+			return new NoCompiler();
+		}
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CorePlugin.COMPILER_EXTENSION_ID);		
 		
 		IExtension[] extensions = extensionPoint.getExtensions();
