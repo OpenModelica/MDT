@@ -85,7 +85,7 @@ import org.modelica.mdt.core.*;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.ui.ModelicaElementSorter;
+import org.modelica.mdt.ui.ModelicaElementComparator;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.ModelicaElementChangeListener;
 
@@ -401,8 +401,8 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	class LexicalSortingAction extends Action 
 	{
 
-		private ModelicaElementSorter fSorter= new ModelicaElementSorter(ModelicaElementSorter.NAME);
-		private ModelicaElementSorter fModelicaSorter= new ModelicaElementSorter(ModelicaElementSorter.MODELICA);		
+		private ModelicaElementComparator fComparator= new ModelicaElementComparator(ModelicaElementComparator.NAME);
+		private ModelicaElementComparator fModelicaComparator= new ModelicaElementComparator(ModelicaElementComparator.MODELICA);		
 
 		public LexicalSortingAction() 
 		{
@@ -424,9 +424,9 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			BusyIndicator.showWhile(fOutlineViewer.getControl().getDisplay(), new Runnable() {
 				public void run() {
 					if (on)
-						fOutlineViewer.setSorter(fSorter);
+						fOutlineViewer.setComparator(fComparator);
 					else
-						fOutlineViewer.setSorter(fModelicaSorter);
+						fOutlineViewer.setComparator(fModelicaComparator);
 				}
 			});
 			

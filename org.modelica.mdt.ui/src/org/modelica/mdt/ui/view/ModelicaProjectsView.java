@@ -83,7 +83,7 @@ import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.ModelicaElementContentProvider;
-import org.modelica.mdt.ui.ModelicaElementSorter;
+import org.modelica.mdt.ui.ModelicaElementComparator;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.eclipse.core.resources.IResource;
@@ -120,7 +120,7 @@ public class ModelicaProjectsView extends ResourceNavigator
 		
 		getViewer().setContentProvider(new ModelicaElementContentProvider());
 		getViewer().setInput(ModelicaCore.getModelicaRoot());
-		getViewer().setSorter(new ModelicaElementSorter(ModelicaElementSorter.MODELICA));
+		getViewer().setComparator(new ModelicaElementComparator(ModelicaElementComparator.MODELICA));
 		UIPlugin.tag(getViewer().getTree(), TREE_TAG);
 
 		drillDownAdapter = new DrillDownAdapter(getViewer());

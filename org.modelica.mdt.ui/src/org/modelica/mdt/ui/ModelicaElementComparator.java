@@ -47,7 +47,7 @@ import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaExtends;
@@ -64,11 +64,11 @@ import org.modelica.mdt.internal.core.ErrorManager;
 /**
  * Implements ordering of modelica elements suitable for displaying 'em in the
  * tree view.
- * 
+ * @author Adrian Pop
  * @author Homer Simpson
  */
 @SuppressWarnings("unchecked")
-public class ModelicaElementSorter extends ResourceSorter
+public class ModelicaElementComparator extends ResourceComparator
 {
 	private static int PROJECT_ORDER 				= 1;
 	private static int FOLDER_ORDER 				= 2;
@@ -107,7 +107,7 @@ public class ModelicaElementSorter extends ResourceSorter
      * @param criteria the sort criterion to use: one of <code>NAME</code> or 
      *   <code>TYPE</code>
      */
-    public ModelicaElementSorter(int criteria) 
+    public ModelicaElementComparator(int criteria) 
     {
         super(criteria);
         this.criteria = criteria;

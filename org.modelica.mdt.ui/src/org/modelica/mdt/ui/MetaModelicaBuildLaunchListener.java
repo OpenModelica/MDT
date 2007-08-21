@@ -9,6 +9,8 @@ import org.eclipse.core.resources.*;
 public class MetaModelicaBuildLaunchListener implements ILaunchListener
 {
 
+	public String User_count;
+	
 	public void launchAdded(ILaunch launch)
 	{
 		// TODO Auto-generated method stub
