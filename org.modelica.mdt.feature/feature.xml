@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.7.1"
+      version="0.7.2"
       provider-name="Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University">
 
    <description url="http://www.ida.liu.se/~pelab/modelica/">
