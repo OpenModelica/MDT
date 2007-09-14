@@ -338,7 +338,14 @@ public class ModelicaCodeResolver
 		{
 			/* try some other way */
 			IModelicaElement me = editor.getEditorInputModelicaElement();
-			file = me.getSourceFile();
+			if (me != null)
+			{
+				file = me.getSourceFile();
+			}
+			else
+			{
+				file = null;
+			}
 		}
 		else
 		{
