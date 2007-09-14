@@ -141,9 +141,10 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget, IBr
 		addEventListener(this);
 		boolean tryAgain = true;
 		int noOfTries = -1;
-		int maxNoOfTries = 3;
+		int maxNoOfTries = 100;
 		while (tryAgain)
 		{
+			try { Thread.sleep(500); } catch (InterruptedException e) {}
 			noOfTries++;
 			tryAgain = false;
 			try 
