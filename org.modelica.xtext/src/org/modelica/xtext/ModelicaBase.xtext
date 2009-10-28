@@ -1,0 +1,672 @@
+grammar org.modelica.xtext.ModelicaBase with org.eclipse.xtext.common.Terminals
+
+generate modelicaBase "http://www.modelica.org/xtext/ModelicaBase"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+/*
+ * Copyright (c) 2009 - currentYear, Adrian Pop [adrpo@ida.liu.se] 
+ * All rights reserved.
+ */
+
+  
+
+
+/*------------------------------------------------------------------
+ * PARSER RULES
+ *------------------------------------------------------------------*/
+
+StorageUnit:
+	('within' (name_path)? SEMICOLON)?
+	(('final')? classDefinition+=ClassDefinition ';')*
+	;
+
+EntityDefinition:
+	ClassDefinition | PartialDerivative | ClassModification | ClassOverloading | Enumeration ;
+
+ClassDefinition:
+	encapsulated?=('encapsulated')? partial?=('partial')? expandable?=('expandable')? 
+	classType=ClassType 
+	(name=IDENT comment=string_comment?
+    | 'extends' IDENT (modification=class_modification)? string_comment?)
+    elemList+=ElementList
+	(	elemList+=ElementList2
+		| initialEquationClauses+=initial_equation_rule_clause
+		| initialAlgorithmClauses+=initial_algorithm_clause
+		| equationClauses+=equation_rule_clause
+		| algorithmClauses+=algorithm_clause
+	)*
+	( extClause=external_clause )?
+    'end' IDENT
+	//| SUBTYPEOF type_specifier
+	;
+
+
+enum ClassType:
+	CLASS = 'class' | MODEL = 'model' | RECORD = 'record' | BLOCK = 'block' 
+	| CONNECTOR = 'connector' | TYPE = 'type' | PACKAGE = 'package' | FUNCTION = 'function'
+	;
+
+
+PartialDerivative:
+	'function' name=IDENT EQUALS 'der' '(' name_path ',' ident_list ')' comment=comment 
+	;
+
+ClassModification:
+	classType=ClassType name=IDENT EQUALS type_prefix typeSpecifier=type_specifier ( modification=class_modification )? comment=comment
+	;
+	
+ClassOverloading:
+	classType=ClassType name=IDENT EQUALS 'overload' '(' name_list ')' comment=comment
+	;
+	
+Enumeration:
+	classType=ClassType name=IDENT EQUALS 'enumeration' LPAR 
+	((ident+=IDENT enumComments+=comment ( COMMA ident+=IDENT  enumComments+=comment)* ) | COLON ) RPAR comment=comment
+	;
+
+ident_list :
+	IDENT (COMMA IDENT)*
+    ;
+
+
+name_list:
+	name_path (',' name_path)*
+	;
+
+external_clause returns ExternalClause:
+        'external'
+        ( languageSpecification=STRING )?
+        ( external_function_call )?
+        ( annotation=annotation )? SEMICOLON
+        ( extAnnotation=annotation SEMICOLON )?
+        ;
+
+
+external_function_call :
+	( component_reference EQUALS )?
+	IDENT LPAR ( expression_list )? RPAR
+	;
+
+ElementList:
+	((elements+=ClassElement | annotations+=annotation ) SEMICOLON)*
+	;
+
+ElementList2 returns ElementList:
+	'public' {PublicElementList} ((elements+=ClassElement | annotations+=annotation ) SEMICOLON)*
+	|  'protected' {ProtectesElementList}((elements+=ClassElement | annotations+=annotation ) SEMICOLON)*
+	;
+
+
+ClassElement:
+	  import_clause
+	| extends_clause
+	//| defineunit_clause
+	| ('redeclare')? ('final')? ('inner')? ('outer')?
+	( (ClassDefinition | component_clause) 
+	| ReplaceableElementClause
+	)
+	;
+
+ReplaceableElementClause:
+	('replaceable' entity=( ClassDefinition | component_clause ) (constrain=constraining_clause)?)
+	;
+
+import_clause returns ImportClause:
+	'import' (asName=IDENT EQUALS name=name_path | name=name_path_star) comment=comment
+	;
+
+/*
+defineunit_clause :
+	DEFINEUNIT IDENT (LPAR named_arguments RPAR)?		
+	;
+*/
+
+
+/*
+ * 2.2.3 Extends
+ */
+
+// Note that this is a minor modification of the standard by
+// allowing the comment.
+extends_clause returns ExtendsClause:
+	'extends' baseClass=name_path (modification=class_modification)? (annotation=annotation)?
+		;
+
+constraining_clause returns ConstrainingClause:
+	('extends' name=name_path  (modification=class_modification)? 
+	| 'constrainedby' name=name_path (modification=class_modification )?
+	) comment=comment
+	;
+
+/*
+ * 2.2.4 Component clause
+ */
+
+component_clause returns ComponentClause:
+	typePrefix=type_prefix typeSpecifier=type_specifier 
+	declarations+=component_declaration (COMMA declarations+=component_declaration)*
+	;
+
+type_prefix :
+	('flow'|'stream')? ('discrete'|'parameter'|'constant')? ('input'|'output')?
+	;
+
+type_specifier returns TypeSpecifier:
+	name=name_path
+	// TODO MML expr?
+	//((LESS type_specifier (COMMA type_specifier)* GREATER))?
+	(subscripts=array_subscripts)?
+	;
+
+component_declaration returns ComponentDeclaration:
+	IDENT (subscripts=array_subscripts)? (modification=modification)? ('if' condition=expression)? comment=comment
+	;
+
+/*
+ * 2.2.5 Modification
+ */
+
+modification returns Modification:
+	class_modification 
+	| SimpleModification
+	;
+
+SimpleModification :
+	EQUALS expression=expression | ASSIGN expression=expression
+	;
+
+class_modification returns ClassModification:
+	LPAR ( arguments+=argument ( COMMA arguments+=argument )* )? RPAR ( EQUALS expression=expression )?
+	;
+
+argument  :
+	('each')? ('final')? (ElementModification | ElementReplaceableClause)
+	| ElementRedeclaration
+	;
+
+ElementModification:
+	componetRef=component_reference ( modification=modification )? comment=string_comment?
+	;
+
+ElementRedeclaration :
+	'redeclare' ( 'each' )? ('final')?
+	( (ClassDefinition | ElementComponentClause) | ElementReplaceableClause )
+	;
+
+ElementReplaceableClause:
+        'replaceable' element=( ClassDefinition | ElementComponentClause ) (constraint=constraining_clause)?
+	;
+	
+ElementComponentClause :
+	typePrefix=type_prefix typeSpecifier=type_specifier IDENT (subscripts=array_subscripts)? 
+	(modification=modification)? comment=comment
+	;
+
+
+/*
+ * 2.2.6 Equations
+ */
+
+
+equation_rule_clause returns EquationClause:
+	'equation' (equationRules+=equation_rule SEMICOLON | annotations+=annotation SEMICOLON)+
+  	;
+
+algorithm_clause :
+	'algorithm' ( algorithmRules+=algorithm SEMICOLON | annotations+=annotation SEMICOLON)+
+	;
+
+initial_equation_rule_clause :
+	'initial' equation_rule_clause
+	;
+
+initial_algorithm_clause :
+	'initial' algorithm_clause
+	;
+
+equation_rule :
+	( equality_equation_rule	 
+	| conditional_equation_rule_e
+	| for_clause_e
+	| connect_clause
+	| when_clause_e   
+	//| FAILURE LPAR equation_rule RPAR
+	//| EQUALITY LPAR equation_rule RPAR
+	)
+	comment=comment
+	;
+
+algorithm :
+	( assign_clause_a
+	| conditional_equation_rule_a
+	| for_clause_a
+	| while_clause
+	| when_clause_a
+	| 'break'
+	| 'return'
+	//| FAILURE LPAR algorithm RPAR
+	//| EQUALITY LPAR algorithm RPAR
+	)
+	comment=comment
+	;
+
+assign_clause_a :          		  
+	simple_expression 
+	( ASSIGN expression  | EQUALS expression )?  
+	;
+
+equality_equation_rule :		  
+	simple_expression ( EQUALS expression )? 		
+	;
+
+conditional_equation_rule_e returns ConditionalEquationRule:
+	'if' expression 'then' (thenEquationClauses+=equation_rule SEMICOLON)* 
+	( elseifClauses+=equation_rule_elseif )* 
+	( 'else' (elseEquationClauses+=equation_rule SEMICOLON)* )? 'end' 'if'
+	;
+
+conditional_equation_rule_a returns ConditionAlgorithmRule:
+	'if' condition=expression 'then' (thenAlgorithmClauses+=algorithm SEMICOLON)* 
+	( elseifClauses+=algorithm_elseif )* 
+	( 'else' (elseAlgotithmClauses+=algorithm SEMICOLON)* )? 'end' 'if'
+	;
+
+for_clause_e returns ForEquationClause:
+	'for' forIndices=for_indices 'loop' (equationClauses+=equation_rule SEMICOLON)* 'end' 'for'
+	;
+
+for_clause_a returns ForAlgorithmClause:
+	'for' forIndices=for_indices 'loop' (algorithmClauses+=algorithm SEMICOLON)* 'end' 'for'
+	;
+
+while_clause returns WhileClause:
+	'while' condition=expression 'loop' (algorithmClauses+=algorithm SEMICOLON)* 'end' 'while'
+	;
+
+when_clause_e :
+	'when' condition=expression 'then' (thenEquationClauses+=equation_rule SEMICOLON)* 
+	(elseWhenClauses+=else_when_e)* 'end' 'when'
+	;
+
+else_when_e :
+	'elsewhen' condition=expression 'then' (thenEquationClauses+=equation_rule SEMICOLON)*
+	;
+
+when_clause_a :
+	'when' condition=expression 'then' (thenAlgorithmClauses+=equation_rule SEMICOLON)* 
+	(elseWhenClauses+=else_when_a)* 'end' 'when'
+	;
+
+else_when_a :
+	'elsewhen' condition=expression 'then' (thenAlgorithmClauses+=equation_rule SEMICOLON)*
+	;
+
+equation_rule_elseif :
+	'elseif' condition=expression 'then' (thenEquationClauses+=equation_rule SEMICOLON)*
+	;
+
+algorithm_elseif :
+	'elseif' condition=expression 'then' (thenAlgorithmClauses+=equation_rule SEMICOLON)*
+	;
+
+connect_clause :
+	'connect' LPAR connector_ref COMMA connector_ref RPAR
+	;
+
+connector_ref :
+	IDENT ( array_subscripts )? ( DOT connector_ref_2 )?
+	;
+
+connector_ref_2 :
+	IDENT ( array_subscripts )?
+	;
+
+/*
+ * 2.2.7 Expressions
+ */
+expression :
+	( if_expression
+	| simple_expression
+	//| code_expression
+	/*| (MATCHCONTINUE expression_or_empty
+	   local_clause
+	   cases
+	   T_END MATCHCONTINUE)
+	| (MATCH expression_or_empty
+	   local_clause
+	   cases
+	   T_END MATCH)
+	   */
+	)
+	;
+
+expression_or_empty :
+	expression
+	| LPAR RPAR
+	;
+
+/*
+// The element_list is now modified
+local_clause:
+	(LOCAL element_list)?
+	;
+
+cases:
+	(onecase)+ (ELSE string_comment local_clause (EQUATION equation_rule_list_then)?
+	THEN expression_or_empty SEMICOLON)?
+	;
+
+onecase:
+	(CASE pattern string_comment local_clause (EQUATION equation_rule_list_then)?
+	THEN expression_or_empty SEMICOLON)
+	;
+
+pattern:
+	expression_or_empty
+	;
+*/
+
+if_expression :
+	'if' expression 'then' expression (elseif_expression)* 'else' expression
+	;
+
+elseif_expression :
+	'elseif' expression 'then' expression
+	;
+
+for_indices :
+        for_index (COMMA for_index)*
+	;
+
+for_index:
+        (IDENT ('in' expression)?)
+	;
+
+simple_expression :
+	  simple_expr 
+	//(COLONCOLON simple_expr)*
+	//| IDENT AS simple_expression
+	;
+
+simple_expr :
+	logical_expression ( COLON logical_expression ( COLON logical_expression )? )?
+	;
+
+/* Code quotation mechanism */
+/*
+code_expression  :
+	CODE LPAR ((expression RPAR)=> e=expression | m=modification | el=element (SEMICOLON)?
+	| eq=code_equation_rule_clause | ieq=code_initial_equation_rule_clause
+	| alg=code_algorithm_clause | ialg=code_initial_algorithm_clause
+	)  RPAR
+	;
+
+code_equation_rule_clause :
+	( EQUATION ( equation_rule SEMICOLON | annotation SEMICOLON )*  )
+	;
+
+code_initial_equation_rule_clause :
+	{ LA(2)==EQUATION }?
+	INITIAL ec=code_equation_rule_clause 
+	;
+
+code_algorithm_clause :
+	'algorithm' (algorithm SEMICOLON | annotation SEMICOLON)*
+	;
+
+code_initial_algorithm_clause :
+	{ LA(2) == 'algorithm' }?
+	INITIAL 'algorithm'
+	( algorithm SEMICOLON | annotation SEMICOLON )* 
+	;
+*/
+/* End Code quotation mechanism */
+
+logical_expression :
+	logical_term   ( 'or' logical_term )*
+	;
+
+logical_term :
+	logical_factor ( 'and' logical_factor )*
+	;
+
+logical_factor :
+	( 'not' )? relation
+	;
+
+relation :
+	arithmetic_expression 
+	( ( LESS | LESSEQ | GREATER | GREATEREQ | EQEQ | LESSGT ) arithmetic_expression )?
+	;
+
+arithmetic_expression :
+	unary_arithmetic_expression ( ( PLUS | MINUS | PLUS_EW | MINUS_EW ) term )*
+	;
+
+unary_arithmetic_expression  :
+	( PLUS term     
+	| MINUS term	   
+	| PLUS_EW term  
+	| MINUS_EW term 
+	| term          
+	)
+	;
+
+term :
+	factor ( ( STAR | SLASH | STAR_EW | SLASH_EW ) factor )*
+	;
+
+factor :
+	primary ( ( POWER | POWER_EW ) primary )?
+	;
+
+primary :
+	( UNSIGNED_INTEGER
+	| UNSIGNED_REAL
+	| STRING
+	| 'false'
+	| 'true'
+	| component_reference__function_call
+    | 'der' function_call
+	| LPAR expression_list RPAR
+	| LBRACK expression_list (SEMICOLON expression_list)* RBRACK
+	| LBRACE for_or_expression_list RBRACE
+	| 'end'
+	)
+	;
+
+component_reference__function_call  :
+	component_reference ( function_call )?
+	| 'initial' LPAR RPAR  
+	;
+
+name_path :
+	//{ LA(2)!=DOT }? 
+	IDENT | 
+	IDENT DOT name_path
+	;
+
+name_path_star 
+	:
+	//{ LA(2) != DOT }? 
+	IDENT ( STAR_EW )?| 
+	IDENT DOT name_path_star 
+	;
+
+component_reference :
+	  IDENT ( array_subscripts )? ( DOT component_reference )?
+	//| WILD
+	;
+
+function_call :
+	LPAR (function_arguments) RPAR 
+	;
+
+function_arguments :
+	(for_or_expression_list)? (named_arguments) ?
+	;
+
+for_or_expression_list :
+	//({LA(1)==IDENT && LA(2) == EQUALS || LA(1) == RPAR || LA(1) == RBRACE}?|
+	(expression ( COMMA for_or_expression_list2? | 'for' for_indices)? )
+	;
+
+for_or_expression_list2 :
+	// {LA(2) == EQUALS}? |
+	expression (COMMA for_or_expression_list2)?
+	;
+
+named_arguments :
+	named_arguments2 
+	;
+
+named_arguments2 :
+	named_argument (COMMA named_argument)*
+	;
+
+named_argument :
+	IDENT EQUALS expression
+	;
+
+expression_list :
+	expression_list2 
+	;
+
+expression_list2 :
+	expression (COMMA expression_list2)?
+	;
+
+array_subscripts :
+	LBRACK subscript ( COMMA subscript )* RBRACK
+	;
+
+subscript :
+	expression | COLON
+	;
+
+comment returns Comment:
+	string=string_comment? annotation=annotation? 
+	;
+
+string_comment :
+	 STRING (PLUS STRING)*
+	;
+
+annotation returns Annotation:
+	'annotation' class_modification
+	;
+
+
+
+/*------------------------------------------------------------------
+ * LEXER RULES
+ *------------------------------------------------------------------*/
+
+/* Keywords */
+
+//terminal T_ALGORITHM	: 'algorithm'	;
+//terminal T_AND		: 'and'		;
+//terminal T_ANNOTATION	: 'annotation'	;
+//terminal BLOCK		: 'block'	;
+//terminal CODE		: 'Code'	;
+//terminal   CLASS		: 'class'	;
+/*
+terminal CONNECT	: 'connect'	;
+terminal CONNECTOR	: 'connector'	;
+terminal   CONSTANT	: 'constant'	;
+terminal   DISCRETE	: 'discrete'	;
+terminal   DER           : 'der' 	;
+terminal   EACH		: 'each'	;
+terminal   ELSE		: 'else'	;
+terminal   ELSEIF	: 'elseif'	;
+terminal   ELSEWHEN	: 'elsewhen'	;
+terminal   T_END		: 'end'		;
+terminal   ENUMERATION	: 'enumeration'	;
+terminal   EQUATION	: 'equation'	;
+terminal   ENCAPSULATED	: 'encapsulated';
+terminal   EXPANDABLE	: 'expandable'  ;
+terminal   EXTENDS	: 'extends'     ;
+terminal   CONSTRAINEDBY : 'constrainedby' ;
+terminal   EXTERNAL	: 'external'	;
+terminal   T_FALSE	: 'false'	;
+//terminal   FINAL		: 'final'	;
+terminal   FLOW		: 'flow'	;
+terminal   FOR		: 'for'		;
+terminal   FUNCTION	: 'function'	;
+terminal   IF		: 'if'		;
+terminal   IMPORT	: 'import'	;
+terminal   T_IN		: 'in'		;
+terminal   INITIAL	: 'initial'	;
+terminal   INNER		: 'inner'	;
+terminal   T_INPUT	: 'input'	;
+terminal   LOOP		: 'loop'	;
+terminal   MODEL		: 'model'	;
+terminal   T_NOT		: 'not'		;
+terminal   T_OUTER	: 'outer'	;
+terminal   OVERLOAD	: 'overload'	;
+terminal   T_OR		: 'or'		;
+terminal   T_OUTPUT	: 'output'	;
+terminal   PACKAGE	: 'package'	;
+terminal   PARAMETER	: 'parameter'	;
+terminal   PARTIAL	: 'partial'	;
+terminal   PROTECTED	: 'protected'	;
+terminal   PUBLIC	: 'public'	;
+terminal   RECORD	: 'record'	;
+terminal   REDECLARE	: 'redeclare'	;
+terminal   REPLACEABLE	: 'replaceable'	;
+terminal   RESULTS	: 'results'	;
+terminal   THEN		: 'then'	;
+terminal   T_TRUE	: 'true'	;
+terminal   TYPE		: 'type'	;
+terminal   WHEN		: 'when'	;
+terminal   WHILE		: 'while'	;
+terminal   WITHIN	: 'within' 	;
+terminal   RETURN	: 'return'  ;
+terminal   BREAK		: 'break'	;
+terminal   STREAM	: 'stream'	; /* for Modelica 3.1 stream connectors */	
+
+  // ---------
+  // Operators
+  // ---------
+  
+terminal 	DOT		: '.'           ;  
+terminal  LPAR		: '('		;
+terminal   RPAR		: ')'		;
+terminal   LBRACK	: '['		;
+terminal   RBRACK	: ']'		;
+terminal   LBRACE	: '{'		;
+terminal   RBRACE	: '}'		;
+terminal   EQUALS	: '='		;
+terminal   ASSIGN	: ':='		;
+terminal   COMMA		: ','		;
+terminal   COLON		: ':'		;
+terminal   SEMICOLON	: ';'		;
+  /* elementwise operators */  
+terminal   PLUS_EW     	: '.+'  	; /* Modelica 3.0 */
+terminal   MINUS_EW    	: '.-'     	; /* Modelica 3.0 */    
+terminal   STAR_EW     	: '.*'     	; /* Modelica 3.0 */
+terminal   SLASH_EW    	: './'		; /* Modelica 3.0 */  
+terminal   POWER_EW    	: '.^' 		; /* Modelica 3.0 */
+  
+terminal STAR		: '*'('.')? 				;
+terminal MINUS		: '-'('.')?					;
+terminal PLUS		: '+'('.'|'&')?				; 
+terminal LESS		: '<'('.')?					;
+terminal LESSEQ		: '<='('.')?				;
+terminal LESSGT		: '!='('.')?|'<>'('.')?		;
+terminal GREATER		: '>'('.')?					;
+terminal GREATEREQ	: '>='('.')?				;
+terminal EQEQ		: '=='('.'|'&')?			;
+terminal POWER		: '^'('.')?					;
+terminal SLASH		: '/'('.')?					;
+
+terminal UNSIGNED_REAL:
+	(('0'..'9')+ '.' ('0'..'9')* (('E'|'e') ('+'|'-')? ('0'..'9')+)? )
+	|(('0'..'9')+ ('E'|'e') ('+'|'-')? ('0'..'9')+) 
+	;
+
+terminal UNSIGNED_INTEGER:
+	('0'..'9')+
+	;
+
+terminal IDENT : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;

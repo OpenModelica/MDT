@@ -1,0 +1,17 @@
+/*
+ * This check file is used to specify constraints for the derived metamodels.
+ * They will be executed by the editor when the user saves a file.
+ * At generation time they will be executed as well.
+ *
+ * Example:
+ *
+ * import myDsl;
+ *
+ * context Class WARNING "Name should start with a capital" :
+ *    name.toFirstUpper() == name;
+ */
+
+import ModelicaBase
+
+//context ModelicaClass ERROR "Package can not have any component clauses (declarations)":
+	

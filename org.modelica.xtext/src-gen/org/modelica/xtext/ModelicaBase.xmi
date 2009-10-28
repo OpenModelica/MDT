@@ -1,0 +1,2026 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:xtext="http://www.eclipse.org/2008/Xtext">
+  <xtext:Grammar name="org.modelica.xtext.ModelicaBase" usedGrammars="/1">
+    <metamodelDeclarations xsi:type="xtext:GeneratedMetamodel" name="modelicaBase">
+      <ePackage href="http://www.modelica.org/xtext/ModelicaBase#/"/>
+    </metamodelDeclarations>
+    <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ecore">
+      <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    </metamodelDeclarations>
+    <rules xsi:type="xtext:ParserRule" name="StorageUnit">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//StorageUnit"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value="within"/>
+          <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.71"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="final"/>
+          <tokens xsi:type="xtext:Assignment" feature="classDefinition" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.2"/>
+          </tokens>
+          <tokens xsi:type="xtext:Keyword" value=";"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="EntityDefinition">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//EntityDefinition"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.2"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.4"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.5"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.6"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.7"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ClassDefinition">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ClassDefinition"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="encapsulated" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="encapsulated"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="partial" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="partial"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="expandable" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="expandable"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="classType" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.3"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+            </tokens>
+            <tokens xsi:type="xtext:Assignment" cardinality="?" feature="comment" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.86"/>
+            </tokens>
+          </groups>
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Keyword" value="extends"/>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+            <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.25"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.86"/>
+          </groups>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="elemList" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.12"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives" cardinality="*">
+          <groups xsi:type="xtext:Assignment" feature="elemList" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.13"/>
+          </groups>
+          <groups xsi:type="xtext:Assignment" feature="initialEquationClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.33"/>
+          </groups>
+          <groups xsi:type="xtext:Assignment" feature="initialAlgorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.34"/>
+          </groups>
+          <groups xsi:type="xtext:Assignment" feature="equationClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.31"/>
+          </groups>
+          <groups xsi:type="xtext:Assignment" feature="algorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.32"/>
+          </groups>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="extClause" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.10"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:EnumRule" name="ClassType">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EEnum" href="http://www.modelica.org/xtext/ModelicaBase#//ClassType"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/CLASS"/>
+          <literal value="class"/>
+        </groups>
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/MODEL"/>
+          <literal value="model"/>
+        </groups>
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/RECORD"/>
+          <literal value="record"/>
+        </groups>
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/BLOCK"/>
+          <literal value="block"/>
+        </groups>
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/CONNECTOR"/>
+          <literal value="connector"/>
+        </groups>
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/TYPE"/>
+          <literal value="type"/>
+        </groups>
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/PACKAGE"/>
+          <literal value="package"/>
+        </groups>
+        <groups xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.modelica.org/xtext/ModelicaBase#//ClassType/FUNCTION"/>
+          <literal value="function"/>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="PartialDerivative">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//PartialDerivative"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="function"/>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+        <tokens xsi:type="xtext:Keyword" value="der"/>
+        <tokens xsi:type="xtext:Keyword" value="("/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.8"/>
+        <tokens xsi:type="xtext:Keyword" value=")"/>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ClassModification">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ClassModification"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="classType" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.3"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.20"/>
+        <tokens xsi:type="xtext:Assignment" feature="typeSpecifier" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.21"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.25"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ClassOverloading">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ClassOverloading"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="classType" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.3"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+        <tokens xsi:type="xtext:Keyword" value="overload"/>
+        <tokens xsi:type="xtext:Keyword" value="("/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.9"/>
+        <tokens xsi:type="xtext:Keyword" value=")"/>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="Enumeration">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//Enumeration"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="classType" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.3"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+        <tokens xsi:type="xtext:Keyword" value="enumeration"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Assignment" feature="ident" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+            </tokens>
+            <tokens xsi:type="xtext:Assignment" feature="enumComments" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+            </tokens>
+            <tokens xsi:type="xtext:Group" cardinality="*">
+              <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+              <tokens xsi:type="xtext:Assignment" feature="ident" operator="+=">
+                <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+              </tokens>
+              <tokens xsi:type="xtext:Assignment" feature="enumComments" operator="+=">
+                <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+              </tokens>
+            </tokens>
+          </groups>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.98"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ident_list">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="name_list">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value=","/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="external_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ExternalClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="external"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="languageSpecification" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.2"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.11"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="annotation" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Assignment" feature="extAnnotation" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="external_function_call">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.73"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+        <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.81"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ElementList">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ElementList"/>
+      </type>
+      <alternatives xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Assignment" feature="elements" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.14"/>
+          </groups>
+          <groups xsi:type="xtext:Assignment" feature="annotations" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+          </groups>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ElementList2">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ElementList"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="public"/>
+          <tokens xsi:type="xtext:Action">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//PublicElementList"/>
+            </type>
+          </tokens>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:Alternatives">
+              <groups xsi:type="xtext:Assignment" feature="elements" operator="+=">
+                <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.14"/>
+              </groups>
+              <groups xsi:type="xtext:Assignment" feature="annotations" operator="+=">
+                <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+              </groups>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="protected"/>
+          <tokens xsi:type="xtext:Action">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ProtectesElementList"/>
+            </type>
+          </tokens>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:Alternatives">
+              <groups xsi:type="xtext:Assignment" feature="elements" operator="+=">
+                <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.14"/>
+              </groups>
+              <groups xsi:type="xtext:Assignment" feature="annotations" operator="+=">
+                <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+              </groups>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </tokens>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ClassElement">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ClassElement"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.17"/>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="redeclare"/>
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="final"/>
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="inner"/>
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="outer"/>
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:Alternatives">
+              <groups xsi:type="xtext:RuleCall" rule="/0/@rules.2"/>
+              <groups xsi:type="xtext:RuleCall" rule="/0/@rules.19"/>
+            </groups>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.15"/>
+          </tokens>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ReplaceableElementClause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ReplaceableElementClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="replaceable"/>
+        <tokens xsi:type="xtext:Assignment" feature="entity" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.2"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.19"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="constrain" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.18"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="import_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ImportClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="import"/>
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Assignment" feature="asName" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+            <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+            </tokens>
+          </groups>
+          <groups xsi:type="xtext:Assignment" feature="name" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.72"/>
+          </groups>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="extends_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ExtendsClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="extends"/>
+        <tokens xsi:type="xtext:Assignment" feature="baseClass" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.25"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="annotation" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="constraining_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ConstrainingClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Keyword" value="extends"/>
+            <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+            </tokens>
+            <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.25"/>
+            </tokens>
+          </groups>
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Keyword" value="constrainedby"/>
+            <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+            </tokens>
+            <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.25"/>
+            </tokens>
+          </groups>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="component_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ComponentClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="typePrefix" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.20"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="typeSpecifier" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.21"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="declarations" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.22"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+          <tokens xsi:type="xtext:Assignment" feature="declarations" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.22"/>
+          </tokens>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="type_prefix">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Keyword" value="flow"/>
+          <groups xsi:type="xtext:Keyword" value="stream"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Keyword" value="discrete"/>
+          <groups xsi:type="xtext:Keyword" value="parameter"/>
+          <groups xsi:type="xtext:Keyword" value="constant"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Keyword" value="input"/>
+          <groups xsi:type="xtext:Keyword" value="output"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="type_specifier">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//TypeSpecifier"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="subscripts" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.83"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="component_declaration">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ComponentDeclaration"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="subscripts" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.83"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.23"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value="if"/>
+          <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="modification">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//Modification"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.25"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.24"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="SimpleModification">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//SimpleModification"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+          <tokens xsi:type="xtext:Assignment" feature="expression" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.96"/>
+          <tokens xsi:type="xtext:Assignment" feature="expression" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+          </tokens>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="class_modification">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ClassModification"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Assignment" feature="arguments" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.26"/>
+          </tokens>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+            <tokens xsi:type="xtext:Assignment" feature="arguments" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.26"/>
+            </tokens>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+          <tokens xsi:type="xtext:Assignment" feature="expression" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+          </tokens>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="argument">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//argument"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="each"/>
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="final"/>
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.27"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.29"/>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.28"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ElementModification">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ElementModification"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="componetRef" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.73"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.23"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.86"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ElementRedeclaration">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ElementRedeclaration"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="redeclare"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="each"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="final"/>
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.2"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.30"/>
+          </groups>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.29"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ElementReplaceableClause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ElementReplaceableClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="replaceable"/>
+        <tokens xsi:type="xtext:Assignment" feature="element" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.2"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.30"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="constraint" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.18"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ElementComponentClause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ElementComponentClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="typePrefix" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.20"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="typeSpecifier" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.21"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="subscripts" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.83"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.23"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="equation_rule_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//EquationClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="equation"/>
+        <tokens xsi:type="xtext:Alternatives" cardinality="+">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Assignment" feature="equationRules" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </groups>
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Assignment" feature="annotations" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </groups>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="algorithm_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//algorithm_clause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="algorithm"/>
+        <tokens xsi:type="xtext:Alternatives" cardinality="+">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Assignment" feature="algorithmRules" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.36"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </groups>
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Assignment" feature="annotations" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </groups>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="initial_equation_rule_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//initial_equation_rule_clause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="initial"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.31"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="initial_algorithm_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//initial_algorithm_clause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="initial"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.32"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="equation_rule">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//equation_rule"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.38"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.39"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.41"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.50"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.44"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="algorithm">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//algorithm"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.37"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.40"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.42"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.43"/>
+          <groups xsi:type="xtext:RuleCall" rule="/0/@rules.46"/>
+          <groups xsi:type="xtext:Keyword" value="break"/>
+          <groups xsi:type="xtext:Keyword" value="return"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.85"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="assign_clause_a">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.59"/>
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.96"/>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+          </groups>
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+          </groups>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="equality_equation_rule">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.59"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="conditional_equation_rule_e">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ConditionalEquationRule"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="if"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenEquationClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseifClauses" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.48"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value="else"/>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:Assignment" feature="elseEquationClauses" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:Keyword" value="if"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="conditional_equation_rule_a">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ConditionAlgorithmRule"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="if"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenAlgorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.36"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseifClauses" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.49"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value="else"/>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:Assignment" feature="elseAlgotithmClauses" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.36"/>
+            </tokens>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:Keyword" value="if"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="for_clause_e">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ForEquationClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="for"/>
+        <tokens xsi:type="xtext:Assignment" feature="forIndices" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.57"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="loop"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="equationClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:Keyword" value="for"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="for_clause_a">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//ForAlgorithmClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="for"/>
+        <tokens xsi:type="xtext:Assignment" feature="forIndices" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.57"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="loop"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="algorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.36"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:Keyword" value="for"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="while_clause">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//WhileClause"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="while"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="loop"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="algorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.36"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:Keyword" value="while"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="when_clause_e">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//when_clause_e"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="when"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenEquationClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseWhenClauses" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.45"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:Keyword" value="when"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="else_when_e">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//else_when_e"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="elsewhen"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenEquationClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="when_clause_a">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//when_clause_a"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="when"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenAlgorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseWhenClauses" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.47"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="end"/>
+        <tokens xsi:type="xtext:Keyword" value="when"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="else_when_a">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//else_when_a"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="elsewhen"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenAlgorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="equation_rule_elseif">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//equation_rule_elseif"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="elseif"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenEquationClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="algorithm_elseif">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//algorithm_elseif"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="elseif"/>
+        <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Assignment" feature="thenAlgorithmClauses" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.35"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="connect_clause">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="connect"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.51"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.51"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="connector_ref">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.83"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.88"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.52"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="connector_ref_2">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.83"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="expression">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.55"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.59"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="expression_or_empty">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="if_expression">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="if"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <tokens xsi:type="xtext:RuleCall" cardinality="*" rule="/0/@rules.56"/>
+        <tokens xsi:type="xtext:Keyword" value="else"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="elseif_expression">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="elseif"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <tokens xsi:type="xtext:Keyword" value="then"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="for_indices">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.58"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.58"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="for_index">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value="in"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="simple_expression">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:RuleCall" rule="/0/@rules.60"/>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="simple_expr">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.61"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.98"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.61"/>
+          <tokens xsi:type="xtext:Group" cardinality="?">
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.98"/>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.61"/>
+          </tokens>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="logical_expression">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.62"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value="or"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.62"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="logical_term">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.63"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value="and"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.63"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="logical_factor">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="not"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.64"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="relation">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.65"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.108"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.109"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.111"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.112"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.113"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.110"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.65"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="arithmetic_expression">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.66"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.107"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.106"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.100"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.101"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.67"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="unary_arithmetic_expression">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.107"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.67"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.106"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.67"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.100"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.67"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.101"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.67"/>
+        </groups>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.67"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="term">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.68"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.105"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.115"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.102"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.103"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.68"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="factor">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.69"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.114"/>
+            <groups xsi:type="xtext:RuleCall" rule="/0/@rules.104"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.69"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="primary">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.117"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.116"/>
+        <groups xsi:type="xtext:RuleCall" rule="/1/@rules.2"/>
+        <groups xsi:type="xtext:Keyword" value="false"/>
+        <groups xsi:type="xtext:Keyword" value="true"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.70"/>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="der"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.74"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.81"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.91"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.81"/>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.99"/>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.81"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.92"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.93"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.76"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.94"/>
+        </groups>
+        <groups xsi:type="xtext:Keyword" value="end"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="component_reference__function_call">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.73"/>
+          <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.74"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="initial"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="name_path">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.88"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.71"/>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="name_path_star">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+          <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.102"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.88"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.72"/>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="component_reference">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.83"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.88"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.73"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="function_call">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.89"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.75"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.90"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="function_arguments">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.76"/>
+        <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.78"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="for_or_expression_list">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+            <tokens xsi:type="xtext:RuleCall" cardinality="?" rule="/0/@rules.77"/>
+          </groups>
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Keyword" value="for"/>
+            <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.57"/>
+          </groups>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="for_or_expression_list2">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.77"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="named_arguments">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:RuleCall" rule="/0/@rules.79"/>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="named_arguments2">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.80"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.80"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="named_argument">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.118"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.95"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="expression_list">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:RuleCall" rule="/0/@rules.82"/>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="expression_list2">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.82"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="array_subscripts">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.91"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.84"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.97"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.84"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.92"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="subscript">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.53"/>
+        <groups xsi:type="xtext:RuleCall" rule="/0/@rules.98"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="comment">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//Comment"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="string" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.86"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="annotation" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.87"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="string_comment">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:RuleCall" rule="/1/@rules.2"/>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.107"/>
+          <tokens xsi:type="xtext:RuleCall" rule="/1/@rules.2"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="annotation">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.modelica.org/xtext/ModelicaBase#//Annotation"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="annotation"/>
+        <tokens xsi:type="xtext:RuleCall" rule="/0/@rules.25"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="DOT">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="."/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="LPAR">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="("/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="RPAR">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=")"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="LBRACK">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="["/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="RBRACK">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="]"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="LBRACE">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="{"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="RBRACE">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="}"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="EQUALS">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="="/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="ASSIGN">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=":="/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="COMMA">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=","/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="COLON">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=":"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="SEMICOLON">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=";"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="PLUS_EW">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=".+"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="MINUS_EW">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=".-"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="STAR_EW">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=".*"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="SLASH_EW">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value="./"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="POWER_EW">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Keyword" value=".^"/>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="STAR">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="*"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="MINUS">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="-"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="PLUS">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="+"/>
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Keyword" value="."/>
+          <groups xsi:type="xtext:Keyword" value="&amp;"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="LESS">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="&lt;"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="LESSEQ">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="&lt;="/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="LESSGT">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="!="/>
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="&lt;>"/>
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="GREATER">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value=">"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="GREATEREQ">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value=">="/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="EQEQ">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="=="/>
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Keyword" value="."/>
+          <groups xsi:type="xtext:Keyword" value="&amp;"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="POWER">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="^"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="SLASH">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="/"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="UNSIGNED_REAL">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+            <left value="0"/>
+            <right value="9"/>
+          </tokens>
+          <tokens xsi:type="xtext:Keyword" value="."/>
+          <tokens xsi:type="xtext:CharacterRange" cardinality="*">
+            <left value="0"/>
+            <right value="9"/>
+          </tokens>
+          <tokens xsi:type="xtext:Group" cardinality="?">
+            <tokens xsi:type="xtext:Alternatives">
+              <groups xsi:type="xtext:Keyword" value="E"/>
+              <groups xsi:type="xtext:Keyword" value="e"/>
+            </tokens>
+            <tokens xsi:type="xtext:Alternatives" cardinality="?">
+              <groups xsi:type="xtext:Keyword" value="+"/>
+              <groups xsi:type="xtext:Keyword" value="-"/>
+            </tokens>
+            <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+              <left value="0"/>
+              <right value="9"/>
+            </tokens>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+            <left value="0"/>
+            <right value="9"/>
+          </tokens>
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:Keyword" value="E"/>
+            <groups xsi:type="xtext:Keyword" value="e"/>
+          </tokens>
+          <tokens xsi:type="xtext:Alternatives" cardinality="?">
+            <groups xsi:type="xtext:Keyword" value="+"/>
+            <groups xsi:type="xtext:Keyword" value="-"/>
+          </tokens>
+          <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+            <left value="0"/>
+            <right value="9"/>
+          </tokens>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="UNSIGNED_INTEGER">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:CharacterRange" cardinality="+">
+        <left value="0"/>
+        <right value="9"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="IDENT">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </groups>
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </groups>
+          <groups xsi:type="xtext:Keyword" value="_"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives" cardinality="*">
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </groups>
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </groups>
+          <groups xsi:type="xtext:Keyword" value="_"/>
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="0"/>
+            <right value="9"/>
+          </groups>
+        </tokens>
+      </alternatives>
+    </rules>
+  </xtext:Grammar>
+  <xtext:Grammar name="org.eclipse.xtext.common.Terminals" definesHiddenTokens="true" hiddenTokens="/1/@rules.5 /1/@rules.3 /1/@rules.4">
+    <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ecore">
+      <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    </metamodelDeclarations>
+    <rules xsi:type="xtext:TerminalRule" name="ID">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="^"/>
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </groups>
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </groups>
+          <groups xsi:type="xtext:Keyword" value="_"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives" cardinality="*">
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </groups>
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </groups>
+          <groups xsi:type="xtext:Keyword" value="_"/>
+          <groups xsi:type="xtext:CharacterRange">
+            <left value="0"/>
+            <right value="9"/>
+          </groups>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="INT">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      </type>
+      <alternatives xsi:type="xtext:CharacterRange" cardinality="+">
+        <left value="0"/>
+        <right value="9"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="STRING">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="&quot;"/>
+          <tokens xsi:type="xtext:Alternatives" cardinality="*">
+            <groups xsi:type="xtext:Group">
+              <tokens xsi:type="xtext:Keyword" value="\"/>
+              <tokens xsi:type="xtext:Alternatives">
+                <groups xsi:type="xtext:Keyword" value="b"/>
+                <groups xsi:type="xtext:Keyword" value="t"/>
+                <groups xsi:type="xtext:Keyword" value="n"/>
+                <groups xsi:type="xtext:Keyword" value="f"/>
+                <groups xsi:type="xtext:Keyword" value="r"/>
+                <groups xsi:type="xtext:Keyword" value="&quot;"/>
+                <groups xsi:type="xtext:Keyword" value="'"/>
+                <groups xsi:type="xtext:Keyword" value="\"/>
+              </tokens>
+            </groups>
+            <groups xsi:type="xtext:NegatedToken">
+              <terminal xsi:type="xtext:Alternatives">
+                <groups xsi:type="xtext:Keyword" value="\"/>
+                <groups xsi:type="xtext:Keyword" value="&quot;"/>
+              </terminal>
+            </groups>
+          </tokens>
+          <tokens xsi:type="xtext:Keyword" value="&quot;"/>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="'"/>
+          <tokens xsi:type="xtext:Alternatives" cardinality="*">
+            <groups xsi:type="xtext:Group">
+              <tokens xsi:type="xtext:Keyword" value="\"/>
+              <tokens xsi:type="xtext:Alternatives">
+                <groups xsi:type="xtext:Keyword" value="b"/>
+                <groups xsi:type="xtext:Keyword" value="t"/>
+                <groups xsi:type="xtext:Keyword" value="n"/>
+                <groups xsi:type="xtext:Keyword" value="f"/>
+                <groups xsi:type="xtext:Keyword" value="r"/>
+                <groups xsi:type="xtext:Keyword" value="&quot;"/>
+                <groups xsi:type="xtext:Keyword" value="'"/>
+                <groups xsi:type="xtext:Keyword" value="\"/>
+              </tokens>
+            </groups>
+            <groups xsi:type="xtext:NegatedToken">
+              <terminal xsi:type="xtext:Alternatives">
+                <groups xsi:type="xtext:Keyword" value="\"/>
+                <groups xsi:type="xtext:Keyword" value="'"/>
+              </terminal>
+            </groups>
+          </tokens>
+          <tokens xsi:type="xtext:Keyword" value="'"/>
+        </groups>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="ML_COMMENT">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="/*"/>
+        <tokens xsi:type="xtext:UntilToken">
+          <terminal xsi:type="xtext:Keyword" value="*/"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="SL_COMMENT">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="//"/>
+        <tokens xsi:type="xtext:NegatedToken" cardinality="*">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:Keyword" value="&#xA;"/>
+            <groups xsi:type="xtext:Keyword" value="&#xD;"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" cardinality="?" value="&#xD;"/>
+          <tokens xsi:type="xtext:Keyword" value="&#xA;"/>
+        </tokens>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="WS">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives" cardinality="+">
+        <groups xsi:type="xtext:Keyword" value=" "/>
+        <groups xsi:type="xtext:Keyword" value="&#x9;"/>
+        <groups xsi:type="xtext:Keyword" value="&#xD;"/>
+        <groups xsi:type="xtext:Keyword" value="&#xA;"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="ANY_OTHER">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Wildcard"/>
+    </rules>
+  </xtext:Grammar>
+</xmi:XMI>
