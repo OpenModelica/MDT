@@ -1,0 +1,3052 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xtext:Grammar xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:xtext="http://www.eclipse.org/2008/Xtext" name="org.modelica.xtext.ModelicaAST" definesHiddenTokens="true" hiddenTokens="//@rules.133 //@rules.130 //@rules.131">
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ecore">
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Program">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Program"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Within">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Within"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Class">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Class"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ClassDef">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="EnumDef">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumDef"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="EnumLiteral">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumLiteral"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ClassPart">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ElementItem">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementItem"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Element">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Element"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ConstrainClass">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ConstrainClass"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ElementSpec">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="InnerOuter">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/InnerOuter"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Import">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Import"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ComponentItem">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentItem"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ComponentCondition">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentCondition"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Component">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Component"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="EquationItem">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/EquationItem"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="AlgorithmItem">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmItem"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Equation">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="AlgorithmStatement">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Modifications">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Modifications"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ElementArg">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementArg"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="RedeclareKeywords">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Each">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Each"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ElementAttributes">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementAttributes"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Variability">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Variability"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Direction">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Direction"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ArrayDim">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ArrayDim"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Exp">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="FunctionArgs">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="NamedArg">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/NamedArg"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Operator">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Subscript">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Subscript"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ComponentRef">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentRef"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Path">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Path"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Restriction">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Annotation">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Annotation"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Comment">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Comment"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ExternalDecl">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/ExternalDecl"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="TimeStamp">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/TimeStamp"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="Iterators">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/Iterators"/>
+  </metamodelDeclarations>
+  <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="TypeSpec">
+    <ePackage href="http://www.openmodelica.org/openmodelica.abstact.syntax/TypeSpec"/>
+  </metamodelDeclarations>
+  <rules xsi:type="xtext:ParserRule" name="StorageUnit">
+    <type metamodel="//@metamodelDeclarations.1">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Program#//PROGRAM"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="withinClause" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.1"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Assignment" feature="classes" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.2"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="WithinClause">
+    <type metamodel="//@metamodelDeclarations.2">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Within#//uWithin"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.2">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Within#//WITHIN"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="within"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="path" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </groups>
+      <groups xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.2">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Within#//TOP"/>
+        </type>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Class">
+    <type metamodel="//@metamodelDeclarations.3">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Class#//uClass"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.3">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Class#//CLASS"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="finalPrefix" operator="?=">
+        <terminal xsi:type="xtext:Keyword" value="final"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="encapsulatedPrefix" operator="?=">
+        <terminal xsi:type="xtext:Keyword" value="encapsulated"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="partialPrefix" operator="?=">
+        <terminal xsi:type="xtext:Keyword" value="partial"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="restriction" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.121"/>
+      </tokens>
+      <tokens xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+          </tokens>
+          <tokens xsi:type="xtext:Assignment" feature="body" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.4"/>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="extends"/>
+          <tokens xsi:type="xtext:Assignment" feature="body" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.9"/>
+          </tokens>
+        </groups>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="InnerClass">
+    <type metamodel="//@metamodelDeclarations.3">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Class#//uClass"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.3">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Class#//CLASS"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="encapsulatedPrefix" operator="?=">
+        <terminal xsi:type="xtext:Keyword" value="encapsulated"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="partialPrefix" operator="?=">
+        <terminal xsi:type="xtext:Keyword" value="partial"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="restriction" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.121"/>
+      </tokens>
+      <tokens xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+          </tokens>
+          <tokens xsi:type="xtext:Assignment" feature="body" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.4"/>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="extends"/>
+          <tokens xsi:type="xtext:Assignment" feature="body" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.9"/>
+          </tokens>
+        </groups>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassDefinition">
+    <type metamodel="//@metamodelDeclarations.4">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef#//uClassDef"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.5"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.6"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.7"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.8"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.10"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassDefinitionDerived">
+    <type metamodel="//@metamodelDeclarations.4">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef#//DERIVED"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+      <tokens xsi:type="xtext:Assignment" feature="attributes" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.58"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="typeSpec" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.129"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" value="("/>
+        <tokens xsi:type="xtext:Assignment" feature="arguments" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value=","/>
+          <tokens xsi:type="xtext:Assignment" feature="arguments" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=")"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassDefinitionEnum">
+    <type metamodel="//@metamodelDeclarations.4">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef#//ENUMERATION"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+      <tokens xsi:type="xtext:Keyword" value="enumeration"/>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" feature="enumLiterals" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.11"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+      <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassDefinitionOverload">
+    <type metamodel="//@metamodelDeclarations.4">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef#//OVERLOAD"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+      <tokens xsi:type="xtext:Keyword" value="overload"/>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" feature="functionNames" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="functionNames" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+      <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassDefinitionPartialDer">
+    <type metamodel="//@metamodelDeclarations.4">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef#//PDER"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+      <tokens xsi:type="xtext:Keyword" value="der"/>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" feature="functionName" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="+">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="vars" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassDefinitionExtends">
+    <type metamodel="//@metamodelDeclarations.4">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef#//CLASS_EXTENDS"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="baseClassName" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" value="("/>
+        <tokens xsi:type="xtext:Assignment" feature="modifications" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value=","/>
+          <tokens xsi:type="xtext:Assignment" feature="modifications" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=")"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.124"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="parts" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.14"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="parts" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.13"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="parts" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.15"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Assignment" feature="nameEnd" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassDefinitionParts">
+    <type metamodel="//@metamodelDeclarations.4">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef#//PARTS"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.124"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="classParts" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.14"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="classParts" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.13"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="classParts" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.15"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Assignment" feature="nameEnd" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EnumerationDefinition">
+    <type metamodel="//@metamodelDeclarations.5">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumDef#//uEnumDef"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.5">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumDef#//ENUMLITERALS"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="enumLiterals" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.12"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value=","/>
+          <tokens xsi:type="xtext:Assignment" feature="enumLiterals" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.12"/>
+          </tokens>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.5">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumDef#//ENUM_COLON"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="//@rules.148"/>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EnumLiteral">
+    <type metamodel="//@metamodelDeclarations.6">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumLiteral#//uEnumLiteral"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.6">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumLiteral#//ENUMLITERAL"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="literal" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassPart">
+    <type metamodel="//@metamodelDeclarations.7">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//uClassPart"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.7">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//PUBLIC"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="public"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="contents" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.16"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.7">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//PROTECTED"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="protected"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="contents" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.16"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.7">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//EQUATIONS"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="equation"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="contents" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.7">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//INITIALEQUATIONS"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="initial"/>
+        <tokens xsi:type="xtext:Keyword" value="equation"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="contents" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.7">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//ALGORITHMS"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="algorithm"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="contents" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.7">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//INITIALALGORITHMS"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="initial"/>
+        <tokens xsi:type="xtext:Keyword" value="algorithm"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="contents" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassPartInitial">
+    <type metamodel="//@metamodelDeclarations.7">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//uClassPart"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.7">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//PUBLIC"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="+" feature="contents" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.16"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ClassPartExternal">
+    <type metamodel="//@metamodelDeclarations.7">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//uClassPart"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.7">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart#//EXTERNAL"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="external"/>
+      <tokens xsi:type="xtext:Assignment" feature="externalDecl" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.125"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=";"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Assignment" feature="annotationNode" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.122"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementItem">
+    <type metamodel="//@metamodelDeclarations.8">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementItem#//uElementItem"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.8">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementItem#//ELEMENTITEM"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="element" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.17"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.8">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementItem#//ANNOTATIONITEM"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="annotation_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.122"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Element">
+    <type metamodel="//@metamodelDeclarations.9">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Element#//uElement"/>
+    </type>
+    <alternatives xsi:type="xtext:RuleCall" rule="//@rules.18"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementElement">
+    <type metamodel="//@metamodelDeclarations.9">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Element#//ELEMENT"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Assignment" feature="specification" operator="=">
+        <terminal xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:RuleCall" rule="//@rules.20"/>
+          <groups xsi:type="xtext:RuleCall" rule="//@rules.21"/>
+        </terminal>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="redeclareKeywords" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.55"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="finalPrefix" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="final"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="innerOuter" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.24"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="specification" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.22"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.23"/>
+          </terminal>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Assignment" feature="redeclareKeywords" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.56"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.54"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="innerOuter" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.24"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="specification" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.22"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.23"/>
+          </terminal>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementSpecification">
+    <type metamodel="//@metamodelDeclarations.11">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//uElementSpec"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.20"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.21"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.22"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.23"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementSpecificationImport">
+    <type metamodel="//@metamodelDeclarations.11">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//uElementSpec"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.11">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//IMPORT"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="import"/>
+      <tokens xsi:type="xtext:Assignment" feature="import_" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.25"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementSpecificationExtends">
+    <type metamodel="//@metamodelDeclarations.11">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//uElementSpec"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.11">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//EXTENDS"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="extends"/>
+      <tokens xsi:type="xtext:Assignment" feature="path" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" value="("/>
+        <tokens xsi:type="xtext:Assignment" feature="elementArg" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value=","/>
+          <tokens xsi:type="xtext:Assignment" feature="elementArg" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=")"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="annotationOpt" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.122"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementSpecificationClassDefinition">
+    <type metamodel="//@metamodelDeclarations.11">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//uElementSpec"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.11">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//CLASSDEF"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="class_" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.3"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementSpecificationComponents">
+    <type metamodel="//@metamodelDeclarations.11">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//uElementSpec"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.11">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//COMPONENTS"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="attributes" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.58"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="typeSpec" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.129"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="components" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.26"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="components" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.26"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="InnerOuter">
+    <type metamodel="//@metamodelDeclarations.12">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/InnerOuter#//uInnerOuter"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.12">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/InnerOuter#//INNEROUTER"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="inner"/>
+        <tokens xsi:type="xtext:Keyword" value="outer"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.12">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/InnerOuter#//INNER"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="inner"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.12">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/InnerOuter#//OUTER"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="outer"/>
+      </groups>
+      <groups xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.12">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/InnerOuter#//UNSPECIFIED"/>
+        </type>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Import">
+    <type metamodel="//@metamodelDeclarations.13">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Import#//uImport"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.13">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Import#//NAMED_IMPORT"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+        </tokens>
+        <tokens xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+        <tokens xsi:type="xtext:Assignment" feature="path" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.13">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Import#//QUAL_IMPORT"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="path" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ComponentItem">
+    <type metamodel="//@metamodelDeclarations.14">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentItem#//uComponentItem"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.14">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentItem#//COMPONENTITEM"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="component" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.28"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="condition" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.27"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ComponentCondition">
+    <type metamodel="//@metamodelDeclarations.15">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentCondition#//ComponentCondition"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="if"/>
+      <tokens xsi:type="xtext:Assignment" feature="condition" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Component">
+    <type metamodel="//@metamodelDeclarations.16">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Component#//uComponent"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.16">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Component#//COMPONENT"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="arrayDim" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.61"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.51"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EquationItem">
+    <type metamodel="//@metamodelDeclarations.17">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EquationItem#//uEquationItem"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.17">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EquationItem#//EQUATIONITEM"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="equation_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.31"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.17">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/EquationItem#//EQUATIONITEMANN"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="annotation_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.122"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmItem">
+    <type metamodel="//@metamodelDeclarations.18">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmItem#//uAlgorithmItem"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.18">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmItem#//ALGORITHMITEM"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="algorithm_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.40"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.123"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.18">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmItem#//ALGORITHMITEMANN"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="annotation_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.122"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Equation">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//uEquation"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.32"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.34"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.36"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.37"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.38"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.35"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EquationIf">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//EQ_IF"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="if"/>
+      <tokens xsi:type="xtext:Assignment" feature="ifExp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="equationTrueItems" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseIfBranches" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.33"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" value="else"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="equationElseItems" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Keyword" value="if"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElseIfBranch">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//tuple_ElseIfBranch"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="elseif"/>
+      <tokens xsi:type="xtext:Assignment" feature="exp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="equationItem" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EquationEquals">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//EQ_EQUALS"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="leftSide" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.65"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="="/>
+      <tokens xsi:type="xtext:Assignment" feature="rightSide" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EquationNoRetCall">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//EQ_NORETCALL"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="functionName" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="functionArgs" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.89"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EquationConnect">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//EQ_CONNECT"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="connect"/>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" feature="connector1" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=","/>
+      <tokens xsi:type="xtext:Assignment" feature="connector2" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EquationFor">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//EQ_FOR"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="for"/>
+      <tokens xsi:type="xtext:Assignment" feature="iterators" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.127"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="loop"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="forEquations" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Keyword" value="for"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="EquationWhenEq">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//EQ_WHEN_E"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="when"/>
+      <tokens xsi:type="xtext:Assignment" feature="whenExp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="whenEquations" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseWhenEquations" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.39"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Keyword" value="when"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElseWhenEquationBranch">
+    <type metamodel="//@metamodelDeclarations.19">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation#//tuple_ElseWhenEquation"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="elsewhen"/>
+      <tokens xsi:type="xtext:Assignment" feature="exp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="equationItem" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.29"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmStatement">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//uAlgorithmStatement"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.41"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.43"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.45"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.46"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.44"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.48"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.49"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.50"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmIf">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_IF"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="if"/>
+      <tokens xsi:type="xtext:Assignment" feature="ifExp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="trueBranch" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseIfAlgorithmBranch" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.42"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" value="else"/>
+        <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseBranch" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Keyword" value="if"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElseIfAlgorithmBranch">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//tuple_ElseIfAlgorithmBranch"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="elseif"/>
+      <tokens xsi:type="xtext:Assignment" feature="exp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="algorithmItem" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmAssign">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_ASSIGN"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="assignComponent" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.65"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=":="/>
+      <tokens xsi:type="xtext:Assignment" feature="value" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmNoRetCall">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_NORETCALL"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="functionCall" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="functionArgs" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.89"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmFor">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_FOR"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="for"/>
+      <tokens xsi:type="xtext:Assignment" feature="iterators" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.127"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="loop"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="forBody" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Keyword" value="for"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmWhen">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_WHEN_A"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="when"/>
+      <tokens xsi:type="xtext:Assignment" feature="boolExpr" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" feature="whenBody" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseWhenAlgorithmBranch" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.47"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Keyword" value="when"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElseWhenAlgorithmBranch">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//tuple_ElseWhenAlgorithmBranch"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="elsewhen"/>
+      <tokens xsi:type="xtext:Assignment" feature="exp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="algorithmItem" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmReturn">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_RETURN"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="return"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmWhile">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_WHILE"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="while"/>
+      <tokens xsi:type="xtext:Assignment" feature="boolExpr" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="loop"/>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="whileBody" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.30"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="end"/>
+      <tokens xsi:type="xtext:Keyword" value="while"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="AlgorithmBreak">
+    <type metamodel="//@metamodelDeclarations.20">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement#//ALG_BREAK"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="break"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Modification">
+    <type metamodel="//@metamodelDeclarations.21">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Modifications#//uModification"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.21">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Modifications#//CLASSMOD"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="("/>
+          <tokens xsi:type="xtext:Assignment" feature="elementArgList" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+          </tokens>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:Keyword" value=","/>
+            <tokens xsi:type="xtext:Assignment" feature="elementArgList" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+            </tokens>
+          </tokens>
+          <tokens xsi:type="xtext:Keyword" value=")"/>
+          <tokens xsi:type="xtext:Group" cardinality="?">
+            <tokens xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+            <tokens xsi:type="xtext:Assignment" feature="expOption" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+            </tokens>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.146"/>
+          </tokens>
+          <tokens xsi:type="xtext:Assignment" feature="expOption" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+          </tokens>
+        </groups>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementArg">
+    <type metamodel="//@metamodelDeclarations.22">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementArg#//uElementArg"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.22">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementArg#//MODIFICATION"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="each_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.57"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="finalItem" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="final"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="componentReg" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="modification" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.51"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="comment" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.124"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.22">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementArg#//REDECLARATION"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="each_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.57"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="finalItem" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="final"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="redeclareKeywords" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.54"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.56"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="elementSpec" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.22"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.53"/>
+          </terminal>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.22">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementArg#//REDECLARATION"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="each_" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.57"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="finalItem" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="final"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="redeclareKeywords" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.55"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="elementSpec" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.22"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.53"/>
+          </terminal>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementSpecificationComponents1">
+    <type metamodel="//@metamodelDeclarations.11">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//uElementSpec"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.11">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec#//COMPONENTS"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="attributes" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.58"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="typeSpec" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.129"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="components" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.26"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=";"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ReplaceableKeyword">
+    <type metamodel="//@metamodelDeclarations.23">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords#//uRedeclareKeywords"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.23">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords#//REPLACEABLE"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="replaceable"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="RedeclareKeyword">
+    <type metamodel="//@metamodelDeclarations.23">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords#//uRedeclareKeywords"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.23">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords#//REDECLARE"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="redeclare"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="RedeclareReplaceableKeyword">
+    <type metamodel="//@metamodelDeclarations.23">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords#//uRedeclareKeywords"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.23">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords#//REDECLARE_REPLACEABLE"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="redeclare"/>
+      <tokens xsi:type="xtext:Keyword" value="replaceable"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Each">
+    <type metamodel="//@metamodelDeclarations.24">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Each#//uEach"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.24">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Each#//EACH"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="each"/>
+      </groups>
+      <groups xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.24">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Each#//NON_EACH"/>
+        </type>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ElementAttributes">
+    <type metamodel="//@metamodelDeclarations.25">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementAttributes#//uElementAttributes"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.25">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementAttributes#//ATTR"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Alternatives" cardinality="?">
+        <groups xsi:type="xtext:Assignment" feature="flowPrefix" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="flow"/>
+        </groups>
+        <groups xsi:type="xtext:Assignment" feature="streamPrefix" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="stream"/>
+        </groups>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="variability" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.59"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="direction" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.60"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="arrayDim" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.61"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Variability">
+    <type metamodel="//@metamodelDeclarations.26">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Variability#//uVariability"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.26">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Variability#//CONST"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="constant"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.26">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Variability#//PARAM"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="parameter"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.26">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Variability#//DISCRETE"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="discrete"/>
+      </groups>
+      <groups xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.26">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Variability#//VAR"/>
+        </type>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Direction">
+    <type metamodel="//@metamodelDeclarations.27">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Direction#//uDirection"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.27">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Direction#//INPUT"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="input"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.27">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Direction#//OUTPUT"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="output"/>
+      </groups>
+      <groups xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.27">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Direction#//BIDIR"/>
+        </type>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ArrayDim">
+    <type metamodel="//@metamodelDeclarations.28">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ArrayDim#//ArrayDim"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="["/>
+      <tokens xsi:type="xtext:Assignment" feature="subscripts" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.117"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="subscripts" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.117"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="]"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Expression">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.63"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.65"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprIf">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.29">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//IFEXP"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="if"/>
+      <tokens xsi:type="xtext:Assignment" feature="ifExp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" feature="trueBranch" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="*" feature="elseIfBranch" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.64"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="else"/>
+        <tokens xsi:type="xtext:Assignment" feature="elseBranch" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprElseIfBranchTuple">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//tuple_ElseIfBranch"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="elseif"/>
+      <tokens xsi:type="xtext:Assignment" feature="exp1" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="then"/>
+      <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprRange">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.66"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="start" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//RANGE"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=":"/>
+        <tokens xsi:type="xtext:Assignment" feature="step" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.66"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value=":"/>
+          <tokens xsi:type="xtext:Assignment" feature="stop" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.66"/>
+          </tokens>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprLogical">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.67"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="exp1" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//LBINARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.109"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.66"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprLogicalTerm">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.68"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="exp1" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//LBINARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.108"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.67"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprLogicalFactor">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.69"/>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//LUNARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.110"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.69"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprRelation">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.70"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="exp1" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//RELATION"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.111"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.112"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.113"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.114"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.115"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.116"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.70"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprArithmetic">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.72"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="exp1" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//BINARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.94"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.95"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.101"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.102"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.71"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprArithmetic2">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.73"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="exp1" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//BINARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.94"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.95"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.101"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.102"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.71"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprUnaryArithmetic">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.73"/>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//UNARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.99"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.100"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.106"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.107"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.73"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprArithmeticTerm">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.74"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="exp1" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//BINARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.96"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.97"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.103"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.104"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.73"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprArithmeticFactor">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:RuleCall" rule="//@rules.75"/>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Action" feature="exp1" operator="=">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//BINARY"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="op" operator="=">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.98"/>
+            <groups xsi:type="xtext:RuleCall" rule="//@rules.105"/>
+          </terminal>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="exp2" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.75"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprPrimary">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.76"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.77"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.78"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.81"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.82"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.83"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.84"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.86"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.87"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.88"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprInt">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//INTEGER"/>
+    </type>
+    <alternatives xsi:type="xtext:Assignment" feature="value" operator="=">
+      <terminal xsi:type="xtext:RuleCall" rule="//@rules.135"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprReal">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//REAL"/>
+    </type>
+    <alternatives xsi:type="xtext:Assignment" feature="value" operator="=">
+      <terminal xsi:type="xtext:RuleCall" rule="//@rules.134"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprComponentRefOrCall">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.29">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//CALL_INITIAL"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="initial"/>
+        <tokens xsi:type="xtext:Keyword" value="("/>
+        <tokens xsi:type="xtext:Keyword" value=")"/>
+      </groups>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.80"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.79"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprComponentRef">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.29">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//CREF"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="componentReg" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprFunctionCall">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//uExp"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.29">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//CALL"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="function" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="functionArgs" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.89"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprString">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//STRING"/>
+    </type>
+    <alternatives xsi:type="xtext:Assignment" feature="value" operator="=">
+      <terminal xsi:type="xtext:RuleCall" rule="//@rules.132"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprBool">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//BOOL"/>
+    </type>
+    <alternatives xsi:type="xtext:Assignment" feature="value" operator="=">
+      <terminal xsi:type="xtext:RuleCall" rule="//@rules.136"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprArray">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//ARRAY"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="{"/>
+      <tokens xsi:type="xtext:Assignment" feature="arrayExp" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="arrayExp" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="}"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprMatrix">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//MATRIX"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="["/>
+      <tokens xsi:type="xtext:Assignment" feature="matrix" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.85"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=";"/>
+        <tokens xsi:type="xtext:Assignment" feature="matrix" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.85"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="]"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="MatrixRow">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//tuple_Matrix"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="exp" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="exp" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprTuple">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//TUPLE"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" feature="expressions" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="expressions" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprEnd">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//END"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="end"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExprDer">
+    <type metamodel="//@metamodelDeclarations.29">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp#//PARTEVALFUNCTION"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="der"/>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" feature="function_" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="functionArgs" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.89"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="FunctionArguments">
+    <type metamodel="//@metamodelDeclarations.30">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs#//uFunctionArguments"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.90"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.91"/>
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.92"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="FunctionArgumentsMixed">
+    <type metamodel="//@metamodelDeclarations.30">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs#//uFunctionArguments"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.30">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs#//FUNCTIONARGS"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="args" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="args" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="argNames" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.93"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="FunctionArgumentsForIter">
+    <type metamodel="//@metamodelDeclarations.30">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs#//uFunctionArguments"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.30">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs#//FOR_ITER_FARG"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="exp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="for"/>
+      <tokens xsi:type="xtext:Assignment" feature="iterators" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.126"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="FunctionNamedArguments">
+    <type metamodel="//@metamodelDeclarations.30">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs#//uFunctionArguments"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.30">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs#//FUNCTIONARGS"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="argNames" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.93"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="argNames" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.93"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="NamedArguments">
+    <type metamodel="//@metamodelDeclarations.31">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/NamedArg#//uNamedArg"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.31">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/NamedArg#//NAMEDARG"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="argName" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="="/>
+      <tokens xsi:type="xtext:Assignment" feature="argValue" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorAdd">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//ADD"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="+"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorSub">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//SUB"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="-"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorMul">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//MUL"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="*"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorDiv">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//DIV"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="/"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorPow">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//POW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="^"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorUnPlus">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//UPLUS"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="+"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorUnMinus">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//UMINUS"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="-"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorAddEW">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//ADD_EW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".+"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorSubEW">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//SUB_EW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".-"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorMulEW">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//MUL_EW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".*"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorDivEW">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//DIV_EW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="./"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorPowEW">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//POW_EW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".^"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorUnPlusEW">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//UPLUS_EW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".+"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorUnMinusEW">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//UMINUS_EW"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".-"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorAnd">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//AND"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="and"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorOr">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//OR"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="or"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorNot">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//NOT"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="not"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorLess">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//LESS"/>
+    </type>
+    <alternatives xsi:type="xtext:RuleCall" rule="//@rules.158"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorLessEq">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//LESSEQ"/>
+    </type>
+    <alternatives xsi:type="xtext:RuleCall" rule="//@rules.159"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorGreater">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//GREATER"/>
+    </type>
+    <alternatives xsi:type="xtext:RuleCall" rule="//@rules.161"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorGreaterEq">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//GREATEREQ"/>
+    </type>
+    <alternatives xsi:type="xtext:RuleCall" rule="//@rules.162"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorEqual">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//EQUAL"/>
+    </type>
+    <alternatives xsi:type="xtext:RuleCall" rule="//@rules.163"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="OperatorNotEqual">
+    <type metamodel="//@metamodelDeclarations.32">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator#//NEQUAL"/>
+    </type>
+    <alternatives xsi:type="xtext:RuleCall" rule="//@rules.160"/>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Subscript">
+    <type metamodel="//@metamodelDeclarations.33">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Subscript#//uSubscript"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.33">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Subscript#//NOSUB"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=":"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.33">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Subscript#//SUBSCRIPT"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="subScript" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ComponentRef">
+    <type metamodel="//@metamodelDeclarations.34">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentRef#//uComponentRef"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:RuleCall" rule="//@rules.119"/>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.34">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentRef#//CREF_IDENT"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value="["/>
+          <tokens xsi:type="xtext:Assignment" feature="subscripts" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.117"/>
+          </tokens>
+          <tokens xsi:type="xtext:Group" cardinality="*">
+            <tokens xsi:type="xtext:Keyword" value=","/>
+            <tokens xsi:type="xtext:Assignment" feature="subscripts" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="//@rules.117"/>
+            </tokens>
+          </tokens>
+          <tokens xsi:type="xtext:Keyword" value="]"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ComponentReferenceQualified">
+    <type metamodel="//@metamodelDeclarations.34">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentRef#//uComponentRef"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.34">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentRef#//CREF_QUAL"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" value="["/>
+        <tokens xsi:type="xtext:Assignment" feature="subscripts" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.117"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value=","/>
+          <tokens xsi:type="xtext:Assignment" feature="subscripts" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.117"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="]"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="."/>
+      <tokens xsi:type="xtext:Assignment" feature="componentRef" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Path">
+    <type metamodel="//@metamodelDeclarations.35">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Path#//uPath"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.35">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Path#//QUALIFIED"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Group">
+            <tokens xsi:type="xtext:Keyword" value="."/>
+            <tokens xsi:type="xtext:Assignment" feature="path" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+            </tokens>
+          </groups>
+          <groups xsi:type="xtext:Keyword" value=".*"/>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.35">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Path#//IDENT"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Restriction">
+    <type metamodel="//@metamodelDeclarations.36">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//uRestriction"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_CLASS"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="class"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_MODEL"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="model"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_RECORD"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="record"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_BLOCK"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="block"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_CONNECTOR"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="connector"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_EXP_CONNECTOR"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="expandable"/>
+        <tokens xsi:type="xtext:Keyword" value="connector"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_TYPE"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="type"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_PACKAGE"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="package"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_FUNCTION"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="function"/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Action">
+          <type metamodel="//@metamodelDeclarations.36">
+            <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction#//R_ENUMERATION"/>
+          </type>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="enumeration"/>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Annotation">
+    <type metamodel="//@metamodelDeclarations.37">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Annotation#//uAnnotation"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.37">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Annotation#//ANNOTATION"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="annotation"/>
+      <tokens xsi:type="xtext:Keyword" value="("/>
+      <tokens xsi:type="xtext:Assignment" feature="elementArgs" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="elementArgs" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>
+        </tokens>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value=")"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="Comment">
+    <type metamodel="//@metamodelDeclarations.38">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Comment#//uComment"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.38">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Comment#//COMMENT"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="comment" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.124"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="annotation_" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.122"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="StringComment">
+    <type metamodel="//@metamodelDeclarations.38">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Comment#//STRING_COMMENT"/>
+    </type>
+    <alternatives xsi:type="xtext:Assignment" feature="comment" operator="=">
+      <terminal xsi:type="xtext:RuleCall" rule="//@rules.132"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ExternalDeclaration">
+    <type metamodel="//@metamodelDeclarations.39">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ExternalDecl#//uExternalDecl"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.39">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/ExternalDecl#//EXTERNALDECL"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="lang" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.132"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Assignment" feature="output_" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.118"/>
+          </tokens>
+          <tokens xsi:type="xtext:RuleCall" rule="//@rules.145"/>
+        </tokens>
+        <tokens xsi:type="xtext:Assignment" feature="funcName" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="("/>
+        <tokens xsi:type="xtext:Assignment" feature="args" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="*">
+          <tokens xsi:type="xtext:Keyword" value=","/>
+          <tokens xsi:type="xtext:Assignment" feature="args" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+          </tokens>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value=")"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="annotation_" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.122"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ForIterator">
+    <type metamodel="//@metamodelDeclarations.41">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Iterators#//ForIterator"/>
+    </type>
+    <alternatives xsi:type="xtext:Assignment" feature="tuple" operator="=">
+      <terminal xsi:type="xtext:RuleCall" rule="//@rules.128"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ForIterators">
+    <type metamodel="//@metamodelDeclarations.41">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Iterators#//ForIterators"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="forIterator" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.126"/>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="*">
+        <tokens xsi:type="xtext:Keyword" value=","/>
+        <tokens xsi:type="xtext:Assignment" feature="forIterator" operator="+=">
+          <terminal xsi:type="xtext:RuleCall" rule="//@rules.126"/>
+        </tokens>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="ForIteratorTuple">
+    <type metamodel="//@metamodelDeclarations.41">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/Iterators#//tuple_ForIterator"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Assignment" feature="Ident" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.137"/>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="in"/>
+      <tokens xsi:type="xtext:Assignment" feature="Exp" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.62"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:ParserRule" name="TypeSpecification">
+    <type metamodel="//@metamodelDeclarations.42">
+      <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/TypeSpec#//uTypeSpec"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Action">
+        <type metamodel="//@metamodelDeclarations.42">
+          <classifier xsi:type="ecore:EClass" href="http://www.openmodelica.org/openmodelica.abstact.syntax/TypeSpec#//TPATH"/>
+        </type>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" feature="path" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.120"/>
+      </tokens>
+      <tokens xsi:type="xtext:Assignment" cardinality="?" feature="arrayDim" operator="=">
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.61"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="ML_COMMENT">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="/*"/>
+      <tokens xsi:type="xtext:UntilToken">
+        <terminal xsi:type="xtext:Keyword" value="*/"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="SL_COMMENT">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="//"/>
+      <tokens xsi:type="xtext:NegatedToken" cardinality="*">
+        <terminal xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Keyword" value="&#xA;"/>
+          <groups xsi:type="xtext:Keyword" value="&#xD;"/>
+        </terminal>
+      </tokens>
+      <tokens xsi:type="xtext:Group" cardinality="?">
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="&#xD;"/>
+        <tokens xsi:type="xtext:Keyword" value="&#xA;"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="STRING">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="&quot;"/>
+      <tokens xsi:type="xtext:Alternatives" cardinality="*">
+        <groups xsi:type="xtext:Group">
+          <tokens xsi:type="xtext:Keyword" value="\"/>
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:Keyword" value="b"/>
+            <groups xsi:type="xtext:Keyword" value="t"/>
+            <groups xsi:type="xtext:Keyword" value="n"/>
+            <groups xsi:type="xtext:Keyword" value="f"/>
+            <groups xsi:type="xtext:Keyword" value="r"/>
+            <groups xsi:type="xtext:Keyword" value="&quot;"/>
+            <groups xsi:type="xtext:Keyword" value="'"/>
+            <groups xsi:type="xtext:Keyword" value="\"/>
+          </tokens>
+        </groups>
+        <groups xsi:type="xtext:NegatedToken">
+          <terminal xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:Keyword" value="\"/>
+            <groups xsi:type="xtext:Keyword" value="&quot;"/>
+          </terminal>
+        </groups>
+      </tokens>
+      <tokens xsi:type="xtext:Keyword" value="&quot;"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="WS">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives" cardinality="+">
+      <groups xsi:type="xtext:Keyword" value=" "/>
+      <groups xsi:type="xtext:Keyword" value="&#x9;"/>
+      <groups xsi:type="xtext:Keyword" value="&#xD;"/>
+      <groups xsi:type="xtext:Keyword" value="&#xA;"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="UNSIGNED_REAL">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+          <left value="0"/>
+          <right value="9"/>
+        </tokens>
+        <tokens xsi:type="xtext:Keyword" value="."/>
+        <tokens xsi:type="xtext:CharacterRange" cardinality="*">
+          <left value="0"/>
+          <right value="9"/>
+        </tokens>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:Keyword" value="E"/>
+            <groups xsi:type="xtext:Keyword" value="e"/>
+          </tokens>
+          <tokens xsi:type="xtext:Alternatives" cardinality="?">
+            <groups xsi:type="xtext:Keyword" value="+"/>
+            <groups xsi:type="xtext:Keyword" value="-"/>
+          </tokens>
+          <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+            <left value="0"/>
+            <right value="9"/>
+          </tokens>
+        </tokens>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+          <left value="0"/>
+          <right value="9"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives">
+          <groups xsi:type="xtext:Keyword" value="E"/>
+          <groups xsi:type="xtext:Keyword" value="e"/>
+        </tokens>
+        <tokens xsi:type="xtext:Alternatives" cardinality="?">
+          <groups xsi:type="xtext:Keyword" value="+"/>
+          <groups xsi:type="xtext:Keyword" value="-"/>
+        </tokens>
+        <tokens xsi:type="xtext:CharacterRange" cardinality="+">
+          <left value="0"/>
+          <right value="9"/>
+        </tokens>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="UNSIGNED_INTEGER">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </type>
+    <alternatives xsi:type="xtext:CharacterRange" cardinality="+">
+      <left value="0"/>
+      <right value="9"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="BOOL_VAL">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Keyword" value="true"/>
+      <groups xsi:type="xtext:Keyword" value="false"/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="IDENT">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Alternatives">
+        <groups xsi:type="xtext:CharacterRange">
+          <left value="a"/>
+          <right value="z"/>
+        </groups>
+        <groups xsi:type="xtext:CharacterRange">
+          <left value="A"/>
+          <right value="Z"/>
+        </groups>
+        <groups xsi:type="xtext:Keyword" value="_"/>
+      </tokens>
+      <tokens xsi:type="xtext:Alternatives" cardinality="*">
+        <groups xsi:type="xtext:CharacterRange">
+          <left value="a"/>
+          <right value="z"/>
+        </groups>
+        <groups xsi:type="xtext:CharacterRange">
+          <left value="A"/>
+          <right value="Z"/>
+        </groups>
+        <groups xsi:type="xtext:Keyword" value="_"/>
+        <groups xsi:type="xtext:CharacterRange">
+          <left value="0"/>
+          <right value="9"/>
+        </groups>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="DOT">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="."/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="LPAR">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="("/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="RPAR">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=")"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="LBRACK">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="["/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="RBRACK">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="]"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="LBRACE">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="{"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="RBRACE">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="}"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="EQUALS">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="="/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="ASSIGN">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=":="/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="COMMA">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=","/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="COLON">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=":"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="SEMICOLON">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=";"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="PLUS_EW">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".+"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="MINUS_EW">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".-"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="STAR_EW">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".*"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="SLASH_EW">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value="./"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="POWER_EW">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Keyword" value=".^"/>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="STAR">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="*"/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="MINUS">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="-"/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="PLUS">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="+"/>
+      <tokens xsi:type="xtext:Alternatives" cardinality="?">
+        <groups xsi:type="xtext:Keyword" value="."/>
+        <groups xsi:type="xtext:Keyword" value="&amp;"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="LESS">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="&lt;"/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="LESSEQ">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="&lt;="/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="LESSGT">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Alternatives">
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="!="/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </groups>
+      <groups xsi:type="xtext:Group">
+        <tokens xsi:type="xtext:Keyword" value="&lt;>"/>
+        <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+      </groups>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="GREATER">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value=">"/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="GREATEREQ">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value=">="/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="EQEQ">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="=="/>
+      <tokens xsi:type="xtext:Alternatives" cardinality="?">
+        <groups xsi:type="xtext:Keyword" value="."/>
+        <groups xsi:type="xtext:Keyword" value="&amp;"/>
+      </tokens>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="POWER">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="^"/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="SLASH">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Group">
+      <tokens xsi:type="xtext:Keyword" value="/"/>
+      <tokens xsi:type="xtext:Keyword" cardinality="?" value="."/>
+    </alternatives>
+  </rules>
+  <rules xsi:type="xtext:TerminalRule" name="ANY_OTHER">
+    <type metamodel="//@metamodelDeclarations.0">
+      <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </type>
+    <alternatives xsi:type="xtext:Wildcard"/>
+  </rules>
+</xtext:Grammar>

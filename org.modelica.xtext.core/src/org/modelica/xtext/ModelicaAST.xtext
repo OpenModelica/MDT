@@ -1,0 +1,799 @@
+grammar org.modelica.xtext.ModelicaAST hidden(WS, ML_COMMENT, SL_COMMENT)
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Program" as Program
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Within" as Within
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Class" as Class
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ClassDef" as ClassDef
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//EnumDef" as EnumDef
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//EnumLiteral" as EnumLiteral
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ClassPart" as ClassPart
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ElementItem" as ElementItem
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Element" as Element
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ConstrainClass" as ConstrainClass
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ElementSpec" as ElementSpec
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//InnerOuter" as InnerOuter
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Import" as Import
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ComponentItem" as ComponentItem
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ComponentCondition" as ComponentCondition
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Component" as Component
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//EquationItem" as EquationItem
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//AlgorithmItem" as AlgorithmItem
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Equation" as Equation
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//AlgorithmStatement" as AlgorithmStatement
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Modifications" as Modifications
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ElementArg" as ElementArg
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords" as RedeclareKeywords
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Each" as Each
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ElementAttributes" as ElementAttributes
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Variability" as Variability
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Direction" as Direction
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ArrayDim" as ArrayDim
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Exp" as Exp
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//FunctionArgs" as FunctionArgs
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//NamedArg" as NamedArg
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Operator" as Operator
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Subscript" as Subscript
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ComponentRef" as ComponentRef
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Path" as Path
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Restriction" as Restriction
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Annotation" as Annotation
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Comment" as Comment
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//ExternalDecl" as ExternalDecl
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//TimeStamp" as TimeStamp
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//Iterators" as Iterators
+import "platform:/resource/org.modelica.emf/model/OpenModelicaAbstactSyntax.ecore#//TypeSpec" as TypeSpec
+
+/*
+ * Copyright (c) 2009 - currentYear, 
+ 	Adrian Pop [adrpo@ida.liu.se], 
+ 	Atanas Pavlov [nasko.js@gmail.com]
+ * All rights reserved.
+ */
+
+  
+
+
+/*------------------------------------------------------------------
+ * PARSER RULES
+ *------------------------------------------------------------------*/
+
+StorageUnit returns Program::PROGRAM :
+	withinClause=WithinClause
+	(classes+=Class ';')*
+	;
+
+WithinClause returns Within::uWithin :
+	{Within::WITHIN} 'within' (path=Path)? ';'
+	| {Within::TOP}
+	;
+
+Class returns Class::uClass :
+	{Class::CLASS} 
+	finalPrefix?=('final')?	encapsulatedPrefix?=('encapsulated')? partialPrefix?=('partial')?
+	restriction=Restriction	(name=IDENT	body=ClassDefinition | 'extends' body=ClassDefinitionExtends)
+	;
+
+InnerClass returns Class::uClass :
+	{Class::CLASS} 
+	encapsulatedPrefix?=('encapsulated')? partialPrefix?=('partial')?
+	restriction=Restriction	(name=IDENT	body=ClassDefinition | 'extends' body=ClassDefinitionExtends)
+	;
+
+ClassDefinition returns ClassDef::uClassDef :
+	ClassDefinitionDerived
+	| ClassDefinitionEnum
+	| ClassDefinitionOverload
+	| ClassDefinitionPartialDer
+	| ClassDefinitionParts
+	;
+	
+ClassDefinitionDerived returns ClassDef::DERIVED :
+	EQUALS attributes=ElementAttributes typeSpec=TypeSpecification 
+	('(' arguments+=ElementArg (',' arguments+=ElementArg)* ')')?  comment=Comment
+	;
+
+ClassDefinitionEnum returns ClassDef::ENUMERATION :
+	EQUALS 'enumeration' '(' enumLiterals=EnumerationDefinition ')' comment=Comment 
+	;
+
+ClassDefinitionOverload returns ClassDef::OVERLOAD :
+	EQUALS 'overload' '(' functionNames+=Path (',' functionNames+=Path)* ')' comment=Comment
+	;
+
+// CHECK Comment?
+ClassDefinitionPartialDer returns ClassDef::PDER :
+	EQUALS 'der' '(' functionName=Path (',' vars+=IDENT)+ ')'
+	;
+// CHECK Comment or StringComment
+ClassDefinitionExtends returns ClassDef::CLASS_EXTENDS :
+	baseClassName=IDENT ('(' 
+	modifications+=ElementArg ( ',' modifications+=ElementArg)* ')')?
+	comment=StringComment? (parts+=ClassPartInitial)? 
+	(parts+=ClassPart)* (parts+=ClassPartExternal)?
+	'end' nameEnd=IDENT
+	;
+
+ClassDefinitionParts returns ClassDef::PARTS :
+	comment=StringComment? (classParts+=ClassPartInitial)?
+	(classParts+=ClassPart)* (classParts+=ClassPartExternal)?
+	'end' nameEnd=IDENT
+	;
+EnumerationDefinition returns EnumDef::uEnumDef :
+	{EnumDef::ENUMLITERALS} enumLiterals+=EnumLiteral (',' enumLiterals+=EnumLiteral)* 
+	| {EnumDef::ENUM_COLON} COLON
+	;
+
+EnumLiteral returns EnumLiteral::uEnumLiteral :
+	{EnumLiteral::ENUMLITERAL} literal=IDENT comment=Comment
+	;
+	
+ClassPart returns ClassPart::uClassPart :
+	{ClassPart::PUBLIC} 'public' (contents+=ElementItem)*
+	|{ClassPart::PROTECTED} 'protected' (contents+=ElementItem)*
+	|{ClassPart::EQUATIONS} 'equation' (contents+=EquationItem)*
+	|{ClassPart::INITIALEQUATIONS} 'initial' 'equation' (contents+=EquationItem)*
+	|{ClassPart::ALGORITHMS} 'algorithm' (contents+=AlgorithmItem)*
+	|{ClassPart::INITIALALGORITHMS} 'initial' 'algorithm' (contents+=AlgorithmItem)*
+	;
+
+ClassPartInitial returns ClassPart::uClassPart :
+	{ClassPart::PUBLIC} (contents+=ElementItem)+
+	;
+	
+ClassPartExternal returns ClassPart::uClassPart :
+	{ClassPart::EXTERNAL} 'external' externalDecl=ExternalDeclaration ';' 
+	(annotationNode=Annotation ';')?
+	;
+
+ElementItem returns ElementItem::uElementItem :
+	{ElementItem::ELEMENTITEM} element=Element ';'
+	|{ElementItem::ANNOTATIONITEM} annotation_=Annotation ';'
+	;
+
+// FIXME Figure out the text thing
+// fix redeclareKeyword>s< ?=('redeclare')?
+Element returns Element::uElement :
+	ElementElement
+	//|{TEXT}
+	//|{DEFINEUNIT}
+	;
+	
+// FIXME constrainedby clause	
+ElementElement returns Element::ELEMENT :
+	specification=(ElementSpecificationImport|ElementSpecificationExtends) innerOuter=InnerOuterUnspecified
+	|redeclareKeywords=RedeclareKeyword? finalPrefix?=('final')?
+		innerOuter=InnerOuter specification=(ElementSpecificationClassDefinition | ElementSpecificationComponents) 
+	|redeclareKeywords=(RedeclareReplaceableKeyword | ReplaceableKeyword) innerOuter=InnerOuter 
+		specification=(ElementSpecificationClassDefinition | ElementSpecificationComponents) 
+		//('constrainedby' name=IDENT  constrainClass=ConstrainClass)?
+	
+	;
+
+/*
+ConstrainClass returns uConstrainClass :
+	{CONSTRAINCLASS} elementSpec=ElementSpecification comment=Comment
+	;
+*/
+
+ElementSpecification returns ElementSpec::uElementSpec :
+	ElementSpecificationImport
+	|ElementSpecificationExtends
+	|ElementSpecificationClassDefinition
+	|ElementSpecificationComponents
+	;
+
+ElementSpecificationImport returns ElementSpec::uElementSpec :
+	{ElementSpec::IMPORT} 'import' import_=Import comment=Comment
+	;
+
+ElementSpecificationExtends returns ElementSpec::uElementSpec :
+	{ElementSpec::EXTENDS} 'extends' path=Path ( '(' 
+	elementArg+=ElementArg (',' elementArg+=ElementArg)* ')' )? annotationOpt=Annotation?
+	;
+
+/* FIXME check the 'replaceable' */
+ElementSpecificationClassDefinition returns ElementSpec::uElementSpec :
+	{ElementSpec::CLASSDEF} /*replaceable_?=('replaceable')?*/ class_=InnerClass
+	;
+	
+ElementSpecificationComponents returns ElementSpec::uElementSpec :
+	{ElementSpec::COMPONENTS} attributes=ElementAttributes typeSpec=TypeSpecification 
+	components+=ComponentItem (',' components+=ComponentItem)*
+	;
+		
+InnerOuter returns InnerOuter::uInnerOuter :
+	{InnerOuter::INNEROUTER} 'inner' 'outer'
+	|{InnerOuter::INNER} 'inner'
+	|{InnerOuter::OUTER} 'outer'
+	|InnerOuterUnspecified
+	;
+
+InnerOuterUnspecified returns InnerOuter::uInnerOuter :
+	{InnerOuter::UNSPECIFIED}
+	;
+
+// FIXME the unqualified import- perhaps in a M2M transformation
+Import returns Import::uImport :
+	{Import::NAMED_IMPORT} name=IDENT EQUALS path=Path
+	|{Import::QUAL_IMPORT} path=Path
+	//|{UNQUAL_IMPORT} path=Path
+	;
+
+ComponentItem returns ComponentItem::uComponentItem :
+	{ComponentItem::COMPONENTITEM} component=Component condition=ComponentCondition? comment=Comment
+	;
+
+ComponentCondition returns ComponentCondition::ComponentCondition :
+	'if' condition=Expression
+	;
+
+Component returns Component::uComponent :
+	{Component::COMPONENT} name=IDENT arrayDim=ArrayDim modification=Modification?
+	;
+
+EquationItem returns EquationItem::uEquationItem :
+	{EquationItem::EQUATIONITEM} equation_=Equation comment=Comment ';'
+	| {EquationItem::EQUATIONITEMANN} annotation_=Annotation ';'
+	;
+
+AlgorithmItem returns AlgorithmItem::uAlgorithmItem :
+	{AlgorithmItem::ALGORITHMITEM} algorithm_=AlgorithmStatement comment=Comment ';'
+	| {AlgorithmItem::ALGORITHMITEMANN} annotation_=Annotation ';'
+	; 
+
+Equation returns Equation::uEquation :
+	EquationIf | EquationEquals | EquationConnect | EquationFor | EquationWhenEq 
+	| EquationNoRetCall  //FIXME what is this doing? 
+	//|EqFailure
+	;
+	
+EquationIf returns Equation::EQ_IF :
+	'if' ifExp=Expression 'then' (equationTrueItems+=EquationItem)* 
+	(elseIfBranches+=ElseIfBranch)* 
+	('else' (equationElseItems+=EquationItem)*)?
+	'end' 'if'
+	;
+
+ElseIfBranch returns Equation::tuple_ElseIfBranch :
+	'elseif' exp=Expression 'then' (equationItem+=EquationItem)*
+	;
+	
+EquationEquals returns Equation::EQ_EQUALS :
+	leftSide=ExprRange '=' rightSide=Expression
+	;
+EquationNoRetCall returns Equation::EQ_NORETCALL :
+	functionName=ComponentRef '(' functionArgs=FunctionArguments? ')'
+	;
+
+EquationConnect returns Equation::EQ_CONNECT :
+	'connect' '(' connector1=ComponentRef ',' connector2=ComponentRef ')'
+	;
+
+EquationFor returns Equation::EQ_FOR :
+	'for' iterators=ForIterators 'loop' (forEquations+=EquationItem)* 'end' 'for' 
+	;
+
+EquationWhenEq returns Equation::EQ_WHEN_E :
+	'when' whenExp=Expression 'then' (whenEquations+=EquationItem)* 
+	(elseWhenEquations+=ElseWhenEquationBranch)* 
+	'end' 'when'
+	;
+
+ElseWhenEquationBranch returns Equation::tuple_ElseWhenEquation :
+	'elsewhen' exp=Expression 'then' (equationItem+=EquationItem)*
+	;	
+
+AlgorithmStatement returns AlgorithmStatement::uAlgorithmStatement :
+	AlgorithmIf | AlgorithmAssign | AlgorithmFor | AlgorithmWhen 
+	|AlgorithmNoRetCall 
+	| AlgorithmReturn | AlgorithmWhile | AlgorithmBreak 
+	;
+
+AlgorithmIf returns AlgorithmStatement::ALG_IF:
+	'if' ifExp=Expression 'then' (trueBranch+=AlgorithmItem)* 
+	(elseIfAlgorithmBranch+=ElseIfAlgorithmBranch)* 
+	('else' (elseBranch+=AlgorithmItem)*)?
+	'end' 'if'
+	;
+
+ElseIfAlgorithmBranch returns AlgorithmStatement::tuple_ElseIfAlgorithmBranch :
+	'elseif' exp=Expression 'then' (algorithmItem+=AlgorithmItem)*
+	;
+
+AlgorithmAssign returns AlgorithmStatement::ALG_ASSIGN:
+	assignComponent=ExprRange ':=' value=Expression
+	;
+AlgorithmNoRetCall returns AlgorithmStatement::ALG_NORETCALL :
+	functionCall=ComponentRef '(' functionArgs=FunctionArguments? ')'
+	;
+
+AlgorithmFor returns AlgorithmStatement::ALG_FOR :
+	'for' iterators=ForIterators 'loop' (forBody+=AlgorithmItem)* 'end' 'for'
+	; 
+
+AlgorithmWhen returns AlgorithmStatement::ALG_WHEN_A :
+	'when' boolExpr=Expression 'then' (whenBody+=AlgorithmItem)
+	(elseWhenAlgorithmBranch+=ElseWhenAlgorithmBranch)*
+	'end' 'when'
+	;
+
+ElseWhenAlgorithmBranch returns AlgorithmStatement::tuple_ElseWhenAlgorithmBranch :
+	'elsewhen' exp=Expression 'then' (algorithmItem+=AlgorithmItem)*
+	;	
+
+AlgorithmReturn returns AlgorithmStatement::ALG_RETURN :
+	'return'
+	;
+
+AlgorithmWhile returns AlgorithmStatement::ALG_WHILE :
+	'while' boolExpr=Expression 'loop' (whileBody+=AlgorithmItem)* 'end' 'while'
+	;
+
+AlgorithmBreak returns AlgorithmStatement::ALG_BREAK :
+	'break'
+	; 
+
+Modification returns Modifications::uModification :
+	{Modifications::CLASSMOD}	(
+	'(' elementArgList+=ElementArg (',' elementArgList+=ElementArg)* ')' (EQUALS expOption=Expression)?
+	| (EQUALS|ASSIGN) expOption=Expression)
+	;
+	
+// TODO componentRef? constrain part
+ElementArg returns ElementArg::uElementArg :
+	{ElementArg::MODIFICATION} each_=Each finalItem?=('final')? 
+	componentReg=ComponentRef modification=Modification? 
+	comment=StringComment?
+	|{ElementArg::REDECLARATION} each_=Each finalItem?=('final')? 
+	redeclareKeywords=( ReplaceableKeyword | RedeclareReplaceableKeyword )
+	elementSpec=( ElementSpecificationClassDefinition | ElementSpecificationComponents1 )
+	/* constrainClass=ConstrainClass? */
+	|{ElementArg::REDECLARATION} each_=Each finalItem?=('final') redeclareKeywords=RedeclareKeyword 
+	elementSpec=( ElementSpecificationClassDefinition | ElementSpecificationComponents1 )
+	;
+
+ElementSpecificationComponents1 returns ElementSpec::uElementSpec :
+	{ElementSpec::COMPONENTS} attributes=ElementAttributes typeSpec=TypeSpecification 
+	components+=ComponentItem ';'
+	;
+	
+ReplaceableKeyword returns RedeclareKeywords::uRedeclareKeywords :
+	{RedeclareKeywords::REPLACEABLE} 'replaceable'
+	;
+
+RedeclareKeyword returns RedeclareKeywords::uRedeclareKeywords :
+	{RedeclareKeywords::REDECLARE} 'redeclare'
+	;
+
+RedeclareReplaceableKeyword returns RedeclareKeywords::uRedeclareKeywords :
+	{RedeclareKeywords::REDECLARE_REPLACEABLE} 'redeclare' 'replaceable'
+	;
+
+
+Each returns Each::uEach :
+	{Each::EACH} 'each'
+	|{Each::NON_EACH}
+	; 
+
+ElementAttributes returns ElementAttributes::uElementAttributes  :
+	{ElementAttributes::ATTR} (flowPrefix?='flow'|streamPrefix?='stream')?
+	variability=Variability direction=Direction arrayDim=ArrayDim?
+	;
+
+Variability returns Variability::uVariability :
+	{Variability::CONST} 'constant'
+	|{Variability::PARAM} 'parameter'
+	|{Variability::DISCRETE} 'discrete'
+	|{Variability::VAR}
+	;
+	
+Direction returns Direction::uDirection :
+	{Direction::INPUT} 'input'
+	|{Direction::OUTPUT} 'output'
+	|{Direction::BIDIR}
+	; 	
+	
+ArrayDim returns ArrayDim::ArrayDim :
+	('[' subscripts+=Subscript (',' subscripts+=Subscript)* ']')?
+	;	
+
+Expression returns Exp::uExp :
+	ExprIf | ExprRange
+	;
+	
+ExprIf returns Exp::uExp :
+	{Exp::IFEXP} 'if' ifExp=Expression 'then' trueBranch=Expression
+	(elseIfBranch+=ExprElseIfBranchTuple)*
+	('else' elseBranch=Expression)
+	;
+
+ExprElseIfBranchTuple returns Exp::tuple_ElseIfBranch :
+	'elseif' exp1=Expression 'then' exp2=Expression
+	;
+
+ExprRange returns Exp::uExp :
+	ExprLogical ({Exp::RANGE.start=current} ':' step=ExprLogical (':' stop=ExprLogical)? )?
+	;
+	
+ExprLogical returns Exp::uExp :
+	ExprLogicalTerm ({Exp::LBINARY.exp1=current} op=OperatorOr exp2=ExprLogical)?
+	;
+	
+ExprLogicalTerm returns Exp::uExp :
+	ExprLogicalFactor ({Exp::LBINARY.exp1=current}  op=OperatorAnd exp2=ExprLogicalTerm)?
+	;
+	
+ExprLogicalFactor returns Exp::uExp :
+	ExprRelation |
+	{Exp::LUNARY} op=OperatorNot exp=ExprRelation
+	;
+
+ExprRelation returns Exp::uExp :
+	ExprArithmetic
+	({Exp::RELATION.exp1=current}  op=( OperatorLess | OperatorLessEq | OperatorGreater | OperatorGreaterEq 
+		| OperatorEqual | OperatorNotEqual ) exp2=ExprArithmetic)?
+	;
+
+ExprArithmetic returns Exp::uExp :
+	ExprUnaryArithmetic 
+	({Exp::BINARY.exp1=current} op=(OperatorAdd | OperatorSub | OperatorAddEW | OperatorSubEW) exp2=ExprArithmetic2)?
+	;
+
+ExprArithmetic2 returns Exp::uExp :
+	ExprArithmeticTerm 
+	({Exp::BINARY.exp1=current} op=(OperatorAdd | OperatorSub | OperatorAddEW | OperatorSubEW) exp2=ExprArithmetic2)?
+	;
+
+ExprUnaryArithmetic returns Exp::uExp :
+	ExprArithmeticTerm |
+	{Exp::UNARY} op=(OperatorUnPlus | OperatorUnMinus | OperatorUnPlusEW | OperatorUnMinusEW)
+	exp=ExprArithmeticTerm
+	;
+
+ExprArithmeticTerm returns Exp::uExp :
+	ExprArithmeticFactor  
+	( {Exp::BINARY.exp1=current} op=(OperatorMul | OperatorDiv | OperatorMulEW | OperatorDivEW) 
+	exp2=ExprArithmeticTerm)?
+	;
+
+ExprArithmeticFactor returns Exp::uExp :
+	ExprPrimary ({Exp::BINARY.exp1=current} op=(OperatorPow | OperatorPowEW) exp2=ExprPrimary)?
+	;
+
+ExprPrimary returns Exp::uExp :
+	ExprInt | ExprReal | ExprComponentRefOrCall | ExprString | ExprBool | ExprArray 
+	| ExprMatrix 
+	| ExprTuple | ExprEnd | ExprDer
+	;
+	
+ExprInt returns Exp::INTEGER :
+	value=UNSIGNED_INTEGER
+	;
+
+ExprReal returns Exp::REAL :
+	value=UNSIGNED_REAL
+	;
+
+ExprComponentRefOrCall returns Exp::uExp :
+	{Exp::CALL_INITIAL} 'initial' '(' ')'
+	| ExprFunctionCall 
+	| ExprComponentRef
+	;
+
+ExprComponentRef returns Exp::uExp :
+	{Exp::CREF} componentReg=ComponentRef
+	;
+
+ExprFunctionCall returns Exp::uExp :
+	{Exp::CALL} function=ComponentRef '(' functionArgs=FunctionArguments? ')'
+	;
+	
+ExprString returns Exp::STRING :
+	value=STRING
+	;
+	 
+ExprBool returns Exp::BOOL :
+	value=BOOL_VAL
+	;
+		
+ExprArray returns Exp::ARRAY :
+	'{' arrayExp+=Expression (',' arrayExp+=Expression)* '}'
+	;
+
+ExprMatrix returns Exp::MATRIX :
+	'[' matrix+=MatrixRow (';' matrix+=MatrixRow)* ']'
+	;
+	
+MatrixRow returns Exp::tuple_Matrix :
+	exp+=Expression (',' exp+=Expression)*
+	;
+	
+ExprTuple returns Exp::TUPLE :
+	'(' expressions+=Expression (',' expressions+=Expression)* ')'
+	;
+	
+ExprEnd returns Exp::END :
+	'end'
+	;
+	
+ExprDer returns Exp::PARTEVALFUNCTION :
+	'der' '(' function_=ComponentRef (',' functionArgs=FunctionArguments)? ')'
+	;
+	
+
+FunctionArguments returns FunctionArgs::uFunctionArguments :
+	FunctionArgumentsMixed
+	|FunctionArgumentsForIter
+	|FunctionNamedArguments
+	;
+	
+FunctionArgumentsMixed returns FunctionArgs::uFunctionArguments :
+	{FunctionArgs::FUNCTIONARGS} args+=Expression (',' args+=Expression)* (',' argNames+=NamedArguments)*
+	;
+
+FunctionArgumentsForIter returns FunctionArgs::uFunctionArguments :
+	{FunctionArgs::FOR_ITER_FARG} exp=Expression 'for' iterators=ForIterator
+	;
+
+FunctionNamedArguments returns FunctionArgs::uFunctionArguments :
+	{FunctionArgs::FUNCTIONARGS} argNames+=NamedArguments (',' argNames+=NamedArguments)*
+	;
+		
+NamedArguments returns NamedArg::uNamedArg :
+	{NamedArg::NAMEDARG} argName=IDENT '=' argValue=Expression
+	;
+
+/* 
+	Operators
+*/
+	
+OperatorAdd returns Operator::ADD :
+	'+'
+	;
+	
+OperatorSub returns Operator::SUB :
+	'-'
+	;
+	
+OperatorMul returns Operator::MUL :
+	'*'
+	;
+	
+OperatorDiv returns Operator::DIV :
+	'/'
+	;
+	
+OperatorPow returns Operator::POW :
+	'^'
+	;
+
+OperatorUnPlus returns Operator::UPLUS :
+	'+'
+	;
+
+OperatorUnMinus returns Operator::UMINUS :
+	'-'
+	;
+
+OperatorAddEW returns Operator::ADD_EW :
+	'.+'
+	;
+	
+OperatorSubEW returns Operator::SUB_EW :
+	'.-'
+	;
+	
+OperatorMulEW returns Operator::MUL_EW :
+	'.*'
+	;
+	
+OperatorDivEW returns Operator::DIV_EW :
+	'./'
+	;
+	
+OperatorPowEW returns Operator::POW_EW :
+	'.^'
+	;
+
+OperatorUnPlusEW returns Operator::UPLUS_EW :
+	'.+'
+	;
+
+OperatorUnMinusEW returns Operator::UMINUS_EW :
+	'.-'
+	;
+
+OperatorAnd returns Operator::AND :
+	'and'
+	;
+
+OperatorOr returns Operator::OR :
+	'or'
+	;
+	
+OperatorNot returns Operator::NOT :
+	'not'
+	;
+	
+OperatorLess returns Operator::LESS :
+	LESS
+	;
+	
+OperatorLessEq returns Operator::LESSEQ :
+	LESSEQ
+	;
+OperatorGreater returns Operator::GREATER :
+	GREATER
+	;
+	
+OperatorGreaterEq returns Operator::GREATEREQ :
+	GREATEREQ
+	;
+OperatorEqual returns Operator::EQUAL :
+	EQEQ
+	;
+	
+OperatorNotEqual returns Operator::NEQUAL :
+	LESSGT
+	;
+
+Subscript returns Subscript::uSubscript	 :
+	{Subscript::NOSUB} ':'
+	|{Subscript::SUBSCRIPT} subScript=Expression
+	 ;
+	 
+ComponentRef returns ComponentRef::uComponentRef  :
+	ComponentReferenceQualified	
+	|{ComponentRef::CREF_IDENT} 
+	name=IDENT ('[' subscripts+=Subscript (',' subscripts+=Subscript)* ']')? 
+	//	{WILD}	
+	;
+
+ComponentReferenceQualified returns ComponentRef::uComponentRef  :	
+	{ComponentRef::CREF_QUAL}
+	name=IDENT ('[' subscripts+=Subscript (',' subscripts+=Subscript)* ']')? 
+	'.' componentRef=ComponentRef
+	;
+	
+/* 
+	1) FIXME Fully-qualified path FULLYQUALIFIED
+	2)
+*/
+	
+Path returns Path::uPath :
+	{Path::QUALIFIED} name=IDENT ('.' path=Path|'.*')
+	|{Path::IDENT} name=IDENT
+	;
+
+//PathStar returns uPath :
+	
+Restriction returns Restriction::uRestriction :
+	{Restriction::R_CLASS} 'class'
+	|{Restriction::R_MODEL} 'model'
+	|{Restriction::R_RECORD} 'record'
+	|{Restriction::R_BLOCK} 'block'
+	|{Restriction::R_CONNECTOR} 'connector'
+	|{Restriction::R_EXP_CONNECTOR} 'expandable' 'connector'
+	|{Restriction::R_TYPE} 'type'
+	|{Restriction::R_PACKAGE} 'package'
+	|{Restriction::R_FUNCTION} 'function'
+	|{Restriction::R_ENUMERATION} 'enumeration'
+	//|{R_PREDEFINED_INT} 'Integer'
+	//|{R_PREDEFINED_REAL} 'Real'
+	//|{R_PREDEFINED_STRING} 'String'
+	//|{R_PREDEFINED_BOOL} 'Boolean'
+	; 	
+
+Annotation returns Annotation::uAnnotation:
+	{Annotation::ANNOTATION} 'annotation' '(' elementArgs+=ElementArg (',' elementArgs+=ElementArg)* ')'
+	;
+
+// CHECK Had to modifiy the comment argument in the EMF model
+Comment returns Comment::uComment:
+	{Comment::COMMENT} (comment=StringComment)? (annotation_=Annotation)? 
+	;
+
+StringComment returns Comment::STRING_COMMENT :
+	 comment=STRING
+	;
+
+ExternalDeclaration returns ExternalDecl::uExternalDecl :
+	{ExternalDecl::EXTERNALDECL} (lang=STRING)? ((output_=ComponentRef EQUALS)? funcName=IDENT
+	'(' args+=Expression (',' args+=Expression)* ')')? (annotation_=Annotation)?
+	;
+
+/* Not created during parsing
+TimeStamp returns uTimeStamp
+
+	;
+*/
+
+ForIterator returns Iterators::ForIterator :
+	tuple=ForIteratorTuple
+	;
+
+ForIterators returns Iterators::ForIterators :
+	forIterator+=ForIterator (',' forIterator+=ForIterator)*
+	;
+
+ForIteratorTuple returns Iterators::tuple_ForIterator :
+	Ident=IDENT 'in' Exp=Expression 
+	;
+	
+TypeSpecification returns TypeSpec::uTypeSpec :
+	{TypeSpec::TPATH} path=Path (arrayDim=ArrayDim)?
+	//|{TCOMPLEX} path=Path '<' typeSpecs+=TypeSpecification 
+	//(',' typeSpecs+=TypeSpecification)* '>'
+	;
+	
+
+/*------------------------------------------------------------------
+ * LEXER RULES
+ *------------------------------------------------------------------*/
+
+
+
+/*********************************
+	2.3 Strings, numbers, etc.
+**********************************/
+
+terminal ML_COMMENT	: '/*' -> '*/';
+terminal SL_COMMENT 	: '//' !('\n'|'\r')* ('\r'? '\n')?;
+terminal STRING	: 
+			'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'"') )* '"' 
+			//|"'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|"'") )* "'"
+		; 
+terminal WS			: (' '|'\t'|'\r'|'\n')+;
+
+terminal UNSIGNED_REAL returns ecore::EDouble:
+	(('0'..'9')+ '.' ('0'..'9')* (('E'|'e') ('+'|'-')? ('0'..'9')+)? )
+	|(('0'..'9')+ ('E'|'e') ('+'|'-')? ('0'..'9')+) 
+	;
+
+terminal UNSIGNED_INTEGER returns ecore::EInt:
+	('0'..'9')+
+	;
+
+terminal BOOL_VAL returns ecore::EBoolean :
+	'true' | 'false'
+	;
+
+terminal IDENT : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+
+/*********************************
+	2.2 Operators
+**********************************/
+  
+terminal 	DOT		: '.'           ;  
+terminal  LPAR		: '('		;
+terminal   RPAR		: ')'		;
+terminal   LBRACK	: '['		;
+terminal   RBRACK	: ']'		;
+terminal   LBRACE	: '{'		;
+terminal   RBRACE	: '}'		;
+terminal   EQUALS	: '='		;
+terminal   ASSIGN	: ':='		;
+terminal   COMMA		: ','		;
+terminal   COLON		: ':'		;
+terminal   SEMICOLON	: ';'		;
+  /* elementwise operators */  
+terminal   PLUS_EW     	: '.+'  	; /* Modelica 3.0 */
+terminal   MINUS_EW    	: '.-'     	; /* Modelica 3.0 */    
+terminal   STAR_EW     	: '.*'     	; /* Modelica 3.0 */
+terminal   SLASH_EW    	: './'		; /* Modelica 3.0 */  
+terminal   POWER_EW    	: '.^' 		; /* Modelica 3.0 */
+  
+terminal STAR		: '*'('.')? 				;
+terminal MINUS		: '-'('.')?					;
+terminal PLUS		: '+'('.'|'&')?				; 
+terminal LESS		: '<'('.')?					;
+terminal LESSEQ		: '<='('.')?				;
+terminal LESSGT		: '!='('.')?|'<>'('.')?		;
+terminal GREATER		: '>'('.')?					;
+terminal GREATEREQ	: '>='('.')?				;
+terminal EQEQ		: '=='('.'|'&')?			;
+terminal POWER		: '^'('.')?					;
+terminal SLASH		: '/'('.')?					;
+
+terminal ANY_OTHER: .;

@@ -1,0 +1,185 @@
+EValidator.Registry bindEValidatorRegistry() 
+	-> org.eclipse.emf.ecore.EValidator.Registry.INSTANCE
+
+EPackage.Registry bindEPackageRegistry() 
+	-> org.eclipse.emf.ecore.EPackage.Registry.INSTANCE
+
+Class<? extends Diagnostician> bindDiagnostician() 
+	-> org.eclipse.xtext.validation.CancellableDiagnostician
+
+Class<? extends IFragmentProvider> bindIFragmentProvider() 
+	-> org.eclipse.xtext.validation.CancellableDiagnostician
+
+Class<? extends ITransientValueService> bindITransientValueService() 
+	-> org.eclipse.xtext.parsetree.reconstr.impl.DefaultTransientValueService
+
+Class<? extends IUnassignedTextSerializer> bindIUnassignedTextSerializer() 
+	-> org.eclipse.xtext.parsetree.reconstr.impl.DefaultUnassignedTextSerializer
+
+Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() 
+	-> org.eclipse.xtext.parsetree.reconstr.impl.DefaultCrossReferenceSerializer
+
+Class<? extends IFormatter> bindIFormatter() 
+	-> org.eclipse.xtext.formatting.impl.OneWhitespaceFormatter
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.formatting.ModelicaASTFormatter
+
+Class<? extends INodeModelFormatter> bindINodeModelFormatter() 
+	-> org.eclipse.xtext.formatting.impl.DefaultNodeModelFormatter
+
+Class<? extends IHiddenTokenMerger> bindIHiddenTokenMerger() 
+	-> org.eclipse.xtext.parsetree.reconstr.impl.DefaultHiddenTokenMerger
+
+Class<? extends SerializerUtil> bindSerializerUtil() 
+	-> org.eclipse.xtext.parsetree.reconstr.SerializerUtil
+
+Class<? extends IResourceFactory> bindIResourceFactory() 
+	-> org.eclipse.xtext.resource.XtextResourceFactory
+
+Class<? extends ILinkingService> bindILinkingService() -> org.eclipse.xtext.linking.impl.DefaultLinkingService
+
+Class<? extends IScopeProvider> bindIScopeProvider() 
+	-> org.eclipse.xtext.scoping.impl.DefaultScopeProvider
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.scoping.ModelicaASTScopeProvider
+
+Class<? extends org.eclipse.xtext.linking.ILinker> bindILinker() 
+	-> org.eclipse.xtext.linking.lazy.LazyLinker
+
+Class<? extends org.eclipse.xtext.conversion.IValueConverterService> bindIValueConverterService() 
+	-> org.eclipse.xtext.common.services.DefaultTerminalConverters
+	-> [ModelicaASTRuntimeModule] org.modelica.xtext.valueConversion.ModelicaTerminalConverters
+
+Class<? extends org.eclipse.xtext.parser.ITokenToStringConverter> bindITokenToStringConverter() 
+	-> org.eclipse.xtext.parser.antlr.AntlrTokenToStringConverter
+
+Class<? extends org.eclipse.xtext.parser.packrat.IParseResultFactory> bindIParseResultFactory() 
+	-> org.eclipse.xtext.parser.packrat.ParseResultFactory
+
+Class<? extends org.eclipse.xtext.parser.ISwitchingParser> bindISwitchingParser() 
+	-> org.eclipse.xtext.parser.SwitchingParser
+
+Class<? extends ITokenDefProvider> bindITokenDefProvider() 
+	-> org.eclipse.xtext.parser.antlr.NullTokenDefProvider
+
+Class<? extends org.eclipse.xtext.parser.IAstFactory> bindIAstFactory() 
+	-> org.eclipse.xtext.parser.DefaultEcoreElementFactory
+
+Class<? extends XtextResource> bindXtextResource() 
+	-> org.eclipse.xtext.linking.lazy.LazyLinkingResource
+
+Class<? extends org.eclipse.xtext.IGrammarAccess> bindIGrammarAccess() 
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.services.ModelicaASTGrammarAccess
+
+Class<? extends org.eclipse.xtext.parsetree.reconstr.IParseTreeConstructor> bindIParseTreeConstructor() 
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.parseTreeConstruction.ModelicaASTParsetreeConstructor
+
+Class<? extends org.eclipse.xtext.parser.antlr.IAntlrParser> bindIAntlrParser() 
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.parser.antlr.ModelicaASTParser
+
+Class<? extends org.eclipse.xtext.parser.ITokenToStringConverter> bindITokenToStringConverter() 
+	-> [AbstractModelicaASTRuntimeModule] org.eclipse.xtext.parser.antlr.AntlrTokenToStringConverter
+
+Class<? extends org.eclipse.xtext.parser.antlr.IAntlrTokenFileProvider> bindIAntlrTokenFileProvider()
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.parser.antlr.ModelicaASTAntlrTokenFileProvider
+
+Class<? extends org.eclipse.xtext.parser.antlr.Lexer> bindLexer() 
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.parser.antlr.internal.InternalModelicaASTLexer
+
+Class<? extends org.eclipse.xtext.parser.antlr.ITokenDefProvider> bindITokenDefProvider() 
+	-> [AbstractModelicaASTRuntimeModule] org.eclipse.xtext.parser.antlr.AntlrTokenDefProvider
+
+Class<? extends org.modelica.xtext.validation.ModelicaASTJavaValidator> bindModelicaASTJavaValidator() 
+	-> [AbstractModelicaASTRuntimeModule] org.modelica.xtext.validation.ModelicaASTJavaValidator
+
+
+Class<? extends org.eclipse.xtext.ui.core.ILocationInFileProvider> bindILocationInFileProvider()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.DefaultLocationInFileProvider
+
+Class<? extends org.eclipse.jface.text.hyperlink.IHyperlinkDetector> bindIHyperlinkDetector()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.hyperlinking.DefaultHyperlinkDetector
+
+Class<? extends org.eclipse.jface.text.reconciler.IReconciler> bindIReconciler()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.editor.reconciler.XtextReconciler
+
+Class<? extends org.eclipse.xtext.ui.core.editor.toggleComments.ISingleLineCommentHelper> bindISingleLineCommentHelper()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.toggleComments.DefaultSingleLineCommentHelper
+
+Class<? extends org.eclipse.xtext.ui.common.editor.outline.ITreeProvider> bindITreeProvider()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.outline.transformer.TransformingTreeProvider
+
+Class<? extends org.eclipse.ui.views.contentoutline.IContentOutlinePage> bindIContentOutlinePage()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.outline.XtextContentOutlinePage
+	-> [ModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.outline.XtextContentOutlinePage
+
+Class<? extends org.eclipse.xtext.ui.common.editor.outline.actions.IActionBarContributor> bindIActionBarContributor()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.outline.actions.IActionBarContributor.DefaultActionBarContributor
+	-> [ModelicaASTUiModule] org.modelica.xtext.outline.ModelicaSourceOutlineActionBarContributor
+
+Class<? extends org.eclipse.xtext.ui.core.editor.syntaxcoloring.IHighlightingHelper> bindIHighlightingHelper()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.syntaxcoloring.HighlightingHelper
+
+Class<? extends org.eclipse.emf.common.notify.AdapterFactory> bindAdapterFactory()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.InjectableAdapterFactory
+
+Class<? extends org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider> bindAdapterFactoryLabelProvider()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.InjectableAdapterFactoryLabelProvider
+
+org.eclipse.emf.edit.provider.ComposedAdapterFactory.Descriptor.Registry bindComposedAdapterFactory$Descriptor$RegistryToInstance()
+	-> [AbstractModelicaASTUiModule] org.eclipse.emf.edit.provider.ComposedAdapterFactory.Descriptor.Registry.INSTANCE;
+
+Class<? extends org.eclipse.xtext.ui.core.editor.contentassist.IContentAssistantFactory> bindIContentAssistantFactory()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.contentassist.DefaultContentAssistantFactory
+
+Class<? extends org.eclipse.jface.text.contentassist.IContentAssistProcessor> bindIContentAssistProcessor()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.editor.contentassist.XtextContentAssistProcessor
+
+Class<? extends org.eclipse.xtext.ui.core.editor.contentassist.ICompletionProposalPostProcessor> bindICompletionProposalPostProcessor()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.contentassist.DefaultCompletionProposalPostProcessor
+
+Class<? extends org.eclipse.xtext.ui.core.editor.contentassist.IFollowElementCalculator> bindIFollowElementCalculator()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.contentassist.DefaultFollowElementCalculator
+
+Class<? extends org.eclipse.xtext.ui.core.editor.contentassist.ITemplateProposalProvider> bindITemplateProposalProvider()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.templates.DefaultTemplateProposalProvider
+
+Class<? extends org.eclipse.jface.text.templates.persistence.TemplateStore> bindTemplateStore()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.templates.XtextTemplateStore
+
+Class<? extends org.eclipse.jface.text.templates.ContextTypeRegistry> bindContextTypeRegistry()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.templates.XtextTemplateContextTypeRegistry
+
+Class<? extends org.eclipse.xtext.ui.core.editor.formatting.IContentFormatterFactory> bindIContentFormatterFactory()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.editor.formatting.ContentFormatterFactory
+
+Class<? extends org.eclipse.xtext.ui.core.editor.utils.ValidationJob.Factory> bindValidationJob$Factory()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.editor.utils.DefaultValidationJobFactory
+
+Class<? extends org.eclipse.xtext.ui.core.editor.IXtextResourceChecker> bindIXtextResourceChecker()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.editor.DefaultXtextResourceChecker
+
+Class<? extends org.eclipse.jface.text.rules.ITokenScanner> bindITokenScanner()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.syntaxcoloring.antlr.AntlrTokenScanner
+
+Class<? extends org.eclipse.xtext.ui.common.editor.contentassist.IProposalConflictHelper> bindIProposalConflictHelper()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.contentassist.antlr.AntlrProposalConflictHelper
+
+Class<? extends org.eclipse.xtext.ui.core.editor.IDamagerRepairer> bindIDamagerRepairer()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.core.editor.XtextDamagerRepairer
+
+Class<? extends org.eclipse.jface.viewers.ILabelProvider> bindILabelProvider()
+	-> [AbstractModelicaASTUiModule] org.modelica.xtext.labeling.ModelicaASTLabelProvider
+
+Class<? extends org.eclipse.xtext.ui.common.editor.outline.transformer.ISemanticModelTransformer> bindISemanticModelTransformer()
+	-> [AbstractModelicaASTUiModule] org.modelica.xtext.outline.ModelicaASTTransformer
+
+Class<? extends org.eclipse.xtext.ui.common.editor.outline.actions.IContentOutlineNodeAdapterFactory> bindIContentOutlineNodeAdapterFactory()
+	-> [AbstractModelicaASTUiModule] org.modelica.xtext.outline.ModelicaASTOutlineNodeAdapterFactory
+
+Class<? extends org.eclipse.xtext.ui.core.editor.contentassist.IContentProposalProvider> bindIContentProposalProvider()
+	-> [AbstractModelicaASTUiModule] org.modelica.xtext.contentassist.ModelicaASTProposalProvider
+
+Class<? extends org.eclipse.xtext.ui.core.editor.contentassist.ContentAssistContext.Factory> bindContentAssistContext$Factory()
+	-> [AbstractModelicaASTUiModule] org.eclipse.xtext.ui.common.editor.contentassist.antlr.ParserBasedContentAssistContextFactory
+
+Class<? extends org.eclipse.xtext.ui.common.editor.contentassist.antlr.IContentAssistParser> bindIContentAssistParser()
+	-> [AbstractModelicaASTUiModule] org.modelica.xtext.contentassist.antlr.ModelicaASTParser
+
