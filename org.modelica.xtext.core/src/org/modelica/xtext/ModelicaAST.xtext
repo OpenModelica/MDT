@@ -89,21 +89,21 @@ ClassDefinition returns ClassDef::uClassDef :
 	;
 	
 ClassDefinitionDerived returns ClassDef::DERIVED :
-	EQUALS attributes=ElementAttributes typeSpec=TypeSpecification 
+	'=' attributes=ElementAttributes typeSpec=TypeSpecification 
 	('(' arguments+=ElementArg (',' arguments+=ElementArg)* ')')?  comment=Comment
 	;
 
 ClassDefinitionEnum returns ClassDef::ENUMERATION :
-	EQUALS 'enumeration' '(' enumLiterals=EnumerationDefinition ')' comment=Comment 
+	'=' 'enumeration' '(' enumLiterals=EnumerationDefinition ')' comment=Comment 
 	;
 
 ClassDefinitionOverload returns ClassDef::OVERLOAD :
-	EQUALS 'overload' '(' functionNames+=Path (',' functionNames+=Path)* ')' comment=Comment
+	'=' 'overload' '(' functionNames+=Path (',' functionNames+=Path)* ')' comment=Comment
 	;
 
 // CHECK Comment?
 ClassDefinitionPartialDer returns ClassDef::PDER :
-	EQUALS 'der' '(' functionName=Path (',' vars+=IDENT)+ ')'
+	'=' 'der' '(' functionName=Path (',' vars+=IDENT)+ ')'
 	;
 // CHECK Comment or StringComment
 ClassDefinitionExtends returns ClassDef::CLASS_EXTENDS :
@@ -121,7 +121,7 @@ ClassDefinitionParts returns ClassDef::PARTS :
 	;
 EnumerationDefinition returns EnumDef::uEnumDef :
 	{EnumDef::ENUMLITERALS} enumLiterals+=EnumLiteral (',' enumLiterals+=EnumLiteral)* 
-	| {EnumDef::ENUM_COLON} COLON
+	| {EnumDef::ENUM_COLON} ':'
 	;
 
 EnumLiteral returns EnumLiteral::uEnumLiteral :
@@ -153,18 +153,18 @@ ElementItem returns ElementItem::uElementItem :
 
 // FIXME Figure out the text thing
 // fix redeclareKeyword>s< ?=('redeclare')?
-Element returns Element::uElement :
-	ElementElement
+//Element returns Element::uElement :
+//	ElementElement
 	//|{TEXT}
 	//|{DEFINEUNIT}
-	;
+	//;
 	
 // FIXME constrainedby clause	
-ElementElement returns Element::ELEMENT :
-	specification=(ElementSpecificationImport|ElementSpecificationExtends) innerOuter=InnerOuterUnspecified
-	|redeclareKeywords=RedeclareKeyword? finalPrefix?=('final')?
+Element returns Element::uElement:
+	{Element::ELEMENT} specification=(ElementSpecificationImport|ElementSpecificationExtends) innerOuter=InnerOuterUnspecified
+	|{Element::ELEMENT} redeclareKeywords=RedeclareKeyword? finalPrefix?=('final')?
 		innerOuter=InnerOuter specification=(ElementSpecificationClassDefinition | ElementSpecificationComponents) 
-	|redeclareKeywords=(RedeclareReplaceableKeyword | ReplaceableKeyword) innerOuter=InnerOuter 
+	|{Element::ELEMENT} redeclareKeywords=(RedeclareReplaceableKeyword | ReplaceableKeyword) innerOuter=InnerOuter 
 		specification=(ElementSpecificationClassDefinition | ElementSpecificationComponents) 
 		//('constrainedby' name=IDENT  constrainClass=ConstrainClass)?
 	
@@ -215,7 +215,7 @@ InnerOuterUnspecified returns InnerOuter::uInnerOuter :
 
 // FIXME the unqualified import- perhaps in a M2M transformation
 Import returns Import::uImport :
-	{Import::NAMED_IMPORT} name=IDENT EQUALS path=Path
+	{Import::NAMED_IMPORT} name=IDENT '=' path=Path
 	|{Import::QUAL_IMPORT} path=Path
 	//|{UNQUAL_IMPORT} path=Path
 	;
@@ -323,21 +323,21 @@ ElseWhenAlgorithmBranch returns AlgorithmStatement::tuple_ElseWhenAlgorithmBranc
 	;	
 
 AlgorithmReturn returns AlgorithmStatement::ALG_RETURN :
-	'return'
+	{AlgorithmStatement::ALG_RETURN} 'return'
 	;
 
 AlgorithmWhile returns AlgorithmStatement::ALG_WHILE :
-	'while' boolExpr=Expression 'loop' (whileBody+=AlgorithmItem)* 'end' 'while'
+	{AlgorithmStatement::ALG_WHILE} 'while' boolExpr=Expression 'loop' (whileBody+=AlgorithmItem)* 'end' 'while'
 	;
 
 AlgorithmBreak returns AlgorithmStatement::ALG_BREAK :
-	'break'
+	{AlgorithmStatement::ALG_BREAK} 'break'
 	; 
 
 Modification returns Modifications::uModification :
 	{Modifications::CLASSMOD}	(
-	'(' elementArgList+=ElementArg (',' elementArgList+=ElementArg)* ')' (EQUALS expOption=Expression)?
-	| (EQUALS|ASSIGN) expOption=Expression)
+	'(' elementArgList+=ElementArg (',' elementArgList+=ElementArg)* ')' ('=' expOption=Expression)?
+	| ('='|':=') expOption=Expression)
 	;
 	
 // TODO componentRef? constrain part
@@ -395,7 +395,7 @@ Direction returns Direction::uDirection :
 	; 	
 	
 ArrayDim returns ArrayDim::ArrayDim :
-	('[' subscripts+=Subscript (',' subscripts+=Subscript)* ']')?
+	{ArrayDim::ArrayDim} ('[' subscripts+=Subscript (',' subscripts+=Subscript)* ']')?
 	;	
 
 Expression returns Exp::uExp :
@@ -510,11 +510,11 @@ MatrixRow returns Exp::tuple_Matrix :
 	;
 	
 ExprTuple returns Exp::TUPLE :
-	'(' expressions+=Expression (',' expressions+=Expression)* ')'
+	{Exp::TUPLE} '(' expressions+=Expression (',' expressions+=Expression)* ')'
 	;
 	
 ExprEnd returns Exp::END :
-	'end'
+	{Exp::END} 'end'
 	;
 	
 ExprDer returns Exp::PARTEVALFUNCTION :
@@ -549,93 +549,93 @@ NamedArguments returns NamedArg::uNamedArg :
 */
 	
 OperatorAdd returns Operator::ADD :
-	'+'
+	{Operator::ADD} '+'
 	;
 	
 OperatorSub returns Operator::SUB :
-	'-'
+	{Operator::SUB} '-'
 	;
 	
 OperatorMul returns Operator::MUL :
-	'*'
+	{Operator::MUL} '*'
 	;
 	
 OperatorDiv returns Operator::DIV :
-	'/'
+	{Operator::DIV} '/'
 	;
 	
 OperatorPow returns Operator::POW :
-	'^'
+	{Operator::POW} '^'
 	;
 
 OperatorUnPlus returns Operator::UPLUS :
-	'+'
+	{Operator::UPLUS} '+'
 	;
 
 OperatorUnMinus returns Operator::UMINUS :
-	'-'
+	{Operator::UMINUS} '-'
 	;
 
 OperatorAddEW returns Operator::ADD_EW :
-	'.+'
+	{Operator::ADD_EW} '.+'
 	;
 	
 OperatorSubEW returns Operator::SUB_EW :
-	'.-'
+	{Operator::SUB_EW} '.-'
 	;
 	
 OperatorMulEW returns Operator::MUL_EW :
-	'.*'
+	{Operator::MUL_EW} '.*'
 	;
 	
 OperatorDivEW returns Operator::DIV_EW :
-	'./'
+	{Operator::DIV_EW} './'
 	;
 	
 OperatorPowEW returns Operator::POW_EW :
-	'.^'
+	{Operator::POW_EW} '.^'
 	;
 
 OperatorUnPlusEW returns Operator::UPLUS_EW :
-	'.+'
+	{Operator::UPLUS_EW} '.+'
 	;
 
 OperatorUnMinusEW returns Operator::UMINUS_EW :
-	'.-'
+	{Operator::UMINUS_EW} '.-'
 	;
 
 OperatorAnd returns Operator::AND :
-	'and'
+	{Operator::AND} 'and'
 	;
 
 OperatorOr returns Operator::OR :
-	'or'
+	{Operator::OR} 'or'
 	;
 	
 OperatorNot returns Operator::NOT :
-	'not'
+	{Operator::NOT} 'not'
 	;
 	
 OperatorLess returns Operator::LESS :
-	LESS
+	{Operator::LESS} '<'
 	;
 	
 OperatorLessEq returns Operator::LESSEQ :
-	LESSEQ
+	{Operator::LESSEQ} '<='
 	;
 OperatorGreater returns Operator::GREATER :
-	GREATER
+	{Operator::GREATER} '>'
 	;
 	
 OperatorGreaterEq returns Operator::GREATEREQ :
-	GREATEREQ
+	{Operator::GREATEREQ} '>='
 	;
 OperatorEqual returns Operator::EQUAL :
-	EQEQ
+	{Operator::EQUAL} '=='
 	;
 	
 OperatorNotEqual returns Operator::NEQUAL :
-	LESSGT
+	{Operator::NEQUAL} ('><'|'!=')
 	;
 
 Subscript returns Subscript::uSubscript	 :
@@ -699,7 +699,7 @@ StringComment returns Comment::STRING_COMMENT :
 	;
 
 ExternalDeclaration returns ExternalDecl::uExternalDecl :
-	{ExternalDecl::EXTERNALDECL} (lang=STRING)? ((output_=ComponentRef EQUALS)? funcName=IDENT
+	{ExternalDecl::EXTERNALDECL} (lang=STRING)? ((output_=ComponentRef '=')? funcName=IDENT
 	'(' args+=Expression (',' args+=Expression)* ')')? (annotation_=Annotation)?
 	;
 
@@ -765,25 +765,29 @@ terminal IDENT : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 	2.2 Operators
 **********************************/
   
-terminal 	DOT		: '.'           ;  
-terminal  LPAR		: '('		;
-terminal   RPAR		: ')'		;
-terminal   LBRACK	: '['		;
-terminal   RBRACK	: ']'		;
-terminal   LBRACE	: '{'		;
-terminal   RBRACE	: '}'		;
-terminal   EQUALS	: '='		;
-terminal   ASSIGN	: ':='		;
-terminal   COMMA		: ','		;
-terminal   COLON		: ':'		;
-terminal   SEMICOLON	: ';'		;
+/*
+terminal	DOT		: '.'           ;  
+terminal  	LPAR		: '('		;
+terminal   	RPAR		: ')'		;
+terminal   	LBRACK	: '['		;
+terminal   	RBRACK	: ']'		;
+terminal   	LBRACE	: '{'		;
+terminal   	RBRACE	: '}'		;
+terminal   	EQUALS	: '='		;
+terminal   	ASSIGN	: ':='		;
+terminal   	COMMA		: ','		;
+terminal   	COLON		: ':'		;
+terminal   	SEMICOLON	: ';'		;
+*/
   /* elementwise operators */  
-terminal   PLUS_EW     	: '.+'  	; /* Modelica 3.0 */
-terminal   MINUS_EW    	: '.-'     	; /* Modelica 3.0 */    
-terminal   STAR_EW     	: '.*'     	; /* Modelica 3.0 */
-terminal   SLASH_EW    	: './'		; /* Modelica 3.0 */  
-terminal   POWER_EW    	: '.^' 		; /* Modelica 3.0 */
-  
+
+//terminal   PLUS_EW     	: '.+'  	; /* Modelica 3.0 */
+//terminal   MINUS_EW    	: '.-'     	; /* Modelica 3.0 */    
+//terminal   STAR_EW     	: '.*'     	; /* Modelica 3.0 */
+//terminal   SLASH_EW    	: './'		; /* Modelica 3.0 */  
+//terminal   POWER_EW    	: '.^' 		; /* Modelica 3.0 */
+
+/*  
 terminal STAR		: '*'('.')? 				;
 terminal MINUS		: '-'('.')?					;
 terminal PLUS		: '+'('.'|'&')?				; 
@@ -795,5 +799,5 @@ terminal GREATEREQ	: '>='('.')?				;
 terminal EQEQ		: '=='('.'|'&')?			;
 terminal POWER		: '^'('.')?					;
 terminal SLASH		: '/'('.')?					;
-
+*/
 terminal ANY_OTHER: .;

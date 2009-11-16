@@ -28,7 +28,6 @@ public class ModelicaASTLabelProvider extends DefaultLabelProvider {
       return "MyModel.gif";
     }
 */
-	/*
 	String text(EObject element) {
 		if (element instanceof CLASS)
 			return "[CLASS]"+((CLASS)element).getName();
@@ -63,7 +62,7 @@ public class ModelicaASTLabelProvider extends DefaultLabelProvider {
 //			return "[]"+(()element).getName();
 
 	}
-*/
+
 	public String pathToString(uPath path) {
 		if (path instanceof IDENT)
 			return ((IDENT)path).getName();		
