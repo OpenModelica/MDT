@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.modelica.emf/src"
+    modelPluginID="org.modelica.emf" modelName="OpenModelicaGraphicalAnnotation" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>OpenModelicaGraphicalAnnotation.ecore</foreignModel>
+  <genPackages prefix="GraphicalAnnotation" basePackage="org.modelica.emf" disposableProviderFactory="true"
+      ecorePackage="OpenModelicaGraphicalAnnotation.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaGraphicalAnnotation.ecore#//FillPattern">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/None"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/Solid"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/Horizontal"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/Vertical"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/Cross"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/Forward"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/Backward"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/CrossDiagonal"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/HorizontalCylinder"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/VerticalCylinder"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//FillPattern/Sphere"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaGraphicalAnnotation.ecore#//LinePattern">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//LinePattern/None"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//LinePattern/Solid"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//LinePattern/Dash"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//LinePattern/Dot"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//LinePattern/DashDot"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//LinePattern/DashDotDot"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaGraphicalAnnotation.ecore#//BorderPattern">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//BorderPattern/None"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//BorderPattern/Raised"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//BorderPattern/Sunken"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//BorderPattern/Engraved"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaGraphicalAnnotation.ecore#//SmoothType">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//SmoothType/None"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//SmoothType/Bezier"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaGraphicalAnnotation.ecore#//ArrowStyle">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//ArrowStyle/None"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//ArrowStyle/Open"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//ArrowStyle/Filled"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//ArrowStyle/Half"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaGraphicalAnnotation.ecore#//TextStyle">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//TextStyle/Normal"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//TextStyle/Bold"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//TextStyle/Italic"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//TextStyle/Underline"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaGraphicalAnnotation.ecore#//TextAlignment">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//TextAlignment/Left"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//TextAlignment/Center"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaGraphicalAnnotation.ecore#//TextAlignment/Right"/>
+    </genEnums>
+    <genClasses image="false" ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//IModelicaGraphicalPrimitive"/>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Icon">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Icon/graphics"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Icon/coordinateSystem"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Diagram">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Diagram/graphics"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Diagram/coordinateSystem"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Point">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Point/x"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Point/y"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Extent">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Extent/p1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Extent/p2"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Color">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Color/red"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Color/green"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Color/blue"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Transformation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Transformation/origin"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Transformation/extent"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Transformation/rotation"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Placement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Placement/visible"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Placement/transformation"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Placement/iconTransformation"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//CoordinateSystem">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//CoordinateSystem/extent"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//CoordinateSystem/preserveAspectRatio"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//CoordinateSystem/initialScale"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//CoordinateSystem/gridYSpace"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//CoordinateSystem/gridXSpace"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//GraphicalPrimitive">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//GraphicalPrimitive/visible"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//GraphicalPrimitive/rotation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//GraphicalPrimitive/originPoint"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//FilledShape">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//FilledShape/linePattern"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//FilledShape/fillPattern"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//FilledShape/lineThickness"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//FilledShape/lineColor"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//FilledShape/fillColor"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Line">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Line/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Line/pattern"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Line/thickness"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Line/points"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Line/arrowStyle1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Line/arrowStyle2"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Line/arrowSize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Line/smoothness"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Polygon">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Polygon/points"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Polygon/smoothness"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Rectangle">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Rectangle/cornerRadius"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Rectangle/extent"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Rectangle/borderPattern"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Ellipse">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Ellipse/extent"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Ellipse/startAngle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Ellipse/endAngle"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Text">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Text/extent"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Text/textString"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Text/fontSize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Text/fontName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Text/textStyle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Text/horizontalAlignment"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaGraphicalAnnotation.ecore#//Bitmap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaGraphicalAnnotation.ecore#//Bitmap/extent"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaGraphicalAnnotation.ecore#//Bitmap/fileName"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

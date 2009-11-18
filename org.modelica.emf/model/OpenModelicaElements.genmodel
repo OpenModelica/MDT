@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.modelica.emf/src"
+    modelPluginID="org.modelica.emf" modelName="OpenModelicaElements" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false" usedGenPackages="OpenModelicaGraphicalAnnotation.genmodel#//GraphicalAnnotation OpenModelicaGUIAnnotation.genmodel#//GUIAnnotation">
+  <foreignModel>OpenModelicaElements.ecore</foreignModel>
+  <genPackages prefix="ModelicaElements" basePackage="org.modelica.emf" disposableProviderFactory="true"
+      ecorePackage="OpenModelicaElements.ecore#/">
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//Type"/>
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaElements.ecore#//Model/components"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference OpenModelicaElements.ecore#//Model/icon"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//Component">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference OpenModelicaElements.ecore#//Component/model"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Component/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Component/stringComment"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaElements.ecore#//Component/dialogAnnotation"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//PrimitiveType"/>
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//ModelicaReal">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/quantity"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/unit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/displayUnit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/min"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/max"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/fixed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//ModelicaReal/nominal"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//Integer">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Integer/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Integer/min"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Integer/max"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Integer/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Integer/fixed"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//String">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//String/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//String/start"/>
+    </genClasses>
+    <genClasses ecoreClass="OpenModelicaElements.ecore#//Boolean">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Boolean/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Boolean/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaElements.ecore#//Boolean/fixed"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

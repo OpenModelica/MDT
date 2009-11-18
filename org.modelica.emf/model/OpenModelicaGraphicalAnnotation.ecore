@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="GraphicalAnnotation"
+    nsURI="http://www.openmodelica.org/openmodelica.annotation.graphical/3.1" nsPrefix="GraphicalAnnotation">
+  <eClassifiers xsi:type="ecore:EEnum" name="FillPattern">
+    <eLiterals name="None"/>
+    <eLiterals name="Solid" value="1"/>
+    <eLiterals name="Horizontal" value="2"/>
+    <eLiterals name="Vertical" value="3"/>
+    <eLiterals name="Cross" value="4"/>
+    <eLiterals name="Forward" value="5"/>
+    <eLiterals name="Backward" value="6"/>
+    <eLiterals name="CrossDiagonal" value="7"/>
+    <eLiterals name="HorizontalCylinder" value="8"/>
+    <eLiterals name="VerticalCylinder" value="9"/>
+    <eLiterals name="Sphere" value="10"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="LinePattern">
+    <eLiterals name="None"/>
+    <eLiterals name="Solid" value="1"/>
+    <eLiterals name="Dash" value="2"/>
+    <eLiterals name="Dot" value="3"/>
+    <eLiterals name="DashDot" value="4"/>
+    <eLiterals name="DashDotDot" value="5"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="BorderPattern">
+    <eLiterals name="None"/>
+    <eLiterals name="Raised" value="1"/>
+    <eLiterals name="Sunken" value="2"/>
+    <eLiterals name="Engraved" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="SmoothType">
+    <eLiterals name="None"/>
+    <eLiterals name="Bezier" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ArrowStyle">
+    <eLiterals name="None"/>
+    <eLiterals name="Open" value="1"/>
+    <eLiterals name="Filled" value="2"/>
+    <eLiterals name="Half" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="TextStyle">
+    <eLiterals name="Normal"/>
+    <eLiterals name="Bold" value="1"/>
+    <eLiterals name="Italic" value="2"/>
+    <eLiterals name="Underline" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="TextAlignment">
+    <eLiterals name="Left"/>
+    <eLiterals name="Center" value="1"/>
+    <eLiterals name="Right" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IModelicaGraphicalPrimitive" abstract="true"
+      interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Icon">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="graphics" upperBound="-1"
+        eType="#//GraphicalPrimitive" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="coordinateSystem" lowerBound="1"
+        eType="#//CoordinateSystem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Diagram">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="graphics" upperBound="-1"
+        eType="#//GraphicalPrimitive" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="coordinateSystem" lowerBound="1"
+        eType="#//CoordinateSystem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Point">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Extent">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="p1" lowerBound="1" eType="#//Point"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="p2" lowerBound="1" eType="#//Point"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Color">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="red" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="green" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="blue" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Transformation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="origin" eType="#//Point"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extent" eType="#//Extent"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rotation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Placement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transformation" eType="#//Transformation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="iconTransformation" eType="#//Transformation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CoordinateSystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extent" lowerBound="1"
+        eType="#//Extent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="preserveAspectRatio" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="initialScale" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gridYSpace" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gridXSpace" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GraphicalPrimitive" eSuperTypes="#//IModelicaGraphicalPrimitive">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rotation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="originPoint" lowerBound="1"
+        eType="#//Point" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FilledShape" abstract="true" eSuperTypes="#//GraphicalPrimitive">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="linePattern" lowerBound="1"
+        eType="#//LinePattern"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fillPattern" lowerBound="1"
+        eType="#//FillPattern"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineThickness" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lineColor" lowerBound="1"
+        eType="#//Color" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fillColor" lowerBound="1"
+        eType="#//Color" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Line" eSuperTypes="#//GraphicalPrimitive">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="color" lowerBound="1" eType="#//Color"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pattern" lowerBound="1"
+        eType="#//LinePattern" defaultValueLiteral="Solid"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="thickness" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.25"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="points" upperBound="-1"
+        eType="#//Point" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="arrowStyle1" lowerBound="1"
+        eType="#//ArrowStyle" defaultValueLiteral="None"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="arrowStyle2" lowerBound="1"
+        eType="#//ArrowStyle" defaultValueLiteral="None"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="arrowSize" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="3"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="smoothness" lowerBound="1"
+        eType="#//SmoothType" defaultValueLiteral="None"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Polygon" eSuperTypes="#//FilledShape">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="points" upperBound="-1"
+        eType="#//Point" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="smoothness" eType="#//SmoothType"
+        defaultValueLiteral="None"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Rectangle" eSuperTypes="#//FilledShape">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cornerRadius" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.0"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extent" lowerBound="1"
+        eType="#//Extent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="borderPattern" lowerBound="1"
+        eType="#//BorderPattern" defaultValueLiteral="None"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Ellipse" eSuperTypes="#//FilledShape">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extent" lowerBound="1"
+        eType="#//Extent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startAngle" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endAngle" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="360.0"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Text" eSuperTypes="#//GraphicalPrimitive">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extent" lowerBound="1"
+        eType="#//Extent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="textString" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fontSize" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fontName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="textStyle" lowerBound="1"
+        eType="#//TextStyle" defaultValueLiteral="Normal"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontalAlignment" lowerBound="1"
+        eType="#//TextAlignment" defaultValueLiteral="Center"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Bitmap" eSuperTypes="#//GraphicalPrimitive">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extent" lowerBound="1"
+        eType="#//Extent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fileName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

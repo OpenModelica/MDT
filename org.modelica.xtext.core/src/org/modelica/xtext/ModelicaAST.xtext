@@ -160,21 +160,21 @@ ElementItem returns ElementItem::uElementItem :
 	//;
 	
 // FIXME constrainedby clause	
-Element returns Element::uElement:
-	{Element::ELEMENT} specification=(ElementSpecificationImport|ElementSpecificationExtends) innerOuter=InnerOuterUnspecified
-	|{Element::ELEMENT} redeclareKeywords=RedeclareKeyword? finalPrefix?=('final')?
-		innerOuter=InnerOuter specification=(ElementSpecificationClassDefinition | ElementSpecificationComponents) 
-	|{Element::ELEMENT} redeclareKeywords=(RedeclareReplaceableKeyword | ReplaceableKeyword) innerOuter=InnerOuter 
-		specification=(ElementSpecificationClassDefinition | ElementSpecificationComponents) 
-		//('constrainedby' name=IDENT  constrainClass=ConstrainClass)?
-	
+Element returns Element::ELEMENT:
+	innerOuter=InnerOuter (specification=ElementSpecificationImport | specification=ElementSpecificationExtends)
+	| redeclareKeywords=RedeclareKeyword? finalPrefix?='final'?
+		innerOuter=InnerOuter (specification=ElementSpecificationClassDefinition | specification=ElementSpecificationComponents) 
+	| (redeclareKeywords=RedeclareReplaceableKeyword | redeclareKeywords=ReplaceableKeyword) innerOuter=InnerOuter 
+		(specification=ElementSpecificationClassDefinition | specification=ElementSpecificationComponents) 	
 	;
 
+//('constrainedby' name=IDENT  constrainClass=ConstrainClass)?
 /*
 ConstrainClass returns uConstrainClass :
 	{CONSTRAINCLASS} elementSpec=ElementSpecification comment=Comment
 	;
 */
+
 
 ElementSpecification returns ElementSpec::uElementSpec :
 	ElementSpecificationImport
@@ -206,12 +206,11 @@ InnerOuter returns InnerOuter::uInnerOuter :
 	{InnerOuter::INNEROUTER} 'inner' 'outer'
 	|{InnerOuter::INNER} 'inner'
 	|{InnerOuter::OUTER} 'outer'
-	|InnerOuterUnspecified
+	|{InnerOuter::UNSPECIFIED}
 	;
 
-InnerOuterUnspecified returns InnerOuter::uInnerOuter :
-	{InnerOuter::UNSPECIFIED}
-	;
+//InnerOuterUnspecified returns InnerOuter::uInnerOuter :
+//	;
 
 // FIXME the unqualified import- perhaps in a M2M transformation
 Import returns Import::uImport :
@@ -229,7 +228,7 @@ ComponentCondition returns ComponentCondition::ComponentCondition :
 	;
 
 Component returns Component::uComponent :
-	{Component::COMPONENT} name=IDENT arrayDim=ArrayDim modification=Modification?
+	{Component::COMPONENT} name=IDENT arrayDim=ArrayDim? modification=Modification?
 	;
 
 EquationItem returns EquationItem::uEquationItem :
@@ -395,7 +394,7 @@ Direction returns Direction::uDirection :
 	; 	
 	
 ArrayDim returns ArrayDim::ArrayDim :
-	{ArrayDim::ArrayDim} ('[' subscripts+=Subscript (',' subscripts+=Subscript)* ']')?
+	{ArrayDim::ArrayDim} '[' subscripts+=Subscript (',' subscripts+=Subscript)* ']'
 	;	
 
 Expression returns Exp::uExp :

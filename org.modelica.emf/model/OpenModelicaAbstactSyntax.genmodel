@@ -5,7 +5,7 @@
     modelPluginID="org.modelica.emf" modelName="OpenModelicaAbstactSyntax" importerID="org.eclipse.emf.importer.ecore"
     complianceLevel="6.0" copyrightFields="false">
   <foreignModel>OpenModelicaAbstactSyntax.ecore</foreignModel>
-  <genPackages prefix="Absyn" basePackage="org.modelica" disposableProviderFactory="true"
+  <genPackages prefix="Absyn" basePackage="org.modelica.emf" disposableProviderFactory="true"
       ecorePackage="OpenModelicaAbstactSyntax.ecore#/">
     <nestedGenPackages prefix="Program" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
         ecorePackage="OpenModelicaAbstactSyntax.ecore#//Program">
