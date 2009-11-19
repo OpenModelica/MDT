@@ -161,7 +161,7 @@ ElementItem returns ElementItem::uElementItem :
 	
 // FIXME constrainedby clause	
 Element returns Element::ELEMENT:
-	innerOuter=InnerOuter (specification=ElementSpecificationImport | specification=ElementSpecificationExtends)
+	innerOuter=InnerOuterUnspecified (specification=ElementSpecificationImport | specification=ElementSpecificationExtends)
 	| redeclareKeywords=RedeclareKeyword? finalPrefix?='final'?
 		innerOuter=InnerOuter (specification=ElementSpecificationClassDefinition | specification=ElementSpecificationComponents) 
 	| (redeclareKeywords=RedeclareReplaceableKeyword | redeclareKeywords=ReplaceableKeyword) innerOuter=InnerOuter 
@@ -206,11 +206,12 @@ InnerOuter returns InnerOuter::uInnerOuter :
 	{InnerOuter::INNEROUTER} 'inner' 'outer'
 	|{InnerOuter::INNER} 'inner'
 	|{InnerOuter::OUTER} 'outer'
-	|{InnerOuter::UNSPECIFIED}
+	|InnerOuterUnspecified
 	;
 
-//InnerOuterUnspecified returns InnerOuter::uInnerOuter :
-//	;
+InnerOuterUnspecified returns InnerOuter::uInnerOuter :
+	{InnerOuter::UNSPECIFIED}
+	;
 
 // FIXME the unqualified import- perhaps in a M2M transformation
 Import returns Import::uImport :
@@ -228,7 +229,7 @@ ComponentCondition returns ComponentCondition::ComponentCondition :
 	;
 
 Component returns Component::uComponent :
-	{Component::COMPONENT} name=IDENT arrayDim=ArrayDim? modification=Modification?
+	{Component::COMPONENT} name=IDENT arrayDim=ArrayDim modification=Modification?
 	;
 
 EquationItem returns EquationItem::uEquationItem :
@@ -342,7 +343,7 @@ Modification returns Modifications::uModification :
 // TODO componentRef? constrain part
 ElementArg returns ElementArg::uElementArg :
 	{ElementArg::MODIFICATION} each_=Each finalItem?=('final')? 
-	componentReg=ComponentRef modification=Modification? 
+	componentRef=ComponentRef modification=Modification? 
 	comment=StringComment?
 	|{ElementArg::REDECLARATION} each_=Each finalItem?=('final')? 
 	redeclareKeywords=( ReplaceableKeyword | RedeclareReplaceableKeyword )
@@ -394,7 +395,7 @@ Direction returns Direction::uDirection :
 	; 	
 	
 ArrayDim returns ArrayDim::ArrayDim :
-	{ArrayDim::ArrayDim} '[' subscripts+=Subscript (',' subscripts+=Subscript)* ']'
+	{ArrayDim::ArrayDim} ('[' subscripts+=Subscript (',' subscripts+=Subscript)* ']')?
 	;	
 
 Expression returns Exp::uExp :
@@ -522,22 +523,22 @@ ExprDer returns Exp::PARTEVALFUNCTION :
 	
 
 FunctionArguments returns FunctionArgs::uFunctionArguments :
-	FunctionArgumentsMixed
+	FunctionArgumentsNormal	
 	|FunctionArgumentsForIter
-	|FunctionNamedArguments
 	;
 	
-FunctionArgumentsMixed returns FunctionArgs::uFunctionArguments :
+FunctionArgumentsNormal returns FunctionArgs::uFunctionArguments :
 	{FunctionArgs::FUNCTIONARGS} args+=Expression (',' args+=Expression)* (',' argNames+=NamedArguments)*
+	|{FunctionArgs::FUNCTIONARGS} argNames+=NamedArguments (',' argNames+=NamedArguments)*
 	;
-
 FunctionArgumentsForIter returns FunctionArgs::uFunctionArguments :
 	{FunctionArgs::FOR_ITER_FARG} exp=Expression 'for' iterators=ForIterator
 	;
-
+/*
 FunctionNamedArguments returns FunctionArgs::uFunctionArguments :
 	{FunctionArgs::FUNCTIONARGS} argNames+=NamedArguments (',' argNames+=NamedArguments)*
 	;
+*/
 		
 NamedArguments returns NamedArg::uNamedArg :
 	{NamedArg::NAMEDARG} argName=IDENT '=' argValue=Expression

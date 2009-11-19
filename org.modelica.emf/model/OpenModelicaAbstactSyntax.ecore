@@ -3,12 +3,8 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="Absyn"
     nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/" nsPrefix="Absyn">
-  <eClassifiers xsi:type="ecore:EClass" name="dummyClass">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dum" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="dummyEnumeration">
-    <eLiterals name="ZEROTH" literal="ZEROTH"/>
-    <eLiterals name="FIRST" value="1" literal="FIRST"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="dummyNum">
+    <eLiterals name="ZERO" literal="ZERO"/>
   </eClassifiers>
   <eSubpackages name="Program" nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/Program"
       nsPrefix="Program">
@@ -470,7 +466,7 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="each_" lowerBound="1"
           eType="#//Each/uEach" containment="true"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="componentReg" lowerBound="1"
+      <eStructuralFeatures xsi:type="ecore:EReference" name="componentRef" lowerBound="1"
           eType="#//ComponentRef/uComponentRef" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="modification" eType="#//Modifications/uModification"
           containment="true"/>
