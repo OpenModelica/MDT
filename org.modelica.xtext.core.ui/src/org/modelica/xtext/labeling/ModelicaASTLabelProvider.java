@@ -6,15 +6,12 @@ package org.modelica.xtext.labeling;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.ui.core.DefaultLabelProvider;
 
-import org.modelica.Absyn.Class.*;
-import org.modelica.Absyn.ClassDef.*;
-import org.modelica.Absyn.ClassPart.*;
-import org.modelica.Absyn.Element.ELEMENT;
-import org.modelica.Absyn.ElementSpec.*;
-import org.modelica.Absyn.Import.NAMED_IMPORT;
-import org.modelica.Absyn.Import.QUAL_IMPORT;
-import org.modelica.Absyn.Import.UNQUAL_IMPORT;
-import org.modelica.Absyn.Path.*;
+import org.modelica.emf.Absyn.Class.*;
+import org.modelica.emf.Absyn.ClassPart.*;
+import org.modelica.emf.Absyn.Element.*;
+import org.modelica.emf.Absyn.ElementSpec.*;
+import org.modelica.emf.Absyn.Import.*;
+import org.modelica.emf.Absyn.Path.*;
 
 /**
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider

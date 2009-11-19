@@ -3,6 +3,13 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="Absyn"
     nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/" nsPrefix="Absyn">
+  <eClassifiers xsi:type="ecore:EClass" name="dummyClass">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dum" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="dummyEnumeration">
+    <eLiterals name="ZEROTH" literal="ZEROTH"/>
+    <eLiterals name="FIRST" value="1" literal="FIRST"/>
+  </eClassifiers>
   <eSubpackages name="Program" nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/Program"
       nsPrefix="Program">
     <eClassifiers xsi:type="ecore:EClass" name="uProgram" abstract="true"/>

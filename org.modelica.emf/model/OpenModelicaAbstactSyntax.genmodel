@@ -7,8 +7,14 @@
   <foreignModel>OpenModelicaAbstactSyntax.ecore</foreignModel>
   <genPackages prefix="Absyn" basePackage="org.modelica.emf" disposableProviderFactory="true"
       ecorePackage="OpenModelicaAbstactSyntax.ecore#/">
-    <nestedGenPackages prefix="Program" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Program">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//dummyEnumeration">
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//dummyEnumeration/ZEROTH"/>
+      <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//dummyEnumeration/FIRST"/>
+    </genEnums>
+    <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//dummyClass">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//dummyClass/dum"/>
+    </genClasses>
+    <nestedGenPackages prefix="Program" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Program">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Program/uProgram"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Program/PROGRAM">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Program/PROGRAM/classes"/>
@@ -16,16 +22,14 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Program/PROGRAM/globalBuildTimes"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Within" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Within">
+    <nestedGenPackages prefix="Within" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Within">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Within/uWithin"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Within/WITHIN">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Within/WITHIN/path"/>
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Within/TOP"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Class" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Class">
+    <nestedGenPackages prefix="Class" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Class">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Class/uClass"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Class/CLASS">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Class/CLASS/name"/>
@@ -36,8 +40,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Class/CLASS/restriction"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ClassDef" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ClassDef">
+    <nestedGenPackages prefix="ClassDef" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ClassDef">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ClassDef/uClassDef"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ClassDef/PARTS">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ClassDef/PARTS/classParts"/>
@@ -70,24 +73,21 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ClassDef/PDER/vars"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="EnumDef" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//EnumDef">
+    <nestedGenPackages prefix="EnumDef" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//EnumDef">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//EnumDef/uEnumDef"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//EnumDef/ENUMLITERALS">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//EnumDef/ENUMLITERALS/enumLiterals"/>
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//EnumDef/ENUM_COLON"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="EnumLiteral" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//EnumLiteral">
+    <nestedGenPackages prefix="EnumLiteral" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//EnumLiteral">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//EnumLiteral/uEnumLiteral"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//EnumLiteral/ENUMLITERAL">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//EnumLiteral/ENUMLITERAL/literal"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//EnumLiteral/ENUMLITERAL/comment"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ClassPart" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ClassPart">
+    <nestedGenPackages prefix="ClassPart" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ClassPart">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ClassPart/uClassPart"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ClassPart/PUBLIC">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ClassPart/PUBLIC/contents"/>
@@ -113,8 +113,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ClassPart/EXTERNAL/annotationNode"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ElementItem" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementItem">
+    <nestedGenPackages prefix="ElementItem" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementItem">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementItem/uElementItem"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementItem/ELEMENTITEM">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ElementItem/ELEMENTITEM/element"/>
@@ -123,8 +122,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ElementItem/ANNOTATIONITEM/annotation_"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Element" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Element">
+    <nestedGenPackages prefix="Element" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Element">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Element/uElement"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Element/ELEMENT">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Element/ELEMENT/finalPrefix"/>
@@ -143,16 +141,14 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Element/DEFINEUNIT/args"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ConstrainClass" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ConstrainClass">
+    <nestedGenPackages prefix="ConstrainClass" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ConstrainClass">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ConstrainClass/uConstrainClass"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ConstrainClass/CONSTRAINCLASS">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ConstrainClass/CONSTRAINCLASS/elementSpec"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ConstrainClass/CONSTRAINCLASS/comment"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ElementSpec" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementSpec">
+    <nestedGenPackages prefix="ElementSpec" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementSpec">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementSpec/uElementSpec"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementSpec/CLASSDEF">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ElementSpec/CLASSDEF/replaceable_"/>
@@ -173,8 +169,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ElementSpec/COMPONENTS/typeSpec"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="InnerOuter" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//InnerOuter">
+    <nestedGenPackages prefix="InnerOuter" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//InnerOuter">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//InnerOuter/OBSOLETE_InnerOuter">
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//InnerOuter/OBSOLETE_InnerOuter/UNSPECIFIED"/>
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//InnerOuter/OBSOLETE_InnerOuter/INNER"/>
@@ -187,8 +182,7 @@
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//InnerOuter/INNEROUTER"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//InnerOuter/UNSPECIFIED"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Import" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Import">
+    <nestedGenPackages prefix="Import" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Import">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Import/uImport"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Import/NAMED_IMPORT">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Import/NAMED_IMPORT/name"/>
@@ -201,8 +195,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Import/UNQUAL_IMPORT/path"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ComponentItem" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ComponentItem">
+    <nestedGenPackages prefix="ComponentItem" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ComponentItem">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentItem/uComponentItem"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentItem/COMPONENTITEM">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentItem/COMPONENTITEM/component"/>
@@ -210,14 +203,13 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentItem/COMPONENTITEM/comment"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ComponentCondition" basePackage="org.modelica.Absyn"
-        disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ComponentCondition">
+    <nestedGenPackages prefix="ComponentCondition" disposableProviderFactory="true"
+        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ComponentCondition">
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentCondition/ComponentCondition">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentCondition/ComponentCondition/condition"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Component" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Component">
+    <nestedGenPackages prefix="Component" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Component">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Component/uComponent"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Component/COMPONENT">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Component/COMPONENT/name"/>
@@ -225,8 +217,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Component/COMPONENT/modification"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="EquationItem" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//EquationItem">
+    <nestedGenPackages prefix="EquationItem" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//EquationItem">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//EquationItem/uEquationItem"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//EquationItem/EQUATIONITEM">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//EquationItem/EQUATIONITEM/equation_"/>
@@ -237,8 +228,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//EquationItem/EQUATIONITEMANN/annotation_"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="AlgorithmItem" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//AlgorithmItem">
+    <nestedGenPackages prefix="AlgorithmItem" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//AlgorithmItem">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//AlgorithmItem/uAlgorithmItem"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//AlgorithmItem/ALGORITHMITEM">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//AlgorithmItem/ALGORITHMITEM/algorithm_"/>
@@ -248,8 +238,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//AlgorithmItem/ALGORITHMITEMANN/annotation_"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Equation" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Equation">
+    <nestedGenPackages prefix="Equation" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Equation">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Equation/uEquation"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Equation/EQ_IF">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Equation/EQ_IF/ifExp"/>
@@ -290,8 +279,8 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Equation/EQ_FAILURE/equ"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="AlgorithmStatement" basePackage="org.modelica.Absyn"
-        disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//AlgorithmStatement">
+    <nestedGenPackages prefix="AlgorithmStatement" disposableProviderFactory="true"
+        ecorePackage="OpenModelicaAbstactSyntax.ecore#//AlgorithmStatement">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//AlgorithmStatement/uAlgorithmStatement"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//AlgorithmStatement/ALG_ASSIGN">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//AlgorithmStatement/ALG_ASSIGN/assignComponent"/>
@@ -332,16 +321,14 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//AlgorithmStatement/tuple_ElseWhenAlgorithmBranch/algorithmItem"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Modifications" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Modifications">
+    <nestedGenPackages prefix="Modifications" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Modifications">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Modifications/uModification"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Modifications/CLASSMOD">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Modifications/CLASSMOD/elementArgList"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Modifications/CLASSMOD/expOption"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ElementArg" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementArg">
+    <nestedGenPackages prefix="ElementArg" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementArg">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementArg/uElementArg"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementArg/MODIFICATION">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ElementArg/MODIFICATION/finalItem"/>
@@ -358,8 +345,8 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ElementArg/REDECLARATION/constrainClass"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="RedeclareKeywords" basePackage="org.modelica.Absyn"
-        disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords">
+    <nestedGenPackages prefix="RedeclareKeywords" disposableProviderFactory="true"
+        ecorePackage="OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords/BSOLETE_RedeclareKeywords">
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords/BSOLETE_RedeclareKeywords/REDECLARE"/>
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords/BSOLETE_RedeclareKeywords/REPLACEABLE"/>
@@ -370,8 +357,7 @@
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords/REPLACEABLE"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//RedeclareKeywords/REDECLARE_REPLACEABLE"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Each" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Each">
+    <nestedGenPackages prefix="Each" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Each">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//Each/OBSOLETE_Each">
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Each/OBSOLETE_Each/EACH"/>
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Each/OBSOLETE_Each/NON_EACH"/>
@@ -380,8 +366,8 @@
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Each/EACH"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Each/NON_EACH"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ElementAttributes" basePackage="org.modelica.Absyn"
-        disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementAttributes">
+    <nestedGenPackages prefix="ElementAttributes" disposableProviderFactory="true"
+        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ElementAttributes">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementAttributes/uElementAttributes"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ElementAttributes/ATTR">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ElementAttributes/ATTR/flowPrefix"/>
@@ -391,8 +377,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ElementAttributes/ATTR/arrayDim"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Variability" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Variability">
+    <nestedGenPackages prefix="Variability" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Variability">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//Variability/OBSOLETE_Variability">
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Variability/OBSOLETE_Variability/CONTINUOUS"/>
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Variability/OBSOLETE_Variability/DISCRETE"/>
@@ -405,8 +390,7 @@
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Variability/PARAM"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Variability/CONST"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Direction" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Direction">
+    <nestedGenPackages prefix="Direction" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Direction">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//Direction/OBSOLETE_Direction">
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Direction/OBSOLETE_Direction/INPUT"/>
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Direction/OBSOLETE_Direction/OUTPUT"/>
@@ -417,14 +401,12 @@
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Direction/OUTPUT"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Direction/BIDIR"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ArrayDim" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ArrayDim">
+    <nestedGenPackages prefix="ArrayDim" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ArrayDim">
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ArrayDim/ArrayDim">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ArrayDim/ArrayDim/subscripts"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Exp" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Exp">
+    <nestedGenPackages prefix="Exp" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Exp">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Exp/uExp"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Exp/INTEGER">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Exp/INTEGER/value"/>
@@ -502,8 +484,7 @@
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Exp/CALL_INITIAL"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="FunctionArgs" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//FunctionArgs">
+    <nestedGenPackages prefix="FunctionArgs" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//FunctionArgs">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//FunctionArgs/uFunctionArguments"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//FunctionArgs/FUNCTIONARGS">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//FunctionArgs/FUNCTIONARGS/args"/>
@@ -514,16 +495,14 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//FunctionArgs/FOR_ITER_FARG/iterators"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="NamedArg" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//NamedArg">
+    <nestedGenPackages prefix="NamedArg" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//NamedArg">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//NamedArg/uNamedArg"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//NamedArg/NAMEDARG">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//NamedArg/NAMEDARG/argName"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//NamedArg/NAMEDARG/argValue"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Operator" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Operator">
+    <nestedGenPackages prefix="Operator" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Operator">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//Operator/OBSOLETE_Operator">
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Operator/OBSOLETE_Operator/ADD"/>
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Operator/OBSOLETE_Operator/SUB"/>
@@ -567,16 +546,14 @@
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Operator/EQUAL"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Operator/NEQUAL"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Subscript" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Subscript">
+    <nestedGenPackages prefix="Subscript" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Subscript">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Subscript/uSubscript"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Subscript/NOSUB"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Subscript/SUBSCRIPT">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Subscript/SUBSCRIPT/subScript"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ComponentRef" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ComponentRef">
+    <nestedGenPackages prefix="ComponentRef" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ComponentRef">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/uComponentRef"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL/name"/>
@@ -589,8 +566,7 @@
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/WILD"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Path" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Path">
+    <nestedGenPackages prefix="Path" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Path">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Path/uPath"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Path/QUALIFIED">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Path/QUALIFIED/name"/>
@@ -603,8 +579,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Path/FULLYQUALIFIED/path"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Restriction" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Restriction">
+    <nestedGenPackages prefix="Restriction" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Restriction">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//Restriction/OBSOLETE_Restriction">
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Restriction/OBSOLETE_Restriction/R_CLASS"/>
         <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//Restriction/OBSOLETE_Restriction/R_MODEL"/>
@@ -639,15 +614,13 @@
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Restriction/R_PREDEFINED_BOOL"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Restriction/R_PREDEFINED_ENUM"/>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Annotation" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Annotation">
+    <nestedGenPackages prefix="Annotation" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Annotation">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Annotation/uAnnotation"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Annotation/ANNOTATION">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Annotation/ANNOTATION/elementArgs"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Comment" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Comment">
+    <nestedGenPackages prefix="Comment" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Comment">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Comment/uComment"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Comment/COMMENT">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Comment/COMMENT/annotation_"/>
@@ -657,8 +630,7 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Comment/STRING_COMMENT/comment"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="ExternalDecl" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//ExternalDecl">
+    <nestedGenPackages prefix="ExternalDecl" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ExternalDecl">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ExternalDecl/uExternalDecl"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ExternalDecl/EXTERNALDECL">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ExternalDecl/EXTERNALDECL/funcName"/>
@@ -668,16 +640,14 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ExternalDecl/EXTERNALDECL/annotation_"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="TimeStamp" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//TimeStamp">
+    <nestedGenPackages prefix="TimeStamp" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//TimeStamp">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//TimeStamp/uTimeStamp"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//TimeStamp/TIMESTAMP">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//TimeStamp/TIMESTAMP/lastBuildTime"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//TimeStamp/TIMESTAMP/lastEditTime"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Iterators" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//Iterators">
+    <nestedGenPackages prefix="Iterators" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//Iterators">
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterator">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterator/tuple"/>
       </genClasses>
@@ -689,8 +659,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterators/forIterator"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="TypeSpec" basePackage="org.modelica.Absyn" disposableProviderFactory="true"
-        ecorePackage="OpenModelicaAbstactSyntax.ecore#//TypeSpec">
+    <nestedGenPackages prefix="TypeSpec" disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//TypeSpec">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//TypeSpec/uTypeSpec"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//TypeSpec/TPATH">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//TypeSpec/TPATH/path"/>

@@ -12,9 +12,303 @@
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.openmodelica.org/openmodelica.elements/3.1"
-            class="org.modelica.emf.ModelicaElements.ModelicaElementsPackage"
-            genModel="model/OpenModelicaElements.genmodel"/>
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/"
+            class="org.modelica.emf.Absyn.AbsynPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Program"
+            class="org.modelica.emf.Absyn.Program.ProgramPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Within"
+            class="org.modelica.emf.Absyn.Within.WithinPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Class"
+            class="org.modelica.emf.Absyn.Class.ClassPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassDef"
+            class="org.modelica.emf.Absyn.ClassDef.ClassDefPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumDef"
+            class="org.modelica.emf.Absyn.EnumDef.EnumDefPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/EnumLiteral"
+            class="org.modelica.emf.Absyn.EnumLiteral.EnumLiteralPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ClassPart"
+            class="org.modelica.emf.Absyn.ClassPart.ClassPartPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementItem"
+            class="org.modelica.emf.Absyn.ElementItem.ElementItemPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Element"
+            class="org.modelica.emf.Absyn.Element.ElementPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ConstrainClass"
+            class="org.modelica.emf.Absyn.ConstrainClass.ConstrainClassPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementSpec"
+            class="org.modelica.emf.Absyn.ElementSpec.ElementSpecPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/InnerOuter"
+            class="org.modelica.emf.Absyn.InnerOuter.InnerOuterPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Import"
+            class="org.modelica.emf.Absyn.Import.ImportPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentItem"
+            class="org.modelica.emf.Absyn.ComponentItem.ComponentItemPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentCondition"
+            class="org.modelica.emf.Absyn.ComponentCondition.ComponentConditionPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Component"
+            class="org.modelica.emf.Absyn.Component.ComponentPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/EquationItem"
+            class="org.modelica.emf.Absyn.EquationItem.EquationItemPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmItem"
+            class="org.modelica.emf.Absyn.AlgorithmItem.AlgorithmItemPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Equation"
+            class="org.modelica.emf.Absyn.Equation.EquationPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/AlgorithmStatement"
+            class="org.modelica.emf.Absyn.AlgorithmStatement.AlgorithmStatementPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Modifications"
+            class="org.modelica.emf.Absyn.Modifications.ModificationsPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementArg"
+            class="org.modelica.emf.Absyn.ElementArg.ElementArgPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/RedeclareKeywords"
+            class="org.modelica.emf.Absyn.RedeclareKeywords.RedeclareKeywordsPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Each"
+            class="org.modelica.emf.Absyn.Each.EachPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ElementAttributes"
+            class="org.modelica.emf.Absyn.ElementAttributes.ElementAttributesPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Variability"
+            class="org.modelica.emf.Absyn.Variability.VariabilityPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Direction"
+            class="org.modelica.emf.Absyn.Direction.DirectionPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ArrayDim"
+            class="org.modelica.emf.Absyn.ArrayDim.ArrayDimPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Exp"
+            class="org.modelica.emf.Absyn.Exp.ExpPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs"
+            class="org.modelica.emf.Absyn.FunctionArgs.FunctionArgsPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/NamedArg"
+            class="org.modelica.emf.Absyn.NamedArg.NamedArgPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Operator"
+            class="org.modelica.emf.Absyn.Operator.OperatorPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Subscript"
+            class="org.modelica.emf.Absyn.Subscript.SubscriptPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ComponentRef"
+            class="org.modelica.emf.Absyn.ComponentRef.ComponentRefPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Path"
+            class="org.modelica.emf.Absyn.Path.PathPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Restriction"
+            class="org.modelica.emf.Absyn.Restriction.RestrictionPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Annotation"
+            class="org.modelica.emf.Absyn.Annotation.AnnotationPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Comment"
+            class="org.modelica.emf.Absyn.Comment.CommentPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/ExternalDecl"
+            class="org.modelica.emf.Absyn.ExternalDecl.ExternalDeclPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/TimeStamp"
+            class="org.modelica.emf.Absyn.TimeStamp.TimeStampPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Iterators"
+            class="org.modelica.emf.Absyn.Iterators.IteratorsPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/TypeSpec"
+            class="org.modelica.emf.Absyn.TypeSpec.TypeSpecPackage"
+            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
    </extension>
 
 </plugin>
