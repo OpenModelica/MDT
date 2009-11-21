@@ -7,9 +7,6 @@
   <foreignModel>OpenModelicaAbstactSyntax.ecore</foreignModel>
   <genPackages prefix="Absyn" basePackage="org.modelica.emf" disposableProviderFactory="true"
       ecorePackage="OpenModelicaAbstactSyntax.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="OpenModelicaAbstactSyntax.ecore#//dummyNum">
-      <genEnumLiterals ecoreEnumLiteral="OpenModelicaAbstactSyntax.ecore#//dummyNum/ZERO"/>
-    </genEnums>
     <nestedGenPackages prefix="Program" basePackage="org.modelica.emf.Absyn" disposableProviderFactory="true"
         ecorePackage="OpenModelicaAbstactSyntax.ecore#//Program">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//Program/uProgram"/>

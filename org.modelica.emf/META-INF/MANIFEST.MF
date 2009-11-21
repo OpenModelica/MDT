@@ -7,8 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.modelica.emf.Absyn,
- org.modelica.emf.Absyn.AlgorithmItem,
+Export-Package: org.modelica.emf.Absyn.AlgorithmItem,
  org.modelica.emf.Absyn.AlgorithmItem.impl,
  org.modelica.emf.Absyn.AlgorithmItem.util,
  org.modelica.emf.Absyn.AlgorithmStatement,
@@ -133,8 +132,7 @@ Export-Package: org.modelica.emf.Absyn,
  org.modelica.emf.Absyn.Variability.util,
  org.modelica.emf.Absyn.Within,
  org.modelica.emf.Absyn.Within.impl,
- org.modelica.emf.Absyn.Within.util,
- org.modelica.emf.Absyn.impl
+ org.modelica.emf.Absyn.Within.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy

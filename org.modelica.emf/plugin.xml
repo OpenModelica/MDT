@@ -12,13 +12,6 @@
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.openmodelica.org/openmodelica.abstact.syntax/"
-            class="org.modelica.emf.Absyn.AbsynPackage"
-            genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <package
             uri="http://www.openmodelica.org/openmodelica.abstact.syntax/Program"
             class="org.modelica.emf.Absyn.Program.ProgramPackage"
             genModel="model/OpenModelicaAbstactSyntax.genmodel"/>
