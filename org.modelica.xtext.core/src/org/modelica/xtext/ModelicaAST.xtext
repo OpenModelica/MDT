@@ -132,7 +132,7 @@ ClassPart returns ClassPart::uClassPart :
 	{ClassPart::PUBLIC} 'public' (contents+=ElementItem)*
 	|{ClassPart::PROTECTED} 'protected' (contents+=ElementItem)*
 	|{ClassPart::EQUATIONS} 'equation' (contents+=EquationItem)*
-	//|{ClassPart::INITIALEQUATIONS} 'initial' 'equation' (contents+=EquationItem)*
+	|{ClassPart::INITIALEQUATIONS} 'initial' 'equation' (contents+=EquationItem)*
 	|{ClassPart::ALGORITHMS} 'algorithm' (contents+=AlgorithmItem)*
 	|{ClassPart::INITIALALGORITHMS} 'initial' 'algorithm' (contents+=AlgorithmItem)*
 	;
@@ -293,7 +293,8 @@ AlgorithmStatement returns AlgorithmStatement::uAlgorithmStatement :
 	| AlgorithmReturn | AlgorithmWhile | AlgorithmBreak 
 	;
 
-AlgorithmIf returns AlgorithmStatement::ALG_IF:
+AlgorithmIf returns AlgorithmStatement::uAlgorithmStatement :
+	{AlgorithmStatement::ALG_IF}
 	'if' ifExp=Expression 'then' (trueBranch+=AlgorithmItem)* 
 	(elseIfAlgorithmBranch+=ElseIfAlgorithmBranch)* 
 	('else' (elseBranch+=AlgorithmItem)*)?
@@ -304,10 +305,11 @@ ElseIfAlgorithmBranch returns AlgorithmStatement::tuple_ElseIfAlgorithmBranch :
 	'elseif' exp=Expression 'then' (algorithmItem+=AlgorithmItem)*
 	;
 
-AlgorithmAssign returns AlgorithmStatement::ALG_ASSIGN:
-	assignComponent=ExprRange ':=' value=Expression
+AlgorithmAssign returns AlgorithmStatement::uAlgorithmStatement :
+	{AlgorithmStatement::ALG_ASSIGN} assignComponent=ExprRange ':=' value=Expression
 	;
-AlgorithmNoRetCall returns AlgorithmStatement::ALG_NORETCALL :
+AlgorithmNoRetCall returns  AlgorithmStatement::uAlgorithmStatement:
+	{AlgorithmStatement::ALG_NORETCALL} 
 	functionCall=ComponentRef '(' functionArgs=FunctionArguments? ')'
 	;
 
@@ -315,7 +317,8 @@ AlgorithmFor returns AlgorithmStatement::uAlgorithmStatement :
 	{AlgorithmStatement::ALG_FOR} 'for' iterators=ForIterators 'loop' (forBody+=AlgorithmItem)* 'end' 'for'
 	; 
 
-AlgorithmWhen returns AlgorithmStatement::ALG_WHEN_A :
+AlgorithmWhen returns AlgorithmStatement::uAlgorithmStatement :
+	{AlgorithmStatement::ALG_WHEN_A}
 	'when' boolExpr=Expression 'then' (whenBody+=AlgorithmItem)
 	(elseWhenAlgorithmBranch+=ElseWhenAlgorithmBranch)*
 	'end' 'when'
@@ -415,8 +418,7 @@ ExprElseIfBranchTuple returns Exp::tuple_ElseIfBranch :
 	;
 
 ExprRange returns Exp::uExp :
-	ExprLogical ({Exp::RANGE.start=current} ':'  stop=ExprLogical 
-	| {Exp::RANGE.start=current} ':' step=ExprLogical ':' stop=ExprLogical )?
+	ExprLogical ({Exp::RANGE.start=current} ':'  (step=ExprLogical ':' stop=ExprLogical | stop=ExprLogical) )?
 	;
 	
 ExprLogical returns Exp::uExp :
@@ -434,17 +436,20 @@ ExprLogicalFactor returns Exp::uExp :
 
 ExprRelation returns Exp::uExp :
 	ExprArithmetic
-	({Exp::RELATION.exp1=current}  op=OperatorLogical exp2=ExprArithmetic)?
+	({Exp::RELATION.exp1=current} op = (OperatorLess | OperatorLessEq | OperatorGreater | 
+	OperatorGreaterEq | OperatorEqual | OperatorEqual)  exp2=ExprArithmetic)?
 	;
 
 ExprArithmetic returns Exp::uExp :
 	ExprUnaryArithmetic 
-	({Exp::BINARY.exp1=current} op=OperatorAddSub exp2=ExprArithmetic2)?
+	({Exp::BINARY.exp1=current} op=(OperatorAdd | OperatorSub | OperatorAddEW | OperatorSubEW) 
+	exp2=ExprArithmetic2)?
 	;
 
 ExprArithmetic2 returns Exp::uExp :
 	ExprArithmeticTerm 
-	({Exp::BINARY.exp1=current} op=OperatorAddSub exp2=ExprArithmetic2)?
+	({Exp::BINARY.exp1=current} op=(OperatorAdd | OperatorSub | OperatorAddEW | OperatorSubEW)
+	exp2=ExprArithmetic2)?
 	;
 
 ExprUnaryArithmetic returns Exp::uExp :
@@ -549,16 +554,16 @@ NamedArguments returns NamedArg::uNamedArg :
 /* 
 	Operators
 */
-
+/*
 OperatorLogical returns Operator::uOperator:
 	{Operator::LESS} '<' | {Operator::LESSEQ} '<=' | {Operator::GREATER} '>' 
 	| {Operator::GREATEREQ} '>=' | {Operator::EQUAL} '==' | {Operator::NEQUAL} ('><'|'!=')
 	;
 
 OperatorAddSub returns Operator::uOperator:
-	{Operator::ADD} '+' | {Operator::SUB} '-' | {Operator::ADD_EW} '.+' | {Operator::SUB_EW} '.-'
+	{Operator::SUB} '-' | {Operator::ADD} '+' | {Operator::ADD_EW} '.+' | {Operator::SUB_EW} '.-'
 	;
-
+*/
 	
 OperatorAdd returns Operator::ADD :
 	{Operator::ADD} '+'

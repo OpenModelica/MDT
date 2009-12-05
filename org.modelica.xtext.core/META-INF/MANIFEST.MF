@@ -25,4 +25,6 @@ Export-Package: org.modelica.xtext,
  org.modelica.xtext.services,
  org.modelica.xtext.parseTreeConstruction,
  org.modelica.xtext.validation,
- org.modelica.xtext.parser.antlr
+ org.modelica.xtext.parser.antlr,
+ org.modelica.xtext.parser.antlr.internal
+Import-Package: org.apache.log4j

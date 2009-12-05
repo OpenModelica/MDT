@@ -433,7 +433,7 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Exp/REAL/value"/>
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Exp/CREF">
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Exp/CREF/componentReg"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Exp/CREF/componentRef"/>
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Exp/STRING">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Exp/STRING/value"/>
@@ -579,15 +579,30 @@
         disposableProviderFactory="true" ecorePackage="OpenModelicaAbstactSyntax.ecore#//ComponentRef">
       <genClasses image="false" ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/uComponentRef"/>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL/ref"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL/subscripts"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL/componentRef"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL/name"/>
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT/name"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT/ref"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT/subscripts"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT/name"/>
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/WILD"/>
+      <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL_RESOLVED">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL_RESOLVED/ref"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL_RESOLVED/subscripts"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL_RESOLVED/componentRef"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_QUAL_RESOLVED/name"/>
+      </genClasses>
+      <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT_RESOLVED">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT_RESOLVED/ref"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT_RESOLVED/subscripts"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//ComponentRef/CREF_IDENT_RESOLVED/name"/>
+      </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="Path" basePackage="org.modelica.emf.Absyn" disposableProviderFactory="true"
         ecorePackage="OpenModelicaAbstactSyntax.ecore#//Path">
@@ -678,15 +693,15 @@
     </nestedGenPackages>
     <nestedGenPackages prefix="Iterators" basePackage="org.modelica.emf.Absyn" disposableProviderFactory="true"
         ecorePackage="OpenModelicaAbstactSyntax.ecore#//Iterators">
+      <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterators">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterators/forIterator"/>
+      </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterator">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterator/tuple"/>
       </genClasses>
       <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Iterators/tuple_ForIterator">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute OpenModelicaAbstactSyntax.ecore#//Iterators/tuple_ForIterator/Ident"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Iterators/tuple_ForIterator/Exp"/>
-      </genClasses>
-      <genClasses ecoreClass="OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterators">
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference OpenModelicaAbstactSyntax.ecore#//Iterators/ForIterators/forIterator"/>
       </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="TypeSpec" basePackage="org.modelica.emf.Absyn" disposableProviderFactory="true"

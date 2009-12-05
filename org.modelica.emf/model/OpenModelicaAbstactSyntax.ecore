@@ -130,7 +130,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="INITIALEQUATIONS" eSuperTypes="#//ClassPart/uClassPart">
       <eStructuralFeatures xsi:type="ecore:EReference" name="contents" upperBound="-1"
-          eType="#//EquationItem/uEquationItem"/>
+          eType="#//EquationItem/uEquationItem" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ALGORITHMS" eSuperTypes="#//ClassPart/uClassPart">
       <eStructuralFeatures xsi:type="ecore:EReference" name="contents" upperBound="-1"
@@ -300,7 +300,8 @@
     <eClassifiers xsi:type="ecore:EClass" name="EQUATIONITEM" eSuperTypes="#//EquationItem/uEquationItem">
       <eStructuralFeatures xsi:type="ecore:EReference" name="equation_" lowerBound="1"
           eType="#//Equation/uEquation" containment="true"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="comment" eType="#//Comment/uComment"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="comment" eType="#//Comment/uComment"
+          containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="EQUATIONITEMANN" eSuperTypes="#//EquationItem/uEquationItem">
       <eStructuralFeatures xsi:type="ecore:EReference" name="annotation_" lowerBound="1"
@@ -405,7 +406,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ALG_FOR" eSuperTypes="#//AlgorithmStatement/uAlgorithmStatement">
       <eStructuralFeatures xsi:type="ecore:EReference" name="iterators" lowerBound="1"
-          eType="#//Iterators/ForIterators"/>
+          eType="#//Iterators/ForIterators" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="forBody" upperBound="-1"
           eType="#//AlgorithmItem/uAlgorithmItem" containment="true"/>
     </eClassifiers>
@@ -629,6 +630,7 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="functionArgs" lowerBound="1"
           eType="#//FunctionArgs/uFunctionArguments" containment="true"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CALL_INITIAL" eSuperTypes="#//Exp/uExp"/>
     <eClassifiers xsi:type="ecore:EClass" name="ARRAY" eSuperTypes="#//Exp/uExp">
       <eStructuralFeatures xsi:type="ecore:EReference" name="arrayExp" upperBound="-1"
           eType="#//Exp/uExp" containment="true"/>
@@ -666,7 +668,6 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="exp" upperBound="-1"
           eType="#//Exp/uExp" containment="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="CALL_INITIAL" eSuperTypes="#//Exp/uExp"/>
   </eSubpackages>
   <eSubpackages name="FunctionArgs" nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/FunctionArgs"
       nsPrefix="FunctionArgs">

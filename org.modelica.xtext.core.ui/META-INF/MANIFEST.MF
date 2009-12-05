@@ -19,3 +19,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.modelica.xtext.contentassist.antlr,
  org.modelica.xtext.contentassist
 Bundle-Activator: org.modelica.xtext.internal.ModelicaASTActivator
+Import-Package: org.apache.log4j
