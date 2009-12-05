@@ -1,13 +1,6 @@
 package org.modelica.xtext.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.xtext.ui.common.editor.outline.XtextContentOutlinePage;
-import org.eclipse.xtext.ui.common.editor.outline.actions.AbstractOutlineAction;
-import org.eclipse.xtext.ui.core.internal.XtextPluginImages;
 import org.modelica.xtext.internal.ModelicaASTActivator;
 
 public class ViewModelicaStructureAction extends OutlineViewAlternativeAction {

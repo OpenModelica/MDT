@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ModelicaProperties:SystemOfUnits xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ModelicaProperties="http://www.openmodelica.org/openmodelica.properties/3.1" xsi:schemaLocation="http://www.openmodelica.org/openmodelica.properties/3.1 OpenModelicaPhysicalQuantity.ecore">
+  <baseUnits name="Meter" symbol="m"/>
+  <baseUnits name="Second" symbol="s"/>
+  <baseUnits name="Kilogram" symbol="kg"/>
+  <baseUnits xsi:type="ModelicaProperties:AlternativeUnit" name="Gram" symbol="g" basisUnit="//@baseUnits.2">
+    <transformationToBasisUnit multiplier="0.0010"/>
+  </baseUnits>
+  <baseUnits xsi:type="ModelicaProperties:AlternativeUnit" name="inch" symbol="inch" basisUnit="//@baseUnits.0">
+    <transformationToBasisUnit multiplier="0.0254"/>
+  </baseUnits>
+  <quantities name="Length" descriptiveName="" symbol="l">
+    <unit xsi:type="ModelicaProperties:ProductUnit">
+      <elements unit="//@baseUnits.0"/>
+    </unit>
+  </quantities>
+  <quantities name="Acceleration">
+    <unit xsi:type="ModelicaProperties:ProductUnit">
+      <elements unit="//@baseUnits.0" powerNumerator="2" powerDenominator="1"/>
+      <elements unit="//@baseUnits.1" powerNumerator="-1" powerDenominator="1"/>
+    </unit>
+  </quantities>
+</ModelicaProperties:SystemOfUnits>

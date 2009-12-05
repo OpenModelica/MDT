@@ -7,10 +7,12 @@ package org.modelica.xtext;
  * Use this class to register components to be used within the IDE.
  */
 public class ModelicaASTUiModule extends org.modelica.xtext.AbstractModelicaASTUiModule {
+	/*
  	public Class<? extends org.eclipse.ui.views.contentoutline.IContentOutlinePage> bindIContentOutlinePage() {
 		return org.modelica.xtext.outline.ModelicaSourceContentOutlinePage.class;
 	}
 	public Class<? extends org.eclipse.xtext.ui.common.editor.outline.actions.IActionBarContributor> bindIActionBarContributor() {
 		return org.modelica.xtext.outline.ModelicaSourceOutlineActionBarContributor.class;
 	}
+	*/
 }

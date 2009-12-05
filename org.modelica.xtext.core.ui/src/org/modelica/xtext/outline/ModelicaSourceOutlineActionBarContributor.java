@@ -1,6 +1,7 @@
 package org.modelica.xtext.outline;
 
 import org.eclipse.xtext.ui.common.editor.outline.actions.IActionBarContributor.DefaultActionBarContributor;
+import org.modelica.xtext.actions.SaveASTAction;
 import org.modelica.xtext.actions.ViewASTAction;
 import org.modelica.xtext.actions.ViewModelicaStructureAction;
 
@@ -12,5 +13,6 @@ public class ModelicaSourceOutlineActionBarContributor extends
 		super.addToolbarActions();
 		add(new ViewASTAction(getOutlinePage()));
 		add(new ViewModelicaStructureAction(getOutlinePage()));
+		add(new SaveASTAction("Save AST", getOutlinePage()));
 	}
 }

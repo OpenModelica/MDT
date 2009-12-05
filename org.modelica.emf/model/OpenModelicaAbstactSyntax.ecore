@@ -566,7 +566,7 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CREF" eSuperTypes="#//Exp/uExp">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="componentReg" lowerBound="1"
+      <eStructuralFeatures xsi:type="ecore:EReference" name="componentRef" lowerBound="1"
           eType="#//ComponentRef/uComponentRef" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="STRING" eSuperTypes="#//Exp/uExp">
@@ -752,20 +752,34 @@
       nsPrefix="ComponentRef">
     <eClassifiers xsi:type="ecore:EClass" name="uComponentRef" abstract="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="CREF_QUAL" eSuperTypes="#//ComponentRef/uComponentRef">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="ref" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts" upperBound="-1"
           eType="#//Subscript/uSubscript" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="componentRef" lowerBound="1"
           eType="#//ComponentRef/uComponentRef" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CREF_IDENT" eSuperTypes="#//ComponentRef/uComponentRef">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="ref" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts" upperBound="-1"
           eType="#//Subscript/uSubscript" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="WILD" eSuperTypes="#//ComponentRef/uComponentRef"/>
+    <eClassifiers xsi:type="ecore:EClass" name="CREF_QUAL_RESOLVED" eSuperTypes="#//ComponentRef/uComponentRef">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1" eType="#//Component/COMPONENT"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts" upperBound="-1"
+          eType="#//Subscript/uSubscript" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="componentRef" lowerBound="1"
+          eType="#//ComponentRef/uComponentRef" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CREF_IDENT_RESOLVED" eSuperTypes="#//ComponentRef/uComponentRef">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1" eType="#//Component/COMPONENT"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts" upperBound="-1"
+          eType="#//Subscript/uSubscript" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
   </eSubpackages>
   <eSubpackages name="Path" nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/Path"
       nsPrefix="Path">
@@ -868,6 +882,10 @@
   </eSubpackages>
   <eSubpackages name="Iterators" nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/Iterators"
       nsPrefix="Iterators">
+    <eClassifiers xsi:type="ecore:EClass" name="ForIterators">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="forIterator" upperBound="-1"
+          eType="#//Iterators/ForIterator" containment="true"/>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ForIterator">
       <eStructuralFeatures xsi:type="ecore:EReference" name="tuple" eType="#//Iterators/tuple_ForIterator"
           containment="true"/>
@@ -877,10 +895,6 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="Exp" eType="#//Exp/uExp"
           containment="true"/>
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="ForIterators">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="forIterator" upperBound="-1"
-          eType="#//Iterators/ForIterator" containment="true"/>
     </eClassifiers>
   </eSubpackages>
   <eSubpackages name="TypeSpec" nsURI="http://www.openmodelica.org/openmodelica.abstact.syntax/TypeSpec"

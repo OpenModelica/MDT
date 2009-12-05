@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="PhysicalQuantities"
+    nsURI="http://www.openmodelica.org/openmodelica.properties/3.1" nsPrefix="ModelicaProperties">
+  <eClassifiers xsi:type="ecore:EEnum" name="UnitPrefixes">
+    <eLiterals name="NONE" literal="NONE"/>
+    <eLiterals name="YOTTA" value="24" literal="Y"/>
+    <eLiterals name="ZETTA" value="21" literal="Z"/>
+    <eLiterals name="EXA" value="18" literal="E"/>
+    <eLiterals name="PETA" value="15" literal="P"/>
+    <eLiterals name="TERA" value="12" literal="T"/>
+    <eLiterals name="GIGA" value="9" literal="G"/>
+    <eLiterals name="MEGA" value="6" literal="M"/>
+    <eLiterals name="KILO" value="3" literal="K"/>
+    <eLiterals name="HECTO" value="2" literal="h"/>
+    <eLiterals name="DEKA" value="1" literal="D"/>
+    <eLiterals name="DECI" value="-1" literal="d"/>
+    <eLiterals name="CENTI" value="-2" literal="c"/>
+    <eLiterals name="MILLI" value="-3" literal="m"/>
+    <eLiterals name="MICRO" value="-6" literal="u"/>
+    <eLiterals name="NANO" value="-9" literal="n"/>
+    <eLiterals name="PICO" value="-12" literal="p"/>
+    <eLiterals name="FEMTO" value="-15" literal="f"/>
+    <eLiterals name="ATTO" value="-18" literal="a"/>
+    <eLiterals name="ZEPTO" value="-21" literal="z"/>
+    <eLiterals name="YOCTO" value="-24" literal="y"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Quantity">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="unit" eType="#//Unit" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="alternativeUnits" eType="#//AlternativeUnit"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="derivedUnits" upperBound="-1"
+        eType="#//DerivedUnit" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="descriptiveName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbol" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Unit" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BaseUnit" eSuperTypes="#//Unit">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbol" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlternativeUnit" eSuperTypes="#//BaseUnit">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="basisUnit" lowerBound="1"
+        eType="#//Unit"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transformationToBasisUnit"
+        lowerBound="1" eType="#//UnitTransformation" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UnitTransformation">
+    <eOperations name="getInverseTransformation" eType="#//UnitTransformation"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="multiplier" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="offset" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DerivedUnit" eSuperTypes="#//Unit"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ProductUnit" eSuperTypes="#//DerivedUnit">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elements" lowerBound="1"
+        upperBound="-1" eType="#//ProductUnitElement" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ProductUnitElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="unit" eType="#//Unit"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="prefix" lowerBound="1"
+        eType="#//UnitPrefixes" defaultValueLiteral="NONE"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="powerNumerator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="powerDenominator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SystemOfUnits">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="baseUnits" lowerBound="3"
+        upperBound="-1" eType="#//BaseUnit" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="quantities" upperBound="-1"
+        eType="#//Quantity" containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>
