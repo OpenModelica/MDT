@@ -1,0 +1,42 @@
+grammar org.openmodelica.modelicaml.editor.xtext.equation.Equationsection with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+
+generate equationsection "http://www.openmodelica.org/modelicaml/editor/xtext/equation/Equationsection"
+
+////////////////////////////////////////Equation///////////////////////////
+equation_section:{equation_section}
+(Eqn+=equation';')*
+;
+equation:
+( 
+sim=simple_expression'=' expr=expression
+| if_equation
+| for_equation
+| connect_clause
+| when_equation
+)
+Comment=comment
+;
+
+//////////////////////////////////////////Conditions and Loop Section For Equation//////////////////////
+when_equation :
+'when' whenEpr=expression 'then'
+( Eqn_Then+=equation ';' )*
+ ('elsewhen' elseWhenEpr+=expression 'then'
+( Eqn_Then+=equation ';')* )*
+'end' 'when'
+;
+if_equation :
+'if' exprtrue=expression 'then'( Eqn+=equation ';')*
+('elseif' exprStilltrue+=expression 'then'( thenEqn+=equation ';' )*)*
+( 'else'( elseEqn+=equation ';' )*)?
+'end' 'if'
+;
+
+for_equation :
+'for' for_loop=for_indices 'loop'
+( For_Eqn+=equation ';')*
+'end' 'for'
+;
+connect_clause :
+'connect' '(' connector1=component_reference ',' connector2=component_reference ')'
+;
