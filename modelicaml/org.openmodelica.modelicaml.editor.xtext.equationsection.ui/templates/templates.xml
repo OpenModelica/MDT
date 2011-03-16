@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+<template 
+autoinsert="true" 
+context="org.openmodelica.modelicaml.editor.xtext.model.Modeleditor.conditional_expr" 
+deleted="false" 
+description="conditional expression for expressions" 
+enabled="true"
+id="org.openmodelica.modelicaml.editor.xtext.equation.Equationsection.conditional_expr" 
+name="conditional expression">
+if ${ifexpr}&#13;then 
+ ${thenexpr}&#13;
+elseif ${elseifexpr} then 
+ ${trueexpr}&#13;
+else 
+ ${falseexpr}
+</template>
+<template 
+autoinsert="true" 
+context="org.openmodelica.modelicaml.editor.xtext.equation.Equationsection.for_equation"
+deleted="false" 
+description="for loop Equation" 
+enabled="true"
+id="org.openmodelica.modelicaml.editor.xtext.equation.Equationsection.for_equation" 
+name="for_equation">
+for ${Ident} in ${for_expression} loop
+ ${for_Eqn};
+end for;
+</template>
+<template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.equation.Equationsection.if_equation" 
+deleted="false" 
+description="if for Equation" 
+enabled="true" 
+id="org.openmodelica.modelicaml.editor.xtext.equation.Equationsection.if_equation"
+name="if_equation">
+if ${Trueexpr} then 
+ ${TrueEqn};&#13;
+elseif ${exprStilltrue} then 
+ ${thenEqn};&#13;
+else 
+ ${elseEqn};&#13;
+end if;
+</template>
+<template 
+autoinsert="true" 
+context="org.openmodelica.modelicaml.editor.xtext.equation.Equationsection.when_equation" 
+deleted="false" 
+description="when in Equation" 
+enabled="true" 
+id="org.openmodelica.modelicaml.editor.xtext.equation.Equationsection.when_equation" 
+name="when_equation">
+when ${whenEpr} then 
+ ${Eqn_Then1 }; &#13;
+elsewhen ${elseWhenEpr} then 
+ ${Eqn_Then2}; &#13;
+end when;
+</template></templates>
