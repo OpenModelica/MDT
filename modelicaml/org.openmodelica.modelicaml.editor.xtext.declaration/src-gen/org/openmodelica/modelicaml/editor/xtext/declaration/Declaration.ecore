@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="declaration"
+    nsURI="http://www.openmodelica.org/modelicaml/editor/xtext/declaration/Declaration"
+    nsPrefix="declaration">
+  <eClassifiers xsi:type="ecore:EClass" name="component_declaration">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Mod" eType="#//modification"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Conditional_Att" eType="#//conditional_attribute"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="modification">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Expr" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="conditional_attribute">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Expr" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

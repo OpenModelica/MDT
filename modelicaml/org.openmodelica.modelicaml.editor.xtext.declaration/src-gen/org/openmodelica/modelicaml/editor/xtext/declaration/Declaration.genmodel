@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.openmodelica.modelicaml.editor.xtext.declaration/src-gen"
+    editDirectory="/org.openmodelica.modelicaml.editor.xtext.declaration.edit/src"
+    editorDirectory="/org.openmodelica.modelicaml.editor.xtext.declaration.editor/src"
+    modelPluginID="org.openmodelica.modelicaml.editor.xtext.declaration" forceOverwrite="true"
+    modelName="Declaration" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="org.openmodelica.modelicaml.editor.xtext.declaration.edit"
+    editorPluginID="org.openmodelica.modelicaml.editor.xtext.declaration.editor" usedGenPackages="../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.genmodel#//modeleditor">
+  <genPackages prefix="Declaration" basePackage="org.openmodelica.modelicaml.editor.xtext.declaration"
+      disposableProviderFactory="true" ecorePackage="Declaration.ecore#/">
+    <genClasses ecoreClass="Declaration.ecore#//component_declaration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Declaration.ecore#//component_declaration/Mod"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Declaration.ecore#//component_declaration/Conditional_Att"/>
+    </genClasses>
+    <genClasses ecoreClass="Declaration.ecore#//modification">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Declaration.ecore#//modification/Expr"/>
+    </genClasses>
+    <genClasses ecoreClass="Declaration.ecore#//conditional_attribute">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Declaration.ecore#//conditional_attribute/Expr"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
