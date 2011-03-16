@@ -1,0 +1,44 @@
+grammar org.openmodelica.modelicaml.editor.xtext.state.Statetransitionguardexpression with  org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+
+generate statetransitionguardexpression "http://www.openmodelica.org/modelicaml/editor/xtext/state/Statetransitionguardexpression"
+
+expression:
+(simple_Expr=simple_expression)?
+;
+
+//////////////////////////////////////////////////Primary///////////////////////////////
+primary :
+num=UNSIGNED_NUMBER
+| int=INT
+| str=STRING
+| Bool=BOOL_VAL
+| Name_Function=name_Function
+| Initial_ref=initial_ref
+| Expr=ExprDer
+| Mac_A=Macro_After
+//| Mac_B=Macro_BEFORE
+| Mac_E=Macro_EVENT
+| Mac_C=Macro_CHANGE
+| Mac_S=Macro_SIGNAL
+| Component_reference=component_reference
+| '(' output_expr_list=output_expression_list ')'
+| '[' Expre_list=expression_list ( ';' Expression_list+=expression_list)* ']'
+| '{' f_arguments=function_arguments '}'
+| End='end'
+;
+//////////////////////////////////////MACRO//////////////////////////////
+Macro_After:
+'AFTER' '(' (int=INT|num=UNSIGNED_NUMBER | Component_reference=component_reference) ')'
+;
+Macro_BEFORE:
+'BEFORE' '(' (int=INT|num=UNSIGNED_NUMBER | Component_reference=component_reference)')'
+;
+Macro_SIGNAL:
+'SIGNAL' '('Component_reference=component_reference')'
+;
+Macro_EVENT:
+'EVENT''('Component_reference=component_reference')'
+;
+Macro_CHANGE:
+'CHANGE' '('Component_reference=component_reference')'
+;
