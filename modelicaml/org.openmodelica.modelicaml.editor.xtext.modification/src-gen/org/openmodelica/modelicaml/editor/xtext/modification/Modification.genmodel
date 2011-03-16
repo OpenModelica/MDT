@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.openmodelica.modelicaml.editor.xtext.modification/src-gen"
+    editDirectory="/org.openmodelica.modelicaml.editor.xtext.modification.edit/src"
+    editorDirectory="/org.openmodelica.modelicaml.editor.xtext.modification.editor/src"
+    modelPluginID="org.openmodelica.modelicaml.editor.xtext.modification" forceOverwrite="true"
+    modelName="Modification" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="org.openmodelica.modelicaml.editor.xtext.modification.edit"
+    editorPluginID="org.openmodelica.modelicaml.editor.xtext.modification.editor"
+    usedGenPackages="../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.genmodel#//modeleditor">
+  <genPackages prefix="Modification" basePackage="org.openmodelica.modelicaml.editor.xtext.modification"
+      disposableProviderFactory="true" ecorePackage="Modification.ecore#/">
+    <genClasses ecoreClass="Modification.ecore#//modification_alternatives">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//modification_alternatives/Modification_Rule"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//left_hand_component_reference">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//left_hand_component_reference/Expr"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//left_hand_component_reference/ref"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//left_hand_component_reference/subscripts1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//left_hand_component_reference/ref1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//left_hand_component_reference/subscripts"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//modification">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//modification/Expr"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//class_modification"/>
+    <genClasses ecoreClass="Modification.ecore#//argument_list"/>
+    <genClasses ecoreClass="Modification.ecore#//argument"/>
+    <genClasses ecoreClass="Modification.ecore#//element_modification_or_replaceable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_modification_or_replaceable/Element_mod"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_modification_or_replaceable/Element_rep"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//element_modification">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_modification/Name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_modification/Modification"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//element_replaceable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_replaceable/Class_Def"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_replaceable/Comp_clause2"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_replaceable/Constrain_Clause"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//constraining_clause">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//constraining_clause/Name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//constraining_clause/Class_Mod"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//element_redeclaration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_redeclaration/Class_Def"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_redeclaration/Comp_clause1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_redeclaration/Element_R"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//component_clause"/>
+    <genClasses ecoreClass="Modification.ecore#//component_list"/>
+    <genClasses ecoreClass="Modification.ecore#//component_declaration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//component_declaration/component_Dec"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//component_declaration/Dec"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//component_declaration/Conditional_Att"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//conditional_attribute">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//conditional_attribute/Expr"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//component_clause1"/>
+    <genClasses ecoreClass="Modification.ecore#//component_declaration1"/>
+    <genClasses ecoreClass="Modification.ecore#//type_specifier">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//type_specifier/Array_Subs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//type_specifier/Com_List"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//type_specifier/Com_Dec"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//type_specifier/Name"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//declaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//declaration/redeclaredComponentName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//declaration/ArraySubs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//declaration/Mod"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//class_definition"/>
+    <genClasses ecoreClass="Modification.ecore#//class_specifier">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//class_specifier/Comp"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//class_specifier/Name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//class_specifier/Array_Subs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//class_specifier/Class_mod"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//class_specifier/var"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//class_specifier/Enum_list"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//enum_list">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//enum_list/Ennum_Lit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//enum_list/E_literal"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//composition">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/E_List_Initial"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/E_List_Public"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/E_List_Protected"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/Eqn_section"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/Alg_section"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/Lang_Spec"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/External_F_C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/Annotation1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//composition/Annotation2"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//element_list">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element_list/Element"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//element">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element/Class_Def"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element/Comp_Clause"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element/Constrain_Clause"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//element/Name"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//equation_section">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//equation_section/Eqn"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//equation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//equation/sim"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//equation/expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//equation/IF_EQN"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//equation/FOR_EQN"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//equation/Con"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//equation/WHEN_EQN"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//equation/Comment"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//when_equation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//when_equation/whenEpr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//when_equation/Eqn_Then"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//when_equation/elseWhenEpr"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//if_equation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_equation/exprtrue"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_equation/Eqn"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_equation/exprStilltrue"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_equation/thenEqn"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_equation/elseEqn"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//for_equation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//for_equation/for_loop"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//for_equation/For_Eqn"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//connect_clause">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//connect_clause/connector1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//connect_clause/connector2"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//algorithm_section"/>
+    <genClasses ecoreClass="Modification.ecore#//statement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//statement/If_statement"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//statement/State_OutputExprList"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//statement/state_Comp_Ref"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//statement/For_statement"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//statement/When_statement"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//statement/While_statement"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//state_OutputExprList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//state_OutputExprList/output_expression_list"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//state_OutputExprList/Component_ref"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//state_OutputExprList/fun_call_args"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//state_Comp_Ref">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//state_Comp_Ref/component_reference"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//state_Comp_Ref/expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//state_Comp_Ref/fun_call_args"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//when_statement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//when_statement/When_expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//when_statement/When_stat_true"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//when_statement/Else_When_expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//when_statement/Then_statement"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//while_statement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//while_statement/while_expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//while_statement/While_stat"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//for_statement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//for_statement/For_indices"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//for_statement/For_statement"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//if_statement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_statement/exprtrue"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_statement/state"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//if_statement/exprStilltrue"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//extends_clause">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//extends_clause/Class_Mod"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//extends_clause/Annotation"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//annotation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//annotation/Class_Mod"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//import_clause"/>
+    <genClasses ecoreClass="Modification.ecore#//language_specification">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Modification.ecore#//language_specification/Str"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//external_function_call">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//external_function_call/component_reference"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//external_function_call/E_List"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//class_modification_action">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//class_modification_action/Arg"/>
+    </genClasses>
+    <genClasses ecoreClass="Modification.ecore#//algorithm_clause">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Modification.ecore#//algorithm_clause/Algorithm"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
