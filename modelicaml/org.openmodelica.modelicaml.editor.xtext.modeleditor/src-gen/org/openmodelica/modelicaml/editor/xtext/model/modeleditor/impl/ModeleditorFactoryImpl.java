@@ -1,0 +1,460 @@
+/**
+ * <copyright>
+ * </copyright>
+ *
+
+ */
+package org.openmodelica.modelicaml.editor.xtext.model.modeleditor.impl;
+
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.impl.EFactoryImpl;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.ExprDer;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.Fun_Arguments_exp;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.Fun_Arguments_for;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.ModeleditorFactory;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.ModeleditorPackage;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.arithmetic_expression;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.array_subscripts;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.component_reference;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.conditional_expr;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.expression;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.expression_list;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.factor;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.for_index;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.for_indices;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.function_arguments;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.function_call_args;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.initial_ref;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.logical_expression;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.logical_factor;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.logical_term;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name_Function;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.named_argument;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.named_arguments;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.output_expression_list;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.primary;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.relation;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.simple_expression;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.subscript;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.term;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model <b>Factory</b>.
+ * <!-- end-user-doc -->
+ * @generated
+ */
+public class ModeleditorFactoryImpl extends EFactoryImpl implements ModeleditorFactory
+{
+  /**
+   * Creates the default factory implementation.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public static ModeleditorFactory init()
+  {
+    try
+    {
+      ModeleditorFactory theModeleditorFactory = (ModeleditorFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.openmodelica.org/modelicaml/editor/xtext/model/Modeleditor"); 
+      if (theModeleditorFactory != null)
+      {
+        return theModeleditorFactory;
+      }
+    }
+    catch (Exception exception)
+    {
+      EcorePlugin.INSTANCE.log(exception);
+    }
+    return new ModeleditorFactoryImpl();
+  }
+
+  /**
+   * Creates an instance of the factory.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ModeleditorFactoryImpl()
+  {
+    super();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EObject create(EClass eClass)
+  {
+    switch (eClass.getClassifierID())
+    {
+      case ModeleditorPackage.EXPRESSION: return createexpression();
+      case ModeleditorPackage.SIMPLE_EXPRESSION: return createsimple_expression();
+      case ModeleditorPackage.CONDITIONAL_EXPR: return createconditional_expr();
+      case ModeleditorPackage.LOGICAL_EXPRESSION: return createlogical_expression();
+      case ModeleditorPackage.LOGICAL_TERM: return createlogical_term();
+      case ModeleditorPackage.LOGICAL_FACTOR: return createlogical_factor();
+      case ModeleditorPackage.RELATION: return createrelation();
+      case ModeleditorPackage.ARITHMETIC_EXPRESSION: return createarithmetic_expression();
+      case ModeleditorPackage.TERM: return createterm();
+      case ModeleditorPackage.FACTOR: return createfactor();
+      case ModeleditorPackage.PRIMARY: return createprimary();
+      case ModeleditorPackage.NAME_FUNCTION: return createname_Function();
+      case ModeleditorPackage.INITIAL_REF: return createinitial_ref();
+      case ModeleditorPackage.EXPR_DER: return createExprDer();
+      case ModeleditorPackage.FUNCTION_CALL_ARGS: return createfunction_call_args();
+      case ModeleditorPackage.EXPRESSION_LIST: return createexpression_list();
+      case ModeleditorPackage.NAME: return createname();
+      case ModeleditorPackage.COMPONENT_REFERENCE: return createcomponent_reference();
+      case ModeleditorPackage.OUTPUT_EXPRESSION_LIST: return createoutput_expression_list();
+      case ModeleditorPackage.ARRAY_SUBSCRIPTS: return createarray_subscripts();
+      case ModeleditorPackage.SUBSCRIPT: return createsubscript();
+      case ModeleditorPackage.FUNCTION_ARGUMENTS: return createfunction_arguments();
+      case ModeleditorPackage.FUN_ARGUMENTS_EXP: return createFun_Arguments_exp();
+      case ModeleditorPackage.FUN_ARGUMENTS_FOR: return createFun_Arguments_for();
+      case ModeleditorPackage.NAMED_ARGUMENTS: return createnamed_arguments();
+      case ModeleditorPackage.NAMED_ARGUMENT: return createnamed_argument();
+      case ModeleditorPackage.FOR_INDICES: return createfor_indices();
+      case ModeleditorPackage.FOR_INDEX: return createfor_index();
+      default:
+        throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public expression createexpression()
+  {
+    expressionImpl expression = new expressionImpl();
+    return expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public simple_expression createsimple_expression()
+  {
+    simple_expressionImpl simple_expression = new simple_expressionImpl();
+    return simple_expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public conditional_expr createconditional_expr()
+  {
+    conditional_exprImpl conditional_expr = new conditional_exprImpl();
+    return conditional_expr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public logical_expression createlogical_expression()
+  {
+    logical_expressionImpl logical_expression = new logical_expressionImpl();
+    return logical_expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public logical_term createlogical_term()
+  {
+    logical_termImpl logical_term = new logical_termImpl();
+    return logical_term;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public logical_factor createlogical_factor()
+  {
+    logical_factorImpl logical_factor = new logical_factorImpl();
+    return logical_factor;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public relation createrelation()
+  {
+    relationImpl relation = new relationImpl();
+    return relation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public arithmetic_expression createarithmetic_expression()
+  {
+    arithmetic_expressionImpl arithmetic_expression = new arithmetic_expressionImpl();
+    return arithmetic_expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public term createterm()
+  {
+    termImpl term = new termImpl();
+    return term;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public factor createfactor()
+  {
+    factorImpl factor = new factorImpl();
+    return factor;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public primary createprimary()
+  {
+    primaryImpl primary = new primaryImpl();
+    return primary;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public name_Function createname_Function()
+  {
+    name_FunctionImpl name_Function = new name_FunctionImpl();
+    return name_Function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public initial_ref createinitial_ref()
+  {
+    initial_refImpl initial_ref = new initial_refImpl();
+    return initial_ref;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ExprDer createExprDer()
+  {
+    ExprDerImpl exprDer = new ExprDerImpl();
+    return exprDer;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public function_call_args createfunction_call_args()
+  {
+    function_call_argsImpl function_call_args = new function_call_argsImpl();
+    return function_call_args;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public expression_list createexpression_list()
+  {
+    expression_listImpl expression_list = new expression_listImpl();
+    return expression_list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public name createname()
+  {
+    nameImpl name = new nameImpl();
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public component_reference createcomponent_reference()
+  {
+    component_referenceImpl component_reference = new component_referenceImpl();
+    return component_reference;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public output_expression_list createoutput_expression_list()
+  {
+    output_expression_listImpl output_expression_list = new output_expression_listImpl();
+    return output_expression_list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public array_subscripts createarray_subscripts()
+  {
+    array_subscriptsImpl array_subscripts = new array_subscriptsImpl();
+    return array_subscripts;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public subscript createsubscript()
+  {
+    subscriptImpl subscript = new subscriptImpl();
+    return subscript;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public function_arguments createfunction_arguments()
+  {
+    function_argumentsImpl function_arguments = new function_argumentsImpl();
+    return function_arguments;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Fun_Arguments_exp createFun_Arguments_exp()
+  {
+    Fun_Arguments_expImpl fun_Arguments_exp = new Fun_Arguments_expImpl();
+    return fun_Arguments_exp;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Fun_Arguments_for createFun_Arguments_for()
+  {
+    Fun_Arguments_forImpl fun_Arguments_for = new Fun_Arguments_forImpl();
+    return fun_Arguments_for;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public named_arguments createnamed_arguments()
+  {
+    named_argumentsImpl named_arguments = new named_argumentsImpl();
+    return named_arguments;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public named_argument createnamed_argument()
+  {
+    named_argumentImpl named_argument = new named_argumentImpl();
+    return named_argument;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public for_indices createfor_indices()
+  {
+    for_indicesImpl for_indices = new for_indicesImpl();
+    return for_indices;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public for_index createfor_index()
+  {
+    for_indexImpl for_index = new for_indexImpl();
+    return for_index;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ModeleditorPackage getModeleditorPackage()
+  {
+    return (ModeleditorPackage)getEPackage();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @deprecated
+   * @generated
+   */
+  @Deprecated
+  public static ModeleditorPackage getPackage()
+  {
+    return ModeleditorPackage.eINSTANCE;
+  }
+
+} //ModeleditorFactoryImpl
