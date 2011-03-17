@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Simulation Core
+Bundle-SymbolicName: org.openmodelica.simulation.core;singleton:=true
+Bundle-Version: 0.7.1.v201003091320
+Bundle-Activator: org.openmodelica.simulation.core.Activator
+Bundle-Vendor: OpenModelica
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.openmodelica.simulation.libs.xom;bundle-version="1.2.6"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: org.openmodelica.simulation.core.init_txt_handling,
+ org.openmodelica.simulation.core.models.modelica,
+ org.openmodelica.simulation.core.models.simulation,
+ org.openmodelica.simulation.core.network,
+ org.openmodelica.simulation.core.omc,
+ org.openmodelica.simulation.core.simulationdata,
+ org.openmodelica.simulation.core.simulationresult_txt_handling,
+ org.openmodelica.simulation.core.xml.generator,
+ org.openmodelica.simulation.core.xml.reader
