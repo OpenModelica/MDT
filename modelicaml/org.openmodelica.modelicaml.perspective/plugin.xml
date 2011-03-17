@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.openmodelica.modelicaml.perspective.perspectives.PapyrusModelicaMLPerspective"
+            icon="icons/releng_gears.gif"
+            id="org.openmodelica.modelicaml.perspective"
+            name="ModelicaML Modeling">
+      </perspective>
+   </extension>
+   
+
+</plugin>

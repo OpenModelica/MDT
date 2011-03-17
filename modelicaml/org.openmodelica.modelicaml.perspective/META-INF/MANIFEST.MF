@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ModelicaML Perspective
+Bundle-SymbolicName: org.openmodelica.modelicaml.perspective;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openmodelica.modelicaml.perspective.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.console,
+ org.eclipse.jdt.ui,
+ org.eclipse.papyrus.perspective;bundle-version="0.7.3",
+ org.eclipse.papyrus.wizards;bundle-version="0.7.3",
+ org.eclipse.papyrus.ui.perspectiveconfiguration;bundle-version="0.7.3"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: OpenModelica Project
