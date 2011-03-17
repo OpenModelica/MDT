@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<query:ModelQuerySet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:query="http://www.eclipse.org/MoDisco/infra/query/0.8.incubation" name="ModelicaML" description="ModelicaML specific queries">
+  <associatedMetamodels href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+  <associatedMetamodels href="http://www.eclipse.org/uml2/3.0.0/UML#/"/>
+  <queries xsi:type="query:JavaModelQuery" name="getModelicaMLComponentIconPath" description="returns the icon path" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetModelicaMLComponentIconPath">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Property"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="getModelicaMLClassIcon" description="returns the icon path " implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetModelicaMLClassIcon">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="getNamedElementLabel" description="returns the name of the naned element" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetNamedElementLabel">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//NamedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="getGeneralizationLabel" description="returns the name of the generalization target " implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetGeneralizationLabel">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Generalization"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="GetTypedElementLabel" description="returns the name, type name, etc. of the typed element" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetTypedElementLabel">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isHaveMoreThanXProperties" description="checks if the class has more then x number of properties" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsHaveMoreThanXProperties">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Classifier"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="getColorForTypedElement" description="returns the color for the TypedElement" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetColorForTypedElement">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isModelicaMLStereotypeApplied" description="looks for the application of any ModelicaML stereotype based on its qualified name" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsModelicaMLStereotypeApplied">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//NamedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="getConnectorLabel" description="creates the label for Connector" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetConnectorLabel">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Connector"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isInput" description="determines if the variable has the prefix input" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsInput">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isFlow" description="determines if the variable has the prefix flow" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsFlow">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isOutput" description="determines if variable has the prefix 'output'" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsOutput">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isConstant" description="Determines if varialble has the prefix 'constant'" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsConstant">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isStream" description="Determines if variable has the prefix 'stream'" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsStream">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="getOpaqueBehaviorLabel" description="" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetOpaqueBehaviorLabel">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//OpaqueBehavior"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isParameter" description="" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsParameter">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//TypedElement"/>
+  </queries>
+  <queries xsi:type="query:JavaModelQuery" name="isPartial" description="Determines if the ModelicaML class has the prefix &quot;partial&quot;" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.IsPartial">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Classifier"/>
+  </queries>
+</query:ModelQuerySet>

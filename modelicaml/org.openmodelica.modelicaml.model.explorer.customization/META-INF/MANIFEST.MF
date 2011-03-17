@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.core.runtime,org.eclipse.gmt.modisco.infra
+ .common.core,org.eclipse.gmt.modisco.infra.query.core,org.eclipse.emf
+ .ecore,org.eclipse.uml2.uml
+Bundle-Vendor: OpenModelica Project
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,bin
+Bundle-Version: 0.0.1.qualifier
+Bundle-Name: org.openmodelica.modelicaml.model.explorer.customization
+Bundle-Activator: org.openmodelica.modelicaml.model.explorer.customiza
+ tion.Activator
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.openmodelica.modelicaml.model.explorer.custom
+ ization;singleton:=true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+
