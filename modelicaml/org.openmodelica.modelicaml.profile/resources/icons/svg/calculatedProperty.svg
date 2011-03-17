@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16px"
+   height="16px"
+   id="svg4570"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   inkscape:export-filename="C:\Documents and Settings\rmupohlm\Desktop\mockups\ModelicaML_icons\icons32\calculatedProperty.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180"
+   sodipodi:docname="calculatedProperty.svg">
+  <defs
+     id="defs4572">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5180">
+      <stop
+         style="stop-color:#e1f7ff;stop-opacity:1;"
+         offset="0"
+         id="stop5182" />
+      <stop
+         style="stop-color:#e1f7ff;stop-opacity:0;"
+         offset="1"
+         id="stop5184" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5150">
+      <stop
+         style="stop-color:#2068a0;stop-opacity:1;"
+         offset="0"
+         id="stop5152" />
+      <stop
+         style="stop-color:#2068a0;stop-opacity:0;"
+         offset="1"
+         id="stop5154" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 8 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="16 : 8 : 1"
+       inkscape:persp3d-origin="8 : 5.3333333 : 1"
+       id="perspective4578" />
+    <inkscape:perspective
+       id="perspective4588"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4626"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5150"
+       id="linearGradient5156"
+       x1="-10.338861"
+       y1="6.2322583"
+       x2="-10.338861"
+       y2="-6.6148515"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5150"
+       id="linearGradient5158"
+       x1="-10.338861"
+       y1="8.2509403"
+       x2="-10.338861"
+       y2="-8.9574261"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5180"
+       id="linearGradient5186"
+       x1="-10.361385"
+       y1="1.1707125"
+       x2="-10.338861"
+       y2="6.2322583"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.197802"
+     inkscape:cx="8"
+     inkscape:cy="8.6488859"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="1280"
+     inkscape:window-height="964"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4575">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <rect
+       style="color:#000000;fill:none;stroke:url(#linearGradient5158);stroke-width:0.98329824;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect4594"
+       width="11.94482"
+       height="8.0255136"
+       x="1.3931839"
+       y="4.4639759" />
+    <rect
+       style="color:#000000;fill:url(#linearGradient5186);fill-opacity:1;stroke:url(#linearGradient5156);stroke-width:0.98329824;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect4594-4"
+       width="7.9354148"
+       height="4.0782475"
+       x="3.3753626"
+       y="6.3925595" />
+    <text
+       xml:space="preserve"
+       style="font-size:32px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="1.9371289"
+       y="14.288119"
+       id="text5188"><tspan
+         sodipodi:role="line"
+         id="tspan5190"
+         x="1.9371289"
+         y="14.288119"
+         style="font-size:10px;font-weight:bold;fill:#1a1a1a;font-family:EADS Sans;-inkscape-font-specification:EADS Sans Bold">cP</tspan></text>
+  </g>
+</svg>

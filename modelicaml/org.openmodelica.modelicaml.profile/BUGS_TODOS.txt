@@ -1,0 +1,14 @@
+
+palette: profile filter anwenden.
+
+outline: Group: add Annotation and Assert
+Done: outline: add ModelicaClass,
+Done: outline: add Operator (create a Package icon with "O")
+
+DONE: outline: EnumerationLiterals in Enumeration Literal umbenennen
+DONE: filter für die outline auf plugin.properties umstellen
+DONE: palette: neuen Eintrag für Enumeration Hinzufügen
+DONE: palette: add <<Function>> to Class Diagram tool palette
+DONE: palette: add "constratinedby", "partialDerivative", "redeclare" Dependencies
+DONE: palette: add ModelicaClass
+
