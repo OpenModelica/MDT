@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLMainPreferencesPage"
+            id="org.openmodelica.modelicaml.preferences.mainpage"
+            name="ModelicaML">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLOMCPreferencePage"
+            id="org.openmodelica.modelicaml.preferences.ModelicaMLPreferencePage"
+            name="ModelicaML OpenModelica Compiler Settings">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.openmodelica.modelicaml.preferences.impl.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>
