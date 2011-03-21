@@ -38,7 +38,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-// TODO: Auto-generated Javadoc
+import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
+import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
+
+//TODO: Auto-generated Javadoc
 /**
  * Generates an text file including all data from the model_init.txt file in the same structure
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
@@ -76,6 +79,8 @@ public class SimulationInit_TXT_writer {
 			  fw.append( "\"" + modifiedInitData.method + "\" // method");
 			  fw.append( System.getProperty("line.separator") );
 			  fw.append(  "\"plt\" // outputFormat");
+			  fw.append( System.getProperty("line.separator") );
+			  fw.append(  "\".*\" // variableFilter");
 			  fw.append( System.getProperty("line.separator") );
 			 
 			  fw.append( modifiedInitData.states + " // n states");
@@ -136,9 +141,9 @@ public class SimulationInit_TXT_writer {
 				
 				  //TODO [20110308] New Version of OMI init file has true/false for boolean instead of 1.0/0.0
 				  if(modifiedInitData.n_bool_parametersProperties.get(parName) == 1.0)
-					  fw.append( "1.0" + " // " + parName + "");
+					  fw.append( "true" + " // " + parName + "");
 				  else if(modifiedInitData.n_bool_parametersProperties.get(parName) == 0.0)
-					  fw.append( "0.0" + " // " + parName + "");
+					  fw.append( "false" + " // " + parName + "");
 				  
 				  fw.append( System.getProperty("line.separator") );				  
 			  }
@@ -148,9 +153,9 @@ public class SimulationInit_TXT_writer {
 				  
 				//TODO [20110308] New Version of OMI init file has true/false for boolean instead of 1.0/0.0
 				  if(modifiedInitData.n_bool_variablesProperties.get(varName) == 1.0)
-					  fw.append( "1.0" + " // " + varName + "");
+					  fw.append( "true" + " // " + varName + "");
 				  else if(modifiedInitData.n_bool_variablesProperties.get(varName) == 0.0)
-					  fw.append( "0.0" + " // " + varName + "");
+					  fw.append( "false" + " // " + varName + "");
 				  
 				  fw.append( System.getProperty("line.separator") );				  
 			  }
@@ -178,10 +183,10 @@ public class SimulationInit_TXT_writer {
 	public static void main(String[] args) {
 		InitTXT modifiedInitData;
 		try {
-			modifiedInitData = SimulationInit_TXT_reader.readInit("D:\\Program Files (x86)\\eclipse-modeling-35\\runtime-EclipseApplication\\org.openmodelica.simulation.projects\\SimpleSimulation\\TwoTanksSystemExample.Simulations.SimpleSimulation_init.txt");
+			modifiedInitData = SimulationInit_TXT_reader.readInit("D:/OpenModelica1.6.0/tmp/TwoTanksExample.Simulations.TanksSystemSimulation1_init.txt");
 			modifiedInitData.step = 1.8;
 			System.out.println(modifiedInitData.n_int_variablesProperties);
-			writeInit("D:/TwoTanksSystemExample.Simulations.SimpleSimulation_init2.txt", modifiedInitData);
+			writeInit("D:/OpenModelica1.6.0/tmp/TwoTanksExample.Simulations.TanksSystemSimulation1_init.txt", modifiedInitData);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
