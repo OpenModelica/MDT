@@ -73,6 +73,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.openmodelica.modelicaml.common.ast.ModelicaMLAST;
 import org.openmodelica.modelicaml.common.ast.TreeParent;
+import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
 
 
 // TODO: Auto-generated Javadoc
@@ -108,6 +109,8 @@ public class InstantiateRequirementsDialog extends Dialog {
 	/** The key word list. */
 	private List<String> keyWordList = new ArrayList<String>();
 
+	private HashMap<Class, Integer> selectedNumberOfInstantiations = new HashMap<Class, Integer>();
+
 	/**
 	 * Instantiates a new instantiate requirements dialog.
 	 * 
@@ -130,6 +133,10 @@ public class InstantiateRequirementsDialog extends Dialog {
 	 */
 	public HashSet<Class> getSelectedList(){
 		return this.selectedReqList;
+	}
+	
+	public HashMap<Class, Integer> getSelectedNumberOfInstantiations(){
+		return this.selectedNumberOfInstantiations;
 	}
 
 	/**
@@ -353,63 +360,63 @@ public class InstantiateRequirementsDialog extends Dialog {
     }
     
     
-    
-    /**
-     * Gets the requirement input properties list.
-     *
-     * @param req the req
-     * @return the requirement input properties list
-     */
-    private EList<Property> getRequirementInputPropertiesList(Class req){
-    	EList<Property> inputsList = new BasicEList<Property>();
-    	EList<Property> list = req.getAllAttributes();
-    	for (Property property : list) {
-			Stereotype stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
-			Object causality = property.getValue(stereotype, "causality");
-			
-			if (causality != null && causality.equals("input")) {
-				list.add(property);
-			}
-		}
-    	return list;
-    }
-    
-    
-    /**
-     * Gets the number of required instantiations.
-     *
-     * @param req the req
-     * @return the number of required instantiations
-     */
-    private Integer getNumberOfRequiredInstantiations(Class req){
-
-    	ModelicaMLAST ast = new ModelicaMLAST(this.containingClass, true);
-		ast.createTree();
-		TreeParent root = ast.getTreeRoot();
-    	
-		
-		
-    	EList<Property> inputsList = getRequirementInputPropertiesList(req);
-    	Integer numberOrRequiredInstantiations = 0;
-    	for (Property property : inputsList) {
-    		if (root != null) {
-    			String valueBindingStereotypeQName =  "ModelicaMLTesting::ValueBinding::ValueClient";
-    			String valueBindingPropertyName = "obtainsValueFrom";
-    	    	
-    			HashSet<Property> listOfProxies = root.getValueBindings(property, valueBindingStereotypeQName, valueBindingPropertyName);
-    			HashSet<String> listOfDotPathThroughProxies = root.getAllLinkedPrimitiveVariablesDotPathThroughProxy(property, listOfProxies, root);
-    			if (listOfDotPathThroughProxies.size() > numberOrRequiredInstantiations) {
-    	    		numberOrRequiredInstantiations = listOfDotPathThroughProxies.size(); 
-				}
-//    			System.err.println("listOfDotPathThroughProxies.size(): " + listOfDotPathThroughProxies.size());
-//    			System.err.println("numberOrRequiredInstantiations: " + numberOrRequiredInstantiations);
-			}
-    		else {
-    			System.err.println("Cannot access the instantiator tree root");
-    		}
-		}
-    	return numberOrRequiredInstantiations;
-    }
+//    
+//    /**
+//     * Gets the requirement input properties list.
+//     *
+//     * @param req the req
+//     * @return the requirement input properties list
+//     */
+//    private EList<Property> getRequirementInputPropertiesList(Class req){
+//    	EList<Property> inputsList = new BasicEList<Property>();
+//    	EList<Property> list = req.getAllAttributes();
+//    	for (Property property : list) {
+//			Stereotype stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
+//			Object causality = property.getValue(stereotype, "causality");
+//			
+//			if (causality != null && causality.equals("input")) {
+//				list.add(property);
+//			}
+//		}
+//    	return list;
+//    }
+//    
+//    
+//    /**
+//     * Gets the number of required instantiations.
+//     *
+//     * @param req the req
+//     * @return the number of required instantiations
+//     */
+//    private Integer getNumberOfRequiredInstantiations(Class req){
+//
+//    	ModelicaMLAST ast = new ModelicaMLAST(this.containingClass, true);
+//		ast.createTree();
+//		TreeParent root = ast.getTreeRoot();
+//		
+//    	EList<Property> inputsList = getRequirementInputPropertiesList(req);
+//    	Integer numberOrRequiredInstantiations = 0;
+//    	for (Property property : inputsList) {
+//    		if (root != null) {
+//    			String valueBindingStereotypeQName =  "ModelicaMLTesting::ValueBinding::ValueClient";
+//    			String valueBindingPropertyName = "obtainsValueFrom";
+//    	    	
+//    			HashSet<Property> listOfProxies = root.getValueBindings(property, valueBindingStereotypeQName, valueBindingPropertyName);
+//    			HashSet<String> listOfDotPathThroughProxies = root.getAllLinkedPrimitiveVariablesDotPathThroughProxy(property, listOfProxies, root);
+//    			if (listOfDotPathThroughProxies.size() > numberOrRequiredInstantiations) {
+//    	    		numberOrRequiredInstantiations = listOfDotPathThroughProxies.size(); 
+//				}
+//    			System.err.println(listOfDotPathThroughProxies);
+//    			
+////    			System.err.println("listOfDotPathThroughProxies.size(): " + listOfDotPathThroughProxies.size());
+////    			System.err.println("numberOrRequiredInstantiations: " + numberOrRequiredInstantiations);
+//			}
+//    		else {
+//    			System.err.println("Cannot access the instantiator tree root");
+//    		}
+//		}
+//    	return numberOrRequiredInstantiations;
+//    }
     
     /**
 	 * Draw expand bar.
@@ -427,6 +434,17 @@ public class InstantiateRequirementsDialog extends Dialog {
 				Object id = "" + req.getValue(stereotype, "id");
 				Object text = "" + req.getValue(stereotype, "text");;
 				String qName = "" + req.getQualifiedName();
+
+				Class reqClass = req;
+				RequirementsInstantiator ri = new RequirementsInstantiator();
+				int numberOfExisingInstantiations = ri.getNumberOfExisitngClassInstances(this.containingClass, reqClass);
+//				System.err.println("numberOfExisingInstantiations: " + numberOfExisingInstantiations);
+				int numberOfRequiredInstantiations = ri.getNumberOfRequiredInstantiations(this.containingClass, reqClass);
+//				System.err.println("numberOfRequiredInstantiations: " + numberOfRequiredInstantiations);
+				int advisedNumberOfInstantiations = 0;
+				if ( (numberOfRequiredInstantiations - numberOfExisingInstantiations) > 0 ) {
+					advisedNumberOfInstantiations = numberOfRequiredInstantiations - numberOfExisingInstantiations;
+				}
 				
 				final ExpandItem reqExpandItem = new ExpandItem(expandBar, SWT.NONE);
 				reqExpandItemsList.add(reqExpandItem);
@@ -441,14 +459,53 @@ public class InstantiateRequirementsDialog extends Dialog {
 				grpId.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				
 				// Set Req. ID
-				grpId.setText("id: " + id.toString()); 
+				//grpId.setText("id: " + id.toString() + "   " + qName);
+				//grpId.setText(qName);
 				reqExpandItem.setControl(grpId);
 				
-				final Button selectCheckBox = new Button(grpId, SWT.CHECK);
 				
+				final CCombo numberOfInstantiations = new CCombo(grpId, SWT.BORDER);
+//				numberOfInstantiations.addSelectionListener(new SelectionAdapter() {
+//					@Override
+//					public void widgetSelected(SelectionEvent e) {
+//						
+//					}
+//				});
+				
+				final Class temp_req = req; 
+				final int number = advisedNumberOfInstantiations;
+				numberOfInstantiations.addModifyListener(new ModifyListener() {
+					
+					@Override
+					public void modifyText(ModifyEvent e) {
+						try {
+							Integer n = Integer.valueOf(numberOfInstantiations.getText());
+							if (n > 0 ) {
+								selectedNumberOfInstantiations.remove(temp_req);	
+								selectedNumberOfInstantiations.put(temp_req, n);
+//								System.err.println(n);
+							}
+							else {
+//								numberOfInstantiations.setText("" + advisedNumberOfInstantiations);
+							}
+							
+						} catch (Exception e2) {
+							numberOfInstantiations.setText("" + number);
+						}
+
+					}
+				});
+				
+				numberOfInstantiations.setItems(new String[] { "" + advisedNumberOfInstantiations});
+				numberOfInstantiations.setEditable(true);
+				numberOfInstantiations.setText("" + advisedNumberOfInstantiations);
+				numberOfInstantiations.setBounds(30, 18, 39, 18);
+				numberOfInstantiations.setEnabled(false);
+				selectedNumberOfInstantiations.put(temp_req, advisedNumberOfInstantiations);
+				
+				final Button selectCheckBox = new Button(grpId, SWT.CHECK);
 				// Set Req. Reference
 				selectCheckBox.setData(req);
-				
 				selectCheckBox.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -457,39 +514,40 @@ public class InstantiateRequirementsDialog extends Dialog {
 							selectedReqList.add((Class) selectCheckBox.getData());
 							reqExpandItem.setImage(SWTResourceManager.getImage(InstantiateRequirementsDialog.class, "/icons/button_ok.png"));
 							//MessageDialog.openInformation(new Shell(), "Added", ((Integer) select.getData()).toString());
+							numberOfInstantiations.setEnabled(true);
 						}
 						else {
 							// Remove from list
 							selectedReqList.remove((Class) selectCheckBox.getData());
 							reqExpandItem.setImage(null);
 							//MessageDialog.openInformation(new Shell(), "Removed", ((Integer) select.getData()).toString());
+							numberOfInstantiations.setEnabled(false);
 						}
 					}
 				});
 				
 				selectCheckBox.setText("select");
 				selectCheckBox.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-				selectCheckBox.setBounds(10, 17, 13, 13);
-		
-				// Set requirement qualified name
-				CLabel reqQualifiedName = new CLabel(grpId, SWT.NONE);
-				reqQualifiedName.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
-				reqQualifiedName.setFont(SWTResourceManager.getFont("Arial", 8, SWT.NORMAL));
-				reqQualifiedName.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-				reqQualifiedName.setBounds(29, 17, 645, 13);
-				reqQualifiedName.setText(qName);
+				selectCheckBox.setBounds(10, 20, 13, 13);
+						
+//				// Set requirement qualified name
+//				CLabel reqQualifiedName = new CLabel(grpId, SWT.NONE);
+//				reqQualifiedName.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
+//				reqQualifiedName.setFont(SWTResourceManager.getFont("Arial", 8, SWT.NORMAL));
+//				reqQualifiedName.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//				reqQualifiedName.setBounds(29, 17, 645, 13);
+//				reqQualifiedName.setText(qName);
 				
-				Integer numberOfInstantiations = getNumberOfRequiredInstantiations(req);
-				
-				if (numberOfInstantiations > 1) {
-					// Set additional Information
-					CLabel additionalInfo = new CLabel(grpId, SWT.NONE);
-					additionalInfo.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_RED));
-					additionalInfo.setFont(SWTResourceManager.getFont("Arial", 8, SWT.NORMAL));
-					additionalInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-					additionalInfo.setBounds(29, 30, 645, 13);
-					additionalInfo.setText("* This requirements should be instantiated " + getNumberOfRequiredInstantiations(req) + " times");
-				}
+//				if (numberOfRequiredInstantiations > 1) {
+				// Set additional Information
+				CLabel additionalInfo = new CLabel(grpId, SWT.NONE);
+				additionalInfo.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_RED));
+				additionalInfo.setFont(SWTResourceManager.getFont("Arial", 8, SWT.NORMAL));
+				additionalInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+				additionalInfo.setBounds(75, 20, 400, 13);
+				String textString = "(Should be instantiated at least " + numberOfRequiredInstantiations + " time(s). " + "Already instantiated " + numberOfExisingInstantiations + " time(s))";
+				additionalInfo.setText(textString);
+//				}
 				
 				//StyledText reqText = new StyledText(grpId, SWT.FULL_SELECTION | SWT.WRAP | SWT.V_SCROLL);
 				StyledText reqText = new StyledText(grpId, SWT.FULL_SELECTION | SWT.WRAP);

@@ -33,6 +33,7 @@
  */
 package org.openmodelica.modelicaml.helper.handlers;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -58,6 +59,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
+import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 
 
@@ -86,11 +88,14 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 			
 			if (dialog.getReturnCode() == 0) {
 				HashSet<Class> selectedReq = dialog.getSelectedList();
+				HashMap<Class, Integer> selectedNumberOfInstantiations = dialog.getSelectedNumberOfInstantiations();
 				
 				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-				for (Class reqClass : selectedReq) {
-					editingDomain.getCommandStack().execute(getCommand(editingDomain, reqClass, (Class) selectedElement));
-				}
+//				for (Class reqClass : selectedReq) {
+//					editingDomain.getCommandStack().execute(getCommand(editingDomain, reqClass, (Class) selectedElement));
+//				}
+				
+				editingDomain.getCommandStack().execute(getCommand(editingDomain, selectedReq, selectedNumberOfInstantiations, (Class) selectedElement));
 				editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
 			}
 		}
@@ -108,34 +113,37 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 	 *            the owning class
 	 * @return the command
 	 */
-	protected Command getCommand(TransactionalEditingDomain editingDomain, final Class reqClass, final Class owningClass) {
-		CompoundCommand cc = new CompoundCommand("Instantiate Requirement " + reqClass.getName());
+//	protected Command getCommand(TransactionalEditingDomain editingDomain, final Class reqClass, final Class owningClass) {
+	protected Command getCommand(TransactionalEditingDomain editingDomain, final HashSet<Class> selectedReq, final HashMap<Class, Integer> selectedNumberOfInstantiations, final Class owningClass) {
+		CompoundCommand cc = new CompoundCommand("Instantiate Requirements in " + owningClass.getName() );
 		
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				EList<Property> pList = owningClass.getAllAttributes();
-				int numberOfReqInstancesWithSameType = 0;
-				String prefix = "req_";
-				for (Property property : pList) {
-					String pName = StringUtls.replaceSpecChar(property.getName());
-					if (pName.substring(0, pName.length() - 2).startsWith(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase()) ) {
-						numberOfReqInstancesWithSameType ++; 
-					}
-				}
-				Integer postfix = numberOfReqInstancesWithSameType + 1;
-				String postfixString = "_" + postfix.toString();
-				
-				// create Property
-				Property p = ((Class)selectedElement).createOwnedAttribute(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase() + postfixString, reqClass);
-				// apply stereotype
-				Stereotype s = p.getApplicableStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementInstance");
-				if (s != null) {
-					p.applyStereotype(s);
-				}
-				else {
-					MessageDialog.openError(new Shell(), "Error:", "Cannot apply ModelicaML stereotype to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
-				}
+//				EList<Property> pList = owningClass.getAllAttributes();
+//				int numberOfReqInstancesWithSameType = 0;
+//				String prefix = "req_";
+//				for (Property property : pList) {
+//					String pName = StringUtls.replaceSpecChar(property.getName());
+//					if (pName.substring(0, pName.length() - 2).startsWith(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase()) ) {
+//						numberOfReqInstancesWithSameType ++; 
+//					}
+//				}
+//				Integer postfix = numberOfReqInstancesWithSameType + 1;
+//				String postfixString = "_" + postfix.toString();
+//				
+//				// create Property
+//				Property p = ((Class)selectedElement).createOwnedAttribute(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase() + postfixString, reqClass);
+//				// apply stereotype
+//				Stereotype s = p.getApplicableStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementInstance");
+//				if (s != null) {
+//					p.applyStereotype(s);
+//				}
+//				else {
+//					MessageDialog.openError(new Shell(), "Error:", "Cannot apply ModelicaML stereotype to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
+//				}
+				RequirementsInstantiator ri = new RequirementsInstantiator();
+				ri.instantiateRequirements(owningClass, selectedReq, selectedNumberOfInstantiations);
 			}
 		};
 		cc.append(command);
