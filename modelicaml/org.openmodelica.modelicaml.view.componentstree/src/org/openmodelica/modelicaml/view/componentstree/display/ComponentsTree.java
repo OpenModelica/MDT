@@ -267,16 +267,20 @@ public class ComponentsTree extends ViewPart {
 			TreeParent item = ( (TreeParent)obj);
 			if (item.isLeaf() && item.getProperty() != null  && !actionShowInputs.isChecked() && !actionShowOutputs.isChecked()) {
 				
-				if (item.getFirstLevelComponent() != item.getProperty()) { // prevent primitive types for being first level components
+				if (item.getFirstLevelComponent() != item.getProperty() && !item.isOutput()) { // prevent primitive types for being first level components
 					manager.add(actionEditModification);
 					
-					if (item.getFirstLevelComponent()!= null) {
+					if (item.getFirstLevelComponent()!= null ) {
 						if (ModificationManager.isInModModListOfComponent(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent())) {
-							actionEditModification.setText("Edit modification in '" + item.getFirstLevelComponent().getName() + "'");
+//							String title = "Edit modification in '" + item.getFirstLevelComponent().getName() + "'";
+							String title = "Edit binding";
+							actionEditModification.setText(title);
 							actionEditModification.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 						}
 						else {
-							actionEditModification.setText("Add modification to '" + item.getFirstLevelComponent().getName() + "'");
+//							String title = "Add modification to '" + item.getFirstLevelComponent().getName() + "'";
+							String title = "Bind to ...";
+							actionEditModification.setText(title);
 							actionEditModification.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 						}
 					}
@@ -285,11 +289,12 @@ public class ComponentsTree extends ViewPart {
 				if (ModificationManager.isInModModListOfComponent(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent())) {
 					manager.add(actionDeleteModification);
 					if (item.getFirstLevelComponent()!= null) {
-						actionDeleteModification.setText("Delete modification from '" + item.getFirstLevelComponent().getName() + "'");
+//						actionDeleteModification.setText("Delete modification from '" + item.getFirstLevelComponent().getName() + "'");
+						actionDeleteModification.setText("Delete binding");
 					}
 				}
 
-				if (item.isInput()) {
+				if (item.isInput() && item.getFinalModificationLeftHand()== null ) {
 					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
 						manager.add(actionDeleteFromInputs);
 					}
@@ -297,19 +302,21 @@ public class ComponentsTree extends ViewPart {
 						manager.add(actionAddToInputs);	
 					}
 				}
-
 				
 				if ( ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDothPath(), false) ) {
 					manager.add(actionDeleteFromOutputs);
 				}
 				else {
-					manager.add(actionAddToOutputs);
+					if (!item.isInput()) {
+						manager.add(actionAddToOutputs);
+					}
 				}
 			}
 			
 			if (!item.isRoot()) { // the root nodes shall not be located
 				
-				showPathAction.setText("Show information about '" + item.getName() + "'");
+//				showPathAction.setText("Show information about '" + item.getName() + "'");
+				showPathAction.setText("Show details");
 				manager.add(showPathAction); // valid for any item
 //				if (item.getProperty() != null ) {
 //					if ( !(item.getProperty().getOwner() instanceof PrimitiveType)) { // Modelica predefined types shall not be located 
@@ -657,8 +664,11 @@ public class ComponentsTree extends ViewPart {
 				}
 			}
 		};
-		actionAddToInputs.setText("Add to class '_inputs' component");
+//		actionAddToInputs.setText("Add to class '_inputs' component");
+//		actionAddToInputs.setToolTipText("Add to class '_inputs' component");
+		actionAddToInputs.setText("Add to '_inputs' ");
 		actionAddToInputs.setToolTipText("Add to class '_inputs' component");
+
 		actionAddToInputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		
 		actionDeleteFromInputs = new Action("actionDeleteFromInputs") {
@@ -675,13 +685,14 @@ public class ComponentsTree extends ViewPart {
 				}
 			}
 		};
-		actionDeleteFromInputs.setText("Delete from class '_inputs'");
+//		actionDeleteFromInputs.setText("Delete from class '_inputs'");
+		actionDeleteFromInputs.setText("Delete from '_inputs'");
 		actionDeleteFromInputs.setToolTipText("Delete from class '_inputs'");
 		actionDeleteFromInputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 	
 		
 				
-		actionAddToOutputs = new Action("AddToInputs") {
+		actionAddToOutputs = new Action("AddToOuputs") {
 			public void run() 
 			{
 				ISelection selection = viewer.getSelection();
@@ -694,7 +705,8 @@ public class ComponentsTree extends ViewPart {
 				}
 			}
 		};
-		actionAddToOutputs.setText("Add to class '_outputs' component");
+//		actionAddToOutputs.setText("Add to class '_outputs' component");
+		actionAddToOutputs.setText("Add to '_outputs'");
 		actionAddToOutputs.setToolTipText("Add to class '_outputs' component");
 		actionAddToOutputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		
@@ -712,7 +724,8 @@ public class ComponentsTree extends ViewPart {
 				}
 			}
 		};
-		actionDeleteFromOutputs.setText("Delete from class '_outputs'");
+//		actionDeleteFromOutputs.setText("Delete from class '_outputs'");
+		actionDeleteFromOutputs.setText("Delete from '_outputs'");
 		actionDeleteFromOutputs.setToolTipText("Delete to class '_outputs'");
 		actionDeleteFromOutputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		

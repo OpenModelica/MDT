@@ -219,7 +219,10 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 				//styledString.append(tNameString + treeObject.toString() + declarationString, StyledString.COUNTER_STYLER);
 				//cell.setText(styledString.toString());
 				//cell.setStyleRanges(styledString.getStyleRanges());
-
+				
+				if (declarationString.trim().equals("")) {
+					declarationString = " = ???";
+				}
 				cell.setText(tNameString + treeObject.toString() + arraySizeString + declarationString);
 				//cell.setForeground(new Color(null, 255, 0, 0)); // RED
 				cell.setForeground(new Color(null, 234, 0, 0)); // darker RED
