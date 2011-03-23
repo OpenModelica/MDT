@@ -437,19 +437,25 @@ public class InstantiateRequirementsDialog extends Dialog {
 
 				Class reqClass = req;
 				RequirementsInstantiator ri = new RequirementsInstantiator();
-				int numberOfExisingInstantiations = ri.getNumberOfExisitngClassInstances(this.containingClass, reqClass);
+				final int numberOfExisingInstantiations = ri.getNumberOfExisitngClassInstances(this.containingClass, reqClass);
 //				System.err.println("numberOfExisingInstantiations: " + numberOfExisingInstantiations);
-				int numberOfRequiredInstantiations = ri.getNumberOfRequiredInstantiations(this.containingClass, reqClass);
+				final int numberOfRequiredInstantiations = ri.getNumberOfRequiredInstantiations(this.containingClass, reqClass);
 //				System.err.println("numberOfRequiredInstantiations: " + numberOfRequiredInstantiations);
-				int advisedNumberOfInstantiations = 0;
+				
+				int recommendedNumberOfInstantiations = 0;
 				if ( (numberOfRequiredInstantiations - numberOfExisingInstantiations) > 0 ) {
-					advisedNumberOfInstantiations = numberOfRequiredInstantiations - numberOfExisingInstantiations;
+					recommendedNumberOfInstantiations = numberOfRequiredInstantiations - numberOfExisingInstantiations;
 				}
 				
 				final ExpandItem reqExpandItem = new ExpandItem(expandBar, SWT.NONE);
 				reqExpandItemsList.add(reqExpandItem);
 				
 				reqExpandItem.setExpanded(false);
+				
+				// mark requirement that is already instantiated 
+				if (numberOfExisingInstantiations > 0 ) {
+					reqExpandItem.setImage(SWTResourceManager.getImage(InstantiateRequirementsDialog.class, "/icons/exists_already.png"));
+				}
 
 				// Set Req. Title
 				reqExpandItem.setText(id + ": " + title);
@@ -473,7 +479,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 //				});
 				
 				final Class temp_req = req; 
-				final int number = advisedNumberOfInstantiations;
+				final int number = recommendedNumberOfInstantiations;
 				numberOfInstantiations.addModifyListener(new ModifyListener() {
 					
 					@Override
@@ -496,12 +502,12 @@ public class InstantiateRequirementsDialog extends Dialog {
 					}
 				});
 				
-				numberOfInstantiations.setItems(new String[] { "" + advisedNumberOfInstantiations});
+				numberOfInstantiations.setItems(new String[] { "" + recommendedNumberOfInstantiations});
 				numberOfInstantiations.setEditable(true);
-				numberOfInstantiations.setText("" + advisedNumberOfInstantiations);
+				numberOfInstantiations.setText("" + recommendedNumberOfInstantiations);
 				numberOfInstantiations.setBounds(30, 18, 39, 18);
 				numberOfInstantiations.setEnabled(false);
-				selectedNumberOfInstantiations.put(temp_req, advisedNumberOfInstantiations);
+				selectedNumberOfInstantiations.put(temp_req, recommendedNumberOfInstantiations);
 				
 				final Button selectCheckBox = new Button(grpId, SWT.CHECK);
 				// Set Req. Reference
@@ -519,7 +525,14 @@ public class InstantiateRequirementsDialog extends Dialog {
 						else {
 							// Remove from list
 							selectedReqList.remove((Class) selectCheckBox.getData());
-							reqExpandItem.setImage(null);
+							
+							// mark requirement that is already instantiated 
+							if (numberOfExisingInstantiations > 0 ) {
+								reqExpandItem.setImage(SWTResourceManager.getImage(InstantiateRequirementsDialog.class, "/icons/exists_already.png"));
+							}
+							else {
+								reqExpandItem.setImage(null);
+							}
 							//MessageDialog.openInformation(new Shell(), "Removed", ((Integer) select.getData()).toString());
 							numberOfInstantiations.setEnabled(false);
 						}
@@ -544,8 +557,8 @@ public class InstantiateRequirementsDialog extends Dialog {
 				additionalInfo.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_RED));
 				additionalInfo.setFont(SWTResourceManager.getFont("Arial", 8, SWT.NORMAL));
 				additionalInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-				additionalInfo.setBounds(75, 20, 400, 13);
-				String textString = "(Should be instantiated at least " + numberOfRequiredInstantiations + " time(s). " + "Already instantiated " + numberOfExisingInstantiations + " time(s))";
+				additionalInfo.setBounds(75, 20, 500, 13);
+				String textString = "time(s), because it should be instantiated at least " + numberOfRequiredInstantiations + " time(s) " + " and is already instantiated " + numberOfExisingInstantiations + " time(s).";
 				additionalInfo.setText(textString);
 //				}
 				
