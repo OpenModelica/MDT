@@ -368,7 +368,7 @@ public class ModificationManager {
 	 * @param componentDotPath
 	 *            the component dot path
 	 */
-	public static void addToClassInputs(final Class selectedClass, Property firstLevelComponent, final Property component, String componentDotPathWithoutFirstLevelComponentName, final String componentDotPath){
+	public static String addToClassInputs(final Class selectedClass, Property firstLevelComponent, final Property component, String componentDotPathWithoutFirstLevelComponentName, final String componentDotPath){
 		
 //		Class inputsClass = (Class)selectedClass.getNestedClassifier(inputsClassName, true, UMLPackage.Literals.CLASS, false);
 		
@@ -500,6 +500,8 @@ public class ModificationManager {
 		}
 		addComponentModification(firstLevelComponent, componentDotPathWithoutFirstLevelComponentName, inputsComponentName + "." + p.getName(), true);
 		//inputsClass.eNotify(new NotificationImpl(PapyrusNotification.SET, null, null)); // notify Papyrus
+		
+		return inputsComponentName + "." + p.getName();
 	}
 	
 	

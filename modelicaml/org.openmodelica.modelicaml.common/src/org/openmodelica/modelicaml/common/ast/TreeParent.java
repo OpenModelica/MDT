@@ -94,7 +94,6 @@ public class TreeParent extends TreeObject
 						Property property, 
 						Property firstLevelComponent,
 						String dotPath, 
-						String causality, 
 						Boolean isLeaf, 
 						Boolean isRoot, 
 						HashSet<String> modifications,
@@ -104,16 +103,14 @@ public class TreeParent extends TreeObject
 				property,
 				firstLevelComponent, 
 				dotPath, 
-				causality, 
 				isLeaf, 
 				isRoot, 
 				modifications,
 				selectedClass);
 		
 		children = new ArrayList<TreeObject>();
-		if (causality.equals("")) {
-			addSignals(); 	
-		}
+
+		addSignals(); 	
 		if (showStateMachines) {
 			addStateMachines();			
 		}
@@ -194,7 +191,7 @@ public class TreeParent extends TreeObject
 //				qName = qName + ".active";
 //			}
 //		}
-		TreeParent treeParent = new TreeParent(StringUtls.replaceSpecChar(element.getName()), null, null, qName, "", false, false, null, super.getSelectedClass(), true);
+		TreeParent treeParent = new TreeParent(StringUtls.replaceSpecChar(element.getName()), null, null, qName, false, false, null, super.getSelectedClass(), true);
 		treeParent.setElement(element);
 		this.addChild(treeParent);
 		return treeParent;
@@ -237,16 +234,16 @@ public class TreeParent extends TreeObject
 				TreeParent sTreeParent = treeParent.addElement(vertex);
 				
 				// add state attributes, such as active, stime, etc.
-				TreeParent stateAttr_active = new TreeParent("active", null, null, sTreeParent.getDothPath() + ".active", "", true, false, null, super.getSelectedClass(), true);
+				TreeParent stateAttr_active = new TreeParent("active", null, null, sTreeParent.getDothPath() + ".active", true, false, null, super.getSelectedClass(), true);
 				stateAttr_active.setComponentType(getModelicaPremitiveType(treeParent, "booleanType"));
 				
-				TreeParent stateAttr_stime = new TreeParent("stime", null, null, sTreeParent.getDothPath() + ".stime", "", true, false, null, super.getSelectedClass(), true);
+				TreeParent stateAttr_stime = new TreeParent("stime", null, null, sTreeParent.getDothPath() + ".stime", true, false, null, super.getSelectedClass(), true);
 				stateAttr_stime.setComponentType(getModelicaPremitiveType(treeParent, "realType"));
 				
-				TreeParent stateAttr_timeAtActivation = new TreeParent("timeAtActivation", null, null, sTreeParent.getDothPath() + ".timeAtActivation", "", true, false, null, super.getSelectedClass(), true);
+				TreeParent stateAttr_timeAtActivation = new TreeParent("timeAtActivation", null, null, sTreeParent.getDothPath() + ".timeAtActivation", true, false, null, super.getSelectedClass(), true);
 				stateAttr_timeAtActivation.setComponentType(getModelicaPremitiveType(treeParent, "realType"));
 				
-				TreeParent stateAttr_selfTransitionActivated = new TreeParent("selfTransitionActivated", null, null, sTreeParent.getDothPath() + ".selfTransitionActivated", "", true, false, null, super.getSelectedClass(), true);
+				TreeParent stateAttr_selfTransitionActivated = new TreeParent("selfTransitionActivated", null, null, sTreeParent.getDothPath() + ".selfTransitionActivated", true, false, null, super.getSelectedClass(), true);
 				stateAttr_selfTransitionActivated.setComponentType(getModelicaPremitiveType(treeParent, "booleanType"));
 				
 				sTreeParent.addChild(stateAttr_active);
@@ -318,14 +315,12 @@ public class TreeParent extends TreeObject
 	 */
 	private void addSignal(Signal signal){		
 		TreeParent signalItem = addElement(signal);
-		TreeParent signalAttr_counter = new TreeParent("counter", null, null, signalItem.getDothPath() + ".counter", "", true, false, null, super.getSelectedClass(), true);
+		TreeParent signalAttr_counter = new TreeParent("counter", null, null, signalItem.getDothPath() + ".counter", true, false, null, super.getSelectedClass(), true);
 		signalAttr_counter.setComponentType(getModelicaPremitiveType(signalItem, "integerType"));
 		signalItem.addChild(signalAttr_counter);
 	}
 	
 
-	
-	
 	
 	
 	

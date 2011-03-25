@@ -35,7 +35,6 @@ package org.openmodelica.modelicaml.common.ast;
 
 import java.util.HashSet;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -74,7 +73,7 @@ public class TreeObject implements IAdaptable
 	private String dotPath;
 	
 	/** The causality. */
-	private String causality;
+//	private String causality;
 	
 	/** The is leaf. */
 	private Boolean isLeaf;
@@ -105,40 +104,66 @@ public class TreeObject implements IAdaptable
 	
 		//TODO: enhance this class to store the source of modification
 	/** The final modification source. */
-		private String finalModificationSource = null;
+	private String finalModificationSource = null;
 	
 	/** The final modification description. */
 	private String finalModificationDescription = null;
 	
-		// TODO: implement getter and setter
+	// TODO: implement getter and setter
 	/** The element. */
-		private NamedElement element = null;
+	private NamedElement element = null;
 	
-	/** The is predefined. */
-	private Boolean isPredefined;
-	
-	/** The is primitive. */
-	private Boolean isPrimitive;
-	
-	/** The is port. */
-	private Boolean isPort;
-		// TODO: add these to constructor
-	/** The is first level component. */
-		private Boolean isFirstLevelComponent;
-	
-	/** The is first level. */
-	private Boolean isFirstLevel;
+//	/** The is predefined. */
+//	private Boolean isPredefined;
+//	
+//	/** The is primitive. */
+//	private Boolean isPrimitive;
+//	
+//	/** The is port. */
+//	private Boolean isPort;
+//	
+//	// TODO: add these to constructor
+//	/** The is first level component. */
+//	private Boolean isFirstLevelComponent;
+//	
+//	/** The is first level. */
+//	private Boolean isFirstLevel;
 	
 	/** The selected class. */
-	private org.eclipse.uml2.uml.Class selectedClass;
+	private Class selectedClass;
 	
 	/** The component type. */
 	private Type componentType = null;
 	
-	/** The resouce. */
-	public IResource resouce;
+//	/** The resouce. */
+//	public IResource resouce;
 
-	
+	public Boolean hasInputs = null;
+	public Boolean getHasInputs() {
+		return hasInputs;
+	}
+	public void setHasInputs(TreeParent root) {
+		this.hasInputs = true;
+//		System.err.println(this.getName() + " has inputs");
+		if (!this.getParent().equals(root) && this.getParent().hasInputs == null) {
+			this.getParent().setHasInputs(root);
+		}
+	}
+
+
+	public Boolean hasOutputs = null;
+	public Boolean getHasOutputs() {
+		return hasOutputs;
+	}
+	public void setHasOutputs(TreeParent root) {
+		this.hasOutputs = true;
+//		System.err.println(this.getName() + " has inputs");
+		if (!this.getParent().equals(root) && this.getParent().hasOutputs == null) {
+			this.getParent().setHasInputs(root);
+		}
+	}
+
+
 	/**
 	 * Instantiates a new tree object.
 	 * 
@@ -165,7 +190,6 @@ public class TreeObject implements IAdaptable
 						Property property, 
 						Property firstLevelComponent, 
 						String dotPath, 
-						String causality, 
 						Boolean isLeaf, 
 						Boolean isRoot, 
 						HashSet<String> modifications,
@@ -186,7 +210,6 @@ public class TreeObject implements IAdaptable
 			this.dotPathWithoutFirstLevelComponent = this.dotPath.replaceFirst(firstLevelComponent.getName() + ".", "");
 		}
 		
-		this.causality = causality;
 		this.isLeaf = isLeaf;
 		this.isRoot = isRoot;
 		
@@ -250,12 +273,6 @@ public class TreeObject implements IAdaptable
 	 * @return the element
 	 */
 	public NamedElement getElement(){
-//		if (this.element != null) {
-//			return this.element;			
-//		}
-//		if (this.property != null) {
-//			return this.property;
-//		}
 		return this.element;
 	}
 	
@@ -394,6 +411,10 @@ public class TreeObject implements IAdaptable
 	 */
 	public String getFinalModificationRightHand(){
 		return this.finalModificationRightHand;
+	}
+	
+	public void setFinalModificationRightHand( String value ){
+		this.finalModificationRightHand = value;
 	}
 	
 	/**
@@ -612,10 +633,10 @@ public class TreeObject implements IAdaptable
 	 * @return the boolean
 	 */
 	public Boolean isInput(){
-		if (this.causality.equals("input")) {
-			return true;
-		}
-		else if (this.property != null) {
+//		if (this.causality.equals("input")) {
+//			return true;
+//		}
+		if (this.property != null) {
 			if (isInputOrOutputVariable(this.property, "input")) {
 				return true;
 			}
@@ -629,10 +650,10 @@ public class TreeObject implements IAdaptable
 	 * @return the boolean
 	 */
 	public Boolean isOutput(){
-		if (this.causality.equals("output")) {
-			return true;
-			}
-		else if (this.property != null) {
+//		if (this.causality.equals("output")) {
+//			return true;
+//			}
+		if (this.property != null) {
 			if (isInputOrOutputVariable(this.property, "output")) {
 				return true;
 			}
