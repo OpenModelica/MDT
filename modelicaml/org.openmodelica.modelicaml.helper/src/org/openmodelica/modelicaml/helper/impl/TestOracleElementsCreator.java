@@ -111,10 +111,12 @@ public class TestOracleElementsCreator {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					createTestEvaluationElements(selectedClass);
-					MessageDialog.openInformation(shell, "Confirmation", "The following test pass/fail evaluation elements were created or updated succesfuly:" +
-					"\n     - a nested class '"+resultsClassName+"' containing additional variables and behavior"+ 
-					"\n     - a component '"+resultsPropertyName+"' of type '"+resultsClassName+"'");
+					Boolean result = createTestEvaluationElements(selectedClass);
+					if (result) {
+						MessageDialog.openInformation(shell, "Confirmation", "The following test pass/fail evaluation elements were created or updated succesfuly:" +
+								"\n     - a nested class '"+resultsClassName+"' containing additional variables and behavior"+ 
+								"\n     - a component '"+resultsPropertyName+"' of type '"+resultsClassName+"'");
+					}
 				}
 			};
 			cc.append(command);
@@ -129,7 +131,7 @@ public class TestOracleElementsCreator {
 	 * @param selectedClass
 	 *            the selected class
 	 */
-	public static void createTestEvaluationElements(Class selectedClass) {
+	public static Boolean createTestEvaluationElements(Class selectedClass) {
 		String violatedExpression = "", evaluatedExpression = "";
 		
 		EList<Property> allAttributes = selectedClass.getAllAttributes();
@@ -179,7 +181,8 @@ public class TestOracleElementsCreator {
 			Shell shell = new Shell();
 			MessageDialog.openError(shell, "Error", "The following requirements do not have the mandotory attributes 'evaluated and 'violated' of type 'ModelicaBoolean'." +
 				invalidComponentNames + 
-				"\n\nNo modification was made to the class '"+selectedClass.getName()+"'.");			
+				"\n\nNo modification was made to the class '"+selectedClass.getName()+"'.");
+			return false;
 		}
 		else if (reqInstances.size() > 0) {
 		
@@ -275,10 +278,12 @@ public class TestOracleElementsCreator {
 				Stereotype stereotype = opaqueBehavior.getApplicableStereotype("ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)");
 				opaqueBehavior.applyStereotype(stereotype);
 			}
+			return true;
 		}
 		else {
 			MessageDialog.openError(shell, "Error", "No modification was made to the class '"+selectedClass.getName()+"'. " +
-					"because no instance of requirements were found. ");			
+					"because no instance of requirements were found. ");
+			return false;
 		}
 	}
 

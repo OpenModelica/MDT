@@ -466,7 +466,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 				
 				// Set Req. ID
 				//grpId.setText("id: " + id.toString() + "   " + qName);
-				//grpId.setText(qName);
+				grpId.setText(qName);
 				reqExpandItem.setControl(grpId);
 				
 				
