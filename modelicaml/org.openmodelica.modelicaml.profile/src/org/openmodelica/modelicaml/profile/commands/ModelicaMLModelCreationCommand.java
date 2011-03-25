@@ -61,6 +61,7 @@ public class ModelicaMLModelCreationCommand extends ModelCreationCommandBase {
 	
 	/** The Constant MODELICAML_PROFILE_URI. */
 	public static final String MODELICAML_PROFILE_URI = PROFILES_PATHMAP + "ModelicaML.profile.uml"; //$NON-NLS-1$
+	public static final String MODELICAML_TESTING_PROFILE_URI = PROFILES_PATHMAP + "ModelicaMLTesting.profile.uml";
 	
 	//public static final String PROTEUS_PROFILE_URI = PROFILES_PATHMAP + "SysML.profile.uml"; //$NON-NLS-1$
 	
@@ -89,9 +90,13 @@ public class ModelicaMLModelCreationCommand extends ModelCreationCommandBase {
 		((org.eclipse.uml2.uml.Package)owner).setName(getModelName());
 
 		// Retrieve ModelicaML profile and apply with Sub-profile
-		Profile proteus = (Profile)PackageUtil.loadPackage(URI.createURI(MODELICAML_PROFILE_URI), owner.eResource().getResourceSet());
-		if(proteus != null) {
-			PackageUtil.applyProfile(((org.eclipse.uml2.uml.Package)owner), proteus, true);
+		Profile modelicaml = (Profile)PackageUtil.loadPackage(URI.createURI(MODELICAML_PROFILE_URI), owner.eResource().getResourceSet());
+		if(modelicaml != null) {
+			PackageUtil.applyProfile(((org.eclipse.uml2.uml.Package)owner), modelicaml, true);
+		}
+		Profile modelicamlTesting = (Profile)PackageUtil.loadPackage(URI.createURI(MODELICAML_TESTING_PROFILE_URI), owner.eResource().getResourceSet());
+		if(modelicamlTesting != null) {
+			PackageUtil.applyProfile(((org.eclipse.uml2.uml.Package)owner), modelicamlTesting, true);
 		}
 	}
 
