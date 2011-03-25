@@ -245,8 +245,10 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 			}
 			else if (treeObject.isLeaf())  {
 				String tNameString = "";
-				if (treeObject.getProperty().getType() != null) {
-					tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
+				if (treeObject.getProperty() != null) {
+					if (treeObject.getProperty().getType() != null) {
+						tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
+					}
 				}
 				cell.setText(tNameString + treeObject.toString() + arraySizeString + declarationString);
 			}

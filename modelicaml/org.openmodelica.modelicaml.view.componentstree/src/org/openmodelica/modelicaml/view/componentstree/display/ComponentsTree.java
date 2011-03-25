@@ -33,7 +33,9 @@
  */
 package org.openmodelica.modelicaml.view.componentstree.display;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
@@ -46,17 +48,26 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -70,6 +81,9 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Port;
+import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.ast.ModelicaMLAST;
 import org.openmodelica.modelicaml.common.ast.ModificationManager;
 import org.openmodelica.modelicaml.common.ast.ModificationsCollector;
@@ -209,6 +223,7 @@ public class ComponentsTree extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
+		hookSelectionChangedAction();
 		contributeToActionBars();
 
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
@@ -265,7 +280,8 @@ public class ComponentsTree extends ViewPart {
 		
 		if (obj instanceof TreeParent) {
 			TreeParent item = ( (TreeParent)obj);
-			if (item.isLeaf() && item.getProperty() != null  && !actionShowInputs.isChecked() && !actionShowOutputs.isChecked()) {
+			//if (item.isLeaf() && item.getProperty() != null  && !actionShowInputs.isChecked() && !actionShowOutputs.isChecked()) {
+			if (item.isLeaf() && item.getProperty() != null ) {
 				
 				if (item.getFirstLevelComponent() != item.getProperty() && !item.isOutput()) { // prevent primitive types for being first level components
 					manager.add(actionEditModification);
@@ -393,7 +409,7 @@ public class ComponentsTree extends ViewPart {
 		actionShowAll = new Action("actionShowAll", 8) {
 			public void run() {
 				if (actionShowAll.isChecked()) {
-					showSelection(par, sel);
+//					showSelection(par, sel);
 					//showMessage("Action 4 executed");
 				}
 			}
@@ -407,10 +423,51 @@ public class ComponentsTree extends ViewPart {
 		actionShowInputs = new Action("actionShowInputs", 8) {
 			public void run() {
 				if (actionShowInputs.isChecked()) {
-					showSelection(par, sel);
-					//showMessage("Action 2 executed");
+					Object[] list = viewer.getExpandedElements();
+					
+					viewer.addFilter(inputFilter);
+					
+					for (int i = 0; i < list.length; i++) {
+//						System.err.println(list[i]);
+						viewer.expandToLevel(list[i], 0); // TODO: does not work. no idea why ...
+					}
+//					viewer.setExpandedElements(list);
+//					viewer.refresh(list);
+					
+					viewer.expandToLevel(2);
+					
+					//showSelection(par, sel);
+				}
+				else {
+					viewer.removeFilter(inputFilter);
+					viewer.expandToLevel(2);
 				}
 			}
+
+//			private void markLastSelectedItem(Object item) {
+//				if (item instanceof TreeParent) {
+//					TreeObject[] contents = ((TreeParent)item).getChildren();
+//					for (Object content : contents) {//checks with my over rided equals method
+//						if (content instanceof TreeParent && ((TreeParent)content).getDothPath().equals(lastSelectedDotPath) ) {
+//							//expand the particular child
+////							viewer.expandToLevel(content, 1);
+//							 viewer.setExpandedState(content, true);
+//				             viewer.refresh(content, false);
+//						}
+//						else {
+//							
+//							if (content instanceof TreeParent) {
+//								TreeObject[] children = ((TreeParent)content).getChildren();
+//								for (int i = 0; i < children.length; i++) {
+//									markLastSelectedItem(children[i]);	
+//								}
+//							}
+//						}
+//					}  
+//				}
+//			}
+			
+			
 		};
 		actionShowInputs.setText("Show only input variables");
 		actionShowInputs.setToolTipText("Action 2 tooltip");
@@ -420,8 +477,13 @@ public class ComponentsTree extends ViewPart {
 		actionShowOutputs = new Action("actionShowOutputs", 8) {
 			public void run() {
 				if (actionShowOutputs.isChecked()) {
-					showSelection(par, sel);
-					//showMessage("Action 3 executed");
+					viewer.addFilter(outputFilter);
+					viewer.expandToLevel(2);
+					//showSelection(par, sel);
+				}
+				else {
+					viewer.removeFilter(outputFilter);
+					viewer.expandToLevel(2);
 				}
 			}
 		};
@@ -443,6 +505,34 @@ public class ComponentsTree extends ViewPart {
 		actionShowStateMachines.setToolTipText("Show StateMachines");
 //		actionShowStateMachines.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
+		
+		actionLocate = new Action(){
+		public void run() 
+		{
+			ISelection selection = viewer.getSelection();
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
+			if (obj instanceof TreeParent) {
+				TreeParent item = ( (TreeParent)obj);
+				Element selectedObject = item.getProperty();
+				
+				// Find element in Outline
+				if(selectedObject!=null){
+					//if ( !(selectedObject.getOwner() instanceof PrimitiveType)) { // filter out the predefined Modelica predefined type attributes that are defined using UML PrimitiveTypes Propoerties
+//					ModelExplorerPageBookView modelExplorerPageBookView = (ModelExplorerPageBookView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(EXPLORER_ID);	
+
+					//}
+				}
+				else {
+					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+					MessageDialog.openInformation(shell, "Information:", "Open the project in papyrus editor");
+				}
+				
+			}
+		}
+	};	
+	actionLocate.setText("Locate in Papyrus Outline View");
+	actionLocate.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+
 		
 		
 //		actionLocate = new Action(){
@@ -640,7 +730,9 @@ public class ComponentsTree extends ViewPart {
 					
 					// Delete the modification from the component modifications list.
 					item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
-					viewer.update(item, null);
+					item.setFinalModificationRightHand(null);
+					//viewer.update(item, null);
+					updateItem(item);
 				}
 			}
 		};
@@ -658,9 +750,13 @@ public class ComponentsTree extends ViewPart {
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
 					//TODO: call method addToInpuits ...
-					ModificationManager.addToClassInputs(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath());
+					String rightHandModificationValue = ModificationManager.addToClassInputs(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath());
 					showMessage("Confirmation", "'" + item.getName() + "' was included into the '_inputs' component of '" + selectedClass.getName() + "'");
-					showSelection(par, sel); // TODO: refresh properly ...
+					//showSelection(par, sel); // TODO: refresh properly ...
+//					System.err.println("item.getFinalModificationRightHand(): " + item.getFinalModificationRightHand());
+//					System.err.println("item.getFinalModificationLeftHand(): " + item.getFinalModificationLeftHand());
+					item.setFinalModificationRightHand(rightHandModificationValue);
+					updateItem(item);
 				}
 			}
 		};
@@ -681,7 +777,9 @@ public class ComponentsTree extends ViewPart {
 					//TODO: destroy all objects and references that are related to class "_inputs"
 					ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), true);
 					showMessage("Confirmation", "'" + item.getName() + "' was deleted from the '_inputs' component of '" + selectedClass.getName() + "'");
-					showSelection(par, sel); // TODO: refresh properly ...
+					//showSelection(par, sel); // TODO: refresh properly ...
+					item.setFinalModificationRightHand(null);
+					updateItem(item);
 				}
 			}
 		};
@@ -701,7 +799,8 @@ public class ComponentsTree extends ViewPart {
 					TreeParent item = ( (TreeParent)obj);
 					ModificationManager.addToClassOutputs(selectedClass, item.getProperty(), item.getDothPath());
 					showMessage("Confirmation", "'" + item.getName() + "' was included into the '_outputs' component of '" + selectedClass.getName() + "'");
-					showSelection(par, sel); // TODO: refresh properly ...
+					//showSelection(par, sel); // TODO: refresh properly ...
+					updateItem(item);
 				}
 			}
 		};
@@ -720,7 +819,9 @@ public class ComponentsTree extends ViewPart {
 					TreeParent item = ( (TreeParent)obj);
 					ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDothPath(), true);
 					showMessage("Confirmation", "'" + item.getName() + " was deleted from the '_outputs' component of '" + selectedClass.getName() + "'");
-					showSelection(par, sel); // TODO: refresh properly ...
+					//showSelection(par, sel); // TODO: refresh properly ...
+					updateItem(item);
+
 				}
 			}
 		};
@@ -739,7 +840,8 @@ public class ComponentsTree extends ViewPart {
 				if (obj instanceof TreeParent) {
 					//TestPassFailCodeGenerator t = new TestPassFailCodeGenerator(selectedClass);
 					TestOracleElementsCreator t = new TestOracleElementsCreator(selectedClass);
-					showSelection(par, sel);
+					//showSelection(par, sel); // TODO: refresh properly ...
+					updateItem(obj);
 				}
 			}
 		};
@@ -755,7 +857,8 @@ public class ComponentsTree extends ViewPart {
 				if (obj instanceof TreeParent) {
 					//TestPassFailCodeGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
 					TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
-					showSelection(par, sel);
+					//showSelection(par, sel); // TODO: refresh properly ...
+					updateItem(obj);
 				}
 			}
 		};
@@ -780,9 +883,9 @@ public class ComponentsTree extends ViewPart {
 		actionCollapsAll = new Action("actionCollapsAll") { //obviously a check box style
 			public void run() {
 				showSelection(par, sel);
-				if (actionCollapsAll.isChecked()) {
-					
-				}
+//				if (actionCollapsAll.isChecked()) {
+//					
+//				}
 			}
 		};
 		actionCollapsAll.setText("Collaps all and refresh");
@@ -814,6 +917,94 @@ public class ComponentsTree extends ViewPart {
 		});
 	}
 
+	
+	
+	private TreeObject lastSelectedItem = null;
+	private String lastSelectedDotPath = null;
+	
+	private void hookSelectionChangedAction() {
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+//				System.err.println("Previous item was " + lastSelectedItem );
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof TreeParent) {
+					lastSelectedItem = (TreeObject)obj;
+					lastSelectedDotPath = ((TreeObject)obj).getDothPath();
+				}
+			}
+		});
+	}
+	
+	
+
+	
+	
+	// ############################### FILTERS 
+	
+	class InputFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+
+				if (item.isRoot()) { // always show the root
+					return true;
+				}
+				if (item.getHasInputs() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
+					return false;
+				}
+				if (item.getHasInputs() != null && !item.getHasInputs() ) { // not a leaf but indicator is set
+					return false;
+				}
+				if ( item.isLeaf() && !item.isInput()) { // is leaf 
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	InputFilter inputFilter = new InputFilter();
+	
+
+
+	class OutputFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+
+				if (item.isRoot()) { // always show the root
+					return true;
+				}
+				if (item.getHasOutputs() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
+					return false;
+				}
+				if (item.getHasOutputs() != null && !item.getHasOutputs() ) { // not a leaf but indicator is set
+					return false;
+				}
+				if ( item.isLeaf() && !item.isOutput()) { // is leaf 
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	OutputFilter outputFilter = new OutputFilter();
+	// ############################### FILTERS
+	
+	
+	
+	
+	private void updateItem(Object item) {
+		if (item != null) {
+			viewer.update(item, null);
+		}
+	}
+	
 	/**
 	 * Show message.
 	 * 
@@ -1037,21 +1228,25 @@ public class ComponentsTree extends ViewPart {
 			if (selectedClass != null && !(selectedClass instanceof Behavior) ) {
 				ModelicaMLAST ast = new ModelicaMLAST(selectedClass, actionShowStateMachines.isChecked());
 
-				if (actionShowInputs.isChecked()) {
-					ast.createInputsTree();
-					invisibleRoot = ast.getInvisibleRoot();
-					root = ast.getTreeRoot();
-				}
-				else if (actionShowOutputs.isChecked()) {
-					ast.createOutputsTree();
-					invisibleRoot = ast.getInvisibleRoot();
-					root = ast.getTreeRoot();
-				}
-				else {
-					ast.createTree();
-					invisibleRoot = ast.getInvisibleRoot();
-					root = ast.getTreeRoot();
-				}
+//				if (actionShowInputs.isChecked()) {
+//					ast.createInputsTree();
+//					invisibleRoot = ast.getInvisibleRoot();
+//					root = ast.getTreeRoot();
+//				}
+//				else if (actionShowOutputs.isChecked()) {
+//					ast.createOutputsTree();
+//					invisibleRoot = ast.getInvisibleRoot();
+//					root = ast.getTreeRoot();
+//				}
+//				else {
+//					ast.createTree();
+//					invisibleRoot = ast.getInvisibleRoot();
+//					root = ast.getTreeRoot();
+//				}
+				
+				ast.createTree();
+				invisibleRoot = ast.getInvisibleRoot();
+				root = ast.getTreeRoot();
 			}
 		}
 	}
