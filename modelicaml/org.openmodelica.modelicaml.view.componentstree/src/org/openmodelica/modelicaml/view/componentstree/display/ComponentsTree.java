@@ -33,9 +33,7 @@
  */
 package org.openmodelica.modelicaml.view.componentstree.display;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
@@ -48,7 +46,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -58,16 +55,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TreeEvent;
-import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -82,8 +74,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.Port;
-import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.ast.ModelicaMLAST;
 import org.openmodelica.modelicaml.common.ast.ModificationManager;
 import org.openmodelica.modelicaml.common.ast.ModificationsCollector;
