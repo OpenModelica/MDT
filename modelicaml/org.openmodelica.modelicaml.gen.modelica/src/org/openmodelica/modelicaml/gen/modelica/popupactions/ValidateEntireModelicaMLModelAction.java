@@ -156,24 +156,20 @@ public class ValidateEntireModelicaMLModelAction extends AbstractHandler {
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 
 		UmlModel umlModel = UmlUtils.getUmlModel();
-		modelFileURI = umlModel.getResourceURI().toString();
-
+		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
+		
 		modelName = umlModel.getResourceURI().lastSegment();
-		project = umlModel.getResourceURI().path().replace(modelName, "")
-				.replace("/resource/", "");
-
+		//project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+		project = umlModel.getResource().getURI().segment(1);
+		
 		// delete markers: start
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject iProject = root.getProject(project);
 		
-		deleteMarker(iProject);
-		// delete markers: end
+		deleteMarker(iProject);// delete markers: end
 		
-		URI chainURI = URI
-				.createPlatformPluginURI(
-						"/org.openmodelica.modelicaml.gen.modelica/bin/validation.chain",
-						true);
+		URI chainURI = URI.createPlatformPluginURI( "/org.openmodelica.modelicaml.gen.modelica/bin/validation.chain", true);
 		ResourceSet rs = new ResourceSetImpl();
 		Resource r = (Resource) rs.createResource(chainURI);
 		try {

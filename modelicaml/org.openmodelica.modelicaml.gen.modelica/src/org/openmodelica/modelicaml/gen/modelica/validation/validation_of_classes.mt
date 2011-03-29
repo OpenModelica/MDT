@@ -68,6 +68,7 @@ import org.openmodelica.modelicaml.gen.modelica.validation.validation_of_code
 			|| eClass().name == "Generalization"
 			|| eClass().name == "Dependency"
 			|| eClass().name == "Signal"
+			|| eClass().name == "EnumerationLiteral"
 	){%>
 	<%}else{%>
 <%alert("error", "DISCARDED(ce01): UML " + eClass().name + "(e)s are not supported.")%>

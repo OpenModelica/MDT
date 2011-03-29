@@ -15,7 +15,7 @@ import org.openmodelica.modelicaml.gen.modelica.services.ModelicaMLServices
 <<%args(0)%>>
 	<message><%args(1)%></message>
 	<qualifiedName><%if (filter("NamedElement").qualifiedName != null){%><%filter("NamedElement").qualifiedName%><%}else{%>QualifiedName not found. Owner is <%owner.filter("NamedElement").qualifiedName%><%}%></qualifiedName>
-	<xmi_id><%getXMIID()%></xmi_id>
+	<%-- <xmi_id><%getXMIID()%></xmi_id> --%>
 </<%args(0)%>>
 <%}%>
 

@@ -116,12 +116,12 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 
 		UmlModel umlModel = UmlUtils.getUmlModel();
-		modelFileURI = umlModel.getResourceURI().toString();
+		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
 
 		modelName = umlModel.getResourceURI().lastSegment();
-		project = umlModel.getResourceURI().path().replace(modelName, "")
-				.replace("/resource/", "");
-
+//		project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+		project = umlModel.getResource().getURI().segment(1);
+		
 		URI chainURI = URI
 				.createPlatformPluginURI(
 						"/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain",
