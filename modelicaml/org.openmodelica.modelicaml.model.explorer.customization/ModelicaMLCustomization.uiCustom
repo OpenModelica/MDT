@@ -76,6 +76,18 @@
         <defaultValue xsi:type="uicustom:StaticFeatureValue" value="inherited elements"/>
       </customizedFeatures>
     </references>
+    <references referenceName="ownedComment">
+      <customizedFeatures customizedFeature="label">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="comments"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="clientDependency">
+      <customizedFeatures customizedFeature="label">
+        <defaultValue xsi:type="uicustom:DerivedFeatureValue">
+          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getImportsLabel"/>
+        </defaultValue>
+      </customizedFeatures>
+    </references>
   </types>
   <types metaclassName="uml.Property">
     <customizedFeatures customizedFeature="icon">
@@ -248,6 +260,103 @@
         <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isPartial"/>
       </valueCases>
     </customizedFeatures>
+  </types>
+  <types metaclassName="uml.Dependency">
+    <customizedFeatures customizedFeature="label">
+      <defaultValue xsi:type="uicustom:DerivedFeatureValue">
+        <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getDependecyLabel"/>
+      </defaultValue>
+    </customizedFeatures>
+    <customizedFeatures customizedFeature="metaclassVisible">
+      <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+    </customizedFeatures>
+  </types>
+  <types metaclassName="uml.Region">
+    <references referenceName="subvertex">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="ownedComment">
+      <customizedFeatures customizedFeature="label">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="comments"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="stateMachine">
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="state">
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+      </customizedFeatures>
+    </references>
+  </types>
+  <types metaclassName="uml.State">
+    <references referenceName="container">
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="region">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="submachine">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
+  </types>
+  <types metaclassName="uml.Transition">
+    <references referenceName="container">
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="ownedRule">
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="guard">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
+  </types>
+  <types metaclassName="uml.StateMachine">
+    <references referenceName="region">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="ownedComment">
+      <customizedFeatures customizedFeature="label">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="comments"/>
+      </customizedFeatures>
+    </references>
+    <references referenceName="submachineState">
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+      </customizedFeatures>
+    </references>
+  </types>
+  <types metaclassName="uml.Pseudostate">
+    <references referenceName="container">
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
+      </customizedFeatures>
+    </references>
+  </types>
+  <types metaclassName="uml.Constraint">
+    <references referenceName="specification">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
   </types>
   <availableQuerySets>PapyrusBrowserQuery</availableQuerySets>
   <availableQuerySets>SysMLDefaultExplorerQueries</availableQuerySets>
