@@ -45,6 +45,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.FunctionBehavior;
@@ -59,6 +60,7 @@ import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.Signal;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
+import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.Vertex;
@@ -101,6 +103,8 @@ public class ModelicaMLContentAssist {
 	private static HashSet<String> predefinedFunctionsList = new HashSet<String>();
 	
 	
+	private static HashSet<String> importedElementsList = new HashSet<String>();
+	
 	/** The Constant stateIconFileName. */
 	private static final String stateIconFileName = "State.gif";
 	
@@ -128,6 +132,9 @@ public class ModelicaMLContentAssist {
 	/** The types list. */
 	private static HashSet<String> typesList = new HashSet<String>();
 
+	
+	private static String connectorStereotypeQname = "ModelicaML::ModelicaClassConstructs::Connector";
+	private static String recordStereotypeQname = "ModelicaML::ModelicaClassConstructs::Record";
 	
 	
 	/**
@@ -162,6 +169,8 @@ public class ModelicaMLContentAssist {
 		
 		typesList.clear();
 		
+		importedElementsList.clear();
+		
 		componentReferenceList.clear();
 		
 		// if it is a Modelica function
@@ -179,10 +188,12 @@ public class ModelicaMLContentAssist {
 		
 		// if it is a Modelica class 
 		else if (aClass !=  null && aClass instanceof Classifier) {
-			//TODO: how to deal with imported models?! 
 			
 			addPredefinedVariablesToList();
 			addVariablesToList(aClass, ""); 
+
+			// Imported elements
+			addImportedElementsToList(aClass, "");
 			
 			addBuiltInModelicaFuntionsToList();
 			addFunctionsToList(aClass);
@@ -305,6 +316,9 @@ public class ModelicaMLContentAssist {
 		return sortedList;
 	}
 	
+	
+	
+	
 	// to be used for code completion
 	/**
 	 * Gets the modified component reference sorted list.
@@ -346,6 +360,9 @@ public class ModelicaMLContentAssist {
 		return sortedList;
 	}
 	
+	
+	
+	
 	/**
 	 * Gets the type specifier sorted list.
 	 *
@@ -373,7 +390,7 @@ public class ModelicaMLContentAssist {
 	}
 	
 	/**
-	 * Adds the built in modelica funtions to list.
+	 * Adds the built in Modelica functions to list.
 	 */
 	private static void addBuiltInModelicaFuntionsToList(){
 		predefinedFunctionsList.add("abs");
@@ -499,7 +516,7 @@ public class ModelicaMLContentAssist {
 				functions.add(object) ;
 		}
 		for (EObject eObject : functions) {
-			dotPath = StringUtls.replaceSpecCharExceptThis(((FunctionBehavior)eObject).getQualifiedName().replaceAll("::", "."), "\\.");
+			dotPath = StringUtls.replaceSpecCharExceptThis(((FunctionBehavior)eObject).getQualifiedName().replaceFirst(aClass.getQualifiedName() + "::", "").replaceAll("::", "."), "\\.");
 			functionsList.add(dotPath);
 			
 		}
@@ -528,7 +545,7 @@ public class ModelicaMLContentAssist {
 	
 	
 	/**
-	 * Checks if is modelica class.
+	 * Checks if is Modelica class.
 	 *
 	 * @param element the element
 	 * @return the boolean
@@ -607,6 +624,31 @@ public class ModelicaMLContentAssist {
 		
 	}
 	
+	// ################################# Add imported elements
+	private static void addImportedElementsToList(Class aClass, String dotPath){
+		EList<Dependency> clientList = aClass.getClientDependencies();
+		for (Dependency dependency : clientList) {
+			EList<NamedElement> suppliersList = dependency.getSuppliers();
+			for (NamedElement namedElement : suppliersList) {
+				if (namedElement instanceof Enumeration) {
+					for (NamedElement literal : ((Enumeration)namedElement).getOwnedLiterals()) {
+						importedElementsList.add(StringUtls.replaceSpecChar(namedElement.getName()) + "." + StringUtls.replaceSpecChar(literal.getName()) );
+					}
+				}
+				else if (namedElement instanceof FunctionBehavior) {
+					// TODO: test it!
+					importedElementsList.add(StringUtls.replaceSpecChar(namedElement.getName()));
+				}
+				else if (namedElement instanceof Class) {
+					// TODO: test it!
+					addVariablesToList((Class)namedElement, "");
+				}
+			}
+		}
+		variablesList.addAll(importedElementsList);
+	}
+	
+	
 	// ################################# Add variables to list
 	
 	/**
@@ -627,8 +669,18 @@ public class ModelicaMLContentAssist {
 			
 			Type pType = property.getType();
 			if (pType != null) {
+				
+				// Add instantces of connectors or records to the list
+				Stereotype c_stereotype = pType.getAppliedStereotype(connectorStereotypeQname);
+				Stereotype r_stereotype = pType.getAppliedStereotype(recordStereotypeQname);
+				
+				if (c_stereotype != null || r_stereotype != null) {
+					variablesList.add(newDotPath);
+				}
+				
 				if (pType instanceof PrimitiveType || pType instanceof Enumeration) {
-					//Add to the componentReferenceList
+					
+					//Add primitive variable or enumeration to the componentReferenceList
 					variablesList.add(newDotPath);
 					
 					// create predefined properties for Modelica real, string, integer and boolean.
@@ -665,8 +717,7 @@ public class ModelicaMLContentAssist {
 	 * @return the class components
 	 */
 	private static EList<Property> getClassComponents(Classifier aClass){
-		//TODO: implement here all Modelica specific filtering of components, 
-		//such as redeclaration and merging of inherited duplicates.
+		//TODO: implement here all Modelica specific filtering of components, such as redeclaration and merging of inherited duplicates.
 		EList<Property> pFinalList = getAllInheritedAttributes(aClass, aClass.getAttributes());
 		return pFinalList;
 	}
@@ -778,8 +829,6 @@ public class ModelicaMLContentAssist {
 //	}
 	
 	
-	//TODO: put all functions references that are available in the model into the list as well.
-	
 	// ################################# Add ModelicaML states representation variables to list
 	
 //	private static void addStateMachinesToList(Class aClass, String dotPath){
@@ -803,8 +852,9 @@ public class ModelicaMLContentAssist {
 private static void traverseStateMachine(StateMachine sm, String dotPath){
 		EList<Region> rList = sm.getRegions();
 		for (Region region : rList) {
-			String newDotPath = getNewDotPath(region, dotPath); 
-			addStatesFromRegion(region, newDotPath);
+//			String newDotPath = getNewDotPath(region, dotPath); 
+//			addStatesFromRegion(region, newDotPath);
+			addStatesFromRegion(region, dotPath);
 		}
 	}
 	
@@ -815,11 +865,14 @@ private static void traverseStateMachine(StateMachine sm, String dotPath){
 	 * @param dotPath the dot path
 	 */
 	private static void addStatesFromRegion(Region r, String dotPath) {
+		
+		String regionDotPath = getNewDotPath(r, dotPath); 
+		
 		EList<Vertex> states = r.getSubvertices();
 		for (Vertex vertex : states) {
 			if (vertex instanceof State) {
 
-				String newDotPath = getNewDotPath(vertex, dotPath); 
+				String newDotPath = getNewDotPath(vertex, regionDotPath); 
 				
 				// add the predefined properties of the ModelicaML state representation 
 				statesList.add(newDotPath + ".active");

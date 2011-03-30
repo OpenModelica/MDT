@@ -114,8 +114,8 @@ public class ModelicaMLMarkerSupport {
 		umlModel = UmlUtils.getUmlModel();
 		if (umlModel != null) {
 			modelName = umlModel.getResourceURI().lastSegment();
-			projectName = umlModel.getResourceURI().path().replace(modelName, "")
-					.replace("/resource/", "");
+			//projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+			projectName = umlModel.getResource().getURI().segment(1);
 			
 			workspace = ResourcesPlugin.getWorkspace();
 			root = workspace.getRoot();
