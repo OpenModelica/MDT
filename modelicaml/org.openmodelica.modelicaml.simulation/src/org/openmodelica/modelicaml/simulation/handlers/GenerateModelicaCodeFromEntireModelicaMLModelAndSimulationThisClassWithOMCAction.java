@@ -169,7 +169,9 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 				.replace("/resource/", "");
 
 		
-		String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+//		String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+		String projectName = umlModel.getResource().getURI().segment(1);
+		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject iProject = root.getProject(projectName);
