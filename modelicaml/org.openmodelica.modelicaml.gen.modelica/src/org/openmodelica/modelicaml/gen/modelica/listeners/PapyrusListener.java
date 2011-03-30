@@ -321,7 +321,8 @@ private String project = null;
 			
 			umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
 
-			String projectName = umlModel.getResourceURI().segment(1);
+			//String projectName = umlModel.getResourceURI().segment(1);
+			String projectName = umlModel.getResource().getURI().segment(1);
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRoot root = workspace.getRoot();
 			iProject = root.getProject(projectName);
@@ -462,7 +463,8 @@ private String project = null;
 			
 			String packageMoFilePath = null;
 			if (UMLModelName != null) {
-				String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+				//String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+				String projectName = umlModel.getResource().getURI().segment(1);
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IWorkspaceRoot root = workspace.getRoot();
 				iProject = root.getProject(projectName);
