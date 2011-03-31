@@ -260,6 +260,11 @@
         <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isPartial"/>
       </valueCases>
     </customizedFeatures>
+    <references referenceName="ownedRule">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
   </types>
   <types metaclassName="uml.Dependency">
     <customizedFeatures customizedFeature="label">
