@@ -4,8 +4,8 @@
  */
 package org.openmodelica.modelicaml.editor.xtext.state.ui;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.DefaultUiModule;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Manual modifications go to {org.openmodelica.modelicaml.editor.xtext.state.ui.StatetransitionguardexpressionUiModule}

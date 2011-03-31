@@ -4,17 +4,18 @@
 package org.openmodelica.modelicaml.editor.xtext.state.ui.contentassist.antlr;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.antlr.runtime.RecognitionException;
 import org.eclipse.xtext.AbstractElement;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.AbstractContentAssistParser;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.FollowElement;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.AbstractInternalContentAssistParser;
-import org.openmodelica.modelicaml.editor.xtext.state.services.StatetransitionguardexpressionGrammarAccess;
 
 import com.google.inject.Inject;
+
+import org.openmodelica.modelicaml.editor.xtext.state.services.StatetransitionguardexpressionGrammarAccess;
 
 public class StatetransitionguardexpressionParser extends AbstractContentAssistParser {
 	
@@ -120,6 +121,7 @@ public class StatetransitionguardexpressionParser extends AbstractContentAssistP
 					put(grammarAccess.getPrimaryAccess().getExpression_listAssignment_13_2_1(), "rule__Primary__Expression_listAssignment_13_2_1");
 					put(grammarAccess.getPrimaryAccess().getF_argumentsAssignment_14_1(), "rule__Primary__F_argumentsAssignment_14_1");
 					put(grammarAccess.getPrimaryAccess().getEndAssignment_15(), "rule__Primary__EndAssignment_15");
+					put(grammarAccess.getPrimaryAccess().getElseAssignment_16(), "rule__Primary__ElseAssignment_16");
 					put(grammarAccess.getMacro_AfterAccess().getIntAssignment_2_0(), "rule__Macro_After__IntAssignment_2_0");
 					put(grammarAccess.getMacro_AfterAccess().getNumAssignment_2_1(), "rule__Macro_After__NumAssignment_2_1");
 					put(grammarAccess.getMacro_AfterAccess().getComponent_referenceAssignment_2_2(), "rule__Macro_After__Component_referenceAssignment_2_2");

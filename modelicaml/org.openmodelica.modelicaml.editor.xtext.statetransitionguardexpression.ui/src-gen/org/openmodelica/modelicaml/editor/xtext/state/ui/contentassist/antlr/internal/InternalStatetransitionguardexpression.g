@@ -1481,6 +1481,12 @@ rule__Primary__Alternatives
 { after(grammarAccess.getPrimaryAccess().getEndAssignment_15()); }
 )
 
+    |(
+{ before(grammarAccess.getPrimaryAccess().getElseAssignment_16()); }
+(rule__Primary__ElseAssignment_16)
+{ after(grammarAccess.getPrimaryAccess().getElseAssignment_16()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -6017,6 +6023,29 @@ rule__Primary__EndAssignment_15
 )
 
 { after(grammarAccess.getPrimaryAccess().getEndEndKeyword_15_0()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Primary__ElseAssignment_16
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getPrimaryAccess().getElseElseKeyword_16_0()); }
+(
+{ before(grammarAccess.getPrimaryAccess().getElseElseKeyword_16_0()); }
+
+	'else' 
+
+{ after(grammarAccess.getPrimaryAccess().getElseElseKeyword_16_0()); }
+)
+
+{ after(grammarAccess.getPrimaryAccess().getElseElseKeyword_16_0()); }
 )
 
 ;
