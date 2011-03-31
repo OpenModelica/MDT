@@ -699,6 +699,7 @@ public class ModelicaMLContentAssist {
 		for (Element element : eList) {
 			if (element instanceof Signal) {
 				String newDotPath = getNewDotPath((Signal)element, dotPath); 
+				signalsList.add(newDotPath);
 				signalsList.add(newDotPath + ".counter");
 			}
 			if (element instanceof StateMachine) {
