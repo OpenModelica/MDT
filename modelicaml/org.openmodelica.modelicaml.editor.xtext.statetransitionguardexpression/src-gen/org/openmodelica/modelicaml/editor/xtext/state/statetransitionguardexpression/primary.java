@@ -25,6 +25,7 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name_Function;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.primary#getMac_E <em>Mac E</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.primary#getMac_C <em>Mac C</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.primary#getMac_S <em>Mac S</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.primary#getElse <em>Else</em>}</li>
  * </ul>
  * </p>
  *
@@ -215,5 +216,31 @@ public interface primary extends org.openmodelica.modelicaml.editor.xtext.model.
    * @generated
    */
   void setMac_S(Macro_SIGNAL value);
+
+  /**
+   * Returns the value of the '<em><b>Else</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Else</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Else</em>' attribute.
+   * @see #setElse(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.StatetransitionguardexpressionPackage#getprimary_Else()
+   * @model
+   * @generated
+   */
+  String getElse();
+
+  /**
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.primary#getElse <em>Else</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Else</em>' attribute.
+   * @see #getElse()
+   * @generated
+   */
+  void setElse(String value);
 
 } // primary

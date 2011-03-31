@@ -2,7 +2,7 @@ grammar org.openmodelica.modelicaml.editor.xtext.state.Statetransitionguardexpre
 
 generate statetransitionguardexpression "http://www.openmodelica.org/modelicaml/editor/xtext/state/Statetransitionguardexpression"
 
-expression:
+expression: 
 (simple_Expr=simple_expression)?
 ;
 
@@ -25,6 +25,7 @@ num=UNSIGNED_NUMBER
 | '[' Expre_list=expression_list ( ';' Expression_list+=expression_list)* ']'
 | '{' f_arguments=function_arguments '}'
 | End='end'
+| Else='else'
 ;
 //////////////////////////////////////MACRO//////////////////////////////
 Macro_After:

@@ -8,9 +8,10 @@ import org.antlr.runtime.TokenSource;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.ParseException;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
-import org.openmodelica.modelicaml.editor.xtext.state.services.StatetransitionguardexpressionGrammarAccess;
 
 import com.google.inject.Inject;
+
+import org.openmodelica.modelicaml.editor.xtext.state.services.StatetransitionguardexpressionGrammarAccess;
 
 public class StatetransitionguardexpressionParser extends org.eclipse.xtext.parser.antlr.AbstractAntlrParser {
 	

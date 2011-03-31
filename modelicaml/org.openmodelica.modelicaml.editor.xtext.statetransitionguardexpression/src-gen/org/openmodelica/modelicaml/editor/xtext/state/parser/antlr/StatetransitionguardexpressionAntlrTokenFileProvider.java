@@ -4,7 +4,6 @@
 package org.openmodelica.modelicaml.editor.xtext.state.parser.antlr;
 
 import java.io.InputStream;
-
 import org.eclipse.xtext.parser.antlr.IAntlrTokenFileProvider;
 
 public class StatetransitionguardexpressionAntlrTokenFileProvider implements IAntlrTokenFileProvider {

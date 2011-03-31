@@ -3,15 +3,11 @@
 */
 package org.openmodelica.modelicaml.editor.xtext.state.parseTreeConstruction;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.Action;
-import org.eclipse.xtext.Alternatives;
-import org.eclipse.xtext.Assignment;
-import org.eclipse.xtext.Group;
-import org.eclipse.xtext.Keyword;
-import org.eclipse.xtext.RuleCall;
+import org.eclipse.emf.ecore.*;
+import org.eclipse.xtext.*;
 import org.eclipse.xtext.parsetree.reconstr.IEObjectConsumer;
 import org.eclipse.xtext.parsetree.reconstr.impl.AbstractParseTreeConstructor;
+
 import org.openmodelica.modelicaml.editor.xtext.state.services.StatetransitionguardexpressionGrammarAccess;
 
 import com.google.inject.Inject;
@@ -140,7 +136,7 @@ protected class Expression_Simple_ExprAssignment extends AssignmentToken  {
  * 	Mac_A=Macro_After | Mac_E=Macro_EVENT | Mac_C=Macro_CHANGE | Mac_S=Macro_SIGNAL |
  * 	Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
  * 	Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
- * 	End="end";
+ * 	End="end" | Else="else";
  *
  **/
 
@@ -149,7 +145,7 @@ protected class Expression_Simple_ExprAssignment extends AssignmentToken  {
 // Mac_A=Macro_After | Mac_E=Macro_EVENT | Mac_C=Macro_CHANGE | Mac_S=Macro_SIGNAL |
 // Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
 // Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
-// End="end"
+// End="end" | Else="else"
 protected class Primary_Alternatives extends AlternativesToken {
 
 	public Primary_Alternatives(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
@@ -180,6 +176,7 @@ protected class Primary_Alternatives extends AlternativesToken {
 			case 13: return new Primary_Group_13(lastRuleCallOrigin, this, 13, inst);
 			case 14: return new Primary_Group_14(lastRuleCallOrigin, this, 14, inst);
 			case 15: return new Primary_EndAssignment_15(lastRuleCallOrigin, this, 15, inst);
+			case 16: return new Primary_ElseAssignment_16(lastRuleCallOrigin, this, 16, inst);
 			default: return null;
 		}	
 	}
@@ -1140,6 +1137,39 @@ protected class Primary_EndAssignment_15 extends AssignmentToken  {
 		if(keywordSerializer.isValid(obj.getEObject(), grammarAccess.getPrimaryAccess().getEndEndKeyword_15_0(), value, null)) {
 			type = AssignmentType.KEYWORD;
 			element = grammarAccess.getPrimaryAccess().getEndEndKeyword_15_0();
+			return obj;
+		}
+		return null;
+	}
+
+}
+
+// Else="else"
+protected class Primary_ElseAssignment_16 extends AssignmentToken  {
+	
+	public Primary_ElseAssignment_16(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
+		super(lastRuleCallOrigin, next, transitionIndex, eObjectConsumer);
+	}
+	
+	@Override
+	public Assignment getGrammarElement() {
+		return grammarAccess.getPrimaryAccess().getElseAssignment_16();
+	}
+
+    @Override
+	public AbstractToken createFollower(int index, IEObjectConsumer inst) {
+		switch(index) {
+			default: return lastRuleCallOrigin.createFollowerAfterReturn(this, index, index, inst);
+		}	
+	}
+
+    @Override	
+	public IEObjectConsumer tryConsume() {
+		if((value = eObjectConsumer.getConsumable("Else",true)) == null) return null;
+		IEObjectConsumer obj = eObjectConsumer.cloneAndConsume("Else");
+		if(keywordSerializer.isValid(obj.getEObject(), grammarAccess.getPrimaryAccess().getElseElseKeyword_16_0(), value, null)) {
+			type = AssignmentType.KEYWORD;
+			element = grammarAccess.getPrimaryAccess().getElseElseKeyword_16_0();
 			return obj;
 		}
 		return null;

@@ -584,6 +584,28 @@ ruleprimary returns [EObject current=null]
 	    }
 
 )
+)
+    |(
+(
+		lv_Else_24_0=	'else' 
+    {
+        createLeafNode(grammarAccess.getPrimaryAccess().getElseElseKeyword_16_0(), "Else"); 
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = factory.create(grammarAccess.getPrimaryRule().getType().getClassifier());
+	            associateNodeWithAstElement(currentNode, $current);
+	        }
+	        
+	        try {
+	       		set($current, "Else", lv_Else_24_0, "else", lastConsumedNode);
+	        } catch (ValueConverterException vce) {
+				handleValueConverterException(vce);
+	        }
+	    }
+
+)
 ))
 ;
 

@@ -250,6 +250,16 @@ public class StatetransitionguardexpressionPackageImpl extends EPackageImpl impl
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getprimary_Else()
+  {
+    return (EAttribute)primaryEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getMacro_After()
   {
     return macro_AfterEClass;
@@ -426,6 +436,7 @@ public class StatetransitionguardexpressionPackageImpl extends EPackageImpl impl
     createEReference(primaryEClass, PRIMARY__MAC_E);
     createEReference(primaryEClass, PRIMARY__MAC_C);
     createEReference(primaryEClass, PRIMARY__MAC_S);
+    createEAttribute(primaryEClass, PRIMARY__ELSE);
 
     macro_AfterEClass = createEClass(MACRO_AFTER);
     createEAttribute(macro_AfterEClass, MACRO_AFTER__INT);
@@ -494,6 +505,7 @@ public class StatetransitionguardexpressionPackageImpl extends EPackageImpl impl
     initEReference(getprimary_Mac_E(), this.getMacro_EVENT(), null, "Mac_E", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getprimary_Mac_C(), this.getMacro_CHANGE(), null, "Mac_C", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getprimary_Mac_S(), this.getMacro_SIGNAL(), null, "Mac_S", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getprimary_Else(), ecorePackage.getEString(), "Else", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(macro_AfterEClass, Macro_After.class, "Macro_After", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMacro_After_Int(), ecorePackage.getEInt(), "int", null, 0, 1, Macro_After.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

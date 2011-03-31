@@ -23,6 +23,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Statetransitionguardexpression.ecore#//primary/Mac_E"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Statetransitionguardexpression.ecore#//primary/Mac_C"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Statetransitionguardexpression.ecore#//primary/Mac_S"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Statetransitionguardexpression.ecore#//primary/Else"/>
     </genClasses>
     <genClasses ecoreClass="Statetransitionguardexpression.ecore#//Macro_After">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Statetransitionguardexpression.ecore#//Macro_After/int"/>

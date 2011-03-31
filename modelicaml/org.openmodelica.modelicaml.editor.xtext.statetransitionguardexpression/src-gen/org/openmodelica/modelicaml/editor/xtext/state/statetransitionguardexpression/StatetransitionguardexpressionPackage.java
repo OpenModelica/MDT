@@ -289,13 +289,22 @@ public interface StatetransitionguardexpressionPackage extends EPackage
   int PRIMARY__MAC_S = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 6;
 
   /**
+   * The feature id for the '<em><b>Else</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRIMARY__ELSE = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 7;
+
+  /**
    * The number of structural features of the '<em>primary</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 7;
+  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 8;
 
   /**
    * The meta object id for the '{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.impl.Macro_AfterImpl <em>Macro After</em>}' class.
@@ -583,6 +592,17 @@ public interface StatetransitionguardexpressionPackage extends EPackage
   EReference getprimary_Mac_S();
 
   /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.primary#getElse <em>Else</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Else</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.primary#getElse()
+   * @see #getprimary()
+   * @generated
+   */
+  EAttribute getprimary_Else();
+
+  /**
    * Returns the meta object for class '{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.Macro_After <em>Macro After</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -837,6 +857,14 @@ public interface StatetransitionguardexpressionPackage extends EPackage
      * @generated
      */
     EReference PRIMARY__MAC_S = eINSTANCE.getprimary_Mac_S();
+
+    /**
+     * The meta object literal for the '<em><b>Else</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRIMARY__ELSE = eINSTANCE.getprimary_Else();
 
     /**
      * The meta object literal for the '{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.impl.Macro_AfterImpl <em>Macro After</em>}' class.

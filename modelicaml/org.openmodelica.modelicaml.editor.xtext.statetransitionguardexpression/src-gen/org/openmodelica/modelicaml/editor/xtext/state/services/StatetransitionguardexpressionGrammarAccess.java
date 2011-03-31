@@ -4,21 +4,14 @@
 
 package org.openmodelica.modelicaml.editor.xtext.state.services;
 
-import org.eclipse.xtext.Alternatives;
-import org.eclipse.xtext.Assignment;
-import org.eclipse.xtext.Grammar;
-import org.eclipse.xtext.GrammarUtil;
-import org.eclipse.xtext.Group;
-import org.eclipse.xtext.Keyword;
-import org.eclipse.xtext.ParserRule;
-import org.eclipse.xtext.RuleCall;
-import org.eclipse.xtext.TerminalRule;
-import org.eclipse.xtext.service.AbstractElementFinder.AbstractGrammarElementFinder;
-import org.eclipse.xtext.service.GrammarProvider;
-import org.openmodelica.modelicaml.editor.xtext.model.services.ModeleditorGrammarAccess;
-
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.Inject;
+
+import org.eclipse.xtext.*;
+import org.eclipse.xtext.service.GrammarProvider;
+import org.eclipse.xtext.service.AbstractElementFinder.*;
+
+import org.openmodelica.modelicaml.editor.xtext.model.services.ModeleditorGrammarAccess;
 
 @Singleton
 public class StatetransitionguardexpressionGrammarAccess extends AbstractGrammarElementFinder {
@@ -88,6 +81,8 @@ public class StatetransitionguardexpressionGrammarAccess extends AbstractGrammar
 		private final Keyword cRightCurlyBracketKeyword_14_2 = (Keyword)cGroup_14.eContents().get(2);
 		private final Assignment cEndAssignment_15 = (Assignment)cAlternatives.eContents().get(15);
 		private final Keyword cEndEndKeyword_15_0 = (Keyword)cEndAssignment_15.eContents().get(0);
+		private final Assignment cElseAssignment_16 = (Assignment)cAlternatives.eContents().get(16);
+		private final Keyword cElseElseKeyword_16_0 = (Keyword)cElseAssignment_16.eContents().get(0);
 		
 		////////////////////////////////////////////////////Primary///////////////////////////////
 		//primary:
@@ -96,7 +91,7 @@ public class StatetransitionguardexpressionGrammarAccess extends AbstractGrammar
 		//	Mac_A=Macro_After | Mac_E=Macro_EVENT | Mac_C=Macro_CHANGE | Mac_S=Macro_SIGNAL |
 		//	Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
 		//	Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
-		//	End="end";
+		//	End="end" | Else="else";
 		public ParserRule getRule() { return rule; }
 
 		//num=UNSIGNED_NUMBER //| Mac_B=Macro_BEFORE
@@ -104,7 +99,7 @@ public class StatetransitionguardexpressionGrammarAccess extends AbstractGrammar
 		//Mac_A=Macro_After | Mac_E=Macro_EVENT | Mac_C=Macro_CHANGE | Mac_S=Macro_SIGNAL |
 		//Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
 		//Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
-		//End="end"
+		//End="end" | Else="else"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//num=UNSIGNED_NUMBER
@@ -241,6 +236,12 @@ public class StatetransitionguardexpressionGrammarAccess extends AbstractGrammar
 
 		//"end"
 		public Keyword getEndEndKeyword_15_0() { return cEndEndKeyword_15_0; }
+
+		//Else="else"
+		public Assignment getElseAssignment_16() { return cElseAssignment_16; }
+
+		//"else"
+		public Keyword getElseElseKeyword_16_0() { return cElseElseKeyword_16_0; }
 	}
 
 	public class Macro_AfterElements extends AbstractParserRuleElementFinder {
@@ -491,7 +492,7 @@ public class StatetransitionguardexpressionGrammarAccess extends AbstractGrammar
 	//	Mac_A=Macro_After | Mac_E=Macro_EVENT | Mac_C=Macro_CHANGE | Mac_S=Macro_SIGNAL |
 	//	Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
 	//	Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
-	//	End="end";
+	//	End="end" | Else="else";
 	public PrimaryElements getPrimaryAccess() {
 		return (pPrimary != null) ? pPrimary : (pPrimary = new PrimaryElements());
 	}

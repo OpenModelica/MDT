@@ -23,6 +23,7 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Mac_S" eType="#//Macro_SIGNAL"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Else" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Macro_After">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="int" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

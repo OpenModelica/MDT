@@ -35,6 +35,7 @@ import org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpres
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.impl.primaryImpl#getMac_E <em>Mac E</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.impl.primaryImpl#getMac_C <em>Mac C</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.impl.primaryImpl#getMac_S <em>Mac S</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.state.statetransitionguardexpression.impl.primaryImpl#getElse <em>Else</em>}</li>
  * </ul>
  * </p>
  *
@@ -111,6 +112,26 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * @ordered
    */
   protected Macro_SIGNAL mac_S;
+
+  /**
+   * The default value of the '{@link #getElse() <em>Else</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getElse()
+   * @generated
+   * @ordered
+   */
+  protected static final String ELSE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getElse() <em>Else</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getElse()
+   * @generated
+   * @ordered
+   */
+  protected String else_ = ELSE_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -474,6 +495,29 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getElse()
+  {
+    return else_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setElse(String newElse)
+  {
+    String oldElse = else_;
+    else_ = newElse;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatetransitionguardexpressionPackage.PRIMARY__ELSE, oldElse, else_));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -521,6 +565,8 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return getMac_C();
       case StatetransitionguardexpressionPackage.PRIMARY__MAC_S:
         return getMac_S();
+      case StatetransitionguardexpressionPackage.PRIMARY__ELSE:
+        return getElse();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -555,6 +601,9 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return;
       case StatetransitionguardexpressionPackage.PRIMARY__MAC_S:
         setMac_S((Macro_SIGNAL)newValue);
+        return;
+      case StatetransitionguardexpressionPackage.PRIMARY__ELSE:
+        setElse((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -591,6 +640,9 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
       case StatetransitionguardexpressionPackage.PRIMARY__MAC_S:
         setMac_S((Macro_SIGNAL)null);
         return;
+      case StatetransitionguardexpressionPackage.PRIMARY__ELSE:
+        setElse(ELSE_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -619,8 +671,27 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return mac_C != null;
       case StatetransitionguardexpressionPackage.PRIMARY__MAC_S:
         return mac_S != null;
+      case StatetransitionguardexpressionPackage.PRIMARY__ELSE:
+        return ELSE_EDEFAULT == null ? else_ != null : !ELSE_EDEFAULT.equals(else_);
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (Else: ");
+    result.append(else_);
+    result.append(')');
+    return result.toString();
   }
 
 } //primaryImpl

@@ -2,14 +2,13 @@ package org.openmodelica.modelicaml.editor.xtext.state.parser.antlr.internal;
 
 // Hack: Use our own Lexer superclass by means of import. 
 // Currently there is no other way to specify the superclass for the lexer.
-import org.antlr.runtime.BaseRecognizer;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.DFA;
-import org.antlr.runtime.EarlyExitException;
-import org.antlr.runtime.MismatchedSetException;
-import org.antlr.runtime.NoViableAltException;
-import org.antlr.runtime.RecognitionException;
 import org.eclipse.xtext.parser.antlr.Lexer;
+
+
+import org.antlr.runtime.*;
+import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
 
 @SuppressWarnings("all")
 public class InternalStatetransitionguardexpressionLexer extends Lexer {
@@ -42,7 +41,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public static final int T48=48;
     public static final int RULE_BOOL_VAL=7;
     public static final int T43=43;
-    public static final int Tokens=53;
+    public static final int Tokens=54;
     public static final int RULE_SL_COMMENT=11;
     public static final int T42=42;
     public static final int T41=41;
@@ -62,6 +61,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public static final int T51=51;
     public static final int T16=16;
     public static final int T17=17;
+    public static final int T53=53;
     public static final int T18=18;
     public static final int T19=19;
     public InternalStatetransitionguardexpressionLexer() {;} 
@@ -219,10 +219,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT22() throws RecognitionException {
         try {
             int _type = T22;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:18:5: ( 'AFTER' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:18:7: 'AFTER'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:18:5: ( 'else' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:18:7: 'else'
             {
-            match("AFTER"); 
+            match("else"); 
 
 
             }
@@ -238,10 +238,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT23() throws RecognitionException {
         try {
             int _type = T23;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:19:5: ( 'SIGNAL' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:19:7: 'SIGNAL'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:19:5: ( 'AFTER' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:19:7: 'AFTER'
             {
-            match("SIGNAL"); 
+            match("AFTER"); 
 
 
             }
@@ -257,10 +257,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT24() throws RecognitionException {
         try {
             int _type = T24;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:20:5: ( 'EVENT' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:20:7: 'EVENT'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:20:5: ( 'SIGNAL' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:20:7: 'SIGNAL'
             {
-            match("EVENT"); 
+            match("SIGNAL"); 
 
 
             }
@@ -276,10 +276,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT25() throws RecognitionException {
         try {
             int _type = T25;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:21:5: ( 'CHANGE' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:21:7: 'CHANGE'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:21:5: ( 'EVENT' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:21:7: 'EVENT'
             {
-            match("CHANGE"); 
+            match("EVENT"); 
 
 
             }
@@ -295,10 +295,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT26() throws RecognitionException {
         try {
             int _type = T26;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:22:5: ( ':' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:22:7: ':'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:22:5: ( 'CHANGE' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:22:7: 'CHANGE'
             {
-            match(':'); 
+            match("CHANGE"); 
+
 
             }
 
@@ -313,11 +314,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT27() throws RecognitionException {
         try {
             int _type = T27;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:23:5: ( 'or' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:23:7: 'or'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:23:5: ( ':' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:23:7: ':'
             {
-            match("or"); 
-
+            match(':'); 
 
             }
 
@@ -332,10 +332,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT28() throws RecognitionException {
         try {
             int _type = T28;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:24:5: ( 'and' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:24:7: 'and'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:24:5: ( 'or' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:24:7: 'or'
             {
-            match("and"); 
+            match("or"); 
 
 
             }
@@ -351,10 +351,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT29() throws RecognitionException {
         try {
             int _type = T29;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:25:5: ( 'not' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:25:7: 'not'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:25:5: ( 'and' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:25:7: 'and'
             {
-            match("not"); 
+            match("and"); 
 
 
             }
@@ -370,10 +370,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT30() throws RecognitionException {
         try {
             int _type = T30;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:26:5: ( '^' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:26:7: '^'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:26:5: ( 'not' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:26:7: 'not'
             {
-            match('^'); 
+            match("not"); 
+
 
             }
 
@@ -388,11 +389,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT31() throws RecognitionException {
         try {
             int _type = T31;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:27:5: ( '.^' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:27:7: '.^'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:27:5: ( '^' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:27:7: '^'
             {
-            match(".^"); 
-
+            match('^'); 
 
             }
 
@@ -407,10 +407,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT32() throws RecognitionException {
         try {
             int _type = T32;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:28:5: ( 'initial' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:28:7: 'initial'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:28:5: ( '.^' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:28:7: '.^'
             {
-            match("initial"); 
+            match(".^"); 
 
 
             }
@@ -426,10 +426,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT33() throws RecognitionException {
         try {
             int _type = T33;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:29:5: ( 'der' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:29:7: 'der'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:29:5: ( 'initial' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:29:7: 'initial'
             {
-            match("der"); 
+            match("initial"); 
 
 
             }
@@ -445,10 +445,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT34() throws RecognitionException {
         try {
             int _type = T34;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:30:5: ( ',' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:30:7: ','
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:30:5: ( 'der' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:30:7: 'der'
             {
-            match(','); 
+            match("der"); 
+
 
             }
 
@@ -463,10 +464,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT35() throws RecognitionException {
         try {
             int _type = T35;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:31:5: ( '.' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:31:7: '.'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:31:5: ( ',' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:31:7: ','
             {
-            match('.'); 
+            match(','); 
 
             }
 
@@ -481,11 +482,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT36() throws RecognitionException {
         try {
             int _type = T36;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:32:5: ( 'for' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:32:7: 'for'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:32:5: ( '.' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:32:7: '.'
             {
-            match("for"); 
-
+            match('.'); 
 
             }
 
@@ -500,10 +500,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT37() throws RecognitionException {
         try {
             int _type = T37;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:33:5: ( '=' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:33:7: '='
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:33:5: ( 'for' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:33:7: 'for'
             {
-            match('='); 
+            match("for"); 
+
 
             }
 
@@ -518,11 +519,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT38() throws RecognitionException {
         try {
             int _type = T38;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:34:5: ( 'in' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:34:7: 'in'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:34:5: ( '=' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:34:7: '='
             {
-            match("in"); 
-
+            match('='); 
 
             }
 
@@ -537,10 +537,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT39() throws RecognitionException {
         try {
             int _type = T39;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:35:5: ( '*' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:35:7: '*'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:35:5: ( 'in' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:35:7: 'in'
             {
-            match('*'); 
+            match("in"); 
+
 
             }
 
@@ -555,10 +556,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT40() throws RecognitionException {
         try {
             int _type = T40;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:36:5: ( '/' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:36:7: '/'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:36:5: ( '*' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:36:7: '*'
             {
-            match('/'); 
+            match('*'); 
 
             }
 
@@ -573,11 +574,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT41() throws RecognitionException {
         try {
             int _type = T41;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:37:5: ( '.*' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:37:7: '.*'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:37:5: ( '/' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:37:7: '/'
             {
-            match(".*"); 
-
+            match('/'); 
 
             }
 
@@ -592,10 +592,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT42() throws RecognitionException {
         try {
             int _type = T42;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:38:5: ( './' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:38:7: './'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:38:5: ( '.*' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:38:7: '.*'
             {
-            match("./"); 
+            match(".*"); 
 
 
             }
@@ -611,10 +611,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT43() throws RecognitionException {
         try {
             int _type = T43;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:39:5: ( '+' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:39:7: '+'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:39:5: ( './' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:39:7: './'
             {
-            match('+'); 
+            match("./"); 
+
 
             }
 
@@ -629,10 +630,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT44() throws RecognitionException {
         try {
             int _type = T44;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:40:5: ( '-' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:40:7: '-'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:40:5: ( '+' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:40:7: '+'
             {
-            match('-'); 
+            match('+'); 
 
             }
 
@@ -647,11 +648,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT45() throws RecognitionException {
         try {
             int _type = T45;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:41:5: ( '.+' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:41:7: '.+'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:41:5: ( '-' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:41:7: '-'
             {
-            match(".+"); 
-
+            match('-'); 
 
             }
 
@@ -666,10 +666,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT46() throws RecognitionException {
         try {
             int _type = T46;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:42:5: ( '.-' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:42:7: '.-'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:42:5: ( '.+' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:42:7: '.+'
             {
-            match(".-"); 
+            match(".+"); 
 
 
             }
@@ -685,10 +685,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT47() throws RecognitionException {
         try {
             int _type = T47;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:43:5: ( '<' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:43:7: '<'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:43:5: ( '.-' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:43:7: '.-'
             {
-            match('<'); 
+            match(".-"); 
+
 
             }
 
@@ -703,11 +704,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT48() throws RecognitionException {
         try {
             int _type = T48;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:44:5: ( '<=' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:44:7: '<='
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:44:5: ( '<' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:44:7: '<'
             {
-            match("<="); 
-
+            match('<'); 
 
             }
 
@@ -722,10 +722,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT49() throws RecognitionException {
         try {
             int _type = T49;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:45:5: ( '>' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:45:7: '>'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:45:5: ( '<=' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:45:7: '<='
             {
-            match('>'); 
+            match("<="); 
+
 
             }
 
@@ -740,11 +741,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT50() throws RecognitionException {
         try {
             int _type = T50;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:46:5: ( '>=' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:46:7: '>='
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:46:5: ( '>' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:46:7: '>'
             {
-            match(">="); 
-
+            match('>'); 
 
             }
 
@@ -759,10 +759,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT51() throws RecognitionException {
         try {
             int _type = T51;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:47:5: ( '==' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:47:7: '=='
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:47:5: ( '>=' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:47:7: '>='
             {
-            match("=="); 
+            match(">="); 
 
 
             }
@@ -778,10 +778,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mT52() throws RecognitionException {
         try {
             int _type = T52;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:48:5: ( '<>' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:48:7: '<>'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:48:5: ( '==' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:48:7: '=='
             {
-            match("<>"); 
+            match("=="); 
 
 
             }
@@ -793,21 +793,40 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     }
     // $ANTLR end T52
 
+    // $ANTLR start T53
+    public final void mT53() throws RecognitionException {
+        try {
+            int _type = T53;
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:49:5: ( '<>' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:49:7: '<>'
+            {
+            match("<>"); 
+
+
+            }
+
+            this.type = _type;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end T53
+
     // $ANTLR start RULE_UNSIGNED_NUMBER
     public final void mRULE_UNSIGNED_NUMBER() throws RecognitionException {
         try {
             int _type = RULE_UNSIGNED_NUMBER;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:22: ( ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:22: ( ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             int alt9=2;
             alt9 = dfa9.predict(input);
             switch (alt9) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:25: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:25: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:25: ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:25: ( '0' .. '9' )+
                     int cnt1=0;
                     loop1:
                     do {
@@ -821,7 +840,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                         switch (alt1) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:26: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:26: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -838,7 +857,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                     } while (true);
 
                     match('.'); 
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:41: ( '0' .. '9' )*
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:41: ( '0' .. '9' )*
                     loop2:
                     do {
                         int alt2=2;
@@ -851,7 +870,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                         switch (alt2) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:42: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:42: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -863,7 +882,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                         }
                     } while (true);
 
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:53: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:53: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -872,7 +891,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                     }
                     switch (alt5) {
                         case 1 :
-                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:54: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:54: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -884,7 +903,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                                 recover(mse);    throw mse;
                             }
 
-                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:64: ( '+' | '-' )?
+                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:64: ( '+' | '-' )?
                             int alt3=2;
                             int LA3_0 = input.LA(1);
 
@@ -911,7 +930,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                             }
 
-                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:75: ( '0' .. '9' )+
+                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:75: ( '0' .. '9' )+
                             int cnt4=0;
                             loop4:
                             do {
@@ -925,7 +944,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                                 switch (alt4) {
                             	case 1 :
-                            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:76: '0' .. '9'
+                            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:76: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -951,9 +970,9 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:89: ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:89: ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
                     {
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:89: ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:89: ( '0' .. '9' )+
                     int cnt6=0;
                     loop6:
                     do {
@@ -967,7 +986,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:90: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:90: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -993,7 +1012,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                         recover(mse);    throw mse;
                     }
 
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:111: ( '+' | '-' )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:111: ( '+' | '-' )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -1020,7 +1039,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                     }
 
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:122: ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:122: ( '0' .. '9' )+
                     int cnt8=0;
                     loop8:
                     do {
@@ -1034,7 +1053,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3485:123: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3507:123: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1070,10 +1089,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_BOOL_VAL() throws RecognitionException {
         try {
             int _type = RULE_BOOL_VAL;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3487:15: ( ( 'true' | 'false' ) )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3487:17: ( 'true' | 'false' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3509:15: ( ( 'true' | 'false' ) )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3509:17: ( 'true' | 'false' )
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3487:17: ( 'true' | 'false' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3509:17: ( 'true' | 'false' )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1085,13 +1104,13 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("3487:17: ( 'true' | 'false' )", 10, 0, input);
+                    new NoViableAltException("3509:17: ( 'true' | 'false' )", 10, 0, input);
 
                 throw nvae;
             }
             switch (alt10) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3487:18: 'true'
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3509:18: 'true'
                     {
                     match("true"); 
 
@@ -1099,7 +1118,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3487:25: 'false'
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3509:25: 'false'
                     {
                     match("false"); 
 
@@ -1123,10 +1142,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_INT() throws RecognitionException {
         try {
             int _type = RULE_INT;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3489:10: ( ( '0' .. '9' )+ )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3489:12: ( '0' .. '9' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3511:10: ( ( '0' .. '9' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3511:12: ( '0' .. '9' )+
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3489:12: ( '0' .. '9' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3511:12: ( '0' .. '9' )+
             int cnt11=0;
             loop11:
             do {
@@ -1140,7 +1159,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3489:13: '0' .. '9'
+            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3511:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1170,11 +1189,11 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_STRING() throws RecognitionException {
         try {
             int _type = RULE_STRING;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3491:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3491:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3513:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3513:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
             {
             match('\"'); 
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3491:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3513:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
             loop12:
             do {
                 int alt12=3;
@@ -1190,7 +1209,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3491:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
+            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3513:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -1207,7 +1226,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3491:61: ~ ( ( '\\\\' | '\"' ) )
+            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3513:61: ~ ( ( '\\\\' | '\"' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -1243,8 +1262,8 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_IDENT() throws RecognitionException {
         try {
             int _type = RULE_IDENT;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3493:12: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )* )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3493:14: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3515:12: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )* )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3515:14: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1256,7 +1275,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3493:38: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3515:38: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
             loop13:
             do {
                 int alt13=2;
@@ -1304,10 +1323,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_ID() throws RecognitionException {
         try {
             int _type = RULE_ID;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3495:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3495:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3517:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3517:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3495:11: ( '^' )?
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3517:11: ( '^' )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -1316,7 +1335,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             }
             switch (alt14) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3495:11: '^'
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3517:11: '^'
                     {
                     match('^'); 
 
@@ -1335,7 +1354,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3495:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3517:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop15:
             do {
                 int alt15=2;
@@ -1383,12 +1402,12 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_ML_COMMENT() throws RecognitionException {
         try {
             int _type = RULE_ML_COMMENT;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3497:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3497:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3519:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3519:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3497:24: ( options {greedy=false; } : . )*
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3519:24: ( options {greedy=false; } : . )*
             loop16:
             do {
                 int alt16=2;
@@ -1413,7 +1432,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3497:52: .
+            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3519:52: .
             	    {
             	    matchAny(); 
 
@@ -1441,12 +1460,12 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_SL_COMMENT() throws RecognitionException {
         try {
             int _type = RULE_SL_COMMENT;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop17:
             do {
                 int alt17=2;
@@ -1459,7 +1478,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
 
                 switch (alt17) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -1480,7 +1499,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                 }
             } while (true);
 
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:40: ( ( '\\r' )? '\\n' )?
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:40: ( ( '\\r' )? '\\n' )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -1489,9 +1508,9 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             }
             switch (alt19) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:41: ( '\\r' )? '\\n'
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:41: ( '\\r' )? '\\n'
                     {
-                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:41: ( '\\r' )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:41: ( '\\r' )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -1500,7 +1519,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                     }
                     switch (alt18) {
                         case 1 :
-                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3499:41: '\\r'
+                            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3521:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1530,10 +1549,10 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_WS() throws RecognitionException {
         try {
             int _type = RULE_WS;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3501:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3501:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3523:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3523:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3501:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3523:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt20=0;
             loop20:
             do {
@@ -1586,8 +1605,8 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     public final void mRULE_ANY_OTHER() throws RecognitionException {
         try {
             int _type = RULE_ANY_OTHER;
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3503:16: ( . )
-            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3503:18: .
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3525:16: ( . )
+            // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:3525:18: .
             {
             matchAny(); 
 
@@ -1601,8 +1620,8 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     // $ANTLR end RULE_ANY_OTHER
 
     public void mTokens() throws RecognitionException {
-        // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:8: ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
-        int alt21=49;
+        // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:8: ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | T53 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        int alt21=50;
         alt21 = dfa21.predict(input);
         switch (alt21) {
             case 1 :
@@ -1879,70 +1898,77 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
                 }
                 break;
             case 40 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:166: RULE_UNSIGNED_NUMBER
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:166: T53
+                {
+                mT53(); 
+
+                }
+                break;
+            case 41 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:170: RULE_UNSIGNED_NUMBER
                 {
                 mRULE_UNSIGNED_NUMBER(); 
 
                 }
                 break;
-            case 41 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:187: RULE_BOOL_VAL
+            case 42 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:191: RULE_BOOL_VAL
                 {
                 mRULE_BOOL_VAL(); 
 
                 }
                 break;
-            case 42 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:201: RULE_INT
+            case 43 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:205: RULE_INT
                 {
                 mRULE_INT(); 
 
                 }
                 break;
-            case 43 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:210: RULE_STRING
+            case 44 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:214: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
-            case 44 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:222: RULE_IDENT
+            case 45 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:226: RULE_IDENT
                 {
                 mRULE_IDENT(); 
 
                 }
                 break;
-            case 45 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:233: RULE_ID
+            case 46 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:237: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
-            case 46 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:241: RULE_ML_COMMENT
+            case 47 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:245: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
-            case 47 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:257: RULE_SL_COMMENT
+            case 48 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:261: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
-            case 48 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:273: RULE_WS
+            case 49 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:277: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
-            case 49 :
-                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:281: RULE_ANY_OTHER
+            case 50 :
+                // ../org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression/src-gen/org/openmodelica/modelicaml/editor/xtext/state/parser/antlr/internal/InternalStatetransitionguardexpression.g:1:285: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
@@ -1965,12 +1991,12 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
     static final String DFA9_maxS =
         "\1\71\1\145\2\uffff";
     static final String DFA9_acceptS =
-        "\2\uffff\1\2\1\1";
+        "\2\uffff\1\1\1\2";
     static final String DFA9_specialS =
         "\4\uffff}>";
     static final String[] DFA9_transitionS = {
             "\12\1",
-            "\1\3\1\uffff\12\1\13\uffff\1\2\37\uffff\1\2",
+            "\1\2\1\uffff\12\1\13\uffff\1\3\37\uffff\1\3",
             "",
             ""
     };
@@ -2005,44 +2031,45 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             this.transition = DFA9_transition;
         }
         public String getDescription() {
-            return "3485:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )";
+            return "3507:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )";
         }
     }
     static final String DFA21_eotS =
-        "\10\uffff\5\54\1\uffff\3\54\1\66\1\75\2\54\1\uffff\1\54\1\104\1"+
-        "\uffff\1\110\2\uffff\1\115\1\117\1\120\1\54\1\43\1\54\11\uffff\1"+
-        "\54\1\uffff\5\54\1\uffff\1\133\2\54\10\uffff\1\137\1\54\1\uffff"+
-        "\2\54\17\uffff\1\120\1\54\2\uffff\1\144\4\54\1\uffff\1\151\1\152"+
-        "\1\54\1\uffff\1\154\1\155\2\54\1\uffff\4\54\2\uffff\1\54\2\uffff"+
-        "\1\54\1\166\1\167\1\54\1\171\2\54\1\166\2\uffff\1\174\1\uffff\1"+
-        "\175\1\54\2\uffff\1\177\1\uffff";
+        "\10\uffff\5\56\1\uffff\3\56\1\67\1\76\2\56\1\uffff\1\56\1\105\1"+
+        "\uffff\1\111\2\uffff\1\116\1\120\1\123\1\56\1\43\1\56\11\uffff\3"+
+        "\56\1\uffff\4\56\1\uffff\1\135\2\56\10\uffff\1\141\1\56\1\uffff"+
+        "\2\56\16\uffff\1\123\1\uffff\1\56\2\uffff\1\146\5\56\1\uffff\1\154"+
+        "\1\155\1\56\1\uffff\1\157\1\160\2\56\1\uffff\1\163\4\56\2\uffff"+
+        "\1\56\2\uffff\1\56\1\172\1\uffff\1\173\1\56\1\175\2\56\1\172\2\uffff"+
+        "\1\u0080\1\uffff\1\u0081\1\56\2\uffff\1\u0083\1\uffff";
     static final String DFA21_eofS =
-        "\u0080\uffff";
+        "\u0084\uffff";
     static final String DFA21_minS =
         "\1\0\7\uffff\5\60\1\uffff\3\60\1\101\1\52\2\60\1\uffff\1\60\1\75"+
-        "\1\uffff\1\52\2\uffff\2\75\1\56\1\60\1\0\1\60\11\uffff\1\60\1\uffff"+
-        "\5\60\1\uffff\1\56\2\60\10\uffff\1\56\1\60\1\uffff\2\60\17\uffff"+
-        "\1\56\1\60\2\uffff\1\56\4\60\1\uffff\2\56\1\60\1\uffff\2\56\2\60"+
-        "\1\uffff\4\60\2\uffff\1\60\2\uffff\1\60\2\56\1\60\1\56\2\60\1\56"+
-        "\2\uffff\1\56\1\uffff\1\56\1\60\2\uffff\1\56\1\uffff";
+        "\1\uffff\1\52\2\uffff\2\75\1\56\1\60\1\0\1\60\11\uffff\3\60\1\uffff"+
+        "\4\60\1\uffff\1\56\2\60\10\uffff\1\56\1\60\1\uffff\2\60\16\uffff"+
+        "\1\56\1\uffff\1\60\2\uffff\1\56\5\60\1\uffff\2\56\1\60\1\uffff\2"+
+        "\56\2\60\1\uffff\1\56\4\60\2\uffff\1\60\2\uffff\1\60\1\56\1\uffff"+
+        "\1\56\1\60\1\56\2\60\1\56\2\uffff\1\56\1\uffff\1\56\1\60\2\uffff"+
+        "\1\56\1\uffff";
     static final String DFA21_maxS =
         "\1\ufffe\7\uffff\5\172\1\uffff\4\172\1\136\2\172\1\uffff\1\172\1"+
         "\75\1\uffff\1\57\2\uffff\1\76\1\75\1\145\1\172\1\ufffe\1\172\11"+
-        "\uffff\1\172\1\uffff\5\172\1\uffff\3\172\10\uffff\2\172\1\uffff"+
-        "\2\172\17\uffff\1\145\1\172\2\uffff\5\172\1\uffff\3\172\1\uffff"+
-        "\4\172\1\uffff\4\172\2\uffff\1\172\2\uffff\10\172\2\uffff\1\172"+
-        "\1\uffff\2\172\2\uffff\1\172\1\uffff";
+        "\uffff\3\172\1\uffff\4\172\1\uffff\3\172\10\uffff\2\172\1\uffff"+
+        "\2\172\16\uffff\1\145\1\uffff\1\172\2\uffff\6\172\1\uffff\3\172"+
+        "\1\uffff\4\172\1\uffff\5\172\2\uffff\1\172\2\uffff\2\172\1\uffff"+
+        "\6\172\2\uffff\1\172\1\uffff\2\172\2\uffff\1\172\1\uffff";
     static final String DFA21_acceptS =
-        "\1\uffff\1\1\1\2\1\3\1\4\1\5\1\6\1\7\5\uffff\1\15\7\uffff\1\25\2"+
-        "\uffff\1\32\1\uffff\1\36\1\37\6\uffff\1\60\1\61\1\1\1\2\1\3\1\4"+
-        "\1\5\1\6\1\7\1\uffff\1\54\5\uffff\1\15\3\uffff\1\21\1\55\1\22\1"+
-        "\40\1\41\1\35\1\34\1\26\2\uffff\1\25\2\uffff\1\46\1\30\1\32\1\57"+
-        "\1\56\1\33\1\36\1\37\1\47\1\43\1\42\1\45\1\44\1\52\1\50\2\uffff"+
-        "\1\53\1\60\5\uffff\1\16\3\uffff\1\31\4\uffff\1\10\4\uffff\1\17\1"+
-        "\20\1\uffff\1\24\1\27\10\uffff\1\51\1\11\1\uffff\1\13\2\uffff\1"+
-        "\12\1\14\1\uffff\1\23";
+        "\1\uffff\1\1\1\2\1\3\1\4\1\5\1\6\1\7\5\uffff\1\16\7\uffff\1\26\2"+
+        "\uffff\1\33\1\uffff\1\37\1\40\6\uffff\1\61\1\62\1\1\1\2\1\3\1\4"+
+        "\1\5\1\6\1\7\3\uffff\1\55\4\uffff\1\16\3\uffff\1\22\1\56\1\23\1"+
+        "\36\1\35\1\41\1\42\1\27\2\uffff\1\26\2\uffff\1\47\1\31\1\33\1\57"+
+        "\1\60\1\34\1\37\1\40\1\50\1\44\1\43\1\46\1\45\1\51\1\uffff\1\53"+
+        "\1\uffff\1\54\1\61\6\uffff\1\17\3\uffff\1\32\4\uffff\1\10\5\uffff"+
+        "\1\20\1\21\1\uffff\1\25\1\30\2\uffff\1\11\6\uffff\1\52\1\12\1\uffff"+
+        "\1\14\2\uffff\1\13\1\15\1\uffff\1\24";
     static final String DFA21_specialS =
-        "\u0080\uffff}>";
+        "\u0084\uffff}>";
     static final String[] DFA21_transitionS = {
             "\11\43\2\42\2\43\1\42\22\43\1\42\1\43\1\40\5\43\1\1\1\2\1\30"+
             "\1\32\1\25\1\33\1\22\1\31\12\36\1\15\1\4\1\34\1\27\1\35\2\43"+
@@ -2056,32 +2083,33 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             "",
             "",
             "",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\15\55\1\53\14\55",
-            "\12\55\7\uffff\5\55\1\56\24\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\10\55\1\57\21\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\25\55\1\60\4\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\7\55\1\61\22\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\13\55\1\54\1\55\1"+
+            "\53\14\55",
+            "\12\55\7\uffff\5\55\1\57\24\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\10\55\1\60\21\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\25\55\1\61\4\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\7\55\1\62\22\55\4\uffff\1\55\1\uffff\32\55",
             "",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\63\10\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\15\55\1\64\14\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\16\55\1\65\13\55",
-            "\32\67\4\uffff\1\67\1\uffff\32\67",
-            "\1\74\1\71\1\uffff\1\72\1\uffff\1\73\56\uffff\1\70",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\15\55\1\76\14\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55\1\77\25\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\64\10\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\15\55\1\65\14\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\16\55\1\66\13\55",
+            "\32\70\4\uffff\1\70\1\uffff\32\70",
+            "\1\73\1\74\1\uffff\1\75\1\uffff\1\72\56\uffff\1\71",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\15\55\1\77\14\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55\1\100\25\55",
             "",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\1\102\15\55\1\101"+
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\1\103\15\55\1\102"+
             "\13\55",
-            "\1\103",
+            "\1\104",
             "",
-            "\1\107\4\uffff\1\106",
+            "\1\107\4\uffff\1\110",
             "",
             "",
-            "\1\114\1\113",
-            "\1\116",
+            "\1\115\1\114",
+            "\1\117",
             "\1\121\1\uffff\12\122\13\uffff\1\121\37\uffff\1\121",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\123\10\55",
-            "\uffff\124",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\124\10\55",
+            "\uffff\125",
             "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
             "",
             "",
@@ -2092,32 +2120,32 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             "",
             "",
             "",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\3\55\1\126\26\55",
-            "",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\3\55\1\127\26\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\22\55\1\130\7\55",
             "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\23\55\1\127\6\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\6\55\1\130\23\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\4\55\1\131\25\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\1\132\31\55\4\uffff\1\55\1\uffff\32\55",
             "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\3\55\1\134\26\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\23\55\1\135\6\55",
+            "\12\55\7\uffff\23\55\1\131\6\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\6\55\1\132\23\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\4\55\1\133\25\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\1\134\31\55\4\uffff\1\55\1\uffff\32\55",
             "",
-            "",
-            "",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\3\55\1\136\26\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\23\55\1\137\6\55",
             "",
             "",
             "",
             "",
             "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\10\55"+
-            "\1\136\21\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\140\10\55",
             "",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\141\10\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\13\55\1\142\16\55",
             "",
+            "",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\10\55"+
+            "\1\140\21\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\142\10\55",
+            "",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\21\55\1\143\10\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\13\55\1\144\16\55",
             "",
             "",
             "",
@@ -2133,50 +2161,54 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             "",
             "",
             "\1\121\1\uffff\12\122\13\uffff\1\121\37\uffff\1\121",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\24\55\1\143\5\55",
+            "",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\24\55\1\145\5\55",
             "",
             "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\4\55\1\145\25\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\15\55\1\146\14\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\15\55\1\147\14\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\15\55\1\150\14\55\4\uffff\1\55\1\uffff\32\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55\1\147\25\55",
+            "\12\55\7\uffff\4\55\1\150\25\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\15\55\1\151\14\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\15\55\1\152\14\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\15\55\1\153\14\55\4\uffff\1\55\1\uffff\32\55",
             "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\23\55\1\153\6\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\23\55\1\156\6\55",
             "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\22\55\1\156\7\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55\1\157\25\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\22\55\1\161\7\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55\1\162\25\55",
             "",
-            "\12\55\7\uffff\21\55\1\160\10\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\1\161\31\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\23\55\1\162\6\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\6\55\1\163\23\55\4\uffff\1\55\1\uffff\32\55",
-            "",
-            "",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\10\55\1\164\21\55",
-            "",
-            "",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55\1\165\25\55",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\13\55\1\170\16\55\4\uffff\1\55\1\uffff\32\55",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\4\55\1\172\25\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\1\173\31\55",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\21\55\1\164\10\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\1\165\31\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\23\55\1\166\6\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\6\55\1\167\23\55\4\uffff\1\55\1\uffff\32\55",
             "",
             "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
-            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\13\55\1\176\16\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\10\55\1\170\21\55",
             "",
             "",
-            "\1\54\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\4\55\1\171\25\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\13\55\1\174\16\55\4\uffff\1\55\1\uffff\32\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\4\55\1\176\25\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\1\177\31\55",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "",
+            "",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
+            "\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\13\55\1\u0082\16\55",
+            "",
+            "",
+            "\1\56\1\uffff\12\55\7\uffff\32\55\4\uffff\1\55\1\uffff\32\55",
             ""
     };
 
@@ -2210,7 +2242,7 @@ public class InternalStatetransitionguardexpressionLexer extends Lexer {
             this.transition = DFA21_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+            return "1:1: Tokens : ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | T53 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
         }
     }
  
