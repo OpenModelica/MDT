@@ -437,6 +437,9 @@ public class ModelicaMLContentAssist {
 		predefinedFunctionsList.add("change");
 		predefinedFunctionsList.add("reinit");
 		
+		predefinedFunctionsList.add("terminate");
+		predefinedFunctionsList.add("assert");
+		
 	}
 	
 
