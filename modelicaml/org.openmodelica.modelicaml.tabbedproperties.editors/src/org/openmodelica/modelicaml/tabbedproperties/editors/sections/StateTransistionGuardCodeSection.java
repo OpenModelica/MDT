@@ -184,7 +184,7 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 				textToEdit = "";
 				//String exisingGuardString = OpaqueExpressionUtil.getBodyForLanguage((OpaqueExpression)((Transition)selectedUmlElement).getGuard().getSpecification(), LANGUAGE);
 				
-				if ( ((Transition)selectedUmlElement).getGuard() != null) {
+				if ( ((Transition)selectedUmlElement).getGuard() != null && ((Transition)selectedUmlElement).getGuard().getSpecification() instanceof OpaqueExpression ) {
 					textToEdit = (String) "" + OpaqueExpressionUtil.getBodyForLanguage((OpaqueExpression)((Transition)selectedUmlElement).getGuard().getSpecification(), LANGUAGE);
 				}
 				
