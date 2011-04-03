@@ -47,7 +47,7 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.core._0_ main_uml2m
 <%if (getStereotypeValue(getProperty("s_stateDependency"), getProperty("s_p_isInState")) != null){%>
 	<%getStereotypeValue(getProperty("s_stateDependency"), getProperty("s_p_isInState")).isInState(metamodel::redefinitionContext.qualifiedName, getStereotypeValue(getProperty("s_stateDependency"), getProperty("s_p_logicalOperator")).name).indentSpace()%> 
 <%}%>
-<%if (guard.specification != null){%>
+<%if (guard.specification != null && guard.specification.filter("OpaqueExpression").body.trim != ""){%>
 	<%-- <%guard.specification.filter("LiteralString").value.expandGuardMacros(args(0)+".stime" )%> --%>
 	<%guard.specification.filter("OpaqueExpression").body.expandGuardMacros(args(0)+".stime" )%>
 <%}else{%>
