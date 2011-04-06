@@ -54,8 +54,8 @@ import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Constraint;
+import org.eclipse.uml2.uml.Namespace;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.profile.Activator;
@@ -71,8 +71,8 @@ public class CreateModelicaAssertHandler extends AbstractHandler {
 	/** The stereotype path. */
 private String stereotypePath = Platform.getResourceString(Activator.getDefault().getBundle(), "%p_path_ModelicaBehaviorConstructs");
 	
-	/** The stereotyep name. */
-	private String stereotyepName = Platform.getResourceString(Activator.getDefault().getBundle(), "%s_assert");
+	/** The stereotype name. */
+	private String stereotypeName = Platform.getResourceString(Activator.getDefault().getBundle(), "%s_assert");
 //### END: adapt it for a new command handler
 	
 	/** The selected element. */
@@ -106,7 +106,7 @@ private EObject selectedElement = null;
 	 */
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 		
-		CompoundCommand cc = new CompoundCommand(stereotyepName);
+		CompoundCommand cc = new CompoundCommand(stereotypeName);
 		
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
@@ -116,31 +116,19 @@ private EObject selectedElement = null;
 				Stereotype stereotype = null;
 				
 //### START: adapt it for a new command handler
-				if (selectedElement instanceof Class) {
+				if (selectedElement instanceof Namespace) {
 					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
-					Ct = (Constraint) ((org.eclipse.uml2.uml.Class)selectedElement).createOwnedRule(stereotyepName, UMLPackage.Literals.CONSTRAINT);
-					stereotype = Ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
+					Ct = (Constraint) ((org.eclipse.uml2.uml.Namespace)selectedElement).createOwnedRule(stereotypeName, UMLPackage.Literals.CONSTRAINT);
+					stereotype = Ct.getApplicableStereotype(stereotypePath+"::"+stereotypeName);
 				}
-//				else if (selectedElement instanceof Package) {
-//					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
-//					Ct = (Constraint) ((org.eclipse.uml2.uml.Class)selectedElement).createOwnedRule(stereotyepName, UMLPackage.Literals.CONSTRAINT);
-//					stereotype = Ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
-//				}
-//				else if (selectedElement instanceof Model) {
-//					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
-//					Ct = (Constraint) ((org.eclipse.uml2.uml.Class)selectedElement).createOwnedRule(stereotyepName, UMLPackage.Literals.CONSTRAINT);
-//					stereotype = Ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
-//				}
-									
-				
 				else {
-					System.err.println("Could not create a Modelica " + stereotyepName + " in " + selectedElement.getClass().getName());
+					System.err.println("Could not create a Modelica " + stereotypeName + " in " + selectedElement.getClass().getName());
 				}
 				
 				// apply ModelicaML stereotype
 				if (stereotype == null) {
 					Shell shell = new Shell();
-					MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotyepName +" to " + Ct.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
+					MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + Ct.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 				}
 				else {
 					Ct.applyStereotype(stereotype);
