@@ -34,8 +34,6 @@
 
 package org.openmodelica.modelicaml.tabbedproperties.editors.sections;
 
-import java.util.Iterator;
-
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
@@ -46,7 +44,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
-import org.eclipse.papyrus.umlutils.OpaqueBehaviorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -56,18 +53,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eclipse.uml2.uml.Behavior;
+import org.eclipse.uml2.uml.ActivityEdge;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Constraint;
+import org.eclipse.uml2.uml.ControlFlow;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.FunctionBehavior;
+import org.eclipse.uml2.uml.LiteralString;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.OpaqueAction;
-import org.eclipse.uml2.uml.OpaqueBehavior;
-import org.eclipse.uml2.uml.State;
+import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.eclipse.uml2.uml.ValueSpecification;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
-import org.openmodelica.modelicaml.editor.xtext.algorithm.ui.internal.AlgorithmsectionActivator;
+import org.openmodelica.modelicaml.editor.xtext.activity.ui.internal.ActivitycontrolflowguardexpressionActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
 
 import com.google.inject.Injector;
@@ -75,11 +73,15 @@ import com.google.inject.Injector;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class StateExitCodeSection.
+ * The Class ActivityEdgeGuardPropertySectionCodeSection.
  */
-public class StateExitCodeSection extends AbstractPropertySection  {
+public class AssertCodeSection extends AbstractPropertySection  {
+
 	/** The LANGUAGE. */
 	protected static String LANGUAGE = "Modelica";
+	
+	/** The selected uml element. */
+	private Element selectedUmlElement;
 
 	/** The parent. */
 	private Composite parent;
@@ -101,21 +103,18 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 	
 	/** The text to edit. */
 	private String textToEdit = "";
-
+	
+	/** The context element. */
+	private Element contextElement;
+	
 	/** The owning class. */
 	private Element owningClass;
 	
 	/** The is new selection. */
-	private boolean isNewSelection = false;
+	private boolean isNewSelection;
 	
-	/** The selected uml element. */
-	private Element selectedUmlElement;
-
-	private State selectedState = null;
-	
-	private OpaqueBehavior stateBehavior = null;
-	
-	private final String stateActionKind = "exit"; 
+	private String stereotypeQName = "ModelicaML::ModelicaBehaviorConstructs::Assert";
+	private String stereotypePropertyToEditName = "condition";
 	
 	
 	/* (non-Javadoc)
@@ -132,10 +131,11 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 		this.editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		// ################################ Adjust start
-		injector = AlgorithmsectionActivator.getInstance().getInjector("org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection");
-		fileExtension = ".modelicamlalgorithmsection";
+		//TODO: implement a dedicated editor for assert condition.
+		injector = ActivitycontrolflowguardexpressionActivator.getInstance().getInjector("org.openmodelica.modelicaml.editor.xtext.activity.Activitycontrolflowguardexpression");
+		fileExtension = ".activitycontrolflowguardexpression";
 		
-		editor = new PropertiesSectionXtextEditorHelper(selectedState, injector, null, textToEdit, fileExtension); // TODO: delete editpart from the constuctor
+		editor = new PropertiesSectionXtextEditorHelper(selectedUmlElement, injector, null, textToEdit, fileExtension);
 		// ################################ Adjust end
 		
 		editor.showEditor(editorComposite, SWT.BORDER);
@@ -148,12 +148,13 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 //			public void focusGained(FocusEvent e) {
 //			}
 //		}) ;
-
+		
 		editor.getEditorWidget().addModifyListener(new ModifyListener() {
 			// TODO: observe if it has impact on performance ...
 			@Override
 			public void modifyText(ModifyEvent e) {
-				storeText(stateBehavior, editor.getText());
+				storeText(contextElement, editor.getText());
+				generateUMLModelMarker();
 			}
 		});
 		
@@ -168,7 +169,10 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 	 */
 	private Boolean isValidElement(){
 		// ################################ Adjust start
-		if ( selectedState instanceof State ) { return true; }
+		//Note UML FunctionBehavior is a sub-type of OpaqueBehavior 
+		if ( this.selectedUmlElement instanceof Constraint  && ((Constraint) this.selectedUmlElement).getAppliedStereotype(stereotypeQName) != null) {
+			return true;
+		}
 		// ################################ Adjust end
 		return false;
 	}
@@ -180,39 +184,45 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 	public void refresh() {
 		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
 			
-			stateBehavior = null; // reset the stateBehavior. important when another state is selected.
-			
-			// build the content assistance proposals list.
-			owningClass = Utils.getContextClass(selectedUmlElement);
-			if (owningClass instanceof Class) {
-				ModelicaMLContentAssist.createComponentReferencelist((Class)owningClass);
-			}
-			
-			//############## Adjust here: start
-			Behavior definedBehavior = ((State)selectedState).getExit();
-			if (definedBehavior instanceof OpaqueBehavior && !(definedBehavior instanceof FunctionBehavior)) {
-				stateBehavior = (OpaqueBehavior)definedBehavior;
-			}
-			else if (definedBehavior != null ) {
-				System.err.println(definedBehavior.eClass().getName() + " cannot be used as input to ModelicaML code editor.");
-			}
-			
-			//Marker support
-			ModelicaMLContentAssist.setSelectedSourceElement(stateBehavior);
-			
 			// ################################ Adjust start
-			if (stateBehavior != null && !(stateBehavior instanceof FunctionBehavior) ) {
-				textToEdit = (String) OpaqueBehaviorUtil.getBody(stateBehavior, LANGUAGE);
-			}
-			else {
-				textToEdit = "";
+			if (selectedUmlElement instanceof Constraint ) {
+				contextElement = ((Constraint)selectedUmlElement);
+
+				Stereotype stereotype = ((Constraint)selectedUmlElement).getAppliedStereotype(stereotypeQName);
+				String condition = null;
+				
+				if (stereotype != null) {
+					Object o = ((Constraint)selectedUmlElement).getValue(stereotype, stereotypePropertyToEditName);
+					if ( o != null ) {
+						condition = o.toString();
+					}
+				}
+				
+				if ( condition != null ) {
+					textToEdit = condition;
+				}
+				else {
+					textToEdit = "";					
+				}
+				
+				// build the content assistance proposals list.
+				ModelicaMLContentAssist.setSelectedSourceElement(selectedUmlElement);
+				//owningClass = ((ActivityEdge)selectedUmlElement).getActivity().getOwner();
+				owningClass = Utils.getContextClass(selectedUmlElement);
+				
+				if (owningClass instanceof Class) {
+					ModelicaMLContentAssist.createComponentReferencelist((Class)owningClass);
+				}
 			}
 			// ################################ Adjust end
 			
 			editor.setTextToEdit(textToEdit);
-			editor.setContextElement(stateBehavior);
+			editor.setContextElement(contextElement);
 			
-			generateUMLModelMarker();
+			// marker support
+			if (selectedUmlElement instanceof NamedElement) {
+				generateUMLModelMarker(); 	// Generate UML model marker
+			}
 		}
 	}
 	
@@ -226,27 +236,23 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 	 *            the body text
 	 */
 	private void storeText(final EObject element, final String bodyText) {
-		CompoundCommand cc = new CompoundCommand("Update " + stateActionKind + " action code of " + selectedState.getQualifiedName());
+		CompoundCommand cc = new CompoundCommand();
 		
 		// Record command
 		// ################################## Adjust start
-		if (stateBehavior == null) {
-			stateBehavior = (OpaqueBehavior) createStateCodeBehavior(selectedState, stateActionKind);
-		}
-		if (bodyText.trim().equals("")) {
-			deleteStateCodeBehavior(selectedState, stateActionKind);
-		}
-		if (stateBehavior != null && bodyText != null ) {
-//			if (element instanceof OpaqueBehavior) {
-				Command command = new RecordingCommand(editingDomain) {
-					@Override
-					protected void doExecute() {
-//						OpaqueBehaviorUtil.setBody((OpaqueBehavior) element, bodyText, LANGUAGE);
-						OpaqueBehaviorUtil.setBody(stateBehavior, bodyText, LANGUAGE);
+		if (element instanceof Constraint) {
+			Command command = new RecordingCommand(editingDomain) {
+				@Override
+				protected void doExecute() {
+					if (element != null && bodyText != null) {
+						Stereotype stereotype = ((Constraint)selectedUmlElement).getAppliedStereotype(stereotypeQName);
+						if (stereotype != null) {
+							((Constraint)selectedUmlElement).setValue(stereotype, stereotypePropertyToEditName, bodyText);						
+						}
 					}
-				};
-				cc.append(command);
-//			}
+				}
+			};
+			cc.append(command);
 		}
 		// ################################## Adjust end
 		
@@ -257,9 +263,11 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 									// i.e., if the new text is put into the EObject 
 									// then there was no new selection until the setInput() method determines a new selection.
 		
-		
-		generateUMLModelMarker(); 	// Generate UML model marker
+		if (element instanceof NamedElement) {
+			generateUMLModelMarker(); 	// Generate UML model marker
+		}
 	}
+	
 	
 
 	
@@ -269,134 +277,25 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 	 * Generate uml model marker.
 	 */
 	private void generateUMLModelMarker(){
-		// create a marker for the uml model element
-		String message = "The " + ((NamedElement)selectedUmlElement).eClass().getName() 
-							+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Modelica code.";
-		
-		if (editor.isDocumentHasErrors()) {
-			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement);
-		}
-		else {
-			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement);
-		}
-	}
-	
-	// Utl #########################################################
-	/**
-	 * Gets the body index.
-	 * 
-	 * @param behavior
-	 *            the behavior
-	 * @param language
-	 *            the language
-	 * @return the body index
-	 */
-	public static int getBodyIndex(OpaqueAction behavior, String language) {
-		int index = 0;
-		boolean isFound = false;
+		if (this.selectedUmlElement != null && this.selectedUmlElement instanceof NamedElement) {
+			// create a marker for the uml model element
+			String message = "The " + ((NamedElement)selectedUmlElement).eClass().getName() 
+								+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Modelica code.";
 
-		// test if the language exists
-		Iterator<String> it = behavior.getLanguages().iterator();
-		while (it.hasNext() && !isFound) {
-			String lang = it.next();
-			if (lang.equalsIgnoreCase(language)) {
-				isFound = true;
-			} else {
-				index++;
+			if (editor.isDocumentHasErrors()) {
+				ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement);
+			}
+			else {
+				ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement);
 			}
 		}
-		// returns -1 if not found
-		if (!isFound) {
-			index = -1;
-		}
-		return index;
 	}
-	
-	/**
-	 * Creates the state code behavior.
-	 * 
-	 * @param state
-	 *            the state
-	 * @param typeOfStateCode
-	 *            the type of state code
-	 * @return the behavior
-	 */
-	private Behavior createStateCodeBehavior(final State state, final String typeOfStateCode){
-		CompoundCommand cc = new CompoundCommand();
-
-		// Record command
-		// ################################## Adjust start
-		Command command = new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				if (typeOfStateCode.equals("entry")) {
-					state.createEntry("Entry code" ,UMLPackage.Literals.OPAQUE_BEHAVIOR);
-				}
-				else if (typeOfStateCode.equals("do")) {
-					state.createDoActivity("Do code" ,UMLPackage.Literals.OPAQUE_BEHAVIOR);
-				}
-				else if (typeOfStateCode.equals("exit")) {
-					state.createExit("Exitcode" ,UMLPackage.Literals.OPAQUE_BEHAVIOR);	
-				}
-			}
-		};
-		cc.append(command);
-		// ################################## Adjust end
-		
-		// Execute command
-		editingDomain.getCommandStack().execute(cc);
-		
-		if (typeOfStateCode.equals("entry")) {
-			return state.getEntry();
-		}
-		else if (typeOfStateCode.equals("do")) {
-			return state.getDoActivity();
-		}
-		else if (typeOfStateCode.equals("exit")) {
-			return state.getExit();	
-		}
-		
-		return null;
-	}
-	
-	
-	private void deleteStateCodeBehavior(final State state, final String typeOfStateCode){
-		CompoundCommand cc = new CompoundCommand();
-
-		// Record command
-		// ################################## Adjust start
-		Command command = new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				if (typeOfStateCode.equals("entry")) {
-					Behavior b = state.getEntry();
-					if (b != null) {  b.destroy(); stateBehavior = null; }
-				}
-				else if (typeOfStateCode.equals("do")) {
-					Behavior b = state.getDoActivity();
-					if (b != null) {  b.destroy(); stateBehavior = null; }
-				}
-				else if (typeOfStateCode.equals("exit")) {
-					Behavior b = state.getExit();
-					if (b != null) {  b.destroy(); stateBehavior = null; }
-				}
-			}
-		};
-		cc.append(command);
-		// ################################## Adjust end
-		
-		// Execute command
-		editingDomain.getCommandStack().execute(cc);
-	}
-	
-	
-	
 	
 	// Same for all sections #########################################################
 	/* (non-Javadoc)
- * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#setInput(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
- */
-@Override
+	 * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#setInput(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		
 		// get the selectedUmlElement
@@ -405,25 +304,18 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 		if (input instanceof ModelElementItem) {
 			EObject eObject = ((ModelElementItem)input).getEObject();
 			if ( eObject instanceof Element ) {
-				selectedUmlElement = (Element)eObject;
-				if (selectedUmlElement instanceof State) {
-					isNewSelection = true;
-					selectedState = (State)selectedUmlElement;
-				}
+				this.selectedUmlElement = (Element)eObject;
+				isNewSelection = true;
 			}
 		}
 		else if (input instanceof IUMLEditPart) {
-			selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
+			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
 			isNewSelection = true;
-			if (selectedUmlElement instanceof State) {
-				isNewSelection = true;
-				selectedState = (State)selectedUmlElement;
-			}
 		}
 	}
 
-//	@Override
-//	was used in combination with focusLost listener
+//	@Override 
+// 	was used in combination with focusLost listener
 //	public void aboutToBeHidden() { 
 //		// This is necessary in order to enforce saving when user changes Eclipse views 
 //		// (e.g. from Properties view to Console View, etc.). 

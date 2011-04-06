@@ -233,19 +233,23 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					
-					// Delete previous guard
-					((Transition)element).setGuard(null);
-					if(((Transition)element).getGuard() != null){
-						((Transition)element).getGuard().destroy();
+					if ( !bodyText.trim().equals("") ) {
+						Constraint c = ((Transition)element).createGuard("ModelicaGuardCode");
+						OpaqueExpressionUtil.setBodyForLanguage((OpaqueExpression)c.createSpecification("ModelicaGuardCode", null, UMLPackage.Literals.OPAQUE_EXPRESSION), LANGUAGE, bodyText);
 					}
-					
-					Constraint c = ((Transition)element).createGuard("ModelicaGuardCode");
-					OpaqueExpressionUtil.setBodyForLanguage((OpaqueExpression)c.createSpecification("ModelicaGuardCode", null, UMLPackage.Literals.OPAQUE_EXPRESSION), LANGUAGE, bodyText);
-					
-//					OpaqueExpression guardSpecification = (OpaqueExpression) c.getSpecification();
-//					guardSpecification.getLanguages().add(LANGUAGE);
-//					guardSpecification.getBodies().add("" + bodyText);
+					else {
+						// delete the language expression 
+						if ( ((Transition)element).getGuard() != null && ((Transition)element).getGuard().getSpecification() instanceof OpaqueExpression) {
+							OpaqueExpression opaqueExpression = (OpaqueExpression) ((Transition)element).getGuard().getSpecification();
+							int index = opaqueExpression.getLanguages().indexOf(LANGUAGE);
+							if (index > -1 ) {
+								opaqueExpression.getLanguages().remove(index);
+								opaqueExpression.getBodies().remove(index);
+								
+								((Transition)element).setGuard(null); // reset the guard 
+							}
+						}	
+					}
 				}
 			};
 			cc.append(command);

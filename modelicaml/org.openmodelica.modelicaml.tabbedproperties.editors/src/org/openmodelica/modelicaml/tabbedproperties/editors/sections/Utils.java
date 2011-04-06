@@ -42,6 +42,7 @@ import org.eclipse.uml2.uml.ActivityEdge;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.OpaqueAction;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.Property;
@@ -65,7 +66,7 @@ public class Utils {
 	 * @return the context class
 	 */
 	public static Class getContextClass(Element element){
-		
+
 		if (element instanceof Class && !(element instanceof Behavior)) {
 			return (Class)element;
 		}
@@ -100,6 +101,9 @@ public class Utils {
 			return getContextClass(element.getOwner());
 		}
 
+		if (element instanceof NamedElement) {
+			return getContextClass(element.getOwner());
+		}
 		
 		return null;
 	}

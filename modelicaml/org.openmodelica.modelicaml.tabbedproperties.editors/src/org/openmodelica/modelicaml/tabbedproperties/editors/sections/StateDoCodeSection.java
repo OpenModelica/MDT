@@ -78,12 +78,8 @@ import com.google.inject.Injector;
  * The Class StateDoCodeSection.
  */
 public class StateDoCodeSection extends AbstractPropertySection  {
-
 	/** The LANGUAGE. */
 	protected static String LANGUAGE = "Modelica";
-	
-	/** The selected uml element. */
-	private Element selectedUmlElement;
 
 	/** The parent. */
 	private Composite parent;
@@ -105,15 +101,21 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 	
 	/** The text to edit. */
 	private String textToEdit = "";
-	
-	/** The context element. */
-	private Element contextElement;
-	
+
 	/** The owning class. */
 	private Element owningClass;
 	
 	/** The is new selection. */
-	private boolean isNewSelection;
+	private boolean isNewSelection = false;
+	
+	/** The selected uml element. */
+	private Element selectedUmlElement;
+
+	private State selectedState = null;
+	
+	private OpaqueBehavior stateBehavior = null;
+	
+	private final String stateActionKind = "do"; 
 	
 	
 	/* (non-Javadoc)
@@ -133,7 +135,7 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 		injector = AlgorithmsectionActivator.getInstance().getInjector("org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection");
 		fileExtension = ".modelicamlalgorithmsection";
 		
-		editor = new PropertiesSectionXtextEditorHelper(selectedUmlElement, injector, null, textToEdit, fileExtension);
+		editor = new PropertiesSectionXtextEditorHelper(selectedState, injector, null, textToEdit, fileExtension); // TODO: delete editpart from the constuctor
 		// ################################ Adjust end
 		
 		editor.showEditor(editorComposite, SWT.BORDER);
@@ -151,7 +153,7 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 			// TODO: observe if it has impact on performance ...
 			@Override
 			public void modifyText(ModifyEvent e) {
-				storeText(contextElement, editor.getText());
+				storeText(stateBehavior, editor.getText());
 			}
 		});
 		
@@ -166,10 +168,7 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 	 */
 	private Boolean isValidElement(){
 		// ################################ Adjust start
-		//Note UML FunctionBehavior is a sub-type of OpaqueBehavior 
-		if ( this.selectedUmlElement instanceof State ) {
-			return true;
-		}
+		if ( selectedState instanceof State ) { return true; }
 		// ################################ Adjust end
 		return false;
 	}
@@ -181,41 +180,37 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 	public void refresh() {
 		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
 			
+			stateBehavior = null; // reset the stateBehavior. important when another state is selected.
+			
 			// build the content assistance proposals list.
-			//owningClass = ((State)selectedUmlElement).getOwner().getOwner().getOwner();
 			owningClass = Utils.getContextClass(selectedUmlElement);
 			if (owningClass instanceof Class) {
 				ModelicaMLContentAssist.createComponentReferencelist((Class)owningClass);
 			}
 			
-			// redirect the selected element to the respective OpaqueBehavior 
 			//############## Adjust here: start
-			Behavior definedBehavior = ((State)this.selectedUmlElement).getDoActivity();
-			
-			if ( definedBehavior == null) {
-				Behavior behavior = createStateCodeBehavior((State)this.selectedUmlElement, "do");
-				this.selectedUmlElement = behavior;
+			Behavior definedBehavior = ((State)selectedState).getDoActivity();
+			if (definedBehavior instanceof OpaqueBehavior && !(definedBehavior instanceof FunctionBehavior)) {
+				stateBehavior = (OpaqueBehavior)definedBehavior;
 			}
-			//############## Adjust here: end
-			else if (definedBehavior instanceof OpaqueBehavior) {
-				this.selectedUmlElement = definedBehavior;
-			}
-			else {
+			else if (definedBehavior != null ) {
 				System.err.println(definedBehavior.eClass().getName() + " cannot be used as input to ModelicaML code editor.");
 			}
 			
-			//Marker support: It is important to set it after the redirection of the selected element.
-			ModelicaMLContentAssist.setSelectedSourceElement(selectedUmlElement);
+			//Marker support
+			ModelicaMLContentAssist.setSelectedSourceElement(stateBehavior);
 			
 			// ################################ Adjust start
-			if (selectedUmlElement instanceof OpaqueBehavior && !(selectedUmlElement instanceof FunctionBehavior) ) {
-				contextElement = ((OpaqueBehavior)selectedUmlElement);
-				textToEdit = (String) OpaqueBehaviorUtil.getBody((OpaqueBehavior) selectedUmlElement,LANGUAGE);
+			if (stateBehavior != null && !(stateBehavior instanceof FunctionBehavior) ) {
+				textToEdit = (String) OpaqueBehaviorUtil.getBody(stateBehavior, LANGUAGE);
+			}
+			else {
+				textToEdit = "";
 			}
 			// ################################ Adjust end
 			
 			editor.setTextToEdit(textToEdit);
-			editor.setContextElement(contextElement);
+			editor.setContextElement(stateBehavior);
 			
 			generateUMLModelMarker();
 		}
@@ -231,20 +226,27 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 	 *            the body text
 	 */
 	private void storeText(final EObject element, final String bodyText) {
-		CompoundCommand cc = new CompoundCommand();
+		CompoundCommand cc = new CompoundCommand("Update " + stateActionKind + " action code of " + selectedState.getQualifiedName());
 		
 		// Record command
 		// ################################## Adjust start
-		if (element != null && bodyText != null) {
-			if (element instanceof OpaqueBehavior) {
+		if (stateBehavior == null) {
+			stateBehavior = (OpaqueBehavior) createStateCodeBehavior(selectedState, stateActionKind);
+		}
+		if (bodyText.trim().equals("")) {
+			deleteStateCodeBehavior(selectedState, stateActionKind);
+		}
+		if (stateBehavior != null && bodyText != null ) {
+//			if (element instanceof OpaqueBehavior) {
 				Command command = new RecordingCommand(editingDomain) {
 					@Override
 					protected void doExecute() {
-						OpaqueBehaviorUtil.setBody((OpaqueBehavior) element, bodyText, LANGUAGE);
+//						OpaqueBehaviorUtil.setBody((OpaqueBehavior) element, bodyText, LANGUAGE);
+						OpaqueBehaviorUtil.setBody(stateBehavior, bodyText, LANGUAGE);
 					}
 				};
 				cc.append(command);
-			}
+//			}
 		}
 		// ################################## Adjust end
 		
@@ -258,7 +260,6 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 		
 		generateUMLModelMarker(); 	// Generate UML model marker
 	}
-	
 	
 
 	
@@ -359,14 +360,43 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 	}
 	
 	
+	private void deleteStateCodeBehavior(final State state, final String typeOfStateCode){
+		CompoundCommand cc = new CompoundCommand();
+
+		// Record command
+		// ################################## Adjust start
+		Command command = new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				if (typeOfStateCode.equals("entry")) {
+					Behavior b = state.getEntry();
+					if (b != null) {  b.destroy(); stateBehavior = null; }
+				}
+				else if (typeOfStateCode.equals("do")) {
+					Behavior b = state.getDoActivity();
+					if (b != null) {  b.destroy(); stateBehavior = null; }
+				}
+				else if (typeOfStateCode.equals("exit")) {
+					Behavior b = state.getExit();
+					if (b != null) {  b.destroy(); stateBehavior = null; }
+				}
+			}
+		};
+		cc.append(command);
+		// ################################## Adjust end
+		
+		// Execute command
+		editingDomain.getCommandStack().execute(cc);
+	}
+	
 	
 	
 	
 	// Same for all sections #########################################################
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#setInput(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	@Override
+ * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#setInput(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+ */
+@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		
 		// get the selectedUmlElement
@@ -375,13 +405,20 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 		if (input instanceof ModelElementItem) {
 			EObject eObject = ((ModelElementItem)input).getEObject();
 			if ( eObject instanceof Element ) {
-				this.selectedUmlElement = (Element)eObject;
-				isNewSelection = true;
+				selectedUmlElement = (Element)eObject;
+				if (selectedUmlElement instanceof State) {
+					isNewSelection = true;
+					selectedState = (State)selectedUmlElement;
+				}
 			}
 		}
 		else if (input instanceof IUMLEditPart) {
-			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
+			selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
 			isNewSelection = true;
+			if (selectedUmlElement instanceof State) {
+				isNewSelection = true;
+				selectedState = (State)selectedUmlElement;
+			}
 		}
 	}
 
