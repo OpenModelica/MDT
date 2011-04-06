@@ -1824,7 +1824,7 @@
 					</container>
 					
 					<expandableContainer label="Modelica Specific Properties">
-						<controller predefinedId="ModelicaML_Assert_condition"/>
+						<!--<controller predefinedId="ModelicaML_Assert_condition"/>-->
 						<controller predefinedId="ModelicaML_Assert_message"/>
 						<controller predefinedId="ModelicaML_Assert_level"/>
 						<layout kind="Grid" numColumns="1" sameWidth="true"/>
