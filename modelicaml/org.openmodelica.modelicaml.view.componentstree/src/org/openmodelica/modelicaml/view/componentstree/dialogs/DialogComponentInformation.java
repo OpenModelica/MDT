@@ -52,10 +52,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
-import org.openmodelica.modelicaml.common.ast.ModificationManager;
-import org.openmodelica.modelicaml.common.ast.TreeParent;
 import org.openmodelica.modelicaml.common.ast.TreeObject;
+import org.openmodelica.modelicaml.common.ast.TreeParent;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
 
@@ -230,6 +230,7 @@ public class DialogComponentInformation extends Dialog {
         
         Label label_titleDothPath = new Label(composite, SWT.WRAP);
         label_titleDothPath.setText("Component path:");
+        label_titleDothPath.setToolTipText(value);
         GridData label_titleDothPath_data = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
@@ -248,24 +249,30 @@ public class DialogComponentInformation extends Dialog {
         text.setBackground(new Color(null,255,255,255));
         text.setLayoutData(data);
         text.setEditable(false);
-        text.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                validateInput();
-            }
-        });
+//        text.addModifyListener(new ModifyListener() {
+//            public void modifyText(ModifyEvent e) {
+//                validateInput();
+//            }
+//        });
 
         
         // Component type
         //if (treeObject.getProperty() != null ) {
-        if (treeObject.getComponentType() != null ) {
-        	 //Classifier cType = (Classifier) treeObject.getProperty().getType();
-        	Classifier cType = (Classifier) treeObject.getComponentType();
-             String cTypeString = "Not defined";
-             if (cType != null) {
-             	cTypeString = cType.getName();
-     		}
-             Label label_type = new Label(composite, SWT.WRAP);
-             label_type.setText("Component type: " + cTypeString);
+        if (treeObject.getProperty() != null && treeObject.getComponentType() != null ) {
+        	Classifier cOriginalType = (Classifier) treeObject.getProperty().getType();
+        	Classifier cFinalType = (Classifier) treeObject.getComponentType();
+            String cTypeString = "Not defined";
+
+            if (treeObject.hasRedeclaredType() && cFinalType!= null && cOriginalType!= null) {
+				cTypeString = "redeclared to '" + cFinalType.getName() + "' (original type was " + cOriginalType.getName() + " )";  
+			}
+            else if (cFinalType != null) {
+            	cTypeString = "'" + cFinalType.getName() + "'";
+            }
+            
+            Label label_type = new Label(composite, SWT.WRAP);
+            label_type.setText("Component type: " + cTypeString);
+            label_type.setToolTipText(cFinalType.getQualifiedName());
 		}
         
         // Causality
@@ -279,44 +286,7 @@ public class DialogComponentInformation extends Dialog {
 			}
 		}
         
-        
-        // Modifications: get component declaration value from the higher level component modification
-//		String declarationString = "";
-//		HashSet<String> modList = treeObject.getModifications();
-//		String title_label = null;
-//		if (modList.size() > 0 ) {
-//			for (String string : modList) {
-//				String[] splitted = string.trim().split("=");
-//				if (splitted.length > 1) {
-//					String leftHand = splitted[0].trim();
-//					String rightHand = splitted[1].trim();
-//					if (leftHand.equals(treeObject.getDothPath())) {
-//						declarationString = declarationString + " = " + rightHand;
-//						title_label = "Component derived modification: ";
-//
-//					}
-//				}
-//			}
-//			
-//		}
-//		// if there no modifications passed from component higher level then display component declaration
-//		if (declarationString.equals("")) {
-//			if (treeObject.getProperty() != null) {
-//				Stereotype stereotype = treeObject.getProperty().getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
-//				if (stereotype != null) {
-//					Object declarationEquationOrAssignment = UmlServices.getStereotypeValue((Element)treeObject.getProperty(), stereotype.getName(), "declarationEquationOrAssignment");
-//					if (declarationEquationOrAssignment instanceof String) {
-//						declarationString = " " + declarationEquationOrAssignment.toString().trim();
-//						title_label = "Component declaration: ";
-//					}						
-//				}
-//			}
-//		}
-//		
-//		
-//		
-//		
-//		if ( title_label != null) {
+ //		if ( title_label != null) {
 //
 //			Label label_modificationsText = new Label(composite, SWT.WRAP);
 //			label_modificationsText.setText(title_label);
@@ -380,11 +350,21 @@ public class DialogComponentInformation extends Dialog {
         if (treeObject.getFinalModificationRightHand() != null) {
 			Label label_modification = new Label(composite, SWT.WRAP);
 			String modSource = "";
-			if (ModificationManager.isInModModListOfComponent(treeObject.getFirstLevelComponent(), treeObject.getDotPathWithoutFirstLevelComponent())) {
-				modSource = " in '" + treeObject.getFirstLevelComponent().getName() + "' ";
+//			if (ModificationManager.isInModModListOfComponent(treeObject.getFirstLevelComponent(), treeObject.getDotPathWithoutFirstLevelComponent())) {
+//				modSource = " in '" + treeObject.getFirstLevelComponent().getName() + "' ";
+//			}
+			NamedElement modSourceElement = treeObject.getFinalModificationSource();
+			if (modSourceElement != null ) {
+//				modSource = modSourceElement.eClass().getName() + " '" + modSourceElement.getQualifiedName() + "' ";
+				modSource = "'" + modSourceElement.getQualifiedName() + "' ";
 			}
-			label_modification.setText("Component declaration overriden by a modification" + modSource + ": ");
-	        
+			String modDescription = "";
+			if (treeObject.getFinalModificationDescription() != null) {
+				modDescription = treeObject.getFinalModificationDescription();
+			}
+			label_modification.setText("Overriden " + modDescription  + " in " + modSource + ": ");
+			label_modification.setToolTipText(modSource);
+			
 			modificationText = new Text(composite,  SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.RESIZE);
 	        GridData modificationTextData = new GridData(GridData.GRAB_HORIZONTAL
 	                | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL

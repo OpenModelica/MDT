@@ -403,7 +403,7 @@ public class DialogComponentModification extends Dialog {
         editor.getEditorWidget().setFocus();
         if (value != null) {
             editor.setTextToEdit(value);
-            editor.getEditorWidget().selectAll();
+//            editor.getEditorWidget().selectAll();
         }
     }
 

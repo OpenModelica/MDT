@@ -186,7 +186,13 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 			// set text
 			if (!treeObject.isLeaf() && !treeObject.isRoot() && treeObject.getChildren().length > 0) { // tree with children object 
 				
+				String redecalaredTypeString = "";
+				if (treeObject.hasRedeclaredType()) {
+					redecalaredTypeString = " <- redeclared ";
+				}
+				
 				StyledString styledString = new StyledString(treeObject.toString() + arraySizeString);
+				styledString.append(redecalaredTypeString, StyledString.DECORATIONS_STYLER);
 				styledString.append(" (" + treeObject.getChildren().length + ")", StyledString.QUALIFIER_STYLER);
 				cell.setText(styledString.toString());
 				cell.setStyleRanges(styledString.getStyleRanges());

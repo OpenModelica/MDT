@@ -300,7 +300,7 @@ public class ComponentsTree extends ViewPart {
 					}
 				}
 
-				if (item.isInput() && item.getFinalModificationLeftHand()== null ) {
+				if (item.isInput() && item.getFinalModificationRightHand() == null ) { // if it is an input and has no modification.
 					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
 						manager.add(actionDeleteFromInputs);
 					}
@@ -308,6 +308,12 @@ public class ComponentsTree extends ViewPart {
 						manager.add(actionAddToInputs);	
 					}
 				}
+				else if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
+					manager.add(actionDeleteFromInputs);
+				}
+				
+				
+				
 				
 				if ( ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDothPath(), false) ) {
 					manager.add(actionDeleteFromOutputs);
@@ -491,7 +497,7 @@ public class ComponentsTree extends ViewPart {
 			}
 		};
 		actionShowStateMachines.setText("Show StateMachines");
-		//actionShowStateMachines.setChecked(true);
+		actionShowStateMachines.setChecked(true);
 		actionShowStateMachines.setToolTipText("Show StateMachines");
 //		actionShowStateMachines.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
@@ -639,7 +645,9 @@ public class ComponentsTree extends ViewPart {
 							// Delete modification in items firstLevelComponent
 							ModificationManager.deleteComponentModificationBasedOnLeftHandValue(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent());
 							// Delete modification in item list.
-							item.deleteFromModificationListBasedOnLeftRightHandValue(item.getDothPath(), modificationString);
+							//item.deleteFromModificationListBasedOnLeftRightHandValue(item.getDothPath(), modificationString);
+							item.setFinalModificationRightHand(null); // TODO: verify against the line above
+							item.setFinalModificationSource(null);
 							viewer.update(item, null);
 						}
 						else {
@@ -656,7 +664,9 @@ public class ComponentsTree extends ViewPart {
 							if (modStringWithoutBraces.startsWith(item.getDotPathWithoutFirstLevelComponent())) {
 								String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent());
 								// Delete modification in item list.
-								item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
+								//item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
+								item.setFinalModificationRightHand(null); // verify against the line above
+								item.setFinalModificationSource(null);
 								viewer.update(item, null);
 							}
 
@@ -673,16 +683,18 @@ public class ComponentsTree extends ViewPart {
 									ModificationManager.addComponentModification(item.getFirstLevelComponent(), leftHandPart, rightHandPart, true);
 									//ModificationManager.addComponentModification(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent(), modificationStringDialog.getValue(), true); // OLD
 									
-									// Add to the modification in item list.
-									//item.addToModificationList(item.getDothPath() + " = " + modificationStringDialog.getValue()); // OLD
-									String storeString = "";
-									if (hasOutterBraces) {
-										storeString = "(" + StringUtls.replaceSpecChar(item.getFirstLevelComponent().getName()) + "." + modStringWithoutBraces + ")";
-									}
-									else {
-										storeString = StringUtls.replaceSpecChar(item.getFirstLevelComponent().getName()) + "." + modStringWithoutBraces ;
-									}
-									item.addToModificationList(storeString); // Store with braces if there are any!
+//									// Add to the modification in item list.
+//									//item.addToModificationList(item.getDothPath() + " = " + modificationStringDialog.getValue()); // OLD
+//									String storeString = "";
+//									if (hasOutterBraces) {
+//										storeString = "(" + StringUtls.replaceSpecChar(item.getFirstLevelComponent().getName()) + "." + modStringWithoutBraces + ")";
+//									}
+//									else {
+//										storeString = StringUtls.replaceSpecChar(item.getFirstLevelComponent().getName()) + "." + modStringWithoutBraces ;
+//									}
+									//item.addToModificationList(storeString); // Store with braces if there are any!
+									item.setFinalModificationRightHand(rightHandPart); // verify this against the line above!
+									item.setFinalModificationSource(item.getFirstLevelComponent());
 									viewer.update(item, null);
 								}
 								else {
@@ -719,8 +731,9 @@ public class ComponentsTree extends ViewPart {
 					String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent());
 					
 					// Delete the modification from the component modifications list.
-					item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
-					item.setFinalModificationRightHand(null);
+//					item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
+					item.setFinalModificationRightHand(null); // verify against the line above
+					item.setFinalModificationSource(null);
 					//viewer.update(item, null);
 					updateItem(item);
 				}
@@ -746,6 +759,7 @@ public class ComponentsTree extends ViewPart {
 //					System.err.println("item.getFinalModificationRightHand(): " + item.getFinalModificationRightHand());
 //					System.err.println("item.getFinalModificationLeftHand(): " + item.getFinalModificationLeftHand());
 					item.setFinalModificationRightHand(rightHandModificationValue);
+					item.setFinalModificationSource(item.getFirstLevelComponent());
 					updateItem(item);
 				}
 			}
@@ -758,8 +772,7 @@ public class ComponentsTree extends ViewPart {
 		actionAddToInputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		
 		actionDeleteFromInputs = new Action("actionDeleteFromInputs") {
-			public void run() 
-			{
+			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
@@ -769,6 +782,7 @@ public class ComponentsTree extends ViewPart {
 					showMessage("Confirmation", "'" + item.getName() + "' was deleted from the '_inputs' component of '" + selectedClass.getName() + "'");
 					//showSelection(par, sel); // TODO: refresh properly ...
 					item.setFinalModificationRightHand(null);
+					item.setFinalModificationSource(null);
 					updateItem(item);
 				}
 			}
@@ -886,8 +900,7 @@ public class ComponentsTree extends ViewPart {
 		actionShowAboutInfo = new Action("actionShowAboutInfo") { //obviously a check box style
 			public void run() {
 				showMessage("Notes for 'Class Components Tree' view", "This view shows the components tree of the class that is selected in model browser. " +
-						"\n\nPlease note that class or instance redeclarations are not taken into account. " +
-						"Furthermore, inherited duplicates of components are not merged.");
+						"\n\nNote, arrays are not expanded");
 			}
 		};
 		actionShowAboutInfo.setText("About");
