@@ -51,6 +51,8 @@ import org.eclipse.uml2.uml.Stereotype;
 public class UmlServices {
 
 
+	
+	
 	/**
 	 * Get the body of OpaqueBehavior ob with index corresponding to the
 	 * language index. We replace all \n text by newline.

@@ -96,7 +96,7 @@ public class TreeParent extends TreeObject
 						String dotPath, 
 						Boolean isLeaf, 
 						Boolean isRoot, 
-						HashSet<String> modifications,
+						HashSet<String> modifications, // TODO: remove it!
 						Class selectedClass,
 						Boolean showStateMachines) {
 		super(	name, 
@@ -105,7 +105,7 @@ public class TreeParent extends TreeObject
 				dotPath, 
 				isLeaf, 
 				isRoot, 
-				modifications,
+//				modifications,
 				selectedClass);
 		
 		children = new ArrayList<TreeObject>();
@@ -673,7 +673,7 @@ public class TreeParent extends TreeObject
 			}
 		}
 		
-		// TODO: do the same for states of statemachines.
+		// TODO: do the same for states of statemachines?
 		
 		return list;
 	}

@@ -1,20 +1,27 @@
 package org.openmodelica.modelicaml.common.ast;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
-import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.Generalization;
-import org.eclipse.uml2.uml.Port;
+import org.eclipse.uml2.uml.Model;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
 public class ModelicaMLAST {
@@ -27,6 +34,13 @@ public class ModelicaMLAST {
 	/** The action show state machines. */
 	private Boolean includeStateMachines;
 
+	
+	public HashMap<String,Type> redeclaredComponentTypes = new HashMap<String,Type>();
+	public HashMap<String,String> firstLevelComponentsModifications = new HashMap<String,String>();
+	public HashMap<String,NamedElement> modificationSource = new HashMap<String,NamedElement>();
+	
+	public HashMap<String,String> modifications = new HashMap<String,String>();
+	
 
 	
 	public ModelicaMLAST(Class selectedClass, Boolean includeStateMachines){
@@ -36,40 +50,135 @@ public class ModelicaMLAST {
 	
 	
 	public void createTree(){
-		HashSet<String> emptyModificationsList = new HashSet<String>();
-		invisibleRoot = new TreeParent("", null, null, "", false, false, emptyModificationsList, selectedClass, false);
-		
-		treeRoot = new TreeParent("'" + selectedClass.getName() +"' components", null, null, "", false, true, emptyModificationsList, selectedClass, includeStateMachines);
-		invisibleRoot.addChild(treeRoot);
-		
-		buildNextTreeLevel(this.selectedClass, null, treeRoot , "");
+		if (selectedClass != null) {
+			invisibleRoot = new TreeParent("", null, null, "", false, false, new HashSet<String>(), selectedClass, false);
+			
+			treeRoot = new TreeParent("'" + selectedClass.getName() +"' components", null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
+			invisibleRoot.addChild(treeRoot);
+
+//			// collect selected class inherited modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
+//			addInheritedClassModifications(this.selectedClass);
+			
+			// collect all first level components modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
+//			addClassComponentsModifications(this.selectedClass);
+			
+			buildNextTreeLevel(this.selectedClass, null, treeRoot , "");
+			
+			
+//			for (Object object : modifications.keySet() ) {
+//				System.err.println( object.toString() + " = " + modifications.get(object).toString() );
+//			}
+//			for (Object object : redeclaredComponentTypes.keySet() ) {
+//				System.err.println( object.toString() + " = " + ((Type)redeclaredComponentTypes.get(object)).getQualifiedName() );
+//			}
+
+//			for (Object object : modificationSource.keySet() ) {
+//				System.err.println( object.toString() + " = " + ((NamedElement)modificationSource.get(object)).getQualifiedName() );
+//			}
+		}
 	}
 	
-//	public void createInputsTree(){
-//		HashSet<String> emptyModificationsList = new HashSet<String>();
-//		invisibleRoot = new TreeParent("", null, null, "", "", false, false, emptyModificationsList, selectedClass, false);
-//		
-//		treeRoot = new TreeParent("Inputs" + " of " + "'"+selectedClass.getName() +"' components", null, null, "", "input", false, true, emptyModificationsList, selectedClass, false);
-//		invisibleRoot.addChild(treeRoot);
-//		
-//		buildNextTreeLevel(this.selectedClass, null, treeRoot , "input", "");
-//	}
-//	
-//	public void createOutputsTree(){
-//		HashSet<String> emptyModificationsList = new HashSet<String>();
-//		invisibleRoot = new TreeParent("", null, null, "", "", false, false, emptyModificationsList, selectedClass, false);
-//		
-//		treeRoot = new TreeParent("Outputs" + " of " + "'"+selectedClass.getName() +"' components", null, null, "", "output", false, true, emptyModificationsList, selectedClass, false);
-//		invisibleRoot.addChild(treeRoot);
-//		
-//		buildNextTreeLevel(this.selectedClass, null, treeRoot , "output", "");
-//	}
-//	
 	
-//	public void setTreeRoot(TreeParent treeRoot) {
-//		this.treeRoot = treeRoot;
-//	}
-
+	private void addInheritedClassModifications(Class aClass, String dotPath){
+		EList<Generalization> extendsRelations = aClass.getGeneralizations();
+		
+		for (Generalization generalization : extendsRelations) {
+			Stereotype stereotype = getGeneralizationStereotype(generalization);
+			if ( stereotype != null ) {
+				EList<String> modList = getGeneralizationModifications(generalization, stereotype);
+				for (String string : modList) {
+					addToModificationList(string, dotPath, aClass);
+				}
+				// recursive call to the next inheritance level
+				EList<Element> targets = generalization.getTargets();
+				for (Element element : targets) {
+					if (element instanceof Class) {
+						addInheritedClassModifications((Class)element, dotPath); 
+					}
+				}
+				
+			}
+		}
+	}
+	
+	private void addClassComponentsModifications(Property property, String dotPath){
+		String prefix = "";
+		if (!dotPath.trim().equals("")) {
+			prefix = dotPath + ".";
+		}
+//		EList<Property> components = getClassComponents(aClass);
+//		for (Property property : components) {
+			HashSet<String> modList = getComponentModifications(property);
+			String propertyName = prefix + StringUtls.replaceSpecChar(property.getName());
+			for (String string : modList) {
+				addToModificationList(string, propertyName, property);
+			}
+//		}
+	}
+	
+	private void addToModificationList(String string, String dotPath, NamedElement sourceOfModification) {
+		String prefix = "";
+		if ( !dotPath.trim().equals("")) {
+			prefix = dotPath + ".";
+		}
+		
+		if ( isSimpleComponentValueBinding(string) ) { // if it is a simple component binding, e.g. comp1 = comp2.value ... 
+			String[] splitted = string.trim().split("=");
+			if (splitted.length > 1) {
+				String leftHand = prefix + splitted[0].trim();
+				String rightHand = splitted[1].trim();
+				if ( !this.firstLevelComponentsModifications.containsKey(leftHand) ) { // TODO: do we need it?!
+					this.firstLevelComponentsModifications.put(leftHand, rightHand); // contains modifications that are defined first level components
+					// Add to modification source in order to always know where this modification came from
+					this.modificationSource.put(leftHand, sourceOfModification);
+				}
+				if ( !this.modifications.containsKey(leftHand) ) {
+					this.modifications.put(leftHand, rightHand); // contains all final modifications.
+					// Add to modification source in order to always know where this modification came from
+					this.modificationSource.put(leftHand, sourceOfModification);
+				}
+			}
+		}
+		else { // match others, e.g. redeclaration of the component type
+			addRedeclaredComponentTypeEntry(string, dotPath, sourceOfModification);
+		}
+		
+	}
+	
+	
+	private void addRedeclaredComponentTypeEntry(String string, String dotPath, NamedElement sourceOfModification){
+		String prefix = "";
+		if ( !dotPath.trim().equals("")) {
+			prefix = dotPath + ".";
+		}
+		//match a component type redeclaration
+		if (string.contains("redeclare ")) {
+			String s = StringUtls.removeOutterBraces(string).replaceFirst("redeclare ", "").replaceFirst(" each ", "").replaceFirst(" final ", "").trim();
+			String[] splitted = s.split(" ");
+			
+			if (splitted.length == 2) {
+				String typeDotPath = splitted[0].trim();
+				String componentDotPath = prefix + splitted[1].trim();
+				
+				Type type = findType(sourceOfModification, typeDotPath); // sourceOfModification is used to get the top level model in order to search fo the type
+				if (type != null) {
+					if ( !redeclaredComponentTypes.containsKey(componentDotPath) ) {
+						redeclaredComponentTypes.put(componentDotPath, type);
+						// Add to modification source in order to always know where this modification came from
+						this.modificationSource.put(componentDotPath, sourceOfModification);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	public TreeParent getTreeRoot() {
 		return treeRoot;
 	}
@@ -78,12 +187,6 @@ public class ModelicaMLAST {
 	public TreeParent getInvisibleRoot() {
 		return invisibleRoot;
 	}
-
-
-//	public void setInvisibleRoot(TreeParent invisibleRoot) {
-//		this.invisibleRoot = invisibleRoot;
-//	}
-
 	
 	public void setIncludeStateMachines(Boolean showStateMachines) {
 		this.includeStateMachines = showStateMachines;
@@ -119,96 +222,6 @@ public class ModelicaMLAST {
 		return result;
 	}
 
-//	/**
-//	 * Checks if is input or output variable.
-//	 * 
-//	 * @param property
-//	 *            the property
-//	 * @param causalityString
-//	 *            the causality string
-//	 * @return the boolean
-//	 */
-//	private Boolean isInputOrOutputVariable(Property property,
-//			String causalityString) {
-//		Boolean result = false;
-//		Object causality = null;
-//		if (property instanceof Port) {
-//			causality = UmlServices.getStereotypeValue(property,
-//					"ConnectionPort", "causality");
-//		} else if (property instanceof Property) {
-//			causality = UmlServices.getStereotypeValue(property, "Variable",
-//					"causality");
-//		}
-//
-//		if (causality != null) {
-//			String causalityValue = ((EnumerationLiteral) causality).getName();
-//			if (causalityValue.equals(causalityString)) {
-//				result = true;
-//			}
-//		}
-//		return result;
-//	}
-
-//	/**
-//	 * Checks for input or output variables.
-//	 * 
-//	 * @param p
-//	 *            the p
-//	 * @param causalityString
-//	 *            the causality string
-//	 * @return the boolean
-//	 */
-//	private Boolean hasInputOrOutputVariables(Property p, String causalityString) {
-//		Boolean result = false;
-//		HashSet<Property> listOfInputVariables = findInputOrOutputVariables(p,
-//				causalityString);
-//
-//		if (listOfInputVariables.size() > 0) {
-//			result = true;
-//		}
-//		return result;
-//	}
-//
-//	/**
-//	 * Find input or output variables.
-//	 * 
-//	 * @param p
-//	 *            the p
-//	 * @param causalityString
-//	 *            the causality string
-//	 * @return the hash set
-//	 */
-//	private HashSet<Property> findInputOrOutputVariables(Property p,
-//			String causalityString) {
-//		Type pType = p.getType();
-//		HashSet<Property> listOfOutputVariables = new HashSet<Property>();
-//
-//		if (pType != null) {
-//			if (isInputOrOutputVariable(p, causalityString)) {
-//				listOfOutputVariables.add(p);
-//			} else { // is a component -> go for sub components
-//				if (listOfOutputVariables.size() < 1) { // optimization: it
-//														// shall stop as soon as
-//														// at least one is
-//														// found!
-//					// EList<Property> subComponentslist = ((Classifier)
-//					// pType).getAllAttributes(); // includes also all inherited
-//					// attributes // OLD
-//					EList<Property> subComponentslist = getClassComponents((Classifier) pType);
-//					for (Property subProperty : subComponentslist) {
-//						listOfOutputVariables
-//								.addAll(findInputOrOutputVariables(subProperty,
-//										causalityString));
-//					}
-//				} else
-//					return listOfOutputVariables; // optimization: it shall stop
-//													// as soon as at least one
-//													// is found!
-//			}
-//		}
-//		return listOfOutputVariables;
-//	}
-
 	/**
 	 * Gets the class components.
 	 * 
@@ -232,8 +245,7 @@ public class ModelicaMLAST {
 	 *            the passed a list
 	 * @return the all inherited attributes
 	 */
-	public EList<Property> getAllInheritedAttributes(Classifier aClass,
-			EList<Property> passedAList) {
+	public EList<Property> getAllInheritedAttributes(Classifier aClass, EList<Property> passedAList) {
 		// TODO: verify if this works correctly for Modelica inheritance concept.
 		HashSet<Property> mergedSet = new HashSet<Property>();
 		mergedSet.addAll(passedAList);
@@ -245,31 +257,29 @@ public class ModelicaMLAST {
 
 		if (extendsRelations.size() < 1) { // if there there is no inheritance then just return the passedAList
 			finalList.addAll(passedAList);
-		} else {// if there are inheritance then merge
+		} 
+		else {	// if there are inheritance then merge
 			for (Generalization generalization : extendsRelations) {
 				EList<Element> targets = generalization.getTargets();
 				for (Element element : targets) {
-					if (element instanceof Classifier) {
-						EList<Property> inheritedProperties = ((Classifier) element)
-								.getAttributes();
-						mergedSet.addAll(inheritedProperties);
-						for (Property propertyInherited : inheritedProperties) {
-							String nameInheritedProperty = propertyInherited
-									.getName();
-							for (Property propertyPassed : passedAList) {
-								String namePropertyPassed = propertyPassed
-										.getName();
-								if (nameInheritedProperty
-										.equals(namePropertyPassed)) {
-									mergedSet.remove(propertyInherited);
+					if (element instanceof Classifier) { // if the target is a class TODO: filter for applied ModelicaML stereotypes
+						EList<Property> inheritedProperties = ((Classifier) element).getAttributes(); // get the attributes of the class
+						
+						mergedSet.addAll(inheritedProperties); // add all class attribute to list
+						
+						for (Property propertyInherited : inheritedProperties) { // iterate over the class attributes
+							String nameInheritedProperty = propertyInherited.getName();
+							for (Property propertyPassed : passedAList) { // iterate over the passed list
+								String namePropertyPassed = propertyPassed.getName();
+								if (nameInheritedProperty.equals(namePropertyPassed)) { // if a duplicate is found ...
+									mergedSet.remove(propertyInherited); // remove duplicate from the final list.
 									// System.out.println("removed: " + propertyInherited.getName());
 								}
 							}
 						}
 						EList<Property> list = new BasicEList<Property>();
 						list.addAll(mergedSet);
-						finalSet.addAll(getAllInheritedAttributes(
-								(Classifier) element, list));
+						finalSet.addAll(getAllInheritedAttributes((Classifier) element, list)); // recursive call
 					}
 				}
 			}
@@ -293,7 +303,9 @@ public class ModelicaMLAST {
 	 *            the dot path
 	 */
 	public void buildNextTreeLevel(Class aClass, Property firstLevelComponent, TreeParent parent, String dotPath) {
-		// EList<Property> pList = aClass.getAllAttributes(); // OLD
+		// collect selected class inherited modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
+		addInheritedClassModifications(aClass, dotPath);
+		
 		EList<Property> pList = getClassComponents(aClass);
 
 		for (Property property : pList) {
@@ -310,133 +322,62 @@ public class ModelicaMLAST {
 			}
 
 			if (isPrimitiveType(property)) {
-				HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
+//				ModificationsCollector.clear(); // clear all lists.
+//				HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
+				
+				addClassComponentsModifications(property, dotPath);
+				HashSet<String> modifications = null;
+//				String s = this.modifications.get(newDotPath);
+//				if (s != this.modifications.get(newDotPath)) {
+//					modifications.add(s);
+//				}
+				
 				TreeParent child = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(child);
 				
-				// set parent "has inputs/outputs" indicators 
-				if (child.isInput()) {
-					parent.setHasInputs(treeRoot);
-				}
-				if (child.isOutput()) {
-					parent.setHasOutputs(treeRoot);
-				}
+				// set the final modification right hand
+				child.setFinalModificationRightHand(this.modifications.get(newDotPath));
+				child.setModificationSource(this.modificationSource.get(newDotPath));
+
+				// set parent "has inputs, outputs" etc. indicators 
+				if (child.isInput()) { parent.setHasInputs(treeRoot); }
+				if (child.isOutput()) { parent.setHasOutputs(treeRoot); }
+				if (child.isRequirementInstance()) { parent.setHasRequirements(treeRoot); }
 
 				// create predefined properties for Modelica real, string, integer and boolean.
 				createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath);
 				
 			} else {
-				HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
+//				ModificationsCollector.clear(); // clear all lists. 
+//				HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
+
+				addClassComponentsModifications(property, dotPath);
+				HashSet<String> modifications = null;
+//				String s = this.modifications.get(newDotPath);
+//				if (s != this.modifications.get(newDotPath)) {
+//					modifications.add(s);
+//				}
+
+				Type pType = null;
+				pType = this.redeclaredComponentTypes.get(newDotPath);
+				if (pType == null) {
+					pType = property.getType();
+				}
+				
 				TreeParent newParent = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, false, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(newParent);
-				Type pType = property.getType();
+				
+				// set the final modification right hand
+				newParent.setFinalModificationRightHand(this.modifications.get(newDotPath));
+				newParent.setModificationSource(this.modificationSource.get(newDotPath));
+				
+				// make sure that the tree object gets its redeclared type.
+				newParent.setComponentType(pType); 
+				
 				if (pType instanceof Class && (Class) pType != aClass && !(pType instanceof Stereotype)) { // TODO: // prevent endless looping, implement it correctly!
 					buildNextTreeLevel((Class) pType, firstLevelComponent, newParent, newDotPath);
 				}
 			}
-			
-//			
-//			if (!causalityString.equals("")) { // input/output component
-//				if (isInputOrOutputVariable(property, causalityString)) {
-//					TreeParent child = null;
-//					if (property instanceof Port) { // instance of Port
-//						HashSet<String> modifications = ModificationsCollector
-//								.getMergedComponentModifications(selectedClass,
-//										property, newDotPath,
-//										parent.getModifications());
-//						child = new TreeParent(property.getName(), property,
-//								firstLevelComponent, newDotPath,
-//								causalityString, true, false, modifications,
-//								selectedClass, false);
-//
-//						// getAllPortComponents(property, firstLevelComponent,
-//						// child, causalityString, newDotPath);
-//						// TODO: test if the code below is equivalent.
-//						Type pType = property.getType();
-//						if (pType instanceof Class && (Class) pType != aClass) { // TODO:
-//																					// prevent
-//																					// endless
-//																					// looping,
-//																					// implement
-//																					// it
-//																					// correctly!
-//							buildNextTreeLevel((Class) pType,
-//									firstLevelComponent, child,
-//									causalityString, newDotPath);
-//						}
-//					} else { // instance of Property
-//						HashSet<String> modifications = ModificationsCollector
-//								.getMergedComponentModifications(selectedClass,
-//										property, newDotPath,
-//										parent.getModifications());
-//						child = new TreeParent(property.getName(), property,
-//								firstLevelComponent, newDotPath,
-//								causalityString, true, false, modifications,
-//								selectedClass, false);
-//					}
-//					parent.addChild(child);
-//
-//					// create predefined properties for Modelica real, string,
-//					// integer and boolean.
-//					createPredefinedTypeProperties(property,
-//							firstLevelComponent, child, newDotPath,
-//							causalityString);
-//
-//				} else if (hasInputOrOutputVariables(property, causalityString)) {
-//					HashSet<String> modifications = ModificationsCollector
-//							.getMergedComponentModifications(selectedClass,
-//									property, newDotPath,
-//									parent.getModifications());
-//					TreeParent newParent = new TreeParent(property.getName(),
-//							property, firstLevelComponent, newDotPath,
-//							causalityString, false, false, modifications,
-//							selectedClass, false);
-//					parent.addChild(newParent);
-//					Type pType = property.getType();
-//					if (pType instanceof Class && (Class) pType != aClass) { // TODO:
-//																				// prevent
-//																				// endless
-//																				// looping,
-//																				// implement
-//																				// it
-//																				// correctly!
-//						buildNextTreeLevel((Class) pType,
-//								firstLevelComponent, newParent,
-//								causalityString, newDotPath);
-//					}
-//				}
-//			} else {// any component
-//				if (isPrimitiveType(property)) {
-//					HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
-//					TreeParent child = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, causalityString, true, false, modifications, selectedClass, includeStateMachines);
-//					parent.addChild(child);
-//					
-//					// set parent "has inputs/outputs" indicators 
-//					if (child.isInput()) {
-//						parent.setHasInputs(treeRoot);
-//					}
-//					if (child.isOutput()) {
-//						parent.setHasOutputs(treeRoot);
-//					}
-//					
-//
-//					// create predefined properties for Modelica real, string,
-//					// integer and boolean.
-//					createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath, causalityString);
-//				} else {
-//					HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
-//					TreeParent newParent = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, causalityString, false, false, modifications, selectedClass, includeStateMachines);
-//					parent.addChild(newParent);
-//					Type pType = property.getType();
-//					if (pType instanceof Class && (Class) pType != aClass && !(pType instanceof Stereotype)) { // TODO: // prevent endless looping, implement it correctly!
-//						buildNextTreeLevel((Class) pType,
-//								firstLevelComponent, newParent,
-//								causalityString, newDotPath);
-//					}
-//				}
-//			}
-			
-			
 			
 			// reset the firstLevelComponent. This ensures that only the very first level components are passed.
 			if (firstLevelComponent == property) {
@@ -474,16 +415,148 @@ public class ModelicaMLAST {
 					} else {
 						newDotPath = p.getName();
 					}
-					HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
+//					HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
 					// EList<String> modifications = new BasicEList<String>();
 					// TODO: here get the final modifications for this component.
+					
+					HashSet<String> modifications = null;
+//					String s = this.modifications.get(newDotPath);
+//					if (s != this.modifications.get(newDotPath)) {
+//						modifications.add(s);
+//					}
+					
 					TreeParent child = new TreeParent(p.getName(), p, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, false);
 					parent.addChild(child);
+					
+					// set the final modification right hand
+					child.setFinalModificationRightHand(this.modifications.get(newDotPath));
+					child.setModificationSource(this.modificationSource.get(newDotPath));
 				}
 			}
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
+	
+	private Type findType(Element sourceOfRedeclaration, String dotPath){
+		Model model = sourceOfRedeclaration.getModel();
+		Iterator<EObject> i = model.eAllContents();
+//		List<EObject> redeclaredTypes = new ArrayList<EObject>() ;
+//		Type type = null;
+		String typeDotPath = "";
+		while (i.hasNext()) {
+			EObject object = i.next() ;
+			if (object instanceof Class )
+				typeDotPath = StringUtls.replaceSpecCharExceptThis(((Class)object).getQualifiedName(), "::").replaceAll("::", ".");
+				if (typeDotPath.equals(dotPath)) {
+					return (Type) object;
+				}
+		}
+		return null;
+	}
+	
+	private Boolean isSimpleComponentValueBinding(String modification){
+		if (modification.contains("redeclare ")) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+
+	/**
+	 * Gets the generalization stereotype.
+	 * 
+	 * @param extendsRelation
+	 *            the extends relation
+	 * @return the generalization stereotype
+	 */
+	private static Stereotype getGeneralizationStereotype(Generalization extendsRelation) {
+		Stereotype stereotype = null;
+		if (UmlServices.hasStereotype((Element) extendsRelation, "ExtendsRelation"))
+			return stereotype = extendsRelation.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::ExtendsRelation");
+		
+		if (UmlServices.hasStereotype((Element) extendsRelation, "TypeRelation"))
+			return stereotype = extendsRelation.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::TypeRelation");
+		
+		return stereotype;
+	}
+
+	/**
+	 * Gets the component modifications.
+	 * 
+	 * @param component
+	 *            the component
+	 * @return the component modifications
+	 */
+	public HashSet<String> getComponentModifications(Property component) {
+		HashSet<String> mList = new HashSet<String>();
+		String stereotypeName = getFirstModelicaMLComponentStereotypeName(component);
+		List<String> modificationList = new ArrayList<String>();
+		if (stereotypeName != null) {
+			Object o = UmlServices.getStereotypeValue((Element) component, getFirstModelicaMLComponentStereotypeName(component), "modification");
+			if (o instanceof List<?>) {
+				modificationList = (List<String>) o;
+			}
+			for (String string : modificationList) {
+				mList.add(StringUtls.removeOutterBraces(string));
+			}
+			//mList.addAll(modificationList);
+		}
+		return mList;
+	}
+	
+	/**
+	 * Gets the generalization modifications.
+	 * 
+	 * @param extendsRelation
+	 *            the extends relation
+	 * @param stereotype
+	 *            the stereotype
+	 * @return the generalization modifications
+	 */
+	private EList<String> getGeneralizationModifications(Generalization extendsRelation, Stereotype stereotype) {
+		EList<String> mList = new BasicEList<String>();
+		
+		List<String> modificationList = new ArrayList<String>();
+		if (stereotype != null) {
+			Object o = UmlServices.getStereotypeValue((Element) extendsRelation, stereotype.getName(),"modification");
+			if (o instanceof List<?>) {
+				modificationList = (List<String>) o;
+			}
+			mList.addAll(modificationList);
+		}
+		return mList;
+	}
+
+	/**
+	 * Gets the first modelica ml component stereotype name.
+	 * 
+	 * @param property
+	 *            the property
+	 * @return the first modelica ml component stereotype name
+	 */
+	private String getFirstModelicaMLComponentStereotypeName(Property property) {
+		String name = null;
+		if (UmlServices.hasStereotype((Element) property, "Component")) return "Component";
+		if (UmlServices.hasStereotype((Element) property, "Variable")) return "Variable";
+		if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return "RequirementInstance";
+		if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return "CalculatedProperty";
+		return name;
+	}
+	
 
 }
