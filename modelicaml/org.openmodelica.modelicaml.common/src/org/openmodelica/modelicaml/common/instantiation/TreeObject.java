@@ -31,31 +31,22 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011
  */
-package org.openmodelica.modelicaml.common.ast;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+package org.openmodelica.modelicaml.common.instantiation;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
-import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.EnumerationLiteral;
-import org.eclipse.uml2.uml.FunctionBehavior;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
-import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
 
@@ -109,7 +100,10 @@ public class TreeObject implements IAdaptable
 //	private String finalModificationLeftHand = null;
 	
 	/** The final modification right hand. */
-	private String finalModificationRightHand= null;
+	private String finalModificationRightHand = null;
+	
+	/** The final modification right hand. */
+	private String modificationRightHand = null;
 	
 		//TODO: enhance this class to store the source of modification
 	/** The final modification source. */
@@ -122,6 +116,8 @@ public class TreeObject implements IAdaptable
 	// TODO: implement getter and setter
 	/** The element. */
 	private NamedElement element = null;
+	
+	private Element modificationStoreLocation = null;
 	
 //	/** The is predefined. */
 //	private Boolean isPredefined;
@@ -368,18 +364,28 @@ public class TreeObject implements IAdaptable
 //		return this.finalModificationLeftHand;
 //	}
 	
-	/**
-	 * Gets the final modification right hand.
-	 * 
-	 * @return the final modification right hand
-	 */
+	
+	
+	public void setModificationRightHand(String modificationRightHand) {
+		this.modificationRightHand = modificationRightHand;
+	}
+
+	public String getModificationRightHand() {
+		return modificationRightHand;
+	}
+	
+
 	public String getFinalModificationRightHand(){
+		if (this.finalModificationRightHand == null) {
+			return getModificationRightHand();
+		}
 		return this.finalModificationRightHand;
 	}
 	
 	public void setFinalModificationRightHand( String value ){
 		this.finalModificationRightHand = value;
 	}
+	
 	
 //	/**
 //	 * Gets the modifications.
@@ -718,14 +724,36 @@ public class TreeObject implements IAdaptable
 	}
 	
 	public Boolean hasRedeclaredType() {
-		Property property = this.getProperty(); 
-		Type pType = this.getProperty().getType();
-		if (property != null && pType != null && this.getComponentType() != null) {
-			if (!pType.equals(this.getComponentType())) {
-				return true;
+		if (this.getProperty() != null) {
+			Property property = this.getProperty(); 
+			Type pType = this.getProperty().getType();
+			if (property != null && pType != null && this.getComponentType() != null) {
+				if (!pType.equals(this.getComponentType())) {
+					return true;
+				}
 			}
 		}
 		return false;
+	}
+	
+	public String getFinalModificationDescription() {
+		if (finalModificationSource != null ) {
+			if (finalModificationSource instanceof Class) {
+				return "by class extension modification";
+			}
+			else {
+				 return "by component modification";
+			}
+		}
+		else if (this.modificationSource != null) {
+			if (this.modificationSource instanceof Class) {
+				return "by inheritance modification";
+			}
+			else {
+				 return "by component modification";
+			}
+		}	
+		return "";
 	}
 	
 	
@@ -733,6 +761,25 @@ public class TreeObject implements IAdaptable
 	
 	
 	
+	
+	
+
+	public void setModificationStoreLocation(Element modificationStoreLocation) {
+		this.modificationStoreLocation = modificationStoreLocation;
+	}
+
+
+	public Element getModificationStoreLocation() {
+		return modificationStoreLocation;
+	}
+
+	public Boolean isInherited(){
+		if (getModificationStoreLocation() instanceof Generalization) {
+			return true;
+		}
+		return false;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
@@ -750,25 +797,7 @@ public class TreeObject implements IAdaptable
 //	}
 
 
-	public String getFinalModificationDescription() {
-		if (finalModificationSource != null ) {
-			if (finalModificationSource instanceof Class) {
-				return "by inheritance modification";
-			}
-			else {
-				 return "by component modification";
-			}
-		}
-		else if (this.modificationSource != null) {
-			if (this.modificationSource instanceof Class) {
-				return "by inheritance modification";
-			}
-			else {
-				 return "by component modification";
-			}
-		}	
-		return "";
-	}
+
 
 
 

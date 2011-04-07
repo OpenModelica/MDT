@@ -31,7 +31,7 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011
  */
-package org.openmodelica.modelicaml.common.ast;
+package org.openmodelica.modelicaml.common.instantiation;
 
 import java.util.ArrayList;
 import java.util.HashSet;

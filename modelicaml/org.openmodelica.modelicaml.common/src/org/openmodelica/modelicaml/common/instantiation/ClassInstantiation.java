@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.common.ast;
+package org.openmodelica.modelicaml.common.instantiation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -24,7 +25,7 @@ import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
-public class ModelicaMLAST {
+public class ClassInstantiation {
 
 	private Class selectedClass;
 	
@@ -41,9 +42,13 @@ public class ModelicaMLAST {
 	
 	public HashMap<String,String> modifications = new HashMap<String,String>();
 	
-
+//	public HashMap<Property,Class> componentIsInheritedFrom = new HashMap<Property,Class>(); // TODO do we need it? 
 	
-	public ModelicaMLAST(Class selectedClass, Boolean includeStateMachines){
+	public HashSet<Property> selectedClassOwnedComponents = new HashSet<Property>();
+	public HashMap<Generalization,EList<Property>> selectedClassExtensionsReferenceForInheritedComponents = new HashMap<Generalization,EList<Property>>(); // TODO do we need it?
+	
+	
+	public ClassInstantiation(Class selectedClass, Boolean includeStateMachines){
 		this.selectedClass = selectedClass;
 		this.includeStateMachines = includeStateMachines;
 	}
@@ -55,15 +60,24 @@ public class ModelicaMLAST {
 			
 			treeRoot = new TreeParent("'" + selectedClass.getName() +"' components", null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
 			invisibleRoot.addChild(treeRoot);
+			
+			// get class components in order to know which other attributes are inherited.
+			selectedClassOwnedComponents.addAll(this.selectedClass.getOwnedAttributes());
 
-//			// collect selected class inherited modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
-//			addInheritedClassModifications(this.selectedClass);
+			// associate all inherited components (only the next level, i.e. only first level components) to the selected class extension (there may be multiple) in order to be able to determine the right location for storing modifications
+			EList<Generalization> extendsRelations = this.selectedClass.getGeneralizations(); // TODO: filter on ModelicaML stereotypes
+			for (Generalization generalization : extendsRelations) {
+				EList<Element> targets = generalization.getTargets(); // get the extended classes
+				for (Element element : targets) {
+					if (element instanceof Class) { // if it is a class
+						EList<Property> inheritedAtrtibutesList = getAllInheritedAttributes((Class)element, ((Class)element).getOwnedAttributes());
+						selectedClassExtensionsReferenceForInheritedComponents.put(generalization, inheritedAtrtibutesList);
+					}
+				}
+			}
 			
-			// collect all first level components modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
-//			addClassComponentsModifications(this.selectedClass);
-			
+			// build tree starting from the selected class node.
 			buildNextTreeLevel(this.selectedClass, null, treeRoot , "");
-			
 			
 //			for (Object object : modifications.keySet() ) {
 //				System.err.println( object.toString() + " = " + modifications.get(object).toString() );
@@ -229,10 +243,10 @@ public class ModelicaMLAST {
 	 *            the a class
 	 * @return the class components
 	 */
-	private EList<Property> getClassComponents(Classifier aClass) {
+	private EList<Property> getClassComponents(Class aClass) {
 		// EList<Property> pList = aClass.getAllAttributes(); // OLD
+		EList<Property> pFinalList = getAllInheritedAttributes(aClass, aClass.getOwnedAttributes());
 		// TODO: implement here all Modelica specific filtering of components, such as redeclaration and merging of duplicates if they are identical.
-		EList<Property> pFinalList = getAllInheritedAttributes(aClass, aClass.getAttributes());
 		return pFinalList;
 	}
 
@@ -288,25 +302,13 @@ public class ModelicaMLAST {
 		return finalList;
 	}
 
-	/**
-	 * Builds the next level of input or output tree.
-	 * 
-	 * @param aClass
-	 *            the a class
-	 * @param firstLevelComponent
-	 *            the first level component
-	 * @param parent
-	 *            the parent
-	 * @param causalityString
-	 *            the causality string
-	 * @param dotPath
-	 *            the dot path
-	 */
+
 	public void buildNextTreeLevel(Class aClass, Property firstLevelComponent, TreeParent parent, String dotPath) {
+		
 		// collect selected class inherited modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
 		addInheritedClassModifications(aClass, dotPath);
 		
-		EList<Property> pList = getClassComponents(aClass);
+		EList<Property> pList = getClassComponents(aClass); // get all (i.e. also inherited) class components
 
 		for (Property property : pList) {
 
@@ -321,42 +323,32 @@ public class ModelicaMLAST {
 				newDotPath = property.getName();
 			}
 
-			if (isPrimitiveType(property)) {
-//				ModificationsCollector.clear(); // clear all lists.
-//				HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
-				
+			if (isPrimitiveType(property)) { // if it is a primitive which value can be modified
+
 				addClassComponentsModifications(property, dotPath);
 				HashSet<String> modifications = null;
-//				String s = this.modifications.get(newDotPath);
-//				if (s != this.modifications.get(newDotPath)) {
-//					modifications.add(s);
-//				}
 				
 				TreeParent child = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(child);
 				
 				// set the final modification right hand
-				child.setFinalModificationRightHand(this.modifications.get(newDotPath));
+//				child.setFinalModificationRightHand(this.modifications.get(newDotPath));
+				child.setModificationRightHand(this.modifications.get(newDotPath));
 				child.setModificationSource(this.modificationSource.get(newDotPath));
 
-				// set parent "has inputs, outputs" etc. indicators 
+				// set the store location for the tree object.
+				setModificationStoreLocation(child);
+
+				// set parent "has inputs, outputs" indicators to all ancestors
 				if (child.isInput()) { parent.setHasInputs(treeRoot); }
 				if (child.isOutput()) { parent.setHasOutputs(treeRoot); }
-				if (child.isRequirementInstance()) { parent.setHasRequirements(treeRoot); }
-
+				
 				// create predefined properties for Modelica real, string, integer and boolean.
 				createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath);
 				
-			} else {
-//				ModificationsCollector.clear(); // clear all lists. 
-//				HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
+			} else { // non-primitive item
 
 				addClassComponentsModifications(property, dotPath);
-				HashSet<String> modifications = null;
-//				String s = this.modifications.get(newDotPath);
-//				if (s != this.modifications.get(newDotPath)) {
-//					modifications.add(s);
-//				}
 
 				Type pType = null;
 				pType = this.redeclaredComponentTypes.get(newDotPath);
@@ -364,12 +356,20 @@ public class ModelicaMLAST {
 					pType = property.getType();
 				}
 				
+				HashSet<String> modifications = null;
 				TreeParent newParent = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, false, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(newParent);
 				
 				// set the final modification right hand
-				newParent.setFinalModificationRightHand(this.modifications.get(newDotPath));
+//				newParent.setFinalModificationRightHand(this.modifications.get(newDotPath));
+				newParent.setModificationRightHand(this.modifications.get(newDotPath));
 				newParent.setModificationSource(this.modificationSource.get(newDotPath));
+				
+				// set the store location for the tree object.
+				setModificationStoreLocation(newParent);
+				
+				// set has requirements indicator to all ancestors
+				if (newParent.isRequirementInstance()) { parent.setHasRequirements(treeRoot); }
 				
 				// make sure that the tree object gets its redeclared type.
 				newParent.setComponentType(pType); 
@@ -386,27 +386,36 @@ public class ModelicaMLAST {
 		}
 	}
 
-	/**
-	 * Creates the predefined type properties.
-	 * 
-	 * @param property
-	 *            the property
-	 * @param firstLevelComponent
-	 *            the first level component
-	 * @param parent
-	 *            the parent
-	 * @param dotPath
-	 *            the dot path
-	 * @param causalityString
-	 *            the causality string
-	 */
-	private void createPredefinedTypeProperties(Property property, Property firstLevelComponent, TreeParent parent, String dotPath) {
-		Type type = property.getType();
+	private void setModificationStoreLocation(TreeParent treeItem){
+		if (treeItem.getFirstLevelComponent() != null) { // if first level component is defined
+			if (selectedClassOwnedComponents.contains(treeItem.getFirstLevelComponent()) ) { //check if this is an owned attribute of the selected class
+//				System.err.println("Store location for '" + treeItem.getName() + "' is the selected-class owned component: " + treeItem.getFirstLevelComponent().getName());
+				treeItem.setModificationStoreLocation(treeItem.getFirstLevelComponent());
+			}
+			else {
+				Set<Generalization> keys = selectedClassExtensionsReferenceForInheritedComponents.keySet();
+				for (Generalization generalization : keys) {
+					//get the respective generalization
+					if (selectedClassExtensionsReferenceForInheritedComponents.get(generalization).contains(treeItem.getFirstLevelComponent())) {
+//						System.err.println("Store for " + treeItem.getName() + " location is the selected-class generalization to " + ((NamedElement)generalization.getTargets().get(0)).getQualifiedName());
+						treeItem.setModificationStoreLocation(generalization);
+					}
+				}
+			}
+		}
+	}
+	
 
-		if (type != null) {
-			if (type instanceof Classifier) {
-				EList<Property> ModelicaPredefinedTypeProperties = ((Classifier) type)
-						.getAllAttributes();
+	private void createPredefinedTypeProperties(Property property, Property firstLevelComponent, TreeParent parent, String dotPath) {
+		Type pType = null;
+		pType = this.redeclaredComponentTypes.get(dotPath);
+		if (pType == null) {
+			pType = property.getType();
+		}
+
+		if (pType != null) {
+			if (pType instanceof Classifier) {
+				EList<Property> ModelicaPredefinedTypeProperties = ((Classifier) pType).getAllAttributes();
 				for (Property p : ModelicaPredefinedTypeProperties) {
 
 					String newDotPath = "";
@@ -415,22 +424,18 @@ public class ModelicaMLAST {
 					} else {
 						newDotPath = p.getName();
 					}
-//					HashSet<String> modifications = ModificationsCollector.getMergedComponentModifications(selectedClass, property, newDotPath, parent.getModifications());
-					// EList<String> modifications = new BasicEList<String>();
-					// TODO: here get the final modifications for this component.
-					
+
 					HashSet<String> modifications = null;
-//					String s = this.modifications.get(newDotPath);
-//					if (s != this.modifications.get(newDotPath)) {
-//						modifications.add(s);
-//					}
-					
 					TreeParent child = new TreeParent(p.getName(), p, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, false);
 					parent.addChild(child);
 					
 					// set the final modification right hand
-					child.setFinalModificationRightHand(this.modifications.get(newDotPath));
+//					child.setFinalModificationRightHand(this.modifications.get(newDotPath));
+					child.setModificationRightHand(this.modifications.get(newDotPath));
 					child.setModificationSource(this.modificationSource.get(newDotPath));
+					
+					// set the store location for the tree object.
+					setModificationStoreLocation(child);
 				}
 			}
 		}

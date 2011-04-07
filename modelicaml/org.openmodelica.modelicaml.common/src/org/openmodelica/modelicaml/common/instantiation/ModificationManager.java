@@ -31,7 +31,7 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011
  */
-package org.openmodelica.modelicaml.common.ast;
+package org.openmodelica.modelicaml.common.instantiation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +45,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
@@ -61,18 +62,6 @@ import org.openmodelica.modelicaml.common.services.UmlServices;
  */
 public class ModificationManager {
 	
-	/** The Constant StereotypePath_Model. */
-	private static final String StereotypePath_Model = "ModelicaML::ModelicaClassConstructs::Model";
-	
-	/** The Constant StereotypePath_record. */
-	private static final String StereotypePath_record = "ModelicaML::ModelicaClassConstructs::Record";
-	
-	/** The Constant StereotypePath_variable. */
-	private static final String StereotypePath_variable = "ModelicaML::ModelicaCompositeConstructs::Variable";
-	
-	/** The Constant StereotypePath_CalculatedProperty. */
-	private static final String StereotypePath_CalculatedProperty  = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
-	
 	/** The Constant StereotypePropertyName_modification. */
 	private static final String StereotypePropertyName_modification = "modification";
 	
@@ -88,6 +77,20 @@ public class ModificationManager {
 	/** The Constant StereotypeName_variable. */
 	private static final String StereotypeName_variable = "Variable";
 	
+	private static final String stereotypeQName_Variable = "ModelicaML::ModelicaCompositeConstructs::Variable";
+	private static final String stereotypeQName_Component = "ModelicaML::ModelicaCompositeConstructs::Component";
+	private static final String stereotypeQName_ConnectionPort = "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
+	private static final String stereotypeQName_CalculatedProperty = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
+	
+	private static final String stereotypeQName_RequirementInstance = "ModelicaML::ModelicaRequirementConstructs::RequirementInstance";
+	
+	private static final String stereotypeQName_ExtendsRelation = "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
+	private static final String stereotypeQName_TypeRelation = "ModelicaML::ModelicaRelationsConstructs::TypeRelation";
+
+	private static final String stereotypeQName_Model = "ModelicaML::ModelicaClassConstructs::Model";
+	private static final String stereotypeQName_record = "ModelicaML::ModelicaClassConstructs::Record";
+
+	
 	/** The Constant inputsComponentName. */
 	private static final String inputsComponentName = "_inputs";
 	
@@ -99,6 +102,10 @@ public class ModificationManager {
 	
 	/** The Constant outputsClassName. */
 	private static final String outputsClassName = "_Outputs";
+	
+	
+	
+	
 	
 	
 	/**
@@ -114,7 +121,7 @@ public class ModificationManager {
 	 *            the overwrite existing modification
 	 */
 	public static void addComponentModification(
-			final Property component, 
+			final Element element, 
 			String modificationLeftHandPart,
 			String modificationRightHandPart,
 			Boolean overwriteExistingModification){
@@ -124,7 +131,7 @@ public class ModificationManager {
 		HashSet<String> newModificationList = new HashSet<String>(); // new value to be set (no duplicates)
 		final List<String> newValue = new ArrayList<String>(); // new modification value
 
-		HashSet<String> existingModificationList = getModifications(component); // existing modifications
+		HashSet<String> existingModificationList = getModifications(element); // existing modifications
 		HashSet<String> filteredModificationsList = new HashSet<String>(); // filtered modifications 
 		filteredModificationsList.addAll(existingModificationList);
 				
@@ -143,7 +150,7 @@ public class ModificationManager {
 			}
 		}
 
-		final Stereotype stereotype = getComponentStereotype(component);
+		final Stereotype stereotype = getElementStereotype(element);
 		
 		if (stereotype != null) {
 			newModificationList.addAll(bindingEquations); // add first the new modifications
@@ -157,7 +164,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					component.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
+					element.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
 				}
 			};
 			cc.append(command);
@@ -179,13 +186,13 @@ public class ModificationManager {
 	 *            the modification string
 	 */
 	public static void deleteComponentModification(
-			final Property component, 
+			final Element element, 
 			String modificationString){
 		
 		HashSet<String> newModificationList = new HashSet<String>(); // new value to be set (no duplicates)
 		final List<String> newValue = new ArrayList<String>(); // new modification value
 
-		HashSet<String> existingModificationList = getModifications(component); // existing modifications
+		HashSet<String> existingModificationList = getModifications(element); // existing modifications
 		HashSet<String> filteredModificationsList = new HashSet<String>(); // filtered modifications 
 		filteredModificationsList.addAll(existingModificationList);
 
@@ -197,7 +204,7 @@ public class ModificationManager {
 			}
 		}
 
-		final Stereotype stereotype = getComponentStereotype(component);
+		final Stereotype stereotype = getElementStereotype(element);
 		
 		if (stereotype != null) {
 			newModificationList.addAll(filteredModificationsList); // then add the existing modification and reject duplicates
@@ -211,7 +218,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					component.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
+					element.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
 				}
 			};
 			cc.append(command);
@@ -234,10 +241,10 @@ public class ModificationManager {
 	 * @return the boolean
 	 */
 	public static Boolean isInModModListOfComponent(
-			Property component, 
+			Element element, 
 			String lefthandValue){
 		
-		HashSet<String> existingModificationList = getModifications(component); // existing modifications
+		HashSet<String> existingModificationList = getModifications(element); // existing modifications
 
 		for (String string : existingModificationList) {
 			String[] splitted = string.trim().split("=");
@@ -262,7 +269,7 @@ public class ModificationManager {
 	 * @return the string
 	 */
 	public static String deleteComponentModificationBasedOnLeftHandValue(
-			final Property component, 
+			final Element element, 
 			String lefthandValue){
 		
 		String deletedString = "";
@@ -270,7 +277,7 @@ public class ModificationManager {
 		HashSet<String> newModificationList = new HashSet<String>(); // new value to be set (no duplicates)
 		final List<String> newValue = new ArrayList<String>(); // new modification value
 
-		HashSet<String> existingModificationList = getModifications(component); // existing modifications
+		HashSet<String> existingModificationList = getModifications(element); // existing modifications
 		HashSet<String> filteredModificationsList = new HashSet<String>(); // filtered modifications 
 		filteredModificationsList.addAll(existingModificationList);
 
@@ -286,7 +293,7 @@ public class ModificationManager {
 			}
 		}
 
-		final Stereotype stereotype = getComponentStereotype(component);
+		final Stereotype stereotype = getElementStereotype(element);
 		
 		if (stereotype != null) {
 			newModificationList.addAll(filteredModificationsList); // then add the existing modification and reject duplicates
@@ -300,7 +307,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					component.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
+					element.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
 				}
 			};
 			cc.append(command);
@@ -368,7 +375,7 @@ public class ModificationManager {
 	 * @param componentDotPath
 	 *            the component dot path
 	 */
-	public static String addToClassInputs(final Class selectedClass, Property firstLevelComponent, final Property component, String componentDotPathWithoutFirstLevelComponentName, final String componentDotPath){
+	public static String addToClassInputs(final Class selectedClass, Element modificaitonStoreLocation, final Property component, String componentDotPathWithoutFirstLevelComponentName, final String componentDotPath){
 		
 //		Class inputsClass = (Class)selectedClass.getNestedClassifier(inputsClassName, true, UMLPackage.Literals.CLASS, false);
 		
@@ -400,8 +407,8 @@ public class ModificationManager {
 //		}
 
 		// apply ModelicaML stereotype
-		if (inputsClass.getAppliedStereotype(StereotypePath_Model) == null) {
-			final Stereotype resultsClassStereotype = inputsClass.getApplicableStereotype(StereotypePath_Model);
+		if (inputsClass.getAppliedStereotype(stereotypeQName_Model) == null) {
+			final Stereotype resultsClassStereotype = inputsClass.getApplicableStereotype(stereotypeQName_Model);
 			
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -443,7 +450,7 @@ public class ModificationManager {
 
 		// apply ModelicaML stereotype to the properties
 		if ( !UmlServices.hasStereotype(p, StereotypeName_variable) ) {
-			final Stereotype pStereotype = p.getApplicableStereotype(StereotypePath_variable);
+			final Stereotype pStereotype = p.getApplicableStereotype(stereotypeQName_Variable);
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
@@ -481,8 +488,8 @@ public class ModificationManager {
 		//########## storing end
 		
 		final Property inputsProperty = selectedClass.getOwnedAttribute(inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, false);
-		final Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(StereotypePath_CalculatedProperty);
-		if (inputsProperty.getAppliedStereotype(StereotypePath_CalculatedProperty) == null) {
+		final Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
+		if (inputsProperty.getAppliedStereotype(stereotypeQName_CalculatedProperty) == null) {
 			//########## storing start
 			if (inputsClassCheck == null) {
 				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -498,8 +505,15 @@ public class ModificationManager {
 			}
 			//########## storing end
 		}
-		addComponentModification(firstLevelComponent, componentDotPathWithoutFirstLevelComponentName, inputsComponentName + "." + p.getName(), true);
-		//inputsClass.eNotify(new NotificationImpl(PapyrusNotification.SET, null, null)); // notify Papyrus
+		
+		String leftHand = "";
+		if (modificaitonStoreLocation instanceof Generalization ) { // then it is an first-level that is inherited by the selected-class
+			leftHand = componentDotPath;
+		}
+		if (modificaitonStoreLocation instanceof Property) { // then it is an owned first-level component of the selected-class
+			leftHand = componentDotPathWithoutFirstLevelComponentName;
+		}
+		addComponentModification(modificaitonStoreLocation, leftHand, inputsComponentName + "." + p.getName(), true);
 		
 		return inputsComponentName + "." + p.getName();
 	}
@@ -538,8 +552,8 @@ public class ModificationManager {
 		outputsClass = (Class)selectedClass.getNestedClassifier(outputsClassName, true, UMLPackage.Literals.CLASS, false);
 		
 		// apply ModelicaML stereotype
-		if (outputsClass.getAppliedStereotype(StereotypePath_record) == null) {
-			final Stereotype resultsClassStereotype = outputsClass.getApplicableStereotype(StereotypePath_record);
+		if (outputsClass.getAppliedStereotype(stereotypeQName_record) == null) {
+			final Stereotype resultsClassStereotype = outputsClass.getApplicableStereotype(stereotypeQName_record);
 			
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -578,7 +592,7 @@ public class ModificationManager {
 		
 		// apply ModelicaML stereotype to the properties
 		if ( !UmlServices.hasStereotype(p, StereotypeName_variable) ) {
-			final Stereotype pStereotype = p.getApplicableStereotype(StereotypePath_variable);
+			final Stereotype pStereotype = p.getApplicableStereotype(stereotypeQName_Variable);
 			
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -615,8 +629,8 @@ public class ModificationManager {
 		//########## storing end
 		
 		final Property outputsProperty = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
-		final Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(StereotypePath_CalculatedProperty);
-		if (outputsProperty.getAppliedStereotype(StereotypePath_CalculatedProperty) == null) {
+		final Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
+		if (outputsProperty.getAppliedStereotype(stereotypeQName_CalculatedProperty) == null) {
 			
 			//########## storing start
 			if (outputsClassCheck == null) {
@@ -634,7 +648,6 @@ public class ModificationManager {
 		}
 		
 		addComponentModification(outputsProperty, StringUtls.replaceSpecChar(componentDotPath), componentDotPath, true);
-		//outputsClass.eNotify(new NotificationImpl(PapyrusNotification.SET, null, null)); // notify Papyrus
 	}
 	
 	/**
@@ -654,16 +667,16 @@ public class ModificationManager {
 	 *            the delete it
 	 * @return the boolean
 	 */
-	public static Boolean isUsedInClassInputs_removeOption(Class selectedClass, Property firstLevelComponent, Property component, String componentDotPathWithoutFirstLevelComponentName, String componentDotPath, Boolean deleteIt){
+	public static Boolean isUsedInClassInputs_removeOption(Class selectedClass, Element modificationStoreLocation, Property component, String componentDotPathWithoutFirstLevelComponentName, String componentDotPath, Boolean deleteIt){
 		final Class inputsClass = (Class)selectedClass.getNestedClassifier(inputsClassName, true, UMLPackage.Literals.CLASS, false);
 		if (inputsClass != null) {
 			final Property p = inputsClass.getOwnedAttribute(StringUtls.replaceSpecChar(componentDotPath), component.getType(), true, UMLPackage.Literals.PROPERTY, false);
 			if (p != null) {
 				final Property inputsProperty = selectedClass.getOwnedAttribute(inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, true);
-				Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(StereotypePath_CalculatedProperty);
+				Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
 				if (inputsProperty != null ) {
 					if (inputsPropertyStereotype != null) {
-						HashSet<String> existingModificationList = getModifications(firstLevelComponent); // existing modifications
+						HashSet<String> existingModificationList = getModifications(modificationStoreLocation); // existing modifications
 						for (String string : existingModificationList) {
 							String[] sPart = string.split("=");
 							if (sPart.length > 0) {
@@ -690,7 +703,7 @@ public class ModificationManager {
 										editingDomain.getCommandStack().execute(cc);
 										//########## storing end
 										
-										deleteComponentModification(firstLevelComponent, string);
+										deleteComponentModification(modificationStoreLocation, string);
 										
 										if (inputsClass.getAllAttributes().size() < 1 ) {
 											//########## storing start
@@ -759,7 +772,7 @@ public class ModificationManager {
 				//########## storing end
 				
 				final Property outputsProperty = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
-				Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(StereotypePath_CalculatedProperty);
+				Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
 				
 				if (outputsProperty != null ) {
 					if (outputsPropertyStereotype != null) {
@@ -821,40 +834,32 @@ public class ModificationManager {
 		return false;
 	}
 	
-	
-	// TODO: create final strings for the stereotypes names and properties names
-	
-	/**
-	 * Gets the component stereotype.
-	 * 
-	 * @param property
-	 *            the property
-	 * @return the component stereotype
-	 */
-	private static Stereotype getComponentStereotype(Property property) {
-		Stereotype stereotype = null;
-		if (UmlServices.hasStereotype((Element) property, "Variable")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
-		if (UmlServices.hasStereotype((Element) property, "Component")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Component");
-		if (UmlServices.hasStereotype((Element) property, "ConnectionPort")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::ConnectionPort");
-		if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::CalculatedProperty");
-			// note: requirementInstance in is another profile than the rest! 
-		if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementInstance");
-		return stereotype;
+	private static Stereotype getElementStereotype(Element element) {
+		if (element.getAppliedStereotype(stereotypeQName_Variable) != null ) { return element.getAppliedStereotype(stereotypeQName_Variable); }
+		if (element.getAppliedStereotype(stereotypeQName_Component) != null ) { return element.getAppliedStereotype(stereotypeQName_Component); }
+		if (element.getAppliedStereotype(stereotypeQName_ConnectionPort) != null ) { return element.getAppliedStereotype(stereotypeQName_ConnectionPort); }
+		if (element.getAppliedStereotype(stereotypeQName_CalculatedProperty) != null ) { return element.getAppliedStereotype(stereotypeQName_CalculatedProperty); }
+		
+		if (element.getAppliedStereotype(stereotypeQName_RequirementInstance) != null ) { return element.getAppliedStereotype(stereotypeQName_RequirementInstance); }
+		
+		if (element.getAppliedStereotype(stereotypeQName_ExtendsRelation) != null ) { return element.getAppliedStereotype(stereotypeQName_ExtendsRelation); }
+		if (element.getAppliedStereotype(stereotypeQName_TypeRelation) != null ) { return element.getAppliedStereotype(stereotypeQName_TypeRelation); }
+		
+//		if (UmlServices.hasStereotype((Element) property, "Variable")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
+//		if (UmlServices.hasStereotype((Element) property, "Component")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Component");
+//		if (UmlServices.hasStereotype((Element) property, "ConnectionPort")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::ConnectionPort");
+//		if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::CalculatedProperty");
+//			// note: requirementInstance in is another profile than the rest! 
+//		if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementInstance");
+		return null;
 	}
 	
-	/**
-	 * Gets the modifications.
-	 * 
-	 * @param component
-	 *            the component
-	 * @return the modifications
-	 */
-	private static HashSet<String> getModifications(Property component)  {
+	public static HashSet<String> getModifications(Element element)  {
 		HashSet<String> mList = new HashSet<String>();
-		String stereotypeName = getFirstModelicaMLStereotypeName(component);
-		List<String> modificationList = new ArrayList<String>();
-		if (stereotypeName != null && !stereotypeName.equals("")) {
-			Object o = UmlServices.getStereotypeValue((Element)component, getFirstModelicaMLStereotypeName(component),"modification");	
+		Stereotype stereotype = getElementStereotype(element);
+		if (stereotype != null ) {
+			List<String> modificationList = new ArrayList<String>();
+			Object o = element.getValue(stereotype, StereotypePropertyName_modification);	
 			if (o instanceof List<?>) {
 				modificationList = (List<String>)o;
 			}
@@ -863,24 +868,24 @@ public class ModificationManager {
 		return mList;
 	}
 	
-	/**
-	 * Gets the first modelica ml stereotype name.
-	 * 
-	 * @param property
-	 *            the property
-	 * @return the first modelica ml stereotype name
-	 */
-	private static String getFirstModelicaMLStereotypeName(Property property) {
-		String name = null;
-		if (property != null) {
-			if (UmlServices.hasStereotype((Element) property, "Variable")) return "Variable";
-			if (UmlServices.hasStereotype((Element) property, "Component")) return "Component";
-			if (UmlServices.hasStereotype((Element) property, "ConnectionPort")) return "ConnectionPort";
-			if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return "CalculatedProperty";
-			if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return "RequirementInstance";			
-		}
-		return name;
-	}
+//	/**
+//	 * Gets the first modelica ml stereotype name.
+//	 * 
+//	 * @param property
+//	 *            the property
+//	 * @return the first modelica ml stereotype name
+//	 */
+//	private static String getFirstModelicaMLStereotypeName(Property property) {
+//		String name = null;
+//		if (property != null) {
+//			if (UmlServices.hasStereotype((Element) property, "Variable")) return "Variable";
+//			if (UmlServices.hasStereotype((Element) property, "Component")) return "Component";
+//			if (UmlServices.hasStereotype((Element) property, "ConnectionPort")) return "ConnectionPort";
+//			if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return "CalculatedProperty";
+//			if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return "RequirementInstance";			
+//		}
+//		return name;
+//	}
 	
 	
 }

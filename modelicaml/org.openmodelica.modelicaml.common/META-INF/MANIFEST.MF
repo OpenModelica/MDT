@@ -13,9 +13,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.papyrus.core;bundle-version="0.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.openmodelica.modelicaml.common.ast,
- org.openmodelica.modelicaml.common.contentassist,
+Export-Package: org.openmodelica.modelicaml.common.contentassist,
  org.openmodelica.modelicaml.common.display,
+ org.openmodelica.modelicaml.common.instantiation,
  org.openmodelica.modelicaml.common.services,
  org.openmodelica.modelicaml.common.validation.services
 Import-Package: org.eclipse.emf.common.util,
