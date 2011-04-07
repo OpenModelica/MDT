@@ -43,9 +43,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.Signal;
@@ -53,7 +57,7 @@ import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.TypedElement;
-import org.openmodelica.modelicaml.common.ast.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.osgi.framework.Bundle;
 
@@ -186,14 +190,26 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 			// set text
 			if (!treeObject.isLeaf() && !treeObject.isRoot() && treeObject.getChildren().length > 0) { // tree with children object 
 				
-				String redecalaredTypeString = "";
+				String hasRedecalaredTypeString = "";
 				if (treeObject.hasRedeclaredType()) {
-					redecalaredTypeString = " <- redeclared ";
+					hasRedecalaredTypeString = " <- redeclared ";
 				}
 				
 				StyledString styledString = new StyledString(treeObject.toString() + arraySizeString);
-				styledString.append(redecalaredTypeString, StyledString.DECORATIONS_STYLER);
+				styledString.append(hasRedecalaredTypeString, StyledString.DECORATIONS_STYLER);
 				styledString.append(" (" + treeObject.getChildren().length + ")", StyledString.QUALIFIER_STYLER);
+				Styler styler = new Styler() {
+					@Override
+					public void applyStyles(TextStyle textStyle) {
+						textStyle.foreground = new Color(null, new RGB(105, 105, 105)); // Dim Gray
+					}
+				};;
+				
+				if (treeObject.isInherited()) {
+//					System.err.println(treeObject.getName() + " is inherited");
+					styledString.setStyle(0, (treeObject.toString() + arraySizeString).length(), styler);
+				}
+				
 				cell.setText(styledString.toString());
 				cell.setStyleRanges(styledString.getStyleRanges());
 				

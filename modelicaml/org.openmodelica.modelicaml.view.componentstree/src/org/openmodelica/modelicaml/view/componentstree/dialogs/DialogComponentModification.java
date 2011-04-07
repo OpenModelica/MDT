@@ -57,10 +57,11 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Property;
-import org.openmodelica.modelicaml.common.ast.TreeObject;
-import org.openmodelica.modelicaml.common.ast.TreeParent;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.editor.xtext.array.ui.internal.ArraysubscriptActivator;
 import org.openmodelica.modelicaml.editor.xtext.modification.ui.internal.ModificationActivator;
@@ -403,6 +404,7 @@ public class DialogComponentModification extends Dialog {
         editor.getEditorWidget().setFocus();
         if (value != null) {
             editor.setTextToEdit(value);
+            editor.getEditorWidget().setCaretOffset(value.length());
 //            editor.getEditorWidget().selectAll();
         }
     }
@@ -517,9 +519,17 @@ public class DialogComponentModification extends Dialog {
 		
         
         Label note_label = new Label(composite, SWT.WRAP);
-        Element c = treeObject.getFirstLevelComponent().getOwner();
-        String className = ((Classifier)c).getName();
-        note_label.setText("* Note, this modification will be stored in '" + className +"."+ treeObject.getFirstLevelComponent().getName() + "'");
+//        Element c = treeObject.getFirstLevelComponent().getOwner();
+//        String className = ((Classifier)c).getName();
+     
+        String info ="";
+        if (treeObject.getModificationStoreLocation() instanceof Generalization) {
+			info = " extension modification in " + ((Class)((Generalization)treeObject.getModificationStoreLocation()).getSources().get(0)).getName();
+		}
+        else {
+        	info = " component " + treeObject.getFirstLevelComponent().getName();
+        }
+        note_label.setText("* Note, this modification will be stored in " + info);
         GridData note_label_data = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);

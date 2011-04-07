@@ -74,11 +74,13 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
-import org.openmodelica.modelicaml.common.ast.ModelicaMLAST;
-import org.openmodelica.modelicaml.common.ast.ModificationManager;
-import org.openmodelica.modelicaml.common.ast.ModificationsCollector;
-import org.openmodelica.modelicaml.common.ast.TreeObject;
-import org.openmodelica.modelicaml.common.ast.TreeParent;
+import org.eclipse.uml2.uml.Generalization;
+import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
+import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
+import org.openmodelica.modelicaml.common.instantiation.ModificationsCollector;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentInformation;
@@ -277,7 +279,15 @@ public class ComponentsTree extends ViewPart {
 					manager.add(actionEditModification);
 					
 					if (item.getFirstLevelComponent()!= null ) {
-						if (ModificationManager.isInModModListOfComponent(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent())) {
+						Element modificationStoreLocation = item.getModificationStoreLocation();
+						String componentPath = "";
+						if (modificationStoreLocation instanceof Property) {
+							componentPath = item.getDotPathWithoutFirstLevelComponent();
+						}
+						else if (modificationStoreLocation instanceof Generalization) {
+							componentPath = item.getDothPath();
+						}
+						if (ModificationManager.isInModModListOfComponent(modificationStoreLocation, componentPath)) {
 //							String title = "Edit modification in '" + item.getFirstLevelComponent().getName() + "'";
 							String title = "Edit binding";
 							actionEditModification.setText(title);
@@ -292,7 +302,15 @@ public class ComponentsTree extends ViewPart {
 					}
 				}
 				
-				if (ModificationManager.isInModModListOfComponent(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent())) {
+				Element modificationStoreLocation = item.getModificationStoreLocation();
+				String componentPath = "";
+				if (modificationStoreLocation instanceof Property) {
+					componentPath = item.getDotPathWithoutFirstLevelComponent();
+				}
+				else if (modificationStoreLocation instanceof Generalization) {
+					componentPath = item.getDothPath();
+				}
+				if (ModificationManager.isInModModListOfComponent(modificationStoreLocation, componentPath)) {
 					manager.add(actionDeleteModification);
 					if (item.getFirstLevelComponent()!= null) {
 //						actionDeleteModification.setText("Delete modification from '" + item.getFirstLevelComponent().getName() + "'");
@@ -611,9 +629,8 @@ public class ComponentsTree extends ViewPart {
 					TreeParent item = ( (TreeParent)obj);
 					
 					// get the modification for this item in its first level component
-					//String modificationString = null; 
 					String modificationString = "";
-					HashSet<String> modList = ModificationsCollector.getComponentModifications(item.getFirstLevelComponent());
+					HashSet<String> modList = ModificationManager.getModifications(item.getModificationStoreLocation());
 					if (modList.size() > 0 ) {
 						for (String string : modList) {
 							String[] splitted = string.trim().split("=");
@@ -621,6 +638,9 @@ public class ComponentsTree extends ViewPart {
 								String leftHand = splitted[0].trim();
 								String rightHand = splitted[1].trim();
 								if (leftHand.equals(item.getDotPathWithoutFirstLevelComponent())) {
+									modificationString = rightHand;
+								}
+								else if (leftHand.equals(item.getDothPath()) ) {
 									modificationString = rightHand;
 								}
 							}
@@ -643,9 +663,20 @@ public class ComponentsTree extends ViewPart {
 						Shell shell = new Shell();
 						if ( string.trim().equals("")) {
 							// Delete modification in items firstLevelComponent
-							ModificationManager.deleteComponentModificationBasedOnLeftHandValue(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent());
+							// Delete modification
+							Element modificationStoreLocation = item.getModificationStoreLocation();
+							String componentPath = "";
+							if (modificationStoreLocation instanceof Property) {
+								componentPath = item.getDotPathWithoutFirstLevelComponent();
+							}
+							else if (modificationStoreLocation instanceof Generalization) {
+								componentPath = item.getDothPath();
+							}
+							ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
+
 							// Delete modification in item list.
 							//item.deleteFromModificationListBasedOnLeftRightHandValue(item.getDothPath(), modificationString);
+
 							item.setFinalModificationRightHand(null); // TODO: verify against the line above
 							item.setFinalModificationSource(null);
 							viewer.update(item, null);
@@ -658,11 +689,18 @@ public class ComponentsTree extends ViewPart {
 							}
 							String modStringWithoutBraces = StringUtls.removeOutterBraces(string);
 							
-							// Update the modification in the corresponding firstLevelComponent
-							
-							// Delete modification in items firstLevelComponent
+							// Delete modification 
 							if (modStringWithoutBraces.startsWith(item.getDotPathWithoutFirstLevelComponent())) {
-								String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent());
+								Element modificationStoreLocation = item.getModificationStoreLocation();
+								String componentPath = "";
+								if (modificationStoreLocation instanceof Property) {
+									componentPath = item.getDotPathWithoutFirstLevelComponent();
+								}
+								else if (modificationStoreLocation instanceof Generalization) {
+									componentPath = item.getDothPath();
+								}
+								String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
+								
 								// Delete modification in item list.
 								//item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
 								item.setFinalModificationRightHand(null); // verify against the line above
@@ -675,12 +713,21 @@ public class ComponentsTree extends ViewPart {
 							//ModificationManager.addComponentModification(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent(), modificationStringDialog.getValue(), true);
 							String[] parts = modStringWithoutBraces.split("=");
 							if (parts.length > 0) {
-								String leftHandPart = parts[0];
+//								String leftHandPart = parts[0];
+								
+								// TODO: test it!
+								String leftHandPart = "";
+								if (item.getFirstLevelComponent() != null && item.getModificationStoreLocation() instanceof Generalization) {
+									leftHandPart = StringUtls.replaceSpecChar(item.getFirstLevelComponent().getName()) + "." + parts[0].trim();
+								}
+								else if (item.getFirstLevelComponent() != null && item.getModificationStoreLocation() instanceof Property) {
+									leftHandPart = parts[0].trim();
+								}
 								//System.err.println("leftHandPart " + leftHandPart);
 								if (parts.length > 1) {
 									String rightHandPart = parts[1];
 									//System.err.println("rightHandPart " + rightHandPart);
-									ModificationManager.addComponentModification(item.getFirstLevelComponent(), leftHandPart, rightHandPart, true);
+									ModificationManager.addComponentModification(item.getModificationStoreLocation(), leftHandPart, rightHandPart, true);
 									//ModificationManager.addComponentModification(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent(), modificationStringDialog.getValue(), true); // OLD
 									
 //									// Add to the modification in item list.
@@ -727,8 +774,18 @@ public class ComponentsTree extends ViewPart {
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
 				
-					// Delete modification in items firstLevelComponent
-					String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent());
+					// Delete modification
+					Element modificationStoreLocation = item.getModificationStoreLocation();
+					String componentPath = "";
+					if (modificationStoreLocation instanceof Property) { // if is the owned first level component
+						componentPath = item.getDotPathWithoutFirstLevelComponent();
+						item.setModificationRightHand(null); // reset the modification because it was created from the same first level component
+					}
+					else if (modificationStoreLocation instanceof Generalization) { // if it is an inherited first level component
+						componentPath = item.getDothPath();
+					}
+					
+					String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
 					
 					// Delete the modification from the component modifications list.
 //					item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
@@ -1229,7 +1286,7 @@ public class ComponentsTree extends ViewPart {
 		 */
 		public void createTree(Class selectedClass){
 			if (selectedClass != null && !(selectedClass instanceof Behavior) ) {
-				ModelicaMLAST ast = new ModelicaMLAST(selectedClass, actionShowStateMachines.isChecked());
+				ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked());
 
 //				if (actionShowInputs.isChecked()) {
 //					ast.createInputsTree();

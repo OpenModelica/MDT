@@ -54,8 +54,8 @@ import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
-import org.openmodelica.modelicaml.common.ast.TreeObject;
-import org.openmodelica.modelicaml.common.ast.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
 
