@@ -15,11 +15,11 @@ import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
-import org.openmodelica.modelicaml.common.ast.ModelicaMLAST;
-import org.openmodelica.modelicaml.common.ast.ModificationManager;
-import org.openmodelica.modelicaml.common.ast.ModificationsCollector;
-import org.openmodelica.modelicaml.common.ast.TreeObject;
-import org.openmodelica.modelicaml.common.ast.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
+import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
+import org.openmodelica.modelicaml.common.instantiation.ModificationsCollector;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
 public class RequirementsInstantiator {
@@ -44,7 +44,7 @@ public class RequirementsInstantiator {
 	HashSet<String> reqPropertiesBound = new HashSet<String>();
 	List<ValueBinding> finalBindings = new ArrayList<ValueBinding>();
 	
-	ModelicaMLAST ast; // the ast object
+	ClassInstantiation ast; // the ast object
 	TreeParent astRoot; // the root node of the ast 
 	
 	private String entryPoint = null; // used for marking the parent-dotPath of the first value provider found 
@@ -55,7 +55,7 @@ public class RequirementsInstantiator {
 //	}
 	
 	public void instantiateRequirements(Class containingClass, HashSet<Class> reqClasses, HashMap<Class, Integer> selectedNumberOfInstantiations){
-    	ast = new ModelicaMLAST(containingClass, true);
+    	ast = new ClassInstantiation(containingClass, true);
 		ast.createTree();
 		astRoot = ast.getTreeRoot();
 		
@@ -516,7 +516,7 @@ public class RequirementsInstantiator {
      */
 	public int getNumberOfRequiredInstantiations(Class containingClass, Class reqClass){
 
-    	ModelicaMLAST ast = new ModelicaMLAST(containingClass, true);
+		ClassInstantiation ast = new ClassInstantiation(containingClass, true);
 		ast.createTree();
 		TreeParent root = ast.getTreeRoot();
 		
