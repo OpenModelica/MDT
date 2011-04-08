@@ -107,13 +107,14 @@ public class TreeParent extends TreeObject
 				isRoot, 
 //				modifications,
 				selectedClass);
-		
+
 		children = new ArrayList<TreeObject>();
 
-		addSignals(); 	
 		if (showStateMachines) {
 			addStateMachines();			
 		}
+		addSignals();
+
 	}
 	
 	

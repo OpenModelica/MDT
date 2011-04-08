@@ -67,7 +67,7 @@ import org.eclipse.uml2.uml.Vertex;
 import org.openmodelica.modelicaml.common.display.IconProvider;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
-
+// TODO: REFACTOR this!
 
 // TODO: Auto-generated Javadoc
 /**
@@ -278,46 +278,7 @@ public class ModelicaMLContentAssist {
 	
 
 	
-	
-	
-	
-	
-	// to be used for validation
-	/**
-	 * Gets the full modified component reference sorted list.
-	 *
-	 * @return the full modified component reference sorted list
-	 */
-	public static List<String> getFullModifiedComponentReferenceSortedList(){
-		List<String> sortedList = new ArrayList<String>();
-		
-		if (propertyName != null) {
-
-			// collect references 
-			for (String reference : componentReferenceList) {
-				if (reference.startsWith(propertyName)) {
-					if (!statesList.contains(reference)) {
-						sortedList.add(reference.replaceFirst(propertyName + ".", ""));
-					}
-				}
-			}
-			// collect the predefined properties
-			for (String reference : predefinedVariablePropertiesList) {
-				if (reference.startsWith(propertyName)) {
-					//sortedList.add(reference); // IMPORTANT: this is used for component tree in order to enable modifications that are stored in first level components.
-					sortedList.add(reference.replaceFirst(propertyName + ".", ""));
-				}
-			}
-			
-			Collections.sort(sortedList, String.CASE_INSENSITIVE_ORDER);
-		}
-		
-		//System.err.println(sortedList);
-		return sortedList;
-	}
-	
-	
-	
+	// ############## MODIFICATION
 	
 	// to be used for code completion
 	/**
@@ -359,6 +320,65 @@ public class ModelicaMLContentAssist {
 		Collections.sort(sortedList, String.CASE_INSENSITIVE_ORDER);
 		return sortedList;
 	}
+	
+	
+	
+	// to be used for validation
+	/**
+	 * Gets the full modified component reference sorted list.
+	 *
+	 * @return the full modified component reference sorted list
+	 */
+	public static List<String> getFullModifiedComponentReferenceSortedList(){
+		List<String> sortedList = new ArrayList<String>();
+
+		if (selectedSourceElement instanceof Generalization) {
+			EList<Property> inheritedAttributes = getAllInheritedAttributes( ((Generalization)selectedSourceElement).getSpecific(), new BasicEList<Property>());
+			HashSet<String> inheritedAttributesNames = new HashSet<String>();
+			
+			for (Property property : inheritedAttributes) {
+				inheritedAttributesNames.add(StringUtls.replaceSpecChar(property.getName()));
+			}
+			
+			for (String reference : componentReferenceList) {
+				for (String string : inheritedAttributesNames) {
+					if (reference.startsWith(string)) {
+						if ( !functionsList.contains(reference) && !statesList.contains(reference)) {
+							sortedList.add(reference);
+						}
+					}
+				}
+			}
+		}
+		else if (propertyName != null) {
+
+			// collect references 
+			for (String reference : componentReferenceList) {
+				if (reference.startsWith(propertyName)) {
+					if (!statesList.contains(reference)) {
+						sortedList.add(reference.replaceFirst(propertyName + ".", ""));
+					}
+				}
+			}
+			// collect the predefined properties
+			for (String reference : predefinedVariablePropertiesList) {
+				if (reference.startsWith(propertyName)) {
+					//sortedList.add(reference); // IMPORTANT: this is used for component tree in order to enable modifications that are stored in first level components.
+					sortedList.add(reference.replaceFirst(propertyName + ".", ""));
+				}
+			}
+			
+			Collections.sort(sortedList, String.CASE_INSENSITIVE_ORDER);
+		}
+		
+		//System.err.println(sortedList);
+		return sortedList;
+	}
+	
+	// ############## MODIFICATION END
+	
+	
+	
 	
 	
 	
@@ -661,6 +681,8 @@ public class ModelicaMLContentAssist {
 	 * @param dotPath the dot path
 	 */
 	private static void addVariablesToList(Class aClass, String dotPath){
+		//TODO: refactor this! Use the Class instantiation for collecting the variables.
+		
 		EList<Property> pList = getClassComponents(aClass);
 		
 		for (Property property : pList) {

@@ -713,6 +713,9 @@ public class TreeObject implements IAdaptable
 	}
 	
 	public Boolean getHasRequirements() {
+		if (hasRequirements == null) {
+			return false;
+		}
 		return hasRequirements;
 	}
 	public void setHasRequirements(TreeParent root) {
