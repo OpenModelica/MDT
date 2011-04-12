@@ -58,6 +58,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -348,14 +349,30 @@ public class OMCProxy implements IModelicaCompiler
 			File parent = omcBinary.getParentFile();
 
 			if (parent.getName().equalsIgnoreCase("bin") || 
-					parent.getName().equalsIgnoreCase("compiler"))
+				parent.getName().equalsIgnoreCase("compiler"))
 			{
 				omcWorkingDirectory = parent.getParentFile();
-				File work = new File(omcWorkingDirectory.getAbsolutePath()+File.pathSeparator+"work");
-				if (work.exists()) omcWorkingDirectory = work; 
+				File work = new File(omcWorkingDirectory.getAbsolutePath()+File.pathSeparator+"tmp");
+				if (work.exists()) 
+				{
+					omcWorkingDirectory = work;
+				}
+				else
+				{
+					work = new File(omcWorkingDirectory.getAbsolutePath()+File.pathSeparator+"work");
+					if (work.exists()) 
+					{
+						omcWorkingDirectory = work;
+					}
+					else
+					{
+						// start in tmp.
+					}
+				}				
 			}
 			else
 			{
+				// start in tmp
 				omcWorkingDirectory = parent;
 			}
 
@@ -388,11 +405,16 @@ public class OMCProxy implements IModelicaCompiler
 		/* Can't remember why this is needed. But it is. */
 		String args[] = {null};
 
+		/* set the CORBA read timeout to a larger value as we send huge ammounts of data
+		 * from OMC to MDT
+		 */
+		System.setProperty("com.sun.CORBA.transport.ORBTCPReadTimeouts", "1:60000:300:1"); 
+		
 		ORB orb;
-		orb = ORB.init(args, null);
+		orb = ORB.init(args, null);		
 
 		/* Convert string to object. */
-		org.omg.CORBA.Object obj = orb.string_to_object(stringifiedObjectReference);
+		org.omg.CORBA.Object obj = orb.string_to_object(stringifiedObjectReference);		
 
 		/* Convert object to OmcCommunication object. */
 		omcc = OmcCommunicationHelper.narrow(obj);
@@ -1272,7 +1294,8 @@ public class OMCProxy implements IModelicaCompiler
 			catch (ConnectException e) 
 			{
 				ErrorManager.logError(e);
-				couldNotStartOMC = true; hasInitialized = false;
+				couldNotStartOMC = true; 
+				hasInitialized = false;
 				return;
 			}
 
@@ -1296,13 +1319,31 @@ public class OMCProxy implements IModelicaCompiler
 			StreamReaderThread outThread = null;
 			StreamReaderThread errThread = null;
 			/* TODO! FIXME! add corba session to the preferences! */
-			final String command[] = { omcBinary.getAbsolutePath(), "+c="+corbaSession, "+d=interactiveCorba" };
-			logOMCStatus("Running command: " + command[0] + " " + command[1] + " " + command[2], true);
+			String command[] = { omcBinary.getAbsolutePath(), "+c="+corbaSession, "+d=interactiveCorba"};
+			String extraCmds[] = PreferenceManager.getOMCCommandLineParametersArray();
+			ArrayList both = new ArrayList(command.length + extraCmds.length);
+		    Collections.addAll(both, command);
+		    Collections.addAll(both, extraCmds);
+		    String cmd[] = new String[both.size()];
+		    int nonNull = 0;
+		    for (int i=0; i < both.size(); i++)
+		    {
+		    	String str = (String) both.get(i);
+		    	if (str != null)
+		    	{
+		    		cmd[nonNull] = str;
+		    		nonNull++;
+		    	}
+		    }
+		    String fullCMD = "";
+		    for (int i=0; i < nonNull; i++) 
+		    	fullCMD += cmd[i] + " ";
+			logOMCStatus("Running command: " + fullCMD, true);
 			logOMCStatus("Setting working directory to: " + workingDirectory.getAbsolutePath(), true);				
 			try
 			{
 				// prepare buffers for process output and error streams
-				proc=Runtime.getRuntime().exec(command, null, workingDirectory);
+				proc=Runtime.getRuntime().exec(cmd, null, workingDirectory);
 				//create thread for reading inputStream (process' stdout)
 				outThread= new StreamReaderThread(proc.getInputStream(),System.out);
 				//create thread for reading errorStream (process' stderr)
@@ -1313,7 +1354,7 @@ public class OMCProxy implements IModelicaCompiler
 			}
 			catch(IOException e)
 			{
-				logOMCStatus("Failed to run command: " + command[0] + " " + command[1] + " " + command[2], true);
+				logOMCStatus("Failed to run command: " + fullCMD, true);
 				ErrorManager.logError(e);
 				couldNotStartOMC = true; hasInitialized = false;
 				return;
@@ -1350,11 +1391,16 @@ public class OMCProxy implements IModelicaCompiler
 					return;
 				}
 			}
-			logOMCStatus("OMC object reference found.", true);	            
+			logOMCStatus("OMC object reference found.", true);
+			int omcExitCode = 0;
 			try
 			{
 				//wait for process to end
-				proc.waitFor();
+				omcExitCode = proc.waitFor();
+				if (omcExitCode != 0)
+				{
+					ErrorManager.logWarning("OpenModelica compiler exited with code:" + omcExitCode);
+				}
 				//finish reading whatever's left in the buffers
 				outThread.join();
 				errThread.join();								
