@@ -56,6 +56,7 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 		// remove the file
 		progPath = progPath.removeLastSegments(1);
 		String debugTargetCommandLineArguments = configuration.getAttribute(IMDTConstants.ATTR_MDT_ARGUMENTS, (String)null);
+		String debugTargetWorkDirectory = configuration.getAttribute(IMDTConstants.ATTR_MDT_WORK_DIRECTORY, progPath.toOSString());
 		/* TODO: USE THESE IN THE PROCESS exec(); 
 		ILaunchManager.ATTR_ENVIRONMENT_VARIABLES;
 		ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES;
@@ -88,15 +89,18 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 			
 			Process process = DebugPlugin.exec(
 					commandLine, 
-					new File(progPath.toOSString()), 
+					new File(debugTargetWorkDirectory), 
 					null);
 			if (process == null)
 			{
 				abort("Unable to run the executable: " + commandLine, null);
 			}
 			/* wait a bit of 10 seconds for the process to start */
-			try { Thread.sleep(1000); }
-			catch(InterruptedException e) { /* ignore */ }			
+			try 
+			{ 
+				Thread.sleep(5000);
+			}
+			catch (InterruptedException e) { /* ignore */ }			
 			
 			IProcess p = DebugPlugin.newProcess(launch, process, debugTargetProgram);
 			

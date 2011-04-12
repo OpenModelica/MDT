@@ -144,13 +144,13 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget, IBr
 		int maxNoOfTries = 100;
 		while (tryAgain)
 		{
-			try { Thread.sleep(500); } catch (InterruptedException e) {}
 			noOfTries++;
 			tryAgain = false;
 			try 
 			{
 				// give interpreter a chance to start			
-				try { Thread.sleep(100); } catch (InterruptedException e) {}			
+				try { Thread.sleep(100); } catch (InterruptedException e) {}
+				
 				fCommandSocket = new Socket("localhost", commandPort);
 				fCommandWriter = new PrintWriter(fCommandSocket.getOutputStream());
 				
@@ -172,7 +172,6 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget, IBr
 				fSignalSocket = new Socket("localhost", signalPort);
 				fSignalWriter = new PrintWriter(fSignalSocket.getOutputStream());
 				
-				
 			} catch (UnknownHostException e) {
 				// if we could not connect it may be because the debugger was not yet ready
 				tryAgain = true;
@@ -184,6 +183,8 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget, IBr
 				if (noOfTries > maxNoOfTries)				
 					requestFailed("Unable to connect to MDT Debugger", e);
 			}
+			
+			try { Thread.sleep(500); } catch (InterruptedException e) {}			
 		}
 		
 		MDTThread x = new MDTThread(this);

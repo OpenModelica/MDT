@@ -20,7 +20,7 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public class MDTVariable extends MDTDebugElement implements IVariable {
 
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
 	String line;
 	DefaultMutableTreeNode top = null;
 	DefaultMutableTreeNode modelicaVariables = null; 

@@ -28,40 +28,40 @@ import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 public abstract class MDTBreakpoint extends Breakpoint implements IMDTBreakpoint {
 
 	/**
-	 * Breakpoint attribute storing the expired value (value <code>"org.eclipse.jdt.debug.core.expired"</code>).
+	 * Breakpoint attribute storing the expired value (value <code>"org.modelica.mdt.debug.core.expired"</code>).
 	 * This attribute is stored as a <code>boolean</code>. Once a hit count has
 	 * been reached, a breakpoint is considered to be "expired".
 	 */
-	protected static final String EXPIRED = "org.eclipse.jdt.debug.core.expired"; //$NON-NLS-1$
+	protected static final String EXPIRED = "org.modelica.mdt.debug.core.expired"; //$NON-NLS-1$
 	/**
 	 * Breakpoint attribute storing a breakpoint's hit count value
-	 * (value <code>"org.eclipse.jdt.debug.core.hitCount"</code>). This attribute is stored as an
+	 * (value <code>"org.modelica.mdt.debug.core.hitCount"</code>). This attribute is stored as an
 	 * <code>int</code>.
 	 */
-	protected static final String HIT_COUNT = "org.eclipse.jdt.debug.core.hitCount"; //$NON-NLS-1$
+	protected static final String HIT_COUNT = "org.modelica.mdt.debug.core.hitCount"; //$NON-NLS-1$
 	/**
 	 * Breakpoint attribute storing the number of debug targets a
-	 * breakpoint is installed in (value <code>"org.eclipse.jdt.debug.core.installCount"</code>).
+	 * breakpoint is installed in (value <code>"org.modelica.mdt.debug.core.installCount"</code>).
 	 * This attribute is a <code>int</code>.
 	 */
-	protected static final String INSTALL_COUNT = "org.eclipse.jdt.debug.core.installCount"; //$NON-NLS-1$	
+	protected static final String INSTALL_COUNT = "org.modelica.mdt.debug.core.installCount"; //$NON-NLS-1$	
 	
 	/**
 	 * Breakpoint attribute storing the fully qualified name of the type
 	 * this breakpoint is located in.
-	 * (value <code>"org.eclipse.jdt.debug.core.typeName"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.modelica.mdt.debug.core.typeName"</code>). This attribute is a <code>String</code>.
 	 */
-	protected static final String TYPE_NAME = "org.eclipse.jdt.debug.core.typeName"; //$NON-NLS-1$		
+	protected static final String TYPE_NAME = "org.modelica.mdt.debug.core.typeName"; //$NON-NLS-1$		
 	
 	/**
 	 * Breakpoint attribute storing suspend policy code for 
 	 * this breakpoint.
-	 * (value <code>"org.eclipse.jdt.debug.core.suspendPolicy</code>).
+	 * (value <code>"org.modelica.mdt.debug.core.suspendPolicy</code>).
 	 * This attribute is an <code>int</code> corresponding
 	 * to <code>IMDTBreakpoint.SUSPEND_VM</code> or
 	 * <code>IMDTBreakpoint.SUSPEND_THREAD</code>.
 	 */
-	protected static final String SUSPEND_POLICY = "org.eclipse.jdt.debug.core.suspendPolicy"; //$NON-NLS-1$			
+	protected static final String SUSPEND_POLICY = "org.modelica.mdt.debug.core.suspendPolicy"; //$NON-NLS-1$			
 	
 	/**
 	 * Stores the collection of requests that this breakpoint has installed in
@@ -105,7 +105,7 @@ public abstract class MDTBreakpoint extends Breakpoint implements IMDTBreakpoint
 	/**
 	 * Property identifier for a breakpoint object on an event request
 	 */
-	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
+	public static final String JAVA_BREAKPOINT_PROPERTY = "org.modelica.mdt.debug.breakpoint"; //$NON-NLS-1$
 	
 	/**
 	 * MDTBreakpoint attributes

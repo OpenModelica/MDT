@@ -29,49 +29,49 @@ import org.modelica.mdt.debug.core.IMDTFailureBreakpoint;
 
 public class MDTExceptionBreakpoint extends MDTBreakpoint implements IMDTFailureBreakpoint {
 
-	private static final String MDT_EXCEPTION_BREAKPOINT= "org.eclipse.jdt.debug.javaExceptionBreakpointMarker"; //$NON-NLS-1$
+	private static final String MDT_EXCEPTION_BREAKPOINT= "org.modelica.mdt.debug.javaExceptionBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Exception breakpoint attribute storing the suspend on caught value
-	 * (value <code>"org.eclipse.jdt.debug.core.caught"</code>). This attribute is stored as a <code>boolean</code>.
+	 * (value <code>"org.modelica.mdt.debug.core.caught"</code>). This attribute is stored as a <code>boolean</code>.
 	 * When this attribute is <code>true</code>, a caught exception of the associated
 	 * type will cause excecution to suspend .
 	 */
-	protected static final String CAUGHT = "org.eclipse.jdt.debug.core.caught"; //$NON-NLS-1$
+	protected static final String CAUGHT = "org.modelica.mdt.debug.core.caught"; //$NON-NLS-1$
 	/**
 	 * Exception breakpoint attribute storing the suspend on uncaught value
-	 * (value <code>"org.eclipse.jdt.debug.core.uncaught"</code>). This attribute is stored as a
+	 * (value <code>"org.modelica.mdt.debug.core.uncaught"</code>). This attribute is stored as a
 	 * <code>boolean</code>. When this attribute is <code>true</code>, an uncaught
 	 * exception of the associated type will cause excecution to suspend.
 	 */
-	protected static final String UNCAUGHT = "org.eclipse.jdt.debug.core.uncaught"; //$NON-NLS-1$	
+	protected static final String UNCAUGHT = "org.modelica.mdt.debug.core.uncaught"; //$NON-NLS-1$	
 	/**
-	 * Exception breakpoint attribute storing the checked value (value <code>"org.eclipse.jdt.debug.core.checked"</code>).
+	 * Exception breakpoint attribute storing the checked value (value <code>"org.modelica.mdt.debug.core.checked"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether an
 	 * exception is a checked exception.
 	 */
-	protected static final String CHECKED = "org.eclipse.jdt.debug.core.checked"; //$NON-NLS-1$	
+	protected static final String CHECKED = "org.modelica.mdt.debug.core.checked"; //$NON-NLS-1$	
 	
 	/**
-	 * Exception breakpoint attribute storing the String value (value <code>"org.eclipse.jdt.debug.core.filters"</code>).
+	 * Exception breakpoint attribute storing the String value (value <code>"org.modelica.mdt.debug.core.filters"</code>).
 	 * This attribute is stored as a <code>String</code>, a comma delimited list
 	 * of class filters.  The filters are applied as inclusion or exclusion depending on 
 	 * INCLUSIVE_FILTERS.
 	 */
-	protected static final String INCLUSION_FILTERS = "org.eclipse.jdt.debug.core.inclusion_filters"; //$NON-NLS-1$	
+	protected static final String INCLUSION_FILTERS = "org.modelica.mdt.debug.core.inclusion_filters"; //$NON-NLS-1$	
 	
 	/**
-	 * Exception breakpoint attribute storing the String value (value <code>"org.eclipse.jdt.debug.core.filters"</code>).
+	 * Exception breakpoint attribute storing the String value (value <code>"org.modelica.mdt.debug.core.filters"</code>).
 	 * This attribute is stored as a <code>String</code>, a comma delimited list
 	 * of class filters.  The filters are applied as inclusion or exclusion depending on 
 	 * INCLUSIVE_FILTERS.
 	 */
-	protected static final String EXCLUSION_FILTERS = "org.eclipse.jdt.debug.core.exclusion_filters"; //$NON-NLS-1$	
+	protected static final String EXCLUSION_FILTERS = "org.modelica.mdt.debug.core.exclusion_filters"; //$NON-NLS-1$	
 	/**
 	 * Allows the user to specify whether we should suspend if subclasses of the specified exception are thrown/caught
 	 * @since 3.2
 	 */
-	protected static final String SUSPEND_ON_SUBCLASSES = "org.eclipse.jdt.debug.core.suspend_on_subclasses"; //$NON-NLS-1$
+	protected static final String SUSPEND_ON_SUBCLASSES = "org.modelica.mdt.debug.core.suspend_on_subclasses"; //$NON-NLS-1$
 	
 	/**
 	 * Name of the exception that was actually hit (could be a
@@ -262,7 +262,7 @@ public class MDTExceptionBreakpoint extends MDTBreakpoint implements IMDTFailure
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getExceptionTypeName()
+	 * @see org.modelica.mdt.debug.core.IJavaExceptionBreakpoint#getExceptionTypeName()
 	 */
 	public String getExceptionTypeName() {
 		return fExceptionName;
@@ -379,21 +379,21 @@ public class MDTExceptionBreakpoint extends MDTBreakpoint implements IMDTFailure
 	}
 	
 	/**
-	 * @see org.eclipse.jdt.debug.core.IMDTFailureBreakpoint#getExclusionFilters()
+	 * @see org.modelica.mdt.debug.core.IMDTFailureBreakpoint#getExclusionFilters()
 	 */
 	public String[] getExclusionFilters() {
 		return getExclusionClassFilters();
 	}
 
 	/**
-	 * @see org.eclipse.jdt.debug.core.IMDTFailureBreakpoint#getInclusionFilters()
+	 * @see org.modelica.mdt.debug.core.IMDTFailureBreakpoint#getInclusionFilters()
 	 */
 	public String[] getInclusionFilters() {
 		return getInclusionClassFilters();
 	}
 
 	/**
-	 * @see org.eclipse.jdt.debug.core.IMDTFailureBreakpoint#setExclusionFilters(String[])
+	 * @see org.modelica.mdt.debug.core.IMDTFailureBreakpoint#setExclusionFilters(String[])
 	 */
 	public void setExclusionFilters(String[] filters) throws CoreException {
 		String serializedFilters= serializeList(filters);
@@ -409,7 +409,7 @@ public class MDTExceptionBreakpoint extends MDTBreakpoint implements IMDTFailure
 	}
 
 	/**
-	 * @see org.eclipse.jdt.debug.core.IMDTFailureBreakpoint#setInclusionFilters(String[])
+	 * @see org.modelica.mdt.debug.core.IMDTFailureBreakpoint#setInclusionFilters(String[])
 	 */
 	public void setInclusionFilters(String[] filters) throws CoreException {
 		String serializedFilters= serializeList(filters);

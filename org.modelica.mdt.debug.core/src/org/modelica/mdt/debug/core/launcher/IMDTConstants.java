@@ -15,4 +15,6 @@ public interface IMDTConstants
 	 */
 	public static final String ATTR_MDT_PROGRAM = ID_MDT_DEBUG_MODEL + ".ATTR_MDT_PROGRAM";
 	public static final String ATTR_MDT_ARGUMENTS = ID_MDT_DEBUG_MODEL + ".ATTR_MDT_ARGUMENTS";
+	
+	public static final String ATTR_MDT_WORK_DIRECTORY = ID_MDT_DEBUG_MODEL + ".ATTR_MDT_WORK_DIRECTORY";	
 }

@@ -1,0 +1,201 @@
+	/**
+	 * Returns the current stack frames in the target.
+	 * 
+	 * @return the current stack frames in the target
+	 * @throws DebugException
+	 *             if unable to perform the request
+	 */
+	protected IStackFrame[] getStackFrames() throws DebugException 
+	{
+			sendCommand(IMDTDebugCommands.CMD_STACK);
+			try {
+				String framesData = fReplyReader.readLine();
+				if (framesData != null) {
+					String[] frames = framesData.split("#");
+					IStackFrame[] theFrames = new IStackFrame[frames.length];
+					for (int i = 0; i < frames.length; i++) {
+						String data = frames[i];
+						theFrames[frames.length - i - 1] = new MDTStackFrame(fThread, data, i);
+					}
+					return theFrames;
+				}
+			} catch (IOException e) {
+				abort("Unable to retrieve stack frames", e);
+			}
+			
+		return new IStackFrame[0];
+	}
+
+	/**
+	 * Single step the interpreter.
+	 * 
+	 * @throws DebugException
+	 *             if the request fails
+	 */
+	protected void step() throws DebugException {
+		sendCommand(IMDTDebugCommands.CMD_STEP);
+	}
+
+	/**
+	 * Returns the current value of the given variable.
+	 * 
+	 * @param variable
+	 * @return variable value
+	 * @throws DebugException
+	 *             if the request fails
+	 */
+	protected IValue getVariableValue(MDTVariable variable) throws DebugException 
+	{
+		sendCommand(IMDTDebugCommands.CMD_VARIABLE_VALUE + " " + variable.getName());
+		try 
+		{
+			String value = fReplyReader.readLine();
+			return new MDTValue(this, value);
+		}
+		catch (IOException e) 
+		{
+			abort(MessageFormat.format("Unable to retrieve value for variable {0}", new String[] { variable.getName() }), e);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the values on the data stack (top down)
+	 * 
+	 * @return the values on the data stack (top down)
+	 */
+	public IValue[] getDataStack() throws DebugException 
+	{
+		sendCommand(IMDTDebugCommands.CMD_DATA_STACK);
+		try 
+		{
+			String valueString = fReplyReader.readLine();
+			if (valueString != null && valueString.length() > 0) 
+			{
+				String[] values = valueString.split("\\|");
+				IValue[] theValues = new IValue[values.length];
+				for (int i = 0; i < values.length; i++) 
+				{
+					String value = values[values.length - i - 1];
+					theValues[i] = new MDTValue(this, value);
+				}
+				return theValues;
+			}
+		} 
+		catch (IOException e) {
+			abort("Unable to retrieve data stack", e);
+		}
+		return new IValue[0];
+	}
+
+	/**
+	 * Sends a request to the MDT Debugger and will get one of IMDTDebugCommands.EVENT_*
+	 * 
+	 * @param cmd
+	 *            debug command
+	 * @throws DebugException
+	 *             if the request fails
+	 */
+	private void sendCommand(String cmd) throws DebugException 
+	{
+			System.out.println("Sending command:" + cmd);
+			fCommandWriter.println(cmd);
+			fCommandWriter.flush();
+	}
+
+	/**
+	 * Sends a signal to the MDT Debugger.
+	 * 
+	 * @param signal
+	 *            debug signal
+	 * @throws DebugException
+	 *             if the request fails
+	 */
+	private void sendSignal(String signal) throws DebugException 
+	{
+			System.out.println("Sending signal:" + signal);
+			fSignalWriter.println(signal);
+			fSignalWriter.flush();
+	}
+	
+	/**
+	 * Notification a breakpoint was encountered. Determine which breakpoint was
+	 * hit and fire a suspend event.
+	 * 
+	 * @param event
+	 *            debug event
+	 */
+	private void breakpointHit(String event) 
+	{
+		// determine which breakpoint was hit, and set the thread's breakpoint
+		int column = event.indexOf(':');
+		String file = event.substring(3,column);
+		String line = event.substring(column+1);
+		int lineNumber = Integer.parseInt(line);
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IMDTConstants.ID_MDT_DEBUG_MODEL);
+
+		for (int i = 0; i < breakpoints.length; i++) {
+			IBreakpoint breakpoint = breakpoints[i];
+			if (supportsBreakpoint(breakpoint)) {
+				if (breakpoint instanceof ILineBreakpoint) {
+					ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;						
+					try {
+						System.out.println("Breakpoint on " + file + " line: "+ lineBreakpoint.getLineNumber());
+						if (lineBreakpoint.getLineNumber()-1 == lineNumber) {
+							fThread.setBreakpoints(new IBreakpoint[] { breakpoint });
+							break;
+						}
+					} catch (CoreException e) {
+					}
+				}
+			}
+		}
+		suspended(DebugEvent.BREAKPOINT);
+	}
+
+	/*
+String event = "";
+while (!isTerminated() && event != null) {
+	try {
+		event = fReplyReader.readLine();
+		if (event != null) {
+			System.out.println("RECEIVED EVENT: " + event);
+
+			fThread.setBreakpoints(null);
+			fThread.setStepping(false);
+			
+			if (event.equals(IMDTDebugCommands.EVENT_START)) {
+				started();
+			} 
+			else if (event.equals(IMDTDebugCommands.EVENT_QUIT)) {
+				terminated();
+			} 
+			else if (event.startsWith(IMDTDebugCommands.EVENT_STEP_OVER)) {
+				fThread.setStepping(true);
+				resumed(DebugEvent.STEP_OVER);							
+			}
+			else if (event.startsWith(IMDTDebugCommands.EVENT_STEP)) {
+				resumed(DebugEvent.CLIENT_REQUEST);
+			}
+			else if (event.startsWith(IMDTDebugCommands.EVENT_RUN)) 
+			{
+				resumed(DebugEvent.CLIENT_REQUEST);							
+			} 
+			else if (event.startsWith(IMDTDebugCommands.EVENT_SUSPEND)) {
+					suspended(DebugEvent.CLIENT_REQUEST);
+			}
+			else if (event.startsWith(IMDTDebugCommands.EVENT_READY)) {
+					suspended(DebugEvent.STEP_END);
+			}
+			else if (event.startsWith(IMDTDebugCommands.EVENT_BREAKPOINT)) {
+					breakpointHit(event);
+			}
+			else System.out.println("Unknown Event:" + event);
+		}
+	} catch (IOException e) {
+		System.out.println("EXCEPTION IN RUN:" + e.getMessage());
+		terminated();
+	}
+}
+return Status.OK_STATUS;
+*/
