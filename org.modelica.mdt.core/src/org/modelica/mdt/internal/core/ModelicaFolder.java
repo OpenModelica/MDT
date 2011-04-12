@@ -64,6 +64,7 @@ import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.preferences.PreferenceManager;
 
 /**
  * @author Elmir Jagudin
@@ -399,9 +400,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			{
 				/* filter here! */
 				IModelicaFolder fe = (ModelicaFolder)element;
-				if (fe.getElementName().equalsIgnoreCase("omc_release") || 
-					fe.getElementName().equalsIgnoreCase("omc_debug") ||	
-					fe.getElementName().equalsIgnoreCase("testsuite"))
+				if (PreferenceManager.isIgnoredDirectory(fe.getElementName()))
 				{
 					/* nothing */
 				}
@@ -412,7 +411,12 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 				fileElement = (IModelicaSourceFile) element;				
 				for (IModelicaClass e : fileElement.getRootClasses())
 				{
-					pkgs.add(e);
+					if (PreferenceManager.isInIgnoredDirectory(e.getResource().getFullPath().toString()))
+					{
+						/* nothing */
+					}					
+					else
+						pkgs.add(e);
 				}
 			}
 		}

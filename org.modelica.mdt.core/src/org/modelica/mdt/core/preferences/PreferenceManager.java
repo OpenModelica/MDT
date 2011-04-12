@@ -47,6 +47,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 
 import org.modelica.mdt.internal.core.CorePlugin;
+import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
  * This class manages the settings for the omc plugin (and at the moment the omc
@@ -79,13 +80,36 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String DISPLAY_COMPATIBILTY_ERRORS = "DisplayCompatibilityErrors";
 	public static final String USE_STANDARD_OMC_PATH = "UseStandardOmcPath";
 	public static final String CUSTOM_OMC_PATH = "CustomOmcPath";	
-	public static final String START_OMC = "StartOMC";	
+	public static final String START_OMC = "StartOMC";
+	public static final String OMC_IGNORED_DIRECTORIES = "OMCIgnoredDirectories";
+	public static final String OMC_COMMAND_LINE_PARAMETERS = "OMCCommandLineParameters";	
 	
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
 	protected final static String EDITOR_MATCHING_BRACKETS_COLOR="matchingBracketsColor";
 	protected final static String EDITOR_TAB_WIDTH = "tabWidth";	
 	
 	private static IPreferenceStore store = null;
+	
+	public enum osType { WINDOWS, UNIX };
+	
+	public  static osType getOs()
+	{
+		String osName = System.getProperty("os.name");
+		if(osName.contains("Linux"))
+		{
+			return osType.UNIX;
+		}
+		else if(osName.contains("Windows"))
+		{
+			return osType.WINDOWS;
+		}
+		else
+		{
+			ErrorManager.logWarning("'" + osName + "' not officialy supported OS");
+			/* If the OS is not GNU/Linux or Windows, default to Unix */
+			return osType.UNIX;
+		}
+	}
 	
 	/**
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
@@ -101,6 +125,14 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		store.setDefault(USE_STANDARD_OMC_PATH, true);
 		store.setDefault(CUSTOM_OMC_PATH, "");
 		store.setDefault(START_OMC, true);
+		String ignored = "";
+		if (getOs() == osType.UNIX)
+			ignored = "omc_release:omc_debug:omc_frontend:omc_profiler:testsuite:bin:pde:modelica_parser:tools:mingw:template_precompile:susan_codegen:build:test_files:libraries:c_runtime:Examples:test_codegen:";
+		else
+			ignored = "omc_release;omc_debug;omc_frontend;omc_profiler;testsuite;bin;pde;modelica_parser;tools;mingw;template_precompile;susan_codegen;build;test_files;libraries;c_runtime;Examples;test_codegen;";
+		store.setDefault(OMC_IGNORED_DIRECTORIES, ignored);
+		
+		store.setDefault(OMC_COMMAND_LINE_PARAMETERS, "+g=MetaModelica");
 		
 		store.setDefault(EDITOR_MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB(192, 192, 192));		
@@ -125,7 +157,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	}
 	
 	/**
-	 * @return current settig for 'use standard omc path (that is $OPENMODELICAHOME)'
+	 * @return current settings for 'use standard omc path (that is $OPENMODELICAHOME)'
 	 */
 	public static boolean getUseStandardOmcPath()
 	{
@@ -147,5 +179,70 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	{
 		return getStore().getBoolean(START_OMC);
 	}
+
+	/**
+	 * @return current setting for   
+	 */
+	public static String getOMCIgnoredDirectories()
+	{
+		return getStore().getString(OMC_IGNORED_DIRECTORIES);
+	}
+
+	/**
+	 * @return current setting for   
+	 */
+	public static String getOMCCommandLineParameters()
+	{
+		return getStore().getString(OMC_COMMAND_LINE_PARAMETERS);
+	}
+
+	/**
+	 * @return current setting for   
+	 */
+	public static String[] getOMCCommandLineParametersArray()
+	{
+		String x = getStore().getString(OMC_COMMAND_LINE_PARAMETERS);
+		String splitAt = " ";
+		return x.split(splitAt);
+	}	
+	
+	/**
+	 * @return current setting for   
+	 */
+	public static String[] getOMCIgnoredDirectoryArray()
+	{
+		String x = getStore().getString(OMC_IGNORED_DIRECTORIES);
+		String splitAt = "";
+		if (getOs() == osType.UNIX)	splitAt = ":"; else splitAt = ";";
+		return x.split(splitAt);		
+	}	
+	
+	/**
+	 * @return current setting for   
+	 */
+	public static boolean isIgnoredDirectory(String dir)	
+	{
+		String[] x = getOMCIgnoredDirectoryArray();
+		for (int i = 0; i < x.length; i++)
+		{
+			if (dir.equalsIgnoreCase(x[i]))
+				return true;
+		}
+		return false;
+	}	
+
+	/**
+	 * @return current setting for   
+	 */
+	public static boolean isInIgnoredDirectory(String file)	
+	{
+		String[] x = getOMCIgnoredDirectoryArray();
+		for (int i = 0; i < x.length; i++)
+		{
+			if (file.contains(x[i]))
+				return true;
+		}
+		return false;
+	}		
 	
 }

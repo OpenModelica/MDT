@@ -56,7 +56,7 @@ public interface IModelicaClass extends IModelicaElement, IParent
 {
 	public enum Restriction 
 	{ 
-		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, BLOCK, TYPE, PACKAGE, UNIONTYPE;
+		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, EXPANDABLE_CONNECTOR, BLOCK, TYPE, PACKAGE, UNIONTYPE;
 		
 		/**
 		 * @param text the type of restriction
@@ -82,6 +82,10 @@ public interface IModelicaClass extends IModelicaElement, IParent
 			{
 				return CONNECTOR;
 			}
+			else if (text.equalsIgnoreCase("EXPANDABLE CONNECTOR"))
+			{
+				return EXPANDABLE_CONNECTOR;
+			}			
 			else if (text.equalsIgnoreCase("RECORD"))
 			{
 				return RECORD;
