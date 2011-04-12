@@ -30,7 +30,7 @@ public class MDTFailureBreakpointPage extends MDTBreakpointPage {
 	
 	private static final String fgExceptionBreakpointError= PropertyPageMessages.JavaExceptionBreakpointPage_2; 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.MDTBreakpointPage#doStore()
+	 * @see org.modelica.mdt.internal.debug.ui.propertypages.MDTBreakpointPage#doStore()
 	 */
 	protected void doStore() throws CoreException {
 		super.doStore();
@@ -46,7 +46,7 @@ public class MDTFailureBreakpointPage extends MDTBreakpointPage {
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.MDTBreakpointPage#createTypeSpecificEditors(org.eclipse.swt.widgets.Composite)
+	 * @see org.modelica.mdt.internal.debug.ui.propertypages.MDTBreakpointPage#createTypeSpecificEditors(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createTypeSpecificEditors(Composite parent) {
 		setTitle(PropertyPageMessages.JavaExceptionBreakpointPage_5);

@@ -13,7 +13,7 @@ package org.modelica.mdt.debug.ui.propertypages;
 import org.eclipse.osgi.util.NLS;
 
 public class PropertyPageMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.modelica.mdt.internal.debug.ui.propertypages.PropertyPageMessages";//$NON-NLS-1$
 
 	public static String BreakpointConditionEditor_1;
 	public static String ExceptionFilterEditor_5;

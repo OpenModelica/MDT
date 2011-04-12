@@ -20,7 +20,7 @@ public class MDTFailureBreakpointAdvancedPage extends MDTBreakpointAdvancedPage 
 	private ExceptionFilterEditor fFilterEditor;
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.MDTBreakpointAdvancedPage#doStore()
+	 * @see org.modelica.mdt.internal.debug.ui.propertypages.MDTBreakpointAdvancedPage#doStore()
 	 */
 	protected void doStore() {
 		super.doStore();

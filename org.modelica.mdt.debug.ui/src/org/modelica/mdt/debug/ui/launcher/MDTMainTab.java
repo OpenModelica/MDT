@@ -5,6 +5,7 @@
  **/
 package org.modelica.mdt.debug.ui.launcher;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -29,15 +30,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 
+import com.sun.org.apache.bcel.internal.generic.FDIV;
+
 /**
  * Tab to specify the MDT program to run/debug.
  */
 public class MDTMainTab extends AbstractLaunchConfigurationTab {
 
-	private Text fProgramText;
-	private Text fProgramArguments;
+	private Text fProgramFullPath;
+	private Button fProgramBrowseButton;	
+	private Text fProgramArguments;	
 	
-	private Button fProgramButton;
+	private Text fWorkDirectory;
+	private Button fWorkDirectoryBrowseButton;
+	
 
 	/*
 	 * (non-Javadoc)
@@ -52,7 +58,7 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(compLayout);
 		comp.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		comp.setFont(font);
-		createVerticalSpacer(comp, 1);
+		createVerticalSpacer(comp, 2);
 		
 		Composite top = new Composite(comp, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
@@ -70,25 +76,48 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 		programLabel.setLayoutData(gd);
 		programLabel.setFont(font);
 
-		fProgramText = new Text(top, SWT.SINGLE | SWT.BORDER);
+		fProgramFullPath = new Text(top, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fProgramText.setLayoutData(gd);
-		fProgramText.setFont(font);
-		fProgramText.addModifyListener(new ModifyListener() {
+		fProgramFullPath.setLayoutData(gd);
+		fProgramFullPath.setFont(font);
+		fProgramFullPath.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 		
-		fProgramButton = createPushButton(top, "&Browse...", null); //$NON-NLS-1$
-		fProgramButton.addSelectionListener(new SelectionAdapter() {
+		fProgramBrowseButton = createPushButton(top, "&Browse...", null); //$NON-NLS-1$
+		fProgramBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				browseEXEFiles();
 			}
-		});	
+		});
+		
+		Label directoryLabel = new Label(top, SWT.NONE);
+		directoryLabel.setText("&Work directory:");
+		gd = new GridData(GridData.BEGINNING);
+		directoryLabel.setLayoutData(gd);
+		directoryLabel.setFont(font);
+
+		fWorkDirectory = new Text(top, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fWorkDirectory.setLayoutData(gd);
+		fWorkDirectory.setFont(font);
+		fWorkDirectory.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		fWorkDirectoryBrowseButton = createPushButton(top, "&Browse...", null); //$NON-NLS-1$
+		fWorkDirectoryBrowseButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				browseDirectory();
+			}
+		});		
 
 		createSeparator(comp, 1);
-		
+				
 		Composite bottom = new Composite(comp, SWT.NONE);
 		GridLayout bottomLayout = new GridLayout(1, false);
 		bottom.setLayout(bottomLayout);
@@ -129,10 +158,29 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 		{
 			Object[] files = dialog.getResult();
 			IFile file = (IFile) files[0];
-			fProgramText.setText(file.getLocation().toOSString());
+			fProgramFullPath.setText(file.getLocation().toOSString());
 		}
 
 	}
+	
+	/**
+	 * Open a resource chooser to select a directory where to run a MDT program
+	 */
+	protected void browseDirectory() 
+	{
+		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(
+				getShell(), ResourcesPlugin.getWorkspace().getRoot(),
+				IResource.FOLDER);
+		dialog.setTitle("Work directory for the executable");
+		dialog.setMessage("Select Directory");
+		// TODO: single select
+		if (dialog.open() == Window.OK) 
+		{
+			Object[] files = dialog.getResult();
+			IFolder directory = (IFolder) files[0];
+			fWorkDirectory.setText(directory.getLocation().toOSString());
+		}
+	}	
 
 	/*
 	 * (non-Javadoc)
@@ -155,11 +203,15 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 		{
 			String program = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String) null);
 			if (program != null) {
-				fProgramText.setText(program);
+				fProgramFullPath.setText(program);
 			}
 			String programArguments = configuration.getAttribute(IMDTConstants.ATTR_MDT_ARGUMENTS, (String) null);
 			if (programArguments != null) {
 				fProgramArguments.setText(programArguments);
+			}			
+			String programWorkDirectory = configuration.getAttribute(IMDTConstants.ATTR_MDT_WORK_DIRECTORY, (String) null);
+			if (programWorkDirectory != null) {
+				fWorkDirectory.setText(programWorkDirectory);
 			}			
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
@@ -173,11 +225,12 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) 
 	{
-		String program = fProgramText.getText().trim();
+		String program = fProgramFullPath.getText().trim();
 		if (program.length() == 0) 
 		{
 			program = null;
 		}
+		
 		configuration.setAttribute(IMDTConstants.ATTR_MDT_PROGRAM, program);
 		String programArguments = fProgramArguments.getText().trim();
 		if (programArguments.length() == 0) 
@@ -185,6 +238,13 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 			programArguments = null;
 		}
 		configuration.setAttribute(IMDTConstants.ATTR_MDT_ARGUMENTS, programArguments);
+		
+		String programWorkDirectory = fWorkDirectory.getText().trim();
+		if (programWorkDirectory.length() == 0) 
+		{
+			programWorkDirectory = null;
+		}
+		configuration.setAttribute(IMDTConstants.ATTR_MDT_WORK_DIRECTORY, programWorkDirectory);		
 	}
 
 	/*
@@ -202,7 +262,7 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		String text = fProgramText.getText();
+		String text = fProgramFullPath.getText();
 		if (text.length() > 0) 
 		{
 			IPath path = new Path(text);
@@ -213,6 +273,21 @@ public class MDTMainTab extends AbstractLaunchConfigurationTab {
 		} else {
 			setMessage("Specify a program");
 		}
+		
+		String directory = fWorkDirectory.getText();
+		if (directory.length() > 0) 
+		{
+			IPath path = new Path(directory);
+			java.io.File f = path.toFile(); 
+			if (!(f.exists() && f.isDirectory())) {
+				setErrorMessage("Specified work drirectory does not exist or is not a directory");
+				return false;				
+			}
+			
+		} else {
+			//setMessage("Specify a working directory");
+		}
+		
 		return super.isValid(launchConfig);
 	}
 }

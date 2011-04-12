@@ -13,7 +13,7 @@ package org.modelica.mdt.debug.ui.breakpoints;
 import org.eclipse.osgi.util.NLS;
 
 public class BreakpointMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.breakpoints.BreakpointMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.modelica.mdt.internal.debug.ui.breakpoints.BreakpointMessages";//$NON-NLS-1$
 
 	public static String AddExceptionAction_0;
 	public static String AddExceptionAction_1;
