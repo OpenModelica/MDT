@@ -2,89 +2,98 @@
 <gmfgraph:Canvas xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:gmfgraph="http://www.eclipse.org/gmf/2005/GraphicalDefinition" name="Modelica Class Diagram">
+    xmlns:gmfgraph="http://www.eclipse.org/gmf/2006/GraphicalDefinition" name="Modelica Class Diagram">
   <figures
       name="Modelica">
-    <figures
-        xsi:type="gmfgraph:PolylineConnection"
-        referencingElements="DashedConnectionWDstArrow"
-        name="DashedLineWDSTArrow"
-        lineKind="LINE_DASH">
-      <targetDecoration
-          xsi:type="gmfgraph:PolylineDecoration"
-          href="../../../plugin/org.eclipse.gmf.graphdef/models/classDiagram.gmfgraph#Arrow"/>
-    </figures>
-    <figures
-        xsi:type="gmfgraph:LabeledContainer"
-        referencingElements="NestedClasses Parameters Parts Values"
+    <descriptors
+        name="DashedLineWDSTArrow">
+      <actualFigure
+          xsi:type="gmfgraph:PolylineConnection"
+          name="DashedLineWDSTArrow"
+          lineKind="LINE_DASH">
+        <targetDecoration
+            xsi:type="gmfgraph:PolylineDecoration"
+            href="../../../plugin/org.eclipse.gmf.graphdef/models/classDiagram.gmfgraph#Arrow"/>
+      </actualFigure>
+    </descriptors>
+    <descriptors
         name="CompartmentFigure">
-      <font
-          xsi:type="gmfgraph:BasicFont"
-          faceName="Tahoma"
-          height="8"/>
-    </figures>
-    <figures
-        xsi:type="gmfgraph:Rectangle"
-        referencingElements="StereotypedNamedNode"
+      <actualFigure
+          xsi:type="gmfgraph:LabeledContainer"
+          name="CompartmentFigure">
+        <font
+            xsi:type="gmfgraph:BasicFont"
+            faceName="Tahoma"
+            height="8"/>
+      </actualFigure>
+    </descriptors>
+    <descriptors
         name="LabeledStereotypedFigure">
-      <layout
-          xsi:type="gmfgraph:FlowLayout"
-          vertical="true"
-          matchMinorSize="true"
-          forceSingleLine="true"
-          majorAlignment="CENTER"
-          minorAlignment="CENTER"
-          majorSpacing="0"
-          minorSpacing="0"/>
-      <children
-          xsi:type="gmfgraph:Label"
-          name="StereotypeName"
-          text="&lt;&lt;stereotype>>">
+      <actualFigure
+          xsi:type="gmfgraph:Rectangle"
+          name="LabeledStereotypedFigure">
+        <layout
+            xsi:type="gmfgraph:FlowLayout"
+            vertical="true"
+            matchMinorSize="true"
+            forceSingleLine="true"
+            majorAlignment="CENTER"
+            minorAlignment="CENTER"
+            majorSpacing="0"
+            minorSpacing="0"/>
+        <backgroundColor
+            xsi:type="gmfgraph:RGBColor"
+            red="247"
+            green="250"
+            blue="253"/>
         <font
             xsi:type="gmfgraph:BasicFont"
             faceName="Tahoma"
             height="8"/>
-      </children>
-      <children
-          xsi:type="gmfgraph:Label"
-          referencingElements="StereotypedNodeLabel"
-          name="StereotypedNodeName">
-        <font
-            xsi:type="gmfgraph:BasicFont"
-            faceName="Tahoma"
-            height="8"/>
-      </children>
-      <children
-          xsi:type="gmfgraph:Label"
-          name="specifiaction"
-          text="{}">
-        <foregroundColor
-            xsi:type="gmfgraph:ConstantColor"
-            value="gray"/>
-        <font
-            xsi:type="gmfgraph:BasicFont"
-            faceName="Tahoma"
-            height="8"/>
-      </children>
-      <backgroundColor
-          xsi:type="gmfgraph:RGBColor"
-          red="247"
-          green="250"
-          blue="253"/>
-      <font
-          xsi:type="gmfgraph:BasicFont"
-          faceName="Tahoma"
-          height="8"/>
-    </figures>
-    <figures
-        xsi:type="gmfgraph:Label"
-        referencingElements="LabelNoIcon"
+        <children
+            xsi:type="gmfgraph:Label"
+            name="StereotypeName"
+            text="&lt;&lt;stereotype>>">
+          <font
+              xsi:type="gmfgraph:BasicFont"
+              faceName="Tahoma"
+              height="8"/>
+        </children>
+        <children
+            xsi:type="gmfgraph:Label"
+            name="StereotypedNodeName">
+          <font
+              xsi:type="gmfgraph:BasicFont"
+              faceName="Tahoma"
+              height="8"/>
+        </children>
+        <children
+            xsi:type="gmfgraph:Label"
+            name="specifiaction"
+            text="{}">
+          <foregroundColor
+              xsi:type="gmfgraph:ConstantColor"
+              value="gray"/>
+          <font
+              xsi:type="gmfgraph:BasicFont"
+              faceName="Tahoma"
+              height="8"/>
+        </children>
+      </actualFigure>
+      <accessors
+          figure="//@figures.0/@descriptors.2/@actualFigure/@children.1"/>
+    </descriptors>
+    <descriptors
         name="LabelFigure">
-      <font
-          xsi:type="gmfgraph:BasicFont"
-          faceName="Tahoma"
-          height="8"/>
-    </figures>
+      <actualFigure
+          xsi:type="gmfgraph:Label"
+          name="LabelFigure">
+        <font
+            xsi:type="gmfgraph:BasicFont"
+            faceName="Tahoma"
+            height="8"/>
+      </actualFigure>
+    </descriptors>
   </figures>
   <nodes
       name="StereotypedNamedNode"
@@ -114,8 +123,9 @@
       needsTitle="true"/>
   <labels
       name="StereotypedNodeLabel"
-      figure="StereotypedNodeName"
-      elementIcon="false"/>
+      figure="LabeledStereotypedFigure"
+      elementIcon="false"
+      accessor="//@figures.0/@descriptors.2/@accessors.0"/>
   <labels
       name="LabelNoIcon"
       figure="LabelFigure"

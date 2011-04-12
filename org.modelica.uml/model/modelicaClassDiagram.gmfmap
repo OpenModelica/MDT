@@ -3,7 +3,7 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:gmfmap="http://www.eclipse.org/gmf/2005/mappings"
+    xmlns:gmfmap="http://www.eclipse.org/gmf/2006/mappings"
     xmlns:gmftool="http://www.eclipse.org/gmf/2005/ToolDefinition">
   <nodes>
     <containmentFeature
@@ -14,7 +14,8 @@
       <domainSpecialization
           body="not oclIsKindOf(uml::AssociationClass)"/>
       <labelMappings
-          editPattern="">
+          xsi:type="gmfmap:FeatureLabelMapping"
+          viewPattern="">
         <diagramLabel
             href="modelicaClassDiagram.gmfgraph#StereotypedNodeLabel"/>
         <features
@@ -35,18 +36,21 @@
           <domainInitializer
               xsi:type="gmfmap:FeatureSeqInitializer">
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="VariabilityKind::none">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/variability"/>
             </initializers>
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="PropertyKind::parameter">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/propertyKind"/>
             </initializers>
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="AccessKind::public">
               <feature
                   xsi:type="ecore:EAttribute"
@@ -54,8 +58,8 @@
             </initializers>
           </domainInitializer>
           <labelMappings
-              viewPattern=""
-              editPattern="">
+              xsi:type="gmfmap:FeatureLabelMapping"
+              viewPattern="">
             <diagramLabel
                 href="../../../plugin/org.eclipse.gmf.graphdef/models/basic.gmfgraph#Label"/>
             <features
@@ -75,25 +79,29 @@
           <domainInitializer
               xsi:type="gmfmap:FeatureSeqInitializer">
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="VariabilityKind::none">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/variability"/>
             </initializers>
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="PropertyKind::part">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/propertyKind"/>
             </initializers>
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="AccessKind::public">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/access"/>
             </initializers>
           </domainInitializer>
-          <labelMappings>
+          <labelMappings
+              xsi:type="gmfmap:FeatureLabelMapping">
             <diagramLabel
                 href="../../../plugin/org.eclipse.gmf.graphdef/models/basic.gmfgraph#Label"/>
             <features
@@ -113,25 +121,29 @@
           <domainInitializer
               xsi:type="gmfmap:FeatureSeqInitializer">
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="VariabilityKind::none">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/variability"/>
             </initializers>
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="PropertyKind::variable">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/propertyKind"/>
             </initializers>
             <initializers
+                xsi:type="gmfmap:FeatureValueSpec"
                 body="AccessKind::public">
               <feature
                   xsi:type="ecore:EAttribute"
                   href="sysml.ecore#//ModelicaProperty/access"/>
             </initializers>
           </domainInitializer>
-          <labelMappings>
+          <labelMappings
+              xsi:type="gmfmap:FeatureLabelMapping">
             <diagramLabel
                 href="../../../plugin/org.eclipse.gmf.graphdef/models/basic.gmfgraph#Label"/>
             <features
@@ -165,7 +177,8 @@
       <domainMetaElement
           href="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//Enumeration"/>
       <labelMappings
-          editPattern="">
+          xsi:type="gmfmap:FeatureLabelMapping"
+          viewPattern="">
         <diagramLabel
             href="../../../plugin/org.eclipse.gmf.graphdef/models/basic.gmfgraph#NamedNode_Name"/>
         <features
@@ -184,7 +197,8 @@
           <domainMetaElement
               href="../../../plugin/org.eclipse.uml2.uml/model/UML.ecore#//EnumerationLiteral"/>
           <labelMappings
-              editPattern="">
+              xsi:type="gmfmap:FeatureLabelMapping"
+              viewPattern="">
             <diagramLabel
                 href="../../../plugin/org.eclipse.gmf.graphdef/models/basic.gmfgraph#Label"/>
             <features
@@ -219,7 +233,8 @@
     <domainMetaElement
         href="sysml.ecore#//ModelicaComposition"/>
     <labelMappings
-        editPattern="">
+        xsi:type="gmfmap:FeatureLabelMapping"
+        viewPattern="">
       <diagramLabel
           href="modelicaClassDiagram.gmfgraph#LabelNoIcon"/>
       <features

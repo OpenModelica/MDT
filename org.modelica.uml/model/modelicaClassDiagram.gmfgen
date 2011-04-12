@@ -2,7 +2,7 @@
 <gmfgen:GenEditorGenerator xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:gmfgen="http://www.eclipse.org/gmf/2005/GenModel" sameFileForDiagramAndModel="true"
+    xmlns:gmfgen="http://www.eclipse.org/gmf/2006/GenModel" sameFileForDiagramAndModel="true"
     diagramFileExtension="mcd"
     templateDirectory="">
   <diagram
@@ -10,8 +10,8 @@
       editPartClassName="ModelEditPart"
       itemSemanticEditPolicyClassName="ModelItemSemanticEditPolicy"
       notationViewFactoryClassName="ModelViewFactory"
-      iconProviderPriority="Low"
-      canonicalEditPolicyClassName="ModelCanonicalEditPolicy">
+      canonicalEditPolicyClassName="ModelCanonicalEditPolicy"
+      iconProviderPriority="Low">
     <diagramRunTimeClass
         href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Diagram"/>
     <elementType
@@ -53,16 +53,19 @@
         <modelElementInitializer
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="VariabilityKind::none">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/variability"/>
           </initializers>
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="PropertyKind::parameter">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/propertyKind"/>
           </initializers>
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="AccessKind::public">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/access"/>
@@ -73,7 +76,7 @@
           xsi:type="gmfgen:FeatureLabelModelFacet"
           viewPattern=""
           editPattern="">
-        <metaFeature
+        <metaFeatures
             href="../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml/NamedElement/name"/>
       </labelModelFacet>
     </childNodes>
@@ -109,16 +112,19 @@
         <modelElementInitializer
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="VariabilityKind::none">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/variability"/>
           </initializers>
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="PropertyKind::part">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/propertyKind"/>
           </initializers>
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="AccessKind::public">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/access"/>
@@ -127,7 +133,7 @@
       </modelFacet>
       <labelModelFacet
           xsi:type="gmfgen:FeatureLabelModelFacet">
-        <metaFeature
+        <metaFeatures
             href="../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml/NamedElement/name"/>
       </labelModelFacet>
     </childNodes>
@@ -163,16 +169,19 @@
         <modelElementInitializer
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="VariabilityKind::none">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/variability"/>
           </initializers>
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="PropertyKind::variable">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/propertyKind"/>
           </initializers>
           <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
               body="AccessKind::public">
             <feature
                 href="sysml.genmodel#//sysml/ModelicaProperty/access"/>
@@ -181,7 +190,7 @@
       </modelFacet>
       <labelModelFacet
           xsi:type="gmfgen:FeatureLabelModelFacet">
-        <metaFeature
+        <metaFeatures
             href="../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml/NamedElement/name"/>
       </labelModelFacet>
     </childNodes>
@@ -217,7 +226,7 @@
       <labelModelFacet
           xsi:type="gmfgen:FeatureLabelModelFacet"
           editPattern="">
-        <metaFeature
+        <metaFeatures
             href="../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml/NamedElement/name"/>
       </labelModelFacet>
     </childNodes>
@@ -274,7 +283,7 @@
         <modelFacet
             xsi:type="gmfgen:FeatureLabelModelFacet"
             editPattern="">
-          <metaFeature
+          <metaFeatures
               href="../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml/NamedElement/name"/>
         </modelFacet>
       </labels>
@@ -323,7 +332,7 @@
         <modelFacet
             xsi:type="gmfgen:FeatureLabelModelFacet"
             editPattern="">
-          <metaFeature
+          <metaFeatures
               href="../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml/NamedElement/name"/>
         </modelFacet>
       </labels>
@@ -410,7 +419,7 @@
         <modelFacet
             xsi:type="gmfgen:FeatureLabelModelFacet"
             editPattern="">
-          <metaFeature
+          <metaFeatures
               href="../../../plugin/org.eclipse.uml2.uml/model/UML.genmodel#//uml/NamedElement/name"/>
         </modelFacet>
       </labels>
@@ -420,8 +429,8 @@
         editPartClassName="ModelicaClassParametersEditPart"
         itemSemanticEditPolicyClassName="ModelicaClassParametersItemSemanticEditPolicy"
         notationViewFactoryClassName="ModelicaClassParametersViewFactory"
-        childNodes="//@diagram/@childNodes.0"
         canonicalEditPolicyClassName="ModelicaClassParametersCanonicalEditPolicy"
+        childNodes="//@diagram/@childNodes.0"
         title="Parameters"
         node="//@diagram/@topLevelNodes.0">
       <diagramRunTimeClass
@@ -442,8 +451,8 @@
         editPartClassName="ModelicaClassPartsEditPart"
         itemSemanticEditPolicyClassName="ModelicaClassPartsItemSemanticEditPolicy"
         notationViewFactoryClassName="ModelicaClassPartsViewFactory"
-        childNodes="//@diagram/@childNodes.1"
         canonicalEditPolicyClassName="ModelicaClassPartsCanonicalEditPolicy"
+        childNodes="//@diagram/@childNodes.1"
         title="Parts"
         node="//@diagram/@topLevelNodes.0">
       <diagramRunTimeClass
@@ -464,8 +473,8 @@
         editPartClassName="ModelicaClassValuesEditPart"
         itemSemanticEditPolicyClassName="ModelicaClassValuesItemSemanticEditPolicy"
         notationViewFactoryClassName="ModelicaClassValuesViewFactory"
-        childNodes="//@diagram/@childNodes.2"
         canonicalEditPolicyClassName="ModelicaClassValuesCanonicalEditPolicy"
+        childNodes="//@diagram/@childNodes.2"
         title="Values"
         canCollapse="false"
         node="//@diagram/@topLevelNodes.0">
@@ -487,8 +496,8 @@
         editPartClassName="EnumerationCompartmentEditPart"
         itemSemanticEditPolicyClassName="EnumerationCompartmentItemSemanticEditPolicy"
         notationViewFactoryClassName="EnumerationCompartmentViewFactory"
-        childNodes="//@diagram/@childNodes.3"
         canonicalEditPolicyClassName="EnumerationCompartmentCanonicalEditPolicy"
+        childNodes="//@diagram/@childNodes.3"
         title="Compartment"
         node="//@diagram/@topLevelNodes.1">
       <diagramRunTimeClass
@@ -554,16 +563,16 @@
     </palette>
   </diagram>
   <plugin
-      iD="org.modelica.uml.sysml.diagram"/>
+      iD="org.modelica.uml.sysml.diagram">
+    <requiredPlugins>org.eclipse.emf.ocl</requiredPlugins>
+    <requiredPlugins>org.eclipse.emf.query.ocl</requiredPlugins>
+  </plugin>
   <editor/>
   <domainGenModel
       href="sysml.genmodel#/"/>
   <expressionProviders>
     <providers
         xsi:type="gmfgen:GenExpressionInterpreter"
-        expressions="//@diagram/@topLevelNodes.0/@modelFacet/@modelElementSelector //@diagram/@childNodes.0/@modelFacet/@modelElementInitializer/@initializers.0 //@diagram/@childNodes.0/@modelFacet/@modelElementInitializer/@initializers.1 //@diagram/@childNodes.0/@modelFacet/@modelElementInitializer/@initializers.2 //@diagram/@childNodes.1/@modelFacet/@modelElementInitializer/@initializers.0 //@diagram/@childNodes.1/@modelFacet/@modelElementInitializer/@initializers.1 //@diagram/@childNodes.1/@modelFacet/@modelElementInitializer/@initializers.2 //@diagram/@childNodes.2/@modelFacet/@modelElementInitializer/@initializers.0 //@diagram/@childNodes.2/@modelFacet/@modelElementInitializer/@initializers.1 //@diagram/@childNodes.2/@modelFacet/@modelElementInitializer/@initializers.2">
-      <requiredPluginIDs>org.eclipse.emf.ocl</requiredPluginIDs>
-      <requiredPluginIDs>org.eclipse.emf.query.ocl</requiredPluginIDs>
-    </providers>
+        expressions="//@diagram/@topLevelNodes.0/@modelFacet/@modelElementSelector //@diagram/@childNodes.0/@modelFacet/@modelElementInitializer/@initializers.0 //@diagram/@childNodes.0/@modelFacet/@modelElementInitializer/@initializers.1 //@diagram/@childNodes.0/@modelFacet/@modelElementInitializer/@initializers.2 //@diagram/@childNodes.1/@modelFacet/@modelElementInitializer/@initializers.0 //@diagram/@childNodes.1/@modelFacet/@modelElementInitializer/@initializers.1 //@diagram/@childNodes.1/@modelFacet/@modelElementInitializer/@initializers.2 //@diagram/@childNodes.2/@modelFacet/@modelElementInitializer/@initializers.0 //@diagram/@childNodes.2/@modelFacet/@modelElementInitializer/@initializers.1 //@diagram/@childNodes.2/@modelFacet/@modelElementInitializer/@initializers.2"/>
   </expressionProviders>
 </gmfgen:GenEditorGenerator>
