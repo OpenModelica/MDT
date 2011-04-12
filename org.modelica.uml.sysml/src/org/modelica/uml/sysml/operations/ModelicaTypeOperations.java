@@ -37,29 +37,29 @@ public class ModelicaTypeOperations extends TypeOperations {
 		}
 
 		ModelicaComposition composition = (ModelicaComposition) package_
-				.createOwnedType(null,
-						SysmlPackage.Literals.MODELICA_COMPOSITION);
+		.createOwnedType(null,
+				SysmlPackage.Literals.MODELICA_COMPOSITION);
 
 		createAssociationEnd(type, composition, false,
 				AggregationKind.COMPOSITE_LITERAL, end1Name, 0, -1, end1Type);
 
 		createAssociationEnd(end1Type, composition, false,
 				AggregationKind.NONE_LITERAL, end2Name, 0, -1, type);
-		
+
 		composition.setAccess(AccessKind.PUBLIC_LITERAL);
 		composition.setDirection(FlowDirection.IN_LITERAL);
-		
+
 		return composition;
 	}
 
-	
-	
+
+
 	public static List getCompositionProperties(ModelicaClass modelicaClass) {
 		List properties = new ArrayList();
 
 		org.eclipse.uml2.uml.Package package_ = modelicaClass
-				.getNearestPackage();
-
+		.getNearestPackage();
+		
 		if (package_ == null) {
 			throw new IllegalStateException();
 		}
@@ -70,11 +70,12 @@ public class ModelicaTypeOperations extends TypeOperations {
 
 			if (type instanceof ModelicaComposition) {
 				Property classEnd = (Property) ((ModelicaComposition) type)
-						.getOwnedEnds().get(1);
-
+				.getOwnedEnds().get(1);
+				
 				// checking if modelicaClass participates in composition
 				// association
-				if (classEnd.getType().equals(modelicaClass)) {
+				if ((((ModelicaComposition) type)
+						.getSource()).equals(modelicaClass)) {
 					// save another end
 					properties.add(((ModelicaComposition) type).getOwnedEnds()
 							.get(0));

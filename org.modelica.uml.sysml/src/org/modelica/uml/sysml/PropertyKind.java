@@ -189,7 +189,7 @@ public final class PropertyKind extends AbstractEnumerator {
 			case VARIABLE: return VARIABLE_LITERAL;
 			case EQUATION: return EQUATION_LITERAL;
 		}
-		return null;	
+		return null;
 	}
 
 	/**

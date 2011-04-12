@@ -162,7 +162,7 @@ public final class VariabilityKind extends AbstractEnumerator {
 			case CONSTANT: return CONSTANT_LITERAL;
 			case DISCRETE: return DISCRETE_LITERAL;
 		}
-		return null;	
+		return null;
 	}
 
 	/**

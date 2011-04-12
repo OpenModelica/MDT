@@ -41,7 +41,7 @@ public class ItemFlowImpl extends InformationFlowImpl implements ItemFlow {
 	 * @generated
 	 * @ordered
 	 */
-	protected BlockProperty itemProperty = null;
+	protected BlockProperty itemProperty;
 
 	/**
 	 * <!-- begin-user-doc -->

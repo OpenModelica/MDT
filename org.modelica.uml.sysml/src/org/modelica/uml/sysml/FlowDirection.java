@@ -162,7 +162,7 @@ public final class FlowDirection extends AbstractEnumerator {
 			case OUT: return OUT_LITERAL;
 			case INOUT: return INOUT_LITERAL;
 		}
-		return null;	
+		return null;
 	}
 
 	/**

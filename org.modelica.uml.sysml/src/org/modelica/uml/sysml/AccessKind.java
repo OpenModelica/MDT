@@ -53,6 +53,21 @@ public final class AccessKind extends AbstractEnumerator {
 	public static final int PROTECTED = 2;
 
 	/**
+	 * The '<em><b>Private</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Private</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #PRIVATE_LITERAL
+	 * @model name="private"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PRIVATE = 1;
+
+	/**
 	 * The '<em><b>Public</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -73,6 +88,16 @@ public final class AccessKind extends AbstractEnumerator {
 	public static final AccessKind PROTECTED_LITERAL = new AccessKind(PROTECTED, "protected", "protected");
 
 	/**
+	 * The '<em><b>Private</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #PRIVATE
+	 * @generated
+	 * @ordered
+	 */
+	public static final AccessKind PRIVATE_LITERAL = new AccessKind(PRIVATE, "private", "private");
+
+	/**
 	 * An array of all the '<em><b>Access Kind</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -82,6 +107,7 @@ public final class AccessKind extends AbstractEnumerator {
 		new AccessKind[] {
 			PUBLIC_LITERAL,
 			PROTECTED_LITERAL,
+			PRIVATE_LITERAL,
 		};
 
 	/**
@@ -134,8 +160,9 @@ public final class AccessKind extends AbstractEnumerator {
 		switch (value) {
 			case PUBLIC: return PUBLIC_LITERAL;
 			case PROTECTED: return PROTECTED_LITERAL;
+			case PRIVATE: return PRIVATE_LITERAL;
 		}
-		return null;	
+		return null;
 	}
 
 	/**

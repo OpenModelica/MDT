@@ -6,19 +6,68 @@
  */
 package org.modelica.uml.sysml.impl;
 
+import java.util.Collection;
+import java.util.Map;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.DiagnosticChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectValidator;
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.uml2.uml.AggregationKind;
 import org.eclipse.uml2.uml.Association;
+import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Classifier;
+import org.eclipse.uml2.uml.CollaborationUse;
+import org.eclipse.uml2.uml.Constraint;
+import org.eclipse.uml2.uml.Dependency;
+import org.eclipse.uml2.uml.ElementImport;
+import org.eclipse.uml2.uml.Feature;
+import org.eclipse.uml2.uml.Generalization;
+import org.eclipse.uml2.uml.GeneralizationSet;
+import org.eclipse.uml2.uml.Interface;
+import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Namespace;
+import org.eclipse.uml2.uml.Operation;
+import org.eclipse.uml2.uml.PackageImport;
+import org.eclipse.uml2.uml.PackageableElement;
+import org.eclipse.uml2.uml.ParameterableElement;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Relationship;
+import org.eclipse.uml2.uml.RedefinableElement;
+import org.eclipse.uml2.uml.StringExpression;
+import org.eclipse.uml2.uml.Substitution;
+import org.eclipse.uml2.uml.TemplateBinding;
+import org.eclipse.uml2.uml.TemplateParameter;
+import org.eclipse.uml2.uml.TemplateSignature;
+import org.eclipse.uml2.uml.TemplateableElement;
 import org.eclipse.uml2.uml.Type;
+import org.eclipse.uml2.uml.UMLPackage;
+import org.eclipse.uml2.uml.Usage;
+import org.eclipse.uml2.uml.UseCase;
+import org.eclipse.uml2.uml.VisibilityKind;
+import org.eclipse.uml2.uml.internal.impl.DirectedRelationshipImpl;
+import org.eclipse.uml2.uml.util.UMLValidator;
 import org.eclipse.uml2.uml.internal.impl.AssociationImpl;
 
 import org.modelica.uml.sysml.AccessKind;
 import org.modelica.uml.sysml.FlowDirection;
+import org.modelica.uml.sysml.GeneralRelationship;
+import org.modelica.uml.sysml.ModelicaClassifier;
 import org.modelica.uml.sysml.ModelicaComposition;
 import org.modelica.uml.sysml.SysmlPackage;
 
@@ -28,6 +77,8 @@ import org.modelica.uml.sysml.SysmlPackage;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link org.modelica.uml.sysml.impl.ModelicaCompositionImpl#getSource <em>Source</em>}</li>
+ *   <li>{@link org.modelica.uml.sysml.impl.ModelicaCompositionImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaCompositionImpl#isIsFlow <em>Is Flow</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaCompositionImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link org.modelica.uml.sysml.impl.ModelicaCompositionImpl#getArrayDimension <em>Array Dimension</em>}</li>
@@ -40,6 +91,26 @@ import org.modelica.uml.sysml.SysmlPackage;
  */
 public class ModelicaCompositionImpl extends AssociationImpl implements
 		ModelicaComposition {
+
+	/**
+	 * The cached value of the '{@link #getSource() <em>Source</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSource()
+	 * @generated
+	 * @ordered
+	 */
+	protected Element source;
+
+	/**
+	 * The cached value of the '{@link #getTarget() <em>Target</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTarget()
+	 * @generated
+	 * @ordered
+	 */
+	protected Element target;
 
 	@SuppressWarnings("restriction")
 	public Property createOwnedEnd(String name, Type type) {
@@ -154,6 +225,82 @@ public class ModelicaCompositionImpl extends AssociationImpl implements
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Element getSource() {
+		if (source != null && source.eIsProxy()) {
+			InternalEObject oldSource = (InternalEObject)source;
+			source = (Element)eResolveProxy(oldSource);
+			if (source != oldSource) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SysmlPackage.MODELICA_COMPOSITION__SOURCE, oldSource, source));
+			}
+		}
+		return source;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Element basicGetSource() {
+		return source;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSource(Element newSource) {
+		Element oldSource = source;
+		source = newSource;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SysmlPackage.MODELICA_COMPOSITION__SOURCE, oldSource, source));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Element getTarget() {
+		if (target != null && target.eIsProxy()) {
+			InternalEObject oldTarget = (InternalEObject)target;
+			target = (Element)eResolveProxy(oldTarget);
+			if (target != oldTarget) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SysmlPackage.MODELICA_COMPOSITION__TARGET, oldTarget, target));
+			}
+		}
+		return target;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Element basicGetTarget() {
+		return target;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTarget(Element newTarget) {
+		Element oldTarget = target;
+		target = newTarget;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SysmlPackage.MODELICA_COMPOSITION__TARGET, oldTarget, target));
+	}
+
+	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -254,6 +401,12 @@ public class ModelicaCompositionImpl extends AssociationImpl implements
 	 */
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case SysmlPackage.MODELICA_COMPOSITION__SOURCE:
+				if (resolve) return getSource();
+				return basicGetSource();
+			case SysmlPackage.MODELICA_COMPOSITION__TARGET:
+				if (resolve) return getTarget();
+				return basicGetTarget();
 			case SysmlPackage.MODELICA_COMPOSITION__IS_FLOW:
 				return isIsFlow() ? Boolean.TRUE : Boolean.FALSE;
 			case SysmlPackage.MODELICA_COMPOSITION__DIRECTION:
@@ -274,6 +427,12 @@ public class ModelicaCompositionImpl extends AssociationImpl implements
 	 */
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case SysmlPackage.MODELICA_COMPOSITION__SOURCE:
+				setSource((Element)newValue);
+				return;
+			case SysmlPackage.MODELICA_COMPOSITION__TARGET:
+				setTarget((Element)newValue);
+				return;
 			case SysmlPackage.MODELICA_COMPOSITION__IS_FLOW:
 				setIsFlow(((Boolean)newValue).booleanValue());
 				return;
@@ -299,6 +458,12 @@ public class ModelicaCompositionImpl extends AssociationImpl implements
 	 */
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case SysmlPackage.MODELICA_COMPOSITION__SOURCE:
+				setSource((Element)null);
+				return;
+			case SysmlPackage.MODELICA_COMPOSITION__TARGET:
+				setTarget((Element)null);
+				return;
 			case SysmlPackage.MODELICA_COMPOSITION__IS_FLOW:
 				setIsFlow(IS_FLOW_EDEFAULT);
 				return;
@@ -324,6 +489,10 @@ public class ModelicaCompositionImpl extends AssociationImpl implements
 	 */
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case SysmlPackage.MODELICA_COMPOSITION__SOURCE:
+				return source != null;
+			case SysmlPackage.MODELICA_COMPOSITION__TARGET:
+				return target != null;
 			case SysmlPackage.MODELICA_COMPOSITION__IS_FLOW:
 				return isFlow != IS_FLOW_EDEFAULT;
 			case SysmlPackage.MODELICA_COMPOSITION__DIRECTION:
@@ -336,6 +505,48 @@ public class ModelicaCompositionImpl extends AssociationImpl implements
 				return DEFAULT_EDEFAULT == null ? default_ != null : !DEFAULT_EDEFAULT.equals(default_);
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class baseClass) {
+		if (baseClass == ModelicaClassifier.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == GeneralRelationship.class) {
+			switch (derivedFeatureID) {
+				case SysmlPackage.MODELICA_COMPOSITION__SOURCE: return SysmlPackage.GENERAL_RELATIONSHIP__SOURCE;
+				case SysmlPackage.MODELICA_COMPOSITION__TARGET: return SysmlPackage.GENERAL_RELATIONSHIP__TARGET;
+				default: return -1;
+			}
+		}
+		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class baseClass) {
+		if (baseClass == ModelicaClassifier.class) {
+			switch (baseFeatureID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == GeneralRelationship.class) {
+			switch (baseFeatureID) {
+				case SysmlPackage.GENERAL_RELATIONSHIP__SOURCE: return SysmlPackage.MODELICA_COMPOSITION__SOURCE;
+				case SysmlPackage.GENERAL_RELATIONSHIP__TARGET: return SysmlPackage.MODELICA_COMPOSITION__TARGET;
+				default: return -1;
+			}
+		}
+		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
 	/**

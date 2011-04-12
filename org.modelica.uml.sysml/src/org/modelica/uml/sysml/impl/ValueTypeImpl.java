@@ -43,7 +43,7 @@ public class ValueTypeImpl extends DataTypeImpl implements ValueType {
 	 * @generated
 	 * @ordered
 	 */
-	protected Unit unit = null;
+	protected Unit unit;
 
 	/**
 	 * The cached value of the '{@link #getDimension() <em>Dimension</em>}' reference.
@@ -53,7 +53,7 @@ public class ValueTypeImpl extends DataTypeImpl implements ValueType {
 	 * @generated
 	 * @ordered
 	 */
-	protected Dimension dimension = null;
+	protected Dimension dimension;
 
 	/**
 	 * <!-- begin-user-doc -->

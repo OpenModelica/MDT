@@ -7,6 +7,7 @@
 package org.modelica.uml.sysml;
 
 import org.eclipse.uml2.uml.Association;
+import org.eclipse.uml2.uml.DirectedRelationship;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,7 +29,7 @@ import org.eclipse.uml2.uml.Association;
  * @model
  * @generated
  */
-public interface ModelicaComposition extends Association {
+public interface ModelicaComposition extends Association, GeneralRelationship {
 
 	
 	/**

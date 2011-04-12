@@ -213,8 +213,8 @@ public class ModelicaPropertyImpl extends BlockPropertyImpl implements
 					integerType.eClass());
 			}
 		}
-
-		super.setType(typeInstance);
+//		type = newType;	
+		super.setType(newType);
 	}
 
 	/**

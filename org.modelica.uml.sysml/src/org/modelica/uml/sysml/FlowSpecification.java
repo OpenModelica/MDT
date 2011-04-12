@@ -38,7 +38,7 @@ public interface FlowSpecification extends Interface {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Owned Flow Property</em>' containment reference list.
 	 * @see org.modelica.uml.sysml.SysmlPackage#getFlowSpecification_OwnedFlowProperty()
-	 * @model type="org.modelica.uml.sysml.FlowProperty" containment="true"
+	 * @model type="org.modelica.uml.sysml.FlowProperty" containment="true" resolveProxies="true"
 	 * @generated
 	 */
 	EList getOwnedFlowProperty();
