@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.7.2"
+      version="0.7.7"
       provider-name="Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University">
 
    <description url="http://www.ida.liu.se/~pelab/modelica/">
@@ -14,7 +14,7 @@ software and other related projects.
    </description>
 
    <copyright>
-      Copyright (c) 2005-2006, 
+      Copyright (c) 2005-2009, 
       Adrian Pop [adrpo@ida.liu.se], Elmir Jaguding, Andreas Remar
       Programming Environments Laboratory (PELAB),
       Department of Computer and Information Science (IDA), 
@@ -24,7 +24,7 @@ software and other related projects.
 
    <license url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html">
       The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.
-Copyright (c) 2005-2006, 
+Copyright (c) 2005-2009, 
 The MDT Team (Authors): Adrian Pop [adrpo@ida.liu.se], Elmir Jagudin, Andreas Remar, 
 Programming Environments Laboratory (PELAB),
 Department of Computer and Information Science (IDA), 
@@ -57,22 +57,6 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
 OF THE POSSIBILITY OF SUCH DAMAGE.
    </license>
-
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.ui.navigator"/>
-   </requires>
 
    <plugin
          id="org.modelica.mdt.core"
