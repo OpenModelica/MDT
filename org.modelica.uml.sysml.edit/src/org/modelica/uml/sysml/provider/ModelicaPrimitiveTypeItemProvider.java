@@ -59,7 +59,7 @@ public class ModelicaPrimitiveTypeItemProvider
 	public ModelicaPrimitiveTypeItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
-	
+
 	@Override
 	protected void addClientDependencyPropertyDescriptor(Object object) {
 	}
@@ -143,8 +143,8 @@ public class ModelicaPrimitiveTypeItemProvider
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

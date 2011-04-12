@@ -125,7 +125,7 @@ public class ModelicaPropertyItemProvider extends BlockPropertyItemProvider
 				 getString("_UI_TypedElement_type_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_TypedElement_type_feature", "_UI_TypedElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 UMLPackage.Literals.TYPED_ELEMENT__TYPE,
-				 true,
+				 true, true, true,
 				 null,
 				 null,
 				 null));
@@ -496,8 +496,8 @@ public class ModelicaPropertyItemProvider extends BlockPropertyItemProvider
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
 	 * @generated

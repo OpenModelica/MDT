@@ -14,6 +14,7 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -23,9 +24,11 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
+import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 
 import org.modelica.uml.sysml.ModelicaClass;
+import org.modelica.uml.sysml.SysmlFactory;
 import org.modelica.uml.sysml.SysmlPackage;
 
 /**
@@ -45,6 +48,16 @@ public class ModelicaClassItemProvider extends BlockItemProvider implements
 	 */
 	public ModelicaClassItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
+	}
+	
+	@Override
+	protected void addIsAbstractPropertyDescriptor(Object object) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	protected void addRedefinedClassifierPropertyDescriptor(Object object) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -117,6 +130,8 @@ public class ModelicaClassItemProvider extends BlockItemProvider implements
 
 	@Override
 	protected void addOwnedAttributePropertyDescriptor(Object object) {
+		// TODO Auto-generated method stub
+		super.addOwnedAttributePropertyDescriptor(object);
 	}
 
 	@Override
@@ -158,7 +173,7 @@ public class ModelicaClassItemProvider extends BlockItemProvider implements
 	@Override
 	protected void addPowertypeExtentPropertyDescriptor(Object object) {
 	}
-
+/*
 	@Override
 	protected void addRedefinedClassifierPropertyDescriptor(Object object) {
 	}
@@ -166,7 +181,7 @@ public class ModelicaClassItemProvider extends BlockItemProvider implements
 	@Override
 	protected void addRedefinedElementPropertyDescriptor(Object object) {
 	}
-
+*/
 	@Override
 	protected void addRedefinitionContextPropertyDescriptor(Object object) {
 	}
@@ -203,7 +218,7 @@ public class ModelicaClassItemProvider extends BlockItemProvider implements
 	protected void addNamespacePropertyDescriptor(Object object) {
 	}
 
-	@Override
+	//b@Override
 	protected void addIsEncapsulatedPropertyDescriptor(Object object) {
 	}
 
@@ -321,8 +336,8 @@ public class ModelicaClassItemProvider extends BlockItemProvider implements
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
 	 * @generated

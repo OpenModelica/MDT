@@ -2,21 +2,38 @@ package org.modelica.uml.sysml.provider.descriptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.ResourceLocator;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
+import org.eclipse.gmf.runtime.emf.core.GMFEditingDomainFactory;
 import org.eclipse.uml2.common.edit.provider.IItemQualifiedTextProvider;
 import org.eclipse.uml2.common.util.UML2Util;
 import org.eclipse.uml2.uml.Association;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Type;
+import org.eclipse.uml2.uml.UMLPackage;
+import org.eclipse.uml2.uml.Model;
 import org.modelica.uml.sysml.ModelicaProperty;
 import org.modelica.uml.sysml.ModelicaType;
 import org.modelica.uml.sysml.PropertyKind;
@@ -105,56 +122,17 @@ public class SysmlItemPropertyDescriptor extends ItemPropertyDescriptor
 		String category = getCategory(object);
 		String cat = category == null ? getQualifiedText(feature) : category
 				+ getQualifiedText(feature);
-		return cat;
-	}
 
+		return super.getId(object);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection getChoiceOfValues(Object object) {
-		Collection valueList = super.getChoiceOfValues(object);
-
-		/*
-		String id = this.getId(object);
-		// filter only Type property
-		if (id.indexOf("type") > -1) {
-			if (object instanceof ModelicaProperty && valueList != null
-					&& valueList.size() > 0) {
-				ModelicaProperty property = (ModelicaProperty) object;
-
-				List<Type> removeList = new ArrayList<Type>();
-				Iterator iter = valueList.iterator();
-
-				while (iter.hasNext()) {
-					Object obj = iter.next();
-					if (obj instanceof ModelicaType
-							&& (property.getType() == null || (property
-									.getType() != null && !property.getType()
-									.equals(obj)))) {
-						removeList.add((Type) obj);
-					} else if (property.getPropertyKind().equals(
-							PropertyKind.PARAMETER_LITERAL)
-							&& (!(obj instanceof PrimitiveType) && !(obj instanceof Enumeration))) {
-						removeList.add((Type) obj);
-					} else if (property.getPropertyKind().equals(
-							PropertyKind.PART_LITERAL)
-							&& (obj instanceof PrimitiveType || obj instanceof Enumeration)) {
-						removeList.add((Type) obj);
-					} else if (property.getPropertyKind().equals(
-							PropertyKind.VARIABLE_LITERAL)
-							&& (!(obj instanceof PrimitiveType) && !(obj instanceof Enumeration))) {
-						removeList.add((Type) obj);
-					} else if (obj instanceof Association) {
-						removeList.add((Type) obj);
-					}
-				}
-
-				if (removeList.size() > 0) {
-					valueList.removeAll(removeList);
-				}
-			}
-		}
-		*/
+		Collection valueList = null;
+		if(valueList == null)
+		valueList = super.getChoiceOfValues(object);
 		return valueList;
-	}
+}
 
 }
