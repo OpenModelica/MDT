@@ -236,6 +236,12 @@ public class EditorUtility
 		
 		return null;
 	}
+
+//	public static IEditorInput getEditorInput(IModelicaSourceFile cu)
+//	{
+//		// TODO Auto-generated method stub
+//		return editor.getEditorInput();
+//	}
 	
 	
 }

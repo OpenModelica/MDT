@@ -43,12 +43,16 @@ import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
 import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
+import org.eclipse.jface.viewers.StyledString;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.hover.AbstractReusableInformationControlCreator;
 import org.modelica.mdt.ui.hover.HTMLTextPresenter;
+import org.modelica.mdt.ui.text.modelica.CompletionProposal;
+import org.modelica.mdt.ui.text.modelica.IModelicaCompletionProposal;
+import org.modelica.mdt.ui.text.modelica.ModelicaContentAssistInvocationContext;
 
-public class ModelicaCompletionProposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension3, ICompletionProposalExtension5
+public class ModelicaCompletionProposal extends CompletionProposal implements IModelicaCompletionProposal, ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension3, ICompletionProposalExtension5
 {
 
 	/** The string to be displayed in the completion proposal popup. */
@@ -107,6 +111,45 @@ public class ModelicaCompletionProposal implements ICompletionProposal, IComplet
 		fDisplayString= displayString;
 		fContextInformation= contextInformation;
 		fAdditionalProposalInfo= additionalProposalInfo;
+	}
+
+	public ModelicaCompletionProposal(String text, int start, int length,
+			Image image, String text2, int rank)
+	{
+
+		fReplacementString= text;
+		fReplacementOffset= start;
+		fReplacementLength= length;
+		fCursorPosition= 0;
+		fImage= image;
+		fDisplayString= text2;
+		fContextInformation= null;
+		fAdditionalProposalInfo= "";
+	}
+
+	public ModelicaCompletionProposal(String completion, int start, int length,
+			Image image, StyledString label, int relevance)
+	{
+		// TODO Auto-generated constructor stub
+	}
+
+	public ModelicaCompletionProposal(CompletionProposal typeProposal,
+			ModelicaContentAssistInvocationContext invocationContext)
+	{
+		// TODO Auto-generated constructor stub
+	}
+
+	public ModelicaCompletionProposal(String completion, int start, int length,
+			Image image, StyledString label, int relevance,
+			boolean inModelicadoc,
+			ModelicaContentAssistInvocationContext invocationContext)
+	{
+		// TODO Auto-generated constructor stub
+	}
+
+	public ModelicaCompletionProposal(int kind, int completionOffset)
+	{
+		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -170,7 +213,7 @@ public class ModelicaCompletionProposal implements ICompletionProposal, IComplet
 	 */
 	private static final class ControlCreator extends AbstractReusableInformationControlCreator {
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+		 * @see org.modelica.mdt.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			IInformationControl x = new DefaultInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, new HTMLTextPresenter(false));
@@ -482,7 +525,7 @@ public class ModelicaCompletionProposal implements ICompletionProposal, IComplet
 		}
 	
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
+		 * @see org.modelica.mdt.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.modelica.mdt.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
 		 */
 		public ExitFlags doExit(LinkedModeModel environment, VerifyEvent event, int offset, int length) {
 	

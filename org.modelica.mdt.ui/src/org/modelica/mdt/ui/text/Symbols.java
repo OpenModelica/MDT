@@ -73,22 +73,26 @@ public interface Symbols
 	int TokenTYPE			= 54;  
 	int TokenWHEN			= 55; 
 	int TokenWHILE			= 56;
-	int TokenWITHIN			= 57; 
+	int TokenWITHIN			= 57;
+	int TokenEXPANDABLE		= 69;
+	int TokenOPERATOR       = 70;
+	int TokenCONSTRAINEDBY  = 71;
+	
 	
 	/* The following are Meta-Modelica Keywords */
-	int TokenAS				= 58; 
-	int TokenCASE			= 59; 
-	int TokenEQUALITY		= 60;
+	int TokenAS				= 158; 
+	int TokenCASE			= 159; 
+	int TokenEQUALITY		= 160;
 	
-	int TokenFAILURE		= 61; 
-	int TokenLIST			= 62;
-	int TokenLOCAL			= 63; 
-	int TokenMATCH			= 64; 
-	int TokenMATCHCONTINUE	= 65;
-	int TokenTUPLE			= 66; 
-	int TokenUNIONTYPE		= 67;
-	int TokenSUBTYPEOF      = 68;
-	
+	int TokenFAILURE		= 161; 
+	int TokenLIST			= 162;
+	int TokenLOCAL			= 163; 
+	int TokenMATCH			= 164; 
+	int TokenMATCHCONTINUE	= 165;
+	int TokenTUPLE			= 166; 
+	int TokenUNIONTYPE		= 167;
+	int TokenSUBTYPEOF      = 168;
+		
 	int TokenLBRACE			= 1001;
 	int TokenRBRACE			= 1002;
 	int TokenLBRACKET		= 1003;

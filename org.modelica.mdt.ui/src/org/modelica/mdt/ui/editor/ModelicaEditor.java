@@ -1372,7 +1372,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	
 	boolean isFoldingEnabled() {
 		return true;
-		//return UIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
+		//return UIPlugin.getDefault().getPreferenceStore().getBoolean(SpellingPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}	
 	
 	/*

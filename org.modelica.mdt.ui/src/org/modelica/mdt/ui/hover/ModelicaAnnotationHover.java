@@ -23,7 +23,7 @@ import org.modelica.mdt.internal.core.ErrorManager;
  *
  * @since 0.7.0
  */
-@SuppressWarnings("unchecked")
+
 public class ModelicaAnnotationHover extends DefaultAnnotationHover {
 
 	

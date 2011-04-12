@@ -22,6 +22,7 @@ import org.modelica.mdt.ui.view.ModelicaStatusLineContributor;
 public class ModelicaActionContributor extends BasicTextEditorActionContributor
 {
 	protected ModelicaCorrectIndentationAction correctIndentationAction;
+	protected ModelicaBuildAction buildAction;
 	protected ModelicaStatusLineContributor mdtStatus;
 	/**
 	 * Default constructor.
@@ -29,6 +30,7 @@ public class ModelicaActionContributor extends BasicTextEditorActionContributor
 	public ModelicaActionContributor() {
 		super();
 		correctIndentationAction = ModelicaCorrectIndentationAction.getInstance();
+		buildAction = ModelicaBuildAction.getInstance();
 		mdtStatus = new ModelicaStatusLineContributor();
 	}
 	
@@ -41,6 +43,8 @@ public class ModelicaActionContributor extends BasicTextEditorActionContributor
 		if (editMenu != null) {
 			editMenu.add(new Separator());
 			editMenu.add(correctIndentationAction);
+			editMenu.add(new Separator());
+			editMenu.add(buildAction);			
 		}
 	}
 	
@@ -51,6 +55,8 @@ public class ModelicaActionContributor extends BasicTextEditorActionContributor
 		super.contributeToToolBar(toolBarManager);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(correctIndentationAction);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(buildAction);		
 	}
 	
 	/* (non-Javadoc)
@@ -65,6 +71,9 @@ public class ModelicaActionContributor extends BasicTextEditorActionContributor
 		
 		correctIndentationAction.setEditor(editor);
 		correctIndentationAction.update();
+		
+		buildAction.setEditor(editor);
+		buildAction.update();		
 		
 		mdtStatus.update();
 	}

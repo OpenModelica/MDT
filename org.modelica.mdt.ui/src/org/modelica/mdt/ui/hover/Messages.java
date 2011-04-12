@@ -1,7 +1,6 @@
 
 package org.modelica.mdt.ui.hover;
 
-//import com.ibm.icu.text.MessageFormat;
 import java.text.MessageFormat;
 
 /**

@@ -23,6 +23,8 @@
 *******************************************************************************/
 package org.modelica.mdt.ui.editor;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.text.hyperlink.*;
 import org.eclipse.jface.text.information.IInformationProvider;
@@ -42,6 +44,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.swt.SWT;
@@ -61,6 +64,15 @@ import org.modelica.mdt.ui.text.ModelicaMultilineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaSinglelineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaStringScanner;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
+import org.eclipse.ui.texteditor.spelling.SpellingService;
+import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
+
 
 /**
  * 
@@ -68,8 +80,7 @@ import org.eclipse.jface.text.ITextHover;
  *   - big changes, splited scanners for different partitions, etc
  */
 public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration 
-{
-
+{	
 	private ModelicaCodeScanner 	         fCodeScanner;              /* for code parts and strings */
 	private ModelicaMultilineCommentScanner  fMultilineCommentScanner;  /* for C comments */
 	private ModelicaSinglelineCommentScanner fSinglelineCommentScanner; /* for single line comments */
@@ -78,6 +89,8 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	private ITextEditor textEditor;
 		
 	private String fDocumentPartitioning;
+	
+	private static final IContentType MODELICA_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IDocument.DEFAULT_CONTENT_TYPE); 	
 
 	public ModelicaSourceViewerConfig(ITextEditor textEditor, String partitioning) 
 	{
@@ -306,5 +319,29 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
+
+//	/*
+//	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
+//	 */
+//	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+//		if (!EditorsUI.getPreferenceStore().getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+//			return null;
+//
+//		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService()) {
+//			protected IContentType getContentType() {
+//				return MODELICA_CONTENT_TYPE;
+//			}
+//		};
+//
+//		MonoReconciler reconciler= new MonoReconciler(strategy, true);
+//		reconciler.setDelay(500);
+//		return reconciler;
+//	}
+
+	@Override
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer)
+	{
+		return null;
+	}	
 	
 }

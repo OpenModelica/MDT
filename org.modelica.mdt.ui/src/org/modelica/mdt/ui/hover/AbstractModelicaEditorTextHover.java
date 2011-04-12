@@ -340,5 +340,18 @@ public abstract class AbstractModelicaEditorTextHover implements IModelicaEditor
 		}
 		return fgStyleSheet;
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension2#getInformationPresenterControlCreator()
+	 * @since 3.4
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				return new DefaultInformationControl(shell, true);
+			}
+		};
+	}
+	
 	
 }

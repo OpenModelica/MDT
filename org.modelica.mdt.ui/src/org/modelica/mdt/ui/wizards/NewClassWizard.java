@@ -177,7 +177,7 @@ public class NewClassWizard extends Wizard implements INewWizard
 	        l.setLayoutData(gd);
 	        
 	        classType = new Combo(composite, SWT.READ_ONLY);
-	        classType.setItems(new String [] {"model", "class", "connector", "record", "block", "type", "function", "package"});
+	        classType.setItems(new String [] {"model", "class", "connector", "record", "block", "type", "function", "package", "operator"});
 	        classType.setVisibleItemCount(7);
 	        UIPlugin.tag(classType, CLASS_TYPE_TAG);
 	        
@@ -307,7 +307,9 @@ public class NewClassWizard extends Wizard implements INewWizard
 		!(classType.equals("record") 
 				|| classType.equals("type")
 				|| classType.equals("connector") 
-				|| classType.equals("function"));
+				|| classType.equals("function")
+				|| classType.equals("package")
+				|| classType.equals("operator"));
 	}
 	
 	/**

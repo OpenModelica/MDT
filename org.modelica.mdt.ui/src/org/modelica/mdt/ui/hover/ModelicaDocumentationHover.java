@@ -7,7 +7,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension4;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -17,7 +21,8 @@ import org.modelica.mdt.core.IModelicaElement;
  *
  * @since 2.1
  */
-public class ModelicaDocumentationHover extends AbstractModelicaEditorTextHover implements IInformationProviderExtension2, ITextHoverExtension {
+public class ModelicaDocumentationHover extends AbstractModelicaEditorTextHover 
+	implements IInformationProviderExtension2, ITextHoverExtension, ITextHoverExtension2 {
 
 	
 	/**
@@ -43,12 +48,12 @@ public class ModelicaDocumentationHover extends AbstractModelicaEditorTextHover 
 			fPresenterControlCreator= new AbstractReusableInformationControlCreator() {
 
 				/*
-				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+				 * @see org.modelica.mdt.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
 				public IInformationControl doCreateInformationControl(Shell parent) {
 					int shellStyle= SWT.RESIZE | SWT.TOOL;
 					int style= SWT.V_SCROLL | SWT.H_SCROLL;
-					return new DefaultInformationControl(parent, shellStyle, style, new HTMLTextPresenter(false));
+					return new DefaultInformationControl(parent, /* shellStyle, style, */ new HTMLTextPresenter(false));
 				}
 			};
 		}
@@ -64,14 +69,14 @@ public class ModelicaDocumentationHover extends AbstractModelicaEditorTextHover 
 			fHoverControlCreator= new AbstractReusableInformationControlCreator() {
 				
 				/*
-				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+				 * @see org.modelica.mdt.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), getTooltipAffordanceString());
+					return new DefaultInformationControl(parent, /*SWT.NONE,*/ new HTMLTextPresenter(true)/*, getTooltipAffordanceString()*/);
 				}
 				
 				/*
-				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
+				 * @see org.modelica.mdt.ui.text.java.hover.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
 				 */
 				public boolean canReuse(IInformationControl control) {
 					boolean canReuse= super.canReuse(control);
@@ -147,6 +152,12 @@ public class ModelicaDocumentationHover extends AbstractModelicaEditorTextHover 
 			}
 		}
 		return buf.toString();
+	}
+
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

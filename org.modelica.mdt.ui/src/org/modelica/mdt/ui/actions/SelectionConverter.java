@@ -12,14 +12,14 @@ package org.modelica.mdt.ui.actions;
 
 import java.util.Iterator;
 
-//import org.eclipse.jdt.core.IClassFile;
-//import org.eclipse.jdt.core.ICodeAssist;
-//import org.eclipse.jdt.core.ICompilationUnit;
-//import org.eclipse.jdt.core.IModelicaElement;
-//import org.eclipse.jdt.core.ISourceRange;
-//import org.eclipse.jdt.core.ISourceReference;
-//import org.eclipse.jdt.core.IType;
-//import org.eclipse.jdt.core.JavaModelException;
+//import org.modelica.mdt.core.IClassFile;
+//import org.modelica.mdt.core.ICodeAssist;
+//import org.modelica.mdt.core.IModelicaSourceFile;
+//import org.modelica.mdt.core.IModelicaElement;
+//import org.modelica.mdt.core.ISourceRange;
+//import org.modelica.mdt.core.ISourceReference;
+//import org.modelica.mdt.core.IType;
+//import org.modelica.mdt.core.JavaModelException;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -32,13 +32,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 
-//import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
-//import org.eclipse.jdt.internal.ui.JavaPlugin;
-//import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
-//import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-//import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
+//import org.modelica.mdt.internal.corext.util.JavaModelUtil;
+//import org.modelica.mdt.ui.JavaPlugin;
+//import org.modelica.mdt.ui.ModelicaEditor.IClassFileEditorInput;
+//import org.modelica.mdt.ui.ModelicaEditor.ModelicaEditor;
+//import org.modelica.mdt.ui.util.ExceptionHandler;
 //
-//import org.eclipse.jdt.ui.IWorkingCopyManager;
+//import org.modelica.mdt.ui.IWorkingCopyManager;
 import org.modelica.mdt.core.*;
 import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.editor.ModelicaElementEditorInput;
@@ -56,7 +56,7 @@ public class SelectionConverter {
 	 * Converts the selection provided by the given part into a structured selection.
 	 * The following conversion rules are used:
 	 * <ul>
-	 *	<li><code>part instanceof JavaEditor</code>: returns a structured selection
+	 *	<li><code>part instanceof ModelicaEditor</code>: returns a structured selection
 	 * 	using code resolve to convert the editor's text selection.</li>
 	 * <li><code>part instanceof IWorkbenchPart</code>: returns the part's selection
 	 * 	if it is a structured selection.</li>
@@ -197,8 +197,8 @@ public class SelectionConverter {
 	
 	public static IModelicaElement[] codeResolve(IModelicaElement input, ITextSelection selection) throws CoreException {
 //			if (input instanceof ICodeAssist) {
-//				if (input instanceof ICompilationUnit) {
-//					JavaModelUtil.reconcile((ICompilationUnit) input);
+//				if (input instanceof IModelicaSourceFile) {
+//					JavaModelUtil.reconcile((IModelicaSourceFile) input);
 //				}
 //				IModelicaElement[] elements= ((ICodeAssist)input).codeSelect(selection.getOffset(), selection.getLength());
 //				if (elements != null && elements.length > 0)
@@ -208,8 +208,8 @@ public class SelectionConverter {
 	}
 //	
 	public static IModelicaElement getElementAtOffset(IModelicaElement input, ITextSelection selection) throws CoreException {
-//		if (input instanceof ICompilationUnit) {
-//			ICompilationUnit cunit= (ICompilationUnit) input;
+//		if (input instanceof IModelicaSourceFile) {
+//			IModelicaSourceFile cunit= (IModelicaSourceFile) input;
 //			JavaModelUtil.reconcile(cunit);
 //			IModelicaElement ref= cunit.getElementAt(selection.getOffset());
 //			if (ref == null)
@@ -243,8 +243,8 @@ public class SelectionConverter {
 //	
 //	public static IModelicaElement resolveEnclosingElement(IModelicaElement input, ITextSelection selection) throws CoreException {
 //		IModelicaElement atOffset= null;
-//		if (input instanceof ICompilationUnit) {
-//			ICompilationUnit cunit= (ICompilationUnit)input;
+//		if (input instanceof IModelicaSourceFile) {
+//			IModelicaSourceFile cunit= (IModelicaSourceFile)input;
 //			JavaModelUtil.reconcile(cunit);
 //			atOffset= cunit.getElementAt(selection.getOffset());
 //		} else if (input instanceof IClassFile) {

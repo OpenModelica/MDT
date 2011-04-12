@@ -153,6 +153,42 @@
 	  	contextId="org.modelica.mdt.ui.modelicaEditorScope"
 	  	commandId="org.modelica.mdt.ui.edit.text.show.modelicadoc"
 	  	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+   <key
+         commandId="org.eclipse.ui.project.rebuildAll"
+         contextId="org.eclipse.ui.contexts.window"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="Alt+B">
+   </key>
+   <key
+         commandId="org.eclipse.ui.project.rebuildAll"
+         contextId="org.eclipse.ui.console.ConsoleView"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="Alt+B">
+   </key>
+   <key
+         commandId="org.eclipse.ui.project.rebuildAll"
+         contextId="org.eclipse.ui.contexts.dialog"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="Alt+B">
+   </key>
+   <key
+         commandId="org.eclipse.ui.project.rebuildAll"
+         contextId="org.eclipse.ui.contexts.dialogAndWindow"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="Alt+B">
+   </key>
+   <key
+         commandId="org.eclipse.ui.project.rebuildAll"
+         contextId="org.eclipse.ui.textEditorScope"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="Alt+B">
+   </key>
+   <key
+         commandId="org.eclipse.ui.project.rebuildAll"
+         contextId="org.modelica.mdt.ui.modelicaEditorScope"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="Alt+B">
+   </key>
   </extension>   
    
    <extension
@@ -264,12 +300,49 @@
             <adapter type="org.eclipse.ui.views.tasklist.ITaskListResourceAdapter"/>            
 		</factory>		
 	</extension>
+  <!--
   <extension
-        point="org.eclipse.ui.editors.templates">
-     <template
-           autoinsert="true"
-           contextTypeId="org.modelica.mdt.ui.template1"
-           id="org.modelica.mdt.ui.template1"
-           name="org.modelica.mdt.ui.template1"/>
+        point="org.eclipse.ui.workbench.texteditor.spellingEngine">
+     <engine
+           class="org.modelica.mdt.ui.text.spelling.DefaultSpellingEngine"
+           id="org.modelica.mdt.ui.engineModelica">
+     </engine>
   </extension>
+  -->
+  <extension point="org.eclipse.ui.popupMenus">
+    <!-- put a context menu item into the menu of standard text editors.
+         If the properties editor had an own context menu id, we could
+         target this more specifically. This way, we must have the
+         refactoring itself decide whether the operation can run.
+      -->
+    <viewerContribution targetID="#TextEditorContext" id="org.eclipse.ui.articles.action.contribution.popup.editor">
+      <menu
+         id="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu"
+         label="Modelica Refactorings"
+         path="additions">
+         <separator name="group1"/>
+      </menu>    
+      <action label="Rename Function"
+              class="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction" 
+              menubarPath="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu/group1" 
+              id="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction"/>
+      <action label="Rename Component"
+              class="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction" 
+              menubarPath="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu/group1" 
+              id="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction"/>
+      <action label="Add Component"
+              class="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction" 
+              menubarPath="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu/group1" 
+              id="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction"/>
+      <action label="Delete Component"
+              class="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction" 
+              menubarPath="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu/group1" 
+              id="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction"/>
+      <action label="Add New Component to Record"
+              class="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction" 
+              menubarPath="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu/group1" 
+              id="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction"/>              
+    </viewerContribution>
+  </extension>  
+  
 </plugin>

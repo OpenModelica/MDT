@@ -5,6 +5,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.core.resources.*;
+import org.modelica.mdt.ui.util.Launchers;
 
 public class MetaModelicaBuildLaunchListener implements ILaunchListener
 {
@@ -19,8 +20,7 @@ public class MetaModelicaBuildLaunchListener implements ILaunchListener
 		if (launchConfig == null) return;		
 		IFile launchFile = launchConfig.getFile();
 		if (launchFile == null) return; 
-		if (launchFile.getName().contains("OMDev") &&
-		    launchFile.getName().endsWith(".launch"))
+		if (Launchers.launcherNameMatches(launchFile.getName()))
 		{
 			UIPlugin.getDefault().deleteMarkers();
 		}

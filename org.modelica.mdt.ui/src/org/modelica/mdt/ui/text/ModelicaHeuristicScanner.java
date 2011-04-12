@@ -22,7 +22,7 @@ import org.eclipse.jface.text.TypedRegion;
  * @since 3.0
  */
 public final class ModelicaHeuristicScanner implements Symbols 
-{
+{	
 
 	String fLastIdent = null;
 		
@@ -51,8 +51,11 @@ public final class ModelicaHeuristicScanner implements Symbols
 			new key("block",    	TokenBLOCK), 
 			new key("break", 		TokenBREAK),
 			new key("class", 		TokenCLASS), 
-			new key("connect", 		TokenCONNECT), 
+			new key("connect", 		TokenCONNECT),
+			new key("expandable", 	TokenEXPANDABLE),
 			new key("connector", 	TokenCONNECTOR), 
+			new key("operator", 	TokenOPERATOR),
+			new key("constrainedby", 	TokenCONSTRAINEDBY),
 			new key("constant", 	TokenCONSTANT), 
 			new key("der", 			TokenDER),
 			new key("discrete", 	TokenDISCRETE),

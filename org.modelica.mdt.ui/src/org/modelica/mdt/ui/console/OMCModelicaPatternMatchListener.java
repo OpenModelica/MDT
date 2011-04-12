@@ -18,7 +18,7 @@ public class OMCModelicaPatternMatchListener implements IPatternMatchListener
     private Pattern patternGeneral = Pattern.compile(regexpGeneral);
     private Matcher matcherGeneral;	
     
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
     private TextConsole omcConsole;
     
     public OMCModelicaPatternMatchListener()

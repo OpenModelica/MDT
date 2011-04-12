@@ -8,6 +8,7 @@ import org.eclipse.jface.text.BadLocationException;
 import java.util.regex.*;
 import org.eclipse.core.resources.IProject;
 import org.modelica.mdt.core.*;
+import org.modelica.mdt.ui.util.Launchers;
 import org.eclipse.core.runtime.Platform;
 
 
@@ -15,9 +16,16 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 {
 	public static String ID = "org.modelica.mdt.ui.console.MetaModelicaPatternMatchListener";	
 
-	private String regexpMetaModelica = "^([^:]+)\\:([0-9]*)\\.[0-9]*\\-[0-9]*\\.[0-9]*(.*)";
-	private String regexpGeneral = "^([^:]+)\\:([0-9]+):(.*)";    	
+	private String simplePattern = "([^:\n\r]+):([0-9]+)(.*)";
+	private String disqualifyPattern = "([^:\n\r]+):([0-9]+)(.*)";
+	
+	private String regexpOMCModelica = "^[^\\[]*\\[([^:]+):([0-9]+):[0-9]+\\-[0-9]+:[0-9]+:[^\\]]+\\](.*)";
+	private String regexpMetaModelica = "^([^:]+):([0-9]+)\\.[0-9]+\\-[0-9]+\\.[0-9]+(.*)";
+	private String regexpGeneral = "^([^:]+):([0-9]+)[:\\,\\s](.*)";
 
+    private Pattern patternOMCModelica = Pattern.compile(regexpOMCModelica);
+    private Matcher matcherOMCModelica; 
+	
     private Pattern patternMetaModelica = Pattern.compile(regexpMetaModelica);
     private Matcher matcherMetaModelica; 
 
@@ -57,8 +65,7 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 		int offset = event.getOffset();
 		try
 		{
-			line = console.getDocument().get(
-					event.getOffset(), event.getLength());
+			line = console.getDocument().get(event.getOffset(), event.getLength());
 			debug("MatchedLine:" + line);
 		}
 		catch (BadLocationException e)
@@ -74,33 +81,103 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 		
 		try
 		{
-			matcherMetaModelica = patternMetaModelica.matcher(line);        
-			if (matcherMetaModelica.matches()) 
+			matcherOMCModelica = patternOMCModelica.matcher(line);
+			matcherMetaModelica = patternMetaModelica.matcher(line);
+			matcherGeneral = patternGeneral.matcher(line);			
+			if (matcherOMCModelica.matches()) 
 			{
-				debug("Matches:" + matcherMetaModelica.groupCount());				
+				debug("OMC Matches:" + matcherMetaModelica.groupCount());				
+				if (matcherOMCModelica.groupCount() != 3) return;
+				strFileName = matcherOMCModelica.group(1);
+				int j = strFileName.length()-1;
+				String str = "";
+				while (j >= 0)
+				{
+					int c = strFileName.charAt(j);
+					if (Character.isLetter(c) || 
+							Character.isDigit(c) || 
+							c == '.' || 
+							c == '_' ||
+							c == '-')
+					{
+						str = ((char)c) + str;
+						j--;
+					}
+					else
+						break;
+				}
+				offset += strFileName.length() - str.length() + 1;
+				strFileName = str;				
+				strLine = matcherOMCModelica.group(2);
+				strMsg = matcherOMCModelica.group(3);
+				if (strMsg == null || strMsg.isEmpty())
+					strMsg = "No Message";				
+				debug("Matches:[" + strFileName + "|" + strLine + "|" + strMsg + "]" );
+			}			
+			else if (matcherMetaModelica.matches()) 
+			{
+				debug("MetaModelica Matches:" + matcherMetaModelica.groupCount());				
 				if (matcherMetaModelica.groupCount() != 3) return;
 				strFileName = matcherMetaModelica.group(1);
+				int j = strFileName.length()-1;
+				String str = "";
+				while (j >= 0)
+				{
+					int c = strFileName.charAt(j);
+					if (Character.isLetter(c) || 
+						Character.isDigit(c) || 
+						c == '.' || 
+						c == '_' ||
+						c == '-')
+					{
+						str = ((char)c) + str;
+						j--;
+					}
+					else
+						break;
+				}
+				offset += strFileName.length() - str.length();
+				strFileName = str;
 				strLine = matcherMetaModelica.group(2);
 				strMsg = matcherMetaModelica.group(3);
+				if (strMsg == null || strMsg.isEmpty())
+					strMsg = "No Message";				
 				debug("Matches:[" + strFileName + "|" + strLine + "|" + strMsg + "]" );
 			}
-			else /* if the MetaModelica pattern does not match try the general pattern! */
+			else if (matcherGeneral.matches())/* if the MetaModelica pattern does not match try the general pattern! */
 			{
-				matcherGeneral = patternGeneral.matcher(line);
-				debug("General Matches:" + matcherGeneral.groupCount());				
-				if (matcherGeneral.matches()) 
-				{        	
-					if (matcherGeneral.groupCount() != 3) return;
-					strFileName = matcherGeneral.group(1);
-					strLine = matcherGeneral.group(2);
-					strMsg = matcherGeneral.group(3);
-					debug("Matches:[" + strFileName + "|" + strLine + "|" + strMsg + "]" );					
-				}
-				else
+				debug("General Matches:" + matcherGeneral.groupCount());
+				if (matcherGeneral.groupCount() < 3) return;
+				strFileName = matcherGeneral.group(1);
+				int j = strFileName.length()-1;
+				String str = "";
+				while (j >= 0)
 				{
-					debug("No pattern matched");
-					return;
+					int c = strFileName.charAt(j);
+					if (Character.isLetter(c) || 
+							Character.isDigit(c) || 
+							c == '.' || 
+							c == '_' ||
+							c == '-')
+					{
+						str = ((char)c) + str;
+						j--;
+					}
+					else
+						break;
 				}
+				offset += strFileName.length() - str.length();
+				strFileName = str;
+				strLine = matcherGeneral.group(2);
+				strMsg = matcherGeneral.group(3);
+				if (strMsg == null || strMsg.isEmpty())
+					strMsg = "No Message";
+				debug("Matches:[" + strFileName + "|" + strLine + "|" + strMsg + "]" );					
+			}
+			else
+			{
+				debug("No pattern matched");
+				return;
 			}
 			MarkProblemsVisitor problemsVisitor = 
 				new	MarkProblemsVisitor(
@@ -130,17 +207,14 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 	public void connect(TextConsole console)
 	{
 		debug("should connect?:"+console.getName());		
-		/*
-		debug("should connect?:"+console.getName());
 		if (omdevConsole != null && console.equals(omdevConsole)) // already connected
 		{
-			debug("already conected:"+console.getName());
+			debug("already conected:" + console.getName());
 			return;
 		}
-		*/
-		if (console.getName().contains("OMDev"))
+		if (Launchers.consoleNameMatches(console.getName()))
 		{
-			debug("connect:"+console.getName());		
+			debug("connect:" + console.getName());
 			console.addPatternMatchListener(this);
 			omdevConsole = console;
 		}
@@ -151,6 +225,7 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 		if (omdevConsole == null) return;
 		debug("disconnect");
 		omdevConsole.removePatternMatchListener(this);
+		omdevConsole = null;
 	}
 	
 	public int getCompilerFlags()
@@ -162,12 +237,12 @@ public class MetaModelicaPatternMatchListener implements IPatternMatchListener
 	public String getLineQualifier()
 	{
 		debug("getLineQualifer");		
-		return null;
+		return disqualifyPattern;
 	}
 	
 	public String getPattern()
 	{
 		debug("getPattern");		
-		return "([^:\n\r]+)\\:([0-9]+)(.*)";
+		return simplePattern;
 	}	
 }

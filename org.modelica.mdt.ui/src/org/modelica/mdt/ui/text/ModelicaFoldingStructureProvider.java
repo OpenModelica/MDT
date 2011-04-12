@@ -68,7 +68,7 @@ import org.modelica.mdt.ui.editor.ModelicaEditor;
 public class ModelicaFoldingStructureProvider {
 	/**
 	 * A context that contains the information needed to compute the folding structure of an
-	 * {@link ICompilationUnit} or an {@link IClassFile}. Computed folding regions are collected
+	 * {@link IModelicaSourceFile} or an {@link IClassFile}. Computed folding regions are collected
 	 * via
 	 * {@linkplain #addProjectionRange(ModelicaFoldingStructureProvider.ModelicaProjectionAnnotation, Position) addProjectionRange}.
 	 */
@@ -689,7 +689,7 @@ public class ModelicaFoldingStructureProvider {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.ui.text.folding.IModelicaFoldingStructureProvider#initialize()
+	 * @see org.modelica.mdt.ui.text.folding.IModelicaFoldingStructureProvider#initialize()
 	 */
 	public final void initialize() {
 		fUpdatingCount++;
@@ -1229,7 +1229,7 @@ public class ModelicaFoldingStructureProvider {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.ui.text.folding.IModelicaFoldingStructureProviderExtension#collapseElements(org.eclipse.jdt.core.IModelicaElement[])
+	 * @see org.modelica.mdt.ui.text.folding.IModelicaFoldingStructureProviderExtension#collapseElements(org.modelica.mdt.core.IModelicaElement[])
 	 */
 	public final void collapseElements(IModelicaElement[] elements) {
 		Set set= new HashSet(Arrays.asList(elements));
@@ -1237,7 +1237,7 @@ public class ModelicaFoldingStructureProvider {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.ui.text.folding.IModelicaFoldingStructureProviderExtension#expandElements(org.eclipse.jdt.core.IModelicaElement[])
+	 * @see org.modelica.mdt.ui.text.folding.IModelicaFoldingStructureProviderExtension#expandElements(org.modelica.mdt.core.IModelicaElement[])
 	 */
 	public final void expandElements(IModelicaElement[] elements) {
 		Set set= new HashSet(Arrays.asList(elements));

@@ -2,6 +2,8 @@
 package org.modelica.mdt.ui.hover;
 
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
 
 import org.eclipse.ui.IEditorPart;
 
@@ -19,7 +21,7 @@ import org.eclipse.ui.IEditorPart;
  *
  * @since 2.0
  */
-public interface IModelicaEditorTextHover extends ITextHover {
+public interface IModelicaEditorTextHover extends ITextHover, ITextHoverExtension, ITextHoverExtension2 {
 
 	/**
 	 * Sets the editor on which the hover is shown.

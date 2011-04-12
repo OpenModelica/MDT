@@ -29,7 +29,7 @@ public class ModelicaEditorColors
 	public static Color CODE_COLOR
 	= new Color(Display.getCurrent(), new RGB(0, 0, 0));
 	public static Color TYPE_COLOR 
-	= new Color(Display.getCurrent(), new RGB(0, 0, 139));
+	= new Color(Display.getCurrent(), new RGB(255, 10, 10));
 	public static Color NUMBER_COLOR 
 	= new Color(Display.getCurrent(), new RGB(139, 0, 139));
 	private static Color CONSTRUCTOR_COLOR 
@@ -54,31 +54,30 @@ public class ModelicaEditorColors
 		new TextAttribute(STRING_COLOR, null,SWT.NORMAL);
 
 	public static TextAttribute KEYWORD_ATTRIBUTE = 
-		new TextAttribute(KEYWORD_COLOR, null,SWT.BOLD);
+		new TextAttribute(KEYWORD_COLOR, null, SWT.BOLD);
 
 	public static TextAttribute CODE_ATTRIBUTE =
 		new TextAttribute(CODE_COLOR, null,SWT.NORMAL);
 
 	public static TextAttribute TYPE_ATTRIBUTE =
-		new TextAttribute(TYPE_COLOR, null,SWT.NORMAL);
+		new TextAttribute(TYPE_COLOR, null, SWT.BOLD);
 
 	public static TextAttribute NUMBER_ATTRIBUTE = 
-		new TextAttribute(NUMBER_COLOR, null,SWT.NORMAL);
+		new TextAttribute(NUMBER_COLOR, null, SWT.NORMAL);
 	
 	public static TextAttribute FUNCTION_ATTRIBUTE = 
-		new TextAttribute(FUNCTION_COLOR, null,SWT.NORMAL);
+		new TextAttribute(FUNCTION_COLOR, null, SWT.NORMAL);
 	
 	public static TextAttribute BUILTIN_ATTRIBUTE = 
-		new TextAttribute(BUILTIN_COLOR, null,SWT.NORMAL);
+		new TextAttribute(BUILTIN_COLOR, null, SWT.NORMAL);
 
 	public static TextAttribute CONSTRUCTOR_ATTRIBUTE = 
-		new TextAttribute(CONSTRUCTOR_COLOR, null,SWT.NORMAL);
+		new TextAttribute(CONSTRUCTOR_COLOR, null, SWT.NORMAL);
 	
 	public static TextAttribute OPERATORS_ATTRIBUTE = 
-		new TextAttribute(OPERATORS_COLOR, null,SWT.NORMAL);
+		new TextAttribute(OPERATORS_COLOR, null, SWT.NORMAL);
 	
 	public static TextAttribute ERROR_ATTRIBUTE =
-		new TextAttribute(ERROR_COLOR, null,SWT.BOLD);
-	
+		new TextAttribute(ERROR_COLOR, null, SWT.BOLD);	
 
 }

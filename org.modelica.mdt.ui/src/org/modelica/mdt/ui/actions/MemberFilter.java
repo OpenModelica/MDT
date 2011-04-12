@@ -99,7 +99,7 @@ public class MemberFilter extends ViewerFilter
 			/*
 			if (element instanceof IModelicaComponent) 
 			{
-				if (hasFilter(FILTER_PARAMETERS) && (Flags.isStatic(flags) || isFieldInInterfaceOrAnnotation(member)) && memberType != IJavaElement.TYPE) {
+				if (hasFilter(FILTER_PARAMETERS) && (Flags.isStatic(flags) || isFieldInInterfaceOrAnnotation(member)) && memberType != IModelicaElement.TYPE) {
 					return false;
 				}
 			}				

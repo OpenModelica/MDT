@@ -144,7 +144,7 @@ public class ModelicaInformationProvider implements IInformationProvider, IInfor
 			fPresenterControlCreator= new AbstractReusableInformationControlCreator() {
 
 				/*
-				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
+				 * @see org.modelica.mdt.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
 				public IInformationControl doCreateInformationControl(Shell parent) {
 					int shellStyle= SWT.RESIZE | SWT.TOOL;

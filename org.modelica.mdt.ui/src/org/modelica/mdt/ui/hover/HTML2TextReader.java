@@ -119,7 +119,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.text.SubstitutionTextReader#computeSubstitution(int)
+	 * @see org.modelica.mdt.ui.text.SubstitutionTextReader#computeSubstitution(int)
 	 */
 	protected String computeSubstitution(int c) throws IOException {
 

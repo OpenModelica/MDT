@@ -16,7 +16,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 
 import org.eclipse.ui.IEditorPart;
@@ -26,7 +29,8 @@ import org.modelica.mdt.core.IModelicaElement;
 /**
  * Provides source as hover info for Modelica elements.
  */
-public class ModelicaSourceHover extends AbstractModelicaEditorTextHover implements ITextHoverExtension, IInformationProviderExtension2 {
+public class ModelicaSourceHover extends AbstractModelicaEditorTextHover 
+	implements ITextHoverExtension, ITextHoverExtension2, IInformationProviderExtension2 {
 
 	/*
 	 * @see ModelicaElementHover
@@ -73,5 +77,12 @@ public class ModelicaSourceHover extends AbstractModelicaEditorTextHover impleme
 				return new SourceViewerInformationControl(parent, shellStyle, style);
 			}
 		};
+	}
+
+
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion)
+	{
+		// TODO Auto-generated method stub
+		return getHoverInfo(textViewer, hoverRegion);
 	}
 }
