@@ -1,0 +1,50 @@
+Featurelevel improvments. Stuff that would be nice to have.
+
+* add filtering support to Modelica Projects View
+
+* add 'Link With Editor' support to Modelica Projects View
+
+* add support for working sets to Modelica Projects View
+
+* add standart toolbar (Back, Forward, Up, Collapse All, Link With Editor,
+  'Filters/Working set menu) to Modelica Projects View
+  
+* add source code navigation support, you know, beeing able to click on
+  stuff in the source code while holding down Ctrl
+  (try it in JDT, best feature evah!)
+  to do this more information from OMC needed
+* implement quickfixes whenever possible, for this OMC needs to report
+  error types
+  
+* right now if multiple modelica compiler plugins (plugins that define
+  org.modelica.mdt.compiler extension) are available an error message is
+  displayed and nothing works until exactly one compile is available.
+  This can be changed to allowing user to configure which compiler to use on per 
+  project basis. It's probably good to add a 'default compiler' setting also.
+  
+* if identical classnames exists in two files, strange things begin to happen
+  in MDT. The user should be warned when this happens.
+
+* package the source together with the binary plugins when doing distribution
+  (see org.eclipse.pde.core.source)
+
+* in the Projects View, rename doesn't work, cut/paste not implemented
+
+* add icon for Modelica perspective
+
+* don't expose CompilerProxy outside of the core plugin (move CompilerProxy.java
+  to the internal.core package)
+
+* check if imports, inputParams and outputParams are updated when a file is
+	saved in the Modelica editor
+	
+* if only one code completion is proposed, that completion should be done
+	automatically
+	
+* an indicator that shows that connection with omc has been established would
+	be good
+
+* add support for overlay images, like 'error' and 'svn'/'cvs' overlays
+	in the Modelica Project view
+
+* remove models that are contained in a sourcefile from omc when it is rebuilt

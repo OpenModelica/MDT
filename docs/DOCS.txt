@@ -1,0 +1,175 @@
+﻿THE MDT HACKING MANUAL
+
+� THESIS REPORT
+
+The thesis report will hopefully contain some usefull information for
+developers of MDT. Here someone will add a list of section to read there.
+
+� REPOSITORY STRUCTURE
+
+�� BACKGROUND BLURB
+
+This section describes the folder structure of the repository, where the things
+are stored and where they should be stored. The discussion starts at the root
+of the MDT subversion repository. Refer to the MDT website for the URL to
+the root of the repository.
+
+�� THE ROOT
+
+ (repository root)
+   + tags     release (and possiby other) tags 
+      + 0.2   source code for 0.2 release of MDT
+   + trunk    the mainline brunch
+   + docs     general documentation on the project
+
+�� PROJECS
+
+Inside the trunk directory or root directory of any branch there is following
+structure:
+
+  (branch root)
+    + org.modelica.mdt.core       The core plugin project
+    + org.modelica.mdt.ui         the UI contributions of the MDT plugin
+    + org.modelica.mdt.omc        the OMC 'driver'
+    + org.modelica.mdt.test       the regression tests
+    + org.modelica.mdt.feature    the MDT feature that groups all plugins
+    + org.modelica.mdt.site       the MDT update site
+    + org.modelica.mdt.debug.core the MDT debug core plugin 
+    + org.modelica.mdt.debug.ui   the MDT debug UI plugin 
+
+All folders are Eclipse projects and can be checked out into the root of
+the eclipse workspace.
+
+� BUILDING SOFTWARE
+
+The only supported way to build mdt plugins, regression tests, feature and 
+update site is through Eclipse. Normaly it is sufficient to import the
+projects into the workspace and let the eclipse autobuilders do the job.
+Building the feature and updatesite is a manul processdure and is documented
+in the 'Making a release' section in this manual.
+
+The only general requirment for all projects is Eclipse 3.* PDE environment. 
+It should be noted that only Eclipse 3.1 and 3.1.1 have been tested and stuff
+may not work as prescribed in earlier versions.
+
+
+�� BUILDING REGRESSION TESTS
+
+To build (and run) the regression tests you need to download 'abbot for eclipse'
+version 1.0rc1 or later plugin. It is available from 
+http://prdownloads.sourceforge.net/abbot/abbot_1.0-rc1-eclipse-3.0.zip?download
+
+�� PROJECTS FOR REGRESSION TESTS
+
+Many test cases need to create a projects to setup the environment for testing.
+Becouse all the tests are run in the same workspace there is a risk of 
+conflicts in the projects namespace between different test cases. To avoid this
+and to simplify maintainance of the tests, following scheme should be used apon
+creation of guinnia pig projects.
+
+For each created project a constant PROJECT_NAME_n must be created. The constant
+should be assigned value of TestCaseName.class.getName() + "1". For example test
+case TestFoo, which will create two project will contain following constant
+declaration:
+
+public class TestFoo extends TestCase 
+{
+	private static final String PROJECT_NAME_1 = 
+		TestFoo.class.getName() + "1";
+
+	private static final String PROJECT_NAME_2 = 
+		TestFoo.class.getName() + "2";
+    
+    // .....
+}
+
+� INSTRUMENTATION
+
+The org.modelica.mdt.omc plugin defines trace options. The options can be used
+to get an insite on what the plugin is up to. So far only tracing communication 
+with OMC is implemented.
+
+The options can be enabled from the 'Run' dialog. Choose 'Run->Run...' from
+the top menu. In the 'Run' dialog make sure your Eclipse Application run 
+configuration is selected, the tracing options are available in the 'Tracing' 
+tab.
+
+�� org.modelica.mdt.omc/trace/omcCalls
+
+When enabled writes calls to and replys from OMC to the standard out. Calls
+are prefixed with ">>" and replyes are preseeded with "<<".
+
+Actually the calls which a logged are the arguments to function sendExpression()
+in the OMC which is called through the CORBA interface.
+ 
+�� org.modelica.mdt.omc/trace/omcStatus
+
+Loggs the status of the connection to an OMC instance. So far only the code
+that sets up the OMC connection is covered.
+ 
+� MAKING A RELEASE
+
+�� MOTIVATIONAL BLURB
+
+The intention of this section is to serve as both a cheat sheet while making a 
+release and to formalize the release building process. A more formal release
+procedure should help avoid making stupid misstakes and hopefully improve the
+quality of the releases. All in all, doesn't everyone love processes?
+
+�� THE RELEASE PROCEDURE
+
+ * start with a clean workspace, e.g. use File->Switch Workspace and switch to
+   an empty folder
+   
+ * checkout (as Plugin-Projects) from whatever branch/revision you want to make
+   a release:
+   
+    - org.modelica.mdt.core
+    - org.modelica.mdt.omc
+    - org.modelica.mdt.ui
+    - org.modelica.mdt.feature
+    - org.modelica.mdt.site
+    - org.modelica.mdt.test
+    - org.modelica.mdt.debug.core 
+    - org.modelica.mdt.debug.ui 
+
+
+ * if you have trouble building do this:
+   - update classpath on core, omc, ui and test plugins
+     (PDE Tools -> Update classpath... from context menu on project node)
+   - make sure Java Compiler is set to version 5 (1.5) on projects or globaly
+    
+ * run the regression tests
+   If some of the tests fail, go back to the drawing board.
+
+ * update version number in:
+    org.modelica.mdt.core/plugin.xml
+    org.modelica.mdt.omc/plugin.xml
+    org.modelica.mdt.ui/plugin.xml
+    org.modelica.mdt.feature/feature.xml
+    org.modelica.mdt.debug.core/plugin.xml
+    org.modelica.mdt.debug.ui/plugin.xml
+
+
+* add the new version feature to the update site
+ 
+ * run 'PDE tools'->'Build site' from the context menu of 
+   org.modelica.mdt.site/site.xml
+
+ * export the update site to a test location on a webserver, use 
+   'Export'->'File System' wizard. Make sure that both features and plugin 
+   directories are exported.   
+   
+ * test with a clean eclipse installation that the MDT-plugin installs correctly
+   from the update site. Use the Help->'Software Updates'->'Find and Install...'
+   Check that it runs as expected.
+
+ * commit changes
+   
+ * upload the binaries to the offical update site
+
+ * make a version tag in <..>/tags folder in repository after the
+   relase is made public
+   
+ * enjoy the release party!
+ 

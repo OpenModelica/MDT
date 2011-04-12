@@ -1,0 +1,94 @@
+Known bugs and issues in the MDT plugin.
+
+OPEN BUGS AND ISSUES
+
+BUGID: 7
+STATUS: open
+TESTCASE: absent
+
+If the exists tab characters (\t) in the modelica source code then the region
+reported by IModelicaElement.getLocation() will be wrong. This is due to the
+fact that OMC counts each tab as 8 characters and eclipse text framework as
+1 character.
+
+There is no straighforward way to fix this bug. Best way it to discuss this
+with OMC hackers and agreen on some sort of standard or something.
+
+One way to fix this is to change OMC to count each tab as 1 character and
+instead of returning start/end line and start/end column for each element
+is to report only start and end character. However this probably will break 
+other OMC clients. No, life aint easy.
+
+BUGID: 8
+STATUS: open
+TESTCASE: absent
+
+Double clicking on the 'Standard Library' node in the modelia project
+view couses the NullPointerException.
+
+CLOSED BUGS AND ISSUES
+
+BUGID: 2
+STATUS: fixed
+TESTCASE: absent, a bit tricky to write
+It is not possible to open/close project from the Modelica Project View.
+
+BUGID: 4
+STATUS: closed
+TESTCASE: n/a
+ENVIRONMENT: windows XP, omc 1.3.1
+Expand 'System Library'->'Modelica'->SIunits'. A bunch of InvocationError
+exceoptions are thrown. E.g.:
+
+org.modelica.mdt.internal.omcproxy.InvocationError: getPackages(Modelica.SIunit\
+s.ModulusOfAdmittance) replys 'error'
+	at org.modelica.mdt.internal.omcproxy.OMCProxy.getPackages(OMCProxy.java:325)
+
+This can be some sort of omc bug, getErrorString() returns:
+#Error, lookup_classdef failed
+Length in Modelica
+[..snip..]
+This should probably be reported upstream.
+-------------------------------------------------------------------------------
+Mail sent to modelica-pelab list, waiting for reply.
+-------------------------------------------------------------------------------
+No reply recived, bug entered in omc's bug database, closing this issue.
+
+BUGID: 5
+STATUS: fixed
+TESTCASE: absent
+'Open project' and 'Close project' menu items are not updated after invocation.
+
+Try this. Select an open project and click on 'close project' menu (for example
+in contex menu). Look at the menu again, 'Open project' is still disabled 
+and 'Close project' enabled. Same problem if you open a closed project.
+
+BUGID: 	1
+STATUS: fixed (obsolete)
+TESTCASE: n/a
+DESCRIPTION
+When there is a warning displayed New Modelica Class Wizard, the finish button
+is disabled, should be enabled. 
+-------------------------------------------------------------------------------
+The behavior desrived above is depricated sorta. New class wizard does not
+display warnings any more, just errors.
+
+BUGID: 6
+STATUS: fixed
+TESTCASE: n/a
+
+While in modelica editor line and column number are not visible. In for
+example java editor line and column number are visible in the status bar
+at the bottom.
+
+BUGID: 3
+STATUS: closed
+TESTCASE: n/a
+
+It is not possible to print from Modelica Editor. The print icon is grayed out
+on the toolbar.
+-------------------------------------------------------------------------------
+It's not possible at all to print from Eclipse/GTK+ right now
+(Eclipse 3.1.1), support is not implemented in SWT. See 
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=24796
+
