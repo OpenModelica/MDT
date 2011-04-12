@@ -38,12 +38,12 @@ public abstract class SysmlAbstractExpression {
 	/**
 	 * @generated
 	 */
-	private String body;
+	private final String body;
 
 	/**
 	 * @generated
 	 */
-	private EClassifier context;
+	private final EClassifier context;
 
 	/**
 	 * @generated
@@ -54,13 +54,13 @@ public abstract class SysmlAbstractExpression {
 	 * @generated
 	 */
 	protected SysmlAbstractExpression(EClassifier context) {
-		this.context = context;
+		this(null, context);
 	}
 
 	/**
 	 * @generated
 	 */
-	protected SysmlAbstractExpression(String body, EClassifier context, Map env) {
+	protected SysmlAbstractExpression(String body, EClassifier context) {
 		this.body = body;
 		this.context = context;
 	}

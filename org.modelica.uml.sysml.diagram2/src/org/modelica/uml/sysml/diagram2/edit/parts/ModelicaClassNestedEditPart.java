@@ -14,6 +14,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassNestedCanonicalEditPolicy;
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassNestedItemSemanticEditPolicy;
+import org.modelica.uml.sysml.diagram2.part.Messages;
 
 /**
  * @generated
@@ -36,7 +37,7 @@ public class ModelicaClassNestedEditPart extends ShapeCompartmentEditPart {
 	 * @generated
 	 */
 	public String getCompartmentName() {
-		return "Nested";
+		return Messages.ModelicaClassNestedEditPart_title;
 	}
 
 	/**

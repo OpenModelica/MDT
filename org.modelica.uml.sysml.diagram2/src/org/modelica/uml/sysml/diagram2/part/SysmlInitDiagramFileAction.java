@@ -28,6 +28,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -41,40 +43,42 @@ public class SysmlInitDiagramFileAction implements IObjectActionDelegate {
 	/**
 	 * @generated
 	 */
-	private IWorkbenchPart myPart;
+	private IWorkbenchPart targetPart;
 
 	/**
 	 * @generated
 	 */
-	private IFile mySelectedModelFile;
-
-	/**
-	 * @generated
-	 */
-	private IStructuredSelection mySelection;
+	private URI domainModelURI;
 
 	/**
 	 * @generated
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		myPart = targetPart;
+		this.targetPart = targetPart;
 	}
 
 	/**
 	 * @generated
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		mySelectedModelFile = null;
-		mySelection = StructuredSelection.EMPTY;
+		domainModelURI = null;
 		action.setEnabled(false);
 		if (selection instanceof IStructuredSelection == false
 				|| selection.isEmpty()) {
 			return;
 		}
-		mySelection = (IStructuredSelection) selection;
-		mySelectedModelFile = (IFile) ((IStructuredSelection) selection)
+		IFile file = (IFile) ((IStructuredSelection) selection)
 				.getFirstElement();
+		domainModelURI = URI.createPlatformResourceURI(file.getFullPath()
+				.toString(), true);
 		action.setEnabled(true);
+	}
+
+	/**
+	 * @generated
+	 */
+	private Shell getShell() {
+		return targetPart.getSite().getShell();
 	}
 
 	/**
@@ -86,43 +90,26 @@ public class SysmlInitDiagramFileAction implements IObjectActionDelegate {
 		ResourceSet resourceSet = editingDomain.getResourceSet();
 		EObject diagramRoot = null;
 		try {
-			Resource resource = resourceSet.getResource(URI
-					.createPlatformResourceURI(mySelectedModelFile
-							.getFullPath().toString()), true);
+			Resource resource = resourceSet.getResource(domainModelURI, true);
 			diagramRoot = (EObject) resource.getContents().get(0);
 		} catch (WrappedException ex) {
-			SysmlDiagramEditorPlugin
-					.getInstance()
-					.logError(
-							"Unable to load resource: " + mySelectedModelFile.getFullPath().toString(), ex); //$NON-NLS-1$
+			SysmlDiagramEditorPlugin.getInstance().logError(
+					"Unable to load resource: " + domainModelURI, ex); //$NON-NLS-1$
 		}
 		if (diagramRoot == null) {
-			MessageDialog.openError(myPart.getSite().getShell(), "Error",
-					"Model file loading failed");
+			MessageDialog
+					.openError(
+							getShell(),
+							Messages.SysmlInitDiagramFileAction_InitDiagramFileResourceErrorDialogTitle,
+							Messages.SysmlInitDiagramFileAction_InitDiagramFileResourceErrorDialogMessage);
 			return;
 		}
-		Wizard wizard = new SysmlNewDiagramFileWizard(mySelectedModelFile,
-				myPart.getSite().getPage(), mySelection, diagramRoot,
-				editingDomain);
-		IDialogSettings pluginDialogSettings = SysmlDiagramEditorPlugin
-				.getInstance().getDialogSettings();
-		IDialogSettings initDiagramFileSettings = pluginDialogSettings
-				.getSection("InisDiagramFile"); //$NON-NLS-1$
-		if (initDiagramFileSettings == null) {
-			initDiagramFileSettings = pluginDialogSettings
-					.addNewSection("InisDiagramFile"); //$NON-NLS-1$
-		}
-		wizard.setDialogSettings(initDiagramFileSettings);
-		wizard.setForcePreviousAndNextButtons(false);
-		wizard.setWindowTitle("Initialize new " + ModelEditPart.MODEL_ID
-				+ " diagram file");
-
-		WizardDialog dialog = new WizardDialog(myPart.getSite().getShell(),
-				wizard);
-		dialog.create();
-		dialog.getShell().setSize(Math.max(500, dialog.getShell().getSize().x),
-				500);
-		dialog.open();
+		Wizard wizard = new SysmlNewDiagramFileWizard(domainModelURI,
+				diagramRoot, editingDomain);
+		wizard.setWindowTitle(NLS.bind(
+				Messages.SysmlInitDiagramFileAction_InitDiagramFileWizardTitle,
+				ModelEditPart.MODEL_ID));
+		SysmlDiagramEditorUtil.runWizard(getShell(), wizard, "InitDiagramFile"); //$NON-NLS-1$
 	}
 
 }

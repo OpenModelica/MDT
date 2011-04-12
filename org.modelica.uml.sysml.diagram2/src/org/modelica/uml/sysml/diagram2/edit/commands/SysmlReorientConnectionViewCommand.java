@@ -62,11 +62,9 @@ public class SysmlReorientConnectionViewCommand extends
 		assert null != edgeAdaptor : "Null child in SysmlReorientConnectionViewCommand"; //$NON-NLS-1$
 		Edge edge = (Edge) getEdgeAdaptor().getAdapter(Edge.class);
 		assert null != edge : "Null edge in SysmlReorientConnectionViewCommand"; //$NON-NLS-1$
-
 		View tempView = edge.getSource();
 		edge.setSource(edge.getTarget());
 		edge.setTarget(tempView);
-
 		return CommandResult.newOKCommandResult();
 	}
 }

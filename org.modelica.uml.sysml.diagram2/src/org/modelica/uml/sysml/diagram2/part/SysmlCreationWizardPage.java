@@ -5,12 +5,17 @@ import java.io.InputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.wizards.EditorWizardPage;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.util.DiagramFileCreator;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelEditPart;
@@ -18,74 +23,78 @@ import org.modelica.uml.sysml.diagram2.edit.parts.ModelEditPart;
 /**
  * @generated
  */
-public class SysmlCreationWizardPage extends EditorWizardPage {
+public class SysmlCreationWizardPage extends WizardNewFileCreationPage {
 
 	/**
 	 * @generated
 	 */
-	public SysmlCreationWizardPage(IWorkbench workbench,
-			IStructuredSelection selection) {
-		super("CreationWizardPage", workbench, selection); //$NON-NLS-1$
-		setTitle("Create Modelica Class Internal Diagram");
-		setDescription("Create a new Modelica Class Internal diagram.");
+	private final String fileExtension;
+
+	/**
+	 * @generated
+	 */
+	public SysmlCreationWizardPage(String pageName,
+			IStructuredSelection selection, String fileExtension) {
+		super(pageName, selection);
+		this.fileExtension = fileExtension;
+	}
+
+	/**
+	 * Override to create files with this extension.
+	 * 
+	 * @generated
+	 */
+	protected String getExtension() {
+		return fileExtension;
 	}
 
 	/**
 	 * @generated
 	 */
-	public IFile createAndOpenDiagram(IPath containerPath, String fileName,
-			InputStream initialContents, String kind, IWorkbenchWindow dWindow,
-			IProgressMonitor progressMonitor, boolean saveDiagram) {
-		return SysmlDiagramEditorUtil.createAndOpenDiagram(
-				getDiagramFileCreator(), containerPath, fileName,
-				initialContents, kind, dWindow, progressMonitor,
-				isOpenNewlyCreatedDiagramEditor(), saveDiagram);
+	public URI getURI() {
+		return URI.createPlatformResourceURI(getFilePath().toString(), false);
 	}
 
 	/**
 	 * @generated
 	 */
-	protected String getDefaultFileName() {
-		return "default"; //$NON-NLS-1$
+	protected IPath getFilePath() {
+		IPath path = getContainerFullPath();
+		if (path == null) {
+			path = new Path(""); //$NON-NLS-1$
+		}
+		String fileName = getFileName();
+		if (fileName != null) {
+			path = path.append(fileName);
+		}
+		return path;
 	}
 
 	/**
 	 * @generated
 	 */
-	public DiagramFileCreator getDiagramFileCreator() {
-		return SysmlDiagramFileCreator.getInstance();
-	}
-
-	/**
-	 * @generated
-	 */
-	protected String getDiagramKind() {
-		return ModelEditPart.MODEL_ID;
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		setFileName(SysmlDiagramEditorUtil.getUniqueFileName(
+				getContainerFullPath(), getFileName(), getExtension()));
+		setPageComplete(validatePage());
 	}
 
 	/**
 	 * @generated
 	 */
 	protected boolean validatePage() {
-		if (super.validatePage()) {
-			String fileName = getFileName();
-			if (fileName == null) {
-				return false;
-			}
-			// appending file extension to correctly process file names including "." symbol
-			IPath path = getContainerFullPath()
-					.append(
-							getDiagramFileCreator().appendExtensionToFileName(
-									fileName));
-			path = path.removeFileExtension().addFileExtension("sysml"); //$NON-NLS-1$
-			if (ResourcesPlugin.getWorkspace().getRoot().exists(path)) {
-				setErrorMessage("Model File already exists: "
-						+ path.lastSegment());
-				return false;
-			}
-			return true;
+		if (!super.validatePage()) {
+			return false;
 		}
-		return false;
+		String extension = getExtension();
+		if (extension != null
+				&& !getFilePath().toString().endsWith("." + extension)) {
+			setErrorMessage(NLS.bind(
+					Messages.SysmlCreationWizardPageExtensionError, extension));
+			return false;
+		}
+		return true;
 	}
 
 }

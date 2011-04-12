@@ -4,17 +4,20 @@ import java.util.Collections;
 import org.eclipse.gef.DragTracker;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.ColorConstants;
 
+import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.geometry.Point;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.impl.ENotificationImpl; 
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.EObject;
@@ -52,6 +55,7 @@ import org.eclipse.gmf.runtime.notation.impl.NodeImpl;
 
 import org.eclipse.draw2d.StackLayout;
 
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
@@ -147,7 +151,7 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 1002;
+	public static final int VISUAL_ID = 1003;
 
 	/**
 	 * @generated
@@ -170,14 +174,13 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 	 * @generated
 	 */
 	protected void createDefaultEditPolicies() {
+
 		super.createDefaultEditPolicies();
 		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
 				new ModelicaTypeItemSemanticEditPolicy());
-		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE,
-				new ModelicaTypeGraphicalNodeEditPolicy());
-		installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-				new ModelicaTypeCanonicalEditPolicy());
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
+		// XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
+		// removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
 	}
 
 	/**
@@ -237,6 +240,7 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 	 * @generated
 	 */
 	protected boolean removeFixedChild(EditPart childEditPart) {
+
 		return false;
 	}
 
@@ -244,8 +248,9 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 	 * @generated
 	 */
 	protected NodeFigure createNodePlate() {
-		return new DefaultSizeNodeFigure(getMapMode().DPtoLP(40), getMapMode()
-				.DPtoLP(40));
+		DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(getMapMode()
+				.DPtoLP(200), getMapMode().DPtoLP(160));
+		return result;
 	}
 
 	/**
@@ -262,21 +267,21 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 		IFigure shape = createNodeShape();
 		figure.add(shape);
 		contentPane = setupContentPane(shape);
-		
+
 		//display the name of the type if it is set
-		Object element = ((NodeImpl)this.getModel()).getElement();
-		Object value = ((ModelicaTypeImpl)element).getTypeData();
+		Object element = ((NodeImpl) this.getModel()).getElement();
+		Object value = ((ModelicaTypeImpl) element).getTypeData();
 		EStructuralFeature feature = SysmlPackage.Literals.MODELICA_TYPE__TYPE_DATA;
-		
-		if(value != null){
-		
-			ENotificationImpl notification = new ENotificationImpl((InternalEObject)element,
-					Notification.SET, feature, value, value);
-		//call the metod directly , notifyChanged is not working if editpart is not active
+
+		if (value != null) {
+
+			ENotificationImpl notification = new ENotificationImpl(
+					(InternalEObject) element, Notification.SET, feature,
+					value, value);
+			//call the metod directly , notifyChanged is not working if editpart is not active
 			this.handleNotificationEvent(notification);
 		}
-		
-		
+
 		return figure;
 	}
 
@@ -334,6 +339,14 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 	}
 
 	/**
+	 * @generated
+	 */
+	protected IFigure getContentPaneFor(IGraphicalEditPart editPart) {
+
+		return super.getContentPaneFor(editPart);
+	}
+
+	/**
 	 * @generated NOT
 	 */
 	public void refresh() {
@@ -368,7 +381,7 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 
 					if (typeName != null) {
 						WrapLabel typeNameLabel = (WrapLabel) this
-								.getPrimaryShape().getFigureTypeDisplay()
+								.getPrimaryShape().getFigureTypeIdentifier()
 								.getChildren().get(0);
 						typeNameLabel.setText(typeName);
 					}
@@ -383,14 +396,24 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 	/**
 	 * @generated
 	 */
-	public class TypeFigure extends org.eclipse.draw2d.RectangleFigure {
+	public class TypeFigure extends RectangleFigure {
+
+		/**
+		 * @generated
+		 */
+		private WrapLabel fFigureTypeName;
+
+		/**
+		 * @generated
+		 */
+		private WrapLabel fFigureTypeIdentifier;
 
 		/**
 		 * @generated
 		 */
 		public TypeFigure() {
-
-			this.setPreferredSize(200, 160);
+			this.setPreferredSize(new Dimension(getMapMode().DPtoLP(200),
+					getMapMode().DPtoLP(160)));
 			createContents();
 		}
 
@@ -398,96 +421,51 @@ public class ModelicaTypeEditPart extends ShapeNodeEditPart {
 		 * @generated
 		 */
 		private void createContents() {
-			org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel fig_0 = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel();
-			fig_0.setText("<<ModelicaType>>");
 
-			setFigureIdentifier(fig_0);
+			WrapLabel identifier0 = new WrapLabel();
+			identifier0.setText("<<ModelicaType>>");
 
-			Object layData0 = null;
+			this.add(identifier0);
 
-			this.add(fig_0, layData0);
-			org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel fig_1 = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel();
-			fig_1.setText("");
+			fFigureTypeName = new WrapLabel();
+			fFigureTypeName.setText("");
 
-			setFigureTypeName(fig_1);
+			this.add(fFigureTypeName);
 
-			Object layData1 = null;
+			RectangleFigure typeDisplay0 = new RectangleFigure();
 
-			this.add(fig_1, layData1);
-			org.eclipse.draw2d.RectangleFigure fig_2 = new org.eclipse.draw2d.RectangleFigure();
+			this.add(typeDisplay0);
 
-			setFigureTypeDisplay(fig_2);
+			FlowLayout layoutTypeDisplay0 = new FlowLayout();
+			layoutTypeDisplay0.setStretchMinorAxis(false);
+			layoutTypeDisplay0.setMinorAlignment(FlowLayout.ALIGN_LEFTTOP);
 
-			Object layData2 = null;
+			layoutTypeDisplay0.setMajorAlignment(FlowLayout.ALIGN_LEFTTOP);
+			layoutTypeDisplay0.setMajorSpacing(5);
+			layoutTypeDisplay0.setMinorSpacing(5);
+			layoutTypeDisplay0.setHorizontal(false);
 
-			this.add(fig_2, layData2);
-			org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel fig_3 = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel();
-			fig_3.setText("TypeIdentifier");
+			typeDisplay0.setLayoutManager(layoutTypeDisplay0);
 
-			Object layData3 = null;
+			WrapLabel typeIdentifier1 = new WrapLabel();
+			typeIdentifier1.setText("TypeIdentifier");
 
-			fig_2.add(fig_3, layData3);
-			fig_3.setSize(200, 20);
-			
+			typeDisplay0.add(typeIdentifier1);
+
 		}
 
 		/**
 		 * @generated
 		 */
-		private org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel fIdentifier;
-
-		/**
-		 * @generated
-		 */
-		public org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel getFigureIdentifier() {
-			return fIdentifier;
+		public WrapLabel getFigureTypeName() {
+			return fFigureTypeName;
 		}
 
 		/**
 		 * @generated
 		 */
-		private void setFigureIdentifier(
-				org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel fig) {
-			fIdentifier = fig;
-		}
-
-		/**
-		 * @generated
-		 */
-		private org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel fTypeName;
-
-		/**
-		 * @generated
-		 */
-		public org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel getFigureTypeName() {
-			return fTypeName;
-		}
-
-		/**
-		 * @generated
-		 */
-		private void setFigureTypeName(
-				org.eclipse.gmf.runtime.draw2d.ui.figures.WrapLabel fig) {
-			fTypeName = fig;
-		}
-
-		/**
-		 * @generated
-		 */
-		private org.eclipse.draw2d.RectangleFigure fTypeDisplay;
-
-		/**
-		 * @generated
-		 */
-		public org.eclipse.draw2d.RectangleFigure getFigureTypeDisplay() {
-			return fTypeDisplay;
-		}
-
-		/**
-		 * @generated
-		 */
-		private void setFigureTypeDisplay(org.eclipse.draw2d.RectangleFigure fig) {
-			fTypeDisplay = fig;
+		public WrapLabel getFigureTypeIdentifier() {
+			return fFigureTypeIdentifier;
 		}
 
 		/**

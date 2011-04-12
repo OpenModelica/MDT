@@ -30,6 +30,7 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassConnectionsCanonicalEditPolicy;
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassConnectionsItemSemanticEditPolicy;
+import org.modelica.uml.sysml.diagram2.part.Messages;
 
 /**
  * @generated
@@ -52,7 +53,7 @@ public class ModelicaClassConnectionsEditPart extends ShapeCompartmentEditPart {
 	 * @generated
 	 */
 	public String getCompartmentName() {
-		return "Connections";
+		return Messages.ModelicaClassConnectionsEditPart_title;
 	}
 
 	/**

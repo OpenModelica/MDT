@@ -22,9 +22,13 @@ import org.eclipse.uml2.uml.UMLPackage;
 import org.modelica.uml.sysml.ModelicaClass;
 import org.modelica.uml.sysml.ModelicaComposition;
 import org.modelica.uml.sysml.ModelicaConnector;
+import org.modelica.uml.sysml.impl.ModelicaConnectionImpl;
+import org.modelica.uml.sysml.impl.SysmlFactoryImpl;
+import org.modelica.uml.sysml.ModelicaConnection;
 import org.modelica.uml.sysml.ModelicaProperty;
 import org.modelica.uml.sysml.SysmlPackage;
 
+import org.modelica.uml.sysml.diagram2.edit.commands.ModelicaConnectionCreateCommand;
 import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
 
 /**
@@ -57,7 +61,7 @@ public class ModelicaPortItemSemanticEditPolicy extends
 			if (req.getSource() instanceof ModelicaProperty) {
 				ModelicaProperty portSource = (ModelicaProperty) req
 						.getSource();
-				if (portSource.getType() instanceof ModelicaConnector) {
+				if (portSource.getType() instanceof ModelicaClass) {
 
 					if (req.getTarget() == null) {
 						return getCreateStartOutgoingModelicaConnection3009Command(req);
@@ -65,8 +69,10 @@ public class ModelicaPortItemSemanticEditPolicy extends
 
 					ModelicaProperty portTarget = (ModelicaProperty) req
 							.getTarget();
-					if (portTarget.getType() instanceof ModelicaConnector
-							) {
+					if (portTarget.getType() instanceof ModelicaClass) {
+						if (!portSource.equals(portTarget)){
+							int i = 5; 
+						}
 						return getCreateCompleteIncomingModelicaConnection3009Command(req);
 					}
 				}
@@ -79,9 +85,21 @@ public class ModelicaPortItemSemanticEditPolicy extends
 	 */
 	protected Command getCreateStartOutgoingModelicaConnection3009Command(
 			CreateRelationshipRequest req) {
+		
+		final ModelicaClass connectorContainer = (ModelicaClass) ((ModelicaProperty) ((View) this
+				.getHost().getParent().getModel()).getElement()).getOwner();
 
-		return new Command() {
-		};
+		if (connectorContainer == null) {
+			return UnexecutableCommand.INSTANCE;
+		}
+		
+		req.setContainer(connectorContainer);
+		
+		if (SysmlElementTypes.ModelicaConnection_3009 == req.getElementType()) {
+			return getGEFWrapper(new ModelicaConnectionCreateCommand(req, req
+					.getSource(), req.getTarget()));
+		}
+		return null;
 	}
 
 	/**
@@ -89,30 +107,43 @@ public class ModelicaPortItemSemanticEditPolicy extends
 	protected Command getCreateCompleteIncomingModelicaConnection3009Command(
 			CreateRelationshipRequest req) {
 
-		if (!(req.getSource() instanceof ModelicaProperty)) {
-			return UnexecutableCommand.INSTANCE;
-		}
-
-		// get top most class that will own connector
+		
+		
+//		
+//		if (!(req.getSource() instanceof ModelicaProperty)) {
+//			return UnexecutableCommand.INSTANCE;
+//		}
+//
+//		// get top most class that will own connector
 		final ModelicaClass connectorContainer = (ModelicaClass) ((ModelicaProperty) ((View) this
 				.getHost().getParent().getModel()).getElement()).getOwner();
 
 		if (connectorContainer == null) {
 			return UnexecutableCommand.INSTANCE;
 		}
-
-		if (req.getContainmentFeature() == null) {
-			req.setContainmentFeature(UMLPackage.eINSTANCE
-					.getStructuredClassifier_OwnedConnector());
+		
+		req.setContainer(connectorContainer);
+		
+		if (SysmlElementTypes.ModelicaConnection_3009 == req.getElementType()) {
+			return getGEFWrapper(new ModelicaConnectionCreateCommand(req, req
+					.getSource(), req.getTarget()));
 		}
-
-		return getMSLWrapper(new CreateIncomingModelicaConnection3009Command(
-				req) {
-
-			protected EObject getElementToEdit() {
-				return connectorContainer;
-			}
-		});
+		return null;
+		
+//	
+//
+//		if (req.getContainmentFeature() == null) {
+//			req.setContainmentFeature(UMLPackage.eINSTANCE
+//					.getStructuredClassifier_OwnedConnector());
+//		}
+//
+//		return getMSLWrapper(new CreateIncomingModelicaConnection3009Command(
+//				req) {
+//
+//			protected EObject getElementToEdit() {
+//				return connectorContainer;
+//			}
+//		});
 	}
 
 	/**
@@ -143,15 +174,17 @@ public class ModelicaPortItemSemanticEditPolicy extends
 		 */
 		protected EObject doDefaultElementCreation() {
 
-			Connector connector = ((ModelicaClass) getElementToEdit())
-					.createOwnedConnector("connector");
-			ConnectorEnd sourceEnd = connector.createEnd();
+			ModelicaConnection modelicaConnector = SysmlFactoryImpl.eINSTANCE.createModelicaConnection();	
+			ConnectorEnd sourceEnd = modelicaConnector.createEnd();
 			sourceEnd.setRole((ModelicaProperty)getSource());
 			
-			ConnectorEnd targetEnd = connector.createEnd();
-			targetEnd.setRole((ModelicaProperty)getSource());
-
-			return connector;
+			ConnectorEnd targetEnd = modelicaConnector.createEnd();
+			targetEnd.setRole((ModelicaProperty)getTarget());
+			modelicaConnector.setName("connector");
+			
+			((ModelicaClass) getElementToEdit()).
+				getOwnedConnectors().add(modelicaConnector);
+			return modelicaConnector;
 		}
 	}
 }

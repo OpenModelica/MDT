@@ -10,9 +10,8 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpart.AbstractEditPartProv
 import org.eclipse.gmf.runtime.diagram.ui.services.editpart.CreateGraphicEditPartOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpart.IEditPartOperation;
 import org.eclipse.gmf.runtime.notation.View;
-import org.modelica.uml.sysml.diagram2.edit.parts.SysmlEditPartFactory;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelEditPart;
-
+import org.modelica.uml.sysml.diagram2.edit.parts.SysmlEditPartFactory;
 import org.modelica.uml.sysml.diagram2.part.SysmlVisualIDRegistry;
 
 /**

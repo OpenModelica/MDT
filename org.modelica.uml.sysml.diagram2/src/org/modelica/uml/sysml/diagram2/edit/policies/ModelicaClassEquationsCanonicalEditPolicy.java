@@ -1,18 +1,22 @@
 package org.modelica.uml.sysml.diagram2.edit.policies;
 
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
-import org.eclipse.gmf.runtime.notation.View;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.uml2.uml.StructuredClassifier;
-
+import org.eclipse.uml2.uml.UMLPackage;
 import org.modelica.uml.sysml.ModelicaEquationProperty;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaEquationPropertyEditPart;
-
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaPropertyEditPart;
+import org.modelica.uml.sysml.diagram2.part.SysmlDiagramUpdater;
+import org.modelica.uml.sysml.diagram2.part.SysmlNodeDescriptor;
 import org.modelica.uml.sysml.diagram2.part.SysmlVisualIDRegistry;
 
 /**
@@ -22,17 +26,23 @@ public class ModelicaClassEquationsCanonicalEditPolicy extends
 		CanonicalEditPolicy {
 
 	/**
+	 * @generated
+	 */
+	Set myFeaturesToSynchronize;
+
+	/**
 	 * @generated NOT
 	 */
 	protected List getSemanticChildrenList() {
-		List result = new LinkedList();
-		EObject modelObject = ((View) getHost().getModel()).getElement();
 		View viewObject = (View) getHost().getModel();
+		List result = new LinkedList();
 		EObject nextValue;
 		int nodeVID;
-		for (Iterator values = ((StructuredClassifier) modelObject)
-				.getOwnedAttributes().iterator(); values.hasNext();) {
-			nextValue = (EObject) values.next();
+		for (Iterator it = SysmlDiagramUpdater
+				.getModelicaClassEquations_5006SemanticChildren(viewObject)
+				.iterator(); it.hasNext();) {
+
+			nextValue = ((SysmlNodeDescriptor) it.next()).getModelElement();
 			if (nextValue instanceof ModelicaEquationProperty) {
 				nodeVID = SysmlVisualIDRegistry.getNodeVisualID(viewObject,
 						nextValue);
@@ -40,16 +50,24 @@ public class ModelicaClassEquationsCanonicalEditPolicy extends
 					result.add(nextValue);
 				}
 			}
+
 		}
+
 		return result;
 	}
 
 	/**
 	 * @generated
 	 */
-	protected boolean shouldDeleteView(View view) {
-		return view.isSetElement() && view.getElement() != null
-				&& view.getElement().eIsProxy();
+	protected boolean isOrphaned(Collection semanticChildren, final View view) {
+		int visualID = SysmlVisualIDRegistry.getVisualID(view);
+		switch (visualID) {
+		case ModelicaEquationPropertyEditPart.VISUAL_ID:
+			return !semanticChildren.contains(view.getElement())
+					|| visualID != SysmlVisualIDRegistry.getNodeVisualID(
+							(View) getHost().getModel(), view.getElement());
+		}
+		return false;
 	}
 
 	/**
@@ -57,6 +75,18 @@ public class ModelicaClassEquationsCanonicalEditPolicy extends
 	 */
 	protected String getDefaultFactoryHint() {
 		return null;
+	}
+
+	/**
+	 * @generated
+	 */
+	protected Set getFeaturesToSynchronize() {
+		if (myFeaturesToSynchronize == null) {
+			myFeaturesToSynchronize = new HashSet();
+			myFeaturesToSynchronize.add(UMLPackage.eINSTANCE
+					.getStructuredClassifier_OwnedAttribute());
+		}
+		return myFeaturesToSynchronize;
 	}
 
 }

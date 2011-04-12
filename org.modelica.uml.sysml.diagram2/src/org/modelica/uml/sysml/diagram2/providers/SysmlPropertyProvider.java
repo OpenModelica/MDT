@@ -35,7 +35,7 @@ public class SysmlPropertyProvider extends GenericEMFPropertiesProvider
 	}
 
 	/**
-	 * @generated NOT
+	 * @generated
 	 */
 	public ICompositePropertySource getPropertySource(Object object) {
 		EObject element = getSemanticElement(object);

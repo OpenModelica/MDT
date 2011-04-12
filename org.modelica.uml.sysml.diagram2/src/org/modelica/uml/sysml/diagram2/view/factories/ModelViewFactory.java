@@ -21,18 +21,8 @@ public class ModelViewFactory extends DiagramViewFactory {
 	 */
 	protected List createStyles(View view) {
 		List styles = new ArrayList();
-		styles.add(NotationFactory.eINSTANCE.createPageStyle());
-		styles.add(NotationFactory.eINSTANCE.createGuideStyle());
-		styles.add(NotationFactory.eINSTANCE.createDescriptionStyle());
+		styles.add(NotationFactory.eINSTANCE.createDiagramStyle());
 		return styles;
-	}
-
-	/**
-	 * @generated
-	 */
-	protected void decorateView(View view, IAdaptable semanticAdapter,
-			String diagramKind) {
-		super.decorateView(view, semanticAdapter, diagramKind);
 	}
 
 	/**

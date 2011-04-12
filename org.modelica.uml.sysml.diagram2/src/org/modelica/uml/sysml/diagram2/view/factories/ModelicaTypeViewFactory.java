@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EcoreFactory;
 
 import org.eclipse.gmf.runtime.diagram.ui.view.factories.AbstractLabelViewFactory;
@@ -14,11 +15,13 @@ import org.eclipse.gmf.runtime.diagram.core.util.ViewUtil;
 
 import org.eclipse.gmf.runtime.diagram.ui.view.factories.AbstractShapeViewFactory;
 
+import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.View;
 
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelEditPart;
 
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeEditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeNameEditPart;
 
 import org.modelica.uml.sysml.diagram2.part.SysmlVisualIDRegistry;
@@ -33,10 +36,7 @@ public class ModelicaTypeViewFactory extends AbstractShapeViewFactory {
 	 */
 	protected List createStyles(View view) {
 		List styles = new ArrayList();
-		styles.add(NotationFactory.eINSTANCE.createFontStyle());
-		styles.add(NotationFactory.eINSTANCE.createDescriptionStyle());
-		styles.add(NotationFactory.eINSTANCE.createFillStyle());
-		styles.add(NotationFactory.eINSTANCE.createLineStyle());
+		styles.add(NotationFactory.eINSTANCE.createShapeStyle());
 		return styles;
 	}
 
@@ -48,7 +48,7 @@ public class ModelicaTypeViewFactory extends AbstractShapeViewFactory {
 			boolean persisted) {
 		if (semanticHint == null) {
 			semanticHint = SysmlVisualIDRegistry
-					.getType(org.modelica.uml.sysml.diagram2.edit.parts.ModelicaTypeEditPart.VISUAL_ID);
+					.getType(ModelicaTypeEditPart.VISUAL_ID);
 			view.setType(semanticHint);
 		}
 		super.decorateView(containerView, view, semanticAdapter, semanticHint,
@@ -62,8 +62,13 @@ public class ModelicaTypeViewFactory extends AbstractShapeViewFactory {
 					"modelID", ModelEditPart.MODEL_ID); //$NON-NLS-1$
 			view.getEAnnotations().add(shortcutAnnotation);
 		}
+		IAdaptable eObjectAdapter = null;
+		EObject eObject = (EObject) semanticAdapter.getAdapter(EObject.class);
+		if (eObject != null) {
+			eObjectAdapter = new EObjectAdapter(eObject);
+		}
 		getViewService().createNode(
-				semanticAdapter,
+				eObjectAdapter,
 				view,
 				SysmlVisualIDRegistry
 						.getType(ModelicaTypeNameEditPart.VISUAL_ID),

@@ -1,7 +1,7 @@
-# Debugging options for the org.modelica.uml.sysml.diagram2 plug-in
+# Tracing options for the org.modelica.uml.sysml.diagram2 plug-in
 
-# Turn on general debugging for the org.modelica.uml.sysml.diagram2 plug-in
+# Common issues
 org.modelica.uml.sysml.diagram2/debug=false
 
-# Turn on debugging of visualID processing
-org.modelica.uml.sysml.diagram2/debug/visualID=true
+# Visual IDs
+org.modelica.uml.sysml.diagram2/debug/visualID=false

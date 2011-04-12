@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
@@ -50,6 +51,11 @@ public class SysmlDiagramEditorPlugin extends AbstractUIPlugin {
 	 * @generated
 	 */
 	private ComposedAdapterFactory adapterFactory;
+
+	/**
+	 * @generated
+	 */
+	private SysmlDocumentProvider documentProvider;
 
 	/**
 	 * @generated
@@ -174,6 +180,25 @@ public class SysmlDiagramEditorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Returns string from plug-in's resource bundle
+	 *
+	 * @generated
+	 */
+	public static String getString(String key) {
+		return Platform.getResourceString(getInstance().getBundle(), "%" + key); //$NON-NLS-1$
+	}
+
+	/**
+	 * @generated
+	 */
+	public SysmlDocumentProvider getDocumentProvider() {
+		if (documentProvider == null) {
+			documentProvider = new SysmlDocumentProvider();
+		}
+		return documentProvider;
+	}
+
+	/**
 	 * @generated
 	 */
 	public void logError(String error) {
@@ -206,7 +231,7 @@ public class SysmlDiagramEditorPlugin extends AbstractUIPlugin {
 	 * @generated
 	 */
 	public void logInfo(String message, Throwable throwable) {
-		if (message == null && message != null) {
+		if (message == null && throwable != null) {
 			message = throwable.getMessage();
 		}
 		getLog().log(

@@ -4,14 +4,24 @@ import java.util.LinkedList;
 import java.util.Iterator;
 
 import org.eclipse.gef.EditPart;
+import org.eclipse.uml2.uml.Model;
+import org.eclipse.uml2.uml.PrimitiveType;
+import org.eclipse.uml2.uml.Type;
+import org.eclipse.uml2.uml.internal.impl.UMLFactoryImpl;
 
+import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.common.util.EList; 
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelicaClassEditPart;
+import org.modelica.uml.sysml.diagram2.edit.parts.ModelEditPart;
 
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.compiler.ElementInfo;
 
 import org.modelica.uml.sysml.diagram2.util.SetPropertiesUtil;
+import org.modelica.uml.sysml.ModelicaType;
+import org.modelica.uml.sysml.impl.ModelicaTypeImpl;
 
 public class ModelicaElementsUtil {
 	
@@ -63,6 +73,22 @@ public class ModelicaElementsUtil {
 				direction = "in";
 			else if (element.getDirection().equals("output"))
 				direction = "out";
+			
+			final String typeName = element.getTypeName();
+			UMLFactoryImpl umlFactory = new UMLFactoryImpl();
+			PrimitiveType type = umlFactory.createPrimitiveType();
+			type.setName(typeName);	
+			EditPart modelEdp = classEDP.getParent();
+
+			if (modelEdp instanceof ModelEditPart) {
+				final Model model = (Model)((ModelEditPart)modelEdp).getDiagramView().getElement();
+//				NewTypeCommand cmd = new NewTypeCommand(editingDomain, model, typeName);
+//				editingDomain.getCommandStack().execute(cmd);
+//				editingDomain.getCommandStack().flush();
+//
+//				type = cmd.getType();
+
+			}
 
 			if(componentEDP != null){
 				SetPropertiesUtil.setModelProperties(editingDomain,
@@ -73,7 +99,7 @@ public class ModelicaElementsUtil {
 						direction, 
 						false, 
 						element.getNames(),  
-						element.getTypeName(), 
+						type,
 						element.getKind());
 			}
 		}
@@ -84,17 +110,17 @@ public class ModelicaElementsUtil {
 		
 		EditPart componentEDP = null;
 		
-		//String kind = element.getKind();
+		String kind = element.getVariability();
 		
-		String kind = "parameter";
-		
-		if(kind.equals("parameter")){
-			componentEDP = SetPropertiesUtil.addParameter(classEDP);
+		if (kind != null){
+			if(kind.equals("parameter")){
+				componentEDP = SetPropertiesUtil.addParameter(classEDP);
+			}	
+			else if (kind.equals("unspecified")){
+				componentEDP = SetPropertiesUtil.addVariable(classEDP);
+			}
 		}
-		else if (kind.equals("unspecified")){
-			componentEDP = SetPropertiesUtil.addVariable(classEDP);
-		}
-		
+
 		return componentEDP;
 		
 	}
@@ -105,4 +131,29 @@ public class ModelicaElementsUtil {
 		
 	}
 	
+	public class NewTypeCommand extends RecordingCommand {
+		private Type newType = null;
+		private Model model;
+		private String typeName;
+		NewTypeCommand(TransactionalEditingDomain domain, Model model, 
+				String typeName) {
+			super(domain);
+			this.model = model;
+			this.typeName = typeName;
+			
+		}
+	
+		protected void doExecute() {
+
+			if (model != null) {
+//				if (model.getOwnedType(typeName) == null) {
+				newType = model.createOwnedPrimitiveType(typeName);
+//				}
+			}
+		}
+		
+		public Type getType(){
+			return newType;
+		}
+	}
 }

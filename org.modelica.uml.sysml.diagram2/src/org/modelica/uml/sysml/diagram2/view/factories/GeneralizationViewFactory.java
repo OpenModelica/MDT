@@ -13,6 +13,7 @@ import org.eclipse.gmf.runtime.diagram.ui.view.factories.ConnectionViewFactory;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.View;
 
+import org.modelica.uml.sysml.diagram2.edit.parts.GeneralizationEditPart;
 import org.modelica.uml.sysml.diagram2.edit.parts.ModelEditPart;
 
 import org.modelica.uml.sysml.diagram2.part.SysmlVisualIDRegistry;
@@ -27,9 +28,8 @@ public class GeneralizationViewFactory extends ConnectionViewFactory {
 	 */
 	protected List createStyles(View view) {
 		List styles = new ArrayList();
-		styles.add(NotationFactory.eINSTANCE.createRoutingStyle());
+		styles.add(NotationFactory.eINSTANCE.createConnectorStyle());
 		styles.add(NotationFactory.eINSTANCE.createFontStyle());
-		styles.add(NotationFactory.eINSTANCE.createLineStyle());
 		return styles;
 	}
 
@@ -41,20 +41,11 @@ public class GeneralizationViewFactory extends ConnectionViewFactory {
 			boolean persisted) {
 		if (semanticHint == null) {
 			semanticHint = SysmlVisualIDRegistry
-					.getType(org.modelica.uml.sysml.diagram2.edit.parts.GeneralizationEditPart.VISUAL_ID);
+					.getType(GeneralizationEditPart.VISUAL_ID);
 			view.setType(semanticHint);
 		}
 		super.decorateView(containerView, view, semanticAdapter, semanticHint,
 				index, persisted);
-		if (!ModelEditPart.MODEL_ID.equals(SysmlVisualIDRegistry
-				.getModelID(containerView))) {
-			EAnnotation shortcutAnnotation = EcoreFactory.eINSTANCE
-					.createEAnnotation();
-			shortcutAnnotation.setSource("Shortcut"); //$NON-NLS-1$
-			shortcutAnnotation.getDetails().put(
-					"modelID", ModelEditPart.MODEL_ID); //$NON-NLS-1$
-			view.getEAnnotations().add(shortcutAnnotation);
-		}
 	}
 
 }

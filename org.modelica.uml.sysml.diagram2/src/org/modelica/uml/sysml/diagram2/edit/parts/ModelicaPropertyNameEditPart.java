@@ -8,6 +8,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 
@@ -82,6 +83,7 @@ import org.modelica.uml.sysml.diagram2.edit.util.ModelicaPropertyUtil;
 import org.modelica.uml.sysml.diagram2.part.SysmlDiagramEditorPlugin;
 
 import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
+import org.modelica.uml.sysml.diagram2.providers.SysmlParserProvider;
 
 /**
  * @generated
@@ -221,20 +223,18 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 	 * @generated
 	 */
 	protected EObject getParserElement() {
-		EObject element = resolveSemanticElement();
-		return element != null ? element : (View) getModel();
+		return resolveSemanticElement();
 	}
 
 	/**
 	 * @generated
 	 */
 	protected Image getLabelIcon() {
-		ImageDescriptor descriptor = SysmlDiagramEditorPlugin.getInstance()
-				.getItemImageDescriptor(getParserElement());
-		if (descriptor == null) {
-			descriptor = ImageDescriptor.getMissingImageDescriptor();
+		EObject parserElement = getParserElement();
+		if (parserElement == null) {
+			return null;
 		}
-		return descriptor.createImage();
+		return SysmlElementTypes.getImage(parserElement.eClass());
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 	 * @generated
 	 */
 	public String getEditText() {
-		if (getParser() == null) {
+		if (getParserElement() == null || getParser() == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return getParser().getEditString(
@@ -284,7 +284,7 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 	 * @generated
 	 */
 	protected boolean isEditable() {
-		return getEditText() != null;
+		return getParser() != null;
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 	 * @generated
 	 */
 	public IContentAssistProcessor getCompletionProcessor() {
-		if (getParser() == null) {
+		if (getParserElement() == null || getParser() == null) {
 			return null;
 		}
 		return getParser().getCompletionProcessor(
@@ -344,16 +344,9 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 	public IParser getParser() {
 		if (parser == null) {
 			String parserHint = ((View) getModel()).getType();
-			ParserHintAdapter hintAdapter = new ParserHintAdapter(
-					getParserElement(), parserHint) {
-
-				public Object getAdapter(Class adapter) {
-					if (IElementType.class.equals(adapter)) {
-						return SysmlElementTypes.ModelicaProperty_2004;
-					}
-					return super.getAdapter(adapter);
-				}
-			};
+			IAdaptable hintAdapter = new SysmlParserProvider.HintAdapter(
+					SysmlElementTypes.ModelicaProperty_2004,
+					getParserElement(), parserHint);
 			parser = ParserService.getInstance().getParser(hintAdapter);
 		}
 		return parser;
@@ -623,7 +616,7 @@ public class ModelicaPropertyNameEditPart extends CompartmentEditPart implements
 	 * @generated
 	 */
 	protected IFigure createFigure() {
-		// Parent should assign one using setLabel method
+		// Parent should assign one using setLabel() method
 		return null;
 	}
 }

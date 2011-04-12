@@ -16,6 +16,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassEquations2CanonicalEditPolicy;
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassEquations2ItemSemanticEditPolicy;
+import org.modelica.uml.sysml.diagram2.part.Messages;
 
 /**
  * @generated
@@ -45,7 +46,7 @@ public class ModelicaClassEquations2EditPart extends ListCompartmentEditPart {
 	 * @generated
 	 */
 	public String getCompartmentName() {
-		return "Equations";
+		return Messages.ModelicaClassEquations2EditPart_title;
 	}
 
 	/**

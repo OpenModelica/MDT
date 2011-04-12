@@ -128,7 +128,7 @@ public class ModelicaPortEditPart extends AbstractBorderItemEditPart {
 	 */
 	protected IFigure getExternalLabelsContainer() {
 		LayerManager root = (LayerManager) getRoot();
-		return root.getLayer(SysmlEditPartFactory.EXTERNAL_NODE_LABELS_LAYER);
+		return root.getLayer("External Node Labels");
 	}
 
 	/**

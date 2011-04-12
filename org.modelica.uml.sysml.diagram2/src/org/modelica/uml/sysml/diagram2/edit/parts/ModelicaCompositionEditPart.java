@@ -1,9 +1,15 @@
 package org.modelica.uml.sysml.diagram2.edit.parts;
 
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.draw2d.Connection;
 
+import org.eclipse.draw2d.PolygonDecoration;
+import org.eclipse.draw2d.RotatableDecoration;
+import org.eclipse.draw2d.geometry.PointList;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaCompositionItemSemanticEditPolicy;
@@ -16,7 +22,7 @@ public class ModelicaCompositionEditPart extends ConnectionNodeEditPart {
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 3002;
+	public static final int VISUAL_ID = 3004;
 
 	/**
 	 * @generated
@@ -35,6 +41,23 @@ public class ModelicaCompositionEditPart extends ConnectionNodeEditPart {
 	}
 
 	/**
+	 * @generated
+	 */
+	protected boolean addFixedChild(EditPart childEditPart) {
+		return false;
+	}
+
+	/**
+	 * @generated
+	 */
+	protected void addChildVisual(EditPart childEditPart, int index) {
+		if (addFixedChild(childEditPart)) {
+			return;
+		}
+		super.addChildVisual(childEditPart, -1);
+	}
+
+	/**
 	 * Creates figure for this edit part.
 	 * 
 	 * Body of this method does not depend on settings in generation model
@@ -49,8 +72,14 @@ public class ModelicaCompositionEditPart extends ConnectionNodeEditPart {
 	/**
 	 * @generated
 	 */
-	public class SolidLineWSrcDiamond extends
-			org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {
+	public SolidLineWSrcDiamond getPrimaryShape() {
+		return (SolidLineWSrcDiamond) getFigure();
+	}
+
+	/**
+	 * @generated
+	 */
+	public class SolidLineWSrcDiamond extends PolylineConnectionEx {
 
 		/**
 		 * @generated
@@ -63,19 +92,16 @@ public class ModelicaCompositionEditPart extends ConnectionNodeEditPart {
 		/**
 		 * @generated
 		 */
-		private org.eclipse.draw2d.PolygonDecoration createSourceDecoration() {
-			org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();
-			// dispatchNext?
-			df.setFill(true);
-			org.eclipse.draw2d.geometry.PointList pl = new org.eclipse.draw2d.geometry.PointList();
-			pl.addPoint(-1, 1);
-			pl.addPoint(0, 0);
-			pl.addPoint(-1, -1);
-			pl.addPoint(-2, 0);
-			pl.addPoint(-1, 1);
+		private RotatableDecoration createSourceDecoration() {
+			PolygonDecoration df = new PolygonDecoration();
+			PointList pl = new PointList();
+			pl.addPoint(getMapMode().DPtoLP(-1), getMapMode().DPtoLP(1));
+			pl.addPoint(getMapMode().DPtoLP(0), getMapMode().DPtoLP(0));
+			pl.addPoint(getMapMode().DPtoLP(-1), getMapMode().DPtoLP(-1));
+			pl.addPoint(getMapMode().DPtoLP(-2), getMapMode().DPtoLP(0));
+			pl.addPoint(getMapMode().DPtoLP(-1), getMapMode().DPtoLP(1));
 			df.setTemplate(pl);
 			df.setScale(7, 3);
-
 			return df;
 		}
 

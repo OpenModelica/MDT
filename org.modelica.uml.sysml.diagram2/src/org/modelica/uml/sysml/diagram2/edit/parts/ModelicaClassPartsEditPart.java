@@ -8,6 +8,7 @@ import org.eclipse.gef.EditPolicy;
 
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ListCompartmentEditPart;
 
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CreationEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DragDropEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditPolicy;
@@ -16,11 +17,12 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassPartsCanonicalEditPolicy;
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassPartsItemSemanticEditPolicy;
+import org.modelica.uml.sysml.diagram2.part.Messages;
 
 /**
  * @generated
  */
-public class ModelicaClassPartsEditPart extends ListCompartmentEditPart {
+public class ModelicaClassPartsEditPart extends ShapeCompartmentEditPart {
 
 	/**
 	 * @generated
@@ -37,15 +39,8 @@ public class ModelicaClassPartsEditPart extends ListCompartmentEditPart {
 	/**
 	 * @generated
 	 */
-	protected boolean hasModelChildrenChanged(Notification evt) {
-		return false;
-	}
-
-	/**
-	 * @generated
-	 */
 	public String getCompartmentName() {
-		return "Parts";
+		return Messages.ModelicaClassPartsEditPart_title;
 	}
 
 	/**

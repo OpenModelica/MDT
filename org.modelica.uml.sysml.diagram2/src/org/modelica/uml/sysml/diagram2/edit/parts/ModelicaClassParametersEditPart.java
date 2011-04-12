@@ -1,21 +1,17 @@
 package org.modelica.uml.sysml.diagram2.edit.parts;
 
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
-import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.gef.EditPolicy;
-
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ListCompartmentEditPart;
-
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CreationEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DragDropEditPolicy;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditPolicy;
-
 import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
-
+import org.eclipse.gmf.runtime.notation.View;
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassParametersCanonicalEditPolicy;
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassParametersItemSemanticEditPolicy;
+import org.modelica.uml.sysml.diagram2.part.Messages;
 
 /**
  * @generated
@@ -45,7 +41,7 @@ public class ModelicaClassParametersEditPart extends ListCompartmentEditPart {
 	 * @generated
 	 */
 	public String getCompartmentName() {
-		return "Parameters";
+		return Messages.ModelicaClassParametersEditPart_title;
 	}
 
 	/**
@@ -73,4 +69,5 @@ public class ModelicaClassParametersEditPart extends ListCompartmentEditPart {
 			super.setRatio(ratio);
 		}
 	}
+
 }

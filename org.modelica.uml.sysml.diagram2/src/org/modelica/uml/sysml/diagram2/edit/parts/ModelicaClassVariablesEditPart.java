@@ -16,6 +16,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassVariablesCanonicalEditPolicy;
 import org.modelica.uml.sysml.diagram2.edit.policies.ModelicaClassVariablesItemSemanticEditPolicy;
+import org.modelica.uml.sysml.diagram2.part.Messages;
 
 /**
  * @generated
@@ -45,7 +46,7 @@ public class ModelicaClassVariablesEditPart extends ListCompartmentEditPart {
 	 * @generated
 	 */
 	public String getCompartmentName() {
-		return "Variables";
+		return Messages.ModelicaClassVariablesEditPart_title;
 	}
 
 	/**

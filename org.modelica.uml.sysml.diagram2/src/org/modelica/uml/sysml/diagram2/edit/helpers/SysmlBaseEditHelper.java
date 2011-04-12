@@ -8,6 +8,7 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.CreateRelationshipRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.DestroyElementRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.DestroyReferenceRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.IEditCommandRequest;
+import org.modelica.uml.sysml.diagram2.providers.SysmlElementTypes;
 
 /**
  * @generated
@@ -39,9 +40,14 @@ public class SysmlBaseEditHelper extends AbstractEditHelper {
 	}
 
 	/**
-	 * @generated
+	 * @generated NOT
 	 */
 	protected ICommand getCreateCommand(CreateElementRequest req) {
+
+		if (req.getElementType().equals(SysmlElementTypes.ModelicaPort_2070)) {
+			return super.getCreateCommand(req);
+		}
+
 		return null;
 	}
 
