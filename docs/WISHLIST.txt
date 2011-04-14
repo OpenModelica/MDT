@@ -1,0 +1,84 @@
+
+Adrian wish-list:
+
+- Faster saving of files.
+- Outline
+
+
+Martin:
+- Should handle, if two packages have the same name,
+it should display an error. Adrian: easy, just check if the file is loaded.
+
+
+
+
+From:	Peter Aronsson [peter.aronsson@mathcore.com]
+Sent:	den 10 mars 2011 08:31
+To:	Peter Fritzson
+Cc:	Daniel Hedberg; Adrian Pop
+Subject:	RE: Önskelista från MathCore
+
+Hej,
+
+Daniel har ett till önskemål som även jag skulle vilja se och som vi båda tycker är väldigt användbart för 
+kodning och framförallt läsning av kod i MDT. 
+Det är att ha samma funktionalitet som finns i Notepad++, nämligen att om man markerar ett ord i 
+texteditorn så färgas (med tex. grön bakgrundsfärg) alla förekomster av detta ord automatiskt i samma 
+textfil. Det är då väldigt lätt att se alla referenser av tex en variabel och detta ökar läsförståelsen rejält. 
+Jag vet inte hur lätt detta är att implementera i eclipse/MDT, men om det är en lätt sak så tycker jag 
+man borde prioritera detta högt, då det är en klar effektivitetsökande åtgärd för alla utvecklare.
+
+Mvh Peter och Daniel.
+
+From: Peter Fritzson [mailto:peter.fritzson@liu.se]  
+Sent: den 7 mars 2011 11:14 
+To: Peter Aronsson; PELAB - Peter Fritzson 
+Subject: RE: Önskelista från MathCore
+
+Hej!
+
+Tack för det.
+
+Dessa tror jag redan fungerar (det mesta):
+*	Step over i debug (line mode)
+*	Default binding (tex. input Boolean msg=false). Borde väl fås automatiskt vid bootstrapping
+*	Komplett stack (vid Debuggning) (line mode)
+*	Prestanda vid debuggning (mål: debugga DoublePendulum)  (Ja, kan göras på –O3 kompilerad 
+kod)
+*	For, while, if,break (automatiskt vid bootstrapping?)  (finns i alla fall while och if)
+
+Det andra är på gång eller sätts på listan, även parametriserade funktioner / unionstyper.
+
+From: Peter Aronsson [mailto:peter.aronsson@mathcore.com]  
+Sent: den 7 mars 2011 10:42 
+To: petfr@ida.liu.se 
+Subject: Önskelista från MathCore
+
+*	Step over i debug
+*	Default binding (tex. input Boolean msg=false). Borde väl fås automatiskt vid bootstrapping
+*	Komplett stack (vid Debuggning)
+*	Prestanda vid debuggning (mål: debugga DoublePendulum)
+*	For, while, if,break (automatiskt vid bootstrapping?)
+*	Snabb variablelviewer (Debugger)
+*	MDT klara multipla projekt med samma filnamn på flera olika ställen (funkar inte idag)
+*	Auto completion i text editorn
+*	Syntax coloring av odefinerade lokala variabler.
+*	Möjlighet att stänga av automatisk popup av deklarationen för typer (tex record-definition) i 
+MDT
+*	Snabbare save i MDT
+
+Sedan vore det ju också väldigt trevligt om tex. HashTable modulerna kunde generaliseras så vi inte 
+behöver göra en ny fil för varje ”instans”. Det borde ju vara ett grundkrav att ett språk för 
+kompilatorkonstruktion är tillräckligt kraftfullt för att klara detta ;)
+
+Sen hoppas jag att felmeddelanden i den bootstrappade kompilatorn blir bättre än vad de är idag. De 
+är ju nu väldigt svåra att läsa och förstå.
+
+/Peter
+--------------------------------------------
+Peter Aronsson Product Manager
+MathCore Engineering AB
+Teknikringen 1F  SE-583 30 Linköping
+Sweden
++46 13 328502
+
