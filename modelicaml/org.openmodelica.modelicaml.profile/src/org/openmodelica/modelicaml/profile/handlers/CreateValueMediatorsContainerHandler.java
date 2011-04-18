@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
@@ -80,6 +81,7 @@ public class CreateValueMediatorsContainerHandler extends AbstractHandler {
 	
 	/** The selected element. */
 private EObject selectedElement = null;
+private Element createdElement = null;
 	
 	/**
 	 * Execute Command. Get the property from the selection, and apply the
@@ -94,7 +96,7 @@ private EObject selectedElement = null;
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
-		return null;
+		return createdElement;
 	}
 
 	/**
@@ -138,6 +140,7 @@ private EObject selectedElement = null;
 				}
 				else {
 					clazz.applyStereotype(stereotype);
+					createdElement = clazz;
 				}
 //### END: adapt it for a new command handler
 				

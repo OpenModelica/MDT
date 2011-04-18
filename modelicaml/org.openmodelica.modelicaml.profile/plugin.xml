@@ -427,8 +427,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.commands.CreateValueMediatorsContainerCommand"
                   icon="resources/icons/icons16/valueMediatorsContainer.png"
-                  label="ValueMediatorContainer"
-                  style="push">
+                  label="Value Mediator Container"
+                  style="push"
+                  tooltip="Value Mediator Container">
                <visibleWhen
                      checkEnabled="true">
                   <with
@@ -452,7 +453,7 @@
             <command
                   commandId="org.openmodelica.modelicaml.commands.CreateValueMediatorCommand"
                   icon="resources/icons/icons16/valueMediator.png"
-                  label="ValueMediator"
+                  label="Value Mediator"
                   style="push">
                <visibleWhen
                      checkEnabled="true">
