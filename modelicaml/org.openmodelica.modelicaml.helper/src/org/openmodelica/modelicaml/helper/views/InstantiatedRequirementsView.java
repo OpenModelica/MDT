@@ -194,7 +194,7 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 					Collections.sort(list);
 					reqInstancesNames.setItems(list.toArray(new String[list.size()]));
 					reqInstancesNames.setText(list.get(0).toString());
-					reqInstancesNames.setBounds(5, 20, 500, 18);
+					reqInstancesNames.setBounds(5, 20, 600, 18);
 					reqInstancesNames.setEditable(false);
 					
 					//StyledText reqText = new StyledText(grpId, SWT.FULL_SELECTION | SWT.WRAP | SWT.V_SCROLL);
