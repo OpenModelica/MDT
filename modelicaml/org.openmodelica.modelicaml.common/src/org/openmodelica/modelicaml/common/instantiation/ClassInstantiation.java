@@ -64,7 +64,7 @@ public class ClassInstantiation {
 			// get class components in order to know which other attributes are inherited.
 			selectedClassOwnedComponents.addAll(this.selectedClass.getOwnedAttributes());
 
-			// associate all inherited components (only the next level, i.e. only first level components) to the selected class extension (there may be multiple) in order to be able to determine the right location for storing modifications
+			// associate all inherited components to the selected class extension (there may be multiple) in order to be able to determine the location for storing modifications
 			EList<Generalization> extendsRelations = this.selectedClass.getGeneralizations(); // TODO: filter on ModelicaML stereotypes
 			for (Generalization generalization : extendsRelations) {
 				EList<Element> targets = generalization.getTargets(); // get the extended classes

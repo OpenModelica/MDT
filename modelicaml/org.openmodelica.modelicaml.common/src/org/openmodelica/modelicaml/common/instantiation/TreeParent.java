@@ -60,8 +60,7 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 /**
  * The Class TreeParent.
  */
-public class TreeParent extends TreeObject 
-{
+public class TreeParent extends TreeObject {
 	
 	/** The children. */
 	private ArrayList<TreeObject> children;
@@ -120,11 +119,60 @@ public class TreeParent extends TreeObject
 	
 	
 	/**
+	 * Adds the child.
+	 * 
+	 * @param child
+	 *            the child
+	 */
+	public void addChild(TreeObject child) {
+		children.add(child);
+		child.setParent(this);
+	}
+
+
+
+	/**
+	 * Gets the children.
+	 * 
+	 * @return the children
+	 */
+	public TreeObject[] getChildren() {
+		return (TreeObject[]) children.toArray(new TreeObject[children.size()]);
+	}
+
+
+
+	/**
+	 * Removes the child.
+	 * 
+	 * @param child
+	 *            the child
+	 */
+	public void removeChild(TreeObject child) {
+		children.remove(child);
+		child.setParent(null);
+	}
+
+
+
+	/**
+	 * Checks for children.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean hasChildren() {
+		return children.size() > 0;
+	}
+
+
+
+	/**
 	 * Adds the state machines.
 	 */
 	private void addStateMachines(){
-		if (isRoot()) {
+		if (isRoot()) { // if it is the selected class
 			if (super.getSelectedClass()!= null) {
+				// add all owned state machines
 				EList<Behavior> sList = super.getSelectedClass().getOwnedBehaviors();
 				for (Element element : sList) {
 					if (element instanceof StateMachine) {
@@ -133,10 +181,20 @@ public class TreeParent extends TreeObject
 						}
 					}
 				}
+				// add all inherited state machines
+				// TODO: elaborate this in order to support Modelica constructs like redeclaration
+				EList<NamedElement> inheritedElements = super.getSelectedClass().getInheritedMembers();
+				for (NamedElement namedElement : inheritedElements) {
+					if (namedElement instanceof StateMachine) {
+						if ( ((StateMachine)namedElement).getSubmachineStates().size() < 1 ) {
+							addStateMachine(this, (StateMachine)namedElement);
+						}
+					}
+				}
 			}
 		}
-		else if (super.getProperty() != null) {
-			Type t = super.getProperty().getType();
+		else if (super.getProperty() != null) { // if it is a component that has a type
+			Type t = super.getComponentType();
 			if (t != null) {
 				if (t instanceof Class) {
 					EList<Behavior> sList = ((Class)t).getOwnedBehaviors();
@@ -144,6 +202,16 @@ public class TreeParent extends TreeObject
 						if (element instanceof StateMachine) {
 							if ( ((StateMachine)element).getSubmachineStates().size() < 1 ) {
 								addStateMachine(this, (StateMachine)element);
+							}
+						}
+					}
+					// add all inherited state machines
+					// TODO: elaborate this in order to support Modelica constructs like redeclaration
+					EList<NamedElement> inheritedElements = super.getSelectedClass().getInheritedMembers();
+					for (NamedElement namedElement : inheritedElements) {
+						if (namedElement instanceof StateMachine) {
+							if ( ((StateMachine)namedElement).getSubmachineStates().size() < 1 ) {
+								addStateMachine(this, (StateMachine)namedElement);
 							}
 						}
 					}
@@ -280,94 +348,6 @@ public class TreeParent extends TreeObject
 	
 	
 	/**
-	 * Adds the signals.
-	 */
-	private void addSignals(){
-		if (this.isRoot()) {
-			if (super.getSelectedClass()!= null) {
-				EList<Element> sList = super.getSelectedClass().getOwnedElements();
-				for (Element element : sList) {
-					if (element instanceof Signal) {
-						this.addSignal((Signal)element);
-					}
-				}
-			}
-		}
-		else if (super.getProperty() != null) {
-			Type t = super.getProperty().getType();
-			if (t != null) {
-				if (t instanceof Class) {
-					EList<Element> sList = t.getOwnedElements();
-					for (Element element : sList) {
-						if (element instanceof Signal) {
-							this.addSignal((Signal)element);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Adds the signal.
-	 * 
-	 * @param signal
-	 *            the signal
-	 */
-	private void addSignal(Signal signal){		
-		TreeParent signalItem = addElement(signal);
-		TreeParent signalAttr_counter = new TreeParent("counter", null, null, signalItem.getDothPath() + ".counter", true, false, null, super.getSelectedClass(), true);
-		signalAttr_counter.setComponentType(getModelicaPremitiveType(signalItem, "integerType"));
-		signalItem.addChild(signalAttr_counter);
-	}
-	
-
-	
-	
-	
-	
-	/**
-	 * Adds the child.
-	 * 
-	 * @param child
-	 *            the child
-	 */
-	public void addChild(TreeObject child) {
-		children.add(child);
-		child.setParent(this);
-	}
-
-	/**
-	 * Removes the child.
-	 * 
-	 * @param child
-	 *            the child
-	 */
-	public void removeChild(TreeObject child) {
-		children.remove(child);
-		child.setParent(null);
-	}
-
-	/**
-	 * Gets the children.
-	 * 
-	 * @return the children
-	 */
-	public TreeObject[] getChildren() {
-		return (TreeObject[]) children.toArray(new TreeObject[children.size()]);
-	}
-
-	/**
-	 * Checks for children.
-	 * 
-	 * @return true, if successful
-	 */
-	public boolean hasChildren() {
-		return children.size() > 0;
-	}
-	
-	
-	/**
 	 * Gets the all signals.
 	 * 
 	 * @param type
@@ -472,6 +452,52 @@ public class TreeParent extends TreeObject
 	
 	
 	
+	/**
+	 * Adds the signals.
+	 */
+	private void addSignals(){
+		if (this.isRoot()) {
+			if (super.getSelectedClass()!= null) {
+				EList<Element> sList = super.getSelectedClass().getOwnedElements();
+				for (Element element : sList) {
+					if (element instanceof Signal) {
+						this.addSignal((Signal)element);
+					}
+				}
+			}
+		}
+		else if (super.getProperty() != null) {
+			Type t = super.getProperty().getType();
+			if (t != null) {
+				if (t instanceof Class) {
+					EList<Element> sList = t.getOwnedElements();
+					for (Element element : sList) {
+						if (element instanceof Signal) {
+							this.addSignal((Signal)element);
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * Adds the signal.
+	 * 
+	 * @param signal
+	 *            the signal
+	 */
+	private void addSignal(Signal signal){		
+		TreeParent signalItem = addElement(signal);
+		TreeParent signalAttr_counter = new TreeParent("counter", null, null, signalItem.getDothPath() + ".counter", true, false, null, super.getSelectedClass(), true);
+		signalAttr_counter.setComponentType(getModelicaPremitiveType(signalItem, "integerType"));
+		signalItem.addChild(signalAttr_counter);
+	}
+
+
+
 	/**
 	 * Gets the all primitive variables dot path.
 	 * 

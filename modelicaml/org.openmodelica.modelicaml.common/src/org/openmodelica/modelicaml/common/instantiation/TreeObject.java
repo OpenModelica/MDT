@@ -55,10 +55,9 @@ import org.openmodelica.modelicaml.common.services.UmlServices;
 /**
  * The Class TreeObject.
  */
-public class TreeObject implements IAdaptable 
-{
-	private String requirementStereotypeQName = "ModelicaML::ModelicaRequirementConstructs::Requirement";
-	private String variableStereotypeqName = "ModelicaML::ModelicaCompositeConstructs::Variable";
+public class TreeObject implements IAdaptable {
+	private String stereotypeQName_Requirement = "ModelicaML::ModelicaRequirementConstructs::Requirement";
+	private String stereotypeQName_Variable = "ModelicaML::ModelicaCompositeConstructs::Variable";
 	
 		/** The property. */
 	private Property property = null;
@@ -100,7 +99,7 @@ public class TreeObject implements IAdaptable
 //	private String finalModificationLeftHand = null;
 	
 	/** The final modification right hand. */
-	private String finalModificationRightHand = null;
+	private String finalModificationRightHand = null; // TODO: rename to editedModification
 	
 	/** The final modification right hand. */
 	private String modificationRightHand = null;
@@ -335,7 +334,7 @@ public class TreeObject implements IAdaptable
 	 */
 	private String setDeclaration(){
 		if (this.property != null) {
-			Stereotype stereotype = property.getAppliedStereotype(variableStereotypeqName );
+			Stereotype stereotype = property.getAppliedStereotype(stereotypeQName_Variable );
 			if (stereotype != null) {
 				Object declarationEquationOrAssignment = UmlServices.getStereotypeValue((Element)property, stereotype.getName(), "declarationEquationOrAssignment");
 				if (declarationEquationOrAssignment instanceof String) {
@@ -375,14 +374,14 @@ public class TreeObject implements IAdaptable
 	}
 	
 
-	public String getFinalModificationRightHand(){
+	public String getFinalModificationRightHand(){ // TODO: rename to getEditedModification
 		if (this.finalModificationRightHand == null) {
 			return getModificationRightHand();
 		}
 		return this.finalModificationRightHand;
 	}
 	
-	public void setFinalModificationRightHand( String value ){
+	public void setFinalModificationRightHand( String value ){ // TODO: rename to setEditedModification
 		this.finalModificationRightHand = value;
 	}
 	
@@ -547,7 +546,7 @@ public class TreeObject implements IAdaptable
 	 * 
 	 * @return the doth path
 	 */
-	public String getDothPath(){
+	public String getDothPath(){ //TODO: refactor in order to correct the typo
 		return this.dotPath;
 	}
 	
@@ -599,7 +598,7 @@ public class TreeObject implements IAdaptable
 	
 	public Boolean isRequirementInstance(){
 		if (this.property != null) {
-			if (this.getComponentType() != null && this.getComponentType().getAppliedStereotype(requirementStereotypeQName) != null ) {
+			if (this.getComponentType() != null && this.getComponentType().getAppliedStereotype(stereotypeQName_Requirement) != null ) {
 				return true;
 			}
 		}
