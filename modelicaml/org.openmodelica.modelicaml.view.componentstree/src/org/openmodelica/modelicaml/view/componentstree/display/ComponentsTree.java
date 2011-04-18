@@ -33,7 +33,9 @@
  */
 package org.openmodelica.modelicaml.view.componentstree.display;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
@@ -61,6 +63,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -219,6 +222,8 @@ public class ComponentsTree extends ViewPart {
 		contributeToActionBars();
 
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
+		
+		getSite().setSelectionProvider(viewer); // add a selection provider.
 	}
 
 	/**
@@ -938,7 +943,7 @@ public class ComponentsTree extends ViewPart {
 		};
 		actionLinkWithEditor.setChecked(true);
 		actionLinkWithEditor.setText("Link with Papyrus Model Explorer");
-		actionLinkWithEditor.setToolTipText("Link with Papyrus Outline View");
+		actionLinkWithEditor.setToolTipText("Link with Papyrus Model Explorer");
 		actionLinkWithEditor.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 	
 		actionCollapsAll = new Action("actionCollapsAll") { //obviously a check box style
@@ -1085,14 +1090,14 @@ public class ComponentsTree extends ViewPart {
 		viewer.getControl().setFocus();
 	}
 
-	/** The pagebook. */
-	private PageBook pagebook;
-	
-	/** The tableviewer. */
-	private TableViewer tableviewer;
-	
-	/** The textviewer. */
-	private TextViewer textviewer;
+//	/** The pagebook. */
+//	private PageBook pagebook;
+//	
+//	/** The tableviewer. */
+//	private TableViewer tableviewer;
+//	
+//	/** The textviewer. */
+//	private TextViewer textviewer;
 
 	// the listener we register with the selection service
 	/** The listener. */

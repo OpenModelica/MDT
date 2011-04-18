@@ -203,7 +203,7 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 					public void applyStyles(TextStyle textStyle) {
 						textStyle.foreground = new Color(null, new RGB(105, 105, 105)); // Dim Gray
 					}
-				};;
+				};
 				
 				if (treeObject.isInherited()) {
 //					System.err.println(treeObject.getName() + " is inherited");
@@ -347,19 +347,15 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 		
 		Image image = null;
 		InputStream imageFileStream = null;   	
-
-
-		try
-		{
+		try {
   	    	imageFileStream = imageFileUrl.openStream();
   	    	image = new Image(null, imageFileStream);
 		}
-		catch (IOException e)
-		{
+		catch (IOException e) {
 			e.printStackTrace();
 		}
-		finally
-		{
+		
+		finally {
 			if (imageFileStream != null)
 				try { imageFileStream.close(); } catch (IOException e) {}
 		}
