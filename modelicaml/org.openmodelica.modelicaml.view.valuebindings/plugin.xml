@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.openmodelica.modelicaml.view.valuebindings"
+            name="Value Bindings"
+            parentCategory="org.openmodelica.modelicaml.gen.modelica.category1">
+      </category>
+      <view
+            allowMultiple="false"
+            category="org.openmodelica.modelicaml.gen.modelica.category1"
+            class="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView"
+            icon="icons/valueMediator.png"
+            id="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView"
+            name="Value Bindings">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.openmodelica.modelicaml.perspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>

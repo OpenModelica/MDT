@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ModelicaML Value Bindings View
+Bundle-SymbolicName: org.openmodelica.modelicaml.view.valuebindings; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openmodelica.modelicaml.view.valuebindings.Activator
+Bundle-Vendor: OpenModelica Project
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf;bundle-version="2.6.0",
+ org.eclipse.papyrus.core;bundle-version="0.7.3",
+ org.openmodelica.modelicaml.common;bundle-version="1.0.1",
+ org.eclipse.uml2.uml;bundle-version="3.1.2",
+ org.openmodelica.modelicaml.profile;bundle-version="1.2.19"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
