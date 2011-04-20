@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.view.valuebindings.utls;
+package org.openmodelica.modelicaml.view.valuebindings.display;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -10,6 +10,10 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.Package;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
+import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
+import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 
 public class ViewLabelProvider extends LabelProvider {

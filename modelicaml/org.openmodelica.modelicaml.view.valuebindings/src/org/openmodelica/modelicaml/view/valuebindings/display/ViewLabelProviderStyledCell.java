@@ -1,4 +1,6 @@
-package org.openmodelica.modelicaml.view.valuebindings.utls;
+package org.openmodelica.modelicaml.view.valuebindings.display;
+
+import java.util.HashSet;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
@@ -20,10 +22,15 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
+import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
+import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
-	private final ImageDescriptor warningImageDescriptor =PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
 	
 	@Override
 	public void update(ViewerCell cell) {
@@ -158,26 +165,20 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		// set image
 		if ( obj instanceof TreeObject  ){
 			if ( obj instanceof TreeParent && ((TreeParent)obj).getUmlElement() instanceof Model) {
-//				cell.setImage(decorateImage( obj, "/icons/Model.gif" ));
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Model.gif"));
+				cell.setImage(decorateImage( obj , "/icons/Model.gif" ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Model.gif"));
 			}
 			else if ( obj instanceof TreeParent && ((TreeParent)obj).getUmlElement() instanceof Package) {
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Package.gif"));
+				cell.setImage(decorateImage( obj , "/icons/Package.gif" ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Package.gif"));
 			}
 			else if (((TreeObject)obj).isValueMediatorContainer()) {
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediatorsContainer.png"));
+				cell.setImage(decorateImage( obj , "/icons/valueMediatorsContainer.png" ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediatorsContainer.png"));
 			}
 			else if (((TreeObject)obj).isValueMediator()) {
-//				// numbers of clients and providers
-//				int numberOfClients = getNumberOfClients(obj);
-//				int numberOfProviders = getNumberOfProviders(obj);
-//				if (numberOfClients == 0 || numberOfProviders == 0) {
-//					cell.setImage(decorateImage( obj, "/icons/valueMediator.png" ));
-//				}
-//				else {
-//					cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediator.png"));
-//				}
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediator.png"));
+				cell.setImage(decorateImage( obj , "/icons/valueMediator.png" ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediator.png"));
 			}
 			
 			else if (((TreeObject)obj).isValueClient() || ((TreeObject)obj).isValueProvider()) {
@@ -185,10 +186,12 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Property.gif"));	
 			}
 			else if ( ((TreeObject)obj).getName().equals(Constants.valueClientsTitleName) ) {
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueClient.png"));
+				cell.setImage(decorateImage( obj , "/icons/addValueClient.png" ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueClient.png"));
 			}
 			else if ( ((TreeObject)obj).getName().equals(Constants.valueProvidersTitleName) ) {
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
+				cell.setImage(decorateImage( obj , "/icons/addValueProviders.png" ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
 			else {
 				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/reload.png"));
@@ -204,6 +207,79 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		super.update(cell);
 	}
 	
+	
+	
+	public boolean hasEmptyClientsMediator(TreeParent treeParent) {
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		list.addAll(findNextEmptyClientsMediator(treeParent));
+		if (list.size() > 0 ) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean hasEmptyProvidersMediator(TreeParent treeParent) {
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		list.addAll(findNextEmptyProvidersMediator(treeParent));
+		if (list.size() > 0 ) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	
+	private HashSet<TreeObject> findNextEmptyClientsMediator(TreeParent treeParent){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		
+		if (treeParent.isValueMediator()) {
+			if (getNumberOfClients(treeParent) == 0) {
+				list.add(treeParent);
+				return list;
+			}
+		}
+		
+		TreeObject[] children = treeParent.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].isValueMediator()) {
+				if (getNumberOfClients(children[i]) == 0) {
+					list.add(treeParent);
+					return list;
+				}
+			}
+			else if (children[i] instanceof TreeParent) {
+				list.addAll(findNextEmptyClientsMediator( (TreeParent)children[i] ));	
+			}
+		}
+		return list;
+	}
+	
+	
+	private HashSet<TreeObject> findNextEmptyProvidersMediator(TreeParent treeParent){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+	
+		if (treeParent.isValueMediator()) {
+			if (getNumberOfProviders(treeParent) == 0) {
+				list.add(treeParent);
+				return list;
+			}
+		}
+		
+		TreeObject[] children = treeParent.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].isValueMediator()) {
+				if (getNumberOfProviders(children[i]) == 0) {
+					list.add(treeParent);
+					return list;
+				}
+			}
+			else if (children[i] instanceof TreeParent) {
+				list.addAll(findNextEmptyProvidersMediator( (TreeParent)children[i] ));	
+			}
+		}
+		return list;
+	}
 	
 	
 	
@@ -237,10 +313,17 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	}
 
 
-
-
 	
 	public Image decorateImage(Object element, String imagePath) {
-		return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
+		if (element instanceof TreeParent) {
+			if (hasEmptyProvidersMediator((TreeParent)element)) {
+				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+			}
+			if (hasEmptyClientsMediator((TreeParent)element)) {
+				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
+			}
+		}
+		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
+	
 }

@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.view.valuebindings.utls;
+package org.openmodelica.modelicaml.view.valuebindings.properties;
 
 public class Constants {
 	public static final String stereotypeQName_ValueMediatorsContainer = "ModelicaMLTesting::ValueBinding::ValueMediatorsContainer";

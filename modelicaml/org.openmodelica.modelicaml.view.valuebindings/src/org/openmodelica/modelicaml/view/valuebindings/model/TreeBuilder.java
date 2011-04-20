@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.view.valuebindings.utls;
+package org.openmodelica.modelicaml.view.valuebindings.model;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +17,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Package;
+import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
 
 
 public class TreeBuilder {
@@ -48,45 +49,50 @@ public class TreeBuilder {
 			root.addChild(rootModelNode);
 			
 			for (Class valueBindingContainer : valueMediatorContainers) {
-				Package p = valueBindingContainer.getNearestPackage();
-				TreeParent packageNode = null;
 				
-				// TODO: still buggy!
-				if (p != null && p != getUmlModel()) {
+				Package nearestPackage = valueBindingContainer.getNearestPackage();
+				TreeParent packageNode = null;
+
+				if (nearestPackage != null && nearestPackage != getUmlModel() ) {
 					
-					// see this package aready exist.
+					// see this package already exist.
 					TreeObject[] children = ((TreeParent)rootModelNode).getChildren();
+
 					for (int i = 0; i < children.length; i++) {
-						if (children[i].getUmlElement() == p ) {
+						if (children[i].getUmlElement() == nearestPackage ) {
 							packageNode = (TreeParent) children[i];
 							break;
 						}
 					}
 					
-					// if there is no package node yet ...
+					// if there is no package node yet then create one
 					if (packageNode == null) {
-						packageNode = new TreeParent(p.getName());
+						packageNode = new TreeParent(nearestPackage.getName());
+						// set the nearest package element and add item to tree.
+						packageNode.setUmlElement(nearestPackage);
+						rootModelNode.addChild(packageNode);
 					}
-					
-					packageNode.setUmlElement(p);
-					rootModelNode.addChild(packageNode);
-					
+		
+					// add the container item to the tree.
 					TreeParent item = new TreeParent(valueBindingContainer.getName());
 					item.setUmlElement(valueBindingContainer);
 					packageNode.addChild(item);
 					
+					// add mediators
 					addValueMediators(item);
 				}
-				else {
+				else { // if there is no package for containers then add them to the root model node.
 					TreeParent item = new TreeParent(valueBindingContainer.getName());
 					item.setUmlElement(valueBindingContainer);
 					rootModelNode.addChild(item);
 					
+					// add mediators
 					addValueMediators(item);
 				}
 			}
 		}
 		else {
+			// create a hin as root
 			TreeParent rootTitle = new TreeParent("Click on the \"(Re)load\" button to load value bindings ...");
 			root.addChild(rootTitle);
 		}

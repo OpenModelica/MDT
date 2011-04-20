@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.view.valuebindings.utls;
+package org.openmodelica.modelicaml.view.valuebindings.model;
 
 import java.util.ArrayList;
 

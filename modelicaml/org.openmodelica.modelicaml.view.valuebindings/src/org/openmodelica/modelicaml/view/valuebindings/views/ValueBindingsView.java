@@ -6,7 +6,12 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,6 +30,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -32,21 +40,30 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Stereotype;
+import org.eclipse.uml2.uml.util.UMLUtil;
+import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorHandler;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorsContainerHandler;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.ElementSelectionDialog;
+import org.openmodelica.modelicaml.view.valuebindings.display.ViewLabelProviderStyledCell;
+import org.openmodelica.modelicaml.view.valuebindings.handlers.DeleteCommandHandler;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
+import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
+import org.openmodelica.modelicaml.view.valuebindings.utls.ResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
-import org.openmodelica.modelicaml.view.valuebindings.utls.TreeBuilder;
-import org.openmodelica.modelicaml.view.valuebindings.utls.TreeObject;
-import org.openmodelica.modelicaml.view.valuebindings.utls.TreeParent;
-import org.openmodelica.modelicaml.view.valuebindings.utls.ViewLabelProviderStyledCell;
 
+import org.eclipse.emf.transaction.RecordingCommand;
 /**
  * This sample class demonstrates how to plug-in a new
  * workbench view. The view shows data obtained from the
@@ -88,77 +105,15 @@ public class ValueBindingsView extends ViewPart {
 	private Action actionAddValueMediator;
 	private Action actionAddValueMediatorContainer;
 	private Action actionCollapsAll;
+	private Action actionDeleteModelElement;
+	private Action actionLocateInPapyrusModelExplorer;
 	
 	private TreeParent invisibleRoot = null;
-	
 	public TreeBuilder tree = new TreeBuilder();
 
-	private Action actionDeleteModelElement;
-
-
 	
-	
-	
-	/*
-	 * The content provider class is responsible for
-	 * providing objects to the view. It can wrap
-	 * existing objects in adapters or simply return
-	 * objects as-is. These objects may be sensitive
-	 * to the current input of the view, or ignore
-	 * it and always show the same content 
-	 * (like Task List, for example).
-	 */
-	 
-//	class TreeObject implements IAdaptable {
-//		private String name;
-//		private TreeParent parent;
-//		
-//		public TreeObject(String name) {
-//			this.name = name;
-//		}
-//		public String getName() {
-//			return name;
-//		}
-//		public void setParent(TreeParent parent) {
-//			this.parent = parent;
-//		}
-//		public TreeParent getParent() {
-//			return parent;
-//		}
-//		public String toString() {
-//			return getName();
-//		}
-//
-//		public Object getAdapter(java.lang.Class adapter) {
-//			// TODO Auto-generated method stub
-//			return null;
-//		}
-//	}
-	
-//	class TreeParent extends TreeObject {
-//		private ArrayList children;
-//		public TreeParent(String name) {
-//			super(name);
-//			children = new ArrayList();
-//		}
-//		public void addChild(TreeObject child) {
-//			children.add(child);
-//			child.setParent(this);
-//		}
-//		public void removeChild(TreeObject child) {
-//			children.remove(child);
-//			child.setParent(null);
-//		}
-//		public TreeObject [] getChildren() {
-//			return (TreeObject [])children.toArray(new TreeObject[children.size()]);
-//		}
-//		public boolean hasChildren() {
-//			return children.size()>0;
-//		}
-//	}
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
-//		private TreeParent invisibleRoot;
 
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -197,51 +152,10 @@ public class ValueBindingsView extends ViewPart {
 			// add the selection listener
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
 
-//			TreeObject to1 = new TreeObject("Leaf 1");
-//			TreeObject to2 = new TreeObject("Leaf 2");
-//			TreeObject to3 = new TreeObject("Leaf 3");
-//			TreeParent p1 = new TreeParent("Parent 1");
-//			p1.addChild(to1);
-//			p1.addChild(to2);
-//			p1.addChild(to3);
-//			
-//			TreeObject to4 = new TreeObject("Leaf 4");
-//			TreeParent p2 = new TreeParent("Parent 2");
-//			p2.addChild(to4);
-			
-//			TreeParent root = new TreeParent("Root");
-//			root.addChild(p1);
-//			root.addChild(p2);
-
 			invisibleRoot = new TreeParent("");
 			tree.buildTree(invisibleRoot);
-			
-			
-//			invisibleRoot = new TreeParent("");
-//			invisibleRoot.addChild(root);
 		}
 	}
-	
-	
-//	class ViewLabelProvider extends LabelProvider {
-//
-//		public String getText(Object obj) {
-//			return obj.toString();
-//		}
-//		public Image getImage(Object obj) {
-////			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-//			if (obj instanceof TreeParent){
-//				return SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediatorsContainer.png"); 
-////				imageKey = ISharedImages.IMG_OBJ_FOLDER;
-//			}
-//			else {
-//				return SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediator.png");
-//			}
-////			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
-//		}
-//	}
-	
-	
 	
 	
 //	class NameSorter extends ViewerSorter {
@@ -272,9 +186,9 @@ public class ValueBindingsView extends ViewPart {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		
+
 		// add a selection provider.
-		getSite().setSelectionProvider(viewer); 
+		getSite().setSelectionProvider(viewer);
 	}
 
 	private void hookContextMenu() {
@@ -296,58 +210,87 @@ public class ValueBindingsView extends ViewPart {
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(actionAssociateValueClient);
-		manager.add(new Separator());
-		manager.add(actionAssociateValueProvider);
-	}
+//	private void fillLocalPullDown(IMenuManager manager) {
+//		manager.add(actionAssociateValueClient);
+//		manager.add(new Separator());
+//		manager.add(actionAssociateValueProvider);
+//	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		ISelection selection = viewer.getSelection();
 		Object selectedTreeObject = ((IStructuredSelection)selection).getFirstElement();
 		if (selectedTreeObject instanceof TreeObject) {
+			
 			if (((TreeObject)selectedTreeObject).isPackage()) {
-				actionAddValueMediatorContainer.setText("Add Value Mediator Container to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+//				actionAddValueMediatorContainer.setText("Add Value Mediator Container to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+				actionAddValueMediatorContainer.setText("Add Value Mediator Container");
 				manager.add(actionAddValueMediatorContainer);
 				
-				manager.add(new Separator());
+//				manager.add(new Separator());
+//				actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName() + "'");
+//				manager.add(actionDeleteModelElement);
 				
-				actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName() + "'");
-				manager.add(actionDeleteModelElement);
+				manager.add(new Separator());
+				manager.add(actionLocateInPapyrusModelExplorer);
 			}
 			else if (((TreeObject)selectedTreeObject).isValueMediatorContainer()) {
-				actionAddValueMediator.setText("Add Value Mediator to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+//				actionAddValueMediator.setText("Add Value Mediator to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+				actionAddValueMediator.setText("Add Value Mediator");
 				manager.add(actionAddValueMediator);
 				
-				manager.add(new Separator());
+//				manager.add(new Separator());
+//				actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName() + "'");
+//				manager.add(actionDeleteModelElement);
 				
-				actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName() + "'");
-				manager.add(actionDeleteModelElement);
+				manager.add(new Separator());
+				manager.add(actionLocateInPapyrusModelExplorer);
 			}
 			else if (((TreeObject)selectedTreeObject).isValueMediator()) {
-				actionAssociateValueClient.setText("Add Value Client to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+//				actionAssociateValueClient.setText("Add Value Client to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+				actionAssociateValueClient.setText("Add Value Client");
 				manager.add(actionAssociateValueClient);
 				
-				actionAssociateValueProvider.setText("Add Value Provider to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+//				actionAssociateValueProvider.setText("Add Value Provider to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+				actionAssociateValueProvider.setText("Add Value Provider");
 				manager.add(actionAssociateValueProvider);
 				
-				manager.add(new Separator());
+//				manager.add(new Separator());
+//				actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName());
+//				manager.add(actionDeleteModelElement);
 				
-				actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName());
-				manager.add(actionDeleteModelElement);
+				manager.add(new Separator());
+				manager.add(actionLocateInPapyrusModelExplorer);
 			}
 			else if ( ((TreeObject)selectedTreeObject).isValueClient() || ((TreeObject)selectedTreeObject).isValueProvider()) {
-				actionDeleteReference.setText("Delete the referecen to '" + ((TreeObject)selectedTreeObject).getParent().getParent().getName() + "'");
+				actionDeleteReference.setText("Delete the reference to \"" + ((TreeObject)selectedTreeObject).getParent().getParent().getName() + "\"");
 				manager.add(actionDeleteReference);
+				
+				manager.add(new Separator());
+				manager.add(actionLocateInPapyrusModelExplorer);
+			}
+			else if (((TreeObject)selectedTreeObject).isValueClientNode()) {
+				actionAssociateValueClient.setText("Add Value Client");
+				manager.add(actionAssociateValueClient);
+			}
+			else if (((TreeObject)selectedTreeObject).isValueProviderNode()) {
+				actionAssociateValueProvider.setText("Add Value Provider");
+				manager.add(actionAssociateValueProvider);
 			}
 		}
 
-		manager.add(new Separator());
+//		manager.add(new Separator());
+//		drillDownAdapter.addNavigationActions(manager);
 		
-		drillDownAdapter.addNavigationActions(manager);
+		if (((TreeObject)selectedTreeObject).isValueMediatorContainer() || ((TreeObject)selectedTreeObject).isValueMediator()) {
+			
+			manager.add(new Separator());
+//			actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName() + "'");
+			actionDeleteModelElement.setText("Delete");
+			manager.add(actionDeleteModelElement);
+		}
 		
 		// Other plug-ins can contribute there actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+//		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -362,6 +305,38 @@ public class ValueBindingsView extends ViewPart {
 	}
 
 	private void makeActions() {
+		
+		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
+			public void run() {
+//				showMessage("The view will be reloaded");
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+
+				ModelExplorerPageBookView modelExplorerPageBookView = null;
+				if (view instanceof ModelExplorerPageBookView) {
+					modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+				   }
+				
+				if (modelExplorerPageBookView != null) {
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					if (obj instanceof TreeObject ) {
+						Object object = ((TreeObject)obj).getAdapter(EObject.class);
+						if (object instanceof EObject) {
+							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+							List<Object> items = new ArrayList<Object>();
+							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+							modelExplorerView.setSelection(new StructuredSelection(items), true);
+						}
+					}
+				}
+			}
+		};
+//		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus Model Explorer");
+		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus");
+		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Papyrus Model Explorer");
+		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
+		
+		
 		
 		actionReload = new Action("actionReload") {
 			public void run() {
@@ -394,7 +369,6 @@ public class ValueBindingsView extends ViewPart {
 
 		
 		
-		
 		actionLinkWithEditor = new Action("actionLinkWithEditor", 2) { //obviously a check box style
 			public void run() {
 
@@ -410,15 +384,18 @@ public class ValueBindingsView extends ViewPart {
 		
 		actionAssociateValueClient = new Action() {
 			public void run() {
-				showMessage("actionAssociateValueClient 2 is not implemented yet.");
+//				showMessage("actionAssociateValueClient is not implemented yet.");
 				
 				ISelection selection = viewer.getSelection();
-				Object selectedTreeParent = ((IStructuredSelection)selection).getFirstElement();
-				if (selectedTreeParent instanceof TreeParent) {
+				Object selectedTreeItem = ((IStructuredSelection)selection).getFirstElement();
+				
+				TreeParent valueMediatorTreeItem = getValueMediator((TreeObject) selectedTreeItem);
+				
+				if (valueMediatorTreeItem instanceof TreeParent) {
 					List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
 					listOfAllowedMetaClassesNames.add("Property");
 					String title = "Value Client Selection";
-					String message = "Click on a model element to be associated as Value Client to the Value Mediator '" + ((TreeParent)selectedTreeParent).getName() + "'.";
+					String message = "Click on a model element to be associated as Value Client to the Value Mediator."; // '" + ((TreeParent)selectedTreeParent).getName() + "'.";
 					String mode = "addValueClient";
 
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
@@ -427,7 +404,7 @@ public class ValueBindingsView extends ViewPart {
 							title, 
 							message, 
 							listOfAllowedMetaClassesNames,
-							(TreeParent)selectedTreeParent,
+							(TreeParent)valueMediatorTreeItem,
 							viewer,
 							mode);
 					
@@ -445,16 +422,19 @@ public class ValueBindingsView extends ViewPart {
 		
 		actionAssociateValueProvider = new Action() {
 			public void run() {
-				showMessage("actionAssociateValueProvider 2 is not implemented yet.");
+//				showMessage("actionAssociateValueProvider is not implemented yet.");
 				
 				ISelection selection = viewer.getSelection();
-				Object selectedTreeParent = ((IStructuredSelection)selection).getFirstElement();
+				Object selectedTreeItem = ((IStructuredSelection)selection).getFirstElement();
 				
-				if (selectedTreeParent instanceof TreeParent) {
+				TreeParent valueMediatorTreeItem = getValueMediator((TreeObject) selectedTreeItem);
+				
+				if (valueMediatorTreeItem instanceof TreeParent) {
 					List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
 					listOfAllowedMetaClassesNames.add("Property");
 					String title = "Value Provider Selection";
-					String message = "Click on a model element to be associated as Value Provider to the Value Mediator '" + ((TreeParent)selectedTreeParent).getName() + "'.";
+
+					String message = "Click on a model element to be associated as Value Provider to the Value Mediator."; // '" + ((TreeParent)selectedTreeParent).getName() + "'."
 					String mode = "addValueProvider";
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
 							new Shell(), 
@@ -462,7 +442,7 @@ public class ValueBindingsView extends ViewPart {
 							title, 
 							message, 
 							listOfAllowedMetaClassesNames,
-							(TreeParent)selectedTreeParent,
+							valueMediatorTreeItem,
 							viewer,
 							mode);
 					
@@ -472,15 +452,52 @@ public class ValueBindingsView extends ViewPart {
 		};
 		actionAssociateValueProvider.setText("Add Value Provider");
 		actionAssociateValueProvider.setToolTipText("Add Value Provider");
-//		actionAssociateValueProvider.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		actionAssociateValueProvider.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/addValueProviders.png"));
 
 		
 		
-		
-		actionAddValueMediator= new Action("actionValueMediator") {
+		actionAddValueMediator= new Action("actionAddValueMediator") {
 			public void run() {
-				showMessage("actionValueMediator is not implemented yet.");
+				CreateValueMediatorHandler h = new CreateValueMediatorHandler();
+				try {
+					EList<Element> createdElements = h.execute(null); // execute handler
+
+					// add tree item
+					if (createdElements instanceof EList) {
+						ISelection selection = viewer.getSelection();
+						Object parentItem = ((IStructuredSelection)selection).getFirstElement();
+						
+						for (Element createdElement : createdElements) {
+							if (parentItem instanceof TreeParent) {
+								TreeParent item  = new TreeParent( ((NamedElement)createdElement ).getName() );
+								item.setUmlElement((NamedElement)createdElement);
+								((TreeParent)parentItem).addChild(item);
+								viewer.add(parentItem, item);
+								
+								// add clients node
+								TreeParent clientsNode  = new TreeParent( Constants.valueClientsTitleName );
+								item.addChild(clientsNode);
+								viewer.add(item, clientsNode);
+								
+								// add providers node
+								TreeParent providersNode  = new TreeParent( Constants.valueProvidersTitleName );
+								item.addChild(providersNode);
+								viewer.add(item, providersNode);
+								
+								viewer.refresh();
+							}
+						}
+					}
+					else {
+						showMessage("Could not finish the action AddValueMediator ...");
+					}
+					
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					showMessage("Could not finish the action AddValueMediator ...");
+				}
+//				showMessage("actionValueMediator is not implemented yet.");
 			}
 		};
 		actionAddValueMediator.setText("Add Value Mediator");
@@ -496,10 +513,15 @@ public class ValueBindingsView extends ViewPart {
 					Object createdElement = h.execute(null);
 					if (createdElement instanceof NamedElement) {
 						ISelection selection = viewer.getSelection();
-						Object obj = ((IStructuredSelection)selection).getFirstElement();
-						TreeParent item  = new TreeParent( ((NamedElement)createdElement ).getName() );
-						item.setUmlElement((NamedElement)createdElement);
-						viewer.add(obj, item);
+						Object parentItem = ((IStructuredSelection)selection).getFirstElement();
+
+						if (parentItem instanceof TreeParent) {
+							TreeParent item  = new TreeParent( ((NamedElement)createdElement ).getName() );
+							item.setUmlElement((NamedElement)createdElement);
+							((TreeParent)parentItem).addChild(item);
+							viewer.add(parentItem, item);
+							viewer.refresh();
+						}
 					}
 					else {
 						showMessage("Could not finish the action AddValueMediatorContainer ...");
@@ -518,21 +540,109 @@ public class ValueBindingsView extends ViewPart {
 		actionAddValueMediatorContainer.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/valueMediatorsContainer.png"));
 
 		
+
 		
 		actionDeleteReference = new Action("actionDeleteReference") {
 			public void run() {
-				showMessage("actionDeleteReference is not implemented yet.");
+//				showMessage("actionDeleteReference is not implemented yet.");
+				
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				String name = "";
+				
+				if (obj instanceof TreeObject) {
+				
+					name = ((TreeObject)obj).getName();
+					String title = "Delete Element";
+					String message = "Are you sure you want to delete " + "'" + name + "'?" +
+							"\nThis action cannot be undone.";
+					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+
+					if (go) {
+						
+						final TreeParent valueMediator = getValueMediator((TreeObject)obj);
+						final EObject valueMediatorSteretypeApplication = valueMediator.getUmlElement().getStereotypeApplication(valueMediator.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator));
+						
+						TreeObject itemToBeDeleted = (TreeObject)obj;
+						Stereotype itemToBeDeletedStereotype = null;
+						String itemToBeDeletedStereotypePropertyName = null;
+
+						if ( itemToBeDeleted.isValueClient() ) {
+							itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient);
+							itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
+						} else if ( itemToBeDeleted.isValueProvider() ) {
+							itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider);
+							itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueProvider_providesValueFor;
+						}
+						
+						if ( itemToBeDeletedStereotype != null && itemToBeDeletedStereotypePropertyName != null) {
+							final Object exisitngList = itemToBeDeleted.getUmlElement().getValue(itemToBeDeletedStereotype, itemToBeDeletedStereotypePropertyName);
+							
+							if (exisitngList instanceof EList && containsObject((EList) exisitngList, valueMediator.getUmlElement())) {
+//								########## storing start
+								TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+								CompoundCommand cc = new CompoundCommand("Add value mediator reference");
+								Command command = new RecordingCommand(editingDomain) {
+									@Override
+									protected void doExecute() {
+											// Important: use the getStereotypeApplication to get an EObject! 
+											DynamicEObjectImpl eObject =(DynamicEObjectImpl)valueMediatorSteretypeApplication;
+											
+											// add value to the list
+											((EList)exisitngList).remove(eObject);
+									}
+								};
+								cc.append(command);
+								editingDomain.getCommandStack().execute(cc);
+							}
+						}
+						
+						TreeParent parent = itemToBeDeleted.getParent();
+						if (parent != null ) {
+							parent.removeChild(itemToBeDeleted);
+						}
+						viewer.remove(itemToBeDeleted);
+						viewer.refresh();
+					}
+				}
+
+				
 			}
 		};
 		actionDeleteReference.setText("Delete this reference");
 		actionDeleteReference.setToolTipText("Delete this reference");
-		actionDeleteReference.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_DELETE));
+		actionDeleteReference.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
 		
 
 		actionDeleteModelElement = new Action("actionDeleteModelElement") {
 			public void run() {
-				showMessage("actionDeleteModelElement is not implemented yet.");
+//				showMessage("actionDeleteModelElement is not implemented yet.");
+
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				String name = "";
+				if (obj instanceof TreeObject) {
+					name = ((TreeObject)obj).getName();
+					String title = "Delete Element";
+					String message = "Are you sure you want to delete " + "'" + name + "'?" +
+							"\nThis action cannot be undone.";
+					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+
+					if (go) {
+						DeleteCommandHandler h = new DeleteCommandHandler();
+						try {
+							// delete from the Papyrus UML model
+							// Note: this will lead to the deletion in the tree because of the a listener that reacts to the changes of Papyrus Model.
+							h.execute(null);
+//							}
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+							MessageDialog.openError(new Shell(), "Error", "Could not delete the element '" + name + "'.");
+//							showMessage("Could not finish the action DeleteModelElement ...");
+						}
+					}
+				}
 			}
 		};
 		actionDeleteModelElement.setText("Delete");
@@ -550,6 +660,7 @@ public class ValueBindingsView extends ViewPart {
 		};
 	}
 
+	
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -571,8 +682,71 @@ public class ValueBindingsView extends ViewPart {
 	
 	
 	
+	// #############################
+	private TreeParent getValueMediator(TreeObject item) {
+		if (item.isValueMediator()) {
+			return (TreeParent) item;
+		}
+		else if (item.getParent() != null) {
+			return getValueMediator(item.getParent());
+		}
+		return null;
+	}
 	
-	private HashSet<Object> findTreeItem(EObject selectedElement, TreeParent parent, HashSet<Object> list) {
+	private boolean containsObject(EList list, EObject eObject){
+		if (list instanceof EList) {
+			for (Object object : (EList)list) {
+				if (object instanceof EObject) {
+//					if (((EObject)object).eCrossReferences().get(0) == eObject) {
+					if (UMLUtil.getBaseElement((EObject)object) == eObject) {
+						return true;
+					}
+				}	
+			}
+		}
+		return false;
+	}
+	// #############################	
+	
+	
+	public void removeTreeItem(EObject object) {
+		TreeObject[] items = invisibleRoot.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			if ( ((TreeObject)items[i]).getUmlElement() != null && ((TreeObject)items[i]).getUmlElement() == object) {
+					TreeParent parent = ((TreeObject)items[i]).getParent();
+					if (parent != null) {
+						parent.removeChild((TreeObject) items[i]);
+					}
+					viewer.remove(items[i]);
+//					viewer.refresh();
+			}
+			else {
+				if (items[i] instanceof TreeParent) {
+					removeTreeItem((TreeParent)items[i], object);
+				}
+			}
+		}
+	}
+
+	
+	private void removeTreeItem(TreeParent parent, EObject object) {
+		TreeObject[] items = parent.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			if ( ((TreeObject)items[i]).getUmlElement() != null && ((TreeObject)items[i]).getUmlElement() == object) {
+				parent.removeChild((TreeObject) items[i]);
+				viewer.remove(items[i]);
+//				viewer.refresh();
+			}
+			else {
+				if (items[i] instanceof TreeParent) {
+					removeTreeItem((TreeParent)items[i], object);
+				}
+			}
+		}
+	}
+	
+	
+	private HashSet<Object> findTreeItems(EObject selectedElement, TreeParent parent, HashSet<Object> list) {
 		TreeObject[] items = parent.getChildren();
 		
 		for (int i = 0; i < items.length; i++) {
@@ -581,7 +755,7 @@ public class ValueBindingsView extends ViewPart {
 			}
 			else {
 				if (items[i] instanceof TreeParent) {
-					list.addAll(findTreeItem(selectedElement, (TreeParent)items[i], list));
+					list.addAll(findTreeItems(selectedElement, (TreeParent)items[i], list));
 				}
 			}
 		}
@@ -597,7 +771,7 @@ public class ValueBindingsView extends ViewPart {
 					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 				}
 				if ( selectedElement != null ) {
-					HashSet<Object> objects = findTreeItem(selectedElement, invisibleRoot, new HashSet<Object>());
+					HashSet<Object> objects = findTreeItems(selectedElement, invisibleRoot, new HashSet<Object>());
 					List<Object> items = new ArrayList<Object>();
 					items.addAll(objects);
 					viewer.setSelection(new StructuredSelection(items), true);
@@ -606,6 +780,7 @@ public class ValueBindingsView extends ViewPart {
 	    }
 	};
 	
+	@SuppressWarnings("unchecked")
 	private List<Object> getCurrentSelections() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if(selection instanceof IStructuredSelection) {
@@ -634,5 +809,15 @@ public class ValueBindingsView extends ViewPart {
 		}
 		return eObject;
 	}
+	
+	public TreeParent getTreeRoot(){
+		return this.invisibleRoot;
+	}
+
+	public TreeViewer getViewer(){
+		return this.viewer;
+	}
+
+	
 	
 }

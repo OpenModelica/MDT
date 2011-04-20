@@ -1,10 +1,12 @@
-package org.openmodelica.modelicaml.view.valuebindings.utls;
+package org.openmodelica.modelicaml.view.valuebindings.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
+import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
 
 public class TreeObject implements IAdaptable {
 	private String name;
@@ -16,6 +18,9 @@ public class TreeObject implements IAdaptable {
 		this.name = name;
 	}
 	public String getName() {
+		if (getUmlElement() instanceof NamedElement) {
+			return ((NamedElement)getUmlElement()).getName();
+		}
 		return name;
 	}
 	public void setParent(TreeParent parent) {
@@ -60,8 +65,22 @@ public class TreeObject implements IAdaptable {
 		return false;
 	}
 
+	public boolean isValueClientNode() {
+		if (getName().equals(Constants.valueClientsTitleName)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean isValueProvider() {
 		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isValueProviderNode() {
+		if (getName().equals(Constants.valueProvidersTitleName)) {
 			return true;
 		}
 		return false;
