@@ -345,4 +345,11 @@ See the full OSMC Public License conditions for more details.
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.openmodelica.modelicaml.view.valuebindings"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
