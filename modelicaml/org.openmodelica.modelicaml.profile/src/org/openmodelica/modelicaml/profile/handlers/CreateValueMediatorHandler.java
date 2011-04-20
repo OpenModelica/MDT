@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -88,6 +89,8 @@ public class CreateValueMediatorHandler extends AbstractHandler {
 	
 	/** The selected element. */
 private EObject selectedElement = null;
+private EList<Element> createdElements = new BasicEList<Element>();
+
 	
 	/**
 	 * Execute Command. Get the property from the selection, and apply the
@@ -99,10 +102,10 @@ private EObject selectedElement = null;
 	 * @throws ExecutionException
 	 *             the execution exception
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public EList<Element> execute(ExecutionEvent event) throws ExecutionException {
 		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
-		return null;
+		return createdElements;
 	}
 
 	/**
@@ -175,7 +178,8 @@ private EObject selectedElement = null;
 									MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML Testing profile is applied to the top-level model/package.");
 								}
 								else {
-									element.applyStereotype(stereotype);	
+									element.applyStereotype(stereotype);
+									createdElements.add(element);
 								}
 								//**************************************
 							}
@@ -194,7 +198,8 @@ private EObject selectedElement = null;
 							MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML Testing profile is applied to the top-level model/package.");
 						}
 						else {
-							element.applyStereotype(stereotype);	
+							element.applyStereotype(stereotype);
+							createdElements.add(element);
 						}
 						//**************************************
 					}
