@@ -202,342 +202,342 @@ public class Area51Projects
 	 */
 	private static void createModelicaProject() throws CoreException
 	{
-		/*
-		 * create the project
-		 */
-		
-		IModelicaProject mproj = 
-			ModelicaCore.getModelicaRoot().createProject(MODELICA_PROJECT_NAME);
-		Assert.assertNotNull("failed to create project", mproj);
-		
-		modelica_project = mproj.getWrappedProject();
-		
-		/*
-		 * populate with some packages
-		 */
-		IFolder folder, sub_folder;
-		IFile file;
-		String contents;
-		
-		/* root_folder */
-		folder = modelica_project.getFolder("root_folder");
-		folder.create(false, true, null);
-		
-		/* root_folder/hej_hopp */
-		file = folder.getFile("hej_hopp");
-		file.create(Utility.getByteStream("go morron!\n"), true, null);
-
-		/* packages_folder */
-		folder = modelica_project.getFolder("packages_folder");
-		folder.create(false, true, null);
-
-		/* packages_folder/file_package.mo */
-		file = folder.getFile("file_package.mo");
-		contents = 
-			"package file_package1\n" +
-			"    import Modelica;\n" +
-			"end file_package1;\n" +
-			"\n" +
-			"encapsulated package file_package2\n" +
-			"    import Modelica;\n" +
-			"end file_package2;";
-			
-		file.create(Utility.getByteStream(contents), true, null);
-				
-		/* packages_folder/folder_package */
-		folder = folder.getFolder("folder_package");
-		folder.create(false, true, null);
-
-		/* packages_folder/folder_package/package.mo */
-		file = folder.getFile("package.mo");
-		contents = 
-			"package folder_package\n" +
-			"    import Modelica;\n" +
-			"end folder_package;";
-		file.create(Utility.getByteStream(contents), true, null);
-				
-		/* package_look_alike */
-		folder = modelica_project.getFolder("package_look_alike");
-		folder.create(false, true, null);
-		
-		/* package_look_alike/package.mo */
-		file = folder.getFile("package.mo");
-		file.create(Utility.getByteStream(""), true, null);
-		
-		/* empty_folder */
-		folder = modelica_project.getFolder("empty_folder");
-		folder.create(false, true, null);		
-		
-		/* empty_file */
-		file = modelica_project.getFile("empty_file");
-		file.create(Utility.getByteStream(""), true, null);
-
-		/* root_model.mo */
-		file = modelica_project.getFile("root_model.mo");
-		contents = 
-			"encapsulated model root_model\n" +
-			"    import Modelica;\n" +
-			"end root_model;";
-		file.create(Utility.getByteStream(contents), true, null);
-
-		/* nested_models.mo */
-		file = modelica_project.getFile("nested_models.mo");
-		contents = 
-			"model nested_models\n" +
-			"    import Modelica;\n" +
-			"    record hepp end hepp;\n" +
-			"    class foo\n" +
-			"        class bar\n"+
-			"        end bar;" +
-			"    end foo;\n" +
-			"end nested_models;\n" +
-			"model muu\n" +
-			"Real a;\n" +
-			"equation\n"+
-			"    x = 10;\n"+
-			"end muu;\n"+
-			"\n"+
-			"model foo\n"+
-			"    import Modelica;\n"+
-			"end foo;\n" +
-			"\n\n" +
-			"record hej\n" +
-			"    package ine_paketen\n" +
-			"    end ine_paketen;\n" +
-			"    class hejhej\n" +
-			"        class foo\n" +
-			"        end foo;\n" +
-			"    end hejhej;\n" +
-			"end hej;\n" +
-			"\n\n\n" +
-			"package hepp\n" +
-			"    package hopp\n" +
-			"    end hopp;\n" +
-			"    class hehehe\n" +
-			"    end hehehe;\n" +
-			"end hepp;\n";
-			
-
-		file.create(Utility.getByteStream(contents), true, null);
-
-		/* broken_nested_models.mo */
-		file = modelica_project.getFile("broken_nested_models.mo");
-		contents = 
-			"model broken_nested_models\n" +
-			"    import Modelica;\n" +
-			"    record hepp end hepp;\n" +
-			"    class foo\n" +
-			"        class bar\n"+
-			"          Real a;\n"+
-			"          b;\n"+
-			"        equation\n" +
-			"          a = ;\n"+
-			"          b = c;\n" +
-			"          c := 0;\n" +
-			"        end bar;\n" +
-			"    algorithm\n"+
-			"      a = 0;\n" +
-			"      b := 3\n" +
-			"      c = 2;\n" +
-			"    end foo;\n" +
-			"end nested_models;\n" +
-			"\n"+
-			"model bruuken_muu\n" +
-			"Real a;\n" +
-			"equation\n"+
-			"    x = 10;\n"+
-			"end bruuken_muu;\n"+
-			"\n"+
-			"model foobared\n"+
-			"    import Modelica;\n"+
-			"end foobared;\n" +
-			"\n\n" +
-			"record broken_hej\n" +
-			"    package ine_paketen\n" +
-			"    end ine_paketen;\n" +
-			"    class hejhej\n" +
-			"        class foo\n" +
-			"        end foo;\n" +
-			"    end hejhej;\n" +
-			"end broken_hej;\n" +
-			"\n\n\n" +
-			"package broken_hepp\n" +
-			"    package hopp\n" +
-			"    end hopp;\n" +
-			"    class hehehe\n" +
-			"    end hehehe;\n" +
-			"end broken_hepp;\n";
-			
-
-		file.create(Utility.getByteStream(contents), true, null);
-				
-		/* component_model.mo */
-		file = modelica_project.getFile("component_model.mo");
-		contents = 
-			"model components_bananza\n" +
-			"    Real a_real \"with doc string\";\n" +
-			"    Real an_undocumented_real;\n" +
-			"    package a_package end a_package;\n" +
-			"    class a_class end a_class;\n" +
-			"    model a_model end a_model;\n" +
-			"    connector a_connector end a_connector;\n" +
-			"    record a_record end a_record;\n" +
-			"    block a_block end a_block;\n" +
-			"    function a_function end a_function;\n" +
-			"    type a_type end a_type;\n" +
-			"protected\n" +
-			"    Real a_protected_real;\n" +
-			"    Integer a_protected_integer \"with a comment\";\n" +
-			"equation\n" +
-			"    b = time;\n" +
-			"    der(a) = b;\n" +
-			"end components_bananza;";
-
-		file.create(Utility.getByteStream(contents), true, null);
-
-		/* import_rich_model.mo */
-		file = modelica_project.getFile("import_rich_model.mo");
-		contents = 
-			"model import_rich_model\n" +
-			"  // qualified imports\n" +
-			"  import Modelica;\n" +
-			"  // another qualified import\n" +
-			"  import Modelica.Math.sin;\n" +
-			"  // unqualified import\n" +
-			"  import Modelica.*;\n" +
-			"  // renaming import\n" +
-			"  import mm = Modelica.Math;\n" +
-			"\n" +
-			"  // import some local packages, defined in the same project\n" +
-			"  import foo = hepp;\n" +
-			"  import hepp.hopp;\n" +
-			"  import hepp.*;\n" +
-			"  //import root_package.root_package_model;\n" +
-			// importing the roo_package.root_package_model triggers a bug
-			// and couses a bunch of tests to fail
-			//TODO fix that bug and put back the import
-			//"  import root_package.root_package_model;\n" +
-			"\n" +
-			"  constant Real x;\n" +
-			"\n" +
-			"  class bar\n" +
-			"    // do some imports that are local to the class bar\n" +
-			"    import Modelica.SIunits;\n" +
-			"    import Modelica.Blocks;\n" +
-			"    import cp = childless_package;\n" +
-			"    Real y;\n" +
-			"  equation\n" +
-			"\n" +
-			"  // its easier to write this comment then to fix the bug\n" +
-			"  end bar;\n" +
-			"  // an encapsulated class for testing lookup scope encapsulation\n"+
-			"  encapsulated class foo\n" +
-			"    Real foo_local_var;\n" +
-			"\n" +
-			"  end foo;\n" +
-			"\n" +
-			"end import_rich_model;\n" +
-			" // an area outside of any class definitions";
-
-		file.create(Utility.getByteStream(contents), true, null);
-
-		
-		/* README.txt */
-		file = modelica_project.getFile("README.txt");
-		contents = 
-			"This is a dummy modelica project to run regression test on.\n" +
-			" tr�s bien !";
-		file.create(Utility.getByteStream(contents), true, null);
-				
-		/* root_package */
-		folder = modelica_project.getFolder("root_package");
-		folder.create(false, true, null);
-			
-		file = folder.getFile("package.mo");
-		contents = 
-			"package root_package\n" +
-			"\n" + 
-			"end root_package;\n";
-		file.create(Utility.getByteStream(contents), true, null);
-			
-		/* plain file inside root_package */
-		file = folder.getFile("plain_file");
-		file.create(Utility.getByteStream(""), true, null);
-			
-		/* a model inside the root_package */
-		file = folder.getFile("root_package_model.mo");
-		contents = 
-			"within root_package;\n" +
-			"\n" +
-			"model root_package_model\n" +
-			"\n" + 
-			"end root_package_model;\n";
-		file.create(Utility.getByteStream(contents), true, null);
-
-		/* a function inside the root_package */
-		file = folder.getFile("root_package_function.mo");
-		contents = 
-			"function root_package_function\n" +
-			"    input Real x;\n" +
-			"    output Real y;\n" +
-			"algorithm\n" +
-			"    y := 1 - x\n" +
-			"end root_package_function;\n";
-		file.create(Utility.getByteStream(contents), true, null);
-
-		/* a (non-package) folder inside the root_package */
-		sub_folder = folder.getFolder("root_package_folder");
-		sub_folder.create(false, true, null);
-			
-		/* root_package/sub_package */
-		folder = folder.getFolder("sub_package");
-		folder.create(false, true, null);
-			
-		/* root_package/sub_package/package.mo */
-		file = folder.getFile("package.mo");
-		contents = 
-			"within root_package;\n" +
-			"\n" +
-			"package sub_package\n" +
-			"\n" + 
-			"end sub_package;\n";
-		file.create(Utility.getByteStream(contents), true, null);
-			
-		/* root_package/sub_package/sub_package_model.mo */
-		file = folder.getFile("sub_package_model.mo");
-		contents =
-			"within root_package.sub_package;\n" +
-			"\n" +
-			"model sub_package_model\n" +
-			"\n" + 
-			"end sub_package_model;\n";
-		file.create(Utility.getByteStream(contents), true, null);
-
-
-		/* root_package/sub_package/leaf_package */
-		folder = folder.getFolder("leaf_package");
-		folder.create(false, true, null);
-
-		/* root_package/sub_package/leaf_package/package.mo */
-		file = folder.getFile("package.mo");
-		contents =
-			"within root_package.sub_package;\n" +
-			"\n" +
-			"encapsulated package leaf_package\n" +
-			"\n" + 
-			"end leaf_package;\n";
-		file.create(Utility.getByteStream(contents), true, null);
-			
-		/* childless_package */
-		folder = modelica_project.getFolder("childless_package");
-		folder.create(false, true, null);
-			
-		file = folder.getFile("package.mo");
-		contents = 
-			"encapsulated package childless_package\n" +
-			"\n" + 
-			"end childless_package;\n";
-		file.create(Utility.getByteStream(contents), true, null);
+//		/*
+//		 * create the project
+//		 */
+//		
+//		IModelicaProject mproj = 
+//			ModelicaCore.getModelicaRoot().createProject(MODELICA_PROJECT_NAME);
+//		Assert.assertNotNull("failed to create project", mproj);
+//		
+//		modelica_project = mproj.getWrappedProject();
+//		
+//		/*
+//		 * populate with some packages
+//		 */
+//		IFolder folder, sub_folder;
+//		IFile file;
+//		String contents;
+//		
+//		/* root_folder */
+//		folder = modelica_project.getFolder("root_folder");
+//		folder.create(false, true, null);
+//		
+//		/* root_folder/hej_hopp */
+//		file = folder.getFile("hej_hopp");
+//		file.create(Utility.getByteStream("go morron!\n"), true, null);
+//
+//		/* packages_folder */
+//		folder = modelica_project.getFolder("packages_folder");
+//		folder.create(false, true, null);
+//
+//		/* packages_folder/file_package.mo */
+//		file = folder.getFile("file_package.mo");
+//		contents = 
+//			"package file_package1\n" +
+//			"    import Modelica;\n" +
+//			"end file_package1;\n" +
+//			"\n" +
+//			"encapsulated package file_package2\n" +
+//			"    import Modelica;\n" +
+//			"end file_package2;";
+//			
+//		file.create(Utility.getByteStream(contents), true, null);
+//				
+//		/* packages_folder/folder_package */
+//		folder = folder.getFolder("folder_package");
+//		folder.create(false, true, null);
+//
+//		/* packages_folder/folder_package/package.mo */
+//		file = folder.getFile("package.mo");
+//		contents = 
+//			"package folder_package\n" +
+//			"    import Modelica;\n" +
+//			"end folder_package;";
+//		file.create(Utility.getByteStream(contents), true, null);
+//				
+//		/* package_look_alike */
+//		folder = modelica_project.getFolder("package_look_alike");
+//		folder.create(false, true, null);
+//		
+//		/* package_look_alike/package.mo */
+//		file = folder.getFile("package.mo");
+//		file.create(Utility.getByteStream(""), true, null);
+//		
+//		/* empty_folder */
+//		folder = modelica_project.getFolder("empty_folder");
+//		folder.create(false, true, null);		
+//		
+//		/* empty_file */
+//		file = modelica_project.getFile("empty_file");
+//		file.create(Utility.getByteStream(""), true, null);
+//
+//		/* root_model.mo */
+//		file = modelica_project.getFile("root_model.mo");
+//		contents = 
+//			"encapsulated model root_model\n" +
+//			"    import Modelica;\n" +
+//			"end root_model;";
+//		file.create(Utility.getByteStream(contents), true, null);
+//
+//		/* nested_models.mo */
+//		file = modelica_project.getFile("nested_models.mo");
+//		contents = 
+//			"model nested_models\n" +
+//			"    import Modelica;\n" +
+//			"    record hepp end hepp;\n" +
+//			"    class foo\n" +
+//			"        class bar\n"+
+//			"        end bar;" +
+//			"    end foo;\n" +
+//			"end nested_models;\n" +
+//			"model muu\n" +
+//			"Real a;\n" +
+//			"equation\n"+
+//			"    x = 10;\n"+
+//			"end muu;\n"+
+//			"\n"+
+//			"model foo\n"+
+//			"    import Modelica;\n"+
+//			"end foo;\n" +
+//			"\n\n" +
+//			"record hej\n" +
+//			"    package ine_paketen\n" +
+//			"    end ine_paketen;\n" +
+//			"    class hejhej\n" +
+//			"        class foo\n" +
+//			"        end foo;\n" +
+//			"    end hejhej;\n" +
+//			"end hej;\n" +
+//			"\n\n\n" +
+//			"package hepp\n" +
+//			"    package hopp\n" +
+//			"    end hopp;\n" +
+//			"    class hehehe\n" +
+//			"    end hehehe;\n" +
+//			"end hepp;\n";
+//			
+//
+//		file.create(Utility.getByteStream(contents), true, null);
+//
+//		/* broken_nested_models.mo */
+//		file = modelica_project.getFile("broken_nested_models.mo");
+//		contents = 
+//			"model broken_nested_models\n" +
+//			"    import Modelica;\n" +
+//			"    record hepp end hepp;\n" +
+//			"    class foo\n" +
+//			"        class bar\n"+
+//			"          Real a;\n"+
+//			"          b;\n"+
+//			"        equation\n" +
+//			"          a = ;\n"+
+//			"          b = c;\n" +
+//			"          c := 0;\n" +
+//			"        end bar;\n" +
+//			"    algorithm\n"+
+//			"      a = 0;\n" +
+//			"      b := 3\n" +
+//			"      c = 2;\n" +
+//			"    end foo;\n" +
+//			"end nested_models;\n" +
+//			"\n"+
+//			"model bruuken_muu\n" +
+//			"Real a;\n" +
+//			"equation\n"+
+//			"    x = 10;\n"+
+//			"end bruuken_muu;\n"+
+//			"\n"+
+//			"model foobared\n"+
+//			"    import Modelica;\n"+
+//			"end foobared;\n" +
+//			"\n\n" +
+//			"record broken_hej\n" +
+//			"    package ine_paketen\n" +
+//			"    end ine_paketen;\n" +
+//			"    class hejhej\n" +
+//			"        class foo\n" +
+//			"        end foo;\n" +
+//			"    end hejhej;\n" +
+//			"end broken_hej;\n" +
+//			"\n\n\n" +
+//			"package broken_hepp\n" +
+//			"    package hopp\n" +
+//			"    end hopp;\n" +
+//			"    class hehehe\n" +
+//			"    end hehehe;\n" +
+//			"end broken_hepp;\n";
+//			
+//
+//		file.create(Utility.getByteStream(contents), true, null);
+//				
+//		/* component_model.mo */
+//		file = modelica_project.getFile("component_model.mo");
+//		contents = 
+//			"model components_bananza\n" +
+//			"    Real a_real \"with doc string\";\n" +
+//			"    Real an_undocumented_real;\n" +
+//			"    package a_package end a_package;\n" +
+//			"    class a_class end a_class;\n" +
+//			"    model a_model end a_model;\n" +
+//			"    connector a_connector end a_connector;\n" +
+//			"    record a_record end a_record;\n" +
+//			"    block a_block end a_block;\n" +
+//			"    function a_function end a_function;\n" +
+//			"    type a_type end a_type;\n" +
+//			"protected\n" +
+//			"    Real a_protected_real;\n" +
+//			"    Integer a_protected_integer \"with a comment\";\n" +
+//			"equation\n" +
+//			"    b = time;\n" +
+//			"    der(a) = b;\n" +
+//			"end components_bananza;";
+//
+//		file.create(Utility.getByteStream(contents), true, null);
+//
+//		/* import_rich_model.mo */
+//		file = modelica_project.getFile("import_rich_model.mo");
+//		contents = 
+//			"model import_rich_model\n" +
+//			"  // qualified imports\n" +
+//			"  import Modelica;\n" +
+//			"  // another qualified import\n" +
+//			"  import Modelica.Math.sin;\n" +
+//			"  // unqualified import\n" +
+//			"  import Modelica.*;\n" +
+//			"  // renaming import\n" +
+//			"  import mm = Modelica.Math;\n" +
+//			"\n" +
+//			"  // import some local packages, defined in the same project\n" +
+//			"  import foo = hepp;\n" +
+//			"  import hepp.hopp;\n" +
+//			"  import hepp.*;\n" +
+//			"  //import root_package.root_package_model;\n" +
+//			// importing the roo_package.root_package_model triggers a bug
+//			// and couses a bunch of tests to fail
+//			//TODO fix that bug and put back the import
+//			//"  import root_package.root_package_model;\n" +
+//			"\n" +
+//			"  constant Real x;\n" +
+//			"\n" +
+//			"  class bar\n" +
+//			"    // do some imports that are local to the class bar\n" +
+//			"    import Modelica.SIunits;\n" +
+//			"    import Modelica.Blocks;\n" +
+//			"    import cp = childless_package;\n" +
+//			"    Real y;\n" +
+//			"  equation\n" +
+//			"\n" +
+//			"  // its easier to write this comment then to fix the bug\n" +
+//			"  end bar;\n" +
+//			"  // an encapsulated class for testing lookup scope encapsulation\n"+
+//			"  encapsulated class foo\n" +
+//			"    Real foo_local_var;\n" +
+//			"\n" +
+//			"  end foo;\n" +
+//			"\n" +
+//			"end import_rich_model;\n" +
+//			" // an area outside of any class definitions";
+//
+//		file.create(Utility.getByteStream(contents), true, null);
+//
+//		
+//		/* README.txt */
+//		file = modelica_project.getFile("README.txt");
+//		contents = 
+//			"This is a dummy modelica project to run regression test on.\n" +
+//			" tr�s bien !";
+//		file.create(Utility.getByteStream(contents), true, null);
+//				
+//		/* root_package */
+//		folder = modelica_project.getFolder("root_package");
+//		folder.create(false, true, null);
+//			
+//		file = folder.getFile("package.mo");
+//		contents = 
+//			"package root_package\n" +
+//			"\n" + 
+//			"end root_package;\n";
+//		file.create(Utility.getByteStream(contents), true, null);
+//			
+//		/* plain file inside root_package */
+//		file = folder.getFile("plain_file");
+//		file.create(Utility.getByteStream(""), true, null);
+//			
+//		/* a model inside the root_package */
+//		file = folder.getFile("root_package_model.mo");
+//		contents = 
+//			"within root_package;\n" +
+//			"\n" +
+//			"model root_package_model\n" +
+//			"\n" + 
+//			"end root_package_model;\n";
+//		file.create(Utility.getByteStream(contents), true, null);
+//
+//		/* a function inside the root_package */
+//		file = folder.getFile("root_package_function.mo");
+//		contents = 
+//			"function root_package_function\n" +
+//			"    input Real x;\n" +
+//			"    output Real y;\n" +
+//			"algorithm\n" +
+//			"    y := 1 - x\n" +
+//			"end root_package_function;\n";
+//		file.create(Utility.getByteStream(contents), true, null);
+//
+//		/* a (non-package) folder inside the root_package */
+//		sub_folder = folder.getFolder("root_package_folder");
+//		sub_folder.create(false, true, null);
+//			
+//		/* root_package/sub_package */
+//		folder = folder.getFolder("sub_package");
+//		folder.create(false, true, null);
+//			
+//		/* root_package/sub_package/package.mo */
+//		file = folder.getFile("package.mo");
+//		contents = 
+//			"within root_package;\n" +
+//			"\n" +
+//			"package sub_package\n" +
+//			"\n" + 
+//			"end sub_package;\n";
+//		file.create(Utility.getByteStream(contents), true, null);
+//			
+//		/* root_package/sub_package/sub_package_model.mo */
+//		file = folder.getFile("sub_package_model.mo");
+//		contents =
+//			"within root_package.sub_package;\n" +
+//			"\n" +
+//			"model sub_package_model\n" +
+//			"\n" + 
+//			"end sub_package_model;\n";
+//		file.create(Utility.getByteStream(contents), true, null);
+//
+//
+//		/* root_package/sub_package/leaf_package */
+//		folder = folder.getFolder("leaf_package");
+//		folder.create(false, true, null);
+//
+//		/* root_package/sub_package/leaf_package/package.mo */
+//		file = folder.getFile("package.mo");
+//		contents =
+//			"within root_package.sub_package;\n" +
+//			"\n" +
+//			"encapsulated package leaf_package\n" +
+//			"\n" + 
+//			"end leaf_package;\n";
+//		file.create(Utility.getByteStream(contents), true, null);
+//			
+//		/* childless_package */
+//		folder = modelica_project.getFolder("childless_package");
+//		folder.create(false, true, null);
+//			
+//		file = folder.getFile("package.mo");
+//		contents = 
+//			"encapsulated package childless_package\n" +
+//			"\n" + 
+//			"end childless_package;\n";
+//		file.create(Utility.getByteStream(contents), true, null);
 	}	
 }
 

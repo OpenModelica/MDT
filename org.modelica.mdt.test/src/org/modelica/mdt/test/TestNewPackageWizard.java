@@ -96,7 +96,7 @@ public class TestNewPackageWizard extends TestCase
 		if (!project.exists())
 		{
 			IModelicaProject mproj = 
-				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1);
+				ModelicaCore.getModelicaRoot().createProject(project);//PROJECT_NAME_1);
 			Assert.assertNotNull("failed to create project", mproj);
 			
 			project = mproj.getWrappedProject();

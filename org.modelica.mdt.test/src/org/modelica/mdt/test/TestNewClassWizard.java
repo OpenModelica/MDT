@@ -71,7 +71,7 @@ public class TestNewClassWizard extends TestCase
 	private static final String PROJECT_NAME_1 = 
 			TestNewClassWizard.class.getName() + "1";
 	
-	/* a project name that is garanteed to be nonexistent */
+	/* a project name that is guaranteed to be nonexistent */
 	private static final String NON_EXSITING_PROJECT_NAME = 
 		TestNewClassWizard.class.getName() + "non_existing_project";
 
@@ -107,7 +107,7 @@ public class TestNewClassWizard extends TestCase
 		if (!project.exists())
 		{
 			IModelicaProject mproj = 
-				ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1);
+				ModelicaCore.getModelicaRoot().createProject(project);//PROJECT_NAME_1);
 			Assert.assertNotNull("failed to create project", mproj);
 			
 			project = mproj.getWrappedProject();

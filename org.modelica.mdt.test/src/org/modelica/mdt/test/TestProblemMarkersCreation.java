@@ -167,15 +167,15 @@ public class TestProblemMarkersCreation extends TestCase
 	@Override
 	protected void setUp() throws CoreException
 	{
-		/*
-		 * setup project
-		 */
-		IModelicaProject mproj = 
-			ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1);
-		Assert.assertNotNull("failed to create project", mproj);
-		
-		project = mproj.getWrappedProject();
-		project.open(null);
+//		/*
+//		 * setup project
+//		 */
+//		IModelicaProject mproj = 
+//			ModelicaCore.getModelicaRoot().createProject(PROJECT_NAME_1);
+//		Assert.assertNotNull("failed to create project", mproj);
+//		
+//		project = mproj.getWrappedProject();
+//		project.open(null);
 	}
 	
 	public void testProblemMarkers() throws CoreException
