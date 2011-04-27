@@ -25,6 +25,7 @@ Eclipse-LazyStart: true
 Bundle-Vendor: Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University
 Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modelica.mdt.ui,org.modelica.mdt.debug.ui",
  org.modelica.mdt.ui.actions,
+ org.modelica.mdt.ui.assist,
  org.modelica.mdt.ui.console,
  org.modelica.mdt.ui.editor;x-friends:="org.modelica.mdt.test,org.modelica.mdt.debug.ui",
  org.modelica.mdt.ui.filters,
