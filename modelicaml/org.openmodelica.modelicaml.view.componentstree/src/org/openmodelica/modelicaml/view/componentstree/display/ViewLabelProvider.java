@@ -51,6 +51,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.uml2.uml.Port;
+import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.Signal;
 import org.eclipse.uml2.uml.State;
@@ -165,18 +166,21 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 				if (treeObject.getProperty() instanceof Port) {
 					cell.setImage(createImage("port.gif")); 	
 				}
-				else if (treeObject.getElement() != null) {
-					if (treeObject.getElement() instanceof Signal) {
+				else if (treeObject.getUmlElement() != null) {
+					if (treeObject.getUmlElement() instanceof Signal) {
 						cell.setImage(createImage("Signal.gif"));
 					}
-					else if (treeObject.getElement() instanceof StateMachine) {
+					else if (treeObject.getUmlElement() instanceof StateMachine) {
 						cell.setImage(createImage("StateMachine.gif"));
 					}
-					else if (treeObject.getElement() instanceof Region) {
+					else if (treeObject.getUmlElement() instanceof Region) {
 						cell.setImage(createImage("Region.gif"));
 					}
-					else if (treeObject.getElement() instanceof State) {
+					else if (treeObject.getUmlElement() instanceof State) {
 						cell.setImage(createImage("State.gif"));
+					}
+					else if (treeObject.getUmlElement() instanceof Property) {
+						cell.setImage(createImage("Property.gif"));
 					}
 				}
 				else {

@@ -7,10 +7,59 @@
       <view
             category="org.openmodelica.modelicaml.gen.modelica.category1"
             class="org.openmodelica.modelicaml.view.componentstree.display.ComponentsTree"
-            icon="icons/tree_co.gif"
+            icon="icons/tree.png"
             id="org.openmodelica.modelicaml.view.componentstree"
             name="Class Components Tree">
       </view>
    </extension>
-
+	<extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.openmodelica.modelicaml.view.componentstree"
+            labelProvider="org.openmodelica.modelicaml.view.componentstree.sections.LabelProviderDetails">
+         <propertyCategory
+               category="componentsTree"></propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="org.openmodelica.modelicaml.view.componentstree">
+         <propertyTab
+               category="componentsTree"
+               id="org.openmodelica.modelicaml.view.componentstree.properties.tab.details"
+               indented="true"
+               label="Details">
+         </propertyTab>
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.view.componentstree.properties.tab.details"
+               category="componentsTree"
+               id="org.openmodelica.modelicaml.view.componentstree.properties.tab.comments"
+               indented="true"
+               label="Comments">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="org.openmodelica.modelicaml.view.componentstree">
+         <propertySection
+               class="org.openmodelica.modelicaml.view.componentstree.sections.PropertySectionDetails"
+               id="org.openmodelica.modelicaml.view.componentstree.propertySection.details"
+               tab="org.openmodelica.modelicaml.view.componentstree.properties.tab.details">
+            <input
+                  type="org.openmodelica.modelicaml.common.instantiation.TreeObject">
+            </input>
+         </propertySection>
+         <propertySection
+               class="org.openmodelica.modelicaml.view.componentstree.sections.PropertySectionComments"
+               id="org.openmodelica.modelicaml.view.componentstree.propertySection.comments"
+               tab="org.openmodelica.modelicaml.view.componentstree.properties.tab.comments">
+            <input
+                  type="org.openmodelica.modelicaml.common.instantiation.TreeObject">
+            </input>
+         </propertySection>
+      </propertySections>
+   </extension>
 </plugin>

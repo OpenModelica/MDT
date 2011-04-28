@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -47,7 +47,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -56,44 +56,53 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
+import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
-import org.openmodelica.modelicaml.common.instantiation.ModificationsCollector;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
+import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentInformation;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
+import org.openmodelica.modelicaml.view.componentstree.utls.ResourceManager;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ComponentsTree.
  */
-public class ComponentsTree extends ViewPart {
+public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPageContributor  {
 
 	/** The viewer. */
 	private TreeViewer viewer;
@@ -148,7 +157,7 @@ public class ComponentsTree extends ViewPart {
 	/** The action link with editor. */
 	private Action actionLinkWithEditor;
 	
-	/** The action collaps all. */
+	/** The action collapse all. */
 	private Action actionCollapsAll;
 	
 	/** The action add to inputs. */
@@ -167,9 +176,6 @@ public class ComponentsTree extends ViewPart {
 	/** The selected class. */
 	private Class selectedClass = null;
 	
-	/** The action req test evaluation elements. */
-	private Action actionReqTestEvaluationElements;
-	
 	/** The action add req test evaluation elements. */
 	private Action actionAddReqTestEvaluationElements;
 	
@@ -187,13 +193,28 @@ public class ComponentsTree extends ViewPart {
 	
 	/** The action show state machines. */
 	private IAction actionShowStateMachines;
+
+	private Action actionReload;
 	
-	/**
-	 * The constructor.
-	 */
-	public ComponentsTree() {
-		
-	}
+	public static final String stereotypeQName_ModelicaClass = "ModelicaML::ModelicaClassConstructs::ModelicaClass";
+	public static final String stereotypeQName_Model = "ModelicaML::ModelicaClassConstructs::Model";
+	public static final String stereotypeQName_Block = "ModelicaML::ModelicaClassConstructs::Block";
+	public static final String stereotypeQName_Connector = "ModelicaML::ModelicaClassConstructs::Connector";
+	public static final String stereotypeQName_Record = "ModelicaML::ModelicaClassConstructs::Record";
+	public static final String stereotypeQName_Function = "ModelicaML::ModelicaClassConstructs::Function";
+	
+	public static final String stereotypeQName_CalculationModel = "ModelicaML::ModelicaClassConstructs::CalculationModel";
+	public static final String stereotypeQName_Requirement = "ModelicaML::ModelicaRequirementConstructs::Requirement";	
+	
+	public static final String stereotypeQName_Simulation = "ModelicaML::ModelicaSimulationConstructs::Simulation";
+	
+	
+//	/**
+//	 * The constructor.
+//	 */
+//	public ComponentsTree() {
+//		
+//	}
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -323,7 +344,7 @@ public class ComponentsTree extends ViewPart {
 					}
 				}
 
-				if (item.isInput() && item.getFinalModificationRightHand() == null ) { // if it is an input and has no modification.
+				if (isSimulation(selectedClass) && item.isInput() && item.getFinalModificationRightHand() == null ) { // if it is an input and has no modification.
 					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
 						manager.add(actionDeleteFromInputs);
 					}
@@ -331,18 +352,15 @@ public class ComponentsTree extends ViewPart {
 						manager.add(actionAddToInputs);	
 					}
 				}
-				else if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
+				else if (isSimulation(selectedClass) && ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
 					manager.add(actionDeleteFromInputs);
 				}
 				
-				
-				
-				
-				if ( ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDothPath(), false) ) {
+				if (isSimulation(selectedClass) &&  ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDothPath(), false) ) {
 					manager.add(actionDeleteFromOutputs);
 				}
 				else {
-					if (!item.isInput()) {
+					if (isSimulation(selectedClass) && !item.isInput()) {
 						manager.add(actionAddToOutputs);
 					}
 				}
@@ -351,23 +369,33 @@ public class ComponentsTree extends ViewPart {
 			if (!item.isRoot()) { // the root nodes shall not be located
 				
 //				showPathAction.setText("Show information about '" + item.getName() + "'");
-				showPathAction.setText("Show details");
-				manager.add(showPathAction); // valid for any item
-//				if (item.getProperty() != null ) {
-//					if ( !(item.getProperty().getOwner() instanceof PrimitiveType)) { // Modelica predefined types shall not be located 
-//						actionLocate.setText("Locate '" + item.getProperty().getName() + "' in Papyrus Outline View");
-//						manager.add(actionLocate);
-//						if ( item.getProperty().getType() != null ) {
-//							if (!(item.getProperty().getType() instanceof PrimitiveType)) { //Primitive types should not be located.
+//				showPathAction.setText("Show details");
+//				manager.add(showPathAction); // valid for any item
+				
+				if (item.getUmlElement() instanceof Property) {
+					if ( !(item.getProperty().getOwner() instanceof PrimitiveType)) { // Modelica predefined types shall not be located
+						
+//						actionLocate.setText("Locate '" + item.getProperty().getName() + "' in Papyrus");
+						manager.add(new Separator());
+						manager.add(actionLocate);
+						
+						if ( item.getProperty().getType() != null ) {
+							if (!(item.getProperty().getType() instanceof PrimitiveType)) { //Primitive types should not be located.
 //								actionLocateType.setText("Locate '" + item.getProperty().getType().getName() + "', the type of '" + item.getProperty().getName() + "', in Papyrus Outline View");
-//								manager.add(actionLocateType);
-//							}
-//						}
-//					}
-//				}	
+								manager.add(new Separator());
+								manager.add(actionLocateType);
+							}
+						}
+					}
+				}
+				else if (item.getUmlElement() instanceof NamedElement) {
+					manager.add(new Separator());
+					manager.add(actionLocate);
+				}
 			}
 
-			if (item.isRoot()) {
+			
+			if (item.isRoot() && isSimulation(selectedClass)) {
 				if (TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, false)) {
 					manager.add(actionDeleteReqTestEvaluationElements);
 				}
@@ -377,8 +405,6 @@ public class ComponentsTree extends ViewPart {
 			}
 		}
 		
-		
-		
 //		manager.add(new Separator());
 		//drillDownAdapter.addNavigationActions(manager);
 		// Other plug-ins can contribute there actions here
@@ -386,6 +412,14 @@ public class ComponentsTree extends ViewPart {
 		//manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
+	
+	private boolean isSimulation(Class aClass) {
+		if (aClass.getAppliedStereotype(stereotypeQName_Simulation) != null) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Fill local tool bar.
 	 * 
@@ -393,8 +427,11 @@ public class ComponentsTree extends ViewPart {
 	 *            the manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(actionLinkWithEditor);
+		manager.add(actionReload);
 		manager.add(actionCollapsAll);
+		manager.add(actionLinkWithEditor);
+		
+		manager.add(new Separator());
 		manager.add(actionShowAboutInfo);
 		//manager.add(new Separator());
 		//drillDownAdapter.addNavigationActions(manager);
@@ -404,6 +441,17 @@ public class ComponentsTree extends ViewPart {
 	 * Make actions.
 	 */
 	private void makeActions() {
+		
+		actionReload = new Action("actionReload") {
+			public void run() {
+				showSelection(par, sel);
+			}
+		};
+		actionReload.setText("(Re)load");
+		actionReload.setToolTipText("(Re)load");
+		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
+		
+		
 		showPathAction = new Action() {
 			public void run() 
 			{
@@ -428,8 +476,8 @@ public class ComponentsTree extends ViewPart {
 		actionShowAll = new Action("actionShowAll", 8) {
 			public void run() {
 				if (actionShowAll.isChecked()) {
+//					selectLastItem(); // TODO: does not work ...
 //					showSelection(par, sel);
-					//showMessage("Action 4 executed");
 				}
 			}
 		};
@@ -442,51 +490,34 @@ public class ComponentsTree extends ViewPart {
 		actionShowInputs = new Action("actionShowInputs", 8) {
 			public void run() {
 				if (actionShowInputs.isChecked()) {
-					Object[] list = viewer.getExpandedElements();
-					
+//					Object[] list = viewer.getExpandedElements();
 					viewer.addFilter(inputFilter);
-					
-					for (int i = 0; i < list.length; i++) {
-//						System.err.println(list[i]);
-						viewer.expandToLevel(list[i], 0); // TODO: does not work. no idea why ...
-					}
-//					viewer.setExpandedElements(list);
-//					viewer.refresh(list);
-					
+//					viewer.setSelection(new StructuredSelection(list), true);
+//					selectLastItem(); // TODO: does not work
 					viewer.expandToLevel(2);
+//					
+//					for (int i = 0; i < list.length; i++) {
+////						System.err.println(list[i]);
+//						viewer.expandToLevel(list[i], 0); // TODO: does not work. no idea why ...
+//					}
+////					viewer.setExpandedElements(list);
+////					viewer.refresh(list);
 					
-					//showSelection(par, sel);
+//					showSelection(par, sel);
 				}
 				else {
+//					Object[] list = viewer.getExpandedElements();
 					viewer.removeFilter(inputFilter);
+//					viewer.setSelection(new StructuredSelection(list), true);
 					viewer.expandToLevel(2);
+					
+//					System.err.println(lastSelectedItem);
+//					viewer.expandToLevel(lastSelectedItem, 1);
+					
+//					showSelection(par, sel);
+//					selectLastItem(); // TODO: does not work ...
 				}
 			}
-
-//			private void markLastSelectedItem(Object item) {
-//				if (item instanceof TreeParent) {
-//					TreeObject[] contents = ((TreeParent)item).getChildren();
-//					for (Object content : contents) {//checks with my over rided equals method
-//						if (content instanceof TreeParent && ((TreeParent)content).getDothPath().equals(lastSelectedDotPath) ) {
-//							//expand the particular child
-////							viewer.expandToLevel(content, 1);
-//							 viewer.setExpandedState(content, true);
-//				             viewer.refresh(content, false);
-//						}
-//						else {
-//							
-//							if (content instanceof TreeParent) {
-//								TreeObject[] children = ((TreeParent)content).getChildren();
-//								for (int i = 0; i < children.length; i++) {
-//									markLastSelectedItem(children[i]);	
-//								}
-//							}
-//						}
-//					}  
-//				}
-//			}
-			
-			
 		};
 		actionShowInputs.setText("Show only input variables");
 		actionShowInputs.setToolTipText("Action 2 tooltip");
@@ -526,103 +557,78 @@ public class ComponentsTree extends ViewPart {
 		
 		
 		actionLocate = new Action(){
-		public void run() 
-		{
-			ISelection selection = viewer.getSelection();
-			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			if (obj instanceof TreeParent) {
-				TreeParent item = ( (TreeParent)obj);
-				Element selectedObject = item.getProperty();
-				
-				// Find element in Outline
-				if(selectedObject!=null){
-					//if ( !(selectedObject.getOwner() instanceof PrimitiveType)) { // filter out the predefined Modelica predefined type attributes that are defined using UML PrimitiveTypes Propoerties
-//					ModelExplorerPageBookView modelExplorerPageBookView = (ModelExplorerPageBookView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(EXPLORER_ID);	
+			public void run() {
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
 
-					//}
-				}
-				else {
-					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-					MessageDialog.openInformation(shell, "Information:", "Open the project in papyrus editor");
+				ModelExplorerPageBookView modelExplorerPageBookView = null;
+				if (view instanceof ModelExplorerPageBookView) {
+					modelExplorerPageBookView = (ModelExplorerPageBookView)view;
 				}
 				
+				if (modelExplorerPageBookView != null) {
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					if (obj instanceof TreeObject ) {
+						Object object = ((TreeObject)obj).getAdapter(EObject.class);
+						if (object instanceof EObject) {
+							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+							List<Object> items = new ArrayList<Object>();
+							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+							modelExplorerView.setSelection(new StructuredSelection(items), true);
+						}
+					}
+				}
 			}
-		}
-	};	
-	actionLocate.setText("Locate in Papyrus Outline View");
-	actionLocate.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
-
-		
-		
-//		actionLocate = new Action(){
-//			public void run() 
-//			{
-//				ISelection selection = viewer.getSelection();
-//				Object obj = ((IStructuredSelection) selection).getFirstElement();
-//				if (obj instanceof TreeParent) {
-//					TreeParent item = ( (TreeParent)obj);
-//					Element selectedObject = item.getProperty();
-//					MultiDiagramEditor editor = PapyrusPlugin.getPapyrusEditor();
-//					TreeOutlinePage outline = (TreeOutlinePage) editor.getAdapter(IContentOutlinePage.class);
-//					//TODO see ExtendedMarkersView openMarkerInEditor() ..
-//
-//					// Find element in Outline
-//					if(selectedObject!=null){
-//						//if ( !(selectedObject.getOwner() instanceof PrimitiveType)) { // filter out the predefined Modelica predefined type attributes that are defined using UML PrimitiveTypes Propoerties
-//							CommonTreeEditPart ctep = outline.expandToElement(selectedObject);
-//							if (ctep != null) {
-//								// Set selection on the TreeEditPart that matches the selection
-//								ctep.getViewer().select(ctep);
-//							}
-//						//}
-//					}
-//					else {
-//						Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-//						MessageDialog.openInformation(shell, "Information:", "Open the project in papyrus editor");
-//					}
-//					
-//				}
-//			}
-//		};	
-//		actionLocate.setText("Locate in Papyrus Outline View");
+		};	
+		actionLocate.setText("Locate component");
+		actionLocate.setToolTipText("Locate component in Papyrus Model Explorer");
+		actionLocate.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
 //		actionLocate.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 //		
-//		actionLocateType = new Action(){
-//			public void run() 
-//			{
-//				ISelection selection = viewer.getSelection();
-//				Object obj = ((IStructuredSelection) selection).getFirstElement();
-//				if (obj instanceof TreeParent) {
-//					TreeParent item = ( (TreeParent)obj);
-//					Property p = item.getProperty();
-//					if (p!=null) {
-//						Type t = p.getType();
-//						if (t != null) {
-//							Element selectedObject = t;
-//							MultiDiagramEditor editor = PapyrusPlugin.getPapyrusEditor();
-//							TreeOutlinePage outline = (TreeOutlinePage) editor.getAdapter(IContentOutlinePage.class);
-//
-//							// Find element in Outline
-//							if(selectedObject != null){
-//								if ( !(t instanceof PrimitiveType)) { // filter out the predefined Modelica predefined type attributes that are defined using UML PrimitiveTypes Propoerties
-//									CommonTreeEditPart ctep = outline.expandToElement(selectedObject);
-//									if (ctep != null) {
-//										// Set selection on the TreeEditPart that matches the selection
-//										ctep.getViewer().select(ctep);
-//									}
-//								}
-//							}
-//							else {
-//								Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-//								MessageDialog.openError(shell, "Error:", "Cannot locate the element in Papyrus Outline.");
-//							}
-//
-//						}
-//					}					
-//				}
-//			}
-//		};	
-//		actionLocateType.setText("Locate component type in Papyrus Outline View");
+		actionLocateType = new Action(){
+			public void run() {
+				
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+
+				ModelExplorerPageBookView modelExplorerPageBookView = null;
+				if (view instanceof ModelExplorerPageBookView) {
+					modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+				   }
+				
+				if (modelExplorerPageBookView != null) {
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					if (obj instanceof TreeObject ) {
+						TreeParent item = ( (TreeParent)obj);
+						Property property = item.getProperty();
+						if (property != null) {
+							Type type = property.getType();
+							if (type != null && !(type instanceof PrimitiveType)) {
+								Object object = type;
+								if (object instanceof EObject) {
+									CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+									List<Object> items = new ArrayList<Object>();
+									items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+									modelExplorerView.setSelection(new StructuredSelection(items), true);
+								}
+							}
+							else {
+								Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+								if (type == null) {
+									MessageDialog.openError(shell, "Error:", "No type is defined for " +  item.getName() + ".");	
+								}
+								else {
+									MessageDialog.openError(shell, "Error:", "Primitive Types cannot be located.");
+								}
+							}
+						}
+					}
+				}
+			}
+		};	
+		actionLocateType.setText("Locate the component type");
+		actionLocateType.setToolTipText("Locate in Papyrus Model Explorer");
+		actionLocateType.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
 //		actionLocateType.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 		
 		
@@ -814,10 +820,8 @@ public class ComponentsTree extends ViewPart {
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
-					//TODO: call method addToInpuits ...
 					String rightHandModificationValue = ModificationManager.addToClassInputs(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath());
 					showMessage("Confirmation", "'" + item.getName() + "' was included into the '_inputs' component of '" + selectedClass.getName() + "'");
-					//showSelection(par, sel); // TODO: refresh properly ...
 //					System.err.println("item.getFinalModificationRightHand(): " + item.getFinalModificationRightHand());
 //					System.err.println("item.getFinalModificationLeftHand(): " + item.getFinalModificationLeftHand());
 					item.setFinalModificationRightHand(rightHandModificationValue);
@@ -839,10 +843,8 @@ public class ComponentsTree extends ViewPart {
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
-					//TODO: destroy all objects and references that are related to class "_inputs"
 					ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), true);
 					showMessage("Confirmation", "'" + item.getName() + "' was deleted from the '_inputs' component of '" + selectedClass.getName() + "'");
-					//showSelection(par, sel); // TODO: refresh properly ...
 					item.setFinalModificationRightHand(null);
 					item.setFinalModificationSource(null);
 					updateItem(item);
@@ -865,7 +867,6 @@ public class ComponentsTree extends ViewPart {
 					TreeParent item = ( (TreeParent)obj);
 					ModificationManager.addToClassOutputs(selectedClass, item.getProperty(), item.getDothPath());
 					showMessage("Confirmation", "'" + item.getName() + "' was included into the '_outputs' component of '" + selectedClass.getName() + "'");
-					//showSelection(par, sel); // TODO: refresh properly ...
 					updateItem(item);
 				}
 			}
@@ -906,7 +907,6 @@ public class ComponentsTree extends ViewPart {
 				if (obj instanceof TreeParent) {
 					//TestPassFailCodeGenerator t = new TestPassFailCodeGenerator(selectedClass);
 					TestOracleElementsCreator t = new TestOracleElementsCreator(selectedClass);
-					//showSelection(par, sel); // TODO: refresh properly ...
 					updateItem(obj);
 				}
 			}
@@ -923,7 +923,6 @@ public class ComponentsTree extends ViewPart {
 				if (obj instanceof TreeParent) {
 					//TestPassFailCodeGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
 					TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
-					//showSelection(par, sel); // TODO: refresh properly ...
 					updateItem(obj);
 				}
 			}
@@ -977,34 +976,12 @@ public class ComponentsTree extends ViewPart {
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				showPathAction.run();
+//				showPathAction.run();
 			}
 		});
 	}
 
 	
-	
-	private TreeObject lastSelectedItem = null;
-	private String lastSelectedDotPath = null;
-	
-	private void hookSelectionChangedAction() {
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-//				System.err.println("Previous item was " + lastSelectedItem );
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				if (obj instanceof TreeParent) {
-					lastSelectedItem = (TreeObject)obj;
-					lastSelectedDotPath = ((TreeObject)obj).getDothPath();
-				}
-			}
-		});
-	}
-	
-	
-
 	
 	
 	// ############################### FILTERS 
@@ -1033,7 +1010,6 @@ public class ComponentsTree extends ViewPart {
 	}
 	InputFilter inputFilter = new InputFilter();
 	
-
 
 	class OutputFilter extends ViewerFilter {
 		@Override
@@ -1101,18 +1077,47 @@ public class ComponentsTree extends ViewPart {
 
 	// the listener we register with the selection service
 	/** The listener. */
+	
 	private ISelectionListener listener = new ISelectionListener() {
-		public void selectionChanged(IWorkbenchPart sourcepart,
-				ISelection selection) {
+		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 			// we ignore our own selections
 			if (sourcepart != ComponentsTree.this) {
-				if (actionLinkWithEditor.isChecked()) {
-					showSelection(sourcepart, selection);
+				EObject selectedElement = null;
+	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+				}
+				if (selectedElement instanceof Element) {
+					if (actionLinkWithEditor.isChecked()) {
+						showSelection(sourcepart, selection);
+						viewer.expandToLevel(2);
+					}
 				}
 			}
 		}
 	};
 
+	
+	
+	private TreeObject lastSelectedItem = null;
+//	private String lastSelectedDotPath = null;
+	
+	private void hookSelectionChangedAction() {
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+//				System.err.println("Previous item was " + lastSelectedItem );
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof TreeParent) {
+					lastSelectedItem = (TreeObject)obj;
+//					lastSelectedDotPath = ((TreeObject)obj).getDothPath();
+				}
+			}
+		});
+	}
+	
+	
 	/**
 	 * Shows the given selection in this view.
 	 * 
@@ -1126,6 +1131,12 @@ public class ComponentsTree extends ViewPart {
 		par = sourcepart;
 		viewer.setInput(getViewSite());
 		viewer.setAutoExpandLevel(2);
+	}
+	
+	private void selectLastItem(){ // Does not work because we ignore our own selection ...
+		List<Object> items = new ArrayList<Object>();
+		items.add(lastSelectedItem);
+		viewer.setSelection(new StructuredSelection(items), true);
 	}
 
 //	private void showItems(Object[] items) {
@@ -1145,8 +1156,7 @@ public class ComponentsTree extends ViewPart {
 	/* (non-Javadoc)
  * @see org.eclipse.ui.part.WorkbenchPart#dispose()
  */
-	public void dispose() 
-	{
+	public void dispose() {
 		// important: We need do unregister our listener when the view is
 		// disposed
 		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(listener);
@@ -1156,8 +1166,7 @@ public class ComponentsTree extends ViewPart {
 	/**
 	 * The Class ViewContentProvider.
 	 */
-	class ViewContentProvider implements IStructuredContentProvider,ITreeContentProvider 
-	{
+	class ViewContentProvider implements IStructuredContentProvider,ITreeContentProvider {
 		
 		/** The invisible root. */
 		private TreeParent invisibleRoot;
@@ -1182,7 +1191,6 @@ public class ComponentsTree extends ViewPart {
 				invisibleRoot = null;
 				initialize();
 				return getChildren(invisibleRoot);
-				//return getChildren(visualizedTree);
 			}
 			return getChildren(parent);
 		}
@@ -1223,21 +1231,24 @@ public class ComponentsTree extends ViewPart {
 
 			if (sel != null) {
 				if (sel instanceof IStructuredSelection) {
-					Object first = ((IStructuredSelection) sel).getFirstElement();
+//					Object first = ((IStructuredSelection) sel).getFirstElement();
 					EObject selectedElement = null;
-					// TODO: Find the right meta class for ModelElementItem
-					if (first instanceof ModelElementItem) {
-						selectedElement = ((ModelElementItem)first).getEObject();
+		        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+						selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 					}
-					else if (first instanceof IUMLEditPart) {
-						selectedElement = ((IUMLEditPart)first).getUMLElement();
-					}
+					
+//					// TODO: Find the right meta class for ModelElementItem
+//					if (first instanceof ModelElementItem) {
+//						selectedElement = ((ModelElementItem)first).getEObject();
+//					}
+//					else if (first instanceof IUMLEditPart) {
+//						selectedElement = ((IUMLEditPart)first).getUMLElement();
+//					}
 					
 //					if (first instanceof IUMLElementEditPart<?>) {
 //						first = ((IUMLElementEditPart<?>) first).getUmlElement();
 //						
 //					}
-					//Class selectedClass = null;
 					
 //					if (first instanceof Property) {
 //						Type type = ((Property)first).getType();
@@ -1290,29 +1301,69 @@ public class ComponentsTree extends ViewPart {
 		 *            the selected class
 		 */
 		public void createTree(Class selectedClass){
-			if (selectedClass != null && !(selectedClass instanceof Behavior) ) {
+			if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
+				
 				ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked());
 
-//				if (actionShowInputs.isChecked()) {
-//					ast.createInputsTree();
-//					invisibleRoot = ast.getInvisibleRoot();
-//					root = ast.getTreeRoot();
-//				}
-//				else if (actionShowOutputs.isChecked()) {
-//					ast.createOutputsTree();
-//					invisibleRoot = ast.getInvisibleRoot();
-//					root = ast.getTreeRoot();
-//				}
-//				else {
-//					ast.createTree();
-//					invisibleRoot = ast.getInvisibleRoot();
-//					root = ast.getTreeRoot();
-//				}
-				
 				ast.createTree();
 				invisibleRoot = ast.getInvisibleRoot();
 				root = ast.getTreeRoot();
 			}
 		}
+	}
+
+	private boolean isValid(Class aClass){
+		if (aClass.getAppliedStereotype(stereotypeQName_ModelicaClass) != null) { return true; }
+		if (aClass.getAppliedStereotype(stereotypeQName_Model) != null) { return true; }
+		if (aClass.getAppliedStereotype(stereotypeQName_Block) != null) { return true; }
+		
+//		if (aClass.getAppliedStereotype(stereotypeQName_Connector) != null) { return true; }
+//		if (aClass.getAppliedStereotype(stereotypeQName_Record) != null) { return true; }
+//		if (aClass.getAppliedStereotype(stereotypeQName_Function) != null) { return true; }
+
+		if (aClass.getAppliedStereotype(stereotypeQName_CalculationModel) != null) { return true; }
+		if (aClass.getAppliedStereotype(stereotypeQName_Requirement) != null) { return true; }
+		
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Object> getCurrentSelections() {
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+		if(selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+			return structuredSelection.toList();
+		}
+		return null;
+	}
+	
+	
+	protected EObject adaptSelectedElement( Object selection) {
+		EObject eObject = null;
+		if(selection != null) {
+			
+			if(selection instanceof IAdaptable) {
+				selection = ((IAdaptable)selection).getAdapter(EObject.class);
+			}
+			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
+			if(businessObject instanceof EObject) {
+				eObject = (EObject)businessObject;
+			}
+		}
+		return eObject;
+	}
+	
+	
+    @SuppressWarnings("rawtypes")
+	public Object getAdapter(java.lang.Class adapter) {
+        if (adapter == IPropertySheetPage.class){
+            return new TabbedPropertySheetPage(this);        	
+        }
+        return super.getAdapter(adapter);
+    }
+
+	@Override
+	public String getContributorId() {
+		return getSite().getId();
 	}
 }

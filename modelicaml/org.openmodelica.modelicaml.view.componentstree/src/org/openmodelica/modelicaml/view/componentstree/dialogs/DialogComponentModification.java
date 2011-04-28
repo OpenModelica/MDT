@@ -376,7 +376,7 @@ public class DialogComponentModification extends Dialog {
 			}
 		});
 		
-		addValueProviderButton = createButton(parent, 1, "Find Linked Variables" + " (" + linkedVariablesList.size() + ")", true);
+		addValueProviderButton = createButton(parent, 1, "Find Value Providers" + " (" + linkedVariablesList.size() + ")", true);
 		addValueProviderButton.addListener(3, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
