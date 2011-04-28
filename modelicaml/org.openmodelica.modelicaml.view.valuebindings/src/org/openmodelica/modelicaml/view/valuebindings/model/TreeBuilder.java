@@ -17,7 +17,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Package;
-import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
+import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
 
 
 public class TreeBuilder {

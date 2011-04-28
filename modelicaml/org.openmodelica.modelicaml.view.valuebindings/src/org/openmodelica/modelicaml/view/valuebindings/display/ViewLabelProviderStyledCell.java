@@ -22,9 +22,9 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
+import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
-import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
@@ -183,7 +183,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			
 			else if (((TreeObject)obj).isValueClient() || ((TreeObject)obj).isValueProvider()) {
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/variable.png"));
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Property.gif"));	
+				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/Property.gif"));	
 			}
 			else if ( ((TreeObject)obj).getName().equals(Constants.valueClientsTitleName) ) {
 				cell.setImage(decorateImage( obj , "/icons/addValueClient.png" ));
@@ -194,7 +194,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
 			else {
-				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/reload.png"));
+				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/reload.png"));
 			}
 		}
 		else {

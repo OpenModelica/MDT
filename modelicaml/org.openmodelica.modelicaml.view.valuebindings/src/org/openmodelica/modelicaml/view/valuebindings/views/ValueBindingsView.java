@@ -11,6 +11,7 @@ import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
+import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -41,48 +42,31 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorHandler;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorsContainerHandler;
+import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.view.valuebindings.display.ViewLabelProviderStyledCell;
 import org.openmodelica.modelicaml.view.valuebindings.handlers.DeleteCommandHandler;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
-import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.utls.ResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
-import org.eclipse.emf.transaction.RecordingCommand;
-/**
- * This sample class demonstrates how to plug-in a new
- * workbench view. The view shows data obtained from the
- * model. The sample creates a dummy model on the fly,
- * but a real implementation would connect to the model
- * available either in this or another plug-in (e.g. the workspace).
- * The view is connected to the model using a content provider.
- * <p>
- * The view uses a label provider to define how model
- * objects should be presented in the view. Each
- * view can present the same model objects using
- * different labels and icons, if needed. Alternatively,
- * a single label provider can be shared between views
- * in order to ensure that objects of the same type are
- * presented in the same way everywhere.
- * <p>
- */
-
-public class ValueBindingsView extends ViewPart {
+public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetPageContributor, IAdaptable {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -543,6 +527,7 @@ public class ValueBindingsView extends ViewPart {
 
 		
 		actionDeleteReference = new Action("actionDeleteReference") {
+			@SuppressWarnings("rawtypes")
 			public void run() {
 //				showMessage("actionDeleteReference is not implemented yet.");
 				
@@ -553,7 +538,7 @@ public class ValueBindingsView extends ViewPart {
 				if (obj instanceof TreeObject) {
 				
 					name = ((TreeObject)obj).getName();
-					String title = "Delete Element";
+					String title = "Delete Reference";
 					String message = "Are you sure you want to delete " + "'" + name + "'?" +
 							"\nThis action cannot be undone.";
 					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
@@ -653,9 +638,9 @@ public class ValueBindingsView extends ViewPart {
 		
 		doubleClickAction = new Action() {
 			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click action for " + obj.toString() + " is not implemented yet.");
+//				ISelection selection = viewer.getSelection();
+//				Object obj = ((IStructuredSelection)selection).getFirstElement();
+//				showMessage("Double-click action for " + obj.toString() + " is not implemented yet.");
 			}
 		};
 	}
@@ -818,6 +803,19 @@ public class ValueBindingsView extends ViewPart {
 		return this.viewer;
 	}
 
+	@Override
+	public String getContributorId() {
+		 return getSite().getId();
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+    public Object getAdapter(java.lang.Class adapter) {
+        if (adapter == IPropertySheetPage.class) {
+        	return new TabbedPropertySheetPage(this);
+        }
+        return super.getAdapter(adapter);
+    }
 	
 	
 }

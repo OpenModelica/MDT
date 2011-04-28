@@ -43,5 +43,42 @@
             realization="org.openmodelica.modelicaml.view.valuebindings.listeners.PapyrusListener">
       </listener>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView"
+            labelProvider="org.openmodelica.modelicaml.view.valuebindings.sections.DetailLabelProvider">
+         <propertyCategory
+               category="org.eclipse.papyrus.modelicaml"></propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView">
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.modelicaml"
+               category="org.eclipse.papyrus.modelicaml"
+               id="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details"
+               indented="true"
+               label="Details">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView">
+         <propertySection
+               class="org.openmodelica.modelicaml.view.valuebindings.sections.PropertySectionDetails"
+               id="org.openmodelica.modelicaml.view.valuebindings.propertySection.details"
+               tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details">
+            <input
+                  type="org.openmodelica.modelicaml.view.valuebindings.model.TreeObject">
+            </input>
+         </propertySection>
+      </propertySections>
+   </extension>
 
 </plugin>

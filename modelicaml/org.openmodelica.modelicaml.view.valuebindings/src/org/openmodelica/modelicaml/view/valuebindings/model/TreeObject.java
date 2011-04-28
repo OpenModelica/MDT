@@ -6,7 +6,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
-import org.openmodelica.modelicaml.view.valuebindings.properties.Constants;
+import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
 
 public class TreeObject implements IAdaptable {
 	private String name;
@@ -93,9 +93,21 @@ public class TreeObject implements IAdaptable {
 		return false;
 	}
 	
+	public boolean isModel() {
+		if (getUmlElement() != null && getUmlElement() instanceof Model ) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 	public Object getAdapter(java.lang.Class adapter) {
+		
 		if (adapter == EObject.class) {
 			return getUmlElement();
+		}
+		if (adapter == TreeObject.class) {
+			return this;
 		}
 		return null;
 	}
