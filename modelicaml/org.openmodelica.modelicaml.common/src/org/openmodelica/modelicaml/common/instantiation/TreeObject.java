@@ -36,6 +36,7 @@ package org.openmodelica.modelicaml.common.instantiation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
@@ -231,8 +232,14 @@ public class TreeObject implements IAdaptable {
 	 * 
 	 * @return the element
 	 */
-	public NamedElement getElement(){
-		return this.element;
+//	public NamedElement getElement(){
+//		return this.element;
+//	}
+	
+	public Element getUmlElement(){
+		if (this.property != null ) { return this.property; }
+		if (this.element != null ) { return this.element; }
+		return null;
 	}
 	
 //	/**
@@ -788,6 +795,12 @@ public class TreeObject implements IAdaptable {
 	 */
 	@Override
 	public Object getAdapter(java.lang.Class adapter) {
+		if (adapter == EObject.class) {
+			return getUmlElement();
+		}
+		if (adapter == TreeObject.class) {
+			return this;
+		}
 		// TODO Auto-generated method stub
 		return null;
 	}
