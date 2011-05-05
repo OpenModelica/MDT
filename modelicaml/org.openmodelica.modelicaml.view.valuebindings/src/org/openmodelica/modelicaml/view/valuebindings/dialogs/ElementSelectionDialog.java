@@ -33,10 +33,10 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.util.UMLUtil;
-import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
+import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
-import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 public class ElementSelectionDialog extends Dialog {
 	private Shell sShell = null; 
@@ -255,7 +255,7 @@ public class ElementSelectionDialog extends Dialog {
 					
 					TreeObject[] children = valueMediatorTreeItem.getChildren();
 					for (int i = 0; i < children.length; i++) {
-						if (mode.equals("addValueClient") && children[i].getName().equals(Constants.valueClientsTitleName)) {
+						if (mode.equals("addValueClient") && children[i].isValueClientsNode() ) {
 							
 //							TreeParent titleNode = new TreeParent( Constants.valueClientsTitleName );
 //							selectedTreeParent.addChild(titleNode);
@@ -267,7 +267,7 @@ public class ElementSelectionDialog extends Dialog {
 //							viewer.add(titleNode, item);							
 							viewer.add(children[i], item);
 						}
-						else if (mode.equals("addValueProvider") && children[i].getName().equals(Constants.valueProvidersTitleName)) {
+						else if (mode.equals("addValueProvider") && children[i].isValueProvidersNode()) {
 //							TreeParent titleNode = new TreeParent( Constants.valueProvidersTitleName );
 //							selectedTreeParent.addChild(titleNode);
 //							titleNode.addChild(item);

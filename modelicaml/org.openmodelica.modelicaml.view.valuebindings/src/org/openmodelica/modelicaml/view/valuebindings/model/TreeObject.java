@@ -6,12 +6,13 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
-import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 public class TreeObject implements IAdaptable {
 	private String name;
 	private TreeParent parent;
 	private Element umlElement;
+	private boolean isReadOnly = false;
 	
 	
 	public TreeObject(String name) {
@@ -65,8 +66,15 @@ public class TreeObject implements IAdaptable {
 		return false;
 	}
 
-	public boolean isValueClientNode() {
-		if (getName().equals(Constants.valueClientsTitleName)) {
+	public boolean isValueClientsNode() {
+		if (getName().equals(Constants.valueClientsNodeName)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isValueMediatorsNode() {
+		if (getName().equals(Constants.valueMediatorsNodeName)) {
 			return true;
 		}
 		return false;
@@ -79,8 +87,8 @@ public class TreeObject implements IAdaptable {
 		return false;
 	}
 	
-	public boolean isValueProviderNode() {
-		if (getName().equals(Constants.valueProvidersTitleName)) {
+	public boolean isValueProvidersNode() {
+		if (getName().equals(Constants.valueProvidersNodeName)) {
 			return true;
 		}
 		return false;
@@ -110,5 +118,11 @@ public class TreeObject implements IAdaptable {
 			return this;
 		}
 		return null;
+	}
+	public void setReadOnly(boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
+	}
+	public boolean isReadOnly() {
+		return isReadOnly;
 	}
 }

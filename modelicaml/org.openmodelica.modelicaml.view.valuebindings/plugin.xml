@@ -58,11 +58,15 @@
       <propertyTabs
             contributorId="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView">
          <propertyTab
-               afterTab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.modelicaml"
                category="org.eclipse.papyrus.modelicaml"
                id="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details"
-               indented="true"
                label="Details">
+         </propertyTab>
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details"
+               category="org.eclipse.papyrus.modelicaml"
+               id="org.openmodelica.modelicaml.view.valuebindings.properties.tab.operation"
+               label="Operation">
          </propertyTab>
       </propertyTabs>
    </extension>
@@ -74,6 +78,15 @@
                class="org.openmodelica.modelicaml.view.valuebindings.sections.PropertySectionDetails"
                id="org.openmodelica.modelicaml.view.valuebindings.propertySection.details"
                tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details">
+            <input
+                  type="org.openmodelica.modelicaml.view.valuebindings.model.TreeObject">
+            </input>
+         </propertySection>
+         <propertySection
+               class="org.openmodelica.modelicaml.view.valuebindings.sections.PropertySectionOperation"
+               filter="org.openmodelica.modelicaml.view.valuebindings.filters.PropertySectionFilter_Operation"
+               id="org.openmodelica.modelicaml.view.valuebindings.propertySection.operation"
+               tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.operation">
             <input
                   type="org.openmodelica.modelicaml.view.valuebindings.model.TreeObject">
             </input>

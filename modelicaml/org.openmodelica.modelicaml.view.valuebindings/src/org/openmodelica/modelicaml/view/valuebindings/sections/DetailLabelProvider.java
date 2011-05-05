@@ -6,9 +6,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
-import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 
 public class DetailLabelProvider implements ILabelProvider {
@@ -56,10 +56,10 @@ public class DetailLabelProvider implements ILabelProvider {
 		    else if (item.isValueMediator()) {
 		    	return SWTResourceManager.getImage(Activator.class, "/icons/valueMediator.png");
 			}
-		    else if (item.isValueClientNode()) {
+		    else if (item.isValueClientsNode()) {
 		    	return SWTResourceManager.getImage(Activator.class, "/icons/addValueClient.png");
 			}
-		    else if (item.isValueProviderNode()) {
+		    else if (item.isValueProvidersNode()) {
 		    	return SWTResourceManager.getImage(Activator.class, "/icons/addValueProviders.png");
 			}
 		    else if (item.isValueClient() || item.isValueProvider()) {

@@ -10,10 +10,9 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.Package;
-import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
-import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 
 public class ViewLabelProvider extends LabelProvider {
@@ -46,7 +45,7 @@ public class ViewLabelProvider extends LabelProvider {
 		if (item instanceof TreeParent) {
 			TreeObject[] chidren = ((TreeParent)item).getChildren();
 			for (int i = 0; i < chidren.length; i++) {
-				if (chidren[i].getName().equals(Constants.valueClientsTitleName)) {
+				if (chidren[i].isValueClientsNode()) {
 					if (chidren[i] instanceof TreeParent) {
 						return ((TreeParent)chidren[i]).getChildren().length;
 					}
@@ -61,7 +60,7 @@ public class ViewLabelProvider extends LabelProvider {
 		if (item instanceof TreeParent) {
 			TreeObject[] chidren = ((TreeParent)item).getChildren();
 			for (int i = 0; i < chidren.length; i++) {
-				if (chidren[i].getName().equals(Constants.valueProvidersTitleName)) {
+				if (chidren[i].isValueProvidersNode()) {
 					if (chidren[i] instanceof TreeParent) {
 						return ((TreeParent)chidren[i]).getChildren().length;
 					}
@@ -85,10 +84,10 @@ public class ViewLabelProvider extends LabelProvider {
 				return SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Property.gif");	
 			}
 			
-			if ( ((TreeObject)obj).getName().equals(Constants.valueClientsTitleName) ) {
+			if ( ((TreeObject)obj).isValueClientsNode() ) {
 				return SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueClient.png");
 			}
-			if ( ((TreeObject)obj).getName().equals(Constants.valueProvidersTitleName) ) {
+			if ( ((TreeObject)obj).isValueProvidersNode() ) {
 				return SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png");
 			}
 			if ( obj instanceof TreeParent && ((TreeParent)obj).getUmlElement() instanceof Model) {

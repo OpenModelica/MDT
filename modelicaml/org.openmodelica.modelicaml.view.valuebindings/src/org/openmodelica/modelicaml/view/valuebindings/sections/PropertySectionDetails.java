@@ -29,8 +29,8 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
-import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 public class PropertySectionDetails extends AbstractPropertySection {
 
@@ -95,7 +95,7 @@ public class PropertySectionDetails extends AbstractPropertySection {
     public void refresh() {
 
     	boolean typeTextVisibility = item.isValueClient() || item.isValueMediator() || item.isValueProvider();
-    	boolean ownerTextVisibility = !item.isValueClientNode() && !item.isValueProviderNode() && item.getUmlElement() != null &&  item.getUmlElement().getOwner() instanceof NamedElement;
+    	boolean ownerTextVisibility = !item.isValueClientsNode() && !item.isValueProvidersNode() && item.getUmlElement() != null &&  item.getUmlElement().getOwner() instanceof NamedElement;
 		
     	lblType.setVisible(typeTextVisibility);
 		textType.setVisible(typeTextVisibility);

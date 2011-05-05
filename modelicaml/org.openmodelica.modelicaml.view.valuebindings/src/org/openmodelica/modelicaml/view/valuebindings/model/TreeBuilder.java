@@ -1,5 +1,6 @@
 package org.openmodelica.modelicaml.view.valuebindings.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,7 +18,8 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Package;
-import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
+import org.eclipse.uml2.uml.util.UMLUtil;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 
 public class TreeBuilder {
@@ -108,39 +110,146 @@ public class TreeBuilder {
 				valueBindingsContainer.addChild(item);
 
 				// add clients
-				TreeParent valueClientsTitle = new TreeParent(Constants.valueClientsTitleName);
+				TreeParent valueClientsTitle = new TreeParent(Constants.valueClientsNodeName);
 				item.addChild(valueClientsTitle);
 				
 				HashSet<Element> listOfClients = valueMediatorToValueClients.get(property);
 				if (listOfClients != null ) {
 					for (Element element : listOfClients) {
 						if (element instanceof Property) {
-//							TreeParent valueClientItem = new TreeParent(((Property)element).getName());
-							TreeObject valueClientItem = new TreeObject (((Property)element).getName());
-							valueClientItem.setUmlElement(element); // set the reference to the UML model
+							TreeParent valueClientItem = new TreeParent(((Property)element).getName());
+//							TreeObject valueClientItem = new TreeObject (((Property)element).getName());
+							valueClientItem.setUmlElement(element); // set the reference to the UML model element
 							valueClientsTitle.addChild(valueClientItem); 
+							
+							// adds cyclic tree nodes, i.e. adds a to a client its mediator nodes followed by providers, and vice versa
+							addReadOnlyNodes(valueClientItem); 
 						}
 					}
 				}
 				
 				// add providers
-				TreeParent valueProvidersTitle = new TreeParent(Constants.valueProvidersTitleName);
+				TreeParent valueProvidersTitle = new TreeParent(Constants.valueProvidersNodeName);
 				item.addChild(valueProvidersTitle);
 
 				HashSet<Element> listOfProviders = valueMediatorToValueProviders.get(property);
 				if (listOfProviders != null ) {
 					for (Element element : listOfProviders) {
 						if (element instanceof Property) {
-//							TreeParent valueProviderItem = new TreeParent(((Property)element).getName());
-							TreeObject valueProviderItem = new TreeObject(((Property)element).getName());
-							valueProviderItem.setUmlElement(element); // set the reference to the UML model
+							TreeParent valueProviderItem = new TreeParent(((Property)element).getName());
+//							TreeObject valueProviderItem = new TreeObject(((Property)element).getName());
+							valueProviderItem.setUmlElement(element); // set the reference to the UML model element
 							valueProvidersTitle.addChild(valueProviderItem); 
+							
+							// adds cyclic tree nodes, i.e. adds a to a client its mediator nodes followed by providers, and vice versa
+							addReadOnlyNodes(valueProviderItem); 
 						}
 					}
 				}
 			}
 		}
 	}
+	
+	// ###################### READ-ONLY nodes
+	
+	private void addReadOnlyNodes(TreeParent item){
+		Element element = item.getUmlElement();
+		if (element != null) {
+			List<Element> list = new ArrayList<Element>();
+			if (item.isValueClient()) {
+				list = getValueMediators(element, Constants.stereotypeQName_ValueClient, Constants.stereotypeQName_ValueClient_obtainsValueFrom);
+			}
+			if (item.isValueProvider()) {
+				list = getValueMediators(element, Constants.stereotypeQName_ValueProvider, Constants.stereotypeQName_ValueProvider_providesValueFor);
+			}
+
+//			List<Element> list = getValueMediators(element, Constants.stereotypeQName_ValueClient, Constants.stereotypeQName_ValueClient_obtainsValueFrom);
+			int numberOfMediators  = list.size();
+			
+			if (numberOfMediators > 0) { // if there are mediators at all.
+				// create mediators node
+//				TreeParent mediatorsNode = new TreeParent("subscribed to " + numberOfMediators + " mediators");
+				TreeParent mediatorsNode = new TreeParent(Constants.valueMediatorsNodeName);
+				mediatorsNode.setReadOnly(true);
+				item.addChild(mediatorsNode);
+				
+				// add mediators
+				for (Element valueMediator : list) {
+					TreeParent mediator = new TreeParent(((NamedElement)valueMediator).getName() );
+					mediator.setUmlElement(valueMediator);
+					mediator.setReadOnly(true); // this is only for reading, not for editing.
+					mediatorsNode.addChild(mediator);
+					
+					// add providers
+					if (item.isValueClient()) {
+
+						TreeParent valueProvidersTitle = new TreeParent(Constants.valueProvidersNodeName);
+						valueProvidersTitle.setReadOnly(true);
+						
+						mediator.addChild(valueProvidersTitle);
+
+						HashSet<Element> listOfProviders = valueMediatorToValueProviders.get(valueMediator);
+						if (listOfProviders != null ) {
+							for (Element valueProvider : listOfProviders) {
+								if (element instanceof Property) {
+									TreeParent valueProviderItem = new TreeParent(((Property)element).getName());
+//									TreeObject valueProviderItem = new TreeObject(((Property)element).getName());
+									valueProviderItem.setUmlElement(valueProvider); // set the reference to the UML model element
+									valueProviderItem.setReadOnly(true);
+									valueProvidersTitle.addChild(valueProviderItem); 
+								}
+							}
+						}
+					}
+					
+					// add clients
+					if (item.isValueProvider()) {
+						
+						TreeParent valueClientsTitle = new TreeParent(Constants.valueClientsNodeName);
+						valueClientsTitle.setReadOnly(true);
+						
+						mediator.addChild(valueClientsTitle);
+
+						HashSet<Element> listOfClients = valueMediatorToValueClients.get(valueMediator);
+						if (listOfClients != null ) {
+							for (Element valueClient : listOfClients) {
+								if (element instanceof Property) {
+									TreeParent valueClientItem = new TreeParent(((Property)element).getName());
+//									TreeObject valueClientItem = new TreeObject(((Property)element).getName());
+									valueClientItem.setUmlElement(valueClient); // set the reference to the UML model element
+									valueClientItem.setReadOnly(true);
+									valueClientsTitle.addChild(valueClientItem); 
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	private List<Element> getValueMediators(Element element, String stereotypeQName, String propertyName){
+		List<Element> list = new ArrayList<Element>();
+		
+		Stereotype stereotype = element.getAppliedStereotype(stereotypeQName);
+		Object listOfMediators = element.getValue(stereotype, propertyName);
+		if (listOfMediators instanceof List) {
+			for (Object mediator : (List)listOfMediators) {
+				if (mediator instanceof EObject) {
+					list.add(UMLUtil.getBaseElement((EObject)mediator));
+				}
+			}
+		}
+		return list;
+	}
+	
+	// ###################### READ-ONLY nodes END 
+	
+	
+	
 	
 	public void collectElementsFromModel(){
 		UmlModel papyrusModel = UmlUtils.getUmlModel();
@@ -153,7 +262,6 @@ public class TreeBuilder {
 //				e.printStackTrace();
 			}
 		}
-		
 		if (umlModel != null) {
 			Iterator<EObject> i = umlModel.eAllContents();
 			while (i.hasNext()) {

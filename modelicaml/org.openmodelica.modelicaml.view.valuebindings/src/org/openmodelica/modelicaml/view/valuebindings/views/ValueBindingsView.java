@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.TreeRouter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -21,12 +22,15 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -54,17 +58,17 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.util.UMLUtil;
+import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorHandler;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorsContainerHandler;
-import org.openmodelica.modelicaml.view.valuebindings.constants.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.view.valuebindings.display.ViewLabelProviderStyledCell;
 import org.openmodelica.modelicaml.view.valuebindings.handlers.DeleteCommandHandler;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
-import org.openmodelica.modelicaml.view.valuebindings.utls.ResourceManager;
-import org.openmodelica.modelicaml.view.valuebindings.utls.SWTResourceManager;
 
 public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetPageContributor, IAdaptable {
 
@@ -88,14 +92,13 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 	private Action actionAddValueMediator;
 	private Action actionAddValueMediatorContainer;
-	private Action actionCollapsAll;
+	private Action actionCollapseAll;
 	private Action actionDeleteModelElement;
 	private Action actionLocateInPapyrusModelExplorer;
 	
 	private TreeParent invisibleRoot = null;
 	public TreeBuilder tree = new TreeBuilder();
 
-	
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 
@@ -127,11 +130,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				return ((TreeParent)parent).hasChildren();
 			return false;
 		}
-/*
- * We will set up a dummy model to initialize tree heararchy.
- * In a real code, you will connect to a real model and
- * expose its hierarchy.
- */
+
 		private void initialize() {
 			// add the selection listener
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
@@ -144,12 +143,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	
 //	class NameSorter extends ViewerSorter {
 //	}
-//
-//	/**
-//	 * The constructor.
-//	 */
-//	public ValueBindingsView() {
-//	}
+
 
 	/**
 	 * This is a callback that will allow us
@@ -173,6 +167,19 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 		// add a selection provider.
 		getSite().setSelectionProvider(viewer);
+
+		// double click for opening/closing the sub tree
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(final OpenEvent event) {
+				Object firstElement = ((IStructuredSelection)
+				event.getSelection()).getFirstElement();
+				if (viewer.getExpandedState(firstElement)) {
+					viewer.collapseToLevel(firstElement, AbstractTreeViewer.ALL_LEVELS);
+				} else {
+					viewer.expandToLevel(firstElement, 1);
+				}
+				}
+			});
 	}
 
 	private void hookContextMenu() {
@@ -204,8 +211,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		ISelection selection = viewer.getSelection();
 		Object selectedTreeObject = ((IStructuredSelection)selection).getFirstElement();
 		if (selectedTreeObject instanceof TreeObject) {
+			TreeObject item = ((TreeObject)selectedTreeObject);
 			
-			if (((TreeObject)selectedTreeObject).isPackage()) {
+			if (item.isPackage()) {
 //				actionAddValueMediatorContainer.setText("Add Value Mediator Container to '" + ((TreeObject)selectedTreeObject).getName() + "'");
 				actionAddValueMediatorContainer.setText("Add Value Mediator Container");
 				manager.add(actionAddValueMediatorContainer);
@@ -217,7 +225,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				manager.add(new Separator());
 				manager.add(actionLocateInPapyrusModelExplorer);
 			}
-			else if (((TreeObject)selectedTreeObject).isValueMediatorContainer()) {
+			else if (item.isValueMediatorContainer()) {
 //				actionAddValueMediator.setText("Add Value Mediator to '" + ((TreeObject)selectedTreeObject).getName() + "'");
 				actionAddValueMediator.setText("Add Value Mediator");
 				manager.add(actionAddValueMediator);
@@ -229,49 +237,58 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				manager.add(new Separator());
 				manager.add(actionLocateInPapyrusModelExplorer);
 			}
-			else if (((TreeObject)selectedTreeObject).isValueMediator()) {
-//				actionAssociateValueClient.setText("Add Value Client to '" + ((TreeObject)selectedTreeObject).getName() + "'");
-				actionAssociateValueClient.setText("Add Value Client");
-				manager.add(actionAssociateValueClient);
-				
-//				actionAssociateValueProvider.setText("Add Value Provider to '" + ((TreeObject)selectedTreeObject).getName() + "'");
-				actionAssociateValueProvider.setText("Add Value Provider");
-				manager.add(actionAssociateValueProvider);
-				
-//				manager.add(new Separator());
-//				actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName());
-//				manager.add(actionDeleteModelElement);
-				
-				manager.add(new Separator());
-				manager.add(actionLocateInPapyrusModelExplorer);
-			}
-			else if ( ((TreeObject)selectedTreeObject).isValueClient() || ((TreeObject)selectedTreeObject).isValueProvider()) {
-				actionDeleteReference.setText("Delete the reference to \"" + ((TreeObject)selectedTreeObject).getParent().getParent().getName() + "\"");
-				manager.add(actionDeleteReference);
+			else if (item.isValueMediator()) {
+				if ( !item.isReadOnly() ) { // read only items shall not be modified
+//					actionAssociateValueClient.setText("Add Value Client to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+					actionAssociateValueClient.setText("Add Value Client");
+					manager.add(actionAssociateValueClient);
+					
+//					actionAssociateValueProvider.setText("Add Value Provider to '" + ((TreeObject)selectedTreeObject).getName() + "'");
+					actionAssociateValueProvider.setText("Add Value Provider");
+					manager.add(actionAssociateValueProvider);
+					
+//					manager.add(new Separator());
+//					actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName());
+//					manager.add(actionDeleteModelElement);
+				}
 				
 				manager.add(new Separator());
 				manager.add(actionLocateInPapyrusModelExplorer);
 			}
-			else if (((TreeObject)selectedTreeObject).isValueClientNode()) {
-				actionAssociateValueClient.setText("Add Value Client");
-				manager.add(actionAssociateValueClient);
+			else if ( item.isValueClient() || item.isValueProvider()) {
+				if ( !item.isReadOnly() ) { // read only items shall not be modified
+					actionDeleteReference.setText("Delete the reference to \"" + ((TreeObject)selectedTreeObject).getParent().getParent().getName() + "\"");
+					manager.add(actionDeleteReference);
+				}
+				
+				manager.add(new Separator());
+				manager.add(actionLocateInPapyrusModelExplorer);
 			}
-			else if (((TreeObject)selectedTreeObject).isValueProviderNode()) {
-				actionAssociateValueProvider.setText("Add Value Provider");
-				manager.add(actionAssociateValueProvider);
+			else if (item.isValueClientsNode()) {
+				if ( !item.isReadOnly() ) { // read only items shall not be modified
+					actionAssociateValueClient.setText("Add Value Client");
+					manager.add(actionAssociateValueClient);
+				}
+			}
+			else if (item.isValueProvidersNode()) {
+				if ( !item.isReadOnly() ) { // read only items shall not be modified
+					actionAssociateValueProvider.setText("Add Value Provider");
+					manager.add(actionAssociateValueProvider);
+				}
+			}
+			
+			if (item.isValueMediatorContainer() || item.isValueMediator() ) {
+				if ( !item.isReadOnly() ) { // read only items shall not be modified
+					manager.add(new Separator());
+//					actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName() + "'");
+					actionDeleteModelElement.setText("Delete");
+					manager.add(actionDeleteModelElement);
+				}
 			}
 		}
 
 //		manager.add(new Separator());
 //		drillDownAdapter.addNavigationActions(manager);
-		
-		if (((TreeObject)selectedTreeObject).isValueMediatorContainer() || ((TreeObject)selectedTreeObject).isValueMediator()) {
-			
-			manager.add(new Separator());
-//			actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName() + "'");
-			actionDeleteModelElement.setText("Delete");
-			manager.add(actionDeleteModelElement);
-		}
 		
 		// Other plug-ins can contribute there actions here
 //		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -281,7 +298,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 //		manager.add(actionAssociateValueClient);
 //		manager.add(actionAssociateValueProvider);
 		manager.add(actionReload);
-		manager.add(actionCollapsAll);
+		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
 		manager.add(new Separator());
 		
@@ -340,16 +357,20 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		
-		actionCollapsAll = new Action("actionCollapsAll") { //obviously a check box style
+		
+		actionCollapseAll = new Action("actionCollapseAll") { //obviously a check box style
 			public void run() {
-				actionReload.run();
-//				viewer.setInput(getViewSite());
-//				viewer.expandToLevel(1);
+//				actionReload.run();
+				TreeObject[] children = invisibleRoot.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					viewer.collapseToLevel(children[i], AbstractTreeViewer.ALL_LEVELS);
+//					viewer.collapseToLevel(children[i], 1); // collapse current element in the tree
+				}
 			}
 		};
-		actionCollapsAll.setText("Collaps all");
-		actionCollapsAll.setToolTipText("Collaps all");
-		actionCollapsAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
+		actionCollapseAll.setText("Collapse all");
+		actionCollapseAll.setToolTipText("Collapse all");
+		actionCollapseAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 
 		
 		
@@ -366,7 +387,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		
 		
 		
-		actionAssociateValueClient = new Action() {
+		actionAssociateValueClient = new Action("actionAssociateValueClient") {
 			public void run() {
 //				showMessage("actionAssociateValueClient is not implemented yet.");
 				
@@ -404,7 +425,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		
 		
 		
-		actionAssociateValueProvider = new Action() {
+		actionAssociateValueProvider = new Action("actionAssociateValueProvider") {
 			public void run() {
 //				showMessage("actionAssociateValueProvider is not implemented yet.");
 				
@@ -459,12 +480,12 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 								viewer.add(parentItem, item);
 								
 								// add clients node
-								TreeParent clientsNode  = new TreeParent( Constants.valueClientsTitleName );
+								TreeParent clientsNode  = new TreeParent( Constants.valueClientsNodeName );
 								item.addChild(clientsNode);
 								viewer.add(item, clientsNode);
 								
 								// add providers node
-								TreeParent providersNode  = new TreeParent( Constants.valueProvidersTitleName );
+								TreeParent providersNode  = new TreeParent( Constants.valueProvidersNodeName );
 								item.addChild(providersNode);
 								viewer.add(item, providersNode);
 								
