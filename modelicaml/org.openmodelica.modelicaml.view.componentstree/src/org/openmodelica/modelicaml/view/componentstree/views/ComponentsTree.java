@@ -371,7 +371,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					}
 				}
 
-				if (isSimulation(selectedClass) && item.isInput() && item.getFinalModificationRightHand() == null ) { // if it is an input and has no modification.
+//				if ( isSimulation(selectedClass) && item.isInput() && item.getFinalModificationRightHand() == null ) { // if it is an input and has no modification.
+				if ( isSimulation(selectedClass) && item.isInput() ) { // if it is an input
 					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), false)) {
 						manager.add(actionDeleteFromInputs);
 					}
