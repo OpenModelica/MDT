@@ -358,7 +358,10 @@ public class TreeObject implements IAdaptable {
 	 * @return the declaration
 	 */
 	public String getDeclaration(){
-		return this.declaration;
+		if (this.declaration != null && !this.declaration.trim().equals("")) {
+			return this.declaration;	
+		}
+		return null;
 	}
 	
 //	/**
@@ -553,7 +556,7 @@ public class TreeObject implements IAdaptable {
 	 * 
 	 * @return the doth path
 	 */
-	public String getDothPath(){ //TODO: refactor in order to correct the typo
+	public String getDotPath(){ 
 		return this.dotPath;
 	}
 	

@@ -602,7 +602,7 @@ public class ModificationManager {
 				protected void doExecute() {
 					p.applyStereotype(pStereotype);
 					//set causality
-					p.setValue(pStereotype, StereotypePropertyName_causality, StereotypePropertyName_causality_output);				}
+				}
 			};
 			cc.append(command);
 			editingDomain.getCommandStack().execute(cc);
