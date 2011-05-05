@@ -407,6 +407,7 @@ public class ModelicaMLContentAssist {
 	 */
 	private static void addPredefinedVariablesToList(){
 		variablesList.add("time"); 
+		variablesList.add("i"); // used for iterations in e.g. marco expansions.
 	}
 	
 	/**
@@ -446,7 +447,6 @@ public class ModelicaMLContentAssist {
 		predefinedFunctionsList.add("semiLinear");
 		predefinedFunctionsList.add("Subtask.decouple");
 		
-		
 		predefinedFunctionsList.add("initial");
 		predefinedFunctionsList.add("terminal");
 		predefinedFunctionsList.add("noEvent");
@@ -460,6 +460,18 @@ public class ModelicaMLContentAssist {
 		predefinedFunctionsList.add("terminate");
 		predefinedFunctionsList.add("assert");
 		
+		//Reduction Functions and Operators (see Modelica spec. 3.2)
+		predefinedFunctionsList.add("min");
+		predefinedFunctionsList.add("max");
+		predefinedFunctionsList.add("sum");
+		predefinedFunctionsList.add("product");
+		
+		
+		// ModelicaML specific: used for Value Provider
+		predefinedFunctionsList.add("getOwnPath");
+
+		// ModelicaML specific: used for Value Cleints and Mediators
+		predefinedFunctionsList.add("getResult");
 	}
 	
 
