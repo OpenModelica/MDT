@@ -28,10 +28,10 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
-import org.eclipse.wb.swt.SWTResourceManager;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 
 
@@ -228,10 +228,10 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 				ArrayList<String> list = reqClassInstantiations.get(children[i].getComponentType());
 				if (list == null) {
 					list = new ArrayList<String>();
-					list.add(children[i].getDothPath());
+					list.add(children[i].getDotPath());
 				}
 				else {
-					list.add(children[i].getDothPath());
+					list.add(children[i].getDotPath());
 				}
 				reqClassNameToElement.put(children[i].getComponentType().getName(), children[i].getComponentType());
 				reqClassInstantiations.put(children[i].getComponentType(), list);
