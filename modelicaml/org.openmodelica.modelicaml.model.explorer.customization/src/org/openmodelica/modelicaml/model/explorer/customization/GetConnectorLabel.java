@@ -56,12 +56,18 @@ public class GetConnectorLabel implements IJavaModelQuery<Connector, String> {
 		EList<ConnectorEnd> ends = context.getEnds();
 		String string1 = "??";
 		String string2 = "??";
+		
 		ConnectorEnd connectorEnd1 = ends.get(0);
 		ConnectorEnd connectorEnd2 = ends.get(1);
+		
 		Property p1 = connectorEnd1.getPartWithPort();
 		if (p1 != null) {
 			string1 = p1.getName();
 		}
+		else {
+			string1 = "";
+		}
+		
 		ConnectableElement port1 = connectorEnd1.getRole();
 		if (port1 != null) {
 			string1 = string1 + "." + port1.getName();
@@ -71,6 +77,10 @@ public class GetConnectorLabel implements IJavaModelQuery<Connector, String> {
 		if (p2 != null) {
 			string2 = p2.getName();
 		}
+		else {
+			string2 = "";
+		}
+		
 		ConnectableElement port2 = connectorEnd2.getRole();
 		if (port2 != null) {
 			string2 = string2 + "." + port2.getName();
