@@ -6,7 +6,7 @@
          point="org.eclipse.ui.views">
       <view
             category="org.openmodelica.modelicaml.gen.modelica.category1"
-            class="org.openmodelica.modelicaml.view.componentstree.display.ComponentsTree"
+            class="org.openmodelica.modelicaml.view.componentstree.views.ComponentsTree"
             icon="icons/tree.png"
             id="org.openmodelica.modelicaml.view.componentstree"
             name="Class Components Tree">

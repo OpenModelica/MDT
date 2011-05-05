@@ -16,7 +16,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
-import org.openmodelica.modelicaml.view.componentstree.utls.SWTResourceManager;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 
 public class PropertySectionComments extends AbstractPropertySection {
 	private Link textComments;

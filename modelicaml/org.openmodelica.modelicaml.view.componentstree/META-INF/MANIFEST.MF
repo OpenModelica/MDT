@@ -20,7 +20,9 @@ Require-Bundle: org.eclipse.ui,
  org.openmodelica.modelicaml.editor.xtext.modification.ui;bundle-version="1.0.0",
  org.openmodelica.modelicaml.editor.xtext.modeleditor;bundle-version="1.0.0",
  org.eclipse.papyrus.modelexplorer;bundle-version="0.7.3",
- org.eclipse.ui.navigator;bundle-version="3.5.0"
+ org.eclipse.ui.navigator;bundle-version="3.5.0",
+ org.eclipse.uml2.uml;bundle-version="3.1.2",
+ org.openmodelica.modelicaml.view.valuebindings;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.resources,
  org.eclipse.emf.common.util,

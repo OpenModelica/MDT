@@ -11,8 +11,8 @@ import org.eclipse.uml2.uml.Signal;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
-import org.openmodelica.modelicaml.view.componentstree.utls.SWTResourceManager;
 
 
 public class LabelProviderDetails implements ILabelProvider {
@@ -80,10 +80,10 @@ public class LabelProviderDetails implements ILabelProvider {
 	    Assert.isTrue(input instanceof TreeObject);
 	    TreeObject item = (TreeObject) input;
 	    if (item != null) {
-	    	if (((TreeObject)item).getDothPath().trim().equals("")) {
+	    	if (((TreeObject)item).getDotPath().trim().equals("")) {
 	    		return ((TreeObject)item).getName();
 	    	}
-		    return ((TreeObject)item).getDothPath();
+		    return ((TreeObject)item).getDotPath();
 		}
 	    return " ";
 		// TODO Auto-generated method stub

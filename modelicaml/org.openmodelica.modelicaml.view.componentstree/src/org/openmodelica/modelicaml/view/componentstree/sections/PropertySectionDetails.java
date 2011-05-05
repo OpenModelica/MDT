@@ -36,7 +36,7 @@ import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.UmlServices;
-import org.openmodelica.modelicaml.view.componentstree.utls.SWTResourceManager;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 
 public class PropertySectionDetails extends AbstractPropertySection {
 	private Label lblPath;
@@ -259,12 +259,12 @@ public class PropertySectionDetails extends AbstractPropertySection {
 	}
 	
 	private String getPathText(){
-		if (this.item.getDothPath().trim().equals("") ) {
+		if (this.item.getDotPath().trim().equals("") ) {
 			lblPath.setText("Name: ");
 			return this.item.getName();
 		}
 		lblPath.setText("Path: ");
-	    return this.item.getDothPath();
+	    return this.item.getDotPath();
 	}
 	
 	

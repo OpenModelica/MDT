@@ -34,22 +34,22 @@
 package org.openmodelica.modelicaml.view.componentstree.display;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.util.HashSet;
 
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Region;
@@ -58,16 +58,17 @@ import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.TypedElement;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
-import org.osgi.framework.Bundle;
 
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ViewLabelProvider.
  */
-class ViewLabelProvider extends StyledCellLabelProvider {
+public class ViewLabelProvider extends StyledCellLabelProvider {
 
 	/** The Constant variableStereotypeQName. */
 	private static final String variableStereotypeQName = "ModelicaML::ModelicaCompositeConstructs::Variable";
@@ -82,13 +83,10 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 	/** The Constant requirementInstanceStereotypeQName. */
 	private static final String requirementInstanceStereotypeQName = "ModelicaML::ModelicaRequirementConstructs::RequirementInstance";
 	
-	/**
-	 * Gets the text.
-	 * 
-	 * @param obj
-	 *            the obj
-	 * @return the text
-	 */
+	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+
+	
 	public String getText(Object obj) {
 		return obj.toString();
 	}
@@ -111,7 +109,10 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 			else {
 				declarationString = "";
 			}
+			// remove all line delimiters
+			declarationString = declarationString.replaceAll("\\r|\\n", "");
 
+			
 //			System.out.println("treeObject.getFinalModificationRightHand(): " + treeObject.getFinalModificationRightHand());
 //			System.out.println("treeObject.getDeclaration(): " + treeObject.getDeclaration());
 //			System.out.println("declarationString : " + declarationString );
@@ -153,40 +154,51 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 			
 			if (treeObject.isLeaf() ) {
 				if (treeObject.getProperty() instanceof Port) {
-					cell.setImage(createImage("port.gif")); 	
+//					cell.setImage(createImage("port.gif")); 	
+					cell.setImage(decorateImage( treeObject , "/icons/port.gif" ));
 				}
 				else {
-					cell.setImage(createImage("variable.png")); 
+//					cell.setImage(createImage("variable.png"));
+					cell.setImage(decorateImage( treeObject , "/icons/variable.png" ));
+
 				}
 			}
 			else if (treeObject.isRoot()) {
-				cell.setImage(createImage("Class.gif")); 
+//				cell.setImage(createImage("Class.gif")); 
+				cell.setImage(decorateImage( treeObject , "/icons/Class.gif" ));
 			}
 			else {
 				if (treeObject.getProperty() instanceof Port) {
-					cell.setImage(createImage("port.gif")); 	
+//					cell.setImage(createImage("port.gif")); 	
+					cell.setImage(decorateImage( treeObject , "/icons/port.gif" ));
 				}
 				else if (treeObject.getUmlElement() != null) {
 					if (treeObject.getUmlElement() instanceof Signal) {
-						cell.setImage(createImage("Signal.gif"));
+//						cell.setImage(createImage("Signal.gif"));
+						cell.setImage(decorateImage( treeObject , "/icons/Signal.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof StateMachine) {
-						cell.setImage(createImage("StateMachine.gif"));
+//						cell.setImage(createImage("StateMachine.gif"));
+						cell.setImage(decorateImage( treeObject , "/icons/StateMachine.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof Region) {
-						cell.setImage(createImage("Region.gif"));
+//						cell.setImage(createImage("Region.gif"));
+						cell.setImage(decorateImage( treeObject , "/icons/Region.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof State) {
-						cell.setImage(createImage("State.gif"));
+//						cell.setImage(createImage("State.gif"));
+						cell.setImage(decorateImage( treeObject , "/icons/State.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof Property) {
-						cell.setImage(createImage("Property.gif"));
+//						cell.setImage(createImage("Property.gif"));
+						cell.setImage(decorateImage( treeObject , "/icons/Property.gif" ));
 					}
 				}
 				else {
 					// TODO: icons for ModelicaML Component, RequirementInstance, Calculated Property etc.
 					//cell.setImage(createImage("component.png"));
-					cell.setImage(createImage("Property.gif"));
+//					cell.setImage(createImage("Property.gif"));
+					cell.setImage(decorateImage( treeObject , "/icons/Property.gif" ));
 				}
 			}
 			
@@ -312,30 +324,78 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 		return false;
 	}
 	
-	/**
-	 * Gets the modelica predefined type name.
-	 * 
-	 * @param name
-	 *            the name
-	 * @return the modelica predefined type name
-	 */
-	private String getModelicaPredefinedTypeName(String name){
-		String typeName = name;
-		if (name.equals("ModelicaReal")) {
-			return typeName = "Real";
+	
+	public boolean hasErrors(TreeParent treeParent) {
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		list.addAll(findNextInvalidItem(treeParent));
+		if (list.size() > 0 ) {
+//			for (TreeObject treeObject : list) {
+//				System.err.println(treeObject.getName());
+//			}
+			return true;
 		}
-		if (name.equals("ModelicaInteger")) {
-			return typeName = "Integer";
+		return false;
+	}
+	
+	
+	private HashSet<TreeObject> findNextInvalidItem(TreeParent treeParent){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		
+		// if property has no type 
+		if (treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
+			list.add(treeParent);
+			return list;
 		}
-		if (name.equals("ModelicaString")) {
-			return typeName = "String";
-		}
-		if (name.equals("ModelicaBoolean")) {
-			return typeName = "Boolean";
+		
+		// if property is input and has no declaration and no binding equation exists for it in its first level component modification
+		if (treeParent.isInput() && treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null) {
+			list.add(treeParent);
+			return list;
 		}
 
-		return typeName;
+		TreeObject[] children = treeParent.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof TreeParent) {
+				list.addAll(findNextInvalidItem( (TreeParent)children[i] ));	
+			}
+		}
+		return list;
 	}
+	
+
+	public Image decorateImage(Object element, String imagePath) {
+		if (element instanceof TreeParent) {
+			if (hasErrors((TreeParent)element)) {
+				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+			}
+		}
+		return SWTResourceManager.getImage(Activator.class, imagePath);
+	}
+	
+//	/**
+//	 * Gets the modelica predefined type name.
+//	 * 
+//	 * @param name
+//	 *            the name
+//	 * @return the modelica predefined type name
+//	 */
+//	private String getModelicaPredefinedTypeName(String name){
+//		String typeName = name;
+//		if (name.equals("ModelicaReal")) {
+//			return typeName = "Real";
+//		}
+//		if (name.equals("ModelicaInteger")) {
+//			return typeName = "Integer";
+//		}
+//		if (name.equals("ModelicaString")) {
+//			return typeName = "String";
+//		}
+//		if (name.equals("ModelicaBoolean")) {
+//			return typeName = "Boolean";
+//		}
+//
+//		return typeName;
+//	}
 	
 	/**
 	 * Creates the image.
@@ -344,26 +404,26 @@ class ViewLabelProvider extends StyledCellLabelProvider {
 	 *            the image path
 	 * @return the image
 	 */
-	public Image createImage(String imagePath){
-		final Bundle pluginBundle = Platform.getBundle(Activator.PLUGIN_ID);
-		final Path imageFilePath = new Path(Activator.IMAGES_PATH + imagePath);
-		final URL imageFileUrl = Platform.find(pluginBundle, imageFilePath);
-		
-		Image image = null;
-		InputStream imageFileStream = null;   	
-		try {
-  	    	imageFileStream = imageFileUrl.openStream();
-  	    	image = new Image(null, imageFileStream);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		finally {
-			if (imageFileStream != null)
-				try { imageFileStream.close(); } catch (IOException e) {}
-		}
-
-		return image;
-    }	
+//	public Image createImage(String imagePath){
+//		final Bundle pluginBundle = Platform.getBundle(Activator.PLUGIN_ID);
+//		final Path imageFilePath = new Path(Activator.IMAGES_PATH + imagePath);
+//		final URL imageFileUrl = Platform.find(pluginBundle, imageFilePath);
+//		
+//		Image image = null;
+//		InputStream imageFileStream = null;   	
+//		try {
+//  	    	imageFileStream = imageFileUrl.openStream();
+//  	    	image = new Image(null, imageFileStream);
+//		}
+//		catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		finally {
+//			if (imageFileStream != null)
+//				try { imageFileStream.close(); } catch (IOException e) {}
+//		}
+//
+//		return image;
+//    }	
 }

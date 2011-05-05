@@ -68,7 +68,7 @@ import org.openmodelica.modelicaml.common.services.UmlServices;
  * required.
  * </p>
  */
-public class DialogComponentInformation extends Dialog {
+public class OBSOLETE_DialogComponentInformation extends Dialog {
     /**
      * The title of the dialog.
      */
@@ -149,7 +149,7 @@ public class DialogComponentInformation extends Dialog {
 	 * @param validator
 	 *            an input validator, or <code>null</code> if none
 	 */
-    public DialogComponentInformation(Shell parentShell, String dialogTitle,
+    public OBSOLETE_DialogComponentInformation(Shell parentShell, String dialogTitle,
             String dialogMessage, String initialValue, TreeParent treeObject, IInputValidator validator) {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);

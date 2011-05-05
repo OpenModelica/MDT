@@ -31,7 +31,7 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011
  */
-package org.openmodelica.modelicaml.view.componentstree.display;
+package org.openmodelica.modelicaml.view.componentstree.views;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,15 +48,19 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -87,16 +91,18 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
-import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentInformation;
+import org.openmodelica.modelicaml.view.componentstree.dialogs.OBSOLETE_DialogComponentInformation;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
-import org.openmodelica.modelicaml.view.componentstree.utls.ResourceManager;
+import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -118,7 +124,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	//Dialog box
 	/** The i dialog. */
-	private DialogComponentInformation iDialog = null;
+	private OBSOLETE_DialogComponentInformation iDialog = null;
 	
 	/** The modification string dialog. */
 	private DialogComponentModification modificationStringDialog = null;
@@ -158,7 +164,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private Action actionLinkWithEditor;
 	
 	/** The action collapse all. */
-	private Action actionCollapsAll;
+	private Action actionCollapseAll;
 	
 	/** The action add to inputs. */
 	private Action actionAddToInputs;
@@ -195,18 +201,20 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private IAction actionShowStateMachines;
 
 	private Action actionReload;
+
+	private IAction actionExpandArrays;
 	
-	public static final String stereotypeQName_ModelicaClass = "ModelicaML::ModelicaClassConstructs::ModelicaClass";
-	public static final String stereotypeQName_Model = "ModelicaML::ModelicaClassConstructs::Model";
-	public static final String stereotypeQName_Block = "ModelicaML::ModelicaClassConstructs::Block";
-	public static final String stereotypeQName_Connector = "ModelicaML::ModelicaClassConstructs::Connector";
-	public static final String stereotypeQName_Record = "ModelicaML::ModelicaClassConstructs::Record";
-	public static final String stereotypeQName_Function = "ModelicaML::ModelicaClassConstructs::Function";
-	
-	public static final String stereotypeQName_CalculationModel = "ModelicaML::ModelicaClassConstructs::CalculationModel";
-	public static final String stereotypeQName_Requirement = "ModelicaML::ModelicaRequirementConstructs::Requirement";	
-	
-	public static final String stereotypeQName_Simulation = "ModelicaML::ModelicaSimulationConstructs::Simulation";
+//	public static final String stereotypeQName_ModelicaClass = "ModelicaML::ModelicaClassConstructs::ModelicaClass";
+//	public static final String stereotypeQName_Model = "ModelicaML::ModelicaClassConstructs::Model";
+//	public static final String stereotypeQName_Block = "ModelicaML::ModelicaClassConstructs::Block";
+//	public static final String stereotypeQName_Connector = "ModelicaML::ModelicaClassConstructs::Connector";
+//	public static final String stereotypeQName_Record = "ModelicaML::ModelicaClassConstructs::Record";
+//	public static final String stereotypeQName_Function = "ModelicaML::ModelicaClassConstructs::Function";
+//	
+//	public static final String stereotypeQName_CalculationModel = "ModelicaML::ModelicaClassConstructs::CalculationModel";
+//	public static final String stereotypeQName_Requirement = "ModelicaML::ModelicaRequirementConstructs::Requirement";	
+//	
+//	public static final String stereotypeQName_Simulation = "ModelicaML::ModelicaSimulationConstructs::Simulation";
 	
 	
 //	/**
@@ -223,15 +231,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 * @param parent
 	 *            the parent
 	 */
-	public void createPartControl(Composite parent)
-	{
+	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		
 		//viewer.setSorter(new NameSorter()); // sorts the tree names alphabetically
-				
+		viewer.setInput(getViewSite());
+		
 		shell = parent.getShell();
 
 		// Create the help context id for the viewer's control
@@ -242,9 +249,23 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		hookSelectionChangedAction();
 		contributeToActionBars();
 
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
+//		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 		
-		getSite().setSelectionProvider(viewer); // add a selection provider.
+		// add a selection provider.
+		getSite().setSelectionProvider(viewer); 
+		
+		// double click for opening/closing the sub tree
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(final OpenEvent event) {
+				Object firstElement = ((IStructuredSelection)
+				event.getSelection()).getFirstElement();
+				if (viewer.getExpandedState(firstElement)) {
+					viewer.collapseToLevel(firstElement, AbstractTreeViewer.ALL_LEVELS);
+				} else {
+					viewer.expandToLevel(firstElement, 1);
+				}
+				}
+			});
 	}
 
 	/**
@@ -282,9 +303,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		manager.add(actionShowAll);
 		manager.add(actionShowInputs);	
 		manager.add(actionShowOutputs);
+		
 		manager.add(new Separator());
 		manager.add(actionShowStateMachines);
+		
+		manager.add(new Separator());
+		manager.add(actionExpandArrays);
+
 	}
+	
 
 	/**
 	 * Fill context menu.
@@ -311,7 +338,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 							componentPath = item.getDotPathWithoutFirstLevelComponent();
 						}
 						else if (modificationStoreLocation instanceof Generalization) {
-							componentPath = item.getDothPath();
+							componentPath = item.getDotPath();
 						}
 						if (ModificationManager.isInModModListOfComponent(modificationStoreLocation, componentPath)) {
 //							String title = "Edit modification in '" + item.getFirstLevelComponent().getName() + "'";
@@ -334,7 +361,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					componentPath = item.getDotPathWithoutFirstLevelComponent();
 				}
 				else if (modificationStoreLocation instanceof Generalization) {
-					componentPath = item.getDothPath();
+					componentPath = item.getDotPath();
 				}
 				if (ModificationManager.isInModModListOfComponent(modificationStoreLocation, componentPath)) {
 					manager.add(actionDeleteModification);
@@ -345,18 +372,18 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 
 				if (isSimulation(selectedClass) && item.isInput() && item.getFinalModificationRightHand() == null ) { // if it is an input and has no modification.
-					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
+					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), false)) {
 						manager.add(actionDeleteFromInputs);
 					}
 					else {
 						manager.add(actionAddToInputs);	
 					}
 				}
-				else if (isSimulation(selectedClass) && ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), false)) {
+				else if (isSimulation(selectedClass) && ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), false)) {
 					manager.add(actionDeleteFromInputs);
 				}
 				
-				if (isSimulation(selectedClass) &&  ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDothPath(), false) ) {
+				if (isSimulation(selectedClass) &&  ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDotPath(), false) ) {
 					manager.add(actionDeleteFromOutputs);
 				}
 				else {
@@ -414,7 +441,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	
 	private boolean isSimulation(Class aClass) {
-		if (aClass.getAppliedStereotype(stereotypeQName_Simulation) != null) {
+		if (aClass.getAppliedStereotype(Constants.stereotypeQName_Simulation) != null) {
 			return true;
 		}
 		return false;
@@ -428,13 +455,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
-		manager.add(actionCollapsAll);
+		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
 		
 		manager.add(new Separator());
 		manager.add(actionShowAboutInfo);
-		//manager.add(new Separator());
-		//drillDownAdapter.addNavigationActions(manager);
+		
+		manager.add(new Separator());
+		drillDownAdapter.addNavigationActions(manager);
 	}
 
 	/**
@@ -462,7 +490,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				if (obj instanceof TreeParent) {
 					if ( !((TreeParent) obj).isRoot()) { 
 						TreeParent item = ( (TreeParent)obj);
-						iDialog = new DialogComponentInformation(shell, "Component Information", LABEL, item.getDothPath(), item, null);
+						iDialog = new OBSOLETE_DialogComponentInformation(shell, "Component Information", LABEL, item.getDotPath(), item, null);
 						iDialog.open();
 					}
 				}
@@ -494,8 +522,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					viewer.addFilter(inputFilter);
 //					viewer.setSelection(new StructuredSelection(list), true);
 //					selectLastItem(); // TODO: does not work
+//					viewer.expandToLevel(lastSelectedItem, 1); // does not work.
+//					viewer.expandToLevel(lastSelectedItem, AbstractTreeViewer.ALL_LEVELS);// does not work.
 					viewer.expandToLevel(2);
-//					
+
 //					for (int i = 0; i < list.length; i++) {
 ////						System.err.println(list[i]);
 //						viewer.expandToLevel(list[i], 0); // TODO: does not work. no idea why ...
@@ -509,8 +539,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //					Object[] list = viewer.getExpandedElements();
 					viewer.removeFilter(inputFilter);
 //					viewer.setSelection(new StructuredSelection(list), true);
+//					viewer.expandToLevel(lastSelectedItem, 1);// does not work.
+//					viewer.expandToLevel(lastSelectedItem, AbstractTreeViewer.ALL_LEVELS);// does not work.
 					viewer.expandToLevel(2);
-					
+
 //					System.err.println(lastSelectedItem);
 //					viewer.expandToLevel(lastSelectedItem, 1);
 					
@@ -554,6 +586,24 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowStateMachines.setChecked(true);
 		actionShowStateMachines.setToolTipText("Show StateMachines");
 //		actionShowStateMachines.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		
+
+		
+		actionExpandArrays = new Action("actionExpandArrays", 2) {
+			public void run() {
+				if ( actionExpandArrays.isChecked() ) {
+					showMessage("Note", "This feature is not implemented yet. The purpose of " +
+							"this feature will be to include into the components tree " +
+							"all combination of components based on their arrays size definition.");
+					actionExpandArrays.setChecked(false);
+				}
+			}
+		};
+		actionExpandArrays.setText("Expand Arrays");
+		actionExpandArrays.setChecked(false);
+		actionExpandArrays.setToolTipText("Expand Arrays");
+//		actionExpandArrays(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+
 		
 		
 		actionLocate = new Action(){
@@ -651,7 +701,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								if (leftHand.equals(item.getDotPathWithoutFirstLevelComponent())) {
 									modificationString = rightHand;
 								}
-								else if (leftHand.equals(item.getDothPath()) ) {
+								else if (leftHand.equals(item.getDotPath()) ) {
 									modificationString = rightHand;
 								}
 							}
@@ -665,7 +715,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					String fullModificationString = item.getDotPathWithoutFirstLevelComponent() + " = " + modificationString;
 					
 					//modificationStringDialog = new DialogModificationStringInput(shell, "Edit Component Modification", item.getDothPath() + " = ", modificationString, item, null, root);
-					modificationStringDialog = new DialogComponentModification(shell, "Edit Component Modification", item.getDothPath(), fullModificationString, item, null, root);
+					modificationStringDialog = new DialogComponentModification(shell, "Edit Component Modification", item.getDotPath(), fullModificationString, item, null, root);
 					
 					modificationStringDialog.open();
 					
@@ -681,7 +731,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								componentPath = item.getDotPathWithoutFirstLevelComponent();
 							}
 							else if (modificationStoreLocation instanceof Generalization) {
-								componentPath = item.getDothPath();
+								componentPath = item.getDotPath();
 							}
 							ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
 
@@ -690,7 +740,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 							item.setFinalModificationRightHand(null); // TODO: verify against the line above
 							item.setFinalModificationSource(null);
-							viewer.update(item, null);
+//							viewer.update(item, null);
+							updateItem(item);
 						}
 						else {
 							Boolean hasOutterBraces = string.trim().startsWith("(");
@@ -708,7 +759,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 									componentPath = item.getDotPathWithoutFirstLevelComponent();
 								}
 								else if (modificationStoreLocation instanceof Generalization) {
-									componentPath = item.getDothPath();
+									componentPath = item.getDotPath();
 								}
 								String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
 								
@@ -716,7 +767,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								//item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
 								item.setFinalModificationRightHand(null); // verify against the line above
 								item.setFinalModificationSource(null);
-								viewer.update(item, null);
+//								viewer.update(item, null);
+								updateItem(item);
 							}
 
 							
@@ -753,7 +805,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 									//item.addToModificationList(storeString); // Store with braces if there are any!
 									item.setFinalModificationRightHand(rightHandPart); // verify this against the line above!
 									item.setFinalModificationSource(item.getFirstLevelComponent());
-									viewer.update(item, null);
+//									viewer.update(item, null);
+									updateItem(item);
 								}
 								else {
 									//System.err.println("ModelicaML modifications parsing error ComponentsTree.class 03, no right hand part found: " + string);
@@ -768,7 +821,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						}
 						//viewer.update(item, null);
 					}
-					viewer.update(item, null);
+//					viewer.update(item, null);
+					updateItem(item);
 				}
 			}
 		};
@@ -784,26 +838,33 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
-				
-					// Delete modification
-					Element modificationStoreLocation = item.getModificationStoreLocation();
-					String componentPath = "";
-					if (modificationStoreLocation instanceof Property) { // if is the owned first level component
-						componentPath = item.getDotPathWithoutFirstLevelComponent();
-						item.setModificationRightHand(null); // reset the modification because it was created from the same first level component
-					}
-					else if (modificationStoreLocation instanceof Generalization) { // if it is an inherited first level component
-						componentPath = item.getDothPath();
-					}
 					
-					String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
-					
-					// Delete the modification from the component modifications list.
-//					item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
-					item.setFinalModificationRightHand(null); // verify against the line above
-					item.setFinalModificationSource(null);
-					//viewer.update(item, null);
-					updateItem(item);
+					String title = "Delete Reference";
+					String message = "Are you sure you want to delete the binding for " + "'" + item.getName() + "'?" +
+							"\nThis action cannot be undone.";
+					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+
+					if (go) {
+						// Delete modification
+						Element modificationStoreLocation = item.getModificationStoreLocation();
+						String componentPath = "";
+						if (modificationStoreLocation instanceof Property) { // if is the owned first level component
+							componentPath = item.getDotPathWithoutFirstLevelComponent();
+							item.setModificationRightHand(null); // reset the modification because it was created from the same first level component
+						}
+						else if (modificationStoreLocation instanceof Generalization) { // if it is an inherited first level component
+							componentPath = item.getDotPath();
+						}
+						
+						String deletedModification = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
+						
+						// Delete the modification from the component modifications list.
+//						item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
+						item.setFinalModificationRightHand(null); // verify against the line above
+						item.setFinalModificationSource(null);
+						//viewer.update(item, null);
+						updateItem(item);
+					}
 				}
 			}
 		};
@@ -820,7 +881,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
-					String rightHandModificationValue = ModificationManager.addToClassInputs(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath());
+					String rightHandModificationValue = ModificationManager.addToClassInputs(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath());
 					showMessage("Confirmation", "'" + item.getName() + "' was included into the '_inputs' component of '" + selectedClass.getName() + "'");
 //					System.err.println("item.getFinalModificationRightHand(): " + item.getFinalModificationRightHand());
 //					System.err.println("item.getFinalModificationLeftHand(): " + item.getFinalModificationLeftHand());
@@ -834,8 +895,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //		actionAddToInputs.setToolTipText("Add to class '_inputs' component");
 		actionAddToInputs.setText("Add to '_inputs' ");
 		actionAddToInputs.setToolTipText("Add to class '_inputs' component");
-
 		actionAddToInputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+
+		
+		
 		
 		actionDeleteFromInputs = new Action("actionDeleteFromInputs") {
 			public void run() {
@@ -843,11 +906,19 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
-					ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDothPath(), true);
-					showMessage("Confirmation", "'" + item.getName() + "' was deleted from the '_inputs' component of '" + selectedClass.getName() + "'");
-					item.setFinalModificationRightHand(null);
-					item.setFinalModificationSource(null);
-					updateItem(item);
+					
+					String title = "Delete '" + item.getName() + "' from class '_inputs'";
+					String message = "Are you sure you want to delete " + "'" + item.getName() + "' from class '_inputs'?" +
+							"\nThis action cannot be undone.";
+					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+
+					if (go) {
+						ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), true);
+						showMessage("Confirmation", "'" + item.getName() + "' was deleted from the '_inputs' component of '" + selectedClass.getName() + "'");
+						item.setFinalModificationRightHand(null);
+						item.setFinalModificationSource(null);
+						updateItem(item);
+					}
 				}
 			}
 		};
@@ -855,17 +926,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionDeleteFromInputs.setText("Delete from '_inputs'");
 		actionDeleteFromInputs.setToolTipText("Delete from class '_inputs'");
 		actionDeleteFromInputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
-	
 		
 				
 		actionAddToOutputs = new Action("AddToOuputs") {
-			public void run() 
-			{
+			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
-					ModificationManager.addToClassOutputs(selectedClass, item.getProperty(), item.getDothPath());
+					ModificationManager.addToClassOutputs(selectedClass, item.getProperty(), item.getDotPath());
 					showMessage("Confirmation", "'" + item.getName() + "' was included into the '_outputs' component of '" + selectedClass.getName() + "'");
 					updateItem(item);
 				}
@@ -884,11 +953,17 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					TreeParent item = ( (TreeParent)obj);
-					ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDothPath(), true);
-					showMessage("Confirmation", "'" + item.getName() + " was deleted from the '_outputs' component of '" + selectedClass.getName() + "'");
-					//showSelection(par, sel); // TODO: refresh properly ...
-					updateItem(item);
+					String title = "Delete '" + item.getName() + "' from class '_outputs'";
+					String message = "Are you sure you want to delete " + "'" + item.getName() + "' from class '_outputs'?" +
+							"\nThis action cannot be undone.";
+					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
 
+					if (go) {
+						ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDotPath(), true);
+						showMessage("Confirmation", "'" + item.getName() + " was deleted from the '_outputs' component of '" + selectedClass.getName() + "'");
+						//showSelection(par, sel); // TODO: refresh properly ...
+						updateItem(item);
+					}
 				}
 			}
 		};
@@ -908,6 +983,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					//TestPassFailCodeGenerator t = new TestPassFailCodeGenerator(selectedClass);
 					TestOracleElementsCreator t = new TestOracleElementsCreator(selectedClass);
 					updateItem(obj);
+					showSelection(par, sel);
 				}
 			}
 		};
@@ -921,14 +997,22 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
-					//TestPassFailCodeGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
-					TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
-					updateItem(obj);
+//					TreeParent item = ( (TreeParent)obj);
+					String title = "Delete requirements test evaluation elements";
+					String message = "Are you sure you want to delete the requirements test result evaluation elements?" +
+							"\nThis action cannot be undone.";
+					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+
+					if (go) {
+						TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
+						updateItem(obj);
+						showSelection(par, sel);
+					}
 				}
 			}
 		};
-		actionDeleteReqTestEvaluationElements.setText("Delete requirements test evaluation elements");
-		actionDeleteReqTestEvaluationElements.setToolTipText("Delete requirements test evaluation elements");
+		actionDeleteReqTestEvaluationElements.setText("Delete requirements test result evaluation elements");
+		actionDeleteReqTestEvaluationElements.setToolTipText("Delete requirements test result evaluation elements");
 		actionDeleteReqTestEvaluationElements.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
 		
@@ -945,23 +1029,24 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionLinkWithEditor.setToolTipText("Link with Papyrus Model Explorer");
 		actionLinkWithEditor.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 	
-		actionCollapsAll = new Action("actionCollapsAll") { //obviously a check box style
+		actionCollapseAll = new Action("actionCollapsAll") { //obviously a check box style
 			public void run() {
-				showSelection(par, sel);
+				viewer.collapseToLevel(root, 2); // TODO: does not, it always collapse to level 1
+//				showSelection(par, sel);
 //				if (actionCollapsAll.isChecked()) {
 //					
 //				}
 			}
 		};
-		actionCollapsAll.setText("Collaps all and refresh");
-		actionCollapsAll.setToolTipText("Collaps all and refresh");
-		actionCollapsAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
+		actionCollapseAll.setText("Collapse all ");
+		actionCollapseAll.setToolTipText("Collapse all");
+		actionCollapseAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 
 		
 		actionShowAboutInfo = new Action("actionShowAboutInfo") { //obviously a check box style
 			public void run() {
-				showMessage("Notes for 'Class Components Tree' view", "This view shows the components tree of the class that is selected in model browser. " +
-						"\n\nNote, arrays are not expanded");
+				showMessage("Notes for 'Class Components Tree' view", "This view shows the components tree of the class that is selected in Papyrus model explorer.");
+//							"\n\nNote that arrays are not expanded.");
 			}
 		};
 		actionShowAboutInfo.setText("About");
@@ -1038,25 +1123,29 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	// ############################### FILTERS
 	
 	
-	
-	
 	private void updateItem(Object item) {
 		if (item != null) {
 			viewer.update(item, null);
+			if (item instanceof TreeObject) {
+				updateAllParents((TreeObject)item );
+			}
+			// does not work. see https://bugs.eclipse.org/bugs/show_bug.cgi?id=113675 
+//			TreePath[] expanded = viewer.getExpandedTreePaths();
+//			viewer.refresh();
+//			viewer.setExpandedTreePaths(expanded);
 		}
 	}
 	
-	/**
-	 * Show message.
-	 * 
-	 * @param title
-	 *            the title
-	 * @param message
-	 *            the message
-	 */
+	private void updateAllParents(TreeObject item){
+		if (item.getParent() != null) {
+			viewer.update(item.getParent(), null);
+			updateAllParents(item.getParent());
+		}
+	}
+	
+
 	private void showMessage(String title, String message) {
-		MessageDialog.openInformation(viewer.getControl().getShell(),
-				title, message);
+		MessageDialog.openInformation(viewer.getControl().getShell(), title, message);
 	}
 
 	/**
@@ -1131,6 +1220,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		par = sourcepart;
 		viewer.setInput(getViewSite());
 		viewer.setAutoExpandLevel(2);
+//		viewer.expandToLevel(2);
 	}
 	
 	private void selectLastItem(){ // Does not work because we ignore our own selection ...
@@ -1228,6 +1318,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		 * Initialize.
 		 */
 		private void initialize() {
+			// add the selection listener
+			getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 
 			if (sel != null) {
 				if (sel instanceof IStructuredSelection) {
@@ -1307,22 +1399,23 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 				ast.createTree();
 				invisibleRoot = ast.getInvisibleRoot();
+//				invisibleRoot = new TreeParent("");
 				root = ast.getTreeRoot();
 			}
 		}
 	}
 
 	private boolean isValid(Class aClass){
-		if (aClass.getAppliedStereotype(stereotypeQName_ModelicaClass) != null) { return true; }
-		if (aClass.getAppliedStereotype(stereotypeQName_Model) != null) { return true; }
-		if (aClass.getAppliedStereotype(stereotypeQName_Block) != null) { return true; }
+		if (aClass.getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null) { return true; }
+		if (aClass.getAppliedStereotype(Constants.stereotypeQName_Model) != null) { return true; }
+		if (aClass.getAppliedStereotype(Constants.stereotypeQName_Block) != null) { return true; }
 		
 //		if (aClass.getAppliedStereotype(stereotypeQName_Connector) != null) { return true; }
 //		if (aClass.getAppliedStereotype(stereotypeQName_Record) != null) { return true; }
 //		if (aClass.getAppliedStereotype(stereotypeQName_Function) != null) { return true; }
 
-		if (aClass.getAppliedStereotype(stereotypeQName_CalculationModel) != null) { return true; }
-		if (aClass.getAppliedStereotype(stereotypeQName_Requirement) != null) { return true; }
+		if (aClass.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null) { return true; }
+		if (aClass.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) { return true; }
 		
 		return false;
 	}

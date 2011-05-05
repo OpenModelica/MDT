@@ -39,9 +39,12 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -59,13 +62,22 @@ import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.services.StringUtls;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.editor.xtext.array.ui.internal.ArraysubscriptActivator;
 import org.openmodelica.modelicaml.editor.xtext.modification.ui.internal.ModificationActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
+import org.openmodelica.modelicaml.view.componentstree.Activator;
+import org.openmodelica.modelicaml.view.valuebindings.dialogs.DialogDerivedCode;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveCodeHelper;
+
+import sun.security.util.DerEncoder;
 
 import com.google.inject.Injector;
 
@@ -141,10 +153,10 @@ public class DialogComponentModification extends Dialog {
 	private TreeParent root;
 	
 	/** The variables list. */
-	private HashSet<String> variablesList;
+//	private HashSet<String> variablesList;
 	
 	/** The linked variables list. */
-	private HashSet<String> linkedVariablesList;
+//	private HashSet<String> linkedVariablesList;
 	
 	
 	/** The editor. */
@@ -161,32 +173,9 @@ public class DialogComponentModification extends Dialog {
 
 	/** The stereotype property name. */
 	private String stereotypePropertyName;
-	
-	
-    /**
-	 * Creates an input dialog with OK and Cancel buttons. Note that the dialog
-	 * will have no visual representation (no widgets) until it is told to open.
-	 * <p>
-	 * Note that the <code>open</code> method blocks for input dialogs.
-	 * </p>
-	 * 
-	 * @param parentShell
-	 *            the parent shell, or <code>null</code> to create a top-level
-	 *            shell
-	 * @param dialogTitle
-	 *            the dialog title, or <code>null</code> if none
-	 * @param dialogMessage
-	 *            the dialog message, or <code>null</code> if none
-	 * @param initialValue
-	 *            the initial input value, or <code>null</code> if none
-	 *            (equivalent to the empty string)
-	 * @param treeObject
-	 *            the tree object
-	 * @param validator
-	 *            an input validator, or <code>null</code> if none
-	 * @param root
-	 *            the root
-	 */
+
+	private Button deriveButton;
+
     public DialogComponentModification(Shell parentShell, String dialogTitle,
             String dialogMessage, String initialValue, TreeParent treeObject, IInputValidator validator, TreeParent root) {
         super(parentShell);
@@ -204,11 +193,11 @@ public class DialogComponentModification extends Dialog {
 		}
         this.validator = validator;
         
-        this.variablesList = getVariablesList();
-        this.linkedVariablesList= getLinkedVariablesList();
+//        this.variablesList = getVariablesList();
+//        this.linkedVariablesList = getLinkedVariablesList();
         
         this.selectedElement = treeObject.getProperty();
-        this.stereotypePropertyName = "modification"; // this dialog is used only for modifications.
+        this.stereotypePropertyName = Constants.propertyName_modification; // this dialog is used only for modifications.
     }
 
     /*
@@ -253,17 +242,6 @@ public class DialogComponentModification extends Dialog {
         }
         super.buttonPressed(buttonId);
     }
-
-    /**
-     * Gets the right hand modification string.
-     *
-     * @return the right hand modification string
-     */
-    private String getRightHandModificationString(){
-    	String rightHandString = null;
-    	
-    	return rightHandString;
-    }
     
     /*
      * (non-Javadoc)
@@ -277,21 +255,14 @@ public class DialogComponentModification extends Dialog {
 		}
     }
 
-    
-    /**
-	 * Open element list selection dialog.
-	 * 
-	 * @param title
-	 *            the title
-	 * @param msg
-	 *            the msg
-	 * @param listOfDotPath
-	 *            the list of dot path
-	 */
+ 
     protected void openElementListSelectionDialog(String title, String msg, HashSet<String> listOfDotPath){
-    	Shell shell = new Shell();
-		final ElementListSelectionDialog lsd = new ElementListSelectionDialog(shell,new LabelProvider());	    
-		lsd.setTitle(title + " (" + listOfDotPath.size() + ")");
+
+    	// TODO: replace this list selection dialog by a check tree that will also include the type compatibility information 
+    	
+    	final ElementListSelectionDialog lsd = new ElementListSelectionDialog(new Shell(), new LabelProvider() );	    
+		
+    	lsd.setTitle(title + " (" + listOfDotPath.size() + ")");
 		lsd.setMessage(listOfDotPath.size() + " variables were found in this class. " + msg);
 		lsd.setHelpAvailable(false);
 		
@@ -304,37 +275,29 @@ public class DialogComponentModification extends Dialog {
 		String selVar = "";
 		if (results != null) {
 			for (int i = 0; i < results.length; i++) {
-				selVar = selVar  + "     " + results[i];
+				selVar = selVar  + " " + results[i] + " ";
 			}
-			//String s = this.text.getText(); // text in the edited field.
 			String s = this.editor.getText(); // text in the edited field.
 			
 			// split the text based on the cursor position.
-//			String s1 = s.substring(0,this.text.getCaretPosition());
-//			String s2 = s.substring(this.text.getCaretPosition(), s.length());
 			String s1 = s.substring(0,editor.getEditorWidget().getCaretOffset());
 			String s2 = s.substring(editor.getEditorWidget().getCaretOffset(), s.length());
 
-//			this.text.setText(s1 + " " + selVar + " " + s2); // add it at the position of the cursor
-//			this.text.setSelection(s1.length() + 1, s1.length() + 1 + selVar.length());
-			
 			this.editor.setTextToEdit(s1 + " " + selVar + " " + s2); // add it at the position of the cursor
 			this.editor.getEditorWidget().setSelection(s1.length() + 1, s1.length() + 1 + selVar.length());
-
-			//this.text.selectAll();
 		}
     }
     
     
-    /**
-	 * Gets the variables list.
-	 * 
-	 * @return the variables list
-	 */
-    private HashSet<String> getVariablesList(){
-    	HashSet<String> listOfDotPath = ((TreeParent)treeObject).getAllPrimitiveVariablesDotPath(this.root);
-    	return listOfDotPath;
-    }
+//    /**
+//	 * Gets the variables list.
+//	 * 
+//	 * @return the variables list
+//	 */
+//    private HashSet<String> getVariablesList(){
+//    	HashSet<String> listOfDotPath = TreeUtls.getAllPrimitiveVariablesDotPath(this.root);
+//    	return listOfDotPath;
+//    }
 
     /**
 	 * Gets the linked variables list.
@@ -342,20 +305,27 @@ public class DialogComponentModification extends Dialog {
 	 * @return the linked variables list
 	 */
     private HashSet<String> getLinkedVariablesList(){
+
     	HashSet<String> list = new HashSet<String>();
 
-    	// for using dependencies
-    	// TODO: remove it. this is now replaced by the value-proxy concept (see below). 
-    	HashSet<String> listOfDotPath = ((TreeParent)treeObject).getAllLinkedPrimitiveVariablesDotPath(this.treeObject.getProperty(), this.root);
-    	list.addAll(listOfDotPath);
+//    	// for using dependencies
+//    	// Removed. This is now replaced by the value-proxy concept (see below). 
+//    	HashSet<String> listOfDotPath = TreeUtls.getAllLinkedPrimitiveVariablesDotPath(this.treeObject.getProperty(), this.root);
+//    	list.addAll(listOfDotPath);
     	
-    	// for using proxies.
-    	String valueBindingStereotypeQName = "ModelicaMLTesting::ValueBinding::ValueClient"; 
-		String valueBindingPropertyName= "obtainsValueFrom";
-    	HashSet<Property> listOfProxies = ((TreeParent)treeObject).getValueBindings(this.treeObject.getProperty(), valueBindingStereotypeQName, valueBindingPropertyName);
-    	HashSet<String> listOfDotPathThroughProxies = ((TreeParent)treeObject).getAllLinkedPrimitiveVariablesDotPathThroughProxy(this.treeObject.getProperty(), listOfProxies, this.root);
-    	list.addAll(listOfDotPathThroughProxies);
-    	
+    	// for using proxies (i.e. Value Clients / Mediators / Providers ).
+    	String valueBindingStereotypeQName = Constants.stereotypeQName_ValueClient; 
+		String valueBindingPropertyName= Constants.stereotypeQName_ValueClient_obtainsValueFrom;
+		
+ 
+ //		HashSet<String> listOfDotPathThroughProxies = TreeUtls.getAllLinkedPrimitiveVariablesDotPathThroughProxy(this.treeObject.getProperty(), listOfProxies, this.root);
+//    	list.addAll(listOfDotPathThroughProxies);
+ 
+	   	EList<Element> listOfMediators= TreeUtls.getValueMediators(this.treeObject.getProperty(), valueBindingStereotypeQName, valueBindingPropertyName);
+    	EList<TreeObject> listOfProviders = TreeUtls.getValueProviders(this.treeObject.getProperty(), listOfMediators, this.root);
+    	for (TreeObject treeObject : listOfProviders) {
+			list.add(treeObject.getDotPath());
+		}
     	return list;
     }
 
@@ -364,51 +334,94 @@ public class DialogComponentModification extends Dialog {
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
     protected void createButtonsForButtonBar(Composite parent) {
-    	addButton = createButton(parent, 1, "Find Variables"+ " (" + variablesList.size() + ")", true);
-		addButton.addListener(3, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				String title = "List of Instances";
-				String msg = "You can select one or more variables from the list below and " +
-						"\nclick 'OK' in order to return their dot-path to the editor.";
-				//openElementListSelectionDialog( title, msg, getVariablesList());
-				openElementListSelectionDialog( title, msg, variablesList);
-			}
-		});
+    	
+//    	addButton = createButton(parent, 10, "Find Variables"+ " (" + variablesList.size() + ")", true);
+//		addButton.addListener(3, new Listener() {
+//			@Override
+//			public void handleEvent(Event event) {
+//				String title = "List of Instances";
+//				String msg = "You can select one or more variables from the list below and " +
+//						"\nclick 'OK' in order to return their dot-path to the editor.";
+//				//openElementListSelectionDialog( title, msg, getVariablesList());
+//				openElementListSelectionDialog( title, msg, variablesList);
+//			}
+//		});
 		
-		addValueProviderButton = createButton(parent, 1, "Find Value Providers" + " (" + linkedVariablesList.size() + ")", true);
-		addValueProviderButton.addListener(3, new Listener() {
+
+    	final DeriveCodeHelper deriveCodeHelper = new DeriveCodeHelper(treeObject, root);
+    	final String derivedCode = deriveCodeHelper.getCode(); 
+    	final String errosString = deriveCodeHelper.getErrorString();
+
+//		System.err.println(deriveCodeHelper.getCode());
+//		System.err.println(deriveCodeHelper.getErrorString());
+
+    	deriveButton = createButton(parent, 11, "Derive Code ...    ", false);
+    	deriveButton.addListener(3, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				String title = "List of Linked Instances";
-				String msg = "You can select one or more variables from the list below and " +
-				"\nclick 'OK' in order to return their dot-path to the editor.";
-//				openElementListSelectionDialog( title, msg, getLinkedVariablesList());
-				openElementListSelectionDialog( title, msg, linkedVariablesList);
+				if (deriveCodeHelper.errorsDetected()) {
+					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), errosString, DialogDerivedCode.ERROR_MESSAGE, treeObject);
+					dialog.open(); // do nothing after closing the dialog.
+				}
+				else if (derivedCode != null) {
+					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), treeObject.getDotPathWithoutFirstLevelComponent() + " = " + derivedCode, DialogDerivedCode.CODE, treeObject);
+					dialog.open();
+					if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
+						String string = dialog.getCode();
+						if (string != null) {
+							editor.setTextToEdit(string);
+						}
+					}
+				}
 			}
 		});
+    	
+    	if (deriveCodeHelper.errorsDetected()) {
+    		deriveButton.setImage(SWTResourceManager.getImage(Activator.class, "/org/eclipse/jface/dialogs/images/message_error.gif"));
+		}
+    	else {
+    		deriveButton.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png"));
+    	}
+    	if (errosString == null && derivedCode == null) { // not applicable, i.e. no code could be derived and nothing is to report.
+    		deriveButton.setVisible(false);
+		}
+    	setButtonLayoutData(deriveButton);
+    	
+    	
+    	
+    	
+    	final HashSet<String> linkedVariablesList = getLinkedVariablesList();
+		if (linkedVariablesList.size() > 0) {
+			addValueProviderButton = createButton(parent, 12, "Value Providers (" + linkedVariablesList.size() + ")  ", false);
+			addValueProviderButton.addListener(3, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					String title = "List of Linked Instances";
+					String msg = "You can select one or more variables from the list below and " +
+					"\nclick 'OK' in order to return their dot-path to the editor.";
+					openElementListSelectionDialog( title, msg, linkedVariablesList);
+				}
+			});
+			addValueProviderButton.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/addValueProviders.png"));
+		}
+		
     	
     	// create OK and Cancel buttons by default
         okButton = createButton(parent, IDialogConstants.OK_ID,
                 IDialogConstants.OK_LABEL, true);
+       
         createButton(parent, IDialogConstants.CANCEL_ID,
                 IDialogConstants.CANCEL_LABEL, false);
+
         //do this here because setting the text will set enablement on the ok
-        // button
-//        text.setFocus();
-//        if (value != null) {
-//            text.setText(value);
-//            text.selectAll();
-//        }
-        
         editor.getEditorWidget().setFocus();
         if (value != null) {
             editor.setTextToEdit(value);
             editor.getEditorWidget().setCaretOffset(value.length());
-//            editor.getEditorWidget().selectAll();
+//          editor.getEditorWidget().selectAll();
         }
     }
-
+    
     /*
      * (non-Javadoc) Method declared on Dialog.
      */
