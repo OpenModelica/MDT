@@ -2,7 +2,7 @@
 <feature
       id="org.openmodelica.modelicaml.feature"
       label="ModelicaML - Papyrus Customization, Modelica Code Generation, Simulation with OMC"
-      version="1.5.0.qualifier"
+      version="1.5.1.qualifier"
       provider-name="OpenModelica Project">
 
    <description url="http://www.openmodelica.org/modelicaml">
@@ -347,6 +347,48 @@ See the full OSMC Public License conditions for more details.
 
    <plugin
          id="org.openmodelica.modelicaml.view.valuebindings"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
