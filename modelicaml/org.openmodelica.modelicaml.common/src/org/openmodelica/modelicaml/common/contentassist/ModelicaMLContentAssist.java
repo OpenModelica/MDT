@@ -64,6 +64,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.Vertex;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.display.IconProvider;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
@@ -146,13 +147,17 @@ public class ModelicaMLContentAssist {
 		propertyName = name;
 	}
 	
+	public static String getPropertyName(){
+		return propertyName;
+	}
+	
 	/**
 	 * Creates the component referencelist.
 	 *
 	 * @param aClass the a class
 	 */
-	public static void createComponentReferencelist(Class aClass){
-		
+	
+	public static void clearAllLists(){
 		// clear all lists at any time this method is called in order to avoid using wrong references.
 		variablesList.clear();
 		predefinedVariablePropertiesList.clear();
@@ -172,7 +177,13 @@ public class ModelicaMLContentAssist {
 		importedElementsList.clear();
 		
 		componentReferenceList.clear();
+	}
+	
+	public static void createComponentReferencelist(Class aClass){
+		// clear all lists at any time this method is called in order to avoid using wrong references.
 		
+		clearAllLists();
+
 		// if it is a Modelica function
 		if (aClass instanceof FunctionBehavior ) {
 			addPredefinedVariablesToList();
@@ -208,6 +219,22 @@ public class ModelicaMLContentAssist {
 		addTypeSpecifiersToList(aClass);
 	}
 	
+	
+	public static void replaceFirstComponentName(String replaceString){
+		HashSet<String> refList = new HashSet<String>();
+		refList.addAll(componentReferenceList);
+		for (String path : refList) {
+			if (propertyName != null && replaceString != null && path.startsWith(propertyName)) {
+				componentReferenceList.remove(path);
+				System.err.println("name: " + propertyName);
+				System.err.println("replaced: " + path.replaceFirst(propertyName, replaceString));
+				componentReferenceList.add(path.replaceFirst(propertyName, replaceString));
+			}
+		}
+	}
+	
+
+	
 //	public static void addComponentsOfThisClassToComponentReferencelist(Class aClass){
 //		if (aClass !=  null && aClass instanceof Classifier) {
 //			//TODO: how to deal with imported models?! 
@@ -241,6 +268,9 @@ public class ModelicaMLContentAssist {
 
 		// add the list for code completion
 		sortedList.addAll(componentReferenceList);
+		
+		// in general used for code from macros that lead to for-loop code.
+		sortedList.add("i");
 		
 		// add the rest (predefined properties) in order to support the validation
 		sortedList.addAll(predefinedVariablePropertiesList);
@@ -407,7 +437,7 @@ public class ModelicaMLContentAssist {
 	 */
 	private static void addPredefinedVariablesToList(){
 		variablesList.add("time"); 
-		variablesList.add("i"); // used for iterations in e.g. marco expansions.
+//		variablesList.add("i"); // used for iterations in e.g. marco expansions.
 	}
 	
 	/**
@@ -465,13 +495,7 @@ public class ModelicaMLContentAssist {
 		predefinedFunctionsList.add("max");
 		predefinedFunctionsList.add("sum");
 		predefinedFunctionsList.add("product");
-		
-		
-		// ModelicaML specific: used for Value Provider
-		predefinedFunctionsList.add("getOwnPath");
 
-		// ModelicaML specific: used for Value Cleints and Mediators
-		predefinedFunctionsList.add("getResult");
 	}
 	
 
@@ -586,23 +610,19 @@ public class ModelicaMLContentAssist {
 	 * @return the boolean
 	 */
 	private static Boolean isModelicaClass(Element element){
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::ModelicaClass") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::ModelicaPackage") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Operator") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Model") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Block") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Connector") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Record") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Type") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::ModelicaEnumeration") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Function") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::CalculationModel") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::ModelicaModelReference") != null) { return true; }
-
-		if (element.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::Requirement") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementRepresentative") != null) { return true; }
-		if (element.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::MeasureOfEffectiveness") != null) { return true; }
-		
+		if (element.getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Operator) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Model) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Block) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Record) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Type) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_ModelicaEnumeration) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Function) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_ModelicaModelReference) != null) { return true; }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) { return true; }
 		return false;
 	}
 	

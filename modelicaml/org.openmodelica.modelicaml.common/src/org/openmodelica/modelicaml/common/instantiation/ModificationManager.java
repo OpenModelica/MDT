@@ -49,62 +49,16 @@ import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
-//import org.openmodelica.modelicaml.view.componentstree.utls.UmlServices;
-//import org.openmodelica.modelicaml.view.componentstree.utls.Utls;
 
-// TODO: Auto-generated Javadoc
-//import com.cea.papyrus.core.listener.PapyrusNotification;
 
 /**
  * The Class ModificationManager.
  */
 public class ModificationManager {
-	
-	/** The Constant StereotypePropertyName_modification. */
-	private static final String StereotypePropertyName_modification = "modification";
-	
-	/** The Constant StereotypePropertyName_causality. */
-	private static final String StereotypePropertyName_causality = "causality";
-	
-	/** The Constant StereotypePropertyName_causality_output. */
-	private static final String StereotypePropertyName_causality_output = "output";
-	
-	/** The Constant StereotypePropertyName_causality_input. */
-	private static final String StereotypePropertyName_causality_input = "input";
-	
-	/** The Constant StereotypeName_variable. */
-	private static final String StereotypeName_variable = "Variable";
-	
-	private static final String stereotypeQName_Variable = "ModelicaML::ModelicaCompositeConstructs::Variable";
-	private static final String stereotypeQName_Component = "ModelicaML::ModelicaCompositeConstructs::Component";
-	private static final String stereotypeQName_ConnectionPort = "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
-	private static final String stereotypeQName_CalculatedProperty = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
-	
-	private static final String stereotypeQName_RequirementInstance = "ModelicaML::ModelicaRequirementConstructs::RequirementInstance";
-	
-	private static final String stereotypeQName_ExtendsRelation = "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
-	private static final String stereotypeQName_TypeRelation = "ModelicaML::ModelicaRelationsConstructs::TypeRelation";
 
-	private static final String stereotypeQName_Model = "ModelicaML::ModelicaClassConstructs::Model";
-	private static final String stereotypeQName_record = "ModelicaML::ModelicaClassConstructs::Record";
-
-	
-	/** The Constant inputsComponentName. */
-	private static final String inputsComponentName = "_inputs";
-	
-	/** The Constant inputsClassName. */
-	private static final String inputsClassName = "_Inputs";
-	
-	/** The Constant outputsComponentName. */
-	private static final String outputsComponentName = "_outputs";
-	
-	/** The Constant outputsClassName. */
-	private static final String outputsClassName = "_Outputs";
-	
-	
-	
 	
 	
 	
@@ -164,7 +118,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					element.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
+					element.setValue(stereotype, Constants.propertyName_modification, newValue); // set the value
 				}
 			};
 			cc.append(command);
@@ -218,7 +172,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					element.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
+					element.setValue(stereotype, Constants.propertyName_modification, newValue); // set the value
 				}
 			};
 			cc.append(command);
@@ -307,7 +261,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					element.setValue(stereotype, StereotypePropertyName_modification, newValue); // set the value
+					element.setValue(stereotype, Constants.propertyName_modification, newValue); // set the value
 				}
 			};
 			cc.append(command);
@@ -379,7 +333,7 @@ public class ModificationManager {
 		
 //		Class inputsClass = (Class)selectedClass.getNestedClassifier(inputsClassName, true, UMLPackage.Literals.CLASS, false);
 		
-		final Class inputsClassCheck = (Class)selectedClass.getNestedClassifier(inputsClassName, true, UMLPackage.Literals.CLASS, false);
+		final Class inputsClassCheck = (Class)selectedClass.getNestedClassifier(Constants.inputsClassName, true, UMLPackage.Literals.CLASS, false);
 		final Class inputsClass;
 
 		
@@ -390,7 +344,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					selectedClass.createNestedClassifier(inputsClassName, UMLPackage.Literals.CLASS);
+					selectedClass.createNestedClassifier(Constants.inputsClassName, UMLPackage.Literals.CLASS);
 				}
 			};
 			cc.append(command);
@@ -398,7 +352,7 @@ public class ModificationManager {
 			//########## storing end
 		}
 		
-		inputsClass = (Class)selectedClass.getNestedClassifier(inputsClassName, true, UMLPackage.Literals.CLASS, false);
+		inputsClass = (Class)selectedClass.getNestedClassifier(Constants.inputsClassName, true, UMLPackage.Literals.CLASS, false);
 				
 //		// apply ModelicaML stereotype
 //		if (inputsClass.getAppliedStereotype(StereotypePath_Model) == null) {
@@ -407,8 +361,8 @@ public class ModificationManager {
 //		}
 
 		// apply ModelicaML stereotype
-		if (inputsClass.getAppliedStereotype(stereotypeQName_Model) == null) {
-			final Stereotype resultsClassStereotype = inputsClass.getApplicableStereotype(stereotypeQName_Model);
+		if (inputsClass.getAppliedStereotype(Constants.stereotypeQName_Model) == null) {
+			final Stereotype resultsClassStereotype = inputsClass.getApplicableStereotype(Constants.stereotypeQName_Model);
 			
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -449,8 +403,8 @@ public class ModificationManager {
 		final Property p = inputsClass.getOwnedAttribute(StringUtls.replaceSpecChar(componentDotPath), component.getType(), true, UMLPackage.Literals.PROPERTY, false);
 
 		// apply ModelicaML stereotype to the properties
-		if ( !UmlServices.hasStereotype(p, StereotypeName_variable) ) {
-			final Stereotype pStereotype = p.getApplicableStereotype(stereotypeQName_Variable);
+		if ( !UmlServices.hasStereotype(p, Constants.stereotypeQName_Variable) ) {
+			final Stereotype pStereotype = p.getApplicableStereotype(Constants.stereotypeQName_Variable);
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
@@ -469,7 +423,7 @@ public class ModificationManager {
 		}
 
 		// add modification to the "_inputs" property
-		Property inputsPropertyCheck = selectedClass.getOwnedAttribute(inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, false);
+		Property inputsPropertyCheck = selectedClass.getOwnedAttribute(Constants.inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, false);
 
 		//########## storing start
 		if (inputsPropertyCheck == null) {
@@ -478,7 +432,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					selectedClass.createOwnedAttribute(inputsComponentName, inputsClass);
+					selectedClass.createOwnedAttribute(Constants.inputsComponentName, inputsClass);
 					//Property outputsProperty = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
 				}
 			};
@@ -487,9 +441,9 @@ public class ModificationManager {
 		}
 		//########## storing end
 		
-		final Property inputsProperty = selectedClass.getOwnedAttribute(inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, false);
-		final Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
-		if (inputsProperty.getAppliedStereotype(stereotypeQName_CalculatedProperty) == null) {
+		final Property inputsProperty = selectedClass.getOwnedAttribute(Constants.inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, false);
+		final Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(Constants.stereotypeQName_CalculatedProperty);
+		if (inputsProperty.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) == null) {
 			//########## storing start
 			if (inputsClassCheck == null) {
 				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -513,9 +467,9 @@ public class ModificationManager {
 		if (modificaitonStoreLocation instanceof Property) { // then it is an owned first-level component of the selected-class
 			leftHand = componentDotPathWithoutFirstLevelComponentName;
 		}
-		addComponentModification(modificaitonStoreLocation, leftHand, inputsComponentName + "." + p.getName(), true);
+		addComponentModification(modificaitonStoreLocation, leftHand, Constants.inputsComponentName + "." + p.getName(), true);
 		
-		return inputsComponentName + "." + p.getName();
+		return Constants.inputsComponentName + "." + p.getName();
 	}
 	
 	
@@ -531,7 +485,7 @@ public class ModificationManager {
 	 */
 	public static void addToClassOutputs(final Class selectedClass, final Property component, final String componentDotPath){
 		
-		final Class outputsClassCheck = (Class)selectedClass.getNestedClassifier(outputsClassName, true, UMLPackage.Literals.CLASS, false);
+		final Class outputsClassCheck = (Class)selectedClass.getNestedClassifier(Constants.outputsClassName, true, UMLPackage.Literals.CLASS, false);
 		final Class outputsClass;
 		
 		if (outputsClassCheck == null) {
@@ -541,7 +495,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					selectedClass.createNestedClassifier(outputsClassName, UMLPackage.Literals.CLASS);
+					selectedClass.createNestedClassifier(Constants.outputsClassName, UMLPackage.Literals.CLASS);
 				}
 			};
 			cc.append(command);
@@ -549,11 +503,11 @@ public class ModificationManager {
 			//########## storing end
 		}
 		
-		outputsClass = (Class)selectedClass.getNestedClassifier(outputsClassName, true, UMLPackage.Literals.CLASS, false);
+		outputsClass = (Class)selectedClass.getNestedClassifier(Constants.outputsClassName, true, UMLPackage.Literals.CLASS, false);
 		
 		// apply ModelicaML stereotype
-		if (outputsClass.getAppliedStereotype(stereotypeQName_record) == null) {
-			final Stereotype resultsClassStereotype = outputsClass.getApplicableStereotype(stereotypeQName_record);
+		if (outputsClass.getAppliedStereotype(Constants.stereotypeQName_Record) == null) {
+			final Stereotype resultsClassStereotype = outputsClass.getApplicableStereotype(Constants.stereotypeQName_Record);
 			
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -591,8 +545,8 @@ public class ModificationManager {
 		final Property p = outputsClass.getOwnedAttribute(StringUtls.replaceSpecChar(componentDotPath), component.getType(), true, UMLPackage.Literals.PROPERTY, false);
 		
 		// apply ModelicaML stereotype to the properties
-		if ( !UmlServices.hasStereotype(p, StereotypeName_variable) ) {
-			final Stereotype pStereotype = p.getApplicableStereotype(stereotypeQName_Variable);
+		if ( !UmlServices.hasStereotype(p, Constants.stereotypeQName_Variable) ) {
+			final Stereotype pStereotype = p.getApplicableStereotype(Constants.stereotypeQName_Variable);
 			
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -610,7 +564,7 @@ public class ModificationManager {
 		}
 
 		// add modification to the "_outputs" property
-		Property outputsPropertyCheck = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
+		Property outputsPropertyCheck = selectedClass.getOwnedAttribute(Constants.outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
 		
 		//########## storing start
 		if (outputsPropertyCheck == null) {
@@ -619,7 +573,7 @@ public class ModificationManager {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					selectedClass.createOwnedAttribute(outputsComponentName, outputsClass);
+					selectedClass.createOwnedAttribute(Constants.outputsComponentName, outputsClass);
 					//Property outputsProperty = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
 				}
 			};
@@ -628,9 +582,9 @@ public class ModificationManager {
 		}
 		//########## storing end
 		
-		final Property outputsProperty = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
-		final Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
-		if (outputsProperty.getAppliedStereotype(stereotypeQName_CalculatedProperty) == null) {
+		final Property outputsProperty = selectedClass.getOwnedAttribute(Constants.outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
+		final Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(Constants.stereotypeQName_CalculatedProperty);
+		if (outputsProperty.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) == null) {
 			
 			//########## storing start
 			if (outputsClassCheck == null) {
@@ -668,12 +622,12 @@ public class ModificationManager {
 	 * @return the boolean
 	 */
 	public static Boolean isUsedInClassInputs_removeOption(Class selectedClass, Element modificationStoreLocation, Property component, String componentDotPathWithoutFirstLevelComponentName, String componentDotPath, Boolean deleteIt){
-		final Class inputsClass = (Class)selectedClass.getNestedClassifier(inputsClassName, true, UMLPackage.Literals.CLASS, false);
+		final Class inputsClass = (Class)selectedClass.getNestedClassifier(Constants.inputsClassName, true, UMLPackage.Literals.CLASS, false);
 		if (inputsClass != null) {
 			final Property p = inputsClass.getOwnedAttribute(StringUtls.replaceSpecChar(componentDotPath), component.getType(), true, UMLPackage.Literals.PROPERTY, false);
 			if (p != null) {
-				final Property inputsProperty = selectedClass.getOwnedAttribute(inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, true);
-				Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
+				final Property inputsProperty = selectedClass.getOwnedAttribute(Constants.inputsComponentName, inputsClass, true, UMLPackage.Literals.PROPERTY, true);
+				Stereotype inputsPropertyStereotype = inputsProperty.getApplicableStereotype(Constants.stereotypeQName_CalculatedProperty);
 				if (inputsProperty != null ) {
 					if (inputsPropertyStereotype != null) {
 						HashSet<String> existingModificationList = getModifications(modificationStoreLocation); // existing modifications
@@ -687,7 +641,8 @@ public class ModificationManager {
 								}
 								
 								if ( modLeftHand.equals(componentDotPathWithoutFirstLevelComponentName.trim()) 
-									&& modRightHand.equals(inputsComponentName + "." + StringUtls.replaceSpecChar(componentDotPath))) {
+//									&& modRightHand.equals(inputsComponentName + "." + StringUtls.replaceSpecChar(componentDotPath))) {
+									&& modRightHand.matches("(.+)?" + Constants.inputsComponentName + "." + StringUtls.replaceSpecChar(componentDotPath) + "(.+)?" ) ) {
 									
 									if (deleteIt) {
 										TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -747,7 +702,7 @@ public class ModificationManager {
 	 */
 	public static Boolean isUsedInClassOutputs_removeOption(final Class selectedClass, Property component, String componentDotPath, Boolean deleteIt){
 		// get the Outputs class
-		final Class outputsClass = (Class)selectedClass.getNestedClassifier(outputsClassName, true, UMLPackage.Literals.CLASS, false);
+		final Class outputsClass = (Class)selectedClass.getNestedClassifier(Constants.outputsClassName, true, UMLPackage.Literals.CLASS, false);
 		
 		if (outputsClass != null) {
 			// get the corresponding property in the Outputs class
@@ -755,7 +710,7 @@ public class ModificationManager {
 			if (p != null) {
 					// get the instance of the Outputs class
 				
-				Property outputsPropertyCheck = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
+				Property outputsPropertyCheck = selectedClass.getOwnedAttribute(Constants.outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
 				//########## storing start
 				if (outputsPropertyCheck == null) {
 					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
@@ -763,7 +718,7 @@ public class ModificationManager {
 					Command command = new RecordingCommand(editingDomain) {
 						@Override
 						protected void doExecute() {
-							selectedClass.createOwnedAttribute(outputsComponentName, outputsClass);
+							selectedClass.createOwnedAttribute(Constants.outputsComponentName, outputsClass);
 						}
 					};
 					cc.append(command);
@@ -771,8 +726,8 @@ public class ModificationManager {
 				}
 				//########## storing end
 				
-				final Property outputsProperty = selectedClass.getOwnedAttribute(outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
-				Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(stereotypeQName_CalculatedProperty);
+				final Property outputsProperty = selectedClass.getOwnedAttribute(Constants.outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
+				Stereotype outputsPropertyStereotype = outputsProperty.getApplicableStereotype(Constants.stereotypeQName_CalculatedProperty);
 				
 				if (outputsProperty != null ) {
 					if (outputsPropertyStereotype != null) {
@@ -786,7 +741,8 @@ public class ModificationManager {
 							
 								// compare if the instance of the Outputs class has a modification that consists of the corresponding property and the dotPath
 								if ( modLeftHand.equals(p.getName()) 
-									&& modRightHand.equals(componentDotPath)) {
+										&& modRightHand.matches("(.+)?"+ componentDotPath + "(.+)?" ) ) {
+//										&& modRightHand.equals(componentDotPath)) {
 									
 									if (deleteIt) {
 
@@ -835,31 +791,26 @@ public class ModificationManager {
 	}
 	
 	private static Stereotype getElementStereotype(Element element) {
-		if (element.getAppliedStereotype(stereotypeQName_Variable) != null ) { return element.getAppliedStereotype(stereotypeQName_Variable); }
-		if (element.getAppliedStereotype(stereotypeQName_Component) != null ) { return element.getAppliedStereotype(stereotypeQName_Component); }
-		if (element.getAppliedStereotype(stereotypeQName_ConnectionPort) != null ) { return element.getAppliedStereotype(stereotypeQName_ConnectionPort); }
-		if (element.getAppliedStereotype(stereotypeQName_CalculatedProperty) != null ) { return element.getAppliedStereotype(stereotypeQName_CalculatedProperty); }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Variable) != null ) { return element.getAppliedStereotype(Constants.stereotypeQName_Variable); }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_Component) != null ) { return element.getAppliedStereotype(Constants.stereotypeQName_Component); }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_ConnectionPort) != null ) { return element.getAppliedStereotype(Constants.stereotypeQName_ConnectionPort); }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) != null ) { return element.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty); }
 		
-		if (element.getAppliedStereotype(stereotypeQName_RequirementInstance) != null ) { return element.getAppliedStereotype(stereotypeQName_RequirementInstance); }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance) != null ) { return element.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance); }
 		
-		if (element.getAppliedStereotype(stereotypeQName_ExtendsRelation) != null ) { return element.getAppliedStereotype(stereotypeQName_ExtendsRelation); }
-		if (element.getAppliedStereotype(stereotypeQName_TypeRelation) != null ) { return element.getAppliedStereotype(stereotypeQName_TypeRelation); }
-		
-//		if (UmlServices.hasStereotype((Element) property, "Variable")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
-//		if (UmlServices.hasStereotype((Element) property, "Component")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Component");
-//		if (UmlServices.hasStereotype((Element) property, "ConnectionPort")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::ConnectionPort");
-//		if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::CalculatedProperty");
-//			// note: requirementInstance in is another profile than the rest! 
-//		if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return stereotype = property.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementInstance");
+		if (element.getAppliedStereotype(Constants.stereotypeQName_ExtendsRelation) != null ) { return element.getAppliedStereotype(Constants.stereotypeQName_ExtendsRelation); }
+		if (element.getAppliedStereotype(Constants.stereotypeQName_TypeRelation) != null ) { return element.getAppliedStereotype(Constants.stereotypeQName_TypeRelation); }
+
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashSet<String> getModifications(Element element)  {
 		HashSet<String> mList = new HashSet<String>();
 		Stereotype stereotype = getElementStereotype(element);
 		if (stereotype != null ) {
 			List<String> modificationList = new ArrayList<String>();
-			Object o = element.getValue(stereotype, StereotypePropertyName_modification);	
+			Object o = element.getValue(stereotype, Constants.propertyName_modification);	
 			if (o instanceof List<?>) {
 				modificationList = (List<String>)o;
 			}

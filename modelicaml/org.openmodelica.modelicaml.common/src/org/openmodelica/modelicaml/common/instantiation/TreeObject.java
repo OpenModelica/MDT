@@ -105,10 +105,9 @@ public class TreeObject implements IAdaptable {
 	/** The final modification right hand. */
 	private String modificationRightHand = null;
 	
-		//TODO: enhance this class to store the source of modification
 	/** The final modification source. */
-	private NamedElement finalModificationSource = null;
-	private NamedElement modificationSource = null;
+	private Element finalModificationSource = null;
+	private Element modificationSource = null;
 	
 	/** The final modification description. */
 	private String finalModificationDescription = null;
@@ -680,21 +679,21 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	
-	public void setFinalModificationSource(NamedElement finalModificationSource) {
+	public void setFinalModificationSource(Element finalModificationSource) {
 		this.finalModificationSource = finalModificationSource;
 	}
 	
-	public NamedElement getFinalModificationSource() {
+	public Element getFinalModificationSource() {
 		if (this.finalModificationSource == null) {
 			return modificationSource;
 		}
 		return finalModificationSource;
 	}
-	public void setModificationSource(NamedElement modificationSource) {
+	public void setModificationSource(Element modificationSource) {
 		this.modificationSource = modificationSource;
 		this.finalModificationSource = modificationSource;
 	}
-	public NamedElement getModificationSource() {
+	public Element getModificationSource() {
 		return modificationSource;
 	}
 	
