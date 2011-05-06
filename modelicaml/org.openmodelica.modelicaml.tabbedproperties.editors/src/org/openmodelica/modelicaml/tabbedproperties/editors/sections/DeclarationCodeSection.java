@@ -63,6 +63,7 @@ import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.editor.xtext.declaration.ui.internal.DeclarationActivator;
@@ -166,11 +167,11 @@ public class DeclarationCodeSection extends AbstractPropertySection  {
 		
 		// ################################ Adjust start
 		if ( this.selectedUmlElement instanceof Property && !(this.selectedUmlElement instanceof Port)
-				&& ((Property)this.selectedUmlElement).getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable") != null ) {
+				&& ((Property)this.selectedUmlElement).getAppliedStereotype(Constants.stereotypeQName_Variable) != null ) {
 			return true;
 		}
 		if ( this.selectedUmlElement instanceof Parameter 
-				&& ((Parameter)this.selectedUmlElement).getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::FunctionArgument") != null){
+				&& ((Parameter)this.selectedUmlElement).getAppliedStereotype(Constants.stereotypeQName_FunctionArgument) != null){
 			return true; 
 		}
 		
