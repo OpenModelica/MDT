@@ -1023,7 +1023,32 @@
 		</section>
 	</sectionSet>
 	
-	
+	<!-- TODO: does not work. maybe because the profile is a different one... -->
+	<sectionSet name="sectionSet_Single_ValueMediatorsContainer">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Block" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ValueMediatorsContainer"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Block">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
 	
 	
 	
@@ -1280,6 +1305,39 @@
 			</fragment>
 		</section>
 	</sectionSet>
+	
+	
+	<sectionSet name="sectionSet_Single_ValueMediator">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediator"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Variable" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ValueMediator"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ValueMediator">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediator"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  					</container>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
 	
 	
 	
