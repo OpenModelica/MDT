@@ -28,6 +28,7 @@ import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
@@ -216,11 +217,21 @@ public class PropertySectionDetails extends AbstractPropertySection {
 			return item.getFirstLevelComponent().getName();
 		}
 		
-		NamedElement modSourceElement = item.getFinalModificationSource();
-		if (modSourceElement != null ) {
+		Element modSourceElement = item.getFinalModificationSource();
+		if (modSourceElement instanceof NamedElement) {
 //			modSource = modSourceElement.eClass().getName() + " '" + modSourceElement.getQualifiedName() + "' ";
-			return "'" + modSourceElement.getQualifiedName() + "' ";
+			return "'" + ((NamedElement)modSourceElement).getQualifiedName() + "' ";
 		}
+		else if (modSourceElement instanceof Generalization) {
+			Element firstSource = ((Generalization)modSourceElement).getSources().get(0);
+			if (firstSource instanceof NamedElement) {
+				return "'" + ((NamedElement)firstSource).getQualifiedName() + "' ";
+			}
+		}
+		else {
+			return " ## Could not identify the modification source ...## ";
+		}
+		
 
 //		NamedElement modSourceElement = item.getFinalModificationSource();
 //		if (modSourceElement != null ) {
