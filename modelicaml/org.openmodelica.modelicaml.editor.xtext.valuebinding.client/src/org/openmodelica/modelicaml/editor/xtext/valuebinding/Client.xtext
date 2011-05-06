@@ -1,0 +1,92 @@
+grammar org.openmodelica.modelicaml.editor.xtext.valuebinding.Client with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+
+import "http://www.eclipse.org/uml2/3.0.0/UML" as uml
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+generate client "http://www.openmodelica.org/modelicaml/editor/xtext/valuebinding/Client"
+
+ClientOperation : 
+	(Expr=expression)? // optional expression
+	;
+
+primary :
+num=UNSIGNED_NUMBER
+| int=INT
+| str=STRING
+| Bool=BOOL_VAL
+| Name_Function=name_Function
+| Initial_ref=initial_ref
+| Expr=ExprDer
+//| reductionFunction=ReductionFunction // ModelicaML Value Binding Concept specific
+	| sum=SumFunction
+	| prod=ProductFunction 
+	| min=MinFunction
+	| max=MaxFunction
+	| result=GetResultFunction
+
+//| specificFunction=SpecificFunction // only for Value Provider
+| Component_reference=component_reference
+| '(' output_expr_list=output_expression_list ')'
+| '[' Expre_list=expression_list ( ';' Expression_list+=expression_list)* ']'
+| '{' f_arguments=function_arguments '}'
+| End='end'
+;
+
+//// ModelicaML specific list reduction or value client operation functions
+//ReductionFunction : 
+//	SumFunction
+//	| ProductFunction 
+//	| MinFunction
+//	| MaxFunction
+//	| GetResultFunction
+//	;
+
+ProductFunction :
+	'product' ReductionFunctionCallArgs;
+SumFunction :
+	'sum' ReductionFunctionCallArgs;
+MinFunction :
+	'min' ReductionFunctionCallArgs;
+MaxFunction :
+	'max' ReductionFunctionCallArgs;
+GetResultFunction :
+	'getResult' Brackets;
+
+
+SpecificFunction : // only for Value Provider
+	'getOwnPath()'
+	;
+
+ReductionFunctionCallArgs : 
+	'(' + ':' + ')';
+Brackets : 
+	'(' ')';
+
+	
+//// override the definition from the reused grammar.
+//name : {name}
+//	('.')? name_ID=IDENT ( '.' nam_ID+=IDENT )*
+//	| reduction_function = ReductionFunction 
+////	| specific_function = SpecificFunction '.' name_ID=IDENT ( '.' nam_ID+=IDENT )* // TODO: name in this case should only refer to subcomponents
+//;
+//
+
+component_reference:
+	ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)* 
+	| ('.')? ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)*
+//	| specific_function = SpecificFunction '.' name_ID=IDENT ( '.' nam_ID+=IDENT )* // TODO: name in this case should only refer to subcomponents
+	;
+
+
+
+
+
+
+
+
+
+//Model:
+//	greetings+=Greeting*;
+//	
+//Greeting:
+//	'Hello' name=ID '!';
