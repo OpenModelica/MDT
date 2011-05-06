@@ -49,3 +49,4 @@ Import-Package: com.google.inject;version="2.0.0",
  org.openmodelica.modelicaml.editor.xtext.equation.ui.internal,
  org.openmodelica.modelicaml.editor.xtext.modification.ui.internal,
  org.openmodelica.modelicaml.editor.xtext.state.ui.internal
+Export-Package: org.openmodelica.modelicaml.tabbedproperties.editors.sections
