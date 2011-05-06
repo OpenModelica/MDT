@@ -156,10 +156,10 @@ public class DeriveCodeHelper {
 		Element element = item.getUmlElement();
 		String macroCode = getOperationSpecification(element, Constants.stereotypeQName_ValueProvider, Constants.propertyName_operation);
 		if (macroCode != null ) {
-			// TODO: implement a parser
 //			macroCode = "(" + macroCode.replaceAll("#PATH#", item.getDotPath()) + ")";
 //			macroCode = macroCode.replaceAll("getPath\\((\\s+)?\\)", item.getDotPath());
-			macroCode = macroCode.replaceAll("getOwnPath\\((\\s+)?\\)", item.getDotPath());
+//			macroCode = macroCode.replaceAll("getOwnPath\\((\\s+)?\\)", item.getDotPath());
+			macroCode = macroCode.replaceAll(Constants.MACRO_ownPath, item.getDotPath());
 			return macroCode ;
 		}
 		return item.getDotPath();
@@ -174,20 +174,8 @@ public class DeriveCodeHelper {
 			macroCode = macroCode.replaceAll("\\((\\s+)?\\:(\\s+)?\\)", "( i for i in {" + getItemsSeparated(", ", codeItems) + "})");
 //			System.err.println("EXPANDED: " + macroCode);
 
-//			System.err.println("ORIGINAL: " + macroCode);
-//			macroCode = macroCode.replaceAll("getFirstValue\\((\\s+)?\\)", codeItems.get(0)); // @Deprecated
-//			macroCode = macroCode.replaceAll("getFirst\\((\\s+)?\\)", codeItems.get(0)); // @Deprecated
+			// this is only valid if codeItems has only one item. The validation will catch it and set error so that no code will be generated if there are multiple items
 			macroCode = macroCode.replaceAll("getResult\\((\\s+)?\\)", getItemsSeparated(", ", codeItems) ); // used by value client/mediator to manipulate the result received from one mediator/provider
-//			System.err.println("EXPANDED: " + macroCode);
-			
-//			// sum all items
-//			macroCode = macroCode.replaceAll("#SUM#", buildOperatorString(" + ", codeItems));
-//
-//			// build a product from all items
-//			macroCode = macroCode.replaceAll("#PROD#", buildOperatorString(" * ", codeItems));
-//
-//			// just get the first result
-//			macroCode = macroCode.replaceAll("#REF#", codeItems.get(0));
 		}
 		return macroCode;
 	}

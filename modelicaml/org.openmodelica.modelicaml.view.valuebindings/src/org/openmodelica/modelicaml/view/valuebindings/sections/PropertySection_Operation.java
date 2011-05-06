@@ -17,7 +17,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 
-public class PropertySectionOperation extends AbstractPropertySection {
+public class PropertySection_Operation extends AbstractPropertySection {
 	private Link textOperation;
 	private TreeObject item = null;
 

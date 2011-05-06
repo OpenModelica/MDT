@@ -4,13 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -31,8 +39,9 @@ import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
+import org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView;
 
-public class PropertySectionDetails extends AbstractPropertySection {
+public class PropertySection_Details extends AbstractPropertySection {
 
     private TreeObject item;
 
@@ -44,6 +53,8 @@ public class PropertySectionDetails extends AbstractPropertySection {
 	private Label lblType;
 
 	private Label lblOwner;
+	
+	private TreeViewer viewer;
 
     public void createControls(Composite parent, TabbedPropertySheetPage aTabbedPropertySheetPage) {
         super.createControls(parent, aTabbedPropertySheetPage);
@@ -59,8 +70,30 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		lblName.setText("Name:");
 		
 		textName = new Text(composite, SWT.BORDER);
-		textName.setEditable(false);
 		textName.setBounds(65, 10, 579, 19);
+		textName.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (item != null && item.getUmlElement() != null && item.getUmlElement() instanceof NamedElement) {
+					final NamedElement element = (NamedElement)item.getUmlElement();
+					//########## storing start
+					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+					CompoundCommand cc = new CompoundCommand();
+					Command command = new RecordingCommand(editingDomain) {
+						@Override
+						protected void doExecute() {
+							String newName = textName.getText();
+							element.setName(newName);
+							item.setName(newName);
+							viewer.update(item, null);
+						}
+					};
+					cc.append(command);
+					editingDomain.getCommandStack().execute(cc);
+					//########## storing end
+				}
+			}
+		});
 		
 		lblType = new Label(composite, SWT.NONE);
 		lblType.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -81,7 +114,6 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		textOwner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		textOwner.setBounds(65, 43, 579, 13);
 		textOwner.setText("<a>New Link</a>");
- 
     }
 
     public void setInput(IWorkbenchPart part, ISelection selection) {
@@ -90,6 +122,10 @@ public class PropertySectionDetails extends AbstractPropertySection {
         Object input = ((IStructuredSelection) selection).getFirstElement();
         Assert.isTrue(input instanceof TreeObject);
         this.item = (TreeObject) input;
+        
+        if (getPart() != null && getPart() instanceof ValueBindingsView) {
+			viewer = ((ValueBindingsView)getPart()).getViewer();
+		}
     }
 
     public void refresh() {
@@ -104,6 +140,11 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		textOwner.setVisible(ownerTextVisibility);
 
     	textName.setText(item.getName());
+    	if (item != null && item.getUmlElement() instanceof NamedElement) {
+    		textName.setEditable(true);		}
+    	else {
+    		textName.setEditable(false);
+    	}
     	
     	// type
     	String type = "";
@@ -144,7 +185,6 @@ public class PropertySectionDetails extends AbstractPropertySection {
     	textOwner.setText(owner);
     }
 
-    
     
     private void locate(Object object){
 		if (object instanceof EObject) {

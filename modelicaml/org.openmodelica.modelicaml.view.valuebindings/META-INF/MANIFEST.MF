@@ -16,8 +16,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.navigator;bundle-version="3.5.0",
  com.google.inject;bundle-version="2.0.0",
  org.openmodelica.modelicaml.editor.xtext.modification.ui;bundle-version="1.0.0",
- org.openmodelica.modelicaml.tabbedproperties.editors.glue;bundle-version="1.0.0"
+ org.openmodelica.modelicaml.tabbedproperties.editors.glue;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.tabbedproperties.editors;bundle-version="1.0.1",
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.provider;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.generator;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.ui;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openmodelica.modelicaml.view.valuebindings.dialogs,
  org.openmodelica.modelicaml.view.valuebindings.helpers
+Import-Package: org.eclipse.papyrus.diagram.common.editparts

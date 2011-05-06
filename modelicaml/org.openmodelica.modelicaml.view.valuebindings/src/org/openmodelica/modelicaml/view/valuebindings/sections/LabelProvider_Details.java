@@ -11,7 +11,7 @@ import org.openmodelica.modelicaml.view.valuebindings.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 
 
-public class DetailLabelProvider implements ILabelProvider {
+public class LabelProvider_Details implements ILabelProvider {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
@@ -53,7 +53,7 @@ public class DetailLabelProvider implements ILabelProvider {
 		    else if (item.isValueMediatorContainer()) {
 		    	return SWTResourceManager.getImage(Activator.class, "/icons/valueMediatorsContainer.png");
 			}
-		    else if (item.isValueMediator()) {
+		    else if (item.isValueMediator() || item.isValueMediatorsNode()) {
 		    	return SWTResourceManager.getImage(Activator.class, "/icons/valueMediator.png");
 			}
 		    else if (item.isValueClientsNode()) {
@@ -76,9 +76,17 @@ public class DetailLabelProvider implements ILabelProvider {
 	    Assert.isTrue(input instanceof TreeObject);
 	    TreeObject item = (TreeObject) input;
 	    if (item != null) {
+	    	if (item.isValueClient()) {
+	    		return ((TreeObject)item).getName() + " (Value Client)";
+			}
+	    	if (item.isValueMediator()) {
+	    		return ((TreeObject)item).getName() + " (Value Mediator)";
+			}
+	    	if (item.isValueProvider()) {
+	    		return ((TreeObject)item).getName() + " (Value Provider)";
+			}
 		    return ((TreeObject)item).getName();
 		}
-
 	    return " ";
 	}
 

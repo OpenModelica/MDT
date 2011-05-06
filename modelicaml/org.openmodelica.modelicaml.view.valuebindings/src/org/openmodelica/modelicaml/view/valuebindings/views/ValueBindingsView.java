@@ -498,7 +498,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					}
 					
 				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					showMessage("Could not finish the action AddValueMediator ...");
 				}
