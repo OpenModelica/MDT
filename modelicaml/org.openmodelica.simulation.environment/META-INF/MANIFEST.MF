@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Simulation Environment
 Bundle-SymbolicName: org.openmodelica.simulation.environment;singleton:=true
-Bundle-Version: 0.6.4.v201003091320
+Bundle-Version: 0.6.5.v201105101600
 Bundle-Activator: org.openmodelica.simulation.environment.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

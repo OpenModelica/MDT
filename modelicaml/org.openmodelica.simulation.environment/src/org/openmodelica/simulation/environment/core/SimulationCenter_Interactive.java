@@ -308,14 +308,14 @@ public class SimulationCenter_Interactive {
 	 * General method to start all server and client threads and to send the filter mask.
 	 */
 	public void startAll() {
-		//runSimulationRuntime();
+		runSimulationRuntime();
 		runServers();
 	}
 
 	/**
 	 * Starts the Simulation Runtime executable file.
 	 */
-	@SuppressWarnings("unused") //TODO [20110221] Implement starting runtime environment
+//	@SuppressWarnings("unused") //TODO [20110221] Implement starting runtime environment
 	private void runSimulationRuntime(){
 		simulationruntime.start();
 	}
@@ -381,8 +381,8 @@ public class SimulationCenter_Interactive {
 	 */
 	private void interruptSimulationRuntime(){
 		SimulationControlClient.clearAll(getSequenceNumber()+"");
-		//TODO 20101120 runnableForSimulationruntime.stopProcess();
-		//TODO 20101120 simulationruntime.interrupt();
+		runnableForSimulationruntime.stopProcess();
+		simulationruntime.interrupt();
 	}	
 	
 	/**

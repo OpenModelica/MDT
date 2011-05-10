@@ -5,6 +5,7 @@ package org.openmodelica.simulation.environment.filehandling;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,18 +46,21 @@ public class RunInteractiveSimulationRuntimeEnvironment implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		System.out.println(pathToExecutable + "\\" + runtimeName);
+		
+//		System.out.println(pathToExecutable + "\\" + runtimeName);
 		String[] command = { pathToExecutable + "/" + runtimeName,
 				"-interactive", "-port", runtimecontrolserverPort };
 		try {
 			ProcessBuilder builder = new ProcessBuilder(command);
 			builder.directory(new File(pathToExecutable + "/"));
 			p = builder.start();
-			p.waitFor();
+			Scanner s = new Scanner( p.getInputStream() ).useDelimiter( "\\n" );
+			while(s.hasNext()){
+				System.err.println( "RUNTIME > " + s.next() );
+			}
+//			p.waitFor();
 		} catch (IOException e) {
 			System.err.println("IOException starting process!");
-		} catch (InterruptedException e) {
-			System.err.println("Interrupted waiting for process!");
 		}
 	}
 	
