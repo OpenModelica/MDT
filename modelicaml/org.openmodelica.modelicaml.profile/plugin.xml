@@ -20,15 +20,8 @@
       <profile
             description="ModelicaML - A UML Profile for Modelica"
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="ModelicaML (1.1.1)"
+            name="ModelicaML (1.2.0)"
             path="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"
-            provider="OpenModelica Project">
-      </profile>
-      <profile
-            description="ModelicaML Testing Profile"
-            iconpath="resources/icons/icons16/modelicaml_testing_logo_16x16.png"
-            name="ModelicaML Testing (0.0.5)"
-            path="pathmap://PALETTE_PROFILE/ModelicaMLTesting.profile.uml"
             provider="OpenModelica Project">
       </profile>
    </extension>
@@ -466,7 +459,7 @@
                               type="org.eclipse.emf.ecore.EObject">
                            <and>
                               <test
-                                    args="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
                                     forcePluginActivation="true"
                                     property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
@@ -618,7 +611,7 @@
                               type="org.eclipse.emf.ecore.EObject">
                            <not>
                               <test
-                                    args="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
                                     forcePluginActivation="true"
                                     property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
@@ -759,7 +752,7 @@
                               type="org.eclipse.emf.ecore.EObject">
                            <not>
                               <test
-                                    args="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
                                     forcePluginActivation="true"
                                     property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
@@ -789,7 +782,7 @@
                               type="org.eclipse.emf.ecore.EObject">
                            <not>
                               <test
-                                    args="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
                                     forcePluginActivation="true"
                                     property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
@@ -1112,7 +1105,7 @@
                            </not>
                            <not>
                               <test
-                                    args="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
                                     forcePluginActivation="true"
                                     property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
@@ -2285,7 +2278,7 @@
                               property="org.openmodelica.modelicaml.testers.hasStereotype">
                         </test>
                         <test
-                              args="ModelicaML::ModelicaClassConstructs::MeasureOfEffectiveness"
+                              args="ModelicaML::ModelicaRequirementConstructs::Requirement"
                               property="org.openmodelica.modelicaml.testers.hasStereotype">
                         </test>
                         <instanceof
@@ -2723,7 +2716,7 @@
                         type="org.eclipse.emf.ecore.EObject">
                      <or>
                         <test
-                              args="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"
+                              args="ModelicaML::ValueBinding::ValueMediatorsContainer"
                               property="org.openmodelica.modelicaml.testers.hasStereotype">
                         </test>
                      </or>

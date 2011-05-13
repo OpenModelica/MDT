@@ -71,7 +71,7 @@ public class CreateValueMediatorsContainerHandler extends AbstractHandler {
 //### START: adapt it for a new command handler
 	/** The stereotype path. */
 //	private String stereotypePath = Platform.getResourceString(Activator.getDefault().getBundle(), "%p_path_ModelicaClassConstructs");
-	private String stereotypePath = "ModelicaMLTesting::ValueBinding";
+	private String stereotypePath = "ModelicaML::ValueBinding";
 	
 	/** The stereotyep name. */
 //	private String stereotypeName = Platform.getResourceString(Activator.getDefault().getBundle(), "%s_block");

@@ -64,8 +64,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.wb.swt.SWTResourceManager;
 import org.openmodelica.modelicaml.common.services.StringUtls;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 
 // TODO: Auto-generated Javadoc
 /**
