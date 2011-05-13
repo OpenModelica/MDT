@@ -209,6 +209,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	private IAction actionUpdateBindings;
 
+	private Action actionShowValueClients;
+
+	private Action actionShowValueProviders;
+
+	private Action actionShowRequirements;
+
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -289,6 +295,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		manager.add(actionShowAll);
 		manager.add(actionShowInputs);	
 		manager.add(actionShowOutputs);
+		manager.add(actionShowValueClients);
+		manager.add(actionShowValueProviders);
+		manager.add(actionShowRequirements);
 		
 		manager.add(new Separator());
 		manager.add(actionShowStateMachines);
@@ -493,30 +502,64 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					TreeParent item = (TreeParent)obj;
 					
 					Boolean go = MessageDialog.openConfirm(new Shell(), "Confirmation", 
-							"This action will overwrite all unambiguous bindings in the sub-tree of '" + item.getName() +"'." +
-							"\nThis action cannot be undone.");
+							"This action will update all unambiguous bindings in the sub-tree of '" + item.getName() +"'." +
+							"\n\nThis action cannot be undone.");
 					
 					if (go) {
 						
-						ValueBindingCreator.updateBindings( item, root);
+						// ask if old bindings shall be deleted
+						boolean deleteOldBindings = MessageDialog.openQuestion(new Shell(), 
+								"Question", "Shall all bindings that are based on Value Providers be deleted before updating? " +
+								"\n\nNote that after that only unambiguous bindings will be set." + 
+								"\n\nThis action cannot be undone."); 
+						
+						// update bindings
+						ValueBindingCreator.updateBindings( item, root, deleteOldBindings );
+						
+						// get the updated items
 						List<TreeObject> updatedItems = ValueBindingCreator.getUpdatedItems();
 						HashMap<TreeObject, String> updatedModifications = ValueBindingCreator.getUpdatedItemsToNewModification();
+						
+						// get the deleted modifications items
+						List<TreeObject> deletedItemsModifications = ValueBindingCreator.getDeletedItemsModification();
+						List<String> deletedModifications = ValueBindingCreator.getDeletedModifications();
 
-						if (updatedItems.size() > 0) {
-							String infoText = "The following items were updated: \n";
-							String message = "";
-							for (TreeObject updatedTreeObject : updatedItems) {
-								updateItem(updatedTreeObject);
-								message = message + updatedTreeObject.getDotPath()+ " = " + updatedModifications.get(updatedTreeObject)
-										+ "\n\n------------------" +
-											"----------------------------------" +
-											"----------------------------------" +
+						String infoText = "The following updates were performed: \n";
+						String message = "";
+						String separator = "\n\n---------------------------------------------" + 
+											"--------------------------------------------------------------------" +
 											"---------------------------- \n\n";
+						
+						// update the deleted modification items in viewer 
+						for (TreeObject deletedItemModificationItem : deletedItemsModifications) {
+//							System.err.println("item: " + deletedItemModificationItem.getDotPath());
+							// update in viewer
+							updateItem(deletedItemModificationItem);
+						}
+						
+						// TODO: not nice because it will collapse the tree ...
+						viewer.refresh();
+						
+						// create message for deleted modifications
+						for (String string : deletedModifications) {
+							message = message + "DELETED: " + string + separator ;
+						}
+						
+						if (updatedItems.size() > 0) {
+							for (TreeObject updatedTreeObject : updatedItems) {
+								
+								// update in viewer
+								updateItem(updatedTreeObject);
+								
+								// create message
+								message = message + "UPDATED: " +  updatedTreeObject.getDotPath()+ " = " + updatedModifications.get(updatedTreeObject)
+										+ separator ;
 							}
 							DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, message);
 							dialog.open();
+							
 						} else {
-							showMessage("Result", "No items were updated.");
+							showMessage("Result", "No updates were performed.");
 						}
 					}
 				}
@@ -555,9 +598,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionShowAll.setText("Show all components");
+		actionShowAll.setText("Show All");
 		actionShowAll.setChecked(true);
-		actionShowAll.setToolTipText("Action 3 tooltip");
+		actionShowAll.setToolTipText("Show All");
 //		actionShowAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
 		
@@ -597,8 +640,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionShowInputs.setText("Show only input variables");
-		actionShowInputs.setToolTipText("Action 2 tooltip");
+		actionShowInputs.setText("Show only Inputs");
+		actionShowInputs.setToolTipText("Show only Inputs");
 //		actionShowInputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
 		
@@ -615,9 +658,63 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionShowOutputs.setText("Show only output variables");
-		actionShowOutputs.setToolTipText("Action 3 tooltip");
+		actionShowOutputs.setText("Show only Outputs");
+		actionShowOutputs.setToolTipText("Show only Outputs");
 //		actionShowOutputs.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+
+		
+		actionShowValueClients = new Action("actionShowValueClients", 8) {
+			public void run() {
+				if (actionShowValueClients.isChecked()) {
+					viewer.addFilter(valueClientFilter);
+					viewer.expandToLevel(2);
+					//showSelection(par, sel);
+				}
+				else {
+					viewer.removeFilter(valueClientFilter);
+					viewer.expandToLevel(2);
+				}
+			}
+		};
+		actionShowValueClients.setText("Show only Value Clients");
+		actionShowValueClients.setToolTipText("Show only Value Clients");
+//		actionShowValueClients.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+
+		actionShowValueProviders = new Action("actionShowValueProviders", 8) {
+			public void run() {
+				if (actionShowValueProviders.isChecked()) {
+					viewer.addFilter(valueProviderFilter);
+					viewer.expandToLevel(2);
+					//showSelection(par, sel);
+				}
+				else {
+					viewer.removeFilter(valueProviderFilter);
+					viewer.expandToLevel(2);
+				}
+			}
+		};
+		actionShowValueProviders.setText("Show only Value Providers");
+		actionShowValueProviders.setToolTipText("Show only Value Providers");
+//		actionShowValueProviders.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+
+		actionShowRequirements = new Action("actionShowRequirements", 8) {
+			public void run() {
+				if (actionShowRequirements.isChecked()) {
+					viewer.addFilter(requirementInstanceFilter);
+					viewer.expandToLevel(2);
+					//showSelection(par, sel);
+				}
+				else {
+					viewer.removeFilter(requirementInstanceFilter);
+					viewer.expandToLevel(2);
+				}
+			}
+		};
+		actionShowRequirements.setText("Show only Requirements");
+		actionShowRequirements.setToolTipText("Show only Requirements");
+//		actionShowRequirements.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+
+		
 		
 		
 		actionShowStateMachines = new Action("actionShowStateMachines", 2) {
@@ -1167,6 +1264,94 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		}
 	}
 	OutputFilter outputFilter = new OutputFilter();
+	
+	
+	class ValueClientFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+
+				if (item.isRoot()) { // always show the root
+					return true;
+				}
+				if (item.hasValueClients()) {
+					return true;
+				}
+				if (item.isValueClient()) { 
+					return true;
+				}
+//				if (item.getHasValueClients() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
+//					return false;
+//				}
+//				if (item.getHasValueClients() != null && !item.getHasValueClients() ) { // not a leaf but indicator is set
+//					return false;
+//				}
+//				if ( item.isLeaf() && !item.isValueClient()) { // is leaf 
+//					return false;
+//				}
+			}
+			return false;
+//			return true;
+		}
+	}
+	ValueClientFilter valueClientFilter = new ValueClientFilter();
+	
+	class ValueProviderFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+
+				if (item.isRoot()) { // always show the root
+					return true;
+				}
+				if (item.hasValueProviders()) {
+					return true;
+				}
+				if (item.isValueProvider()) { 
+					return true;
+				}
+				
+//				if (item.getHasValueProviders() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
+//					return false;
+//				}
+//				if (item.getHasValueProviders() != null && !item.getHasValueProviders() ) { // not a leaf but indicator is set
+//					return false;
+//				}
+//				if ( item.isLeaf() && !item.isValueProvider()) { // is leaf 
+//					return false;
+//				}
+			}
+			return false;
+//			return true;
+		}
+	}
+	ValueProviderFilter valueProviderFilter = new ValueProviderFilter();
+	
+	
+	class RequirementInstanceFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+
+				if (item.isRoot()) { // always show the root
+					return true;
+				}
+				if (item.hasRequirements()) { // Intermediate node with an indicator
+					return true;
+				}
+				if (item.isRequirementInstance()) { 
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	RequirementInstanceFilter requirementInstanceFilter = new RequirementInstanceFilter();
+	
+	
 	// ############################### FILTERS
 	
 	

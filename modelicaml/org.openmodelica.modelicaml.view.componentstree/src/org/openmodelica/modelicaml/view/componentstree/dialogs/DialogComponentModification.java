@@ -351,9 +351,9 @@ public class DialogComponentModification extends Dialog {
     	final DeriveCodeHelper deriveCodeHelper = new DeriveCodeHelper(treeObject, root);
     	final String derivedCode = deriveCodeHelper.getCode(); 
     	final String errosString = deriveCodeHelper.getErrorString();
-
-//		System.err.println(deriveCodeHelper.getCode());
-//		System.err.println(deriveCodeHelper.getErrorString());
+    	
+//		System.err.println("code: " + deriveCodeHelper.getCode());
+//		System.err.println("ErrorString: " + deriveCodeHelper.getErrorString());
 
     	deriveButton = createButton(parent, 11, "Derive Code ...    ", false);
     	deriveButton.addListener(3, new Listener() {
@@ -388,9 +388,13 @@ public class DialogComponentModification extends Dialog {
     	setButtonLayoutData(deriveButton);
     	
     	
-    	
-    	
-    	final HashSet<String> linkedVariablesList = getLinkedVariablesList();
+//    	final HashSet<String> linkedVariablesList = getLinkedVariablesList();
+    	EList<TreeObject> valueProviders = deriveCodeHelper.getValueProviders();
+    	final HashSet<String> linkedVariablesList = new HashSet<String>();
+    	for (TreeObject item : valueProviders) {
+			linkedVariablesList.add(item.getDotPath());
+		}
+
 		if (linkedVariablesList.size() > 0) {
 			addValueProviderButton = createButton(parent, 12, "Value Providers (" + linkedVariablesList.size() + ")  ", false);
 			addValueProviderButton.addListener(3, new Listener() {

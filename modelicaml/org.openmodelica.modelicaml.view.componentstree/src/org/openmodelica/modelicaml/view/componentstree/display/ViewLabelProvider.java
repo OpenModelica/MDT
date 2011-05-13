@@ -58,6 +58,7 @@ import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.TypedElement;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
@@ -71,17 +72,17 @@ import org.openmodelica.modelicaml.view.componentstree.Activator;
 public class ViewLabelProvider extends StyledCellLabelProvider {
 
 	/** The Constant variableStereotypeQName. */
-	private static final String variableStereotypeQName = "ModelicaML::ModelicaCompositeConstructs::Variable";
+	private static final String variableStereotypeQName = Constants.stereotypeQName_Variable;
 	/** The Constant functionArgumentStereotypeQName. */
-	private static final String functionArgumentStereotypeQName = "ModelicaML::ModelicaCompositeConstructs::FunctionArgument";
+	private static final String functionArgumentStereotypeQName = Constants.stereotypeQName_FunctionArgument;
 	/** The Constant portStereotypeQName. */
-	private static final String portStereotypeQName = "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
+	private static final String portStereotypeQName = Constants.stereotypeQName_ConnectionPort;
 	/** The Constant componentStereotypeQName. */
-	private static final String componentStereotypeQName = "ModelicaML::ModelicaCompositeConstructs::Component";
+	private static final String componentStereotypeQName = Constants.stereotypeQName_Component;
 	/** The Constant calculatedPropertyStereotypeQName. */
-	private static final String calculatedPropertyStereotypeQName = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
+	private static final String calculatedPropertyStereotypeQName = Constants.stereotypeQName_CalculatedProperty;
 	/** The Constant requirementInstanceStereotypeQName. */
-	private static final String requirementInstanceStereotypeQName = "ModelicaML::ModelicaRequirementConstructs::RequirementInstance";
+	private static final String requirementInstanceStereotypeQName = Constants.stereotypeQName_RequirementInstance;
 	
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
@@ -111,7 +112,6 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			}
 			// remove all line delimiters
 			declarationString = declarationString.replaceAll("\\r|\\n", "");
-
 			
 //			System.out.println("treeObject.getFinalModificationRightHand(): " + treeObject.getFinalModificationRightHand());
 //			System.out.println("treeObject.getDeclaration(): " + treeObject.getDeclaration());
@@ -248,41 +248,80 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 				cell.setStyleRanges(styledString.getStyleRanges());
 				super.update(cell);
 			}
-			else if (treeObject.isInput()) {
-				String tNameString = "input ";
-				if (treeObject.getProperty().getType() != null) {
-					tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
-				}
-				//StyledString styledString = new StyledString("");
-				//styledString.append(tNameString + treeObject.toString() + declarationString, StyledString.COUNTER_STYLER);
-				//cell.setText(styledString.toString());
-				//cell.setStyleRanges(styledString.getStyleRanges());
+			
+			else if (treeObject.isInput() || treeObject.isOutput()) {
+				String tNameString = "";
 				
-				if (declarationString.trim().equals("")) {
-					declarationString = " = ???";
+				if (treeObject.isValueClient()) {
+					tNameString = tNameString + clientIndicator+", ";
 				}
-				cell.setText(tNameString + treeObject.toString() + arraySizeString + declarationString);
-				//cell.setForeground(new Color(null, 255, 0, 0)); // RED
-				cell.setForeground(new Color(null, 234, 0, 0)); // darker RED
-				super.update(cell);
+				else if (treeObject.isValueProvider()) {
+					tNameString = tNameString + providerIndicator+", ";
 				}
-			else if (treeObject.isOutput())  {
-				String tNameString = "output ";
-				if (treeObject.getProperty().getType() != null) {
-					tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
-				}
-//				StyledString styledString = new StyledString("");
-//				styledString.append(tNameString + treeObject.toString() + declarationString, StyledString.DECORATIONS_STYLER);
-//				cell.setText(styledString.toString());
-//				cell.setStyleRanges(styledString.getStyleRanges());
 				
+				if (treeObject.isInput()) {
+					tNameString = tNameString + "input ";
+					
+					if (declarationString.trim().equals("")) {
+						declarationString = " = ???";
+					}
+				}
+				else if (treeObject.isOutput()) {
+					tNameString = tNameString + "output ";
+				}
+
 				cell.setText(tNameString + treeObject.toString() + arraySizeString + declarationString);
-				//cell.setForeground(new Color(null, 0, 150, 0)); // darker GREEN
-				cell.setForeground(new Color(null, 0, 187, 0)); // GREEN
+				if (treeObject.isInput()) {
+					cell.setForeground(new Color(null, 234, 0, 0)); // darker RED
+				}
+				else if (treeObject.isOutput()) {
+					cell.setForeground(new Color(null, 0, 187, 0)); // GREEN
+				}
 				super.update(cell);
 			}
+//			else if (treeObject.isInput()) {
+//				String tNameString = "input ";
+//				if (treeObject.getProperty().getType() != null) {
+//					tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
+//				}
+//				//StyledString styledString = new StyledString("");
+//				//styledString.append(tNameString + treeObject.toString() + declarationString, StyledString.COUNTER_STYLER);
+//				//cell.setText(styledString.toString());
+//				//cell.setStyleRanges(styledString.getStyleRanges());
+//				
+//				if (declarationString.trim().equals("")) {
+//					declarationString = " = ???";
+//				}
+//				cell.setText(tNameString + treeObject.toString() + arraySizeString + declarationString);
+//				//cell.setForeground(new Color(null, 255, 0, 0)); // RED
+//				cell.setForeground(new Color(null, 234, 0, 0)); // darker RED
+//				super.update(cell);
+//				}
+//			else if (treeObject.isOutput())  {
+//				String tNameString = "output ";
+//				if (treeObject.getProperty().getType() != null) {
+//					tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
+//				}
+////				StyledString styledString = new StyledString("");
+////				styledString.append(tNameString + treeObject.toString() + declarationString, StyledString.DECORATIONS_STYLER);
+////				cell.setText(styledString.toString());
+////				cell.setStyleRanges(styledString.getStyleRanges());
+//				
+//				cell.setText(tNameString + treeObject.toString() + arraySizeString + declarationString);
+//				//cell.setForeground(new Color(null, 0, 150, 0)); // darker GREEN
+//				cell.setForeground(new Color(null, 0, 187, 0)); // GREEN
+//				super.update(cell);
+//			}
 			else if (treeObject.isLeaf())  {
 				String tNameString = "";
+				
+				if (treeObject.isValueClient()) {
+					tNameString = tNameString + clientIndicator+", ";
+				}
+				else if (treeObject.isValueProvider()) {
+					tNameString = tNameString + providerIndicator+", ";
+				}
+				
 				if (treeObject.getProperty() != null) {
 					if (treeObject.getProperty().getType() != null) {
 						tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
@@ -292,6 +331,14 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			}
 			else {
 				String tNameString = "";
+				
+				if (treeObject.isValueClient()) {
+					tNameString = tNameString + clientIndicator+", ";
+				}
+				else if (treeObject.isValueProvider()) {
+					tNameString = tNameString + providerIndicator+", ";
+				}
+				
 				if (treeObject.getProperty().getType() != null) {
 					tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
 				}
@@ -304,6 +351,8 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		}
 	}
 	
+	private final static String clientIndicator = "(client)";
+	private final static String providerIndicator = "(provider)";
 	
 	/**
 	 * Checks for array size.
