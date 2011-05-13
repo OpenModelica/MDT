@@ -115,6 +115,8 @@
 <!--predefined controller for CalculatedProperty#iconImagePath--><predefinedController id="emftStructuralFeatureController" predefinedId="ModelicaML_CalculatedProperty_iconImagePath"><feature handlerID="StringStereotype" name="iconImagePath" stereotypeName="ModelicaML::ModelicaCompositeConstructs::CalculatedProperty"/><editor id="org.eclipse.papyrus.properties.runtime.textPropertyEditor" label="Icon Image Path:" labelPosition="16384"/><constraints><appliedStereotypes><appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::CalculatedProperty"/></appliedStereotypes></constraints></predefinedController>
 
 
+<!--predefined controller for ValueMediator#variability--><predefinedController id="emftStructuralFeatureController" predefinedId="ModelicaML_ValueMediator_variability"><feature handlerID="EnumerationStereotype" name="variability" stereotypeName="ModelicaML::ValueBinding::ValueMediator"/><editor id="org.eclipse.papyrus.properties.runtime.comboPropertyEditor" label="Variability:" labelPosition="16384"/><constraints><appliedStereotypes><appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediator"/></appliedStereotypes></constraints></predefinedController>
+
 <!--predefined controller for AlgorithmCode#loopKind-->
 <predefinedController id="emftStructuralFeatureController" predefinedId="ModelicaML_AlgorithmCode_loopKind">
 	<feature handlerID="EnumerationStereotype" name="loopKind" stereotypeName="ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)"/>

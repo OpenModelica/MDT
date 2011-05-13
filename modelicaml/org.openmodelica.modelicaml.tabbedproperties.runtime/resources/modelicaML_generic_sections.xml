@@ -1027,17 +1027,17 @@
 	<sectionSet name="sectionSet_Single_ValueMediatorsContainer">
 		<context enablesFor="1">
 			<appliedStereotypes>
-				<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"/>
+				<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediatorsContainer"/>
 			</appliedStereotypes>
 		</context>
-		<section adapterId="Semantic" id="section_Single_Block" tabId="basicTabModelicaML">
+		<section adapterId="Semantic" id="section_Single_ValueMediatorsContainer" tabId="basicTabModelicaML">
 			<replacedSections>
 				<replacedSection id="section_Multiple_ValueMediatorsContainer"/>
 			</replacedSections>
 			<fragment id="fragment_Single_Block">
 				<context enablesFor="1">
 					<appliedStereotypes>
-						<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediatorsContainer"/>
+						<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediatorsContainer"/>
 					</appliedStereotypes>
 				</context>
 				<content>
@@ -1310,17 +1310,17 @@
 	<sectionSet name="sectionSet_Single_ValueMediator">
 		<context enablesFor="1">
 			<appliedStereotypes>
-				<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediator"/>
+				<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediator"/>
 			</appliedStereotypes>
 		</context>
-		<section adapterId="Semantic" id="section_Single_Variable" tabId="basicTabModelicaML">
+		<section adapterId="Semantic" id="section_Single_ValueMediator" tabId="basicTabModelicaML">
 			<replacedSections>
 				<replacedSection id="section_Multiple_ValueMediator"/>
 			</replacedSections>
 			<fragment id="fragment_Single_ValueMediator">
 				<context enablesFor="1">
 					<appliedStereotypes>
-						<appliedStereotype qualifiedName="ModelicaMLTesting::ValueBinding::ValueMediator"/>
+						<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediator"/>
 					</appliedStereotypes>
 				</context>
 				<content>
@@ -1331,6 +1331,7 @@
 					<container>
   						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
   						<controller predefinedId="UML_TypedElement_type" />
+  						<controller predefinedId="ModelicaML_ValueMediator_variability"/>
   					</container>
 				</content>
 			</fragment>
