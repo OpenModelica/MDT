@@ -70,6 +70,7 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
@@ -272,12 +273,12 @@ public class InstantiateRequirementsDialog extends Dialog {
 			while (i.hasNext()) {
 				EObject object = i.next() ;
 				if (object instanceof Class) {
-					if ( ((Class)object).getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::Requirement") != null) {
+					if ( ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
 
 						//TODO: bug: once the key words search was performed the sorting based on name or id does not work ...
 						
 						if (keyWordList != null && keyWordList.size() > 0) { // search
-							Stereotype stereotype = ((Class)object).getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::Requirement");
+							Stereotype stereotype = ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement);
 							String name = ((Class)object).getName();
 							String id = "" + (String) ((Class)object).getValue(stereotype, "id");
 							String text = "" + (String) ((Class)object).getValue(stereotype, "text");
@@ -298,7 +299,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 								map.put(((Class)object).getName(), (Class) object);
 							}
 							else if (sortFilter.equals("id")) {
-								Stereotype stereotype = ((Class)object).getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::Requirement");
+								Stereotype stereotype = ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement);
 								String id = "" + (String) ((Class)object).getValue(stereotype, "id");
 								
 								if (stereotype!= null) {
@@ -428,7 +429,7 @@ public class InstantiateRequirementsDialog extends Dialog {
     private ExpandBar drawExpandBar(ExpandBar expandBar){
     	
     	for (Class req : reqList) {
-			Stereotype stereotype = req.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::Requirement");
+			Stereotype stereotype = req.getAppliedStereotype(Constants.stereotypeQName_Requirement);
 			if (stereotype != null) {
 				String title = "" + req.getName();
 				Object id = "" + req.getValue(stereotype, "id");

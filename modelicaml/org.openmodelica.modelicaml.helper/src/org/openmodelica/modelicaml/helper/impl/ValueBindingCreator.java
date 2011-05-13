@@ -2,41 +2,45 @@ package org.openmodelica.modelicaml.helper.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveCodeHelper;
 
 public class ValueBindingCreator {
+	
 	private static List<TreeObject> updatedItems = new ArrayList<TreeObject>(); 
-
-	public static List<TreeObject> getUpdatedItems() {
-		return updatedItems;
-	}
-
 	private static HashMap<TreeObject, String> updatedItemsToNewModification = new HashMap<TreeObject, String>();
 	
-	public static HashMap<TreeObject, String> getUpdatedItemsToNewModification() {
-		return updatedItemsToNewModification;
-	}
+	private static List<TreeObject> deletedItemsModification = new ArrayList<TreeObject>();
+	private static List<String> deletedModifications = new ArrayList<String>();
+	
 
-	public static void updateBindings(TreeParent treeParent, TreeParent treeRoot){
+	public static void updateBindings(TreeParent treeParent, TreeParent treeRoot, boolean deleteOldBindings){
 
 		// clear all static lists
 		updatedItems.clear();
 		updatedItemsToNewModification.clear();
 		
+		deletedItemsModification.clear();
+		deletedModifications.clear();
+		
 		// update bindings
-		update(treeParent,treeRoot);
+		update(treeParent, treeRoot, deleteOldBindings);
 	}
 	
-	private static void update(TreeParent treeParent,  TreeParent treeRoot){
+	private static void update(TreeParent treeParent,  TreeParent treeRoot, boolean deleteOldBindings){
+		
 		if (treeParent != null && treeRoot != null) {
 			
 			TreeObject[] children = treeParent.getChildren();
@@ -60,71 +64,67 @@ public class ValueBindingCreator {
 					DeriveCodeHelper helper = new DeriveCodeHelper(item, treeRoot);
 		    		String modification = helper.getCode();
 		    		
+		    		EList<Element> mediatorsList = TreeUtls.getValueMediators(element, Constants.stereotypeQName_ValueClient, Constants.stereotypeQName_ValueClient_obtainsValueFrom);
+
+//		    		if (mediatorsList.size() > 0 ) {
+//		    			for (Element element2 : mediatorsList) {
+//		    				if (element2 instanceof NamedElement) {
+//		    					System.err.println( item.getDotPath() + " mediator : " + ((NamedElement)element2).getName());
+//							}
+//						}
+//					}
+		    		
+		    		// delete old bindings
+//		    		if ( mediatorsList.size() > 0  && modificationStoreLocation != null && deleteOldBindings ) {
+		    		// if there are value providers for this client and the modification store location is clear ...
+		    		if ( helper.getValueProviders().size() > 0  && modificationStoreLocation != null && deleteOldBindings ) {
+	    				
+		    			String result = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
+	    				
+		    			if (result != null && !result.trim().equals("")) {
+		    				
+		    				deletedModifications.add(result);
+							deletedItemsModification.add(item);
+							
+	    					item.setFinalModificationRightHand( null ); 
+							item.setFinalModificationSource( null );
+						}
+					}
+		    		
+		    		// add modifications
+//		    		if (mediatorsList.size() > 0 && modification != null && modificationStoreLocation != null) {
 		    		if (modification != null && modificationStoreLocation != null) {
 		    			
 		    			ModificationManager.addComponentModification( modificationStoreLocation, componentPath, modification, true);
 						
 		    			item.setFinalModificationRightHand(modification); 
-						if (modificationStoreLocation instanceof NamedElement) {  
-							item.setFinalModificationSource( modificationStoreLocation );
-						}
+						item.setFinalModificationSource( modificationStoreLocation );
 		    			
 						updatedItems.add(item);
 		    			updatedItemsToNewModification.put(item, modification);		    			
-		    			
-//		    			viewer.update(item, null);
 					}
 				}
 			
 				if (item instanceof TreeParent) {
-					update((TreeParent)item, treeRoot);
+					update((TreeParent)item, treeRoot, deleteOldBindings);
 				}
 			}
 		}
 	}
 	
-//	public void bindReqInputProperties(EList<Property> instantiatedRequirementList, Class containingClass, Boolean tryToMatch) {
-//
-//		for (Property instantiatedRequirement : instantiatedRequirementList) {
-//			
-//			Type pType =  instantiatedRequirement.getType();
-//			
-//			if (pType != null && pType instanceof Class) {
-//				EList<Property> reqProperties = getRequirementInputPropertiesList(((Class)pType) );
-//				for (Property reqProperty : reqProperties) {
-//	    			String valueBindingStereotypeQNameForReqProperty =  Constants.stereotypeQName_ValueClient;
-//	    			String valueBindingPropertyNameForReqProperty = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-//	    			Stereotype reqPropertyStereotype = reqProperty.getAppliedStereotype(valueBindingStereotypeQNameForReqProperty);
-//					
-//					if (reqPropertyStereotype != null) {
-//						EList<Element> listOfReqPropertyProxies = TreeUtls.getValueMediators(reqProperty, valueBindingStereotypeQNameForReqProperty, valueBindingPropertyNameForReqProperty);
-//				    	EList<TreeObject> listOfDotPathThroughProxiesForReqProperty = TreeUtls.getValueProviders(reqProperty, listOfReqPropertyProxies, astRoot);
-//				    	
-//				    	if (listOfDotPathThroughProxiesForReqProperty.size() > 1) { // multiple choices
-//							if (tryToMatch) {
-//								// TODO: implement a "find the best match" ... 
-//							}
-//						}
-//				    	else { // only one choice 
-////				    		List<String> list = new ArrayList<String>();
-////				    		list.addAll(listOfDotPathThroughProxiesForReqProperty);
-////				    		System.err.println("Add modification: " + StringUtls.replaceSpecChar(instantiatedRequirement.getName()) + "." + StringUtls.replaceSpecChar(reqProperty.getName()) + " = " + list.get(0));
-//
-//				    		// get the first item path
-////				    		TreeObject provider = listOfDotPathThroughProxiesForReqProperty.get(0);
-//				    		
-//				    		DeriveCodeHelper helper = new DeriveCodeHelper(reqProperty, astRoot);
-//				    		String modification = helper.getCode();
-//				    		
-//				    		if (modification != null) {
-//				    			ModificationManager.addComponentModification(instantiatedRequirement, StringUtls.replaceSpecChar(reqProperty.getName()), modification, true);	
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		
-//	}
+	public static List<TreeObject> getDeletedItemsModification() {
+		return deletedItemsModification;
+	}
 	
+	public static List<String> getDeletedModifications() {
+		return deletedModifications;
+	}
+
+	public static List<TreeObject> getUpdatedItems() {
+		return updatedItems;
+	}
+
+	public static HashMap<TreeObject, String> getUpdatedItemsToNewModification() {
+		return updatedItemsToNewModification;
+	}
 }
