@@ -45,10 +45,10 @@ public class Constants {
 	public static final String propertyName_output 				= "output";
 
 	// primarily used by the value bindings plugin  
-	public static final String stereotypeQName_ValueMediatorsContainer 	= "ModelicaMLTesting::ValueBinding::ValueMediatorsContainer";
-	public static final String stereotypeQName_ValueMediator 			= "ModelicaMLTesting::ValueBinding::ValueMediator";
-	public static final String stereotypeQName_ValueProvider 			= "ModelicaMLTesting::ValueBinding::ValueProvider";
-	public static final String stereotypeQName_ValueClient 				= "ModelicaMLTesting::ValueBinding::ValueClient";
+	public static final String stereotypeQName_ValueMediatorsContainer 	= "ModelicaML::ValueBinding::ValueMediatorsContainer";
+	public static final String stereotypeQName_ValueMediator 			= "ModelicaML::ValueBinding::ValueMediator";
+	public static final String stereotypeQName_ValueProvider 			= "ModelicaML::ValueBinding::ValueProvider";
+	public static final String stereotypeQName_ValueClient 				= "ModelicaML::ValueBinding::ValueClient";
 	
 	public static final String stereotypeQName_ValueClient_obtainsValueFrom 	= "obtainsValueFrom";
 	public static final String stereotypeQName_ValueProvider_providesValueFor 	= "providesValueFor";

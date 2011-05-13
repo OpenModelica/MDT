@@ -48,6 +48,7 @@ import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
 
@@ -57,8 +58,8 @@ import org.openmodelica.modelicaml.common.services.UmlServices;
  * The Class TreeObject.
  */
 public class TreeObject implements IAdaptable {
-	private String stereotypeQName_Requirement = "ModelicaML::ModelicaRequirementConstructs::Requirement";
-	private String stereotypeQName_Variable = "ModelicaML::ModelicaCompositeConstructs::Variable";
+	private String stereotypeQName_Requirement = Constants.stereotypeQName_Requirement;
+	private String stereotypeQName_Variable = Constants.stereotypeQName_Variable;
 	
 		/** The property. */
 	private Property property = null;
@@ -72,20 +73,11 @@ public class TreeObject implements IAdaptable {
 	/** The dot path. */
 	private String dotPath;
 	
-	/** The causality. */
-	private String causality; // TODO: to be used when e.g. ports has causality that affects its subcomponents
-	
 	/** The is leaf. */
 	private Boolean isLeaf;
 	
 	/** The is root. */
 	private Boolean isRoot;
-	
-//	/** The modifications. */
-//	private HashSet<String> modifications = new HashSet<String>(); 
-	
-//	/** The modifications defined infirst level component. */
-//	private HashSet<String> modificationsDefinedInfirstLevelComponent = new HashSet<String>(); 
 	
 	/** The first level component. */
 	private Property firstLevelComponent = null;
@@ -95,9 +87,6 @@ public class TreeObject implements IAdaptable {
 
 	/** The declaration. */
 	private String declaration = null;
-	
-//	/** The final modification left hand. */
-//	private String finalModificationLeftHand = null;
 	
 	/** The final modification right hand. */
 	private String finalModificationRightHand = null; // TODO: rename to editedModification
@@ -118,22 +107,6 @@ public class TreeObject implements IAdaptable {
 	
 	private Element modificationStoreLocation = null;
 	
-//	/** The is predefined. */
-//	private Boolean isPredefined;
-//	
-//	/** The is primitive. */
-//	private Boolean isPrimitive;
-//	
-//	/** The is port. */
-//	private Boolean isPort;
-//	
-//	// TODO: add these to constructor
-//	/** The is first level component. */
-//	private Boolean isFirstLevelComponent;
-//	
-//	/** The is first level. */
-//	private Boolean isFirstLevel;
-	
 	/** The selected class. */
 	private Class selectedClass;
 	
@@ -143,6 +116,8 @@ public class TreeObject implements IAdaptable {
 	public Boolean hasInputs = null;
 	public Boolean hasOutputs = null;
 	public Boolean hasRequirements = null;
+	public Boolean hasValueClients = null;
+	public Boolean hasValueProviders = null;
 
 	public TreeObject(	String name, 
 						Property property, 
@@ -150,7 +125,6 @@ public class TreeObject implements IAdaptable {
 						String dotPath, 
 						Boolean isLeaf, 
 						Boolean isRoot, 
-//						HashSet<String> modifications,
 						org.eclipse.uml2.uml.Class selectedClass) {
 
 		this.name = name;
@@ -170,20 +144,11 @@ public class TreeObject implements IAdaptable {
 		
 		this.isLeaf = isLeaf;
 		this.isRoot = isRoot;
-		
-//		if (modifications != null ) {
-//			this.modifications.addAll(modifications);
-//		}
+
 		this.selectedClass = selectedClass;
-		
-		// set setModificationsDefinedInFirstLevelComponents list
-//		setModificationsDefinedInFirstLevelComponents();
 
 		// declaration string
 		setDeclaration();
-		
-		// set the final modification left/right hand values
-//		setFinalModificationLeftAndRigntHand();
 	}
 	
 	
@@ -226,112 +191,11 @@ public class TreeObject implements IAdaptable {
 		this.element = element;
 	}
 	
-	/**
-	 * Gets the element.
-	 * 
-	 * @return the element
-	 */
-//	public NamedElement getElement(){
-//		return this.element;
-//	}
-	
 	public Element getUmlElement(){
 		if (this.property != null ) { return this.property; }
 		if (this.element != null ) { return this.element; }
 		return null;
 	}
-	
-//	/**
-//	 * Sets the modifications defined in first level components.
-//	 */
-//	private void setModificationsDefinedInFirstLevelComponents(){
-//		if (firstLevelComponent != null) {
-//			HashSet<String> modList = ModificationsCollector.getComponentModifications(firstLevelComponent);
-//
-//			for (String string : modList) {
-//				String[] splitted = string.trim().split("=");
-//				if (splitted.length > 1) {
-//					
-//					String sLeftHand = splitted[0].trim();
-//					//String sRightHand = splitted[1].trim();
-//					
-//					if (sLeftHand.equals(this.dotPathWithoutFirstLevelComponent)) {
-//						String newModString = firstLevelComponent.getName() + "." + string;
-//						modificationsDefinedInfirstLevelComponent.add(newModString);
-//						
-//						// Remove firstLevelComponent modification from modifications
-//						HashSet<String> copyOfModifications = new HashSet<String>();
-//						copyOfModifications.addAll(this.modifications);
-//						for (String string2 : copyOfModifications) {
-//							if (string2.equals(newModString)) {
-//								this.modifications.remove(newModString);
-////								System.out.println("Deleted from derived mod list: " + newModString);
-////								System.out.println("getFinalModificationRightHand(): " + this.getFinalModificationRightHand());
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-	
-//	/**
-//	 * Sets the final modification left and rignt hand.
-//	 */
-//	private void setFinalModificationLeftAndRigntHand(){
-//		
-//		// reset the values
-//		finalModificationLeftHand = null;
-//		finalModificationRightHand = null;
-//		
-//		// get the final modification and split it into left/right hand
-//		if (this.modificationsDefinedInfirstLevelComponent.size() > 0 ) {
-//			for (String string0 : this.modificationsDefinedInfirstLevelComponent) {
-//				String string = StringUtls.removeOutterBraces(string0);
-//				
-//				String[] splitted = string.trim().split("=");
-//				if (splitted.length > 1) {
-//					String sLeftHand = splitted[0].trim();
-//					String sRightHand = splitted[1].trim();
-//
-//					if (sLeftHand.equals(dotPath)) {
-//						finalModificationLeftHand = sLeftHand;
-//						finalModificationRightHand = sRightHand;
-//						
-////						System.err.println("finalModificationLeftHand: " + this.finalModificationLeftHand);
-////						System.out.println("finalModificationRightHand: " + this.finalModificationRightHand);
-//					}	
-//				}
-//				else {
-////					Shell shell = new Shell();
-////					MessageDialog.openError(shell, "ModelicaML modifications parsing error (TreeObject.java 01)", "The modification string '"+string+"' does not contain an equality lign ('='). It will not be stored.");
-//				}
-//			}
-//		}
-//		else if (this.modifications.size() > 0 ) {
-//			for (String string0 : this.modifications) {
-//				String string = StringUtls.removeOutterBraces(string0);
-//				
-//				String[] splitted = string.trim().split("=");
-//				if (splitted.length > 1) {
-//					String sLeftHand = splitted[0].trim();
-//					String sRightHand = splitted[1].trim();
-//					if (sLeftHand.equals(dotPath)) {
-//						finalModificationLeftHand = sLeftHand;
-//						finalModificationRightHand = sRightHand;
-//						
-////						System.err.println("finalModificationLeftHand: " + this.finalModificationLeftHand);
-////						System.out.println("finalModificationRightHand: " + this.finalModificationRightHand);
-//					}	
-//				}
-//				else {
-////					Shell shell = new Shell();
-////					MessageDialog.openError(shell, "ModelicaML modifications parsing error (TreeObject.java 02)", "The modification string '"+string+"' does not contain an equality lign ('='). It will not be stored.");
-//
-//				}
-//			}				
-//		}
-//	}
 	
 	/**
 	 * Sets the declaration.
@@ -363,16 +227,6 @@ public class TreeObject implements IAdaptable {
 		return null;
 	}
 	
-//	/**
-//	 * Gets the final modification left hand.
-//	 * 
-//	 * @return the final modification left hand
-//	 */
-//	public String getFinalModificationLeftHand(){
-//		return this.finalModificationLeftHand;
-//	}
-	
-	
 	
 	public void setModificationRightHand(String modificationRightHand) {
 		this.modificationRightHand = modificationRightHand;
@@ -393,95 +247,6 @@ public class TreeObject implements IAdaptable {
 	public void setFinalModificationRightHand( String value ){ // TODO: rename to setEditedModification
 		this.finalModificationRightHand = value;
 	}
-	
-	
-//	/**
-//	 * Gets the modifications.
-//	 * 
-//	 * @return the modifications
-//	 */
-//	public HashSet<String> getModifications(){
-//		return this.modifications;
-//	}
-	
-	/**
-	 * Delete from modification list based on left right hand value.
-	 * 
-	 * @param leftHandValue
-	 *            the left hand value
-	 * @param rightHandValue
-	 *            the right hand value
-	 */
-//	public void deleteFromModificationListBasedOnLeftRightHandValue(String leftHandValue, String rightHandValue){
-//		
-////		System.out.println("leftHandValue: " + leftHandValue);
-////		System.out.println("rightHandValue: " + rightHandValue);
-//		
-//		HashSet<String> copyOfModificationsDefinedInfirstLevelComponent = new HashSet<String>();
-//		copyOfModificationsDefinedInfirstLevelComponent.addAll(this.modificationsDefinedInfirstLevelComponent);
-//		
-//		String leftHand = null;
-//		String rightHand = null;
-//		for (String string : copyOfModificationsDefinedInfirstLevelComponent) {
-//			String[] splitted = string.trim().split("=");
-//			if (splitted.length > 1) {
-//				leftHand = splitted[0].trim();
-//				rightHand = splitted[1].trim();
-//				
-////				System.out.println("leftHand: " + leftHand);
-////				System.out.println("rightHand: " + rightHand);
-//				
-//				if (leftHand.equals(leftHandValue)) {
-//					if (rightHand.equals(rightHandValue)) {
-//						this.modificationsDefinedInfirstLevelComponent.remove(string);
-//						//System.out.println("Deleted: " + string);
-//						
-//						// update the left/right-hand values
-//						setFinalModificationLeftAndRigntHand();
-//					}
-//				}
-//			}
-//		}
-//
-//	}
-	
-//	/**
-//	 * Delete from modification list.
-//	 * 
-//	 * @param modificationString
-//	 *            the modification string
-//	 */
-//	public void deleteFromModificationList(String modificationString){
-//		String[] splitted = modificationString.trim().split("=");
-//		if (splitted.length > 1) {
-//			String leftHand = splitted[0].trim();
-//			String rightHand = splitted[1].trim();
-//			
-//			deleteFromModificationListBasedOnLeftRightHandValue(leftHand, rightHand);
-//		}
-////		else {
-////			System.err.println("'" + modificationString + "' is not a valid Modelica modification string!");
-////		}
-//	}
-	
-	
-//	/**
-//	 * Adds the to modification list.
-//	 * 
-//	 * @param modificationString
-//	 *            the modification string
-//	 */
-//	public void addToModificationList(String modificationString){
-//		if (modificationString != null) {
-//			if (!modificationString.equals("")) {
-//				//this.modifications.add(modificationString);
-//				this.modificationsDefinedInfirstLevelComponent.add(modificationString);
-//				//System.out.println("added : " + modificationString);
-//					// update the left/right-hand values
-//				setFinalModificationLeftAndRigntHand(); 
-//			}
-//		}
-//	}
 	
 	/**
 	 * Gets the comments.
@@ -621,9 +386,6 @@ public class TreeObject implements IAdaptable {
 	 * @return the boolean
 	 */
 	public Boolean isInput(){
-//		if (this.causality.equals("input")) {
-//			return true;
-//		}
 		if (this.property != null) {
 			if (isInputOrOutputVariable(this.property, "input")) {
 				return true;
@@ -638,9 +400,6 @@ public class TreeObject implements IAdaptable {
 	 * @return the boolean
 	 */
 	public Boolean isOutput(){
-//		if (this.causality.equals("output")) {
-//			return true;
-//			}
 		if (this.property != null) {
 			if (isInputOrOutputVariable(this.property, "output")) {
 				return true;
@@ -720,7 +479,7 @@ public class TreeObject implements IAdaptable {
 		}
 	}
 	
-	public Boolean getHasRequirements() {
+	public Boolean hasRequirements() {
 		if (hasRequirements == null) {
 			return false;
 		}
@@ -733,6 +492,34 @@ public class TreeObject implements IAdaptable {
 			this.getParent().setHasRequirements(root);
 		}
 	}
+	
+	public void setHasValueClients(TreeParent root) {
+		this.hasValueClients = true; // this attribute is only set to true, never to false. 
+//		System.err.println(this.getName() + " hasValueClients");
+		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasRequirements == null) { // it stops when this attribute is already set.
+			this.getParent().setHasValueClients(root);
+		}
+	}
+
+	public Boolean hasValueClients() {
+		if (hasValueClients == null) { return false; }			
+		return hasValueClients;
+	}
+	
+	public void setHasValueProviders(TreeParent root) {
+		this.hasValueProviders = true; // this attribute is only set to true, never to false. 
+//		System.err.println(this.getName() + " hasValueProviders");
+		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasRequirements == null) { // it stops when this attribute is already set.
+			this.getParent().setHasValueProviders(root);
+		}
+	}
+
+	public Boolean hasValueProviders() {
+		if (hasValueProviders == null) { return false; }			
+		return hasValueProviders;
+	}
+
+	
 	
 	public Boolean hasRedeclaredType() {
 		if (this.getProperty() != null) {
@@ -769,8 +556,18 @@ public class TreeObject implements IAdaptable {
 	
 	
 	
-	
-	
+	public Boolean isValueClient(){
+		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
+			return true;
+		}
+		return false;
+	}
+	public Boolean isValueProvider(){
+		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
+			return true;
+		}
+		return false;
+	}
 	
 	
 	
@@ -806,19 +603,5 @@ public class TreeObject implements IAdaptable {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-//	public void setFinalModificationDescription(
-//			String finalModificationDescription) {
-//		this.finalModificationDescription = finalModificationDescription;
-//	}
-
-
-
-
-
-
-	
-
 	
 }

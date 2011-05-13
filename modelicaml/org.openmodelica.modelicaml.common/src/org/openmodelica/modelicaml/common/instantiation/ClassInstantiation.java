@@ -342,6 +342,10 @@ public class ClassInstantiation {
 				// set parent "has inputs, outputs" indicators to all ancestors
 				if (child.isInput()) { parent.setHasInputs(treeRoot); }
 				if (child.isOutput()) { parent.setHasOutputs(treeRoot); }
+
+				// set parent "has value clients or providers" indicators
+				if (child.isValueClient()) { parent.setHasValueClients(treeRoot); }
+				if (child.isValueProvider()) { parent.setHasValueProviders(treeRoot); }
 				
 				// create predefined properties for Modelica real, string, integer and boolean.
 				createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath);
@@ -369,7 +373,11 @@ public class ClassInstantiation {
 				setModificationStoreLocation(newParent);
 				
 				// set has requirements indicator to all ancestors
-				if (newParent.isRequirementInstance()) { parent.setHasRequirements(treeRoot); }
+				if (newParent.isRequirementInstance()) { newParent.setHasRequirements(treeRoot); }
+				
+				// set parent "has value clients or providers" indicators
+				if (newParent.isValueClient()) { newParent.setHasValueClients(treeRoot); }
+				if (newParent.isValueProvider()) { newParent.setHasValueProviders(treeRoot); }
 				
 				// make sure that the tree object gets its redeclared type.
 				newParent.setComponentType(pType); 
