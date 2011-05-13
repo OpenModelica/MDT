@@ -1,7 +1,10 @@
 Manifest-Version: 1.0
-Require-Bundle: org.eclipse.core.runtime,org.eclipse.gmt.modisco.infra
- .common.core,org.eclipse.gmt.modisco.infra.query.core,org.eclipse.emf
- .ecore,org.eclipse.uml2.uml
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.gmt.modisco.infra.common.core,
+ org.eclipse.gmt.modisco.infra.query.core,
+ org.eclipse.emf.ecore,
+ org.eclipse.uml2.uml,
+ org.openmodelica.modelicaml.common;bundle-version="1.0.1"
 Bundle-Vendor: OpenModelica Project
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,bin

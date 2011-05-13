@@ -40,6 +40,7 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.StateMachine;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -65,40 +66,36 @@ public class GetModelicaMLClassIcon implements IJavaModelQuery<Class, String> {
 		if (context instanceof Activity) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/Activity.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::ModelicaClass") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/Class.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::ModelicaPackage") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/package.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Operator") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Operator) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/operator.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Model") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Model) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/model.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Block") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Block) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/block.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Connector") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/connector.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::Record") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Record) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/record.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaClassConstructs::CalculationModel") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/calculationModel.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::Requirement") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/requirement.gif";
 		}
-		
-		// EXPERINEMTAL
-		if (context.getAppliedStereotype("ModelicaMLTesting::ValueBinding::ValueMediatorsContainer") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_ValueMediatorsContainer) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/valueMediatorsContainer.png";
 		}
-		// EXPERINEMTAL END
-		
 		
 		//return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/Class.gif";
 		return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/QuestionMark.png";

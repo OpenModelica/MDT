@@ -37,6 +37,7 @@ import org.eclipse.gmt.modisco.infra.query.core.java.IJavaModelQuery;
 import org.eclipse.gmt.modisco.infra.query.core.java.ParameterValueList;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,23 +53,23 @@ public class GetModelicaMLComponentIconPath implements IJavaModelQuery<Property,
 		if (context instanceof Port) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/Port.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Component") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Component) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/component.png";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Variable) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/variable.png";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::ConnectionPort") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_ConnectionPort) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/Port.gif";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementInstance") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/requirementInstance.png";
 		}
-		if (context.getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::CalculatedProperty") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/calculatedProperty.png";
 		}
 		// EXPERINEMTAL
-		if (context.getAppliedStereotype("ModelicaMLTesting::ValueBinding::ValueMediator") != null) {
+		if (context.getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
 			return "/org.openmodelica.modelicaml.profile/resources/icons/icons16/valueMediator.png";
 		}
 		// EXPERINEMTAL END
