@@ -5,9 +5,17 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 generate client "http://www.openmodelica.org/modelicaml/editor/xtext/valuebinding/Client"
 
-ClientOperation : 
-	(Expr=expression)? // optional expression
-	;
+ClientOperation : // ModelicaML specific. All rules are made optional in order to not create validation error markers if nothing was entered by the user.
+(left_hand=left_hand_component_reference '=' Expr=expression ';')* //a simple component equality assignment modification rule without "(" and ")". Added for better code completion support (see the left_hand_component_reference that returns only the subcomponents of the component being modified)
+;   													 
+
+left_hand_component_reference : // ModelicaML specific. 
+	('.')? ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)*;
+
+//ClientOperation : 
+//	(Expr=expression)? // optional expression
+//	;
+
 
 primary :
 num=UNSIGNED_NUMBER
@@ -22,6 +30,9 @@ num=UNSIGNED_NUMBER
 	| prod=ProductFunction 
 	| min=MinFunction
 	| max=MaxFunction
+	| avr=AverageFunction
+	| size=SizeFunction
+	
 	| result=GetResultFunction
 
 //| specificFunction=SpecificFunction // only for Value Provider
@@ -49,6 +60,10 @@ MinFunction :
 	'min' ReductionFunctionCallArgs;
 MaxFunction :
 	'max' ReductionFunctionCallArgs;
+AverageFunction :
+	'avr' ReductionFunctionCallArgs;
+SizeFunction :
+	'size' ReductionFunctionCallArgs;
 GetResultFunction :
 	'getResult' Brackets;
 

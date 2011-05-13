@@ -15,6 +15,7 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.term;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientOperation;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.component_reference;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary;
 
 /**
@@ -107,6 +108,13 @@ public class ClientSwitch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE:
+      {
+        left_hand_component_reference left_hand_component_reference = (left_hand_component_reference)theEObject;
+        T result = caseleft_hand_component_reference(left_hand_component_reference);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case ClientPackage.PRIMARY:
       {
         primary primary = (primary)theEObject;
@@ -141,6 +149,22 @@ public class ClientSwitch<T>
    * @generated
    */
   public T caseClientOperation(ClientOperation object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>left hand component reference</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>left hand component reference</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseleft_hand_component_reference(left_hand_component_reference object)
   {
     return null;
   }

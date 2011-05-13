@@ -72,13 +72,22 @@ public interface ClientPackage extends EPackage
   int CLIENT_OPERATION = 0;
 
   /**
+   * The feature id for the '<em><b>Left hand</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLIENT_OPERATION__LEFT_HAND = 0;
+
+  /**
    * The feature id for the '<em><b>Expr</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLIENT_OPERATION__EXPR = 0;
+  int CLIENT_OPERATION__EXPR = 1;
 
   /**
    * The number of structural features of the '<em>Operation</em>' class.
@@ -87,7 +96,62 @@ public interface ClientPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLIENT_OPERATION_FEATURE_COUNT = 1;
+  int CLIENT_OPERATION_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl <em>left hand component reference</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.ClientPackageImpl#getleft_hand_component_reference()
+   * @generated
+   */
+  int LEFT_HAND_COMPONENT_REFERENCE = 1;
+
+  /**
+   * The feature id for the '<em><b>Ref</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEFT_HAND_COMPONENT_REFERENCE__REF = 0;
+
+  /**
+   * The feature id for the '<em><b>Subscripts1</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1 = 1;
+
+  /**
+   * The feature id for the '<em><b>Ref1</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEFT_HAND_COMPONENT_REFERENCE__REF1 = 2;
+
+  /**
+   * The feature id for the '<em><b>Subscripts</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS = 3;
+
+  /**
+   * The number of structural features of the '<em>left hand component reference</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEFT_HAND_COMPONENT_REFERENCE_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl <em>primary</em>}' class.
@@ -97,7 +161,7 @@ public interface ClientPackage extends EPackage
    * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.ClientPackageImpl#getprimary()
    * @generated
    */
-  int PRIMARY = 1;
+  int PRIMARY = 2;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute list.
@@ -280,13 +344,31 @@ public interface ClientPackage extends EPackage
   int PRIMARY__MAX = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 6;
 
   /**
+   * The feature id for the '<em><b>Avr</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRIMARY__AVR = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 7;
+
+  /**
+   * The feature id for the '<em><b>Size</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRIMARY__SIZE = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 8;
+
+  /**
    * The feature id for the '<em><b>Result</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PRIMARY__RESULT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 7;
+  int PRIMARY__RESULT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 9;
 
   /**
    * The number of structural features of the '<em>primary</em>' class.
@@ -295,7 +377,7 @@ public interface ClientPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 8;
+  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 10;
 
   /**
    * The meta object id for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.component_referenceImpl <em>component reference</em>}' class.
@@ -305,7 +387,7 @@ public interface ClientPackage extends EPackage
    * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.ClientPackageImpl#getcomponent_reference()
    * @generated
    */
-  int COMPONENT_REFERENCE = 2;
+  int COMPONENT_REFERENCE = 3;
 
   /**
    * The feature id for the '<em><b>Ref</b></em>' attribute.
@@ -364,6 +446,17 @@ public interface ClientPackage extends EPackage
   EClass getClientOperation();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientOperation#getLeft_hand <em>Left hand</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Left hand</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientOperation#getLeft_hand()
+   * @see #getClientOperation()
+   * @generated
+   */
+  EReference getClientOperation_Left_hand();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientOperation#getExpr <em>Expr</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -373,6 +466,60 @@ public interface ClientPackage extends EPackage
    * @generated
    */
   EReference getClientOperation_Expr();
+
+  /**
+   * Returns the meta object for class '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference <em>left hand component reference</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>left hand component reference</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference
+   * @generated
+   */
+  EClass getleft_hand_component_reference();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getRef <em>Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ref</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getRef()
+   * @see #getleft_hand_component_reference()
+   * @generated
+   */
+  EAttribute getleft_hand_component_reference_Ref();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getSubscripts1 <em>Subscripts1</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Subscripts1</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getSubscripts1()
+   * @see #getleft_hand_component_reference()
+   * @generated
+   */
+  EReference getleft_hand_component_reference_Subscripts1();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getRef1 <em>Ref1</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Ref1</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getRef1()
+   * @see #getleft_hand_component_reference()
+   * @generated
+   */
+  EAttribute getleft_hand_component_reference_Ref1();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getSubscripts <em>Subscripts</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Subscripts</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference#getSubscripts()
+   * @see #getleft_hand_component_reference()
+   * @generated
+   */
+  EReference getleft_hand_component_reference_Subscripts();
 
   /**
    * Returns the meta object for class '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary <em>primary</em>}'.
@@ -462,6 +609,28 @@ public interface ClientPackage extends EPackage
   EAttribute getprimary_Max();
 
   /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr <em>Avr</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Avr</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr()
+   * @see #getprimary()
+   * @generated
+   */
+  EAttribute getprimary_Avr();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize <em>Size</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Size</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize()
+   * @see #getprimary()
+   * @generated
+   */
+  EAttribute getprimary_Size();
+
+  /**
    * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getResult <em>Result</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -516,12 +685,62 @@ public interface ClientPackage extends EPackage
     EClass CLIENT_OPERATION = eINSTANCE.getClientOperation();
 
     /**
+     * The meta object literal for the '<em><b>Left hand</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CLIENT_OPERATION__LEFT_HAND = eINSTANCE.getClientOperation_Left_hand();
+
+    /**
      * The meta object literal for the '<em><b>Expr</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference CLIENT_OPERATION__EXPR = eINSTANCE.getClientOperation_Expr();
+
+    /**
+     * The meta object literal for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl <em>left hand component reference</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl
+     * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.ClientPackageImpl#getleft_hand_component_reference()
+     * @generated
+     */
+    EClass LEFT_HAND_COMPONENT_REFERENCE = eINSTANCE.getleft_hand_component_reference();
+
+    /**
+     * The meta object literal for the '<em><b>Ref</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEFT_HAND_COMPONENT_REFERENCE__REF = eINSTANCE.getleft_hand_component_reference_Ref();
+
+    /**
+     * The meta object literal for the '<em><b>Subscripts1</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1 = eINSTANCE.getleft_hand_component_reference_Subscripts1();
+
+    /**
+     * The meta object literal for the '<em><b>Ref1</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEFT_HAND_COMPONENT_REFERENCE__REF1 = eINSTANCE.getleft_hand_component_reference_Ref1();
+
+    /**
+     * The meta object literal for the '<em><b>Subscripts</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS = eINSTANCE.getleft_hand_component_reference_Subscripts();
 
     /**
      * The meta object literal for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl <em>primary</em>}' class.
@@ -588,6 +807,22 @@ public interface ClientPackage extends EPackage
      * @generated
      */
     EAttribute PRIMARY__MAX = eINSTANCE.getprimary_Max();
+
+    /**
+     * The meta object literal for the '<em><b>Avr</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRIMARY__AVR = eINSTANCE.getprimary_Avr();
+
+    /**
+     * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRIMARY__SIZE = eINSTANCE.getprimary_Size();
 
     /**
      * The meta object literal for the '<em><b>Result</b></em>' attribute feature.

@@ -5,7 +5,19 @@
     nsURI="http://www.openmodelica.org/modelicaml/editor/xtext/valuebinding/Client"
     nsPrefix="client">
   <eClassifiers xsi:type="ecore:EClass" name="ClientOperation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left_hand" eType="#//left_hand_component_reference"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Expr" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="left_hand_component_reference">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ref" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts1" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//array_subscripts"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ref1" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts" upperBound="-1"
+        eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//array_subscripts"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="primary" eSuperTypes="../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//primary">
@@ -19,6 +31,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="prod" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="avr" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="result" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="component_reference" eSuperTypes="../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"/>

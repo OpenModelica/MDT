@@ -12,7 +12,14 @@
   <genPackages prefix="Client" basePackage="org.openmodelica.modelicaml.editor.xtext.valuebinding"
       disposableProviderFactory="true" ecorePackage="Client.ecore#/">
     <genClasses ecoreClass="Client.ecore#//ClientOperation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//ClientOperation/left_hand"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//ClientOperation/Expr"/>
+    </genClasses>
+    <genClasses ecoreClass="Client.ecore#//left_hand_component_reference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//left_hand_component_reference/ref"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//left_hand_component_reference/subscripts1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//left_hand_component_reference/ref1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//left_hand_component_reference/subscripts"/>
     </genClasses>
     <genClasses ecoreClass="Client.ecore#//primary">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//primary/Name_Function"/>
@@ -22,6 +29,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/prod"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/min"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/max"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/avr"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/size"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/result"/>
     </genClasses>
     <genClasses ecoreClass="Client.ecore#//component_reference"/>

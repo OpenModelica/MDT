@@ -15,6 +15,7 @@ import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientFactor
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientOperation;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.component_reference;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary;
 
 /**
@@ -70,6 +71,7 @@ public class ClientFactoryImpl extends EFactoryImpl implements ClientFactory
     switch (eClass.getClassifierID())
     {
       case ClientPackage.CLIENT_OPERATION: return createClientOperation();
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE: return createleft_hand_component_reference();
       case ClientPackage.PRIMARY: return createprimary();
       case ClientPackage.COMPONENT_REFERENCE: return createcomponent_reference();
       default:
@@ -86,6 +88,17 @@ public class ClientFactoryImpl extends EFactoryImpl implements ClientFactory
   {
     ClientOperationImpl clientOperation = new ClientOperationImpl();
     return clientOperation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public left_hand_component_reference createleft_hand_component_reference()
+  {
+    left_hand_component_referenceImpl left_hand_component_reference = new left_hand_component_referenceImpl();
+    return left_hand_component_reference;
   }
 
   /**

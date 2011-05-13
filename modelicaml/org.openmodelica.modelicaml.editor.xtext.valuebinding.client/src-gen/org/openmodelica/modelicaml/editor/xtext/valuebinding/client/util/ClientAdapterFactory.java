@@ -15,6 +15,7 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.term;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientOperation;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.component_reference;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary;
 
 /**
@@ -86,6 +87,11 @@ public class ClientAdapterFactory extends AdapterFactoryImpl
         return createClientOperationAdapter();
       }
       @Override
+      public Adapter caseleft_hand_component_reference(left_hand_component_reference object)
+      {
+        return createleft_hand_component_referenceAdapter();
+      }
+      @Override
       public Adapter caseprimary(primary object)
       {
         return createprimaryAdapter();
@@ -148,6 +154,21 @@ public class ClientAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createClientOperationAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference <em>left hand component reference</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference
+   * @generated
+   */
+  public Adapter createleft_hand_component_referenceAdapter()
   {
     return null;
   }

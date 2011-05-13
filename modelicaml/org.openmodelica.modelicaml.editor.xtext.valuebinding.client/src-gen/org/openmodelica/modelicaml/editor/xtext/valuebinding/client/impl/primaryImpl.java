@@ -31,6 +31,8 @@ import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl#getProd <em>Prod</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl#getMin <em>Min</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl#getMax <em>Max</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl#getAvr <em>Avr</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl#getSize <em>Size</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.primaryImpl#getResult <em>Result</em>}</li>
  * </ul>
  * </p>
@@ -148,6 +150,46 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * @ordered
    */
   protected String max = MAX_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getAvr() <em>Avr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAvr()
+   * @generated
+   * @ordered
+   */
+  protected static final String AVR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAvr() <em>Avr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAvr()
+   * @generated
+   * @ordered
+   */
+  protected String avr = AVR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getSize() <em>Size</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSize()
+   * @generated
+   * @ordered
+   */
+  protected static final String SIZE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getSize() <em>Size</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSize()
+   * @generated
+   * @ordered
+   */
+  protected String size = SIZE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getResult() <em>Result</em>}' attribute.
@@ -431,6 +473,52 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getAvr()
+  {
+    return avr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAvr(String newAvr)
+  {
+    String oldAvr = avr;
+    avr = newAvr;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, ClientPackage.PRIMARY__AVR, oldAvr, avr));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getSize()
+  {
+    return size;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setSize(String newSize)
+  {
+    String oldSize = size;
+    size = newSize;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, ClientPackage.PRIMARY__SIZE, oldSize, size));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getResult()
   {
     return result;
@@ -493,6 +581,10 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return getMin();
       case ClientPackage.PRIMARY__MAX:
         return getMax();
+      case ClientPackage.PRIMARY__AVR:
+        return getAvr();
+      case ClientPackage.PRIMARY__SIZE:
+        return getSize();
       case ClientPackage.PRIMARY__RESULT:
         return getResult();
     }
@@ -529,6 +621,12 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return;
       case ClientPackage.PRIMARY__MAX:
         setMax((String)newValue);
+        return;
+      case ClientPackage.PRIMARY__AVR:
+        setAvr((String)newValue);
+        return;
+      case ClientPackage.PRIMARY__SIZE:
+        setSize((String)newValue);
         return;
       case ClientPackage.PRIMARY__RESULT:
         setResult((String)newValue);
@@ -568,6 +666,12 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
       case ClientPackage.PRIMARY__MAX:
         setMax(MAX_EDEFAULT);
         return;
+      case ClientPackage.PRIMARY__AVR:
+        setAvr(AVR_EDEFAULT);
+        return;
+      case ClientPackage.PRIMARY__SIZE:
+        setSize(SIZE_EDEFAULT);
+        return;
       case ClientPackage.PRIMARY__RESULT:
         setResult(RESULT_EDEFAULT);
         return;
@@ -599,6 +703,10 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return MIN_EDEFAULT == null ? min != null : !MIN_EDEFAULT.equals(min);
       case ClientPackage.PRIMARY__MAX:
         return MAX_EDEFAULT == null ? max != null : !MAX_EDEFAULT.equals(max);
+      case ClientPackage.PRIMARY__AVR:
+        return AVR_EDEFAULT == null ? avr != null : !AVR_EDEFAULT.equals(avr);
+      case ClientPackage.PRIMARY__SIZE:
+        return SIZE_EDEFAULT == null ? size != null : !SIZE_EDEFAULT.equals(size);
       case ClientPackage.PRIMARY__RESULT:
         return RESULT_EDEFAULT == null ? result != null : !RESULT_EDEFAULT.equals(result);
     }
@@ -624,6 +732,10 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
     result.append(min);
     result.append(", max: ");
     result.append(max);
+    result.append(", avr: ");
+    result.append(avr);
+    result.append(", size: ");
+    result.append(size);
     result.append(", result: ");
     result.append(result);
     result.append(')');

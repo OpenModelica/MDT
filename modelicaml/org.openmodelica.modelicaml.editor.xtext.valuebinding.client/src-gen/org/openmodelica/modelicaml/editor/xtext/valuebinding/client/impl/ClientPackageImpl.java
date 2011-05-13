@@ -16,6 +16,7 @@ import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientFactor
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientOperation;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.component_reference;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary;
 
 /**
@@ -32,6 +33,13 @@ public class ClientPackageImpl extends EPackageImpl implements ClientPackage
    * @generated
    */
   private EClass clientOperationEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass left_hand_component_referenceEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -128,9 +136,69 @@ public class ClientPackageImpl extends EPackageImpl implements ClientPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getClientOperation_Expr()
+  public EReference getClientOperation_Left_hand()
   {
     return (EReference)clientOperationEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getClientOperation_Expr()
+  {
+    return (EReference)clientOperationEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getleft_hand_component_reference()
+  {
+    return left_hand_component_referenceEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getleft_hand_component_reference_Ref()
+  {
+    return (EAttribute)left_hand_component_referenceEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getleft_hand_component_reference_Subscripts1()
+  {
+    return (EReference)left_hand_component_referenceEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getleft_hand_component_reference_Ref1()
+  {
+    return (EAttribute)left_hand_component_referenceEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getleft_hand_component_reference_Subscripts()
+  {
+    return (EReference)left_hand_component_referenceEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -218,9 +286,29 @@ public class ClientPackageImpl extends EPackageImpl implements ClientPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getprimary_Result()
+  public EAttribute getprimary_Avr()
   {
     return (EAttribute)primaryEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getprimary_Size()
+  {
+    return (EAttribute)primaryEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getprimary_Result()
+  {
+    return (EAttribute)primaryEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -264,7 +352,14 @@ public class ClientPackageImpl extends EPackageImpl implements ClientPackage
 
     // Create classes and their features
     clientOperationEClass = createEClass(CLIENT_OPERATION);
+    createEReference(clientOperationEClass, CLIENT_OPERATION__LEFT_HAND);
     createEReference(clientOperationEClass, CLIENT_OPERATION__EXPR);
+
+    left_hand_component_referenceEClass = createEClass(LEFT_HAND_COMPONENT_REFERENCE);
+    createEAttribute(left_hand_component_referenceEClass, LEFT_HAND_COMPONENT_REFERENCE__REF);
+    createEReference(left_hand_component_referenceEClass, LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1);
+    createEAttribute(left_hand_component_referenceEClass, LEFT_HAND_COMPONENT_REFERENCE__REF1);
+    createEReference(left_hand_component_referenceEClass, LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS);
 
     primaryEClass = createEClass(PRIMARY);
     createEReference(primaryEClass, PRIMARY__NAME_FUNCTION);
@@ -274,6 +369,8 @@ public class ClientPackageImpl extends EPackageImpl implements ClientPackage
     createEAttribute(primaryEClass, PRIMARY__PROD);
     createEAttribute(primaryEClass, PRIMARY__MIN);
     createEAttribute(primaryEClass, PRIMARY__MAX);
+    createEAttribute(primaryEClass, PRIMARY__AVR);
+    createEAttribute(primaryEClass, PRIMARY__SIZE);
     createEAttribute(primaryEClass, PRIMARY__RESULT);
 
     component_referenceEClass = createEClass(COMPONENT_REFERENCE);
@@ -316,7 +413,14 @@ public class ClientPackageImpl extends EPackageImpl implements ClientPackage
 
     // Initialize classes and features; add operations and parameters
     initEClass(clientOperationEClass, ClientOperation.class, "ClientOperation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getClientOperation_Left_hand(), this.getleft_hand_component_reference(), null, "left_hand", null, 0, 1, ClientOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClientOperation_Expr(), theModeleditorPackage.getexpression(), null, "Expr", null, 0, 1, ClientOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(left_hand_component_referenceEClass, left_hand_component_reference.class, "left_hand_component_reference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getleft_hand_component_reference_Ref(), ecorePackage.getEString(), "ref", null, 0, 1, left_hand_component_reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getleft_hand_component_reference_Subscripts1(), theModeleditorPackage.getarray_subscripts(), null, "subscripts1", null, 0, 1, left_hand_component_reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getleft_hand_component_reference_Ref1(), ecorePackage.getEString(), "ref1", null, 0, -1, left_hand_component_reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getleft_hand_component_reference_Subscripts(), theModeleditorPackage.getarray_subscripts(), null, "subscripts", null, 0, -1, left_hand_component_reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(primaryEClass, primary.class, "primary", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getprimary_Name_Function(), theModeleditorPackage.getname_Function(), null, "Name_Function", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -326,6 +430,8 @@ public class ClientPackageImpl extends EPackageImpl implements ClientPackage
     initEAttribute(getprimary_Prod(), ecorePackage.getEString(), "prod", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getprimary_Min(), ecorePackage.getEString(), "min", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getprimary_Max(), ecorePackage.getEString(), "max", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getprimary_Avr(), ecorePackage.getEString(), "avr", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getprimary_Size(), ecorePackage.getEString(), "size", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getprimary_Result(), ecorePackage.getEString(), "result", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(component_referenceEClass, component_reference.class, "component_reference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

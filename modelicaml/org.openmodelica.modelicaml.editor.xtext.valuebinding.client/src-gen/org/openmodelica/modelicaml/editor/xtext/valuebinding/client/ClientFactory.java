@@ -36,6 +36,15 @@ public interface ClientFactory extends EFactory
   ClientOperation createClientOperation();
 
   /**
+   * Returns a new object of class '<em>left hand component reference</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>left hand component reference</em>'.
+   * @generated
+   */
+  left_hand_component_reference createleft_hand_component_reference();
+
+  /**
    * Returns a new object of class '<em>primary</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

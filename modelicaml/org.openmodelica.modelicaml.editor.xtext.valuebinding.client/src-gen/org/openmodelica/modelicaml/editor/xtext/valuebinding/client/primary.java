@@ -25,6 +25,8 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name_Function;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getProd <em>Prod</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMin <em>Min</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMax <em>Max</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr <em>Avr</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize <em>Size</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getResult <em>Result</em>}</li>
  * </ul>
  * </p>
@@ -216,6 +218,58 @@ public interface primary extends org.openmodelica.modelicaml.editor.xtext.model.
    * @generated
    */
   void setMax(String value);
+
+  /**
+   * Returns the value of the '<em><b>Avr</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Avr</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Avr</em>' attribute.
+   * @see #setAvr(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Avr()
+   * @model
+   * @generated
+   */
+  String getAvr();
+
+  /**
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr <em>Avr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Avr</em>' attribute.
+   * @see #getAvr()
+   * @generated
+   */
+  void setAvr(String value);
+
+  /**
+   * Returns the value of the '<em><b>Size</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Size</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Size</em>' attribute.
+   * @see #setSize(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Size()
+   * @model
+   * @generated
+   */
+  String getSize();
+
+  /**
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize <em>Size</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Size</em>' attribute.
+   * @see #getSize()
+   * @generated
+   */
+  void setSize(String value);
 
   /**
    * Returns the value of the '<em><b>Result</b></em>' attribute.
