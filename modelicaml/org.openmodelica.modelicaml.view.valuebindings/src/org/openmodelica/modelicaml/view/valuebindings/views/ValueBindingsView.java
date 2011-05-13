@@ -11,6 +11,7 @@ import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
+import org.eclipse.emf.mwe2.runtime.IFactory;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.TreeRouter;
@@ -34,6 +35,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
@@ -98,6 +100,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	
 	private TreeParent invisibleRoot = null;
 	public TreeBuilder tree = new TreeBuilder();
+
+//	private Action actionShowOnlyClientMediatorsProviders;
 
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
@@ -197,15 +201,14 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
-//		fillLocalPullDown(bars.getMenuManager());
+		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-//	private void fillLocalPullDown(IMenuManager manager) {
-//		manager.add(actionAssociateValueClient);
+	private void fillLocalPullDown(IMenuManager manager) {
+//		manager.add(actionShowOnlyClientMediatorsProviders);
 //		manager.add(new Separator());
-//		manager.add(actionAssociateValueProvider);
-//	}
+	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		ISelection selection = viewer.getSelection();
@@ -306,6 +309,21 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 
 	private void makeActions() {
+		
+//		actionShowOnlyClientMediatorsProviders = new Action("actionShowOnlyClientMediatorsProviders", 2) { // a check box
+//			public void run() {
+//				if (actionShowOnlyClientMediatorsProviders.isChecked()) {
+//					showMessage("clientMediatorsProvidersFilter");
+//					viewer.addFilter(clientMediatorsProvidersFilter);
+//				}else {
+//					viewer.removeFilter(clientMediatorsProvidersFilter);
+//				}
+//			}
+//		};
+//		actionShowOnlyClientMediatorsProviders.setText("Show only Client->Mediators->Providers");
+//		actionShowOnlyClientMediatorsProviders.setToolTipText("Show only Client->Mediators->Providers");
+////		actionShowOnlyClientMediatorsProviders.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
+		
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
 			public void run() {
@@ -411,7 +429,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 							listOfAllowedMetaClassesNames,
 							(TreeParent)valueMediatorTreeItem,
 							viewer,
-							mode);
+							mode, 
+							tree);
 					
 					dialog.open();
 				}
@@ -449,7 +468,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 							listOfAllowedMetaClassesNames,
 							valueMediatorTreeItem,
 							viewer,
-							mode);
+							mode,
+							tree);
 					
 					dialog.open();
 				}
@@ -768,6 +788,43 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 	
 	
+	
+	
+	//####################### FILTERS 
+	
+//	// TODO: Filter for "Show only Client->Mediators->Providers" 
+//	class ClientMediatorsProvidersFilter extends ViewerFilter {
+//		
+////		private boolean isPartOfClientTree(TreeObject item){
+////			if (item.isValueClient() || item.isReadOnly()) {
+////				return true;
+////			}
+//////			TreeObject parent = item.getParent();
+//////			if (parent != null && parent.isReadOnly() ) {
+//////				return isPartOfClientTree(parent);
+//////			}
+//////			else if (parent != null && parent.isValueClient()) {
+//////				return true;
+//////			}
+////			return false;
+////		}
+//		
+//		@Override
+//		public boolean select(Viewer viewer, Object parentElement, Object element) {
+//			if (element instanceof TreeParent) {
+//				TreeParent item = ((TreeParent)element); 
+//				System.err.println(item);
+//				if (item.isValueClient() || item.isReadOnly()) { 
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
+//	}
+//	ClientMediatorsProvidersFilter clientMediatorsProvidersFilter = new ClientMediatorsProvidersFilter();
+	
+	
+	//##################### Selection handling
 	 private ISelectionListener selectionListener = new ISelectionListener() {
 		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 			 if (actionLinkWithEditor.isChecked() && sourcepart != ValueBindingsView.this && selection instanceof IStructuredSelection) {

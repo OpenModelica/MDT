@@ -34,7 +34,9 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
 
@@ -68,6 +70,8 @@ public class ElementSelectionDialog extends Dialog {
 	private Image image = null;
 	private String mode = null;
 	
+	private TreeBuilder treeBuilder;
+	
 	public ElementSelectionDialog(	Shell parent, 
 									Image image,
 									String title, 
@@ -75,14 +79,16 @@ public class ElementSelectionDialog extends Dialog {
 									List<String> listOfAllowedMetaClassNames, 
 									TreeParent valueMediatorTreeItem, 
 									TreeViewer viewer, 
-									String mode 
-									) {
+									String mode, 
+									TreeBuilder treeBuilder) {
 		super(parent);
 
 //		this.listOfAllowedMetaClassNames = listOfAllowedMetaClassNames;
 		this.valueMediatorTreeItem = valueMediatorTreeItem;
 		this.viewer = viewer;
 		this.mode = mode;
+		this.treeBuilder = treeBuilder;
+		
 		
 		this.title = title;
 		this.image = image;
@@ -261,19 +267,27 @@ public class ElementSelectionDialog extends Dialog {
 //							selectedTreeParent.addChild(titleNode);
 //							titleNode.addChild(item);
 							
+							// add the new item
 							((TreeParent) children[i]).addChild(item);
+							
+							// add the cyclic read only nodes to the new item 
+							treeBuilder.addReadOnlyNodes((TreeParent)item);
 							
 //							viewer.add(selectedTreeParent, titleNode);
 //							viewer.add(titleNode, item);							
 							viewer.add(children[i], item);
+							
 						}
 						else if (mode.equals("addValueProvider") && children[i].isValueProvidersNode()) {
 //							TreeParent titleNode = new TreeParent( Constants.valueProvidersTitleName );
 //							selectedTreeParent.addChild(titleNode);
 //							titleNode.addChild(item);
 							
+							// add the new item
 							((TreeParent) children[i]).addChild(item);
-							
+							// add the cyclic read only nodes to the new item 
+							treeBuilder.addReadOnlyNodes((TreeParent)item);
+
 //							viewer.add(selectedTreeParent, titleNode);
 //							viewer.add(titleNode, item);
 							viewer.add(children[i], item);

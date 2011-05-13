@@ -122,7 +122,7 @@ public class TreeBuilder {
 							valueClientItem.setUmlElement(element); // set the reference to the UML model element
 							valueClientsTitle.addChild(valueClientItem); 
 							
-							// adds cyclic tree nodes, i.e. adds a to a client its mediator nodes followed by providers, and vice versa
+							// adds cyclic tree nodes, i.e. it adds a to a client its mediator nodes followed by providers, and vice versa
 							addReadOnlyNodes(valueClientItem); 
 						}
 					}
@@ -152,7 +152,7 @@ public class TreeBuilder {
 	
 	// ###################### READ-ONLY nodes
 	
-	private void addReadOnlyNodes(TreeParent item){
+	public void addReadOnlyNodes(TreeParent item){
 		Element element = item.getUmlElement();
 		if (element != null) {
 			List<Element> list = new ArrayList<Element>();

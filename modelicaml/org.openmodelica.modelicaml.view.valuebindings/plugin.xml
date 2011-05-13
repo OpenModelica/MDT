@@ -71,6 +71,12 @@
          <propertyTab
                afterTab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details"
                category="org.eclipse.papyrus.modelicaml"
+               id="org.openmodelica.modelicaml.view.valuebindings.properties.tab.mediatoroperationeditor"
+               label="Mediator Operation">
+         </propertyTab>
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details"
+               category="org.eclipse.papyrus.modelicaml"
                id="org.openmodelica.modelicaml.view.valuebindings.properties.tab.provideroperationeditor"
                label="Provider Operation">
          </propertyTab>
@@ -93,6 +99,15 @@
                filter="org.openmodelica.modelicaml.view.valuebindings.filters.PropertySectionFilter_ClientOperation"
                id="org.openmodelica.modelicaml.view.valuebindings.propertySection.clientoperationeditor"
                tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.clientoperationeditor">
+            <input
+                  type="org.openmodelica.modelicaml.view.valuebindings.model.TreeObject">
+            </input>
+         </propertySection>
+         <propertySection
+               class="org.openmodelica.modelicaml.view.valuebindings.sections.PropertySection_MediatorOperationEditor"
+               filter="org.openmodelica.modelicaml.view.valuebindings.filters.PropertySectionFilter_MediatorOperation"
+               id="org.openmodelica.modelicaml.view.valuebindings.propertySection.mediatoroperationeditor"
+               tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.mediatoroperationeditor">
             <input
                   type="org.openmodelica.modelicaml.view.valuebindings.model.TreeObject">
             </input>

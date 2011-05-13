@@ -40,14 +40,14 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
-import org.openmodelica.modelicaml.editor.xtext.valuebinding.ui.internal.ClientActivator;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.ui.internal.MediatorActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 
 import com.google.inject.Injector;
 
 
-public class PropertySection_ClientOperationEditor extends AbstractPropertySection {
+public class PropertySection_MediatorOperationEditor extends AbstractPropertySection {
 	
 //	private Link textOperation;
 	private TreeObject item = null;
@@ -120,8 +120,8 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 		this.editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		// ################################ Adjust start
-		injector = ClientActivator.getInstance().getInjector("org.openmodelica.modelicaml.editor.xtext.valuebinding.Client");
-		fileExtension = ".valuebindingclientoperation";
+		injector = MediatorActivator.getInstance().getInjector("org.openmodelica.modelicaml.editor.xtext.valuebinding.Mediator");
+		fileExtension = ".mediatorvaluebindingoperation";
 		
 		// TODO: delete editpart from the constuctor
 		editor = new PropertiesSectionXtextEditorHelper(selectedUmlElement, injector, null, textToEdit, fileExtension); 
@@ -143,11 +143,8 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 
 	private Boolean isValidElement(){
 		// ################################ Adjust start
-		if ( this.selectedUmlElement instanceof Property && (
-					((Property)this.selectedUmlElement).getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null 
-					|| 	((Property)this.selectedUmlElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null 
-				)
-			) {
+		if ( this.selectedUmlElement instanceof Property 
+				&& ((Property)this.selectedUmlElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null ) {
 			return true;
 		}
 		// ################################ Adjust end
@@ -161,21 +158,8 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 			
 //			valueClient = null; // reset the element. important when another element of the same meta-type is selected.
 			
-			if (isValueClient()) { // no code completion for Value Mediator
-				// build the content assistance proposals list.
-				ModelicaMLContentAssist.setSelectedSourceElement(selectedUmlElement);
-				owningClass = ((Property)selectedUmlElement).getOwner();
-
-				if (owningClass instanceof Class) {
-					ModelicaMLContentAssist.createComponentReferencelist((Class)owningClass);
-					ModelicaMLContentAssist.setPropertyName(StringUtls.replaceSpecChar( ((Property)selectedUmlElement).getName() ));
-
-				}
-			}
-			else {// no code completion for Value Mediator
-				ModelicaMLContentAssist.clearAllLists();
-			}
-			
+			// no components code completion for Value Mediator
+			ModelicaMLContentAssist.clearAllLists();
 			//############## Adjust here: start
 
 			//Marker support
@@ -197,14 +181,6 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 		}
 	}
 	
-	private boolean isValueClient(){
-		if (selectedUmlElement.getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
-			return true;
-		}
-		return false;
-	}
-	
-	
 	/**
 	 * Store text.
 	 * 
@@ -217,10 +193,7 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 		CompoundCommand cc = new CompoundCommand("Update operation code");
 		
 		// get the stereotype
-		Stereotype stereotype_temp = selectedUmlElement.getAppliedStereotype(Constants.stereotypeQName_ValueClient);
-		if (stereotype_temp == null) { // try anothjer
-			stereotype_temp = selectedUmlElement.getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
-		}
+		Stereotype stereotype_temp = selectedUmlElement.getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
 		final Stereotype stereotype = stereotype_temp;
 		if (stereotype != null) {
 			// Record command
@@ -269,7 +242,7 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 	private void generateUMLModelMarker(){
 		// create a marker for the uml model element
 		String message = "The " + ((NamedElement)selectedUmlElement).eClass().getName() 
-							+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Value client/Mediator operation code.";
+							+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Value Mediator operation code.";
 		
 		if (editor.isDocumentHasErrors()) {
 			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement);

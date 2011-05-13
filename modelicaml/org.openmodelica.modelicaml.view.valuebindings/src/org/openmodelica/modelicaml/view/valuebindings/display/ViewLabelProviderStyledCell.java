@@ -133,15 +133,22 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
 				// is client, mediator or provider string
 				String whatString = "";
-				if (((TreeObject)obj).isValueClient()) { 	whatString = "(c), ";}
-				if (((TreeObject)obj).isValueMediator()) { 	whatString = "(m), ";}
-				if (((TreeObject)obj).isValueProvider()) { 	whatString = "(p), ";}
+//				if (((TreeObject)obj).isValueClient()) { 	whatString = "(c), ";}
+//				if (((TreeObject)obj).isValueMediator()) { 	whatString = "(m), ";}
+//				if (((TreeObject)obj).isValueProvider()) { 	whatString = "(p), ";}
+				
+				if (((TreeObject)obj).isValueClient()) { 	whatString = "client, ";}
+				if (((TreeObject)obj).isValueMediator()) { 	whatString = "mediator, ";}
+				if (((TreeObject)obj).isValueProvider()) { 	whatString = "provider, ";}
+
 				
 				// type string
 				Type pType = ((Property)umlElement).getType();
-				String pTypeString = "type (NOT DEFINED)";
+//				String pTypeString = "type (NOT DEFINED)";
+				String pTypeString = "type is NOT DEFINED";
 				if ( pType != null ) {
-					pTypeString =  "type (" + pType.getName().replaceFirst("Modelica", "") + ")";
+//					pTypeString =  "type (" + pType.getName().replaceFirst("Modelica", "") + ")";
+					pTypeString =  pType.getName().replaceFirst("Modelica", "");
 				}	
 				
 				if (((TreeObject)obj).isValueMediator() ) {
@@ -196,7 +203,8 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				
 				if ((((TreeObject)obj).isValueClient() || ((TreeObject)obj).isValueProvider())) {
 					
-					String ownerString = "owner (" + ( (NamedElement)((Property)umlElement).getOwner()).getQualifiedName() + ")";
+//					String ownerString = "owner (" + ( (NamedElement)((Property)umlElement).getOwner()).getQualifiedName() + ")";
+					String ownerString = ( (NamedElement)((Property)umlElement).getOwner()).getQualifiedName();
 
 					//  construct the label
 					StyledString styledString = new StyledString();
