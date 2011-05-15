@@ -34,43 +34,42 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
 
 public class ElementSelectionDialog extends Dialog {
-	private Shell sShell = null; 
-	private Button bttOK = null;
-	private Button bttCancel = null;
+	protected Shell sShell = null; 
+	protected Button bttOK = null;
+	protected Button bttCancel = null;
 
 	private int value = 0;
 	
-	private Label message;
-	private Group valueMediatorGroup;
-	private Label vmIcon;
-	private Label vmName;
-	private Group selectedElementGroup;
-	private Label seIcon;
-	private Label seName;
+	protected Label message;
+	protected Group valueMediatorGroup;
+	protected Label vmIcon;
+	protected Label vmName;
+	protected Group selectedElementGroup;
+	protected Label seIcon;
+	protected Label seName;
 
 	// Constants 
-	private static final Image errorIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/org/eclipse/jface/dialogs/images/message_error.gif");
-	private static final Image propertyIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/icons/Property.gif");
-	private static final Image valueMediatorIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/icons/valueMediator.png");
+	protected static final Image errorIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/org/eclipse/jface/dialogs/images/message_error.gif");
+	protected static final Image propertyIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/icons/Property.gif");
+	protected static final Image valueMediatorIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/icons/valueMediator.png");
 
-	private EObject selectedElement = null;
+	protected EObject selectedElement = null;
 	
-	private TreeParent valueMediatorTreeItem = null; 
-	private TreeViewer viewer = null;
+	TreeParent valueMediatorTreeItem = null; 
+	protected TreeViewer viewer = null;
 
 //	private List<String> listOfAllowedMetaClassNames = new ArrayList<String>();
-	private String title = "";
-	private Image image = null;
-	private String mode = null;
+	protected String title = "";
+	protected Image image = null;
+	protected String mode = null;
 	
-	private TreeBuilder treeBuilder;
+	protected TreeBuilder treeBuilder;
 	
 	public ElementSelectionDialog(	Shell parent, 
 									Image image,
@@ -132,7 +131,7 @@ public class ElementSelectionDialog extends Dialog {
 
 	}
 
-	 private ISelectionListener selectionListener = new ISelectionListener() {
+	protected ISelectionListener selectionListener = new ISelectionListener() {
 	        public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 	        if (sourcepart != ElementSelectionDialog.this &&
 	            selection instanceof IStructuredSelection) {
@@ -378,7 +377,7 @@ public class ElementSelectionDialog extends Dialog {
 		return false;
 	}
 	
-	private void addValueToStereotypeProperty_List(){
+	void addValueToStereotypeProperty_List(){
 		
 		if (this.selectedElement instanceof NamedElement) {
 			// get stereotype

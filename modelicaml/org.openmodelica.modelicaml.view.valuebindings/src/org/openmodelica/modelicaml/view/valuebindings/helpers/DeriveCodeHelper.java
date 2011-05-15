@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
@@ -55,6 +56,7 @@ public class DeriveCodeHelper {
 	
 	
 	private void deriveCode(){
+
 		// set Value Client data
 		setValueClientAndItsRightHandMacroCode();
 		
@@ -66,7 +68,7 @@ public class DeriveCodeHelper {
             // validate all and set error text
             validate();
             
-            // TODO: turn on after testing!
+            // turn on after testing!
             if ( !errorsDetected() ) { // No code should be derived if there are errors.
             	this.code = deriveCodeForValueClient(valueClientUmlElement);
     		}
@@ -114,18 +116,28 @@ public class DeriveCodeHelper {
 			// get code items from different mediators
 			List<String> codeItems = new ArrayList<String>();
 			for (Element valueMediator : valueMediators) {
-				codeItems.add(getCodeFromValueMediator(valueMediator) + "\n");
+				String codeItem = getCodeFromValueMediator(valueMediator);
+				if (codeItem != null) {
+					codeItems.add(getCodeFromValueMediator(valueMediator) + "\n");
+				}
 			}
-			// expand all macros (e.g. build sum or product, etc., out of individual code items)
-			return expandMacros(valueClientOperation, codeItems, itemType_CLIENT) ;	
+			if (codeItems.size() > 0 ) {
+				// expand all macros (e.g. build sum or product, etc., out of individual code items)
+				return expandMacros(valueClientOperation, codeItems, itemType_CLIENT) ;	
+			}
 		}
 		else if (valueMediators.size() == 1) { // if there is only one mediator 
 			if (valueClientOperation != null) { // if there is an operation defined then expand the macros based on first mediator.
 				List<String> codeItems = new ArrayList<String>();
-				codeItems.add(getCodeFromValueMediator(valueMediators.get(0)));
 				
-				// expand all macros (e.g. build sum or product, etc., out of individual code items)
-				return expandMacros(valueClientOperation, codeItems, itemType_CLIENT);
+				String codeItem = getCodeFromValueMediator(valueMediators.get(0));
+				if (codeItem != null) {
+					codeItems.add(getCodeFromValueMediator(valueMediators.get(0)));
+				}
+				if (codeItems.size() > 0 ) {
+					// expand all macros (e.g. build sum or product, etc., out of individual code items)
+					return expandMacros(valueClientOperation, codeItems, itemType_CLIENT);
+				}
 			}
 			else { // if no operation is defined then just return the code obtained from the first mediator.
 				return getCodeFromValueMediator(valueMediators.get(0));
@@ -141,30 +153,38 @@ public class DeriveCodeHelper {
 		// create a list with only one value mediator
 		EList<Element> valueMediatorList = new BasicEList<Element>();
 		valueMediatorList.add(valueMediator);
+
 		// get value providers
 		EList<TreeObject> valueProvidersList = TreeUtls.getValueProviders(valueClientUmlElement, valueMediatorList, root);
-		
+
 		if (valueProvidersList.size() > 1 ) {
 			// get items
 			List<String> codeItems = new ArrayList<String>();
 			for (TreeObject valueProvider : valueProvidersList) {
-				codeItems.add(getCodeFromValueProvider(valueProvider));
+				String codeItem = getCodeFromValueProvider(valueProvider);
+				if ( codeItem != null ) {
+					codeItems.add(codeItem);
+				}
 			}
-
-			return expandMacros(valueMediatorOperation, codeItems, itemType_MEDIATOR) ;
+			if (codeItems.size() > 0) {
+				return expandMacros(valueMediatorOperation, codeItems, itemType_MEDIATOR) ;
+			}
 		}
 		else if (valueProvidersList.size() == 1) {
 			if (valueMediatorOperation != null) {  // if there is an operation defined then expand the macros based on first mediator.
-				
 				List<String> codeItems = new ArrayList<String>();
-				codeItems.add(getCodeFromValueProvider(valueProvidersList.get(0)));
-				return expandMacros(valueMediatorOperation, codeItems, itemType_MEDIATOR) ;
+				String codeItem = getCodeFromValueProvider(valueProvidersList.get(0));
+				if ( codeItem != null ) {
+					codeItems.add(codeItem);
+				}
+				if (codeItems.size() > 0 ) {
+					return expandMacros(valueMediatorOperation, codeItems, itemType_MEDIATOR) ;
+				}
 			}
 			else { // if no operation is defined then just return the code obtained from the first provider.
 				return getCodeFromValueProvider(valueProvidersList.get(0));
 			}
 		}
-		
 		return null; // null if it was not possible to derive code.
 	}
 	
@@ -174,11 +194,69 @@ public class DeriveCodeHelper {
 		String macroCode = getOperationSpecification(element, Constants.stereotypeQName_ValueProvider, Constants.propertyName_operation);
 		if (macroCode != null ) {
 			macroCode = macroCode.replaceAll(Constants.MACRO_ownPath, item.getDotPath());
-			return macroCode ;
+			return macroCode;
 		}
 		return item.getDotPath();
 	}
 
+	
+	private String expandMacros(String macroCode, List<String> codeItems, int itemType){
+		
+		// only for value clients
+		if (itemType == itemType_CLIENT) { // for a value client 
+			// get the valueClientRightHandMacroCode that was set previously
+			macroCode = valueClientRightHandMacroCode;
+		}
+		
+		if ( macroCode != null ) {
+			
+			// replace size(:) numberOfProviders
+//			EList<TreeObject> providersList = TreeUtls.getValueProviders(valueClientUmlElement, valueMediators, root); 
+			// TODO: test providersList.size()! 
+			macroCode = macroCode.replaceAll("size\\((\\s+)?\\:(\\s+)?\\)", String.valueOf(getValueProviders().size()) );
+			
+			// replace avg(:) with  ( sum(:) / numberOfProviders). Note, sum(:) will be expanded below.
+			macroCode = macroCode.replaceAll("avr\\((\\s+)?\\:(\\s+)?\\)", "(sum(:) / " + String.valueOf(getValueProviders().size()) + ")");
+			
+			// replace ( : ) with ( i for i in {comp1.name, comp2, etc.})
+			macroCode = macroCode.replaceAll("\\((\\s+)?\\:(\\s+)?\\)", "( i for i in {" + getItemsSeparated(", ", codeItems) + "})");
+
+			// this is only valid if codeItems has only one item. The validation will catch it and set error so that no code will be generated if there are multiple items
+			System.err.println("BEFORE: " + macroCode);
+			macroCode = macroCode.replaceAll("getResult\\((\\s+)?\\)", getItemsSeparated(", ", codeItems) ); // used by value client/mediator to manipulate the result received from one mediator/provider
+			System.err.println("AFTER: " + macroCode);
+		}
+		
+		if (macroCode.equals("null")) {
+			System.err.println("hiiiiiier is: "  + macroCode);
+		}
+		
+		return macroCode;
+	}
+	
+	private String getItemsSeparated(String separator, List<String> items){
+		String code = "";
+
+//		System.err.println("items: " + items);
+//		System.err.println("items.get(0): " + items.get(0));
+//		System.err.println("items.size(): " + items.size());
+		
+		for (int i = 0; i < items.size(); i++) {
+			if (i == 0) { // first item
+				code = code + items.get(i);
+			}
+			else if (i == items.size() - 1 ) { // last item
+				code = code + separator + items.get(i);
+			}
+			else {
+				code = code + separator+ items.get(i);
+			}
+		}
+		return code;
+	}
+	
+	
+	
 	
 	
 	private void setValueClientAndItsRightHandMacroCode(){
@@ -298,35 +376,6 @@ public class DeriveCodeHelper {
 	}
 	
 	
-		
-	
-	private String expandMacros(String macroCode, List<String> codeItems, int itemType){
-		// only for value clients
-		if (itemType == itemType_CLIENT) { // for a value client 
-			// get the valueClientRightHandMacroCode that was set previously
-			macroCode = valueClientRightHandMacroCode;
-		}
-		if (macroCode != null) {
-			
-			// replace size(:) numberOfProviders
-//			EList<TreeObject> providersList = TreeUtls.getValueProviders(valueClientUmlElement, valueMediators, root); 
-
-			// TODO: test providersList.size()! 
-			macroCode = macroCode.replaceAll("size\\((\\s+)?\\:(\\s+)?\\)", String.valueOf(getValueProviders().size()) );
-			
-			// replace avg(:) with  ( sum(:) / numberOfProviders). Note, sum(:) will be expanded below.
-			macroCode = macroCode.replaceAll("avr\\((\\s+)?\\:(\\s+)?\\)", "(sum(:) / " + String.valueOf(getValueProviders().size()) + ")");
-			
-			// replace ( : ) with ( i for i in {comp1.name, comp2, etc.})
-			macroCode = macroCode.replaceAll("\\((\\s+)?\\:(\\s+)?\\)", "( i for i in {" + getItemsSeparated(", ", codeItems) + "})");
-
-			// this is only valid if codeItems has only one item. The validation will catch it and set error so that no code will be generated if there are multiple items
-			macroCode = macroCode.replaceAll("getResult\\((\\s+)?\\)", getItemsSeparated(", ", codeItems) ); // used by value client/mediator to manipulate the result received from one mediator/provider
-		}
-		return macroCode;
-	}
-	
-	
 	
 	
 	// ############## VALIDATION
@@ -344,7 +393,7 @@ public class DeriveCodeHelper {
 			title = "Value Client Inconsistancy \n";
 			message = title + "The value client '" + name + "' is linked to " + valueMediators.size() 
 							+ " value mediators: " + getItemsAsStringList(valueMediators) + "" 
-							+ "\nHowever no binding operation is defined that specifies what shall be done in case of multiple Value Mediators. \n\n";
+							+ "\nHowever, no binding operation is defined that specifies what shall be done in case of multiple Value Mediators. \n\n";
 //			MessageDialog.openError(new Shell(), title, message );
 			
 			// set the error mode
@@ -379,9 +428,10 @@ public class DeriveCodeHelper {
 			if (valueProvidersList.size() > 1 && !hasValidValueClientBindingOperationForMultipleItems(valueMediatorOperation)) {
 				name = ((NamedElement)valueMediator).getName();
 				title = "Value Mediator Inconsistancy \n";
-				message = title + "The value mediator '" + name + "' is linked to " + valueProvidersList.size() 
-								+ " value providers: " + getItemsAsStringList(valueProvidersList) +"" 
-								+ "\nHowever, no binding operation is defined that specifies what shall be done in case of multiple Value Providers. \n\n";
+				message = title + "The Value Client '" + ((NamedElement)valueClientUmlElement).getName() + "' is linked through the Value Mediator '" + name + "' is linked to " + valueProvidersList.size() 
+								+ " Value Providers: " + getItemsAsStringList(valueProvidersList) +"" 
+								+ "\nHowever, no binding operation is defined that specifies what shall be done in case of multiple Value Providers. " 
+								+ "\nIf this is on purpose then it means that you should select one of the Value Providers manually.\n\n";
 //				MessageDialog.openError(new Shell(), title, message );
 				
 				// set error
@@ -391,6 +441,7 @@ public class DeriveCodeHelper {
 			// -----------------------------------------------------------------------------------------------------
 			// ##### if a value mediator has multiple value providers then it cannot contain getResult() macro that can only be used in combination with a single provider.
 			if (valueProvidersList.size() > 1 && containsGetResult(valueMediatorOperation) ) {
+				name = ((NamedElement)valueMediator).getName();
 				title = "Value Mediator Inconsistancy \n";
 				message = title + "The value mediator '" + name + "' is linked to " + valueProvidersList.size() 
 								+ " value mediators: " + getItemsAsStringList(valueMediators) + "" 
@@ -400,6 +451,19 @@ public class DeriveCodeHelper {
 				// set error
 				setError(message);
 			}
+			
+			// -----------------------------------------------------------------------------------------------------
+			// ##### a value mediator must have value providers
+			if (valueProvidersList.size() == 0 ) {
+				name = ((NamedElement)valueMediator).getName();
+				title = "Value Mediator Inconsistancy \n";
+				message = title + "The Value Client '" + ((NamedElement)valueClientUmlElement).getName() + "' is linked to the Value Mediator '" + name + "' which has no Value Providers.\n\n";
+//				MessageDialog.openError(new Shell(), title, message );
+				
+				// set error
+				setError(message);
+			}
+
 		}
 	}
 	
@@ -425,22 +489,6 @@ public class DeriveCodeHelper {
 //		return code;
 //	}
 	
-	
-	private String getItemsSeparated(String separator, List<String> items){
-		String code = "";
-		for (int i = 0; i < items.size(); i++) {
-			if (i == 0) { // first item
-				code = code + items.get(i);
-			}
-			else if (i == items.size() - 1 ) { // last item
-				code = code + separator + items.get(i);
-			}
-			else {
-				code = code + separator+ items.get(i);
-			}
-		}
-		return code;
-	}
 	
 	
 	private boolean isValueClient(Element element){
@@ -520,7 +568,7 @@ public class DeriveCodeHelper {
 		
 		errorString = errorString + "----------------------------------------------" +
 									"----------------------------------------------" +
-									"--------------------------------------- \n";
+									"-------------------------------------------------------- \n";
 	}
 
 	private String getItemsAsStringList(EList<?> list){
