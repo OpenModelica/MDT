@@ -211,7 +211,11 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 					hasRedecalaredTypeString = " <- redeclared ";
 				}
 				
-				StyledString styledString = new StyledString(treeObject.toString() + arraySizeString);
+				String tNameString = "";
+				// add Value Client or Provider indicator
+				tNameString = getValueClientOrProviderIndicatorString(treeObject) + treeObject.toString();
+				
+				StyledString styledString = new StyledString(tNameString + arraySizeString);
 				styledString.append(hasRedecalaredTypeString, StyledString.DECORATIONS_STYLER);
 				styledString.append(" (" + treeObject.getChildren().length + ")", StyledString.QUALIFIER_STYLER);
 				Styler styler = new Styler() {
@@ -252,12 +256,8 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			else if (treeObject.isInput() || treeObject.isOutput()) {
 				String tNameString = "";
 				
-				if (treeObject.isValueClient()) {
-					tNameString = tNameString + clientIndicator+", ";
-				}
-				else if (treeObject.isValueProvider()) {
-					tNameString = tNameString + providerIndicator+", ";
-				}
+				// add Value Client or Provider indicator
+				tNameString = tNameString + getValueClientOrProviderIndicatorString(treeObject);
 				
 				if (treeObject.isInput()) {
 					tNameString = tNameString + "input ";
@@ -315,13 +315,9 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			else if (treeObject.isLeaf())  {
 				String tNameString = "";
 				
-				if (treeObject.isValueClient()) {
-					tNameString = tNameString + clientIndicator+", ";
-				}
-				else if (treeObject.isValueProvider()) {
-					tNameString = tNameString + providerIndicator+", ";
-				}
-				
+				// add Value Client or Provider indicator
+				tNameString = tNameString + getValueClientOrProviderIndicatorString(treeObject);
+
 				if (treeObject.getProperty() != null) {
 					if (treeObject.getProperty().getType() != null) {
 						tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
@@ -332,12 +328,8 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			else {
 				String tNameString = "";
 				
-				if (treeObject.isValueClient()) {
-					tNameString = tNameString + clientIndicator+", ";
-				}
-				else if (treeObject.isValueProvider()) {
-					tNameString = tNameString + providerIndicator+", ";
-				}
+				// add Value Client or Provider indicator
+				tNameString = tNameString + getValueClientOrProviderIndicatorString(treeObject);
 				
 				if (treeObject.getProperty().getType() != null) {
 					tNameString = tNameString + treeObject.getProperty().getType().getName().replaceFirst("Modelica", "") + " ";
@@ -349,6 +341,17 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 				super.update(cell);
 			}
 		}
+	}
+	
+	private String getValueClientOrProviderIndicatorString(TreeObject treeObject) {
+		String string = "";
+		if (treeObject.isValueClient()) {
+			string = string+ clientIndicator+", ";
+		}
+		if (treeObject.isValueProvider()) {
+			string = string + providerIndicator+", ";
+		}
+		return string;
 	}
 	
 	private final static String clientIndicator = "(client)";

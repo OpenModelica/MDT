@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.Action;
@@ -47,6 +48,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -99,13 +101,17 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
+import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 //import org.openmodelica.modelicaml.view.componentstree.dialogs.OBSOLETE_DialogComponentInformation;
+import org.openmodelica.modelicaml.view.componentstree.dialogs.ConfirmationWithCheckOptionDialog;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
+import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueClientOrProviderDialog;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -215,6 +221,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	private Action actionShowRequirements;
 
+	public Action actionAddValueProvider;
+
+	public Action actionAddValueClient;
+
+	private Action actionInstantiateRequirements;
+
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -318,8 +330,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		ISelection selection = viewer.getSelection();
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		
-		if (obj instanceof TreeParent) {
-			TreeParent item = (TreeParent)obj ;
+		if (obj instanceof TreeObject) {
+			TreeObject item = (TreeObject)obj ;
+			
 			if (item.isLeaf() && item.getProperty() != null ) {
 				
 				Element modificationStoreLocation = item.getModificationStoreLocation();
@@ -330,7 +343,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				else if (modificationStoreLocation instanceof Generalization) {
 					componentPath = item.getDotPath();
 				}
-
 				
 				// ************* Add or edit modification
 				if (item.getFirstLevelComponent() != item.getProperty() && !item.isOutput()) { // prevent primitive types for being first level components
@@ -371,38 +383,50 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					}
 				}
 
-				// ************* Add or delete to/from INPUTS
-//				if ( isSimulation(selectedClass) && item.isInput() && item.getFinalModificationRightHand() == null ) { // if it is an input and has no modification.
-				// if it is an input and there is no modification defined in its first level components
-				if ( isSimulation(selectedClass) && item.isInput() 
-						&& !ModificationManager.isInModModListOfComponent(modificationStoreLocation, componentPath) ) { 
-					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), false)) {
-						manager.add(new Separator());
-						manager.add(actionDeleteFromInputs);
-					}
-					else {
-						manager.add(new Separator());
-						manager.add(actionAddToInputs);	
-					}
-				}
-				else if (isSimulation(selectedClass) && ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), false)) {
-					manager.add(new Separator());
-					manager.add(actionDeleteFromInputs);
-				}
-				
-				// ************* Add or delete to/from OUTPUTS
-				if (isSimulation(selectedClass) &&  ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDotPath(), false) ) {
-					manager.add(new Separator());
-					manager.add(actionDeleteFromOutputs);
-				}
-				else {
-					if (isSimulation(selectedClass) && !item.isInput()) {
-						manager.add(new Separator());
-						manager.add(actionAddToOutputs);
-					}
-				}
+//				// ************* Add or delete to/from INPUTS
+//				// if it is an input and there is no modification defined in its first level components
+//				if ( isSimulation(selectedClass) && item.isInput() 
+//						&& !ModificationManager.isInModModListOfComponent(modificationStoreLocation, componentPath) ) { 
+//					if (ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), false)) {
+//						manager.add(new Separator());
+//						manager.add(actionDeleteFromInputs);
+//					}
+//					else {
+//						manager.add(new Separator());
+//						manager.add(actionAddToInputs);	
+//					}
+//				}
+//				else if (isSimulation(selectedClass) && ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), false)) {
+//					manager.add(new Separator());
+//					manager.add(actionDeleteFromInputs);
+//				}
+//				
+//				// ************* Add or delete to/from OUTPUTS
+//				if (isSimulation(selectedClass) &&  ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDotPath(), false) ) {
+//					manager.add(new Separator());
+//					manager.add(actionDeleteFromOutputs);
+//				}
+//				else {
+//					if (isSimulation(selectedClass) && !item.isInput()) {
+//						manager.add(new Separator());
+//						manager.add(actionAddToOutputs);
+//					}
+//				}
 			}
 			
+			// show the "Add a Value Provider" action for a Value Client
+			if ( item.isValueClient() ) {
+				manager.add(new Separator());
+				manager.add(actionAddValueProvider);
+			}
+			// show the "Add a Value Client" action for a Value Provider
+			if ( item.isValueProvider() ) {
+				manager.add(new Separator());
+				manager.add(actionAddValueClient);
+			}
+
+			
+			// locate actions
 			if (!item.isRoot()) { // the root nodes shall not be located
 				
 //				showPathAction.setText("Show information about '" + item.getName() + "'");
@@ -432,15 +456,24 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			}
 
 			
+			// delete actions
 			if (item.isRoot() && isSimulation(selectedClass)) {
+				
+				// instantiate requirements handler can only be used for the root that returns the selected uml class
+//				manager.add(new Separator());
+				manager.add(actionInstantiateRequirements);
+				
 				if (TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, false)) {
+//					manager.add(new Separator());
 					manager.add(actionDeleteReqTestEvaluationElements);
 				}
 				else {
+//					manager.add(new Separator());
 					manager.add(actionAddReqTestEvaluationElements);					
 				}
 			}
 			
+			// updated bindings action
 			manager.add(new Separator());
 			manager.add(actionUpdateBindings);
 
@@ -484,6 +517,76 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 */
 	private void makeActions() {
 		
+		actionAddValueProvider = new Action("actionAddValueProvider") {
+			public void run() {
+				
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof TreeObject) {
+					TreeObject item = (TreeObject)obj;
+					if (item.isValueClient()) {
+						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
+						listOfAllowedMetaClassesNames.add("Property");
+						String title = "Value Provider Selection";
+						String message = "Click on a model element to be associated as Value Provider."; 
+
+						SelectValueClientOrProviderDialog dialog = new SelectValueClientOrProviderDialog(
+								new Shell(), 
+								SWTResourceManager.getImage(SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
+								title, 
+								message, 
+								listOfAllowedMetaClassesNames,
+								item,
+								viewer,
+								SelectValueClientOrProviderDialog.MODE_ADD_PROVIDER,
+								actionEditModification,
+								actionLinkWithEditor);
+						dialog.open();
+					}
+				}
+			}
+		};
+		actionAddValueProvider.setText("Add a Value Provider");
+		actionAddValueProvider.setToolTipText("Add a Value Provider");
+		actionAddValueProvider.setImageDescriptor(ImageDescriptor.createFromFile(SelectValueClientOrProviderDialog.class, "/icons/addValueProviders.png"));
+
+		
+		
+		actionAddValueClient = new Action("actionAddValueClient") {
+			public void run() {
+				
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof TreeObject) {
+					TreeObject item = (TreeObject)obj;
+					if (item.isValueProvider()) {
+						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
+						listOfAllowedMetaClassesNames.add("Property");
+						String title = "Value Client Selection";
+						String message = "Click on a model element to be associated as Value Client."; 
+
+						SelectValueClientOrProviderDialog dialog = new SelectValueClientOrProviderDialog(
+								new Shell(), 
+								SWTResourceManager.getImage(SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
+								title, 
+								message, 
+								listOfAllowedMetaClassesNames,
+								item,
+								viewer,
+								SelectValueClientOrProviderDialog.MODE_ADD_CLIENT,
+								actionEditModification,
+								actionLinkWithEditor);
+						dialog.open();
+					}
+				}
+			}
+		};
+		actionAddValueClient.setText("Add a Value Client");
+		actionAddValueClient.setToolTipText("Add a Value actionAddValueClient");
+		actionAddValueClient.setImageDescriptor(ImageDescriptor.createFromFile(SelectValueClientOrProviderDialog.class, "/icons/addValueClient.png"));
+
+		
+		
 		actionReload = new Action("actionReload") {
 			public void run() {
 				showSelection(par, sel);
@@ -501,17 +604,20 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				if (obj instanceof TreeParent) {
 					TreeParent item = (TreeParent)obj;
 					
-					Boolean go = MessageDialog.openConfirm(new Shell(), "Confirmation", 
-							"This action will update all unambiguous bindings in the sub-tree of '" + item.getName() +"'." +
-							"\n\nThis action cannot be undone.");
+					String title = "Update Bindings Confirmation";
+					String text = "Shall all unambiguous bindings in the sub-tree of '" + item.getName() + "' be updated? " +
+							"\r\nNote, this action cannot be undone.";
+					String checkOptionText = "Delete all bindings that are based on Value Mediators before updating.";
 					
-					if (go) {
-						
-						// ask if old bindings shall be deleted
-						boolean deleteOldBindings = MessageDialog.openQuestion(new Shell(), 
-								"Question", "Shall all bindings that are based on Value Providers be deleted before updating? " +
-								"\n\nNote that after that only unambiguous bindings will be set." + 
-								"\n\nThis action cannot be undone."); 
+					// open the confirmation dialog
+					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+					ConfirmationWithCheckOptionDialog confirmationDialog = new ConfirmationWithCheckOptionDialog(shell, title, text, checkOptionText);
+					confirmationDialog.open();
+				
+					int result = confirmationDialog.getReturnCode();
+					
+					if (result == IDialogConstants.OK_ID) {
+						boolean deleteOldBindings = confirmationDialog.deleteAllBindings();
 						
 						// update bindings
 						ValueBindingCreator.updateBindings( item, root, deleteOldBindings );
@@ -538,7 +644,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						}
 						
 						// TODO: not nice because it will collapse the tree ...
+//						TreePath[] path = viewer.getExpandedTreePaths();
 						viewer.refresh();
+						viewer.expandToLevel(2);
+//						viewer.setExpandedTreePaths(path);
 						
 						// create message for deleted modifications
 						for (String string : deletedModifications) {
@@ -561,12 +670,28 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						} else {
 							showMessage("Result", "No updates were performed.");
 						}
+						
 					}
+					
+//					Boolean go = MessageDialog.openConfirm(new Shell(), "Confirmation", 
+//							"This action will update all unambiguous bindings in the sub-tree of '" + item.getName() +"'." +
+//							"\n\nThis action cannot be undone.");
+					
+//					if (go) {
+//						
+//						// ask if old bindings shall be deleted
+//						boolean deleteOldBindings = MessageDialog.openQuestion(new Shell(), 
+//								"Question", "Shall all bindings that are based on Value Providers be deleted before updating? " +
+//								"\n\nNote that after that only unambiguous bindings will be set." + 
+//								"\n\nThis action cannot be undone."); 
+//						
+//						
+//					}
 				}
 			}
 		};
-		actionUpdateBindings.setText("Update bindings in sub-tree");
-		actionUpdateBindings.setToolTipText("Update bindings in sub-tree");
+		actionUpdateBindings.setText("Update Bindings in Sub-Tree");
+		actionUpdateBindings.setToolTipText("Update Bindings in Sub-Tree");
 		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/updateBindings.png"));
 		
 		
@@ -1118,6 +1243,31 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		
 		
+		actionInstantiateRequirements = new Action("actionReqTestEvaluationElements") {
+			public void run() 
+			{
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof TreeParent) {
+					InstantiateRequirementsHandler ri = new InstantiateRequirementsHandler();
+					try {
+						ri.execute(null);
+						viewer.refresh();
+						viewer.expandToLevel(2);
+						
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+		};
+		actionInstantiateRequirements.setText("Instantiate Requirements");
+		actionInstantiateRequirements.setToolTipText("Instantiate Requirements");
+		actionInstantiateRequirements.setImageDescriptor(ImageDescriptor.createFromFile(InstantiateRequirementsHandler.class, "/icons/list-accept.png"));
+
+		
 		actionAddReqTestEvaluationElements = new Action("actionReqTestEvaluationElements") {
 			public void run() 
 			{
@@ -1131,8 +1281,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionAddReqTestEvaluationElements.setText("Add requirements test evaluation elements");
-		actionAddReqTestEvaluationElements.setToolTipText("Add requirements test evaluation elements");
+		actionAddReqTestEvaluationElements.setText("Add Requirements Evaluation Code");
+		actionAddReqTestEvaluationElements.setToolTipText("Add Requirements Evaluation Code");
 		actionAddReqTestEvaluationElements.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		
 		actionDeleteReqTestEvaluationElements = new Action("actionReqTestEvaluationElements") {
@@ -1155,8 +1305,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionDeleteReqTestEvaluationElements.setText("Delete requirements test result evaluation elements");
-		actionDeleteReqTestEvaluationElements.setToolTipText("Delete requirements test result evaluation elements");
+		actionDeleteReqTestEvaluationElements.setText("Delete Requirements Evaluation Code");
+		actionDeleteReqTestEvaluationElements.setToolTipText("Delete Requirements Evaluation Code");
 		actionDeleteReqTestEvaluationElements.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
 		
