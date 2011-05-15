@@ -95,8 +95,18 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 //					editingDomain.getCommandStack().execute(getCommand(editingDomain, reqClass, (Class) selectedElement));
 //				}
 				
+				// instantiate requirements
 				editingDomain.getCommandStack().execute(getCommand(editingDomain, selectedReq, selectedNumberOfInstantiations, (Class) selectedElement));
-				editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
+				
+				if (selectedReq.size() > 0) { // if new requirements were instantiated
+					// ask for creating requirements evaluation elements and code 
+					boolean go = MessageDialog.openQuestion(new Shell(), "Confirmation", 
+							"Should the requirements evaluation elements and respective code be created or updated " +
+							"in '" + ((Class)selectedElement).getName() + "'?");
+					if (go) {
+						editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
+					}
+				}
 			}
 		}
 		return null;

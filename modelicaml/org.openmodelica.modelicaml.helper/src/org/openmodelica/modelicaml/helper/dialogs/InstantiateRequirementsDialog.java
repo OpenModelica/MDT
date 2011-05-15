@@ -487,13 +487,14 @@ public class InstantiateRequirementsDialog extends Dialog {
 					public void modifyText(ModifyEvent e) {
 						try {
 							Integer n = Integer.valueOf(numberOfInstantiations.getText());
-							if (n > 0 ) {
+//							if (n > 0 ) {
+							if ( n > -1 && n < 999) {
 								selectedNumberOfInstantiations.remove(temp_req);	
 								selectedNumberOfInstantiations.put(temp_req, n);
 //								System.err.println(n);
 							}
 							else {
-//								numberOfInstantiations.setText("" + advisedNumberOfInstantiations);
+								numberOfInstantiations.setText("" + number);
 							}
 							
 						} catch (Exception e2) {
@@ -506,7 +507,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 				numberOfInstantiations.setItems(new String[] { "" + recommendedNumberOfInstantiations});
 				numberOfInstantiations.setEditable(true);
 				numberOfInstantiations.setText("" + recommendedNumberOfInstantiations);
-				numberOfInstantiations.setBounds(30, 18, 39, 18);
+				numberOfInstantiations.setBounds(30, 18, 49, 18);
 				numberOfInstantiations.setEnabled(false);
 				selectedNumberOfInstantiations.put(temp_req, recommendedNumberOfInstantiations);
 				
@@ -558,7 +559,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 				additionalInfo.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_RED));
 				additionalInfo.setFont(SWTResourceManager.getFont("Arial", 8, SWT.NORMAL));
 				additionalInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-				additionalInfo.setBounds(75, 20, 500, 13);
+				additionalInfo.setBounds(85, 20, 500, 13);
 				String textString = "time(s), because it should be instantiated at least " + numberOfRequiredInstantiations + " time(s) " + " and is already instantiated " + numberOfExisingInstantiations + " time(s).";
 				additionalInfo.setText(textString);
 //				}

@@ -65,6 +65,7 @@ public class RequirementsInstantiator {
 			Integer numberOfInstantiations = 0; 
 			if (selectedNumberOfInstantiations != null) {
 				Integer n = selectedNumberOfInstantiations.get(reqClass);
+//				System.err.println(reqClass.getName() + " number of instantiations: " + n);
 				if (n != null) {
 					numberOfInstantiations = n;
 				}
