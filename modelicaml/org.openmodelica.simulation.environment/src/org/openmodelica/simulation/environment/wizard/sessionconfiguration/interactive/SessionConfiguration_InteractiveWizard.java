@@ -239,13 +239,11 @@ public class SessionConfiguration_InteractiveWizard extends Wizard{
 		final SimulationSessionConfiguration selectedSimulationSessionConfiguration = selectedSimulationProject
 				.getSimSessConfig(selectedSessionConfigName);
 
-		
-		MessageDialog
-		.openError(
-			getShell(),
-			"Start Simulation Runtime",
-			"Please start the simulation runtime (*.exe or *.bat)\nusing the parameter -interactive -port 10501 and press OK");
-
+//		MessageDialog
+//		.openError(
+//			getShell(),
+//			"Start Simulation Runtime",
+//			"Please start the simulation runtime (*.exe or *.bat)\nusing the parameter -interactive -port 10501 and press OK");
 		
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, true,
