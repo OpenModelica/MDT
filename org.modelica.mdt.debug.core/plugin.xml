@@ -31,6 +31,36 @@
       </sourcePathComputer>
    </extension>
    
+   <!-- Start of GDB Debugger Launch Configurations -->
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.modelica.mdt.debug.gdb.core.launcher.GDBLaunchDelegate"
+            id="org.modelica.mdt.debug.gdb.core.launchConfigurationType"
+            modes="run, debug"
+            name="Modelica Developement Tooling (MDT) GDB"
+            sourceLocatorId="org.modelica.mdt.debug.gdb.core.sourceLookupDirector.mdt"
+            sourcePathComputerId="org.modelica.mdt.debug.gdb.core.sourcePathComputer.mdt">
+      </launchConfigurationType>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="MDT GDB Source Lookup Director"
+            class="org.modelica.mdt.debug.gdb.core.sourcelookup.GDBSourceLookupDirector"
+            id="org.modelica.mdt.debug.gdb.core.sourceLookupDirector.mdt">
+      </sourceLocator>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="org.modelica.mdt.debug.gdb.core.sourcelookup.GDBSourcePathComputerDelegate"
+            id="org.modelica.mdt.debug.gdb.core.sourcePathComputer.mdt">
+      </sourcePathComputer>
+   </extension>
+   <!-- End of GDB Debugger Launch Configurations -->
    
    <extension
          point="org.eclipse.debug.core.breakpoints">
@@ -60,6 +90,5 @@
       <super type="org.modelica.mdt.debug.core.markerType.lineBreakpoint" />
       <persistent value="true" />
    </extension>
-
 
 </plugin>

@@ -188,7 +188,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget, IBr
 		}
 		
 		MDTThread x = new MDTThread(this);
-		x.fireCreationEvent();
+		//x.fireCreationEvent();
 		fThreads.add(x);
 		fEventDispatch = new EventDispatchJob();
 		fEventDispatch.schedule();
@@ -387,7 +387,7 @@ public class MDTDebugTarget extends MDTDebugElement implements IDebugTarget, IBr
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-		getThread().resume();		
+		getThread().resume();
 	}
 
 	/*

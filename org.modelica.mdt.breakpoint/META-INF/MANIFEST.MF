@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Breakpoint
+Bundle-SymbolicName: org.modelica.mdt.breakpoint; singleton:=true
+Bundle-Version: 0.7.7
+Bundle-Localization: plugin
+Bundle-Vendor: Adeel Asghar [adeel.asghar@liu.se] @ PELAB, Linkoping University
+Bundle-Activator: org.modelica.mdt.breakpoint.Activator
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.debug.core,
+ org.eclipse.debug.ui,
+ org.eclipse.ui,
+ org.eclipse.ui.views,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.jface.text,
+ org.eclipse.core.runtime,
+ org.modelica.mdt.debug.core,
+ org.eclipse.ui.editors,
+ org.modelica.mdt.core
+Bundle-ActivationPolicy: lazy
+Export-Package: org.modelica.mdt.breakpoint

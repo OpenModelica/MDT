@@ -20,6 +20,28 @@
             id="org.modelica.mdt.debug.ui.launchConfigurationTypeImage">
       </launchConfigurationTypeImage>
    </extension>
+   
+   <!-- Start of GDB Debugger Launch Configurations Tabs -->
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.modelica.mdt.debug.gdb.core.launchConfigurationType"
+            description="Run or Debug a MetaModelica program"
+            class="org.modelica.mdt.debug.gdb.ui.launcher.GDBTabGroup"
+            id="org.modelica.mdt.debug.gdb.ui.launchConfigurationTabGroup.mdt">
+      </launchConfigurationTabGroup>
+   </extension>
+
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/cview16/mdt.gif"
+            configTypeID="org.modelica.mdt.debug.gdb.core.launchConfigurationType"
+            id="org.modelica.mdt.debug.gdb.ui.launchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <!-- End of GDB Debugger Launch Configurations Tabs -->
+   
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut

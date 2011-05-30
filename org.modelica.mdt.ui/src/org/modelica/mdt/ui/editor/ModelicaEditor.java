@@ -45,6 +45,8 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -115,6 +117,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.modelica.mdt.ui.PreferenceConstants;
 import org.modelica.mdt.ui.UIPlugin;
+import org.modelica.mdt.breakpoint.MDTBreakpointAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
 import org.modelica.mdt.core.ISourceRegion;
@@ -133,12 +136,12 @@ import org.modelica.mdt.ui.view.ModelicaContentOutlinePage;
  * The editor is configured with following features:
  * 
  *  - modelica syntax highlighting
- *  - content assistant
+ *  - content assiastant
  *  - info-pops
  *  - action that invokes content assist on ctrl+space
  *  - folding(collapsing) of blocks of source code
- *  - outline synchronization
- *  - Modelica Project Viewer synchronization
+ *  - outline syncronization
+ *  - Modelica Project Viewer syncronization
  * 
  * @author Adrian Pop
  * @author MDT team
@@ -573,6 +576,8 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 				return newAdapter;
 		}
 		
+		if (IToggleBreakpointsTarget.class.equals(adapter))
+			return new MDTBreakpointAdapter();
 		
 		return super.getAdapter(adapter);
 	}
