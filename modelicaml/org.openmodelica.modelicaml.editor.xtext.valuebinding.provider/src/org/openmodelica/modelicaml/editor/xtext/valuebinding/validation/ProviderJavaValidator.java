@@ -21,7 +21,7 @@ public class ProviderJavaValidator extends AbstractProviderJavaValidator {
 		for (String string : cListCopy) {
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
 				cList.remove(string);
-				cList.add(string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_ownPath));
+				cList.add(string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_providerPath));
 			}
 		}
 //		for (String string : cList) {
@@ -51,7 +51,7 @@ public class ProviderJavaValidator extends AbstractProviderJavaValidator {
 		for (String string : cListCopy) {
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
 				cList.remove(string);
-				cList.add(string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_ownPath));
+				cList.add(string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_providerPath));
 			}
 		}
 //		for (String string : cList) {
