@@ -31,7 +31,7 @@ public class ClientProposalProvider extends AbstractClientProposalProvider {
 		for (String string : cList) {
 			// replace the Value Provider component name with a specific macro
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
-				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_ownPath);
+				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_clientPath);
 			}
 			
 			String completionString = string;
@@ -58,7 +58,7 @@ public class ClientProposalProvider extends AbstractClientProposalProvider {
 		for (String string : cList) {
 			// replace the Value Provider component name with a specific macro
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
-				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_ownPath);
+				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_clientPath);
 			}
 			
 			String completionString = string;
@@ -88,7 +88,7 @@ public class ClientProposalProvider extends AbstractClientProposalProvider {
 		for (String string : cList) {
 			// replace the Value Provider component name with a specific macro
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
-				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_ownPath);
+				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_clientPath);
 			}
 			
 			String completionString = string;
@@ -105,13 +105,14 @@ public class ClientProposalProvider extends AbstractClientProposalProvider {
 		}
 	}
 	
+	
 	@Override
-	public void complete_SumFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
+	public void complete_GetBindingFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
 		
 		super.complete_name(model, ruleCall, context, acceptor);
 	
 		List<String> cList = new ArrayList<String>();
-		cList.add("sum(:)");
+		cList.add("getBinding()");
 		
 		for (String string : cList) {
 			String completionString = string;
@@ -121,100 +122,4 @@ public class ClientProposalProvider extends AbstractClientProposalProvider {
 		}
 	}
 	
-	@Override
-	public void complete_ProductFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-		
-		super.complete_name(model, ruleCall, context, acceptor);
-	
-		List<String> cList = new ArrayList<String>();
-		cList.add("product(:)");
-		
-		for (String string : cList) {
-			String completionString = string;
-			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
-			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
-			acceptor.accept(completionProposal);
-		}
-	}
-	
-	@Override
-	public void complete_MinFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-		
-		super.complete_name(model, ruleCall, context, acceptor);
-	
-		List<String> cList = new ArrayList<String>();
-		cList.add("min(:)");
-		
-		for (String string : cList) {
-			String completionString = string;
-			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
-			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
-			acceptor.accept(completionProposal);
-		}
-	}
-	
-	@Override
-	public void complete_MaxFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-		
-		super.complete_name(model, ruleCall, context, acceptor);
-	
-		List<String> cList = new ArrayList<String>();
-		cList.add("max(:)");
-		
-		for (String string : cList) {
-			String completionString = string;
-			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
-			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
-			acceptor.accept(completionProposal);
-		}
-	}
-	
-	@Override
-	public void complete_AverageFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-		
-		super.complete_name(model, ruleCall, context, acceptor);
-	
-		List<String> cList = new ArrayList<String>();
-		cList.add("avr(:)");
-		
-		for (String string : cList) {
-			String completionString = string;
-			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
-			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
-			acceptor.accept(completionProposal);
-		}
-	}
-	
-	@Override
-	public void complete_SizeFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-		
-		super.complete_name(model, ruleCall, context, acceptor);
-	
-		List<String> cList = new ArrayList<String>();
-		cList.add("size(:)");
-		
-		for (String string : cList) {
-			String completionString = string;
-			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
-			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
-			acceptor.accept(completionProposal);
-		}
-	}
-	
-	
-	@Override
-	public void complete_GetResultFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-		
-		super.complete_name(model, ruleCall, context, acceptor);
-	
-		List<String> cList = new ArrayList<String>();
-		cList.add("getResult()");
-		
-		for (String string : cList) {
-			String completionString = string;
-			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
-			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
-			acceptor.accept(completionProposal);
-		}
-	}
 }
