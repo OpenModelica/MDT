@@ -31,7 +31,7 @@ public class ProviderProposalProvider extends AbstractProviderProposalProvider {
 		for (String string : cList) {
 			// replace the Value Provider component name with a specific macro
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
-				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_ownPath);
+				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_providerPath);
 			}
 			
 			String completionString = string;
@@ -61,7 +61,7 @@ public class ProviderProposalProvider extends AbstractProviderProposalProvider {
 		for (String string : cList) {
 			// replace the Value Provider component name with a specific macro
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
-				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_ownPath);
+				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_providerPath);
 			}
 			
 			String completionString = string;
