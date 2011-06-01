@@ -41,8 +41,10 @@ public class Constants {
 	// stereotype properties 
 	public static final String propertyName_modification 		= "modification";
 	public static final String propertyName_causality 			= "causality";
+	public static final String propertyName_variability 		= "variability";
 	public static final String propertyName_input 				= "input";
 	public static final String propertyName_output 				= "output";
+	
 
 	// primarily used by the value bindings plugin  
 	public static final String stereotypeQName_ValueMediatorsContainer 	= "ModelicaML::ValueBinding::ValueMediatorsContainer";
@@ -52,12 +54,22 @@ public class Constants {
 	
 	public static final String stereotypeQName_ValueClient_obtainsValueFrom 	= "obtainsValueFrom";
 	public static final String stereotypeQName_ValueProvider_providesValueFor 	= "providesValueFor";
+
+	public static final String stereotypeQName_ObtainsValueFrom 	= "ModelicaML::ValueBinding::ObtainsValueFrom";
+	public static final String stereotypeQName_ProvidesValueFor 	= "ModelicaML::ValueBinding::ProvidesValueFor";
+
 	
-	public static final String propertyName_operation 							= "operation";
+	public static final String propertyName_operation 				= "operation";
+	public static final String propertyName_preferredProviders 		= "preferredProviders";
 	
-	public static final String valueClientsNodeName 		= "Clients";
+	
+	public static final String valueClientsNodeName 			= "Clients";
+	public static final String potentialCalueClientsNodeName 	= "Potential Clients";
 	public static final String valueMediatorsNodeName 		= "Mediators";
 	public static final String valueProvidersNodeName 		= "Providers";
+	public static final int MODE_ADD_CLIENT 				= 0;
+	public static final int MODE_ADD_MEDIATOR 				= 1;
+	public static final int MODE_ADD_PROVIDER 				= 2;
 	
 	
 	// used by components tree plugin
@@ -68,7 +80,20 @@ public class Constants {
 	
 	
 	// used by value binding provider xtext editor
-	public static final String MACRO_ownPath 				= "ownPath";
+	public static final String MACRO_ownPath 				= "ownPath"; // OBSOLETE
+	public static final String MACRO_clientPath 			= "clientPath";
+	public static final String MACRO_providerPath 			= "providerPath";
 	
+	public static final String MACRO_getBinding 			= "getBinding";
+	public static final String MACRO_getSingleProvider 		= "getSingleProvider";
+	public static final String MACRO_toArray 				= "toArray";
+	public static final String MACRO_size 					= "size";
+	public static final String MACRO_avg 					= "avg";
+	
+	// standard Modelica array reduction functions
+	public static final String MACRO_sum 					= "sum";
+	public static final String MACRO_product 				= "product";
+	public static final String MACRO_min 					= "min";
+	public static final String MACRO_max 					= "max";
 	
 }

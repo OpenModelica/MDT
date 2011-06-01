@@ -76,6 +76,8 @@ public class TreeObject implements IAdaptable {
 	/** The is leaf. */
 	private Boolean isLeaf;
 	
+	private Boolean isPredefinedModelicaProperty = false;
+	
 	/** The is root. */
 	private Boolean isRoot;
 	
@@ -118,6 +120,9 @@ public class TreeObject implements IAdaptable {
 	public Boolean hasRequirements = null;
 	public Boolean hasValueClients = null;
 	public Boolean hasValueProviders = null;
+	
+	private boolean isValueClient = false;
+	private boolean isValueProvider = false;
 
 	public TreeObject(	String name, 
 						Property property, 
@@ -495,8 +500,8 @@ public class TreeObject implements IAdaptable {
 	
 	public void setHasValueClients(TreeParent root) {
 		this.hasValueClients = true; // this attribute is only set to true, never to false. 
-//		System.err.println(this.getName() + " hasValueClients");
-		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasRequirements == null) { // it stops when this attribute is already set.
+//		System.err.println(this.getName() + " hasValueClients -> " + this.hasValueClients);
+		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasValueClients == null) { // it stops when this attribute is already set.
 			this.getParent().setHasValueClients(root);
 		}
 	}
@@ -509,7 +514,7 @@ public class TreeObject implements IAdaptable {
 	public void setHasValueProviders(TreeParent root) {
 		this.hasValueProviders = true; // this attribute is only set to true, never to false. 
 //		System.err.println(this.getName() + " hasValueProviders");
-		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasRequirements == null) { // it stops when this attribute is already set.
+		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasValueProviders == null) { // it stops when this attribute is already set.
 			this.getParent().setHasValueProviders(root);
 		}
 	}
@@ -555,20 +560,30 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	
+	//  ####################################### for Value Bindings
+	
+	public void setIsValueClient(boolean isValueClient) {
+		this.isValueClient = isValueClient;
+	}
+
+	public void setIsValueProvider(boolean isValueProvider) {
+		this.isValueProvider = isValueProvider;
+	}
 	
 	public Boolean isValueClient(){
-		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
-			return true;
-		}
-		return false;
+//		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
+//			return true;
+//		}
+//		return false;
+		return this.isValueClient;
 	}
 	public Boolean isValueProvider(){
-		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
-			return true;
-		}
-		return false;
+//		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
+//			return true;
+//		}
+		return this.isValueProvider;
 	}
-	
+	//  ####################################### 
 	
 	
 
@@ -595,6 +610,9 @@ public class TreeObject implements IAdaptable {
 	@Override
 	public Object getAdapter(java.lang.Class adapter) {
 		if (adapter == EObject.class) {
+			if (isRoot) { 
+				return selectedClass;
+			}
 			return getUmlElement();
 		}
 		if (adapter == TreeObject.class) {
@@ -603,5 +621,18 @@ public class TreeObject implements IAdaptable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	public void setIsPredefinedModelicaProperty(Boolean isPredefinedModelicaProperty) {
+		this.isPredefinedModelicaProperty = isPredefinedModelicaProperty;
+	}
+
+
+	public Boolean isPredefinedModelicaProperty() {
+		return isPredefinedModelicaProperty;
+	}
+
+
+
 	
 }

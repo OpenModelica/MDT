@@ -13,6 +13,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.Generalization;
@@ -22,6 +23,7 @@ import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
@@ -31,6 +33,9 @@ public class ClassInstantiation {
 	
 	private TreeParent invisibleRoot;
 	private TreeParent treeRoot;
+	
+	private HashSet<Element> referencedClients = new HashSet<Element>();
+	private HashSet<Element> referencedProviders = new HashSet<Element>();
 	
 	/** The action show state machines. */
 	private Boolean includeStateMachines;
@@ -58,7 +63,10 @@ public class ClassInstantiation {
 		if (selectedClass != null) {
 			invisibleRoot = new TreeParent("", null, null, "", false, false, new HashSet<String>(), selectedClass, false);
 			
-			treeRoot = new TreeParent("'" + selectedClass.getName() +"' components", null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
+//			String name = "'" + selectedClass.getName() +"' components";
+//			String name = "'" + selectedClass.getName() +"' instantiated";
+			String name = "instantiated '" + selectedClass.getName() +"' ";
+			treeRoot = new TreeParent(name, null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
 			invisibleRoot.addChild(treeRoot);
 			
 			// get class components in order to know which other attributes are inherited.
@@ -75,6 +83,10 @@ public class ClassInstantiation {
 					}
 				}
 			}
+			
+			
+			// Get value bindings data 
+			collectValueClientsAndProvidersFromUmlModel(this.selectedClass.getModel());
 			
 			// build tree starting from the selected class node.
 			buildNextTreeLevel(this.selectedClass, null, treeRoot , "");
@@ -344,9 +356,17 @@ public class ClassInstantiation {
 				if (child.isOutput()) { parent.setHasOutputs(treeRoot); }
 
 				// set parent "has value clients or providers" indicators
-				if (child.isValueClient()) { parent.setHasValueClients(treeRoot); }
-				if (child.isValueProvider()) { parent.setHasValueProviders(treeRoot); }
-				
+//				if (child.isValueClient()) { parent.setHasValueClients(treeRoot); }
+//				if (child.isValueProvider()) { parent.setHasValueProviders(treeRoot); }
+				if (this.referencedClients.contains(property)) {
+					child.setIsValueClient(true);
+					parent.setHasValueClients(treeRoot);
+				}
+				if (this.referencedProviders.contains(property)) {
+					child.setIsValueProvider(true);
+					parent.setHasValueProviders(treeRoot);
+				}
+
 				// create predefined properties for Modelica real, string, integer and boolean.
 				createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath);
 				
@@ -376,8 +396,16 @@ public class ClassInstantiation {
 				if (newParent.isRequirementInstance()) { newParent.setHasRequirements(treeRoot); }
 				
 				// set parent "has value clients or providers" indicators
-				if (newParent.isValueClient()) { newParent.setHasValueClients(treeRoot); }
-				if (newParent.isValueProvider()) { newParent.setHasValueProviders(treeRoot); }
+//				if (newParent.isValueClient()) { newParent.setHasValueClients(treeRoot); }
+//				if (newParent.isValueProvider()) { newParent.setHasValueProviders(treeRoot); }
+				if (this.referencedClients.contains(property)) {
+					newParent.setIsValueClient(true);
+					newParent.setHasValueClients(treeRoot);
+				}
+				if (this.referencedProviders.contains(property)) {
+					newParent.setIsValueProvider(true);
+					newParent.setHasValueProviders(treeRoot);
+				}
 				
 				// make sure that the tree object gets its redeclared type.
 				newParent.setComponentType(pType); 
@@ -441,6 +469,8 @@ public class ClassInstantiation {
 //					child.setFinalModificationRightHand(this.modifications.get(newDotPath));
 					child.setModificationRightHand(this.modifications.get(newDotPath));
 					child.setModificationSource(this.modificationSource.get(newDotPath));
+
+					child.setIsPredefinedModelicaProperty(true);
 					
 					// set the store location for the tree object.
 					setModificationStoreLocation(child);
@@ -571,5 +601,41 @@ public class ClassInstantiation {
 		return name;
 	}
 	
+	
+	
+	private void collectValueClientsAndProvidersFromUmlModel(EObject umlRootElement){
+		Iterator<EObject> i = umlRootElement.eAllContents();
+		while (i.hasNext()) {
+			EObject object = i.next();
+			if (object instanceof NamedElement 
+					&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+				
+				NamedElement mediator = (NamedElement)object;
+				EList<Dependency> depList = mediator.getClientDependencies();
+				for (Dependency dependency : depList) {
+					
+					// reference to a clients
+					if (dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null ) { 
+						EList<Element> targets = dependency.getTargets();
+						for (Element element : targets) {
+							if (element instanceof NamedElement) {
+								// add only mediators and referenced elements if they are used in the instantiation tree
+								referencedClients.add(element);	
+							}
+						}
+					}
+					// reference to providers or other mediators
+					else if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null ) {
+						EList<Element> targets = dependency.getTargets();
+						for (Element element : targets) {
+							if (element instanceof NamedElement) {
+								referencedProviders.add(element);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 }

@@ -1,6 +1,7 @@
 package org.openmodelica.modelicaml.common.instantiation;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -21,7 +22,34 @@ import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
+
 	public class TreeUtls {
+		
+		// is set by the components tree plugin and each time it instantiates a class
+		// it is used by other plugins, e.g., value bindings in order to get the currently instantiated class.
+		// IMPORTANT: components tree plugin should not forget to reset it! 
+		public static TreeParent componentsTreeRoot = null;
+		
+		
+		
+		public static HashSet<Object> findTreeItems(String dotPath, TreeParent parent, HashSet<Object> list) {
+			if (parent != null) {
+				TreeObject[] items = parent.getChildren();
+				
+				for (int i = 0; i < items.length; i++) {
+					if ( items[i].getDotPath().equals(dotPath) ) {
+						list.add(items[i]);
+					}
+					else {
+						// if it is a parent
+						if (items[i] instanceof TreeParent) {
+							list.addAll( findTreeItems(dotPath, (TreeParent)items[i], list) );
+						}
+					}
+				}
+			}
+			return list;
+		}
 		
 	
 //	// TODO: remove it and use the getValueMediators() instead
@@ -47,25 +75,26 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 //		return list;
 //	}
 	
-	public static EList<Element> getValueMediators(Element element, String valueBindingStereotypeQName, String valueBindingPropertyName){
-		EList<Element> list = new BasicEList<Element>();
-
-		String stereotypeQName = valueBindingStereotypeQName;
-		Stereotype valueBindingStereotype = element.getAppliedStereotype(stereotypeQName);
 		
-		if (valueBindingStereotype != null) {
-			Object stereotypeValue = element.getValue(valueBindingStereotype, valueBindingPropertyName);
-			if (stereotypeValue instanceof EList) {
-				for (Object object : (EList)stereotypeValue) {
-					if (object instanceof EObject) {
-						Element valueMediator = UMLUtil.getBaseElement((EObject)object);
-						list.add(valueMediator);
-					}
-				}
-			}
-		}
-		return list;
-	}
+//	public static EList<Element> getValueMediators(Element element, String valueBindingStereotypeQName, String valueBindingPropertyName){
+//		EList<Element> list = new BasicEList<Element>();
+//
+//		String stereotypeQName = valueBindingStereotypeQName;
+//		Stereotype valueBindingStereotype = element.getAppliedStereotype(stereotypeQName);
+//		
+//		if (valueBindingStereotype != null) {
+//			Object stereotypeValue = element.getValue(valueBindingStereotype, valueBindingPropertyName);
+//			if (stereotypeValue instanceof EList) {
+//				for (Object object : (EList)stereotypeValue) {
+//					if (object instanceof EObject) {
+//						Element valueMediator = UMLUtil.getBaseElement((EObject)object);
+//						list.add(valueMediator);
+//					}
+//				}
+//			}
+//		}
+//		return list;
+//	}
 	
 	
 	/**
@@ -117,48 +146,48 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 //		return list;
 //	}
 	
-	public static EList<TreeObject> getValueProviders(Element valueClient, EList<Element> listOfMediators, TreeObject treeParent){
-		EList<TreeObject> list = new BasicEList<TreeObject>();
-		TreeObject[] children = ((TreeParent)treeParent).getChildren();
-		for (int i = 0; i < children.length; i++) {
-//			if (children[i].isLeaf()) {
-				Property childProperty = children[i].getProperty();
-				if (childProperty != null && !childProperty.equals(valueClient)) {
-					
-					//System.err.println("childProperty: " + childProperty.getName());
-					
-					String valueBindingStereotypeQName = Constants.stereotypeQName_ValueProvider; 
-					String valueBindingPropertyName = Constants.stereotypeQName_ValueProvider_providesValueFor;
-					
-					if (childProperty.getAppliedStereotype(valueBindingStereotypeQName) != null) {
-						//System.err.println("childProperty has stereotype");
-						EList<Element> listOfChildPropertyProxies = getValueMediators(childProperty, valueBindingStereotypeQName, valueBindingPropertyName);
-						
-//						System.err.println("listOfProxies: " + listOfProxies);
-//						System.err.println("listOfChildPropertyProxies: " + listOfChildPropertyProxies);
-						
-						for (Element property : listOfChildPropertyProxies) {
-							if (listOfMediators.contains(property)) {
-//								System.err.println("the list of proxies contains the proxy '"+property.getName()+"' of the childProperty '" + childProperty.getName() + "' ");
-								list.add(children[i]);
-//								System.err.println(children[i].getName());
-							}
-						}
-					}
-				}
-//			}
-//			else {
-				if ( !children[i].isLeaf() ) { // TODO: use getChlidren?
-					EList<TreeObject> nextLevelList = getValueProviders(valueClient, listOfMediators, children[i]);
-					list.addAll(nextLevelList);
-				}
-//			}
-		}
-		
-		// TODO: do the same for states of statemachines?
-		
-		return list;
-	}
+//	public static EList<TreeObject> getValueProviders(Element valueClient, EList<Element> listOfMediators, TreeObject treeParent){
+//		EList<TreeObject> list = new BasicEList<TreeObject>();
+//		TreeObject[] children = ((TreeParent)treeParent).getChildren();
+//		for (int i = 0; i < children.length; i++) {
+////			if (children[i].isLeaf()) {
+//				Property childProperty = children[i].getProperty();
+//				if (childProperty != null && !childProperty.equals(valueClient)) {
+//					
+//					//System.err.println("childProperty: " + childProperty.getName());
+//					
+//					String valueBindingStereotypeQName = Constants.stereotypeQName_ValueProvider; 
+//					String valueBindingPropertyName = Constants.stereotypeQName_ValueProvider_providesValueFor;
+//					
+//					if (childProperty.getAppliedStereotype(valueBindingStereotypeQName) != null) {
+//						//System.err.println("childProperty has stereotype");
+//						EList<Element> listOfChildPropertyProxies = getValueMediators(childProperty, valueBindingStereotypeQName, valueBindingPropertyName);
+//						
+////						System.err.println("listOfProxies: " + listOfProxies);
+////						System.err.println("listOfChildPropertyProxies: " + listOfChildPropertyProxies);
+//						
+//						for (Element property : listOfChildPropertyProxies) {
+//							if (listOfMediators.contains(property)) {
+////								System.err.println("the list of proxies contains the proxy '"+property.getName()+"' of the childProperty '" + childProperty.getName() + "' ");
+//								list.add(children[i]);
+////								System.err.println(children[i].getName());
+//							}
+//						}
+//					}
+//				}
+////			}
+////			else {
+//				if ( !children[i].isLeaf() ) { // TODO: use getChlidren?
+//					EList<TreeObject> nextLevelList = getValueProviders(valueClient, listOfMediators, children[i]);
+//					list.addAll(nextLevelList);
+//				}
+////			}
+//		}
+//		
+//		// TODO: do the same for states of statemachines?
+//		
+//		return list;
+//	}
 
 	
 	
