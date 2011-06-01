@@ -1,9 +1,7 @@
 package org.openmodelica.modelicaml.helper.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -19,45 +17,21 @@ import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
-import org.openmodelica.modelicaml.common.instantiation.ModificationsCollector;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
-import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveCodeHelper;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataCollector;
 
 public class RequirementsInstantiator {
 	
 	final static String reqPropertyPrefix = "req_";
-
-	List<TreeObject> valueProviders = new ArrayList<TreeObject>();
-	HashSet<String> valueProvidersUsed = new HashSet<String>();
-	HashSet<String> reservedBindings = new HashSet<String>(); // used and reseted for each instantiated requirement
-
-	class ValueBinding{
-		public Property instantiatedRequirement = null;
-		public Property  requirementInputProperty = null;
-		public TreeObject valueProvider = null;
-		public String valueProviderDotPath = null;
-	}
-	class PotentialValueProvider extends ValueBinding {	}
-	
-	List<PotentialValueProvider> valueProvidersPotentialCandidates = new ArrayList<PotentialValueProvider>();
-	//HashSet<String> valueProvidersPotentialCandidatesDotPath = new HashSet<String>();
-	
-	HashSet<String> reqPropertiesBound = new HashSet<String>();
-	List<ValueBinding> finalBindings = new ArrayList<ValueBinding>();
-	
-	ClassInstantiation ast; // the ast object
-	TreeParent astRoot; // the root node of the ast 
-	
-//	private String entryPoint = null; // used for marking the parent-dotPath of the first value provider found 
-	
 	
 	public void instantiateRequirements(Class containingClass, HashSet<Class> reqClasses, HashMap<Class, Integer> selectedNumberOfInstantiations){
-    	ast = new ClassInstantiation(containingClass, true);
+		ClassInstantiation ast = new ClassInstantiation(containingClass, true);
 		ast.createTree();
-		astRoot = ast.getTreeRoot();
+		TreeParent astRoot = ast.getTreeRoot();
 		
 		EList<Property> instantiatedRequirements = new BasicEList<Property>();
 		
@@ -70,11 +44,15 @@ public class RequirementsInstantiator {
 					numberOfInstantiations = n;
 				}
 				else {
-					numberOfInstantiations = getFinalNumberOfRequiredInstantiations(containingClass, reqClass);
+//					numberOfInstantiations = getFinalNumberOfRequiredInstantiations(containingClass, reqClass);
+					// if it is not clear then always instantiated only one.
+					numberOfInstantiations = 1; 
 				}
 			}
 			else {
-				numberOfInstantiations = getFinalNumberOfRequiredInstantiations(containingClass, reqClass);
+//				numberOfInstantiations = getFinalNumberOfRequiredInstantiations(containingClass, reqClass);
+				// if it is not clear then always instantiated only one.
+				numberOfInstantiations = 1;
 			}
 			
 			if (numberOfInstantiations > 0 ) {
@@ -87,139 +65,86 @@ public class RequirementsInstantiator {
 			}
 		}
 
-		bindReqInputProperties(instantiatedRequirements, containingClass, true);
-		
-		
-//		// Initial matching of bindings
-//		for (Property property : instantiatedRequirements) {
-//			System.err.println("\nInitial matching of bindings ... ");
-//			refillReservedBindingsList(containingClass, property);
-//			entryPoint = null; // it is important to reset the entry point for each instantiated requirement
-//			bindRequirementProperties(property, astRoot); // does the initial binding matching
-//		}
-//		
-//		System.err.println("\n#######################################################################\n");
-//		System.err.println("\n Value providers list");
-//		for (PotentialValueProvider o : valueProvidersPotentialCandidates) {
-//			System.err.println( "         " + o.valueProviderDotPath);
-//		}
-//		System.err.println("\n#######################################################################\n");
-//		
-//		//Matching of candidates that are left from the initial matching of bindings ...
-//		int lastValueProvidersPotentialCandidatesSize;
-//		while (valueProvidersPotentialCandidates.size() > 0) {
-//			entryPoint = null;
-//			lastValueProvidersPotentialCandidatesSize = valueProvidersPotentialCandidates.size();
-//			
-//			System.err.println("\nMatching of candidates that are left from the initial matching of bindings ... ");
-//			for (Property property : instantiatedRequirements) {
-//				refillReservedBindingsList(containingClass, property);
-//				entryPoint = null; // it is important to reset the entry point for each instantiated requirement
-//				//bindRequirementPropertiesWithPotentialCandidates(property);
-//				bindRequirementProperties(property, astRoot);
-//			}
-//			
-//			if (valueProvidersPotentialCandidates.size() >= lastValueProvidersPotentialCandidatesSize) {
-//				System.err.println("\n valueProvidersPotentialCandidates list is same or increased -> Break the matching ...");
-//				if (valueProvidersPotentialCandidates.size() > 0 ) {
-//					for (PotentialValueProvider o : valueProvidersPotentialCandidates) {
-////						System.err.println("Value client: " + o.instantiatedRequirement.getName() + "." + o.requirementInputProperty.getName() );
-//						System.err.println("Not possible to bind the valueProvider " + o.valueProviderDotPath);
-//					}
-//				}
-//				break; // stop if it was not possible to reduce the list of candidates
-//			}
-//		}
-
-//		bindRequirementProperties_roughGuess(instantiatedRequirements, astRoot); // WORKS but not correct.
-
+		bindReqInputProperties(instantiatedRequirements, containingClass, astRoot);
 	}
 	
-	public void bindReqInputProperties(EList<Property> instantiatedRequirementList, Class containingClass, Boolean tryToMatch) {
+	public void bindReqInputProperties(EList<Property> instantiatedRequirementList, Class containingClass, TreeParent astRoot) {
 
 		for (Property instantiatedRequirement : instantiatedRequirementList) {
-			
-			refillReservedBindingsList(containingClass, instantiatedRequirement); 
-			
 			Type pType =  instantiatedRequirement.getType();
 			
 			if (pType != null && pType instanceof Class) {
 				EList<Property> reqProperties = getRequirementInputPropertiesList(((Class)pType) );
 				for (Property reqProperty : reqProperties) {
-	    			String valueBindingStereotypeQNameForReqProperty =  Constants.stereotypeQName_ValueClient;
-	    			String valueBindingPropertyNameForReqProperty = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-	    			Stereotype reqPropertyStereotype = reqProperty.getAppliedStereotype(valueBindingStereotypeQNameForReqProperty);
-					
-					if (reqPropertyStereotype != null) {
-						EList<Element> listOfReqPropertyProxies = TreeUtls.getValueMediators(reqProperty, valueBindingStereotypeQNameForReqProperty, valueBindingPropertyNameForReqProperty);
-				    	EList<TreeObject> listOfDotPathThroughProxiesForReqProperty = TreeUtls.getValueProviders(reqProperty, listOfReqPropertyProxies, astRoot);
-				    	
-				    	if (listOfDotPathThroughProxiesForReqProperty.size() > 1) { // multiple choices
-							if (tryToMatch) {
-								// TODO: implement a "find the best match" ... 
-							}
-						}
-				    	else { // only one choice 
-//				    		List<String> list = new ArrayList<String>();
-//				    		list.addAll(listOfDotPathThroughProxiesForReqProperty);
-//				    		System.err.println("Add modification: " + StringUtls.replaceSpecChar(instantiatedRequirement.getName()) + "." + StringUtls.replaceSpecChar(reqProperty.getName()) + " = " + list.get(0));
 
-				    		// get the first item path
-//				    		TreeObject provider = listOfDotPathThroughProxiesForReqProperty.get(0);
-				    		
-				    		DeriveCodeHelper helper = new DeriveCodeHelper(reqProperty, astRoot);
-				    		String modification = helper.getCode();
-				    		
-				    		if (modification != null) {
-				    			ModificationManager.addComponentModification(instantiatedRequirement, StringUtls.replaceSpecChar(reqProperty.getName()), modification, true);	
+					// collect all binding data from the model 
+					// simulate as the reqProperty is already in the tree by passing the tempListOfReqElement
+					ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
+					dc.collectElementsFromInstantiationTree(astRoot);
+					
+					HashSet<Element> umlElementsInTreeInstantiation = dc.getUmlElementsInInstantiationTree();
+					// add the property in order to simulate that it is a class instantiation tree item 
+					umlElementsInTreeInstantiation.add(reqProperty);
+					// collect used mediators (i.e. mediators that have references to tree items)
+					dc.collectMeditorsDataFromUmlModel(containingClass.getModel(), umlElementsInTreeInstantiation);
+					
+					DeriveValueBindingCodeHelper deriveCodeHelper = new DeriveValueBindingCodeHelper();
+					// set the data collection manually in order to ensure that the properties are simulated as tree items in the class instantiation tree.
+					deriveCodeHelper.setDataCollection(dc);
+					
+					// set the client in order to simulate that this is a tree item client
+	    			deriveCodeHelper.setClient(null, reqProperty, false);
+	    			
+	    			// find the mediator(s)
+	    			deriveCodeHelper.findMediator(null, reqProperty, false);
+	    			
+					// if this property is a client at all
+					if ( deriveCodeHelper.getDataCollection().getReferencedClients().contains(reqProperty) ) {
+						
+			    		// Find the tree item for property in the components tree
+						HashSet<TreeObject> list = findTreeItems(reqProperty, astRoot, new HashSet<TreeObject>());
+
+						// get the mediator found. If there is no mediator then either there are multiple mediators for selection or none at all found.
+		    			Element selectedMediator = deriveCodeHelper.getMediatorElement();
+		    			
+		    			if (selectedMediator != null) {
+		    				
+		    				// call it in order to set the providers
+		    				deriveCodeHelper.findProviders(selectedMediator, false);
+	    					HashSet<TreeObject> providers = deriveCodeHelper.getProviders();
+		    				
+		    				// get mediator script in order to see if multiple providers will be reduced to one.
+		    				String mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(selectedMediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+
+		    				String bindingCode = deriveCodeHelper.deriveCode(null, null, selectedMediator, mediatorOperation, providers);
+
+				    		if (bindingCode != null && !bindingCode.equals("")) {
+				    			ModificationManager.addComponentModification(instantiatedRequirement, StringUtls.replaceSpecChar(reqProperty.getName()), bindingCode, true);	
 							}
-						}
+		    			}
 					}
 				}
 			}
 		}
-		
-//		List<String> sortedList = new ArrayList<String>();
-//		sortedList.addAll(multipleChoiceValueProviderslist);
-//		Collections.sort(sortedList);
-//		
-//		System.err.println("Single choice ValueProviders :");
-//		for (String string : singleChoiceValueProviderslist ) {
-//			System.err.println("    " + string);
-//		}
-//
-//		System.err.println("\nMultiple candidates ValueProviders :");
-//		for (String string : sortedList ) {
-//			System.err.println("    " + string);
-//		}
-//
-//		System.err.println("\nValueProviders already in use :");
-//		for (String string : valueProvidersUsed ) {
-//			System.err.println("    " + string);
-//		}
-		
 	}
+
 	
-	
-	private void refillReservedBindingsList(Class containingClass, Property property){
-		reservedBindings.clear(); // clear this list from the last iteration
-		
-		Type pType = property.getType();
-		if (pType != null) {
-			EList<Property> existingClassInstances = getExisitngClassInstances(containingClass, (Class) pType);
-//			System.err.println(property.getName() + ": ");
-			for (Property instantiatedReq : existingClassInstances) {
-				HashSet<String> existingModifications = ModificationsCollector.getComponentModifications(instantiatedReq);
-				for (String string : existingModifications) {
-					String[] splitted = string.split("=");
-					if (splitted.length > 1) {
-						reservedBindings.add(splitted[1].trim());
-//						System.err.println("  " + splitted[1].trim() + " was added to used value providers.");
+	public static HashSet<TreeObject> findTreeItems(EObject selectedElement, TreeParent parent, HashSet<TreeObject> list) {
+		if (parent != null) {
+			TreeObject[] items = parent.getChildren();
+			
+			for (int i = 0; i < items.length; i++) {
+				if ( ((TreeObject)items[i]).getUmlElement() == selectedElement) {
+					list.add(items[i]);
+				}
+				else {
+					if (items[i] instanceof TreeParent) {
+						list.addAll(findTreeItems(selectedElement, (TreeParent)items[i], list));
 					}
 				}
 			}
 		}
-		
+		return list;
 	}
 	
 	
@@ -267,15 +192,15 @@ public class RequirementsInstantiator {
 	}
 	
 	
-	public int getFinalNumberOfRequiredInstantiations(Class containingClass, Class reqClass){
-		int numberOfExistingInstantations = getNumberOfExisitngClassInstances(containingClass, reqClass);
-		int numberOfRequiredInstantations = getNumberOfRequiredInstantiations(containingClass, reqClass);
-		int finalNumber = numberOfRequiredInstantations - numberOfExistingInstantations; 
-		if (finalNumber > 0 ) {
-			return finalNumber;
-		}
-		return 0;
-	}
+//	public int getFinalNumberOfRequiredInstantiations(Class containingClass, Class reqClass){
+//		int numberOfExistingInstantations = getNumberOfExisitngClassInstances(containingClass, reqClass);
+//		int numberOfRequiredInstantations = getMaxNumberOfProviders(containingClass, reqClass);
+//		int finalNumber = numberOfRequiredInstantations - numberOfExistingInstantations; 
+//		if (finalNumber > 0 ) {
+//			return finalNumber;
+//		}
+//		return 0;
+//	}
 	
 	
 	
@@ -301,28 +226,73 @@ public class RequirementsInstantiator {
      * @param req the req
      * @return the number of required instantiations
      */
-	public int getNumberOfRequiredInstantiations(Class containingClass, Class reqClass){
-
+//	public int getNumberOfRequiredInstantiations(Class containingClass, Class reqClass){
+	public int getMaxNumberOfProviders(Class containingClass, Class reqClass){
+    	EList<Property> inputsList = getRequirementInputPropertiesList(reqClass);
+    	
+    	// default number if required instantiations
+    	int numberOrRequiredInstantiations = 1;  
+    	
 		ClassInstantiation ast = new ClassInstantiation(containingClass, true);
 		ast.createTree();
-		TreeParent root = ast.getTreeRoot();
+		TreeParent astRoot = ast.getTreeRoot();
 		
-    	EList<Property> inputsList = getRequirementInputPropertiesList(reqClass);
-    	Integer numberOrRequiredInstantiations = 1;
+		ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
+		dc.collectElementsFromInstantiationTree(astRoot);
+		
+		HashSet<Element> umlElementsInTreeInstantiation = dc.getUmlElementsInInstantiationTree();
+		// add the property in order to simulate that it is a class instantiation tree item 
+		umlElementsInTreeInstantiation.addAll(inputsList);
+		// collect used mediators (i.e. mediators that have references to tree items)
+		dc.collectMeditorsDataFromUmlModel(containingClass.getModel(), umlElementsInTreeInstantiation);
+		
+		DeriveValueBindingCodeHelper deriveCodeHelper = new DeriveValueBindingCodeHelper();
+		// set the data collection manually in order to ensure that the properties are simulated as tree items in the class instantiation tree.
+		deriveCodeHelper.setDataCollection(dc);
+		
     	for (Property property : inputsList) {
-    		if (root != null) {
-    			String valueBindingStereotypeQName =  Constants.stereotypeQName_ValueClient;
-    			String valueBindingPropertyName = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-    	    	
-    			EList<Element> listOfProxies = TreeUtls.getValueMediators(property, valueBindingStereotypeQName, valueBindingPropertyName);
-//    			HashSet<String> listOfDotPathThroughProxies = TreeUtls.getAllLinkedPrimitiveVariablesDotPathThroughProxy(property, listOfProxies, root);
-    			EList<TreeObject> listOfDotPathThroughProxies = TreeUtls.getValueProviders(property, listOfProxies, root);
-    			if (listOfDotPathThroughProxies.size() > numberOrRequiredInstantiations) {
-    	    		numberOrRequiredInstantiations = listOfDotPathThroughProxies.size(); 
+    		if (astRoot != null) {
+    			// set the client in order to simulate that this is a tree item client
+    			deriveCodeHelper.setClient(null, property, false);
+    			
+    			// find the mediator(s)
+    			deriveCodeHelper.findMediator(null, property, false);
+    			
+    			// get the mediator found. If there is no mediator then either there are multiple mediators for selection or none at all found.
+    			Element selectedMediator = deriveCodeHelper.getMediatorElement();
+    			
+    			if (selectedMediator != null) {
+    				// call it in order to set the providers
+    				deriveCodeHelper.findProviders(selectedMediator, false);
+    				
+    				// get mediator script in order to see if multiple providers will be reduced to one.
+    				String mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(selectedMediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+    				
+    				// if it does not have operation to reduce multiple providers to one
+    				// -> get the max. number of providers
+    				if ( !DeriveValueBindingCodeUtls.isValidMediatorMultipleItemsScript(mediatorOperation) ) {
+    					HashSet<TreeObject> providers = deriveCodeHelper.getProviders();
+            			HashSet<TreeObject> multipleProvidersForSelection = deriveCodeHelper.getProvidersForSelection();
+        				
+        				if (providers.size() > 0 ) {
+                			if (providers.size() > numberOrRequiredInstantiations) {
+                	    		numberOrRequiredInstantiations = providers.size(); 
+            				}
+    					}
+            			else if (multipleProvidersForSelection.size() > 0 ) {
+                			if (multipleProvidersForSelection.size() > numberOrRequiredInstantiations) {
+                	    		numberOrRequiredInstantiations = multipleProvidersForSelection.size(); 
+            				}
+    					}
+					} else {
+						// there operation of the mediator reduces the multiple providers to one. 
+					}
+    				
 				}
-//    			System.err.println(listOfDotPathThroughProxies);
-//    			System.err.println("listOfDotPathThroughProxies.size(): " + listOfDotPathThroughProxies.size());
-//    			System.err.println("numberOrRequiredInstantiations: " + numberOrRequiredInstantiations);
+    			else {
+    				//No mediator could be selected for the requirement property ...
+//    				System.err.println("No mediator could be selected for " + property.getQualifiedName());
+    			}
 			}
     		else {
     			System.err.println("Cannot access the instantiator tree root");
@@ -357,6 +327,43 @@ public class RequirementsInstantiator {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+	
+	
+//	private void refillReservedBindingsList(Class containingClass, Property property){
+//		reservedBindings.clear(); // clear this list from the last iteration
+//		
+//		Type pType = property.getType();
+//		if (pType != null) {
+//			EList<Property> existingClassInstances = getExisitngClassInstances(containingClass, (Class) pType);
+////			System.err.println(property.getName() + ": ");
+//			for (Property instantiatedReq : existingClassInstances) {
+//				HashSet<String> existingModifications = ModificationsCollector.getComponentModifications(instantiatedReq);
+//				for (String string : existingModifications) {
+//					String[] splitted = string.split("=");
+//					if (splitted.length > 1) {
+//						reservedBindings.add(splitted[1].trim());
+////						System.err.println("  " + splitted[1].trim() + " was added to used value providers.");
+//					}
+//				}
+//			}
+//		}
+//		
+//	}
     
     
     

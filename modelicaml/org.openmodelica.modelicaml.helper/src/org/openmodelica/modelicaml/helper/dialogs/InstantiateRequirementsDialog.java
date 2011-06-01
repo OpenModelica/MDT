@@ -431,6 +431,7 @@ public class InstantiateRequirementsDialog extends Dialog {
     	for (Class req : reqList) {
 			Stereotype stereotype = req.getAppliedStereotype(Constants.stereotypeQName_Requirement);
 			if (stereotype != null) {
+				
 				String title = "" + req.getName();
 				Object id = "" + req.getValue(stereotype, "id");
 				Object text = "" + req.getValue(stereotype, "text");;
@@ -440,7 +441,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 				RequirementsInstantiator ri = new RequirementsInstantiator();
 				final int numberOfExisingInstantiations = ri.getNumberOfExisitngClassInstances(this.containingClass, reqClass);
 //				System.err.println("numberOfExisingInstantiations: " + numberOfExisingInstantiations);
-				final int numberOfRequiredInstantiations = ri.getNumberOfRequiredInstantiations(this.containingClass, reqClass);
+				final int numberOfRequiredInstantiations = ri.getMaxNumberOfProviders(this.containingClass, reqClass);
 //				System.err.println("numberOfRequiredInstantiations: " + numberOfRequiredInstantiations);
 				
 				int recommendedNumberOfInstantiations = 0;
@@ -469,7 +470,6 @@ public class InstantiateRequirementsDialog extends Dialog {
 				//grpId.setText("id: " + id.toString() + "   " + qName);
 				grpId.setText(qName);
 				reqExpandItem.setControl(grpId);
-				
 				
 				final CCombo numberOfInstantiations = new CCombo(grpId, SWT.BORDER);
 //				numberOfInstantiations.addSelectionListener(new SelectionAdapter() {
@@ -560,7 +560,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 				additionalInfo.setFont(SWTResourceManager.getFont("Arial", 8, SWT.NORMAL));
 				additionalInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				additionalInfo.setBounds(85, 20, 500, 13);
-				String textString = "time(s), because it should be instantiated at least " + numberOfRequiredInstantiations + " time(s) " + " and is already instantiated " + numberOfExisingInstantiations + " time(s).";
+				String textString = "time(s), max. number of providers found: " + numberOfRequiredInstantiations + ", " + " number of existing instantiations: " + numberOfExisingInstantiations + ".";
 				additionalInfo.setText(textString);
 //				}
 				
