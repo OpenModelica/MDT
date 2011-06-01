@@ -88,7 +88,7 @@ public class MediatorProposalProvider extends AbstractMediatorProposalProvider {
 		super.complete_name(model, ruleCall, context, acceptor);
 	
 		List<String> cList = new ArrayList<String>();
-		cList.add("avr(:)");
+		cList.add("avg(:)");
 		
 		for (String string : cList) {
 			String completionString = string;
@@ -116,12 +116,12 @@ public class MediatorProposalProvider extends AbstractMediatorProposalProvider {
 	
 	
 	@Override
-	public void complete_GetResultFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
+	public void complete_ToArrayFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
 		
 		super.complete_name(model, ruleCall, context, acceptor);
 	
 		List<String> cList = new ArrayList<String>();
-		cList.add("getResult()");
+		cList.add("toArray(:)");
 		
 		for (String string : cList) {
 			String completionString = string;
@@ -130,4 +130,21 @@ public class MediatorProposalProvider extends AbstractMediatorProposalProvider {
 			acceptor.accept(completionProposal);
 		}
 	}
+	
+	@Override
+	public void complete_GetSingleProviderFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
+		
+		super.complete_name(model, ruleCall, context, acceptor);
+	
+		List<String> cList = new ArrayList<String>();
+		cList.add("getSingleProvider()");
+		
+		for (String string : cList) {
+			String completionString = string;
+			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
+			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
+			acceptor.accept(completionProposal);
+		}
+	}
+
 }

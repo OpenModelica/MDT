@@ -36,12 +36,13 @@ public class InternalMediatorLexer extends Lexer {
     public static final int T35=35;
     public static final int T30=30;
     public static final int T32=32;
+    public static final int T60=60;
     public static final int T31=31;
     public static final int T49=49;
     public static final int T48=48;
     public static final int RULE_BOOL_VAL=7;
     public static final int T43=43;
-    public static final int Tokens=60;
+    public static final int Tokens=61;
     public static final int RULE_SL_COMMENT=11;
     public static final int T42=42;
     public static final int T41=41;
@@ -579,10 +580,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT41() throws RecognitionException {
         try {
             int _type = T41;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:37:5: ( 'avr' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:37:7: 'avr'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:37:5: ( 'avg' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:37:7: 'avg'
             {
-            match("avr"); 
+            match("avg"); 
 
 
             }
@@ -617,10 +618,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT43() throws RecognitionException {
         try {
             int _type = T43;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:39:5: ( 'getResult' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:39:7: 'getResult'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:39:5: ( 'toArray' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:39:7: 'toArray'
             {
-            match("getResult"); 
+            match("toArray"); 
 
 
             }
@@ -636,10 +637,11 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT44() throws RecognitionException {
         try {
             int _type = T44;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:40:5: ( ':' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:40:7: ':'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:40:5: ( 'getSingleProvider' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:40:7: 'getSingleProvider'
             {
-            match(':'); 
+            match("getSingleProvider"); 
+
 
             }
 
@@ -654,10 +656,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT45() throws RecognitionException {
         try {
             int _type = T45;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:41:5: ( '.' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:41:7: '.'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:41:5: ( ':' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:41:7: ':'
             {
-            match('.'); 
+            match(':'); 
 
             }
 
@@ -672,11 +674,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT46() throws RecognitionException {
         try {
             int _type = T46;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:42:5: ( 'if' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:42:7: 'if'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:42:5: ( '.' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:42:7: '.'
             {
-            match("if"); 
-
+            match('.'); 
 
             }
 
@@ -691,10 +692,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT47() throws RecognitionException {
         try {
             int _type = T47;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:43:5: ( 'then' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:43:7: 'then'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:43:5: ( 'if' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:43:7: 'if'
             {
-            match("then"); 
+            match("if"); 
 
 
             }
@@ -710,10 +711,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT48() throws RecognitionException {
         try {
             int _type = T48;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:44:5: ( 'elseif' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:44:7: 'elseif'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:44:5: ( 'then' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:44:7: 'then'
             {
-            match("elseif"); 
+            match("then"); 
 
 
             }
@@ -729,10 +730,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT49() throws RecognitionException {
         try {
             int _type = T49;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:45:5: ( 'else' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:45:7: 'else'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:45:5: ( 'elseif' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:45:7: 'elseif'
             {
-            match("else"); 
+            match("elseif"); 
 
 
             }
@@ -748,10 +749,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT50() throws RecognitionException {
         try {
             int _type = T50;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:46:5: ( 'or' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:46:7: 'or'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:46:5: ( 'else' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:46:7: 'else'
             {
-            match("or"); 
+            match("else"); 
 
 
             }
@@ -767,10 +768,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT51() throws RecognitionException {
         try {
             int _type = T51;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:47:5: ( 'and' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:47:7: 'and'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:47:5: ( 'or' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:47:7: 'or'
             {
-            match("and"); 
+            match("or"); 
 
 
             }
@@ -786,10 +787,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT52() throws RecognitionException {
         try {
             int _type = T52;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:48:5: ( 'not' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:48:7: 'not'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:48:5: ( 'and' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:48:7: 'and'
             {
-            match("not"); 
+            match("and"); 
 
 
             }
@@ -805,10 +806,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT53() throws RecognitionException {
         try {
             int _type = T53;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:49:5: ( 'initial' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:49:7: 'initial'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:49:5: ( 'not' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:49:7: 'not'
             {
-            match("initial"); 
+            match("not"); 
 
 
             }
@@ -824,10 +825,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT54() throws RecognitionException {
         try {
             int _type = T54;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:50:5: ( 'der' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:50:7: 'der'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:50:5: ( 'initial' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:50:7: 'initial'
             {
-            match("der"); 
+            match("initial"); 
 
 
             }
@@ -843,10 +844,11 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT55() throws RecognitionException {
         try {
             int _type = T55;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:51:5: ( ',' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:51:7: ','
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:51:5: ( 'der' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:51:7: 'der'
             {
-            match(','); 
+            match("der"); 
+
 
             }
 
@@ -861,11 +863,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT56() throws RecognitionException {
         try {
             int _type = T56;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:52:5: ( 'for' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:52:7: 'for'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:52:5: ( ',' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:52:7: ','
             {
-            match("for"); 
-
+            match(','); 
 
             }
 
@@ -880,10 +881,11 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT57() throws RecognitionException {
         try {
             int _type = T57;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:53:5: ( '=' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:53:7: '='
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:53:5: ( 'for' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:53:7: 'for'
             {
-            match('='); 
+            match("for"); 
+
 
             }
 
@@ -898,11 +900,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT58() throws RecognitionException {
         try {
             int _type = T58;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:54:5: ( 'in' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:54:7: 'in'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:54:5: ( '=' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:54:7: '='
             {
-            match("in"); 
-
+            match('='); 
 
             }
 
@@ -917,10 +918,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mT59() throws RecognitionException {
         try {
             int _type = T59;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:55:5: ( 'end' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:55:7: 'end'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:55:5: ( 'in' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:55:7: 'in'
             {
-            match("end"); 
+            match("in"); 
 
 
             }
@@ -932,21 +933,40 @@ public class InternalMediatorLexer extends Lexer {
     }
     // $ANTLR end T59
 
+    // $ANTLR start T60
+    public final void mT60() throws RecognitionException {
+        try {
+            int _type = T60;
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:56:5: ( 'end' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:56:7: 'end'
+            {
+            match("end"); 
+
+
+            }
+
+            this.type = _type;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end T60
+
     // $ANTLR start RULE_UNSIGNED_NUMBER
     public final void mRULE_UNSIGNED_NUMBER() throws RecognitionException {
         try {
             int _type = RULE_UNSIGNED_NUMBER;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:22: ( ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:22: ( ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             int alt9=2;
             alt9 = dfa9.predict(input);
             switch (alt9) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:25: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:25: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:25: ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:25: ( '0' .. '9' )+
                     int cnt1=0;
                     loop1:
                     do {
@@ -960,7 +980,7 @@ public class InternalMediatorLexer extends Lexer {
 
                         switch (alt1) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:26: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:26: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -977,7 +997,7 @@ public class InternalMediatorLexer extends Lexer {
                     } while (true);
 
                     match('.'); 
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:41: ( '0' .. '9' )*
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:41: ( '0' .. '9' )*
                     loop2:
                     do {
                         int alt2=2;
@@ -990,7 +1010,7 @@ public class InternalMediatorLexer extends Lexer {
 
                         switch (alt2) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:42: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:42: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1002,7 +1022,7 @@ public class InternalMediatorLexer extends Lexer {
                         }
                     } while (true);
 
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:53: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:53: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -1011,7 +1031,7 @@ public class InternalMediatorLexer extends Lexer {
                     }
                     switch (alt5) {
                         case 1 :
-                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:54: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:54: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -1023,7 +1043,7 @@ public class InternalMediatorLexer extends Lexer {
                                 recover(mse);    throw mse;
                             }
 
-                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:64: ( '+' | '-' )?
+                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:64: ( '+' | '-' )?
                             int alt3=2;
                             int LA3_0 = input.LA(1);
 
@@ -1050,7 +1070,7 @@ public class InternalMediatorLexer extends Lexer {
 
                             }
 
-                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:75: ( '0' .. '9' )+
+                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:75: ( '0' .. '9' )+
                             int cnt4=0;
                             loop4:
                             do {
@@ -1064,7 +1084,7 @@ public class InternalMediatorLexer extends Lexer {
 
                                 switch (alt4) {
                             	case 1 :
-                            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:76: '0' .. '9'
+                            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:76: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -1090,9 +1110,9 @@ public class InternalMediatorLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:89: ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:89: ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
                     {
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:89: ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:89: ( '0' .. '9' )+
                     int cnt6=0;
                     loop6:
                     do {
@@ -1106,7 +1126,7 @@ public class InternalMediatorLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:90: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:90: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1132,7 +1152,7 @@ public class InternalMediatorLexer extends Lexer {
                         recover(mse);    throw mse;
                     }
 
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:111: ( '+' | '-' )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:111: ( '+' | '-' )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -1159,7 +1179,7 @@ public class InternalMediatorLexer extends Lexer {
 
                     }
 
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:122: ( '0' .. '9' )+
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:122: ( '0' .. '9' )+
                     int cnt8=0;
                     loop8:
                     do {
@@ -1173,7 +1193,7 @@ public class InternalMediatorLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7764:123: '0' .. '9'
+                    	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7876:123: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1209,10 +1229,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_BOOL_VAL() throws RecognitionException {
         try {
             int _type = RULE_BOOL_VAL;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7766:15: ( ( 'true' | 'false' ) )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7766:17: ( 'true' | 'false' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7878:15: ( ( 'true' | 'false' ) )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7878:17: ( 'true' | 'false' )
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7766:17: ( 'true' | 'false' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7878:17: ( 'true' | 'false' )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1224,13 +1244,13 @@ public class InternalMediatorLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("7766:17: ( 'true' | 'false' )", 10, 0, input);
+                    new NoViableAltException("7878:17: ( 'true' | 'false' )", 10, 0, input);
 
                 throw nvae;
             }
             switch (alt10) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7766:18: 'true'
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7878:18: 'true'
                     {
                     match("true"); 
 
@@ -1238,7 +1258,7 @@ public class InternalMediatorLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7766:25: 'false'
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7878:25: 'false'
                     {
                     match("false"); 
 
@@ -1262,10 +1282,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_INT() throws RecognitionException {
         try {
             int _type = RULE_INT;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7768:10: ( ( '0' .. '9' )+ )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7768:12: ( '0' .. '9' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7880:10: ( ( '0' .. '9' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7880:12: ( '0' .. '9' )+
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7768:12: ( '0' .. '9' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7880:12: ( '0' .. '9' )+
             int cnt11=0;
             loop11:
             do {
@@ -1279,7 +1299,7 @@ public class InternalMediatorLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7768:13: '0' .. '9'
+            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7880:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1309,11 +1329,11 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_STRING() throws RecognitionException {
         try {
             int _type = RULE_STRING;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7770:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7770:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7882:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7882:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
             {
             match('\"'); 
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7770:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7882:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
             loop12:
             do {
                 int alt12=3;
@@ -1329,7 +1349,7 @@ public class InternalMediatorLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7770:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
+            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7882:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -1346,7 +1366,7 @@ public class InternalMediatorLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7770:61: ~ ( ( '\\\\' | '\"' ) )
+            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7882:61: ~ ( ( '\\\\' | '\"' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -1382,8 +1402,8 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_IDENT() throws RecognitionException {
         try {
             int _type = RULE_IDENT;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7772:12: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )* )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7772:14: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7884:12: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )* )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7884:14: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1395,7 +1415,7 @@ public class InternalMediatorLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7772:38: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7884:38: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' | '.' )*
             loop13:
             do {
                 int alt13=2;
@@ -1443,10 +1463,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_ID() throws RecognitionException {
         try {
             int _type = RULE_ID;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7774:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7774:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7886:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7886:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7774:11: ( '^' )?
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7886:11: ( '^' )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -1455,7 +1475,7 @@ public class InternalMediatorLexer extends Lexer {
             }
             switch (alt14) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7774:11: '^'
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7886:11: '^'
                     {
                     match('^'); 
 
@@ -1474,7 +1494,7 @@ public class InternalMediatorLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7774:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7886:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop15:
             do {
                 int alt15=2;
@@ -1522,12 +1542,12 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_ML_COMMENT() throws RecognitionException {
         try {
             int _type = RULE_ML_COMMENT;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7776:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7776:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7888:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7888:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7776:24: ( options {greedy=false; } : . )*
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7888:24: ( options {greedy=false; } : . )*
             loop16:
             do {
                 int alt16=2;
@@ -1552,7 +1572,7 @@ public class InternalMediatorLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7776:52: .
+            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7888:52: .
             	    {
             	    matchAny(); 
 
@@ -1580,12 +1600,12 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_SL_COMMENT() throws RecognitionException {
         try {
             int _type = RULE_SL_COMMENT;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop17:
             do {
                 int alt17=2;
@@ -1598,7 +1618,7 @@ public class InternalMediatorLexer extends Lexer {
 
                 switch (alt17) {
             	case 1 :
-            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -1619,7 +1639,7 @@ public class InternalMediatorLexer extends Lexer {
                 }
             } while (true);
 
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:40: ( ( '\\r' )? '\\n' )?
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:40: ( ( '\\r' )? '\\n' )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -1628,9 +1648,9 @@ public class InternalMediatorLexer extends Lexer {
             }
             switch (alt19) {
                 case 1 :
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:41: ( '\\r' )? '\\n'
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:41: ( '\\r' )? '\\n'
                     {
-                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:41: ( '\\r' )?
+                    // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:41: ( '\\r' )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -1639,7 +1659,7 @@ public class InternalMediatorLexer extends Lexer {
                     }
                     switch (alt18) {
                         case 1 :
-                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7778:41: '\\r'
+                            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7890:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1669,10 +1689,10 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_WS() throws RecognitionException {
         try {
             int _type = RULE_WS;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7780:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7780:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7892:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7892:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7780:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7892:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt20=0;
             loop20:
             do {
@@ -1725,8 +1745,8 @@ public class InternalMediatorLexer extends Lexer {
     public final void mRULE_ANY_OTHER() throws RecognitionException {
         try {
             int _type = RULE_ANY_OTHER;
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7782:16: ( . )
-            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7782:18: .
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7894:16: ( . )
+            // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:7894:18: .
             {
             matchAny(); 
 
@@ -1740,8 +1760,8 @@ public class InternalMediatorLexer extends Lexer {
     // $ANTLR end RULE_ANY_OTHER
 
     public void mTokens() throws RecognitionException {
-        // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:8: ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | T53 | T54 | T55 | T56 | T57 | T58 | T59 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
-        int alt21=56;
+        // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:8: ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | T53 | T54 | T55 | T56 | T57 | T58 | T59 | T60 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        int alt21=57;
         alt21 = dfa21.predict(input);
         switch (alt21) {
             case 1 :
@@ -2067,70 +2087,77 @@ public class InternalMediatorLexer extends Lexer {
                 }
                 break;
             case 47 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:194: RULE_UNSIGNED_NUMBER
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:194: T60
+                {
+                mT60(); 
+
+                }
+                break;
+            case 48 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:198: RULE_UNSIGNED_NUMBER
                 {
                 mRULE_UNSIGNED_NUMBER(); 
 
                 }
                 break;
-            case 48 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:215: RULE_BOOL_VAL
+            case 49 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:219: RULE_BOOL_VAL
                 {
                 mRULE_BOOL_VAL(); 
 
                 }
                 break;
-            case 49 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:229: RULE_INT
+            case 50 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:233: RULE_INT
                 {
                 mRULE_INT(); 
 
                 }
                 break;
-            case 50 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:238: RULE_STRING
+            case 51 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:242: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
-            case 51 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:250: RULE_IDENT
+            case 52 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:254: RULE_IDENT
                 {
                 mRULE_IDENT(); 
 
                 }
                 break;
-            case 52 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:261: RULE_ID
+            case 53 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:265: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
-            case 53 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:269: RULE_ML_COMMENT
+            case 54 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:273: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
-            case 54 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:285: RULE_SL_COMMENT
+            case 55 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:289: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
-            case 55 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:301: RULE_WS
+            case 56 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:305: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
-            case 56 :
-                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:309: RULE_ANY_OTHER
+            case 57 :
+                // ../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g:1:313: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
@@ -2153,12 +2180,12 @@ public class InternalMediatorLexer extends Lexer {
     static final String DFA9_maxS =
         "\1\71\1\145\2\uffff";
     static final String DFA9_acceptS =
-        "\2\uffff\1\2\1\1";
+        "\2\uffff\1\1\1\2";
     static final String DFA9_specialS =
         "\4\uffff}>";
     static final String[] DFA9_transitionS = {
             "\12\1",
-            "\1\3\1\uffff\12\1\13\uffff\1\2\37\uffff\1\2",
+            "\1\2\1\uffff\12\1\13\uffff\1\3\37\uffff\1\3",
             "",
             ""
     };
@@ -2193,56 +2220,57 @@ public class InternalMediatorLexer extends Lexer {
             this.transition = DFA9_transition;
         }
         public String getDescription() {
-            return "7764:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )";
+            return "7876:24: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )";
         }
     }
     static final String DFA21_eotS =
-        "\2\uffff\1\47\1\55\2\uffff\1\62\1\64\1\66\1\67\7\uffff\5\101\1\uffff"+
-        "\6\101\1\uffff\1\101\1\127\1\43\1\101\36\uffff\1\101\1\uffff\10"+
-        "\101\1\uffff\1\144\1\146\4\101\1\153\2\101\1\uffff\2\101\1\uffff"+
-        "\1\127\3\uffff\1\101\1\161\1\101\1\163\1\164\1\165\1\166\1\101\1"+
-        "\uffff\1\101\1\uffff\3\101\1\174\1\uffff\1\175\1\176\1\177\2\101"+
-        "\1\uffff\1\u0082\4\uffff\2\101\1\u0085\1\u0086\1\u0088\4\uffff\2"+
-        "\101\1\uffff\2\101\2\uffff\1\101\1\uffff\1\u0086\3\101\1\u0091\1"+
-        "\u0092\1\101\1\u0094\2\uffff\1\101\1\uffff\1\u0096\1\uffff";
+        "\2\uffff\1\47\1\55\2\uffff\1\62\1\64\1\66\1\67\7\uffff\6\101\1\uffff"+
+        "\5\101\1\uffff\1\101\1\132\1\43\1\101\36\uffff\1\101\1\uffff\13"+
+        "\101\1\uffff\1\150\1\152\2\101\1\155\2\101\1\uffff\2\101\1\uffff"+
+        "\1\132\3\uffff\2\101\1\164\1\165\1\166\1\167\1\170\4\101\1\uffff"+
+        "\1\101\1\uffff\1\101\1\177\1\uffff\1\u0080\1\u0081\1\101\1\u0083"+
+        "\1\101\1\u0085\5\uffff\1\u0086\1\101\1\u0088\2\101\1\u008c\3\uffff"+
+        "\1\101\1\uffff\1\101\2\uffff\1\101\1\uffff\3\101\1\uffff\1\u0086"+
+        "\4\101\1\u0097\1\u0098\1\u0099\1\101\1\u009b\3\uffff\1\101\1\uffff"+
+        "\10\101\1\u00a5\1\uffff";
     static final String DFA21_eofS =
-        "\u0097\uffff";
+        "\u00a6\uffff";
     static final String DFA21_minS =
-        "\1\0\1\uffff\2\52\2\uffff\3\75\1\101\7\uffff\5\60\1\uffff\6\60\1"+
-        "\uffff\1\60\1\56\1\0\1\60\36\uffff\1\60\1\uffff\10\60\1\uffff\2"+
-        "\56\4\60\1\56\2\60\1\uffff\2\60\1\uffff\1\56\3\uffff\1\60\1\56\1"+
-        "\60\4\56\1\60\1\uffff\1\60\1\uffff\3\60\1\56\1\uffff\3\56\2\60\1"+
-        "\uffff\1\56\4\uffff\2\60\3\56\4\uffff\2\60\1\uffff\2\60\2\uffff"+
-        "\1\60\1\uffff\1\56\3\60\2\56\1\60\1\56\2\uffff\1\60\1\uffff\1\56"+
-        "\1\uffff";
+        "\1\0\1\uffff\2\52\2\uffff\3\75\1\101\7\uffff\6\60\1\uffff\5\60\1"+
+        "\uffff\1\60\1\56\1\0\1\60\36\uffff\1\60\1\uffff\13\60\1\uffff\2"+
+        "\56\2\60\1\56\2\60\1\uffff\2\60\1\uffff\1\56\3\uffff\2\60\5\56\4"+
+        "\60\1\uffff\1\60\1\uffff\1\60\1\56\1\uffff\2\56\1\60\1\56\1\60\1"+
+        "\56\5\uffff\1\56\1\60\1\56\2\60\1\56\3\uffff\1\60\1\uffff\1\60\2"+
+        "\uffff\1\60\1\uffff\3\60\1\uffff\1\56\4\60\3\56\1\60\1\56\3\uffff"+
+        "\1\60\1\uffff\10\60\1\56\1\uffff";
     static final String DFA21_maxS =
-        "\1\ufffe\1\uffff\1\57\1\136\2\uffff\1\76\2\75\1\172\7\uffff\5\172"+
-        "\1\uffff\6\172\1\uffff\1\172\1\145\1\ufffe\1\172\36\uffff\1\172"+
-        "\1\uffff\10\172\1\uffff\11\172\1\uffff\2\172\1\uffff\1\145\3\uffff"+
-        "\10\172\1\uffff\1\172\1\uffff\4\172\1\uffff\5\172\1\uffff\1\172"+
-        "\4\uffff\5\172\4\uffff\2\172\1\uffff\2\172\2\uffff\1\172\1\uffff"+
-        "\10\172\2\uffff\1\172\1\uffff\1\172\1\uffff";
+        "\1\ufffe\1\uffff\1\57\1\136\2\uffff\1\76\2\75\1\172\7\uffff\6\172"+
+        "\1\uffff\5\172\1\uffff\1\172\1\145\1\ufffe\1\172\36\uffff\1\172"+
+        "\1\uffff\13\172\1\uffff\7\172\1\uffff\2\172\1\uffff\1\145\3\uffff"+
+        "\13\172\1\uffff\1\172\1\uffff\2\172\1\uffff\6\172\5\uffff\6\172"+
+        "\3\uffff\1\172\1\uffff\1\172\2\uffff\1\172\1\uffff\3\172\1\uffff"+
+        "\12\172\3\uffff\1\172\1\uffff\11\172\1\uffff";
     static final String DFA21_acceptS =
         "\1\uffff\1\1\2\uffff\1\5\1\6\4\uffff\1\21\1\22\1\23\1\24\1\25\1"+
-        "\26\1\27\5\uffff\1\37\6\uffff\1\52\4\uffff\1\67\1\70\1\1\1\65\1"+
-        "\66\1\2\1\4\1\7\1\10\1\3\1\20\1\40\1\5\1\6\1\16\1\12\1\11\1\14\1"+
-        "\13\1\15\1\54\1\17\1\64\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\uffff"+
-        "\1\63\10\uffff\1\37\11\uffff\1\52\2\uffff\1\61\1\uffff\1\57\1\62"+
-        "\1\67\10\uffff\1\41\1\uffff\1\55\4\uffff\1\45\5\uffff\1\31\1\uffff"+
-        "\1\33\1\32\1\34\1\46\5\uffff\1\56\1\47\1\51\1\53\2\uffff\1\35\2"+
-        "\uffff\1\42\1\60\1\uffff\1\44\10\uffff\1\43\1\30\1\uffff\1\50\1"+
-        "\uffff\1\36";
+        "\26\1\27\6\uffff\1\40\5\uffff\1\53\4\uffff\1\70\1\71\1\1\1\66\1"+
+        "\67\1\2\1\3\1\4\1\7\1\10\1\20\1\41\1\5\1\6\1\16\1\12\1\11\1\14\1"+
+        "\13\1\15\1\55\1\17\1\65\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\uffff"+
+        "\1\64\13\uffff\1\40\7\uffff\1\53\2\uffff\1\60\1\uffff\1\62\1\63"+
+        "\1\70\13\uffff\1\42\1\uffff\1\56\2\uffff\1\46\6\uffff\1\31\1\33"+
+        "\1\32\1\34\1\47\6\uffff\1\57\1\50\1\52\1\uffff\1\54\1\uffff\1\35"+
+        "\1\61\1\uffff\1\43\3\uffff\1\45\12\uffff\1\44\1\30\1\36\1\uffff"+
+        "\1\51\11\uffff\1\37";
     static final String DFA21_specialS =
-        "\u0097\uffff}>";
+        "\u00a6\uffff}>";
     static final String[] DFA21_transitionS = {
             "\11\43\2\42\2\43\1\42\22\43\1\42\1\43\1\40\5\43\1\12\1\13\1"+
-            "\1\1\4\1\35\1\5\1\3\1\2\12\37\1\26\1\16\1\6\1\10\1\7\2\43\32"+
+            "\1\1\4\1\35\1\5\1\3\1\2\12\37\1\27\1\16\1\6\1\10\1\7\2\43\32"+
             "\41\1\14\1\43\1\15\1\11\1\41\1\43\1\24\2\41\1\34\1\31\1\36\1"+
-            "\25\1\41\1\27\3\41\1\23\1\33\1\32\1\21\2\41\1\22\1\30\6\41\1"+
+            "\26\1\41\1\30\3\41\1\23\1\33\1\32\1\21\2\41\1\22\1\25\6\41\1"+
             "\17\1\43\1\20\uff81\43",
             "",
             "\1\45\4\uffff\1\46",
-            "\1\53\1\51\1\uffff\1\52\1\uffff\1\50\56\uffff\1\54",
+            "\1\50\1\52\1\uffff\1\53\1\uffff\1\51\56\uffff\1\54",
             "",
             "",
             "\1\61\1\60",
@@ -2258,32 +2286,32 @@ public class InternalMediatorLexer extends Lexer {
             "",
             "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\100\10"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10\102\1\104\13"+
-            "\102\1\103\5\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10\102\1\103\13"+
+            "\102\1\104\5\102",
             "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\1\105\7\102\1\106"+
             "\21\102",
             "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\15\102\1\110\7"+
             "\102\1\107\4\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\111\25"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\7\102\1\113\6\102"+
+            "\1\112\2\102\1\111\10\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\114\25"+
             "\102",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\5\102\1\113\7\102"+
-            "\1\114\14\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\7\102\1\115\11"+
-            "\102\1\116\10\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\117\1"+
-            "\102\1\120\14\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\121\10"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\5\102\1\116\7\102"+
+            "\1\117\14\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\120\1"+
+            "\102\1\121\14\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\122\10"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\16\102\1\122\13"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\16\102\1\123\13"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\123\25"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\124\25"+
             "\102",
             "",
             "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\1\126\15\102\1"+
-            "\125\13\102",
-            "\1\131\1\uffff\12\130\13\uffff\1\131\37\uffff\1\131",
-            "\uffff\132",
+            "\127\13\102",
+            "\1\130\1\uffff\12\131\13\uffff\1\130\37\uffff\1\130",
+            "\uffff\133",
             "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32\102",
             "",
             "",
@@ -2315,57 +2343,56 @@ public class InternalMediatorLexer extends Lexer {
             "",
             "",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\16\102\1\134\13"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\16\102\1\135\13"+
             "\102",
             "",
             "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\14\102\1\135\15"+
-            "\102",
             "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\31\102\1\136",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\27\102\1\137\2"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\14\102\1\137\15"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\15\102\1\140\14"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\27\102\1\140\2"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\141\10"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\15\102\1\141\14"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\3\102\1\142\26"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\6\102\1\142\23"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\143\6"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\3\102\1\143\26"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\24\102\1\144\5"+
+            "\102",
+            "\12\102\7\uffff\1\145\31\102\4\uffff\1\102\1\uffff\32\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\146\25"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\147\6"+
             "\102",
             "",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10"+
-            "\102\1\145\21\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\147\25"+
+            "\102\1\151\21\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\22\102\1\153\7"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\24\102\1\150\5"+
-            "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\22\102\1\151\7"+
-            "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\3\102\1\152\26"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\3\102\1\154\26"+
             "\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\154\6"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\156\6"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\155\10"+
-            "\102",
-            "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\156\10"+
-            "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\157\16"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\157\10"+
             "\102",
             "",
-            "\1\131\1\uffff\12\130\13\uffff\1\131\37\uffff\1\131",
-            "",
-            "",
-            "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\3\102\1\160\26"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\160\16"+
             "\102",
-            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\161\10"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\162\25"+
+            "",
+            "\1\130\1\uffff\12\131\13\uffff\1\130\37\uffff\1\130",
+            "",
+            "",
+            "",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\3\102\1\162\26"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\163\25"+
             "\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
@@ -2375,17 +2402,21 @@ public class InternalMediatorLexer extends Lexer {
             "\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
-            "\12\102\7\uffff\21\102\1\167\10\102\4\uffff\1\102\1\uffff\32"+
+            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\171\25"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\172\10"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\15\102\1\173\14"+
+            "\102",
+            "\12\102\7\uffff\22\102\1\174\7\102\4\uffff\1\102\1\uffff\32"+
             "\102",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\170\6"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\175\6"+
             "\102",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\15\102\1\171\14"+
-            "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\172\25"+
-            "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\173\25"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\176\25"+
             "\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
@@ -2394,67 +2425,91 @@ public class InternalMediatorLexer extends Lexer {
             "\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
-            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
-            "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\22\102\1\u0080"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\22\102\1\u0082"+
             "\7\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\24\102\1\u0081"+
+            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\24\102\1\u0084"+
             "\5\102",
-            "",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
             "",
             "",
             "",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\u0083\25"+
+            "",
+            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10\102\1\u0084"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\u0087"+
+            "\10\102",
+            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10\102\1\u0089"+
             "\21\102",
-            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
-            "\102",
-            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
-            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10\102\1\u008a"+
+            "\21\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10"+
-            "\102\1\u0087\21\102",
+            "\102\1\u008b\21\102",
             "",
             "",
             "",
-            "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\u0089\25"+
-            "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\2\102\1\u008a\27"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\u008d\25"+
             "\102",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\22\102\1\u008b"+
-            "\7\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\1\u008c\31\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\2\102\1\u008e\27"+
+            "\102",
             "",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\5\102\1\u008d\24"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\1\u008f\31\102",
+            "",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\15\102\1\u0090"+
+            "\14\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\1\u0091\31\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\5\102\1\u0092\24"+
             "\102",
             "",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\u008e"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\u0093"+
             "\6\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\24\102\1\u008f"+
-            "\5\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\u0090"+
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\30\102\1\u0094"+
+            "\1\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\6\102\1\u0095\23"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\u0096"+
             "\16\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\u0093"+
+            "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\13\102\1\u009a"+
             "\16\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
             "",
             "",
-            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\23\102\1\u0095"+
-            "\6\102",
             "",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\u009c\25"+
+            "\102",
+            "",
+            "\12\102\7\uffff\17\102\1\u009d\12\102\4\uffff\1\102\1\uffff"+
+            "\32\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\u009e"+
+            "\10\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\16\102\1\u009f"+
+            "\13\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\25\102\1\u00a0"+
+            "\4\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\10\102\1\u00a1"+
+            "\21\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\3\102\1\u00a2\26"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\4\102\1\u00a3\25"+
+            "\102",
+            "\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\21\102\1\u00a4"+
+            "\10\102",
             "\1\101\1\uffff\12\102\7\uffff\32\102\4\uffff\1\102\1\uffff\32"+
             "\102",
             ""
@@ -2490,7 +2545,7 @@ public class InternalMediatorLexer extends Lexer {
             this.transition = DFA21_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | T53 | T54 | T55 | T56 | T57 | T58 | T59 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+            return "1:1: Tokens : ( T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | T27 | T28 | T29 | T30 | T31 | T32 | T33 | T34 | T35 | T36 | T37 | T38 | T39 | T40 | T41 | T42 | T43 | T44 | T45 | T46 | T47 | T48 | T49 | T50 | T51 | T52 | T53 | T54 | T55 | T56 | T57 | T58 | T59 | T60 | RULE_UNSIGNED_NUMBER | RULE_BOOL_VAL | RULE_INT | RULE_STRING | RULE_IDENT | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
         }
     }
  
