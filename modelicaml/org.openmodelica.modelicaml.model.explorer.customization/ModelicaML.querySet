@@ -78,4 +78,8 @@
     <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Classifier"/>
   </queries>
+  <queries xsi:type="query:JavaModelQuery" name="HasValueBindingStereotype" description="Checks if the dependency has a Value Binding stereotype" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.HasValueBindingStereotype">
+    <returnType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <scope href="http://www.eclipse.org/uml2/3.0.0/UML#//Element"/>
+  </queries>
 </query:ModelQuerySet>
