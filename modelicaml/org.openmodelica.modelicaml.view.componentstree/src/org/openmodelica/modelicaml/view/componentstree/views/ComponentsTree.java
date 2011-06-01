@@ -41,6 +41,8 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
+import org.eclipse.emf.edit.ui.dnd.ViewerDragAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -51,19 +53,15 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -71,6 +69,9 @@ import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -82,6 +83,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
@@ -93,6 +95,9 @@ import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Region;
+import org.eclipse.uml2.uml.State;
+import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
@@ -106,14 +111,13 @@ import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandle
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
-//import org.openmodelica.modelicaml.view.componentstree.dialogs.OBSOLETE_DialogComponentInformation;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.ConfirmationWithCheckOptionDialog;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogMessage;
+import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
-import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueClientOrProviderDialog;
-
-// TODO: Auto-generated Javadoc
+import org.openmodelica.modelicaml.view.componentstree.listeners.DragListener;
+import org.openmodelica.modelicaml.view.valuebindings.dialogs.NOT_USED_SelectValueClientOrProviderDialog;
 /**
  * The Class ComponentsTree.
  */
@@ -226,6 +230,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	public Action actionAddValueClient;
 
 	private Action actionInstantiateRequirements;
+	
+	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
 	
 	/**
@@ -240,16 +246,19 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		//viewer.setSorter(new NameSorter()); // sorts the tree names alphabetically
+//		viewer.setSorter(new NameSorter()); // sorts the tree names alphabetically
 		viewer.setInput(getViewSite());
 		
+		ViewerFilter[] filters = {showAllFilter};
+		viewer.setFilters(filters);
+
 		shell = parent.getShell();
 
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "org.openmodelica.modelicaml.view.componentstree");
 		makeActions();
 		hookContextMenu();
-		hookDoubleClickAction();
+//		hookDoubleClickAction();
 		hookSelectionChangedAction();
 		contributeToActionBars();
 
@@ -263,13 +272,20 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			public void open(final OpenEvent event) {
 				Object firstElement = ((IStructuredSelection)
 				event.getSelection()).getFirstElement();
-				if (viewer.getExpandedState(firstElement)) {
-					viewer.collapseToLevel(firstElement, AbstractTreeViewer.ALL_LEVELS);
-				} else {
-					viewer.expandToLevel(firstElement, 1);
-				}
+					if (viewer.getExpandedState(firstElement)) {
+						viewer.collapseToLevel(firstElement, AbstractTreeViewer.ALL_LEVELS);
+					} 
+					else {
+						viewer.expandToLevel(firstElement, 1);
+					}
 				}
 			});
+		
+		// add drag support
+		int operations = DND.DROP_MOVE;
+		Transfer[] transferTypes = new Transfer[]{ LocalSelectionTransfer.getTransfer()};
+		viewer.addDragSupport(operations, transferTypes, new DragListener(viewer));
+
 	}
 
 	/**
@@ -414,16 +430,16 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //				}
 			}
 			
-			// show the "Add a Value Provider" action for a Value Client
-			if ( item.isValueClient() ) {
-				manager.add(new Separator());
-				manager.add(actionAddValueProvider);
-			}
-			// show the "Add a Value Client" action for a Value Provider
-			if ( item.isValueProvider() ) {
-				manager.add(new Separator());
-				manager.add(actionAddValueClient);
-			}
+//			// show the "Add a Value Provider" action for a Value Client
+//			if ( item.isValueClient() ) {
+//				manager.add(new Separator());
+//				manager.add(actionAddValueProvider);
+//			}
+//			// show the "Add a Value Client" action for a Value Provider
+//			if ( item.isValueProvider() ) {
+//				manager.add(new Separator());
+//				manager.add(actionAddValueClient);
+//			}
 
 			
 			// locate actions
@@ -473,10 +489,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 			
-			// updated bindings action
-			manager.add(new Separator());
-			manager.add(actionUpdateBindings);
-
+			if (!item.isPredefinedModelicaProperty()) {
+				// updated bindings action
+				manager.add(new Separator());
+				manager.add(actionUpdateBindings);
+			}
 		}
 		
 //		manager.add(new Separator());
@@ -530,15 +547,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						String title = "Value Provider Selection";
 						String message = "Click on a model element to be associated as Value Provider."; 
 
-						SelectValueClientOrProviderDialog dialog = new SelectValueClientOrProviderDialog(
+						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
 								new Shell(), 
-								SWTResourceManager.getImage(SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
+								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
 								title, 
 								message, 
 								listOfAllowedMetaClassesNames,
 								item,
 								viewer,
-								SelectValueClientOrProviderDialog.MODE_ADD_PROVIDER,
+								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_PROVIDER,
 								actionEditModification,
 								actionLinkWithEditor);
 						dialog.open();
@@ -548,7 +565,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		};
 		actionAddValueProvider.setText("Add a Value Provider");
 		actionAddValueProvider.setToolTipText("Add a Value Provider");
-		actionAddValueProvider.setImageDescriptor(ImageDescriptor.createFromFile(SelectValueClientOrProviderDialog.class, "/icons/addValueProviders.png"));
+		actionAddValueProvider.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueProviders.png"));
 
 		
 		
@@ -565,15 +582,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						String title = "Value Client Selection";
 						String message = "Click on a model element to be associated as Value Client."; 
 
-						SelectValueClientOrProviderDialog dialog = new SelectValueClientOrProviderDialog(
+						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
 								new Shell(), 
-								SWTResourceManager.getImage(SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
+								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
 								title, 
 								message, 
 								listOfAllowedMetaClassesNames,
 								item,
 								viewer,
-								SelectValueClientOrProviderDialog.MODE_ADD_CLIENT,
+								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_CLIENT,
 								actionEditModification,
 								actionLinkWithEditor);
 						dialog.open();
@@ -583,7 +600,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		};
 		actionAddValueClient.setText("Add a Value Client");
 		actionAddValueClient.setToolTipText("Add a Value actionAddValueClient");
-		actionAddValueClient.setImageDescriptor(ImageDescriptor.createFromFile(SelectValueClientOrProviderDialog.class, "/icons/addValueClient.png"));
+		actionAddValueClient.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueClient.png"));
 
 		
 		
@@ -620,15 +637,16 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						boolean deleteOldBindings = confirmationDialog.deleteAllBindings();
 						
 						// update bindings
-						ValueBindingCreator.updateBindings( item, root, deleteOldBindings );
+						ValueBindingCreator vc = new ValueBindingCreator();
+						vc.updateBindings( item, root, deleteOldBindings );
 						
 						// get the updated items
-						List<TreeObject> updatedItems = ValueBindingCreator.getUpdatedItems();
-						HashMap<TreeObject, String> updatedModifications = ValueBindingCreator.getUpdatedItemsToNewModification();
+						List<TreeObject> updatedItems = vc.getUpdatedItems();
+						HashMap<TreeObject, String> updatedModifications = vc.getUpdatedItemsToNewModification();
 						
 						// get the deleted modifications items
-						List<TreeObject> deletedItemsModifications = ValueBindingCreator.getDeletedItemsModification();
-						List<String> deletedModifications = ValueBindingCreator.getDeletedModifications();
+						List<TreeObject> deletedItemsModifications = vc.getDeletedItemsModification();
+						List<String> deletedModifications = vc.getDeletedModifications();
 
 						String infoText = "The following updates were performed: \n";
 						String message = "";
@@ -718,8 +736,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowAll = new Action("actionShowAll", 8) {
 			public void run() {
 				if (actionShowAll.isChecked()) {
-//					selectLastItem(); // TODO: does not work ...
-//					showSelection(par, sel);
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {showAllFilter};
+					viewer.setFilters(filters);
+					
+					// select in view
+					TreeUtls.selectInView(obj, root, viewer);
+					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 				}
 			}
 		};
@@ -732,36 +757,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowInputs = new Action("actionShowInputs", 8) {
 			public void run() {
 				if (actionShowInputs.isChecked()) {
-//					Object[] list = viewer.getExpandedElements();
-					viewer.addFilter(inputFilter);
-//					viewer.setSelection(new StructuredSelection(list), true);
-//					selectLastItem(); // TODO: does not work
-//					viewer.expandToLevel(lastSelectedItem, 1); // does not work.
-//					viewer.expandToLevel(lastSelectedItem, AbstractTreeViewer.ALL_LEVELS);// does not work.
-					viewer.expandToLevel(2);
-
-//					for (int i = 0; i < list.length; i++) {
-////						System.err.println(list[i]);
-//						viewer.expandToLevel(list[i], 0); // TODO: does not work. no idea why ...
-//					}
-////					viewer.setExpandedElements(list);
-////					viewer.refresh(list);
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
 					
-//					showSelection(par, sel);
-				}
-				else {
-//					Object[] list = viewer.getExpandedElements();
-					viewer.removeFilter(inputFilter);
-//					viewer.setSelection(new StructuredSelection(list), true);
-//					viewer.expandToLevel(lastSelectedItem, 1);// does not work.
-//					viewer.expandToLevel(lastSelectedItem, AbstractTreeViewer.ALL_LEVELS);// does not work.
-					viewer.expandToLevel(2);
-
-//					System.err.println(lastSelectedItem);
-//					viewer.expandToLevel(lastSelectedItem, 1);
+					ViewerFilter[] filters = {inputFilter};
+					viewer.setFilters(filters);
 					
-//					showSelection(par, sel);
-//					selectLastItem(); // TODO: does not work ...
+					// select in view
+					TreeUtls.selectInView(obj, root, viewer);					
+					viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 				}
 			}
 		};
@@ -773,13 +777,16 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowOutputs = new Action("actionShowOutputs", 8) {
 			public void run() {
 				if (actionShowOutputs.isChecked()) {
-					viewer.addFilter(outputFilter);
-					viewer.expandToLevel(2);
-					//showSelection(par, sel);
-				}
-				else {
-					viewer.removeFilter(outputFilter);
-					viewer.expandToLevel(2);
+					
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {outputFilter};
+					viewer.setFilters(filters);
+					
+					// select in view
+					TreeUtls.selectInView(obj, root, viewer);					
+					viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 				}
 			}
 		};
@@ -791,13 +798,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowValueClients = new Action("actionShowValueClients", 8) {
 			public void run() {
 				if (actionShowValueClients.isChecked()) {
-					viewer.addFilter(valueClientFilter);
-					viewer.expandToLevel(2);
-					//showSelection(par, sel);
-				}
-				else {
-					viewer.removeFilter(valueClientFilter);
-					viewer.expandToLevel(2);
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {valueClientFilter};
+					viewer.setFilters(filters);
+					
+					// select in view
+					TreeUtls.selectInView(obj, root, viewer);					
+					viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 				}
 			}
 		};
@@ -808,13 +817,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowValueProviders = new Action("actionShowValueProviders", 8) {
 			public void run() {
 				if (actionShowValueProviders.isChecked()) {
-					viewer.addFilter(valueProviderFilter);
-					viewer.expandToLevel(2);
-					//showSelection(par, sel);
-				}
-				else {
-					viewer.removeFilter(valueProviderFilter);
-					viewer.expandToLevel(2);
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {valueProviderFilter};
+					viewer.setFilters(filters);
+					
+					// select in view
+					TreeUtls.selectInView(obj, root, viewer);					
+					viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 				}
 			}
 		};
@@ -825,13 +836,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowRequirements = new Action("actionShowRequirements", 8) {
 			public void run() {
 				if (actionShowRequirements.isChecked()) {
-					viewer.addFilter(requirementInstanceFilter);
-					viewer.expandToLevel(2);
-					//showSelection(par, sel);
-				}
-				else {
-					viewer.removeFilter(requirementInstanceFilter);
-					viewer.expandToLevel(2);
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {requirementInstanceFilter};
+					viewer.setFilters(filters);
+					
+					// select in view
+					TreeUtls.selectInView(obj, root, viewer);					
+					viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 				}
 			}
 		};
@@ -841,10 +854,30 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 		
 		
-		
 		actionShowStateMachines = new Action("actionShowStateMachines", 2) {
 			public void run() {
-				showSelection(par, sel);
+				if (actionShowStateMachines.isChecked()) {
+//					TreePath[] path = viewer.getExpandedTreePaths();
+//					ViewerFilter[] filters = viewer.getFilters();
+//					List<ViewerFilter> newFilters = new ArrayList<ViewerFilter>();
+//					for (int i = 0; i < filters.length; i++) {
+//						ViewerFilter viewerFilter = filters[i];
+//						newFilters.add(viewerFilter);
+//					}
+//					newFilters.add(hideStateMachnineElementFilter);
+//					ViewerFilter[] newF = (ViewerFilter[]) newFilters.toArray();
+//					viewer.setFilters(newF);
+					viewer.removeFilter(hideStateMachnineElementFilter);
+					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+//					viewer.setExpandedTreePaths(path);
+				}
+				else {
+//					TreePath[] path = viewer.getExpandedTreePaths();
+					viewer.addFilter(hideStateMachnineElementFilter);
+					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+//					viewer.setExpandedTreePaths(path);
+				}
+//				showSelection(par, sel);
 				//if (actionShowStateMachines.isChecked() || !actionShowStateMachines.isChecked()) {
 					//showMessage("actionShowStateMachines executed");
 				//}
@@ -974,7 +1007,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								}
 							}
 							else {
-								System.err.println("ModelicaML modification parsing error (ComponentsTree.java 01) for the string '" + string + "'");
+//								System.err.println("ModelicaML modification parsing error (ComponentsTree.java 01) for the string '" + string + "'");
 								//MessageDialog.openError(shell, "ModelicaML modifications parsing error (01)", "'"+string+"' ");
 							}
 						}				
@@ -1314,11 +1347,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionLinkWithEditor = new Action("Action6", 2) { //obviously a check box style
 			public void run() {
 				if (actionShowOutputs.isChecked()) {
+					org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = null;
 					showSelection(par, sel);
 				}
 			}
 		};
-		actionLinkWithEditor.setChecked(true);
+//		actionLinkWithEditor.setChecked(true); // to avoid performance issues
 		actionLinkWithEditor.setText("Link with Papyrus Model Explorer");
 		actionLinkWithEditor.setToolTipText("Link with Papyrus Model Explorer");
 		actionLinkWithEditor.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
@@ -1349,21 +1383,28 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 	}
 
-	/**
-	 * Hook double click action.
-	 */
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-//				showPathAction.run();
-			}
-		});
-	}
+//	/**
+//	 * Hook double click action.
+//	 */
+//	private void hookDoubleClickAction() {
+//		viewer.addDoubleClickListener(new IDoubleClickListener() {
+//			public void doubleClick(DoubleClickEvent event) {
+////				showPathAction.run();
+//			}
+//		});
+//	}
 
 	
-	
-	
 	// ############################### FILTERS 
+	
+	class ShowAllFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			return true;
+		}
+	}
+	ShowAllFilter showAllFilter = new ShowAllFilter();
+	
 	
 	class InputFilter extends ViewerFilter {
 		@Override
@@ -1425,24 +1466,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				if (item.isRoot()) { // always show the root
 					return true;
 				}
+//				System.err.println("item.hasValueClients(): " + item + " -> " + item.hasValueClients());
 				if (item.hasValueClients()) {
 					return true;
 				}
 				if (item.isValueClient()) { 
 					return true;
 				}
-//				if (item.getHasValueClients() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
-//					return false;
-//				}
-//				if (item.getHasValueClients() != null && !item.getHasValueClients() ) { // not a leaf but indicator is set
-//					return false;
-//				}
-//				if ( item.isLeaf() && !item.isValueClient()) { // is leaf 
-//					return false;
-//				}
 			}
 			return false;
-//			return true;
 		}
 	}
 	ValueClientFilter valueClientFilter = new ValueClientFilter();
@@ -1462,16 +1494,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				if (item.isValueProvider()) { 
 					return true;
 				}
-				
-//				if (item.getHasValueProviders() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
-//					return false;
-//				}
-//				if (item.getHasValueProviders() != null && !item.getHasValueProviders() ) { // not a leaf but indicator is set
-//					return false;
-//				}
-//				if ( item.isLeaf() && !item.isValueProvider()) { // is leaf 
-//					return false;
-//				}
 			}
 			return false;
 //			return true;
@@ -1500,7 +1522,28 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		}
 	}
 	RequirementInstanceFilter requirementInstanceFilter = new RequirementInstanceFilter();
-	
+
+	class HideStateMachnineElementFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+				Element umlElement = item.getUmlElement();
+				if (umlElement instanceof StateMachine) {
+					return false;
+				}
+				else if (umlElement instanceof Region) {
+					return false;
+				}
+				else if (umlElement instanceof State) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	HideStateMachnineElementFilter hideStateMachnineElementFilter = new HideStateMachnineElementFilter();
+
 	
 	// ############################### FILTERS
 	
@@ -1560,7 +1603,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				if (selectedElement instanceof Element) {
 					if (actionLinkWithEditor.isChecked()) {
 						showSelection(sourcepart, selection);
-						viewer.expandToLevel(2);
+						viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 					}
 				}
 			}
@@ -1569,23 +1612,23 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	
 	
-	private TreeObject lastSelectedItem = null;
+//	private TreeObject lastSelectedItem = null;
 //	private String lastSelectedDotPath = null;
 	
 	private void hookSelectionChangedAction() {
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-//				System.err.println("Previous item was " + lastSelectedItem );
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				if (obj instanceof TreeParent) {
-					lastSelectedItem = (TreeObject)obj;
-//					lastSelectedDotPath = ((TreeObject)obj).getDothPath();
-				}
-			}
-		});
+//		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+//			
+//			@Override
+//			public void selectionChanged(SelectionChangedEvent event) {
+////				System.err.println("Previous item was " + lastSelectedItem );
+//				ISelection selection = viewer.getSelection();
+//				Object obj = ((IStructuredSelection) selection).getFirstElement();
+//				if (obj instanceof TreeParent) {
+//					lastSelectedItem = (TreeObject)obj;
+////					lastSelectedDotPath = ((TreeObject)obj).getDothPath();
+//				}
+//			}
+//		});
 	}
 	
 	
@@ -1600,17 +1643,18 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	public void showSelection(IWorkbenchPart sourcepart, ISelection selection) {
 		sel = selection;
 		par = sourcepart;
-		viewer.setInput(getViewSite());
-		viewer.setAutoExpandLevel(2);
-//		viewer.expandToLevel(2);
+		
+//		System.err.println(sourcepart.getSite().getId());
+		// only listen to the Papyrus Model Explorer
+		if (sourcepart != null && sourcepart.getSite() != null 
+				&& sourcepart.getSite().getId()!= null 
+				&& sourcepart.getSite().getId().equals("org.eclipse.papyrus.modelexplorer.modelexplorer")) {
+			viewer.setInput(getViewSite());
+			viewer.setAutoExpandLevel(2);
+//			viewer.expandToLevel(2);
+		}
 	}
 	
-	private void selectLastItem(){ // Does not work because we ignore our own selection ...
-		List<Object> items = new ArrayList<Object>();
-		items.add(lastSelectedItem);
-		viewer.setSelection(new StructuredSelection(items), true);
-	}
-
 //	private void showItems(Object[] items) {
 //		tableviewer.setInput(items);
 //		pagebook.showPage(tableviewer.getControl());
@@ -1775,6 +1819,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		 *            the selected class
 		 */
 		public void createTree(Class selectedClass){
+			// reset
+//			org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = null;
+			
 			if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
 				
 				ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked());
@@ -1783,6 +1830,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				invisibleRoot = ast.getInvisibleRoot();
 //				invisibleRoot = new TreeParent("");
 				root = ast.getTreeRoot();
+				
+				// set the static variable to be used by other plugins. This is done in order to avoid cyclic plugin dependecies
+				org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = root;
 			}
 		}
 	}

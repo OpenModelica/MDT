@@ -75,7 +75,7 @@ import org.openmodelica.modelicaml.editor.xtext.modification.ui.internal.Modific
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.DialogDerivedCode;
-import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveCodeHelper;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 
 import sun.security.util.DerEncoder;
 
@@ -304,30 +304,30 @@ public class DialogComponentModification extends Dialog {
 	 * 
 	 * @return the linked variables list
 	 */
-    private HashSet<String> getLinkedVariablesList(){
-
-    	HashSet<String> list = new HashSet<String>();
-
-//    	// for using dependencies
-//    	// Removed. This is now replaced by the value-proxy concept (see below). 
-//    	HashSet<String> listOfDotPath = TreeUtls.getAllLinkedPrimitiveVariablesDotPath(this.treeObject.getProperty(), this.root);
-//    	list.addAll(listOfDotPath);
-    	
-    	// for using proxies (i.e. Value Clients / Mediators / Providers ).
-    	String valueBindingStereotypeQName = Constants.stereotypeQName_ValueClient; 
-		String valueBindingPropertyName= Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-		
- 
- //		HashSet<String> listOfDotPathThroughProxies = TreeUtls.getAllLinkedPrimitiveVariablesDotPathThroughProxy(this.treeObject.getProperty(), listOfProxies, this.root);
-//    	list.addAll(listOfDotPathThroughProxies);
- 
-	   	EList<Element> listOfMediators= TreeUtls.getValueMediators(this.treeObject.getProperty(), valueBindingStereotypeQName, valueBindingPropertyName);
-    	EList<TreeObject> listOfProviders = TreeUtls.getValueProviders(this.treeObject.getProperty(), listOfMediators, this.root);
-    	for (TreeObject treeObject : listOfProviders) {
-			list.add(treeObject.getDotPath());
-		}
-    	return list;
-    }
+//    private HashSet<String> getLinkedVariablesList(){
+//
+//    	HashSet<String> list = new HashSet<String>();
+//
+////    	// for using dependencies
+////    	// Removed. This is now replaced by the value-proxy concept (see below). 
+////    	HashSet<String> listOfDotPath = TreeUtls.getAllLinkedPrimitiveVariablesDotPath(this.treeObject.getProperty(), this.root);
+////    	list.addAll(listOfDotPath);
+//    	
+//    	// for using proxies (i.e. Value Clients / Mediators / Providers ).
+//    	String valueBindingStereotypeQName = Constants.stereotypeQName_ValueClient; 
+//		String valueBindingPropertyName= Constants.stereotypeQName_ValueClient_obtainsValueFrom;
+//		
+// 
+// //		HashSet<String> listOfDotPathThroughProxies = TreeUtls.getAllLinkedPrimitiveVariablesDotPathThroughProxy(this.treeObject.getProperty(), listOfProxies, this.root);
+////    	list.addAll(listOfDotPathThroughProxies);
+// 
+//	   	EList<Element> listOfMediators= TreeUtls.getValueMediators(this.treeObject.getProperty(), valueBindingStereotypeQName, valueBindingPropertyName);
+//    	EList<TreeObject> listOfProviders = TreeUtls.getValueProviders(this.treeObject.getProperty(), listOfMediators, this.root);
+//    	for (TreeObject treeObject : listOfProviders) {
+//			list.add(treeObject.getDotPath());
+//		}
+//    	return list;
+//    }
 
     
     /* (non-Javadoc)
@@ -348,23 +348,28 @@ public class DialogComponentModification extends Dialog {
 //		});
 		
 
-    	final DeriveCodeHelper deriveCodeHelper = new DeriveCodeHelper(treeObject, root);
-    	final String derivedCode = deriveCodeHelper.getCode(); 
-    	final String errosString = deriveCodeHelper.getErrorString();
+    	final DeriveValueBindingCodeHelper deriveValueBindingCodeHelper = new DeriveValueBindingCodeHelper();
+    	deriveValueBindingCodeHelper.initialize(root, false);
     	
-//		System.err.println("code: " + deriveCodeHelper.getCode());
-//		System.err.println("ErrorString: " + deriveCodeHelper.getErrorString());
+    	deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, false);
+    	final String derivedCode = deriveValueBindingCodeHelper.getCode(); 
+    	final String errosString = deriveValueBindingCodeHelper.getErrorString();
 
     	deriveButton = createButton(parent, 11, "Derive Code ...    ", false);
     	deriveButton.addListener(3, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				if (deriveCodeHelper.errorsDetected()) {
-					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), errosString, DialogDerivedCode.ERROR_MESSAGE, treeObject);
-					dialog.open(); // do nothing after closing the dialog.
-				}
-				else if (derivedCode != null) {
-					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), treeObject.getDotPathWithoutFirstLevelComponent() + " = " + derivedCode, DialogDerivedCode.CODE, treeObject);
+
+				// clear logs
+				deriveValueBindingCodeHelper.clearErorrString();
+				deriveValueBindingCodeHelper.clearErrorsDetected();
+				deriveValueBindingCodeHelper.clearLog();
+
+				// derive code once again, but now with user guidance
+				deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, true);
+				String code = deriveValueBindingCodeHelper.getCode();
+				if (code != null) {
+					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), treeObject.getDotPathWithoutFirstLevelComponent() + " = " + code, DialogDerivedCode.MODE_CODE, deriveValueBindingCodeHelper, treeObject);
 					dialog.open();
 					if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
 						String string = dialog.getCode();
@@ -373,10 +378,32 @@ public class DialogComponentModification extends Dialog {
 						}
 					}
 				}
+				else {
+					String log = deriveValueBindingCodeHelper.getErrorString();
+					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), log, DialogDerivedCode.MODE_ERROR_MESSAGE, deriveValueBindingCodeHelper, treeObject);
+					dialog.open(); // do nothing after closing the dialog.
+				}
+
+//				if (deriveValueBindingCodeHelper.errorsDetected()) {
+//					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), errosString, DialogDerivedCode.ERROR_MESSAGE, treeObject);
+//					dialog.open(); // do nothing after closing the dialog.
+//				}
+//				else if (derivedCode != null) {
+//					// derive code once again, but now with user guidance
+//					deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, true);
+//					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), treeObject.getDotPathWithoutFirstLevelComponent() + " = " + deriveValueBindingCodeHelper.getCode(), DialogDerivedCode.CODE, treeObject);
+//					dialog.open();
+//					if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
+//						String string = dialog.getCode();
+//						if (string != null) {
+//							editor.setTextToEdit(string);
+//						}
+//					}
+//				}
 			}
 		});
     	
-    	if (deriveCodeHelper.errorsDetected()) {
+    	if (deriveValueBindingCodeHelper.errorsDetected()) {
     		deriveButton.setImage(SWTResourceManager.getImage(Activator.class, "/org/eclipse/jface/dialogs/images/message_error.gif"));
 		}
     	else {
@@ -388,26 +415,26 @@ public class DialogComponentModification extends Dialog {
     	setButtonLayoutData(deriveButton);
     	
     	
-//    	final HashSet<String> linkedVariablesList = getLinkedVariablesList();
-    	EList<TreeObject> valueProviders = deriveCodeHelper.getValueProviders();
-    	final HashSet<String> linkedVariablesList = new HashSet<String>();
-    	for (TreeObject item : valueProviders) {
-			linkedVariablesList.add(item.getDotPath());
-		}
-
-		if (linkedVariablesList.size() > 0) {
-			addValueProviderButton = createButton(parent, 12, "Value Providers (" + linkedVariablesList.size() + ")  ", false);
-			addValueProviderButton.addListener(3, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					String title = "List of Linked Instances";
-					String msg = "You can select one or more variables from the list below and " +
-					"\nclick 'OK' in order to return their dot-path to the editor.";
-					openElementListSelectionDialog( title, msg, linkedVariablesList);
-				}
-			});
-			addValueProviderButton.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/addValueProviders.png"));
-		}
+////    	final HashSet<String> linkedVariablesList = getLinkedVariablesList();
+//    	EList<TreeObject> valueProviders = deriveCodeHelper.getValueProviders();
+//    	final HashSet<String> linkedVariablesList = new HashSet<String>();
+//    	for (TreeObject item : valueProviders) {
+//			linkedVariablesList.add(item.getDotPath());
+//		}
+//
+//		if (linkedVariablesList.size() > 0) {
+//			addValueProviderButton = createButton(parent, 12, "Value Providers (" + linkedVariablesList.size() + ")  ", false);
+//			addValueProviderButton.addListener(3, new Listener() {
+//				@Override
+//				public void handleEvent(Event event) {
+//					String title = "List of Linked Instances";
+//					String msg = "You can select one or more variables from the list below and " +
+//					"\nclick 'OK' in order to return their dot-path to the editor.";
+//					openElementListSelectionDialog( title, msg, linkedVariablesList);
+//				}
+//			});
+//			addValueProviderButton.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/addValueProviders.png"));
+//		}
 		
     	
     	// create OK and Cancel buttons by default

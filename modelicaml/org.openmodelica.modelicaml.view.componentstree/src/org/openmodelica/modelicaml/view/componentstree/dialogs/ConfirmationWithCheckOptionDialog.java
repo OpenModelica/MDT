@@ -61,7 +61,7 @@ public class ConfirmationWithCheckOptionDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBounds(0, 0 , 488, 172);
+		composite.setBounds(0, 0 , 520, 172);
 			
 		lblImage = new Label(composite, SWT.NONE);
 		lblImage.setImage(SWTResourceManager.getImage(ConfirmationWithCheckOptionDialog.class, "/org/eclipse/jface/dialogs/images/help.gif"));

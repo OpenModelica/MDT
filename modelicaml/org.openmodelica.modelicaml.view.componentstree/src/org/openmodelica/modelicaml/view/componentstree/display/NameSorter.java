@@ -38,7 +38,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 /**
  * The Class NameSorter.
  */
-class NameSorter extends ViewerSorter
-{
+public class NameSorter extends ViewerSorter{
 
 }
