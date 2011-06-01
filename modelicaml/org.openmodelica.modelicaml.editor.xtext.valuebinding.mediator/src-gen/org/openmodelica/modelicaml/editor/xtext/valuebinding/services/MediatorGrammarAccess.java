@@ -60,35 +60,37 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMinMinFunctionParserRuleCall_9_0 = (RuleCall)cMinAssignment_9.eContents().get(0);
 		private final Assignment cMaxAssignment_10 = (Assignment)cAlternatives.eContents().get(10);
 		private final RuleCall cMaxMaxFunctionParserRuleCall_10_0 = (RuleCall)cMaxAssignment_10.eContents().get(0);
-		private final Assignment cAvrAssignment_11 = (Assignment)cAlternatives.eContents().get(11);
-		private final RuleCall cAvrAverageFunctionParserRuleCall_11_0 = (RuleCall)cAvrAssignment_11.eContents().get(0);
+		private final Assignment cAvgAssignment_11 = (Assignment)cAlternatives.eContents().get(11);
+		private final RuleCall cAvgAverageFunctionParserRuleCall_11_0 = (RuleCall)cAvgAssignment_11.eContents().get(0);
 		private final Assignment cSizeAssignment_12 = (Assignment)cAlternatives.eContents().get(12);
 		private final RuleCall cSizeSizeFunctionParserRuleCall_12_0 = (RuleCall)cSizeAssignment_12.eContents().get(0);
-		private final Assignment cResultAssignment_13 = (Assignment)cAlternatives.eContents().get(13);
-		private final RuleCall cResultGetResultFunctionParserRuleCall_13_0 = (RuleCall)cResultAssignment_13.eContents().get(0);
-		private final Assignment cComponent_referenceAssignment_14 = (Assignment)cAlternatives.eContents().get(14);
-		private final RuleCall cComponent_referenceComponent_referenceParserRuleCall_14_0 = (RuleCall)cComponent_referenceAssignment_14.eContents().get(0);
-		private final Group cGroup_15 = (Group)cAlternatives.eContents().get(15);
-		private final Keyword cLeftParenthesisKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
-		private final Assignment cOutput_expr_listAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
-		private final RuleCall cOutput_expr_listOutput_expression_listParserRuleCall_15_1_0 = (RuleCall)cOutput_expr_listAssignment_15_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_15_2 = (Keyword)cGroup_15.eContents().get(2);
+		private final Assignment cToArrayAssignment_13 = (Assignment)cAlternatives.eContents().get(13);
+		private final RuleCall cToArrayToArrayFunctionParserRuleCall_13_0 = (RuleCall)cToArrayAssignment_13.eContents().get(0);
+		private final Assignment cSingleProviderAssignment_14 = (Assignment)cAlternatives.eContents().get(14);
+		private final RuleCall cSingleProviderGetSingleProviderFunctionParserRuleCall_14_0 = (RuleCall)cSingleProviderAssignment_14.eContents().get(0);
+		private final Assignment cComponent_referenceAssignment_15 = (Assignment)cAlternatives.eContents().get(15);
+		private final RuleCall cComponent_referenceComponent_referenceParserRuleCall_15_0 = (RuleCall)cComponent_referenceAssignment_15.eContents().get(0);
 		private final Group cGroup_16 = (Group)cAlternatives.eContents().get(16);
-		private final Keyword cLeftSquareBracketKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
-		private final Assignment cExpre_listAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
-		private final RuleCall cExpre_listExpression_listParserRuleCall_16_1_0 = (RuleCall)cExpre_listAssignment_16_1.eContents().get(0);
-		private final Group cGroup_16_2 = (Group)cGroup_16.eContents().get(2);
-		private final Keyword cSemicolonKeyword_16_2_0 = (Keyword)cGroup_16_2.eContents().get(0);
-		private final Assignment cExpression_listAssignment_16_2_1 = (Assignment)cGroup_16_2.eContents().get(1);
-		private final RuleCall cExpression_listExpression_listParserRuleCall_16_2_1_0 = (RuleCall)cExpression_listAssignment_16_2_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_16_3 = (Keyword)cGroup_16.eContents().get(3);
+		private final Keyword cLeftParenthesisKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
+		private final Assignment cOutput_expr_listAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
+		private final RuleCall cOutput_expr_listOutput_expression_listParserRuleCall_16_1_0 = (RuleCall)cOutput_expr_listAssignment_16_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_16_2 = (Keyword)cGroup_16.eContents().get(2);
 		private final Group cGroup_17 = (Group)cAlternatives.eContents().get(17);
-		private final Keyword cLeftCurlyBracketKeyword_17_0 = (Keyword)cGroup_17.eContents().get(0);
-		private final Assignment cF_argumentsAssignment_17_1 = (Assignment)cGroup_17.eContents().get(1);
-		private final RuleCall cF_argumentsFunction_argumentsParserRuleCall_17_1_0 = (RuleCall)cF_argumentsAssignment_17_1.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_17_2 = (Keyword)cGroup_17.eContents().get(2);
-		private final Assignment cEndAssignment_18 = (Assignment)cAlternatives.eContents().get(18);
-		private final Keyword cEndEndKeyword_18_0 = (Keyword)cEndAssignment_18.eContents().get(0);
+		private final Keyword cLeftSquareBracketKeyword_17_0 = (Keyword)cGroup_17.eContents().get(0);
+		private final Assignment cExpre_listAssignment_17_1 = (Assignment)cGroup_17.eContents().get(1);
+		private final RuleCall cExpre_listExpression_listParserRuleCall_17_1_0 = (RuleCall)cExpre_listAssignment_17_1.eContents().get(0);
+		private final Group cGroup_17_2 = (Group)cGroup_17.eContents().get(2);
+		private final Keyword cSemicolonKeyword_17_2_0 = (Keyword)cGroup_17_2.eContents().get(0);
+		private final Assignment cExpression_listAssignment_17_2_1 = (Assignment)cGroup_17_2.eContents().get(1);
+		private final RuleCall cExpression_listExpression_listParserRuleCall_17_2_1_0 = (RuleCall)cExpression_listAssignment_17_2_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_17_3 = (Keyword)cGroup_17.eContents().get(3);
+		private final Group cGroup_18 = (Group)cAlternatives.eContents().get(18);
+		private final Keyword cLeftCurlyBracketKeyword_18_0 = (Keyword)cGroup_18.eContents().get(0);
+		private final Assignment cF_argumentsAssignment_18_1 = (Assignment)cGroup_18.eContents().get(1);
+		private final RuleCall cF_argumentsFunction_argumentsParserRuleCall_18_1_0 = (RuleCall)cF_argumentsAssignment_18_1.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_18_2 = (Keyword)cGroup_18.eContents().get(2);
+		private final Assignment cEndAssignment_19 = (Assignment)cAlternatives.eContents().get(19);
+		private final Keyword cEndEndKeyword_19_0 = (Keyword)cEndAssignment_19.eContents().get(0);
 		
 		//primary:
 		//	num=UNSIGNED_NUMBER | int=INT | str=STRING | Bool=BOOL_VAL | Name_Function=name_Function | Initial_ref=initial_ref |
@@ -96,11 +98,12 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		//	SumFunction | prod= // ModelicaML Value Binding Concept specific
 		//	ProductFunction | min= // ModelicaML Value Binding Concept specific
 		//	MinFunction | max= // ModelicaML Value Binding Concept specific
-		//	MaxFunction | avr= // ModelicaML Value Binding Concept specific
+		//	MaxFunction | avg= // ModelicaML Value Binding Concept specific
 		//	AverageFunction | size= // ModelicaML Value Binding Concept specific
-		//	SizeFunction | result= // ModelicaML Value Binding Concept specific
-		//	GetResultFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
-		//	Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
+		//	SizeFunction | toArray= // ModelicaML Value Binding Concept specific
+		//	ToArrayFunction | singleProvider= // ModelicaML Value Binding Concept specific
+		//	GetSingleProviderFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" |
+		//	"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
 		//	End="end";
 		public ParserRule getRule() { return rule; }
 
@@ -109,11 +112,12 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		//SumFunction | prod= // ModelicaML Value Binding Concept specific
 		//ProductFunction | min= // ModelicaML Value Binding Concept specific
 		//MinFunction | max= // ModelicaML Value Binding Concept specific
-		//MaxFunction | avr= // ModelicaML Value Binding Concept specific
+		//MaxFunction | avg= // ModelicaML Value Binding Concept specific
 		//AverageFunction | size= // ModelicaML Value Binding Concept specific
-		//SizeFunction | result= // ModelicaML Value Binding Concept specific
-		//GetResultFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
-		//Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
+		//SizeFunction | toArray= // ModelicaML Value Binding Concept specific
+		//ToArrayFunction | singleProvider= // ModelicaML Value Binding Concept specific
+		//GetSingleProviderFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" |
+		//"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
 		//End="end"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
@@ -191,13 +195,13 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		//MaxFunction
 		public RuleCall getMaxMaxFunctionParserRuleCall_10_0() { return cMaxMaxFunctionParserRuleCall_10_0; }
 
-		//avr= // ModelicaML Value Binding Concept specific
+		//avg= // ModelicaML Value Binding Concept specific
 		//AverageFunction
-		public Assignment getAvrAssignment_11() { return cAvrAssignment_11; }
+		public Assignment getAvgAssignment_11() { return cAvgAssignment_11; }
 
 		//// ModelicaML Value Binding Concept specific
 		//AverageFunction
-		public RuleCall getAvrAverageFunctionParserRuleCall_11_0() { return cAvrAverageFunctionParserRuleCall_11_0; }
+		public RuleCall getAvgAverageFunctionParserRuleCall_11_0() { return cAvgAverageFunctionParserRuleCall_11_0; }
 
 		//size= // ModelicaML Value Binding Concept specific
 		//SizeFunction
@@ -207,82 +211,90 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		//SizeFunction
 		public RuleCall getSizeSizeFunctionParserRuleCall_12_0() { return cSizeSizeFunctionParserRuleCall_12_0; }
 
-		//result= // ModelicaML Value Binding Concept specific
-		//GetResultFunction
-		public Assignment getResultAssignment_13() { return cResultAssignment_13; }
+		//toArray= // ModelicaML Value Binding Concept specific
+		//ToArrayFunction
+		public Assignment getToArrayAssignment_13() { return cToArrayAssignment_13; }
 
 		//// ModelicaML Value Binding Concept specific
-		//GetResultFunction
-		public RuleCall getResultGetResultFunctionParserRuleCall_13_0() { return cResultGetResultFunctionParserRuleCall_13_0; }
+		//ToArrayFunction
+		public RuleCall getToArrayToArrayFunctionParserRuleCall_13_0() { return cToArrayToArrayFunctionParserRuleCall_13_0; }
+
+		//singleProvider= // ModelicaML Value Binding Concept specific
+		//GetSingleProviderFunction
+		public Assignment getSingleProviderAssignment_14() { return cSingleProviderAssignment_14; }
+
+		//// ModelicaML Value Binding Concept specific
+		//GetSingleProviderFunction
+		public RuleCall getSingleProviderGetSingleProviderFunctionParserRuleCall_14_0() { return cSingleProviderGetSingleProviderFunctionParserRuleCall_14_0; }
 
 		//Component_reference=component_reference
-		public Assignment getComponent_referenceAssignment_14() { return cComponent_referenceAssignment_14; }
+		public Assignment getComponent_referenceAssignment_15() { return cComponent_referenceAssignment_15; }
 
 		//component_reference
-		public RuleCall getComponent_referenceComponent_referenceParserRuleCall_14_0() { return cComponent_referenceComponent_referenceParserRuleCall_14_0; }
+		public RuleCall getComponent_referenceComponent_referenceParserRuleCall_15_0() { return cComponent_referenceComponent_referenceParserRuleCall_15_0; }
 
 		//"(" output_expr_list=output_expression_list ")"
-		public Group getGroup_15() { return cGroup_15; }
-
-		//"("
-		public Keyword getLeftParenthesisKeyword_15_0() { return cLeftParenthesisKeyword_15_0; }
-
-		//output_expr_list=output_expression_list
-		public Assignment getOutput_expr_listAssignment_15_1() { return cOutput_expr_listAssignment_15_1; }
-
-		//output_expression_list
-		public RuleCall getOutput_expr_listOutput_expression_listParserRuleCall_15_1_0() { return cOutput_expr_listOutput_expression_listParserRuleCall_15_1_0; }
-
-		//")"
-		public Keyword getRightParenthesisKeyword_15_2() { return cRightParenthesisKeyword_15_2; }
-
-		//"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]"
 		public Group getGroup_16() { return cGroup_16; }
 
-		//"["
-		public Keyword getLeftSquareBracketKeyword_16_0() { return cLeftSquareBracketKeyword_16_0; }
+		//"("
+		public Keyword getLeftParenthesisKeyword_16_0() { return cLeftParenthesisKeyword_16_0; }
 
-		//Expre_list=expression_list
-		public Assignment getExpre_listAssignment_16_1() { return cExpre_listAssignment_16_1; }
+		//output_expr_list=output_expression_list
+		public Assignment getOutput_expr_listAssignment_16_1() { return cOutput_expr_listAssignment_16_1; }
 
-		//expression_list
-		public RuleCall getExpre_listExpression_listParserRuleCall_16_1_0() { return cExpre_listExpression_listParserRuleCall_16_1_0; }
+		//output_expression_list
+		public RuleCall getOutput_expr_listOutput_expression_listParserRuleCall_16_1_0() { return cOutput_expr_listOutput_expression_listParserRuleCall_16_1_0; }
 
-		//(";" Expression_list+=expression_list)*
-		public Group getGroup_16_2() { return cGroup_16_2; }
+		//")"
+		public Keyword getRightParenthesisKeyword_16_2() { return cRightParenthesisKeyword_16_2; }
 
-		//";"
-		public Keyword getSemicolonKeyword_16_2_0() { return cSemicolonKeyword_16_2_0; }
-
-		//Expression_list+=expression_list
-		public Assignment getExpression_listAssignment_16_2_1() { return cExpression_listAssignment_16_2_1; }
-
-		//expression_list
-		public RuleCall getExpression_listExpression_listParserRuleCall_16_2_1_0() { return cExpression_listExpression_listParserRuleCall_16_2_1_0; }
-
-		//"]"
-		public Keyword getRightSquareBracketKeyword_16_3() { return cRightSquareBracketKeyword_16_3; }
-
-		//"{" f_arguments=function_arguments "}"
+		//"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]"
 		public Group getGroup_17() { return cGroup_17; }
 
+		//"["
+		public Keyword getLeftSquareBracketKeyword_17_0() { return cLeftSquareBracketKeyword_17_0; }
+
+		//Expre_list=expression_list
+		public Assignment getExpre_listAssignment_17_1() { return cExpre_listAssignment_17_1; }
+
+		//expression_list
+		public RuleCall getExpre_listExpression_listParserRuleCall_17_1_0() { return cExpre_listExpression_listParserRuleCall_17_1_0; }
+
+		//(";" Expression_list+=expression_list)*
+		public Group getGroup_17_2() { return cGroup_17_2; }
+
+		//";"
+		public Keyword getSemicolonKeyword_17_2_0() { return cSemicolonKeyword_17_2_0; }
+
+		//Expression_list+=expression_list
+		public Assignment getExpression_listAssignment_17_2_1() { return cExpression_listAssignment_17_2_1; }
+
+		//expression_list
+		public RuleCall getExpression_listExpression_listParserRuleCall_17_2_1_0() { return cExpression_listExpression_listParserRuleCall_17_2_1_0; }
+
+		//"]"
+		public Keyword getRightSquareBracketKeyword_17_3() { return cRightSquareBracketKeyword_17_3; }
+
+		//"{" f_arguments=function_arguments "}"
+		public Group getGroup_18() { return cGroup_18; }
+
 		//"{"
-		public Keyword getLeftCurlyBracketKeyword_17_0() { return cLeftCurlyBracketKeyword_17_0; }
+		public Keyword getLeftCurlyBracketKeyword_18_0() { return cLeftCurlyBracketKeyword_18_0; }
 
 		//f_arguments=function_arguments
-		public Assignment getF_argumentsAssignment_17_1() { return cF_argumentsAssignment_17_1; }
+		public Assignment getF_argumentsAssignment_18_1() { return cF_argumentsAssignment_18_1; }
 
 		//function_arguments
-		public RuleCall getF_argumentsFunction_argumentsParserRuleCall_17_1_0() { return cF_argumentsFunction_argumentsParserRuleCall_17_1_0; }
+		public RuleCall getF_argumentsFunction_argumentsParserRuleCall_18_1_0() { return cF_argumentsFunction_argumentsParserRuleCall_18_1_0; }
 
 		//"}"
-		public Keyword getRightCurlyBracketKeyword_17_2() { return cRightCurlyBracketKeyword_17_2; }
+		public Keyword getRightCurlyBracketKeyword_18_2() { return cRightCurlyBracketKeyword_18_2; }
 
 		//End="end"
-		public Assignment getEndAssignment_18() { return cEndAssignment_18; }
+		public Assignment getEndAssignment_19() { return cEndAssignment_19; }
 
 		//"end"
-		public Keyword getEndEndKeyword_18_0() { return cEndEndKeyword_18_0; }
+		public Keyword getEndEndKeyword_19_0() { return cEndEndKeyword_19_0; }
 	}
 
 	public class ProductFunctionElements extends AbstractParserRuleElementFinder {
@@ -369,18 +381,18 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 	public class AverageFunctionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "AverageFunction");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cAvrKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cAvgKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final RuleCall cReductionFunctionCallArgsParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
 		
 		//AverageFunction returns ecore::EString:
-		//	"avr" ReductionFunctionCallArgs;
+		//	"avg" ReductionFunctionCallArgs;
 		public ParserRule getRule() { return rule; }
 
-		//"avr" ReductionFunctionCallArgs
+		//"avg" ReductionFunctionCallArgs
 		public Group getGroup() { return cGroup; }
 
-		//"avr"
-		public Keyword getAvrKeyword_0() { return cAvrKeyword_0; }
+		//"avg"
+		public Keyword getAvgKeyword_0() { return cAvgKeyword_0; }
 
 		//ReductionFunctionCallArgs
 		public RuleCall getReductionFunctionCallArgsParserRuleCall_1() { return cReductionFunctionCallArgsParserRuleCall_1; }
@@ -406,21 +418,41 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getReductionFunctionCallArgsParserRuleCall_1() { return cReductionFunctionCallArgsParserRuleCall_1; }
 	}
 
-	public class GetResultFunctionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "GetResultFunction");
+	public class ToArrayFunctionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ToArrayFunction");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cGetResultKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final RuleCall cBracketsParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		private final Keyword cToArrayKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cReductionFunctionCallArgsParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
 		
-		//GetResultFunction returns ecore::EString:
-		//	"getResult" Brackets;
+		//ToArrayFunction returns ecore::EString:
+		//	"toArray" ReductionFunctionCallArgs;
 		public ParserRule getRule() { return rule; }
 
-		//"getResult" Brackets
+		//"toArray" ReductionFunctionCallArgs
 		public Group getGroup() { return cGroup; }
 
-		//"getResult"
-		public Keyword getGetResultKeyword_0() { return cGetResultKeyword_0; }
+		//"toArray"
+		public Keyword getToArrayKeyword_0() { return cToArrayKeyword_0; }
+
+		//ReductionFunctionCallArgs
+		public RuleCall getReductionFunctionCallArgsParserRuleCall_1() { return cReductionFunctionCallArgsParserRuleCall_1; }
+	}
+
+	public class GetSingleProviderFunctionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "GetSingleProviderFunction");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cGetSingleProviderKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cBracketsParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		
+		//GetSingleProviderFunction returns ecore::EString:
+		//	"getSingleProvider" Brackets;
+		public ParserRule getRule() { return rule; }
+
+		//"getSingleProvider" Brackets
+		public Group getGroup() { return cGroup; }
+
+		//"getSingleProvider"
+		public Keyword getGetSingleProviderKeyword_0() { return cGetSingleProviderKeyword_0; }
 
 		//Brackets
 		public RuleCall getBracketsParserRuleCall_1() { return cBracketsParserRuleCall_1; }
@@ -586,7 +618,8 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 	private MaxFunctionElements pMaxFunction;
 	private AverageFunctionElements pAverageFunction;
 	private SizeFunctionElements pSizeFunction;
-	private GetResultFunctionElements pGetResultFunction;
+	private ToArrayFunctionElements pToArrayFunction;
+	private GetSingleProviderFunctionElements pGetSingleProviderFunction;
 	private ReductionFunctionCallArgsElements pReductionFunctionCallArgs;
 	private BracketsElements pBrackets;
 	private Component_referenceElements pComponent_reference;
@@ -630,11 +663,12 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 	//	SumFunction | prod= // ModelicaML Value Binding Concept specific
 	//	ProductFunction | min= // ModelicaML Value Binding Concept specific
 	//	MinFunction | max= // ModelicaML Value Binding Concept specific
-	//	MaxFunction | avr= // ModelicaML Value Binding Concept specific
+	//	MaxFunction | avg= // ModelicaML Value Binding Concept specific
 	//	AverageFunction | size= // ModelicaML Value Binding Concept specific
-	//	SizeFunction | result= // ModelicaML Value Binding Concept specific
-	//	GetResultFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" | "["
-	//	Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
+	//	SizeFunction | toArray= // ModelicaML Value Binding Concept specific
+	//	ToArrayFunction | singleProvider= // ModelicaML Value Binding Concept specific
+	//	GetSingleProviderFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" |
+	//	"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
 	//	End="end";
 	public PrimaryElements getPrimaryAccess() {
 		return (pPrimary != null) ? pPrimary : (pPrimary = new PrimaryElements());
@@ -686,7 +720,7 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//AverageFunction returns ecore::EString:
-	//	"avr" ReductionFunctionCallArgs;
+	//	"avg" ReductionFunctionCallArgs;
 	public AverageFunctionElements getAverageFunctionAccess() {
 		return (pAverageFunction != null) ? pAverageFunction : (pAverageFunction = new AverageFunctionElements());
 	}
@@ -705,14 +739,24 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		return getSizeFunctionAccess().getRule();
 	}
 
-	//GetResultFunction returns ecore::EString:
-	//	"getResult" Brackets;
-	public GetResultFunctionElements getGetResultFunctionAccess() {
-		return (pGetResultFunction != null) ? pGetResultFunction : (pGetResultFunction = new GetResultFunctionElements());
+	//ToArrayFunction returns ecore::EString:
+	//	"toArray" ReductionFunctionCallArgs;
+	public ToArrayFunctionElements getToArrayFunctionAccess() {
+		return (pToArrayFunction != null) ? pToArrayFunction : (pToArrayFunction = new ToArrayFunctionElements());
 	}
 	
-	public ParserRule getGetResultFunctionRule() {
-		return getGetResultFunctionAccess().getRule();
+	public ParserRule getToArrayFunctionRule() {
+		return getToArrayFunctionAccess().getRule();
+	}
+
+	//GetSingleProviderFunction returns ecore::EString:
+	//	"getSingleProvider" Brackets;
+	public GetSingleProviderFunctionElements getGetSingleProviderFunctionAccess() {
+		return (pGetSingleProviderFunction != null) ? pGetSingleProviderFunction : (pGetSingleProviderFunction = new GetSingleProviderFunctionElements());
+	}
+	
+	public ParserRule getGetSingleProviderFunctionRule() {
+		return getGetSingleProviderFunctionAccess().getRule();
 	}
 
 	//ReductionFunctionCallArgs returns ecore::EString:

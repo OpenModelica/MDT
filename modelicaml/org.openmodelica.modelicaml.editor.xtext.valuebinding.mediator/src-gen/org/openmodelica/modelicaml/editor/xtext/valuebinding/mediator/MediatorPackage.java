@@ -280,13 +280,13 @@ public interface MediatorPackage extends EPackage
   int PRIMARY__MAX = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 6;
 
   /**
-   * The feature id for the '<em><b>Avr</b></em>' attribute.
+   * The feature id for the '<em><b>Avg</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PRIMARY__AVR = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 7;
+  int PRIMARY__AVG = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 7;
 
   /**
    * The feature id for the '<em><b>Size</b></em>' attribute.
@@ -298,13 +298,22 @@ public interface MediatorPackage extends EPackage
   int PRIMARY__SIZE = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 8;
 
   /**
-   * The feature id for the '<em><b>Result</b></em>' attribute.
+   * The feature id for the '<em><b>To Array</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PRIMARY__RESULT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 9;
+  int PRIMARY__TO_ARRAY = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 9;
+
+  /**
+   * The feature id for the '<em><b>Single Provider</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRIMARY__SINGLE_PROVIDER = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 10;
 
   /**
    * The number of structural features of the '<em>primary</em>' class.
@@ -313,7 +322,7 @@ public interface MediatorPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 10;
+  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 11;
 
   /**
    * The meta object id for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.component_referenceImpl <em>component reference</em>}' class.
@@ -480,15 +489,15 @@ public interface MediatorPackage extends EPackage
   EAttribute getprimary_Max();
 
   /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvr <em>Avr</em>}'.
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvg <em>Avg</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Avr</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvr()
+   * @return the meta object for the attribute '<em>Avg</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvg()
    * @see #getprimary()
    * @generated
    */
-  EAttribute getprimary_Avr();
+  EAttribute getprimary_Avg();
 
   /**
    * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSize <em>Size</em>}'.
@@ -502,15 +511,26 @@ public interface MediatorPackage extends EPackage
   EAttribute getprimary_Size();
 
   /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getResult <em>Result</em>}'.
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getToArray <em>To Array</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Result</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getResult()
+   * @return the meta object for the attribute '<em>To Array</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getToArray()
    * @see #getprimary()
    * @generated
    */
-  EAttribute getprimary_Result();
+  EAttribute getprimary_ToArray();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSingleProvider <em>Single Provider</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Single Provider</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSingleProvider()
+   * @see #getprimary()
+   * @generated
+   */
+  EAttribute getprimary_SingleProvider();
 
   /**
    * Returns the meta object for class '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.component_reference <em>component reference</em>}'.
@@ -630,12 +650,12 @@ public interface MediatorPackage extends EPackage
     EAttribute PRIMARY__MAX = eINSTANCE.getprimary_Max();
 
     /**
-     * The meta object literal for the '<em><b>Avr</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Avg</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute PRIMARY__AVR = eINSTANCE.getprimary_Avr();
+    EAttribute PRIMARY__AVG = eINSTANCE.getprimary_Avg();
 
     /**
      * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
@@ -646,12 +666,20 @@ public interface MediatorPackage extends EPackage
     EAttribute PRIMARY__SIZE = eINSTANCE.getprimary_Size();
 
     /**
-     * The meta object literal for the '<em><b>Result</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>To Array</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute PRIMARY__RESULT = eINSTANCE.getprimary_Result();
+    EAttribute PRIMARY__TO_ARRAY = eINSTANCE.getprimary_ToArray();
+
+    /**
+     * The meta object literal for the '<em><b>Single Provider</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRIMARY__SINGLE_PROVIDER = eINSTANCE.getprimary_SingleProvider();
 
     /**
      * The meta object literal for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.component_referenceImpl <em>component reference</em>}' class.

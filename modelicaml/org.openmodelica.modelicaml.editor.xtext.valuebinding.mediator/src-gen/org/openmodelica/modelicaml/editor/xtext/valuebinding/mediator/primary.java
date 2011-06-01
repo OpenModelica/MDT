@@ -25,9 +25,10 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name_Function;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getProd <em>Prod</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getMin <em>Min</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getMax <em>Max</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvr <em>Avr</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvg <em>Avg</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSize <em>Size</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getResult <em>Result</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getToArray <em>To Array</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSingleProvider <em>Single Provider</em>}</li>
  * </ul>
  * </p>
  *
@@ -220,30 +221,30 @@ public interface primary extends org.openmodelica.modelicaml.editor.xtext.model.
   void setMax(String value);
 
   /**
-   * Returns the value of the '<em><b>Avr</b></em>' attribute.
+   * Returns the value of the '<em><b>Avg</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Avr</em>' attribute isn't clear,
+   * If the meaning of the '<em>Avg</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Avr</em>' attribute.
-   * @see #setAvr(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_Avr()
+   * @return the value of the '<em>Avg</em>' attribute.
+   * @see #setAvg(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_Avg()
    * @model
    * @generated
    */
-  String getAvr();
+  String getAvg();
 
   /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvr <em>Avr</em>}' attribute.
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvg <em>Avg</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Avr</em>' attribute.
-   * @see #getAvr()
+   * @param value the new value of the '<em>Avg</em>' attribute.
+   * @see #getAvg()
    * @generated
    */
-  void setAvr(String value);
+  void setAvg(String value);
 
   /**
    * Returns the value of the '<em><b>Size</b></em>' attribute.
@@ -272,29 +273,55 @@ public interface primary extends org.openmodelica.modelicaml.editor.xtext.model.
   void setSize(String value);
 
   /**
-   * Returns the value of the '<em><b>Result</b></em>' attribute.
+   * Returns the value of the '<em><b>To Array</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Result</em>' attribute isn't clear,
+   * If the meaning of the '<em>To Array</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Result</em>' attribute.
-   * @see #setResult(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_Result()
+   * @return the value of the '<em>To Array</em>' attribute.
+   * @see #setToArray(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_ToArray()
    * @model
    * @generated
    */
-  String getResult();
+  String getToArray();
 
   /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getResult <em>Result</em>}' attribute.
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getToArray <em>To Array</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Result</em>' attribute.
-   * @see #getResult()
+   * @param value the new value of the '<em>To Array</em>' attribute.
+   * @see #getToArray()
    * @generated
    */
-  void setResult(String value);
+  void setToArray(String value);
+
+  /**
+   * Returns the value of the '<em><b>Single Provider</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Single Provider</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Single Provider</em>' attribute.
+   * @see #setSingleProvider(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_SingleProvider()
+   * @model
+   * @generated
+   */
+  String getSingleProvider();
+
+  /**
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSingleProvider <em>Single Provider</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Single Provider</em>' attribute.
+   * @see #getSingleProvider()
+   * @generated
+   */
+  void setSingleProvider(String value);
 
 } // primary

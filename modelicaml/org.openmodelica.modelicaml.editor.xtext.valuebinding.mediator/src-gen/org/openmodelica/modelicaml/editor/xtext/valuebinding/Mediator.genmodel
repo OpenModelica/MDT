@@ -22,9 +22,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/prod"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/min"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/max"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/avr"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/avg"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/size"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/result"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/toArray"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/singleProvider"/>
     </genClasses>
     <genClasses ecoreClass="Mediator.ecore#//component_reference"/>
   </genPackages>

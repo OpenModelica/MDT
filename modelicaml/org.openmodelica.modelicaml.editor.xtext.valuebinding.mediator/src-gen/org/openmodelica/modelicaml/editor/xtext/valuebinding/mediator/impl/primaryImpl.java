@@ -31,9 +31,10 @@ import org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getProd <em>Prod</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getMin <em>Min</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getMax <em>Max</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getAvr <em>Avr</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getAvg <em>Avg</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getSize <em>Size</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getResult <em>Result</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getToArray <em>To Array</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getSingleProvider <em>Single Provider</em>}</li>
  * </ul>
  * </p>
  *
@@ -152,24 +153,24 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
   protected String max = MAX_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getAvr() <em>Avr</em>}' attribute.
+   * The default value of the '{@link #getAvg() <em>Avg</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAvr()
+   * @see #getAvg()
    * @generated
    * @ordered
    */
-  protected static final String AVR_EDEFAULT = null;
+  protected static final String AVG_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getAvr() <em>Avr</em>}' attribute.
+   * The cached value of the '{@link #getAvg() <em>Avg</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAvr()
+   * @see #getAvg()
    * @generated
    * @ordered
    */
-  protected String avr = AVR_EDEFAULT;
+  protected String avg = AVG_EDEFAULT;
 
   /**
    * The default value of the '{@link #getSize() <em>Size</em>}' attribute.
@@ -192,24 +193,44 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
   protected String size = SIZE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getResult() <em>Result</em>}' attribute.
+   * The default value of the '{@link #getToArray() <em>To Array</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getResult()
+   * @see #getToArray()
    * @generated
    * @ordered
    */
-  protected static final String RESULT_EDEFAULT = null;
+  protected static final String TO_ARRAY_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getResult() <em>Result</em>}' attribute.
+   * The cached value of the '{@link #getToArray() <em>To Array</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getResult()
+   * @see #getToArray()
    * @generated
    * @ordered
    */
-  protected String result = RESULT_EDEFAULT;
+  protected String toArray = TO_ARRAY_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getSingleProvider() <em>Single Provider</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSingleProvider()
+   * @generated
+   * @ordered
+   */
+  protected static final String SINGLE_PROVIDER_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getSingleProvider() <em>Single Provider</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSingleProvider()
+   * @generated
+   * @ordered
+   */
+  protected String singleProvider = SINGLE_PROVIDER_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -473,9 +494,9 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getAvr()
+  public String getAvg()
   {
-    return avr;
+    return avg;
   }
 
   /**
@@ -483,12 +504,12 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setAvr(String newAvr)
+  public void setAvg(String newAvg)
   {
-    String oldAvr = avr;
-    avr = newAvr;
+    String oldAvg = avg;
+    avg = newAvg;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__AVR, oldAvr, avr));
+      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__AVG, oldAvg, avg));
   }
 
   /**
@@ -519,9 +540,9 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getResult()
+  public String getToArray()
   {
-    return result;
+    return toArray;
   }
 
   /**
@@ -529,12 +550,35 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setResult(String newResult)
+  public void setToArray(String newToArray)
   {
-    String oldResult = result;
-    result = newResult;
+    String oldToArray = toArray;
+    toArray = newToArray;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__RESULT, oldResult, result));
+      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__TO_ARRAY, oldToArray, toArray));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getSingleProvider()
+  {
+    return singleProvider;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setSingleProvider(String newSingleProvider)
+  {
+    String oldSingleProvider = singleProvider;
+    singleProvider = newSingleProvider;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__SINGLE_PROVIDER, oldSingleProvider, singleProvider));
   }
 
   /**
@@ -581,12 +625,14 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return getMin();
       case MediatorPackage.PRIMARY__MAX:
         return getMax();
-      case MediatorPackage.PRIMARY__AVR:
-        return getAvr();
+      case MediatorPackage.PRIMARY__AVG:
+        return getAvg();
       case MediatorPackage.PRIMARY__SIZE:
         return getSize();
-      case MediatorPackage.PRIMARY__RESULT:
-        return getResult();
+      case MediatorPackage.PRIMARY__TO_ARRAY:
+        return getToArray();
+      case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
+        return getSingleProvider();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -622,14 +668,17 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
       case MediatorPackage.PRIMARY__MAX:
         setMax((String)newValue);
         return;
-      case MediatorPackage.PRIMARY__AVR:
-        setAvr((String)newValue);
+      case MediatorPackage.PRIMARY__AVG:
+        setAvg((String)newValue);
         return;
       case MediatorPackage.PRIMARY__SIZE:
         setSize((String)newValue);
         return;
-      case MediatorPackage.PRIMARY__RESULT:
-        setResult((String)newValue);
+      case MediatorPackage.PRIMARY__TO_ARRAY:
+        setToArray((String)newValue);
+        return;
+      case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
+        setSingleProvider((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -666,14 +715,17 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
       case MediatorPackage.PRIMARY__MAX:
         setMax(MAX_EDEFAULT);
         return;
-      case MediatorPackage.PRIMARY__AVR:
-        setAvr(AVR_EDEFAULT);
+      case MediatorPackage.PRIMARY__AVG:
+        setAvg(AVG_EDEFAULT);
         return;
       case MediatorPackage.PRIMARY__SIZE:
         setSize(SIZE_EDEFAULT);
         return;
-      case MediatorPackage.PRIMARY__RESULT:
-        setResult(RESULT_EDEFAULT);
+      case MediatorPackage.PRIMARY__TO_ARRAY:
+        setToArray(TO_ARRAY_EDEFAULT);
+        return;
+      case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
+        setSingleProvider(SINGLE_PROVIDER_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -703,12 +755,14 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return MIN_EDEFAULT == null ? min != null : !MIN_EDEFAULT.equals(min);
       case MediatorPackage.PRIMARY__MAX:
         return MAX_EDEFAULT == null ? max != null : !MAX_EDEFAULT.equals(max);
-      case MediatorPackage.PRIMARY__AVR:
-        return AVR_EDEFAULT == null ? avr != null : !AVR_EDEFAULT.equals(avr);
+      case MediatorPackage.PRIMARY__AVG:
+        return AVG_EDEFAULT == null ? avg != null : !AVG_EDEFAULT.equals(avg);
       case MediatorPackage.PRIMARY__SIZE:
         return SIZE_EDEFAULT == null ? size != null : !SIZE_EDEFAULT.equals(size);
-      case MediatorPackage.PRIMARY__RESULT:
-        return RESULT_EDEFAULT == null ? result != null : !RESULT_EDEFAULT.equals(result);
+      case MediatorPackage.PRIMARY__TO_ARRAY:
+        return TO_ARRAY_EDEFAULT == null ? toArray != null : !TO_ARRAY_EDEFAULT.equals(toArray);
+      case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
+        return SINGLE_PROVIDER_EDEFAULT == null ? singleProvider != null : !SINGLE_PROVIDER_EDEFAULT.equals(singleProvider);
     }
     return super.eIsSet(featureID);
   }
@@ -732,12 +786,14 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
     result.append(min);
     result.append(", max: ");
     result.append(max);
-    result.append(", avr: ");
-    result.append(avr);
+    result.append(", avg: ");
+    result.append(avg);
     result.append(", size: ");
     result.append(size);
-    result.append(", result: ");
-    result.append(result);
+    result.append(", toArray: ");
+    result.append(toArray);
+    result.append(", singleProvider: ");
+    result.append(singleProvider);
     result.append(')');
     return result.toString();
   }
