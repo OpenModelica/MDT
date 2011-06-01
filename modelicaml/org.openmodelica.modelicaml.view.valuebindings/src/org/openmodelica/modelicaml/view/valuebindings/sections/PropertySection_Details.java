@@ -89,7 +89,12 @@ public class PropertySection_Details extends AbstractPropertySection {
 						}
 					};
 					cc.append(command);
-					editingDomain.getCommandStack().execute(cc);
+					if (editingDomain != null) {
+						editingDomain.getCommandStack().execute(cc);
+					}
+					else {
+						System.err.println("Cannot access the editing domain ...");
+					}
 					//########## storing end
 				}
 			}

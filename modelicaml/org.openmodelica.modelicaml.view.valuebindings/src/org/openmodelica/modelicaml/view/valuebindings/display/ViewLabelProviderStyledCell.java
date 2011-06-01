@@ -20,13 +20,16 @@ import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
@@ -54,10 +57,12 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 		
 		// set text default
-		cell.setText(obj.toString()); 
+//		cell.setText(obj.toString()); 
+		cell.setText( ((TreeObject)obj).getName());
 		
 		// set text styled, override the default
-		if ( ((TreeObject)obj).isValueClientsNode() || ((TreeObject)obj).isValueMediatorsNode() || ((TreeObject)obj).isValueProvidersNode()) {
+		if ( ((TreeObject)obj).isValueClientsNode() 
+				|| ((TreeObject)obj).isValueMediatorsNode() || ((TreeObject)obj).isValueProvidersNode()) {
 			// name string 
 			String name = ((TreeObject)obj).getName() + " ";
 			
@@ -81,7 +86,8 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			if ( item.isValueProvidersNode() && parent != null && parent.isValueMediator()) {
 				Element element = parent.getUmlElement();
 				if (element != null) {
-					valueMediatorOperation = getOperationSpecification(element, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);					
+//					valueMediatorOperation = getOperationSpecification(element, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);					
+					valueMediatorOperation = getOperationSpecification(parent, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);					
 					styledString.append(valueMediatorOperation, stylerGrey);
 				}
 			}
@@ -101,14 +107,23 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			cell.setStyleRanges(styledString.getStyleRanges());
 		}
 		
+		// override the name only if uml element is defined and it is not an instantiation tree item.
 		else if ( obj instanceof TreeObject && ((TreeObject)obj).getUmlElement() != null  ){
+			
 			Element umlElement = ((TreeObject)obj).getUmlElement();
 			TreeObject item = (TreeObject)obj;
 			
-			if (  umlElement instanceof NamedElement && (((TreeObject)obj).isPackage() || ((TreeObject)obj).isValueMediatorContainer() ) ) {
+			if (  umlElement instanceof NamedElement && (((TreeObject)obj).isPackage() || ((TreeObject)obj).isValueMediatorContainer() ) 
+					&& !((TreeObject)obj).isInstantiatedClass() ) {
 				
-				// name string 
-				String name = ((NamedElement)umlElement).getName() + " ";
+				// name string
+				String name = item.getName();
+				if (((TreeObject)obj).getInstantiationTreeObject() != null) {
+					name = ((TreeObject)obj).getInstantiationTreeObject().getDotPath()  + " ";	
+				}
+				else {
+					name = ((NamedElement)umlElement).getName() + " ";
+				}
 				
 				// number of children string 
 				String numberOfChildren = "";
@@ -128,8 +143,14 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			
 			if (umlElement instanceof Property) {
 
-				// name string 
-				String name = ((Property)umlElement).getName() + "   -   ";
+				// name string
+				String name = item.getName();
+				if (((TreeObject)obj).getInstantiationTreeObject() != null) {
+					name = ((TreeObject)obj).getInstantiationTreeObject().getDotPath()  + "   -   ";;	
+				}
+				else {
+					name = ((Property)umlElement).getName() + "   -   ";	
+				}
 
 				// is client, mediator or provider string
 				String whatString = "";
@@ -226,37 +247,42 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 		// set image
 		if ( obj instanceof TreeObject  ){
-			if ( obj instanceof TreeParent && ((TreeParent)obj).getUmlElement() instanceof Model) {
-				cell.setImage(decorateImage( obj , "/icons/Model.gif" ));
+			TreeObject treeObject = (TreeObject)obj; 
+			if ( treeObject instanceof TreeParent && treeObject.getUmlElement() instanceof Model) {
+				cell.setImage(decorateImage( treeObject , "/icons/Model.gif" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Model.gif"));
 			}
-			else if ( obj instanceof TreeParent && ((TreeParent)obj).getUmlElement() instanceof Package) {
-				cell.setImage(decorateImage( obj , "/icons/Package.gif" ));
+			else if ( treeObject instanceof TreeParent && treeObject.getUmlElement() instanceof Package) {
+				cell.setImage(decorateImage( treeObject , "/icons/Package.gif" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Package.gif"));
 			}
-			else if (((TreeObject)obj).isValueMediatorContainer()) {
-				cell.setImage(decorateImage( obj , "/icons/valueMediatorsContainer.png" ));
+			else if (treeObject.isValueMediatorContainer()) {
+				cell.setImage(decorateImage( treeObject , "/icons/valueMediatorsContainer.png" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediatorsContainer.png"));
 			}
-			else if (((TreeObject)obj).isValueMediator()) {
-				cell.setImage(decorateImage( obj , "/icons/valueMediator.png" ));
+			else if (treeObject.isValueMediator()) {
+				cell.setImage(decorateImage( treeObject , "/icons/valueMediator.png" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediator.png"));
 			}
 			
-			else if (((TreeObject)obj).isValueClient() || ((TreeObject)obj).isValueProvider()) {
+			else if (treeObject.isValueClient() || treeObject.isValueProvider()) {
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/variable.png"));
 				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/Property.gif"));	
 			}
-			else if ( ((TreeObject)obj).isValueClientsNode() ) {
-				cell.setImage(decorateImage( obj , "/icons/addValueClient.png" ));
+			else if ( treeObject.isValueClientsNode() ) {
+				cell.setImage(decorateImage( treeObject , "/icons/addValueClient.png" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueClient.png"));
 			}
-			else if ( ((TreeObject)obj).isValueMediatorsNode() ) {
-				cell.setImage(decorateImage( obj , "/icons/valueMediator.png" ));
+			else if ( treeObject.isValueMediatorsNode() ) {
+				cell.setImage(decorateImage( treeObject , "/icons/valueMediator.png" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
-			else if ( ((TreeObject)obj).isValueProvidersNode() ) {
-				cell.setImage(decorateImage( obj , "/icons/addValueProviders.png" ));
+			else if ( treeObject.isValueProvidersNode() ) {
+				cell.setImage(decorateImage( treeObject , "/icons/addValueProviders.png" ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
+			}
+			else if ( treeObject.isInstantiatedClass()) {
+				cell.setImage(decorateImage( treeObject , "/icons/Class.gif" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
 			else {
@@ -340,20 +366,54 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	
 	private HashSet<TreeObject> findNextEmptyProvidersMediator(TreeParent treeParent){
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
-	
+
 		if (treeParent.isValueMediator()) {
-			if (getNumberOfProviders(treeParent) == 0) {
-				list.add(treeParent);
+			int numberOfProviders = getNumberOfProviders(treeParent);
+			if (numberOfProviders == 0) {
+				String script = DeriveValueBindingCodeUtls.getOperationSpecification(treeParent.getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+				// if it has a script that only uses constant values 
+				// -> then no providers are necessary and, actually, no providers should be there.
+				if ( script != null && !DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(script) ) {
+					// do nothing.
+					//System.err.println(treeParent + " is ok");
+				}
+				else {
+					// add to the list of mediators with no providers.
+					list.add(treeParent);
+				}
 				return list;
+			}
+			else if (numberOfProviders == 1 ) {
+				// if there is one provider with an invalid script -> error
+				String script = DeriveValueBindingCodeUtls.getOperationSpecification(treeParent.getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+				if ( script != null && !DeriveValueBindingCodeUtls.isValidMediatorSingleItemsScript(script) ) {
+					list.add(treeParent);					
+				}
 			}
 		}
 		
 		TreeObject[] children = treeParent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].isValueMediator()) {
-				if (getNumberOfProviders(children[i]) == 0) {
-					list.add(treeParent);
+				int numberOfProviders = getNumberOfProviders(children[i]);
+				if (numberOfProviders == 0) {
+					String script = DeriveValueBindingCodeUtls.getOperationSpecification(children[i].getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+					if ( script != null && !DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(script) ) {
+						// do nothing.
+						//System.err.println(treeParent + " is ok");
+					}
+					else {
+						// add to the list of mediators with no providers.
+						list.add(treeParent);
+					}
 					return list;
+				}
+				else if (numberOfProviders == 1 ) {
+					// if there is one provider with an invalid script -> error
+					String script = DeriveValueBindingCodeUtls.getOperationSpecification(children[i].getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+					if ( script != null && !DeriveValueBindingCodeUtls.isValidMediatorSingleItemsScript(script) ) {
+						list.add(treeParent);					
+					}
 				}
 			}
 			else if (children[i] instanceof TreeParent && !children[i].isReadOnly() ) {
@@ -364,6 +424,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	}
 	
 
+	
 	
 	private int getNumberOfClients(Object item){
 		if (item instanceof TreeParent) {
@@ -407,6 +468,29 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				if (o instanceof String) {
 					if ( !((String)o).trim().equals("") ) {
 						return "   -   " + (String)o;
+					}
+				}
+			}
+		}			
+		return "";
+	}
+	
+	private String getOperationSpecification(TreeObject item, String stereotypeQName, String propertyName){
+		String prefix = "";
+		Element element = null;
+		
+		if (item != null ) {
+			element = item.getUmlElement();
+		}
+		if (element != null) {
+			if (item.isValueMediator()) { prefix = "mediator operation: "; }
+			
+			Stereotype stereotype = element.getAppliedStereotype(stereotypeQName);
+			if (stereotype != null) {
+				Object o = element.getValue(stereotype, propertyName);
+				if (o instanceof String) {
+					if ( !((String)o).trim().equals("") ) {
+						return "   -   " + prefix + (String)o;
 					}
 				}
 			}

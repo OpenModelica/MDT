@@ -6,16 +6,10 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
-import org.eclipse.emf.mwe2.runtime.IFactory;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.TreeRouter;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -23,6 +17,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -36,11 +31,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -58,19 +55,20 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Stereotype;
-import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorHandler;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorsContainerHandler;
+import org.openmodelica.modelicaml.view.valuebindings.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.view.valuebindings.display.ViewLabelProviderStyledCell;
 import org.openmodelica.modelicaml.view.valuebindings.handlers.DeleteCommandHandler;
+import org.openmodelica.modelicaml.view.valuebindings.listeners.DropListener;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetPageContributor, IAdaptable {
 
@@ -89,7 +87,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	
 	private Action doubleClickAction;
 
-	private Action actionReload;
+	public Action actionReload;
 	private Action actionLinkWithEditor;
 
 	private Action actionAddValueMediator;
@@ -99,9 +97,18 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private Action actionLocateInPapyrusModelExplorer;
 	
 	private TreeParent invisibleRoot = null;
-	public TreeBuilder tree = new TreeBuilder();
+	public TreeBuilder treeBuilder = new TreeBuilder();
 
-//	private Action actionShowOnlyClientMediatorsProviders;
+	private Action actionShowClientPerspective;
+	private IAction actionShowMediatorPerspective;
+	private IAction actionShowProviderPerspective;
+
+	private Action actionInstantiatedClassMode;
+
+	private Action actionShowUserNoteForReadOnlyNodes;
+	
+	public final static int DEFAULT_EXPAND_LEVEL = 2;
+	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
 
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
@@ -140,13 +147,14 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
 
 			invisibleRoot = new TreeParent("");
-			tree.buildTree(invisibleRoot);
+			treeBuilder.buildTreeFromUmlModel(invisibleRoot);
 		}
 	}
 	
 	
-//	class NameSorter extends ViewerSorter {
-//	}
+	class NameSorter extends ViewerSorter {
+		
+	}
 
 
 	/**
@@ -159,8 +167,12 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		viewer.setContentProvider(new ViewContentProvider());
 //		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setLabelProvider(new ViewLabelProviderStyledCell());
-//		viewer.setSorter(new NameSorter());
+		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
+		
+		ViewerFilter[] filters = {mediatorPerspectiveFilter};
+		viewer.setFilters(filters);
+		viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "org.openmodelica.modelicaml.view.valuebindings.viewer");
@@ -179,11 +191,17 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				event.getSelection()).getFirstElement();
 				if (viewer.getExpandedState(firstElement)) {
 					viewer.collapseToLevel(firstElement, AbstractTreeViewer.ALL_LEVELS);
-				} else {
+				} 
+				else {
 					viewer.expandToLevel(firstElement, 1);
 				}
-				}
-			});
+			}
+		});
+		
+		// add drop support
+		int operations = DND.DROP_MOVE;
+		Transfer[] transferTypes = new Transfer[]{ LocalSelectionTransfer.getTransfer()};
+		viewer.addDropSupport(operations, transferTypes, new DropListener(viewer));
 	}
 
 	private void hookContextMenu() {
@@ -206,7 +224,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-//		manager.add(actionShowOnlyClientMediatorsProviders);
+		manager.add(actionShowMediatorPerspective);
+		manager.add(actionShowClientPerspective);
+		manager.add(actionShowProviderPerspective);
 //		manager.add(new Separator());
 	}
 
@@ -254,6 +274,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 //					actionDeleteModelElement.setText("Delete '" + ((TreeObject)selectedTreeObject).getName());
 //					manager.add(actionDeleteModelElement);
 				}
+				else {
+					manager.add(actionShowUserNoteForReadOnlyNodes);
+				}
 				
 				manager.add(new Separator());
 				manager.add(actionLocateInPapyrusModelExplorer);
@@ -262,6 +285,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				if ( !item.isReadOnly() ) { // read only items shall not be modified
 					actionDeleteReference.setText("Delete the reference to \"" + ((TreeObject)selectedTreeObject).getParent().getParent().getName() + "\"");
 					manager.add(actionDeleteReference);
+				}
+				else {
+					manager.add(actionShowUserNoteForReadOnlyNodes);
 				}
 				
 				manager.add(new Separator());
@@ -272,11 +298,17 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					actionAssociateValueClient.setText("Add Value Client");
 					manager.add(actionAssociateValueClient);
 				}
+				else {
+					manager.add(actionShowUserNoteForReadOnlyNodes);
+				}
 			}
 			else if (item.isValueProvidersNode()) {
 				if ( !item.isReadOnly() ) { // read only items shall not be modified
 					actionAssociateValueProvider.setText("Add Value Provider");
 					manager.add(actionAssociateValueProvider);
+				}
+				else {
+					manager.add(actionShowUserNoteForReadOnlyNodes);
 				}
 			}
 			
@@ -298,31 +330,92 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-//		manager.add(actionAssociateValueClient);
-//		manager.add(actionAssociateValueProvider);
 		manager.add(actionReload);
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
+		manager.add(new Separator());
+		manager.add(actionInstantiatedClassMode);
 		manager.add(new Separator());
 		
 		drillDownAdapter.addNavigationActions(manager);
 	}
 
 	private void makeActions() {
+
+		actionShowUserNoteForReadOnlyNodes = new Action("actionShowUserNoteForReadOnlyNodes", IAction.AS_PUSH_BUTTON) { 
+			public void run() {
+				String message = "This is a read-only node. No actions can be performed on it. " +
+						"\n\nYou can select a client, mediator or provider and switch " +
+						"to the Mediator Perspective in order to enable actions. "
+						;
+				showMessage(message);
+			}
+		};
+		actionShowUserNoteForReadOnlyNodes.setText("User Note ...");
+		actionShowUserNoteForReadOnlyNodes.setToolTipText("User Note ...");
+		actionShowUserNoteForReadOnlyNodes.setChecked(true);
+//		actionShowUserNoteForReadOnlyNodes.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
-//		actionShowOnlyClientMediatorsProviders = new Action("actionShowOnlyClientMediatorsProviders", 2) { // a check box
-//			public void run() {
-//				if (actionShowOnlyClientMediatorsProviders.isChecked()) {
-//					showMessage("clientMediatorsProvidersFilter");
-//					viewer.addFilter(clientMediatorsProvidersFilter);
-//				}else {
-//					viewer.removeFilter(clientMediatorsProvidersFilter);
-//				}
-//			}
-//		};
-//		actionShowOnlyClientMediatorsProviders.setText("Show only Client->Mediators->Providers");
-//		actionShowOnlyClientMediatorsProviders.setToolTipText("Show only Client->Mediators->Providers");
-////		actionShowOnlyClientMediatorsProviders.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
+		actionShowMediatorPerspective = new Action("actionShowMediatorPerspective", 8) { 
+			public void run() {
+				if (actionShowMediatorPerspective.isChecked()) {
+					
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {mediatorPerspectiveFilter};
+					viewer.setFilters(filters);
+					
+					// select in view
+					TreeUtls.selectInView(obj, invisibleRoot, viewer);					
+				}
+			}
+		};
+		actionShowMediatorPerspective.setText("Show Mediator Perspective");
+		actionShowMediatorPerspective.setToolTipText("Show Mediator Perspective");
+		actionShowMediatorPerspective.setChecked(true);
+//		actionShowMediatorPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
+
+		
+		actionShowClientPerspective = new Action("actionShowClientPerspective", 8) { 
+			public void run() {
+				if (actionShowClientPerspective.isChecked()) {
+
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {clientPerspectiveFilter};
+					viewer.setFilters(filters);
+
+					// select in view
+					TreeUtls.selectInView(obj, invisibleRoot, viewer);
+					viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+				}
+			}
+		};
+		actionShowClientPerspective.setText("Show Client Perspective");
+		actionShowClientPerspective.setToolTipText("Show Client Perspective");
+//		actionShowClientPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
+		
+		
+		actionShowProviderPerspective = new Action("actionShowProviderPerspective", 8) { 
+			public void run() {
+				if (actionShowProviderPerspective.isChecked()) {
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {providerPerspectiveFilter};
+					viewer.setFilters(filters);
+
+					// select in view
+					TreeUtls.selectInView(obj, invisibleRoot, viewer);
+					viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+				}
+			}
+		};
+		actionShowProviderPerspective.setText("Show Provider Perspective");
+		actionShowProviderPerspective.setToolTipText("Show Provider Perspective");
+//		actionShowProviderPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
@@ -359,15 +452,26 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		
 		actionReload = new Action("actionReload") {
 			public void run() {
-//				showMessage("The view will be reloaded");
-
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				
 				TreeObject[] children = invisibleRoot.getChildren();
 				for (int i = 0; i < children.length; i++) {
 					invisibleRoot.removeChild(children[i]);
 				}
-				tree.buildTree(invisibleRoot);
+				
+				if (actionInstantiatedClassMode.isChecked()) {
+					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+				}
+				else {
+					treeBuilder.buildTreeFromUmlModel(invisibleRoot);	
+				}
 				viewer.setInput(getViewSite());
-				viewer.expandToLevel(2);
+
+				// select in view
+				TreeUtls.selectInView(obj, invisibleRoot, viewer);
+				viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+
 			}
 		};
 		actionReload.setText("(Re)load");
@@ -394,7 +498,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		
 		actionLinkWithEditor = new Action("actionLinkWithEditor", 2) { //obviously a check box style
 			public void run() {
-
 			}
 		};
 //		actionLinkWithEditor.setChecked(true);
@@ -402,7 +505,33 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionLinkWithEditor.setToolTipText("Link with other Model Views");
 		actionLinkWithEditor.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 
-		
+
+		actionInstantiatedClassMode = new Action("actionInstantiatedClassMode", 2) { //obviously a check box style
+			public void run() {
+				if (actionInstantiatedClassMode.isChecked()) {
+					TreeObject[] children = invisibleRoot.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						invisibleRoot.removeChild(children[i]);
+					}
+					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+					viewer.setInput(getViewSite());
+					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+				}
+				else {
+					TreeObject[] children = invisibleRoot.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						invisibleRoot.removeChild(children[i]);
+					}
+					treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+					viewer.setInput(getViewSite());
+					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+				}
+			}
+		};
+//		actionInstantiatedClassMode.setChecked(true);
+		actionInstantiatedClassMode.setText("Instantiated Class Mode");
+		actionInstantiatedClassMode.setToolTipText("Instantiated Class Mode");
+		actionInstantiatedClassMode.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/instantiatedClassTree.png"));
 		
 		
 		actionAssociateValueClient = new Action("actionAssociateValueClient") {
@@ -412,15 +541,17 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				ISelection selection = viewer.getSelection();
 				Object selectedTreeItem = ((IStructuredSelection)selection).getFirstElement();
 				
-				TreeParent valueMediatorTreeItem = getValueMediator((TreeObject) selectedTreeItem);
+//				TreeParent valueMediatorTreeItem = getValueMediator((TreeObject) selectedTreeItem);
+				TreeObject valueMediatorTreeItem = TreeUtls.getNearestMediator( (TreeObject) selectedTreeItem);
 				
 				if (valueMediatorTreeItem instanceof TreeParent) {
 					List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
 					listOfAllowedMetaClassesNames.add("Property");
 					String title = "Value Client Selection";
 					String message = "Click on a model element to be associated as Value Client to the Value Mediator."; // '" + ((TreeParent)selectedTreeParent).getName() + "'.";
-					String mode = "addValueClient";
-
+//					String mode = "addValueClient";
+					int mode = Constants.MODE_ADD_CLIENT;
+					
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
 							new Shell(), 
 							SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
@@ -430,7 +561,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 							(TreeParent)valueMediatorTreeItem,
 							viewer,
 							mode, 
-							tree);
+							null,
+							treeBuilder);
 					
 					dialog.open();
 				}
@@ -451,25 +583,28 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				ISelection selection = viewer.getSelection();
 				Object selectedTreeItem = ((IStructuredSelection)selection).getFirstElement();
 				
-				TreeParent valueMediatorTreeItem = getValueMediator((TreeObject) selectedTreeItem);
-				
+//				TreeParent valueMediatorTreeItem = getValueMediator((TreeObject) selectedTreeItem);
+				TreeObject valueMediatorTreeItem = TreeUtls.getNearestMediator( (TreeObject) selectedTreeItem);
+
 				if (valueMediatorTreeItem instanceof TreeParent) {
 					List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
 					listOfAllowedMetaClassesNames.add("Property");
 					String title = "Value Provider Selection";
 
 					String message = "Click on a model element to be associated as Value Provider to the Value Mediator."; // '" + ((TreeParent)selectedTreeParent).getName() + "'."
-					String mode = "addValueProvider";
+//					String mode = "addValueProvider";
+					int mode = Constants.MODE_ADD_PROVIDER;
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
 							new Shell(), 
 							SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 							title, 
 							message, 
 							listOfAllowedMetaClassesNames,
-							valueMediatorTreeItem,
+							(TreeParent)valueMediatorTreeItem,
 							viewer,
 							mode,
-							tree);
+							null,
+							treeBuilder);
 					
 					dialog.open();
 				}
@@ -569,8 +704,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionDeleteReference = new Action("actionDeleteReference") {
 			@SuppressWarnings("rawtypes")
 			public void run() {
-//				showMessage("actionDeleteReference is not implemented yet.");
-				
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				String name = "";
@@ -584,50 +717,68 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
 
 					if (go) {
-						
-						final TreeParent valueMediator = getValueMediator((TreeObject)obj);
-						final EObject valueMediatorSteretypeApplication = valueMediator.getUmlElement().getStereotypeApplication(valueMediator.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator));
-						
-						TreeObject itemToBeDeleted = (TreeObject)obj;
-						Stereotype itemToBeDeletedStereotype = null;
-						String itemToBeDeletedStereotypePropertyName = null;
-
-						if ( itemToBeDeleted.isValueClient() ) {
-							itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient);
-							itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-						} else if ( itemToBeDeleted.isValueProvider() ) {
-							itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider);
-							itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueProvider_providesValueFor;
-						}
-						
-						if ( itemToBeDeletedStereotype != null && itemToBeDeletedStereotypePropertyName != null) {
-							final Object exisitngList = itemToBeDeleted.getUmlElement().getValue(itemToBeDeletedStereotype, itemToBeDeletedStereotypePropertyName);
-							
-							if (exisitngList instanceof EList && containsObject((EList) exisitngList, valueMediator.getUmlElement())) {
-//								########## storing start
-								TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-								CompoundCommand cc = new CompoundCommand("Add value mediator reference");
-								Command command = new RecordingCommand(editingDomain) {
-									@Override
-									protected void doExecute() {
-											// Important: use the getStereotypeApplication to get an EObject! 
-											DynamicEObjectImpl eObject =(DynamicEObjectImpl)valueMediatorSteretypeApplication;
-											
-											// add value to the list
-											((EList)exisitngList).remove(eObject);
-									}
-								};
-								cc.append(command);
-								editingDomain.getCommandStack().execute(cc);
+						//delete dependency from mediator in UML model
+						boolean deleted = TreeUtls.deleteDependencyFromMediator((TreeObject)obj);
+						if (deleted) {
+							// remove deleted item from its parent in tree model
+							TreeParent parentItem = ((TreeObject)obj).getParent();
+							if (parentItem != null ) {
+								parentItem.removeChild((TreeObject)obj);
 							}
+							
+							// remove deleted item from its parent in tree viewer
+							viewer.remove((TreeObject)obj);
+							viewer.refresh();
 						}
 						
-						TreeParent parent = itemToBeDeleted.getParent();
-						if (parent != null ) {
-							parent.removeChild(itemToBeDeleted);
-						}
-						viewer.remove(itemToBeDeleted);
-						viewer.refresh();
+						
+//						// START Removed: Old approach using stereotype properties for linking ...
+//						final TreeParent valueMediator = getValueMediator((TreeObject)obj);
+//						if (valueMediator != null) {
+//							final EObject valueMediatorSteretypeApplication = valueMediator.getUmlElement().getStereotypeApplication(valueMediator.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator));
+//							
+//							TreeObject itemToBeDeleted = (TreeObject)obj;
+//							Stereotype itemToBeDeletedStereotype = null;
+//							String itemToBeDeletedStereotypePropertyName = null;
+//
+//							if ( itemToBeDeleted.isValueClient() ) {
+//								itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient);
+//								itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
+//							} else if ( itemToBeDeleted.isValueProvider() ) {
+//								itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider);
+//								itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueProvider_providesValueFor;
+//							}
+//							
+//							if ( itemToBeDeletedStereotype != null && itemToBeDeletedStereotypePropertyName != null) {
+//								final Object exisitngList = itemToBeDeleted.getUmlElement().getValue(itemToBeDeletedStereotype, itemToBeDeletedStereotypePropertyName);
+//								
+//								if (exisitngList instanceof EList && containsObject((EList) exisitngList, valueMediator.getUmlElement())) {
+////									########## storing start
+//									TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+//									CompoundCommand cc = new CompoundCommand("Delete value mediator reference");
+//									Command command = new RecordingCommand(editingDomain) {
+//										@Override
+//										protected void doExecute() {
+//												// Important: use the getStereotypeApplication to get an EObject! 
+//												DynamicEObjectImpl eObject =(DynamicEObjectImpl)valueMediatorSteretypeApplication;
+//												
+//												// add value to the list
+//												((EList)exisitngList).remove(eObject);
+//										}
+//									};
+//									cc.append(command);
+//									editingDomain.getCommandStack().execute(cc);
+//								}
+//							}
+//							
+//							TreeParent parent = itemToBeDeleted.getParent();
+//							if (parent != null ) {
+//								parent.removeChild(itemToBeDeleted);
+//							}
+//							viewer.remove(itemToBeDeleted);
+//							viewer.refresh();
+//						}
+//						// END Removed: Old approach using stereotype properties for linking ...
 					}
 				}
 
@@ -708,120 +859,185 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	
 	
 	// #############################
-	private TreeParent getValueMediator(TreeObject item) {
-		if (item.isValueMediator()) {
-			return (TreeParent) item;
-		}
-		else if (item.getParent() != null) {
-			return getValueMediator(item.getParent());
-		}
-		return null;
-	}
-	
-	private boolean containsObject(EList list, EObject eObject){
-		if (list instanceof EList) {
-			for (Object object : (EList)list) {
-				if (object instanceof EObject) {
-//					if (((EObject)object).eCrossReferences().get(0) == eObject) {
-					if (UMLUtil.getBaseElement((EObject)object) == eObject) {
-						return true;
-					}
-				}	
-			}
-		}
-		return false;
-	}
-	// #############################	
-	
-	
-	public void removeTreeItem(EObject object) {
-		TreeObject[] items = invisibleRoot.getChildren();
-		for (int i = 0; i < items.length; i++) {
-			if ( ((TreeObject)items[i]).getUmlElement() != null && ((TreeObject)items[i]).getUmlElement() == object) {
-					TreeParent parent = ((TreeObject)items[i]).getParent();
-					if (parent != null) {
-						parent.removeChild((TreeObject) items[i]);
-					}
-					viewer.remove(items[i]);
-//					viewer.refresh();
-			}
-			else {
-				if (items[i] instanceof TreeParent) {
-					removeTreeItem((TreeParent)items[i], object);
-				}
-			}
-		}
-	}
+//	private TreeParent getValueMediator(TreeObject item) {
+//		if (item.isValueMediator()) {
+//			return (TreeParent) item;
+//		}
+//		else if (item.getParent() != null) {
+//			return getValueMediator(item.getParent());
+//		}
+//		return null;
+//	}
+//	
+//	private boolean containsObject(EList list, EObject eObject){
+//		if (list instanceof EList) {
+//			for (Object object : (EList)list) {
+//				if (object instanceof EObject) {
+////					if (((EObject)object).eCrossReferences().get(0) == eObject) {
+//					if (UMLUtil.getBaseElement((EObject)object) == eObject) {
+//						return true;
+//					}
+//				}	
+//			}
+//		}
+//		return false;
+//	}
 
 	
-	private void removeTreeItem(TreeParent parent, EObject object) {
-		TreeObject[] items = parent.getChildren();
-		for (int i = 0; i < items.length; i++) {
-			if ( ((TreeObject)items[i]).getUmlElement() != null && ((TreeObject)items[i]).getUmlElement() == object) {
-				parent.removeChild((TreeObject) items[i]);
-				viewer.remove(items[i]);
-//				viewer.refresh();
-			}
-			else {
-				if (items[i] instanceof TreeParent) {
-					removeTreeItem((TreeParent)items[i], object);
-				}
-			}
-		}
-	}
 	
-	
-	private HashSet<Object> findTreeItems(EObject selectedElement, TreeParent parent, HashSet<Object> list) {
-		TreeObject[] items = parent.getChildren();
-		
-		for (int i = 0; i < items.length; i++) {
-			if ( ((TreeObject)items[i]).getUmlElement() == selectedElement) {
-				list.add(items[i]);
-			}
-			else {
-				if (items[i] instanceof TreeParent) {
-					list.addAll(findTreeItems(selectedElement, (TreeParent)items[i], list));
-				}
-			}
-		}
-		return list;
-	}
-	
-	
-	
-	
-	//####################### FILTERS 
-	
-//	// TODO: Filter for "Show only Client->Mediators->Providers" 
-//	class ClientMediatorsProvidersFilter extends ViewerFilter {
-//		
-////		private boolean isPartOfClientTree(TreeObject item){
-////			if (item.isValueClient() || item.isReadOnly()) {
-////				return true;
-////			}
-//////			TreeObject parent = item.getParent();
-//////			if (parent != null && parent.isReadOnly() ) {
-//////				return isPartOfClientTree(parent);
-//////			}
-//////			else if (parent != null && parent.isValueClient()) {
-//////				return true;
-//////			}
-////			return false;
-////		}
-//		
-//		@Override
-//		public boolean select(Viewer viewer, Object parentElement, Object element) {
-//			if (element instanceof TreeParent) {
-//				TreeParent item = ((TreeParent)element); 
-//				System.err.println(item);
-//				if (item.isValueClient() || item.isReadOnly()) { 
-//					return true;
+//	private void deleteDependencyFromMediator(final TreeObject dependencyTargetItem){
+//
+//		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+//		CompoundCommand cc = new CompoundCommand("Delete mediator reference");
+//		Command command = new RecordingCommand(editingDomain) {
+//			@Override
+//			protected void doExecute() {
+//					TreeObject mediator = TreeUtls.getNearestMediator(dependencyTargetItem);
+//					if (mediator != null) {
+//						Element mediatorElement = mediator.getUmlElement();
+//						Element clientOrProviderElement = dependencyTargetItem.getUmlElement();
+//						if (mediatorElement instanceof Property && clientOrProviderElement instanceof NamedElement) {
+//							EList<Dependency> mediatorDependencies = ((Property)mediatorElement).getClientDependencies();
+//							EList<Dependency> dependeciesToBeDeleted = new BasicEList<Dependency>();
+//							
+//							// find dependencies to the selected item (client or mediator)
+//							for (Dependency dependency : mediatorDependencies) {
+//								EList<Element> targets = dependency.getTargets();
+//								for (Element element : targets) {
+//									if (element == clientOrProviderElement) {
+//										// TODO: should we check also if the stereotype is applied? 
+//										dependeciesToBeDeleted.add(dependency);
+//									}
+//								}
+//							}
+//							
+//							// delete dependencies
+//							for (Dependency dependency : dependeciesToBeDeleted) {
+////								System.err.println("Deleting: " + dependency.getName());
+//								dependency.destroy();
+//							}
+//						}
+//						else {
+//							MessageDialog.openError(new Shell(), "Error", "Invalid mediator reference for " + dependencyTargetItem.getName());
+//						}
+//					}
+//					else {
+//						MessageDialog.openError(new Shell(), "Error", "Could not find the Mediator for " + dependencyTargetItem.getName());
+//					}
 //				}
-//			}
+//		};
+//		cc.append(command);
+//		editingDomain.getCommandStack().execute(cc);
+//	}
+	
+	
+	
+//	private boolean areAllParentsReadOnly(TreeObject item){
+//		TreeObject parent = item.getParent();
+//		if (parent != null && parent.isReadOnly() ) {
+//			// go for next parent
+//			return areAllParentsReadOnly(parent);
+//		}
+//		else {
 //			return false;
 //		}
 //	}
-//	ClientMediatorsProvidersFilter clientMediatorsProvidersFilter = new ClientMediatorsProvidersFilter();
+//	
+	//####################### FILTERS 
+	
+	// Filter for "Show Value Mediator Perspective" 
+	class MediatorPerspectiveFilter extends ViewerFilter {
+			@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+				if ( item.isReadOnly() ) { 
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	MediatorPerspectiveFilter mediatorPerspectiveFilter = new MediatorPerspectiveFilter();
+	
+	
+	// Filter for "Show Value Client Perspective" 
+	class ClientPerspectiveFilter extends ViewerFilter {
+			@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+
+				// invisible tree root -> show
+				if (item == invisibleRoot) {
+					return true;
+				}
+				// adjust here
+				// providers node at the top level -> hide
+				else if (item.isValueProvidersNode() && item.getParent() != null && item.getParent() == invisibleRoot) {
+					return false;
+				}
+				// read only -> show (read-only nodes are the perspective specific additional tree nodes that are hidden by default)
+				else if ( item.isReadOnly()) { 
+					return true;
+				}
+				// providers node underneath a mediator for a client -> show
+				else if (item.isValueProvidersNode()) { 
+					return true;
+				}
+				// adjust here
+				// value client underneath a clients node at the top level -> show
+				else if (item.isValueClient() && item.getParent() != null && item.getParent().isReadOnly()) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			return false;
+		}
+	}
+	ClientPerspectiveFilter clientPerspectiveFilter = new ClientPerspectiveFilter();
+	
+	// Filter for "Show Value Provider Perspective" 
+	class ProviderPerspectiveFilter extends ViewerFilter {
+			@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof TreeParent) {
+					TreeParent item = ((TreeParent)element); 
+					
+					// invisible tree root -> show
+					if (item == invisibleRoot) {
+						return true;
+					}
+					// adjust here
+					// clients node at the top level -> hide
+					else if (item.isValueClientsNode() && item.getParent() != null && item.getParent() == invisibleRoot) {
+						return false;
+					}
+					// read only -> show (read-only nodes are the perspective specific additional tree nodes that are hidden by default)
+					else if ( item.isReadOnly()) { 
+						return true;
+					}
+					// clients node underneath a mediator for a provider -> show
+					else if (item.isValueClientsNode()) { 
+						return true;
+					}
+					// adjust here
+					// value provider underneath a providers node at the top level -> show
+					else if (item.isValueProvider() && item.getParent() != null && item.getParent().isReadOnly()) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				return false;
+		}
+	}
+	ProviderPerspectiveFilter providerPerspectiveFilter = new ProviderPerspectiveFilter();
+	
+	
 	
 	
 	//##################### Selection handling
@@ -833,7 +1049,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 				}
 				if ( selectedElement != null ) {
-					HashSet<Object> objects = findTreeItems(selectedElement, invisibleRoot, new HashSet<Object>());
+					HashSet<Object> objects = TreeUtls.findTreeItems(selectedElement, invisibleRoot, new HashSet<Object>());
 					List<Object> items = new ArrayList<Object>();
 					items.addAll(objects);
 					viewer.setSelection(new StructuredSelection(items), true);
@@ -870,6 +1086,10 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 			}
 		}
 		return eObject;
+	}
+	
+	public TreeBuilder getTreeBuilder(){
+		return this.treeBuilder;
 	}
 	
 	public TreeParent getTreeRoot(){

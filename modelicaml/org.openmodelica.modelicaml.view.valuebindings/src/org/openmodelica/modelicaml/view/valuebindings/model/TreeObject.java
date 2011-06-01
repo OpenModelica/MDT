@@ -12,6 +12,14 @@ public class TreeObject implements IAdaptable {
 	private String name;
 	private TreeParent parent;
 	private Element umlElement;
+	
+	// only used for instantiated class mode
+	private org.openmodelica.modelicaml.common.instantiation.TreeObject instantiationTreeObject = null;
+	private boolean isInstantiatedClass = false; // only for the root of the instantiated class tree.
+	
+	private boolean isValueClient = false;
+	private boolean isValueProvider = false;
+
 	private boolean isReadOnly = false;
 	
 	
@@ -64,15 +72,24 @@ public class TreeObject implements IAdaptable {
 		}
 		return false;
 	}
+	
+	public void setIsValueClient() {
+		this.isValueClient = true;
+	}
+
+
+
+	
 	public boolean isValueClient() {
 		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
 			return true;
 		}
-		return false;
+//		return false;
+		return this.isValueClient;
 	}
 
 	public boolean isValueClientsNode() {
-		if (getName().equals(Constants.valueClientsNodeName)) {
+		if (getName().equals(Constants.valueClientsNodeName) || getName().equals(Constants.potentialCalueClientsNodeName)) {
 			return true;
 		}
 		return false;
@@ -85,11 +102,17 @@ public class TreeObject implements IAdaptable {
 		return false;
 	}
 	
+	
+	public void setIsValueProvider() {
+		this.isValueProvider = true;
+	}
+	
 	public boolean isValueProvider() {
 		if (getUmlElement() != null && getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
 			return true;
 		}
-		return false;
+//		return false;
+		return this.isValueProvider;
 	}
 	
 	public boolean isValueProvidersNode() {
@@ -129,5 +152,17 @@ public class TreeObject implements IAdaptable {
 	}
 	public boolean isReadOnly() {
 		return isReadOnly;
+	}
+	public void setInstantiatedClass(boolean isInstantiatedClass) {
+		this.isInstantiatedClass = isInstantiatedClass;
+	}
+	public boolean isInstantiatedClass() {
+		return isInstantiatedClass;
+	}
+	public void setInstantiationTreeObject(org.openmodelica.modelicaml.common.instantiation.TreeObject instantiationTreeObject) {
+		this.instantiationTreeObject = instantiationTreeObject;
+	}
+	public org.openmodelica.modelicaml.common.instantiation.TreeObject getInstantiationTreeObject() {
+		return instantiationTreeObject;
 	}
 }

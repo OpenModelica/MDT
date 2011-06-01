@@ -1,21 +1,15 @@
 package org.openmodelica.modelicaml.view.valuebindings.sections;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -23,17 +17,14 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.OpaqueAction;
-import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
@@ -41,8 +32,10 @@ import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.ui.internal.ClientActivator;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.ui.internal.ProviderActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 import com.google.inject.Injector;
 
@@ -57,7 +50,7 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 	protected static String LANGUAGE = "Modelica";
 	
 	/** The selected uml element. */
-	private Element selectedUmlElement;
+	private Element storeLocation;
 
 	/** The parent. */
 	private Composite parent;
@@ -85,26 +78,50 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 	
 	/** The is new selection. */
 	private boolean isNewSelection;
-	
-//	private Element valueClient;
+
+	// Dependency stereotype name:
+	// from Mediator to Client -> ProvidesValueFor
+	// from Mediator to Provider -> ObtainsValueFrom
+	private String stereotypeQName = Constants.stereotypeQName_ProvidesValueFor;
 
 	
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
         super.setInput(part, selection);
-//        Assert.isTrue(selection instanceof IStructuredSelection);
+        Assert.isTrue(selection instanceof IStructuredSelection);
         Object input = ((IStructuredSelection) selection).getFirstElement();
 //        Assert.isTrue(input instanceof TreeObject);
-//        this.item = (TreeObject) input;
-        
-        EObject selectedElement = (EObject) adaptSelectedElement(input);
-        if (selectedElement instanceof Element) {
-        	selectedUmlElement = (Element)selectedElement;
-			if (selectedUmlElement instanceof Property) {
-//				valueClient = selectedUmlElement;
-				isNewSelection = true;
+        this.item = (TreeObject) input;
+  
+//        EObject selectedElement = null;
+        if (input instanceof TreeObject) {
+			TreeObject item = (TreeObject)input;
+			Element element = item.getUmlElement();
+// ################################ Adjust start
+			if (item.isValueClient() && element instanceof NamedElement) {
+// ################################ Adjust end
+				TreeObject mediator = TreeUtls.getNearestMediator(item);
+				Element mediatorElement = mediator.getUmlElement();
+
+				if (mediatorElement instanceof NamedElement) {
+					EList<Dependency> depList = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement)element, stereotypeQName);
+					if (depList != null && depList.size() == 1) {
+						storeLocation = depList.get(0);
+					}
+					else {
+						MessageDialog.openError(new Shell(), "Value Mediator Inconsitency", "There are multiple links form the Mediator '" + mediator.getName() + "' " +
+								" to the the Value Client '" + item.getName() + "'. This is not allowed."  );
+					}
+				}
 			}
 		}
+        
+//        if (selectedElement instanceof Element) {
+//        	storeLocation = (Element)selectedElement;
+			if (storeLocation instanceof Dependency) {
+				isNewSelection = true;
+			}
+//		}
    }
 	
 	
@@ -123,16 +140,15 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 		injector = ClientActivator.getInstance().getInjector("org.openmodelica.modelicaml.editor.xtext.valuebinding.Client");
 		fileExtension = ".valuebindingclientoperation";
 		
-		// TODO: delete editpart from the constuctor
-		editor = new PropertiesSectionXtextEditorHelper(selectedUmlElement, injector, null, textToEdit, fileExtension); 
+		editor = new PropertiesSectionXtextEditorHelper(storeLocation, injector, null, textToEdit, fileExtension); 
 		// ################################ Adjust end
 		
 		editor.showEditor(editorComposite, SWT.BORDER);
 		editor.getEditorWidget().addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (selectedUmlElement != null) {
-					storeText(selectedUmlElement, editor.getText());					
+				if (storeLocation != null) {
+					storeText(storeLocation, editor.getText());					
 				}
 			}
 		});
@@ -140,14 +156,10 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 		// Get Papyrus editing domain
 		editingDomain = EditorUtils.getTransactionalEditingDomain();
 	}
-
+	
 	private Boolean isValidElement(){
 		// ################################ Adjust start
-		if ( this.selectedUmlElement instanceof Property && (
-					((Property)this.selectedUmlElement).getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null 
-					|| 	((Property)this.selectedUmlElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null 
-				)
-			) {
+		if ( this.storeLocation instanceof Dependency && ((Dependency)this.storeLocation).getAppliedStereotype(stereotypeQName) != null) {
 			return true;
 		}
 		// ################################ Adjust end
@@ -159,51 +171,37 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 	public void refresh() {
 		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
 			
-//			valueClient = null; // reset the element. important when another element of the same meta-type is selected.
+			//############## Adjust here: start
 			
-			if (isValueClient()) { // no code completion for Value Mediator
-				// build the content assistance proposals list.
-				ModelicaMLContentAssist.setSelectedSourceElement(selectedUmlElement);
-				owningClass = ((Property)selectedUmlElement).getOwner();
+			// build the content assistance proposals list.
+			Element element = this.item.getUmlElement();
+			if (element instanceof Property) {
+				ModelicaMLContentAssist.setSelectedSourceElement(element);
+				owningClass = ((Property)element).getOwner();
 
 				if (owningClass instanceof Class) {
 					ModelicaMLContentAssist.createComponentReferencelist((Class)owningClass);
-					ModelicaMLContentAssist.setPropertyName(StringUtls.replaceSpecChar( ((Property)selectedUmlElement).getName() ));
-
+					ModelicaMLContentAssist.setPropertyName(StringUtls.replaceSpecChar( ((Property)element).getName() ));
 				}
 			}
-			else {// no code completion for Value Mediator
-				ModelicaMLContentAssist.clearAllLists();
-			}
-			
-			//############## Adjust here: start
+			// ################################ Adjust end
 
 			//Marker support
-			ModelicaMLContentAssist.setSelectedSourceElement(selectedUmlElement);
+			ModelicaMLContentAssist.setSelectedSourceElement(storeLocation);
 			
-			// ################################ Adjust start
-			if (selectedUmlElement != null ) {
+			if (storeLocation != null ) {
 				textToEdit = getOperationString();
 			}
 			else {
 				textToEdit = "";
 			}
-			// ################################ Adjust end
-			
+
 			editor.setTextToEdit(textToEdit);
-			editor.setContextElement(selectedUmlElement);
+			editor.setContextElement(storeLocation);
 			
 			generateUMLModelMarker();
 		}
 	}
-	
-	private boolean isValueClient(){
-		if (selectedUmlElement.getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
-			return true;
-		}
-		return false;
-	}
-	
 	
 	/**
 	 * Store text.
@@ -217,11 +215,9 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 		CompoundCommand cc = new CompoundCommand("Update operation code");
 		
 		// get the stereotype
-		Stereotype stereotype_temp = selectedUmlElement.getAppliedStereotype(Constants.stereotypeQName_ValueClient);
-		if (stereotype_temp == null) { // try anothjer
-			stereotype_temp = selectedUmlElement.getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
-		}
-		final Stereotype stereotype = stereotype_temp;
+//##################### ADOPT HERE 
+		final Stereotype stereotype = storeLocation.getAppliedStereotype(stereotypeQName);
+		
 		if (stereotype != null) {
 			// Record command
 			// ################################## Adjust start
@@ -229,17 +225,17 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 				Command command = new RecordingCommand(editingDomain) {
 					@Override
 					protected void doExecute() {
-						selectedUmlElement.setValue(stereotype, Constants.propertyName_operation, null);
+						storeLocation.setValue(stereotype, Constants.propertyName_operation, null);
 					}
 				};
 				cc.append(command);
 			}
-			if (selectedUmlElement != null && bodyText != null) {
+			if (storeLocation != null && bodyText != null) {
 //				if (element instanceof OpaqueBehavior) {
 					Command command = new RecordingCommand(editingDomain) {
 						@Override
 						protected void doExecute() {
-							selectedUmlElement.setValue(stereotype, Constants.propertyName_operation, bodyText);
+							storeLocation.setValue(stereotype, Constants.propertyName_operation, bodyText);
 						}
 					};
 					cc.append(command);
@@ -268,120 +264,29 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 	 */
 	private void generateUMLModelMarker(){
 		// create a marker for the uml model element
-		String message = "The " + ((NamedElement)selectedUmlElement).eClass().getName() 
-							+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Value client/Mediator operation code.";
+		String message = "The " + ((NamedElement)storeLocation).eClass().getName() 
+							+ " '" + ((NamedElement)storeLocation).getName() + "' has errors in its Value Provider operation code.";
 		
 		if (editor.isDocumentHasErrors()) {
-			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement);
+			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)storeLocation);
 		}
 		else {
-			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement);
+			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)storeLocation);
 		}
 	}
 	
 	
 	private String getOperationString(){
-	  Stereotype stereotype = getStereotype();
-	  if (stereotype != null) {
-		  Element element = selectedUmlElement;
-		  if (element != null) {
-			  Object object = element.getValue(stereotype, Constants.propertyName_operation);
-			  if (object instanceof String) {
-				return (String)object;
-			}
-		  }
-		}
-	  return "";
-	}
-	
-	private Stereotype getStereotype(){
-		Stereotype stereotype = null;
-		Element element = selectedUmlElement;
-		if (element != null) {
-			stereotype = element.getAppliedStereotype(Constants.stereotypeQName_ValueClient);
-			if (stereotype != null) { return stereotype;}
-
-			stereotype = element.getAppliedStereotype(Constants.stereotypeQName_ValueProvider);
-			if (stereotype != null) { return stereotype;}
-
-			stereotype = element.getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
-			if (stereotype != null) { return stereotype;}
-		}
-		return stereotype;
-	}
-	
-	
-	
-	
-	
-//	protected List<Object> getSelectedElements(ExecutionEvent event) throws ExecutionException {
-//		ISelection selection = getSelection(event);
-//		if (!( selection instanceof IStructuredSelection))
-//			return Collections.emptyList();
-//		return (List<Object>)((IStructuredSelection) selection).toList();
-//	}
-//
-//	/**
-//	 * Gets the current selection.
-//	 * 
-//	 * @param event
-//	 *            the event
-//	 * @return The current selection.
-//	 * @throws ExecutionException
-//	 *             the execution exception
-//	 */
-//	protected ISelection getSelection(ExecutionEvent event) throws ExecutionException {
-//		return HandlerUtil.getCurrentSelectionChecked(event);
-//	}
-
-	/**
-	 * Gets the current selections.
-	 * 
-	 * @return the current selections
-	 */
-//	private List<Object> getCurrentSelections() {
-//		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-//		if(selection instanceof IStructuredSelection) {
-//			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-//			return structuredSelection.toList();
-//		}
-//	
-//		return null;
-//	}
-
-	/**
-	 * Adapt the selected element to an EObject, in case there is intermediate
-	 * construct (like notation.View)
-	 * 
-	 * @param selection
-	 *            the selection
-	 * @return the e object
-	 */
-	protected EObject adaptSelectedElement( Object selection) {
-
-		EObject eObject = null;
-	
-		if(selection != null) {
-			
-//			// treeObject from value bindings plugin
-//			if (selection instanceof TreeObject) {
-//				Element element = ((TreeObject)selection).getUmlElement();
-//				if ( element != null) {
-//					eObject = element;
-//				}
-//			}
-			
-			// from any adaptable
-			if(selection instanceof IAdaptable) {
-				selection = ((IAdaptable)selection).getAdapter(EObject.class);
-			}
-	
-			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
-			if(businessObject instanceof EObject) {
-				eObject = (EObject)businessObject;
+//##################### ADOPT HERE 		
+		if (storeLocation != null) {
+			Stereotype stereotype = storeLocation.getAppliedStereotype(stereotypeQName);
+			if (stereotype != null) {
+				Object object = storeLocation.getValue(stereotype, Constants.propertyName_operation);
+				if (object instanceof String) {
+					return (String)object;
+				}
 			}
 		}
-		return eObject;
+		return "";
 	}
-	
 }

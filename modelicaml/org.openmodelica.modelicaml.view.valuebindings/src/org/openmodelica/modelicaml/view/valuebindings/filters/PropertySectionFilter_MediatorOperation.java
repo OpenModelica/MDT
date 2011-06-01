@@ -9,7 +9,7 @@ public class PropertySectionFilter_MediatorOperation implements IFilter {
 	public boolean select(Object toTest) {
 		if (toTest instanceof TreeObject) {
 			TreeObject item = (TreeObject)toTest;
-			if (item.isValueMediator()) {
+			if (item.isValueMediator() && !item.isReadOnly()) {
 				return true;
 			}
 		}

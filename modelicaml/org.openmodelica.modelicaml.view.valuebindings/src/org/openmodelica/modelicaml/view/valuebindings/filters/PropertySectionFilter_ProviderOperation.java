@@ -1,5 +1,7 @@
 package org.openmodelica.modelicaml.view.valuebindings.filters;
 import org.eclipse.jface.viewers.IFilter;
+import org.eclipse.uml2.uml.Element;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 
 
@@ -9,7 +11,14 @@ public class PropertySectionFilter_ProviderOperation implements IFilter {
 	public boolean select(Object toTest) {
 		if (toTest instanceof TreeObject) {
 			TreeObject item = (TreeObject)toTest;
-			if (item.isValueProvider()) {
+			
+//			Element element = item.getUmlElement();
+//			if (element != null) {
+//				if (element.getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
+//					return true;					
+//				}
+//			}
+			if (item.isValueProvider() && !item.isReadOnly()) {
 				return true;
 			}
 		}

@@ -1,13 +1,17 @@
 package org.openmodelica.modelicaml.view.valuebindings.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
@@ -20,47 +24,89 @@ import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.editor.xtext.modification.ui.internal.ModificationActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 
 import com.google.inject.Injector;
 
 public class DialogDerivedCode extends Dialog {
 
 	private StyledText text;
+	
 	private Label lblMessage;
-	private String string = null;
-	public static int CODE = 0;
-	public final static int ERROR_MESSAGE = 1;
-	private int mode = ERROR_MESSAGE;
+
+	private String string = null; // string is the derived code, error or log string depending on the mode
+	
+	public final static int MODE_CODE = 0;
+	public final static int MODE_ERROR_MESSAGE = 1;
+	public final static int MODE_LOG = 2;
+	
+	private int mode = MODE_ERROR_MESSAGE; //set it by default
 	
 	private Injector injector;
 	private String fileExtension;
 	private PropertiesSectionXtextEditorHelper editor;
 	private TreeObject treeObject;
+	private DeriveValueBindingCodeHelper deriveValueBindingCodeHelper;
 	
-	public DialogDerivedCode(Shell parentShell, String string, int mode, TreeObject treeObject) {
+	public DialogDerivedCode(Shell parentShell, 
+									String string, 
+									int mode, 
+									DeriveValueBindingCodeHelper deriveValueBindingCodeHelper,
+									TreeObject treeObject) {
 		super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE | SWT.APPLICATION_MODAL);
 		this.mode = mode;
+		this.deriveValueBindingCodeHelper = deriveValueBindingCodeHelper;
 		this.treeObject = treeObject;
         this.string = string;
 	}
 	
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
-    	if (mode == CODE) {
+    	if (mode == MODE_CODE) {
     		shell.setText("Derived Code");
     		shell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png"));
 
 		}
-    	else if (mode == ERROR_MESSAGE) {
-    		shell.setText("Validation results");
+    	else if (mode == MODE_ERROR_MESSAGE) {
+    		shell.setText("Code Derivation Validation Results");
     		shell.setImage(SWTResourceManager.getImage(Activator.class, "/org/eclipse/jface/dialogs/images/message_error.gif"));
+		}
+    	else if (mode == MODE_LOG) {
+    		shell.setText("Code Derivation Log");
+    		shell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/log.png"));
 		}
     }
 	
+	
+	protected void createButtonsForButtonBar(Composite parent) {
+		// this button shall not be shown again if the logs are actually displayed.
+		if (this.mode != MODE_LOG) { 
+			Button logsButton = createButton(parent, 11, "See Logs ...    ", false);
+	    	logsButton.addListener(3, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+						String log = deriveValueBindingCodeHelper.getLogString();
+						DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), log, DialogDerivedCode.MODE_LOG, deriveValueBindingCodeHelper, treeObject);
+						dialog.open(); // do nothing after closing the dialog.
+				}
+
+			});
+	    	logsButton.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/log.png"));
+	    	setButtonLayoutData(logsButton);
+		}
+    	
+    	// create OK and Cancel buttons by default
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+    }
+	
+	
+	
+	
 	@Override
 	protected void okPressed() {
-		if (mode == CODE) {
+		if (mode == MODE_CODE) {
 			string = editor.getText();
 		}
 		super.okPressed();
@@ -71,7 +117,7 @@ public class DialogDerivedCode extends Dialog {
 	}
 	
 	public String getCode(){
-		if (mode == CODE) {
+		if (mode == MODE_CODE) {
 			return string;	
 		}
 		return null;
@@ -80,12 +126,14 @@ public class DialogDerivedCode extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
+        
+        if (this.mode == MODE_CODE) {
+            lblMessage = new Label(composite, SWT.NONE);
+    		lblMessage.setBounds(10, 10, 380, 13);
+		}
 
-        lblMessage = new Label(composite, SWT.NONE);
-		lblMessage.setBounds(10, 10, 380, 13);
-
-		if (mode == CODE) {
-			lblMessage.setText("The following code was derived based on linked Value Mediators and Providers: ");			
+		if (mode == MODE_CODE) {
+			lblMessage.setText("The following Value Client binding code was derived based on the selected Value Mediators and Providers: ");			
 
 			Composite editorComposite = new Composite(composite, SWT.BORDER);
 	        editorComposite.setLayout(new GridLayout());
@@ -113,13 +161,27 @@ public class DialogDerivedCode extends Dialog {
     		editor.setTextToEdit(this.string);
     		
 		} 
-		else if (mode == ERROR_MESSAGE) {
-			lblMessage.setText("The following inconsistancies are detected: ");
+		else if (mode == MODE_ERROR_MESSAGE) {
+//			lblMessage.setText("The following inconsistencies are detected: ");
 
-			text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL);
+			text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 			text.setLayout(new GridLayout());
 	        GridData textGD = new GridData(SWT.FILL, SWT.FILL, true, true);
 	        textGD.heightHint = convertHorizontalDLUsToPixels(130);
+	        textGD.widthHint = convertHorizontalDLUsToPixels(400);
+	        text.setLayoutData(textGD);
+	        
+			text.setText(this.string + "\n\n");	
+	        text.setEditable(false);
+		}
+		else if (mode == MODE_LOG) {
+//			lblMessage.setText("");
+
+			text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+			text.setLayout(new GridLayout());
+	        GridData textGD = new GridData(SWT.FILL, SWT.FILL, true, true);
+	        textGD.heightHint = convertHorizontalDLUsToPixels(130);
+	        textGD.widthHint = convertHorizontalDLUsToPixels(400);
 	        text.setLayoutData(textGD);
 	        
 			text.setText(this.string + "\n\n");	

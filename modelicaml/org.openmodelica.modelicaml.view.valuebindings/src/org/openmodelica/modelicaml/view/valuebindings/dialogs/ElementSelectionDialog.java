@@ -3,19 +3,13 @@ package org.openmodelica.modelicaml.view.valuebindings.dialogs;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CompoundCommand;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -31,13 +25,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
-import org.eclipse.uml2.uml.Stereotype;
-import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 public class ElementSelectionDialog extends Dialog {
 	protected Shell sShell = null; 
@@ -59,7 +52,9 @@ public class ElementSelectionDialog extends Dialog {
 	protected static final Image propertyIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/icons/Property.gif");
 	protected static final Image valueMediatorIcon = SWTResourceManager.getImage(ElementSelectionDialog.class, "/icons/valueMediator.png");
 
+	private org.openmodelica.modelicaml.common.instantiation.TreeObject selectedInstantiationTreeObject = null;
 	protected EObject selectedElement = null;
+//	private Object preSelectedElement = null;
 	
 	TreeParent valueMediatorTreeItem = null; 
 	protected TreeViewer viewer = null;
@@ -67,7 +62,7 @@ public class ElementSelectionDialog extends Dialog {
 //	private List<String> listOfAllowedMetaClassNames = new ArrayList<String>();
 	protected String title = "";
 	protected Image image = null;
-	protected String mode = null;
+	protected int mode;
 	
 	protected TreeBuilder treeBuilder;
 	
@@ -78,16 +73,27 @@ public class ElementSelectionDialog extends Dialog {
 									List<String> listOfAllowedMetaClassNames, 
 									TreeParent valueMediatorTreeItem, 
 									TreeViewer viewer, 
-									String mode, 
-									TreeBuilder treeBuilder) {
+									int mode,
+									Object preSelectedElement, 
+									TreeBuilder treeBuilder
+									) {
 		super(parent);
 
 //		this.listOfAllowedMetaClassNames = listOfAllowedMetaClassNames;
 		this.valueMediatorTreeItem = valueMediatorTreeItem;
 		this.viewer = viewer;
 		this.mode = mode;
-		this.treeBuilder = treeBuilder;
 		
+		// set pre-selected element
+//		this.preSelectedElement = preSelectedElement;
+		if (adaptSelectedElement(preSelectedElement) instanceof EObject) {
+			this.selectedElement = adaptSelectedElement(preSelectedElement);	
+		}
+		if (preSelectedElement instanceof org.openmodelica.modelicaml.common.instantiation.TreeObject) {
+			selectedInstantiationTreeObject = (org.openmodelica.modelicaml.common.instantiation.TreeObject) preSelectedElement;
+		}
+
+		this.treeBuilder = treeBuilder;
 		
 		this.title = title;
 		this.image = image;
@@ -115,16 +121,24 @@ public class ElementSelectionDialog extends Dialog {
 		// set default values for element selection
 		seName.setText("Click on a model element ...");
 		seIcon.setImage(errorIcon); // nothing is selected yet.
+		
+		Label lblNote = new Label(sShell, SWT.NONE);
+		lblNote.setFont(SWTResourceManager.getFont("Tahoma", 7, SWT.NORMAL));
+		lblNote.setBounds(10, 168, 517, 17);
+		lblNote.setText("Note, after selection, the bindings view should be reloaded in order to reflect the selection in other tree nodes.");
 
-		if (mode.equals("addValueProvider")) {
+		if (mode == Constants.MODE_ADD_PROVIDER) {
 			selectedElementGroup.setText("Value Provider"); 
 		}
-		else if (mode.equals("addValueClient")) {
+		else if (mode == Constants.MODE_ADD_CLIENT) {
 			selectedElementGroup.setText("Value Client");
 		}
 		else {
 			selectedElementGroup.setText("Selected Element");
 		}
+		
+		// validate the selection and set the enablement of the ok button. 
+		validate();
 		
 		// add the selection listener
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
@@ -133,64 +147,69 @@ public class ElementSelectionDialog extends Dialog {
 
 	protected ISelectionListener selectionListener = new ISelectionListener() {
 	        public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-	        if (sourcepart != ElementSelectionDialog.this &&
-	            selection instanceof IStructuredSelection) {
+	        if (sourcepart != ElementSelectionDialog.this && selection instanceof IStructuredSelection) {
 	
 	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
-						selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+					if (getCurrentSelections().get(0) instanceof org.openmodelica.modelicaml.common.instantiation.TreeObject) {
+						selectedInstantiationTreeObject = (org.openmodelica.modelicaml.common.instantiation.TreeObject) getCurrentSelections().get(0); 
+					}
 				}
-	        	
-				if (	selectedElement instanceof Property
-						&& ((Property)selectedElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) == null
-						&& selectedElement != valueMediatorTreeItem.getUmlElement()
-						) {
-
-					String typeString = "Not Defined!";
-					String ownerString = "";
-					if (((Element) selectedElement).getOwner() instanceof NamedElement) {
-						NamedElement owner = (NamedElement) ( (NamedElement) selectedElement).getOwner();
-						ownerString = "owner(" + owner.getName() + ")";
-					}
-					if (selectedElement instanceof Property  
-							&& ((Property)selectedElement).getType() != null ) {
-						typeString = ((Property)selectedElement).getType().getName().replaceFirst("Modelica", "");
-					}
-					seName.setText( ((Property)selectedElement).getName() + "   -   type(" + typeString + ")" + ", " + ownerString);
-					seIcon.setImage(propertyIcon);
-
-					// enable the OK button
-					bttOK.setEnabled(true);
-					
-				} else {
-					// reset  
-					seName.setText("");
-					seIcon.setImage(errorIcon);
-					
-					if (selectedElement == valueMediatorTreeItem.getUmlElement()) { // link to its self
-						String text = "It is not allowed to link an element with itself.";
-						seName.setText(text);
-					}
-					else if ( selectedElement instanceof Property
-							&& ((Property)selectedElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null){
-						String text = "It is not allowed to link a Value Mediator to another Value Mediator.";
-						seName.setText(text);
-					}
-					else if (selectedElement != null) {
-						String text = selectedElement.eClass().getName() + " is not allowed!";
-						seName.setText(text);
-					}
-					else {
-						String text = "Not a valid selection";
-						seName.setText(text);
-					}
-
-					// disable the OK button
-					bttOK.setEnabled(false);
-				}
+	        	// validate the selection and set the enablement of the ok button.
+	        	validate();
 	        }
 	    }
 	};
-	    
+	   
+	public void validate(){
+		if (	selectedElement instanceof Property
+				&& ((Property)selectedElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) == null
+				&& selectedElement != valueMediatorTreeItem.getUmlElement()
+				) {
+
+			String typeString = "Not Defined!";
+			String ownerString = "";
+			if (((Element) selectedElement).getOwner() instanceof NamedElement) {
+				NamedElement owner = (NamedElement) ( (NamedElement) selectedElement).getOwner();
+				ownerString = "owner(" + owner.getName() + ")";
+			}
+			if (selectedElement instanceof Property  
+					&& ((Property)selectedElement).getType() != null ) {
+				typeString = ((Property)selectedElement).getType().getName().replaceFirst("Modelica", "");
+			}
+			seName.setText( ((Property)selectedElement).getName() + "   -   type(" + typeString + ")" + ", " + ownerString);
+			seIcon.setImage(propertyIcon);
+
+			// enable the OK button
+			bttOK.setEnabled(true);
+			
+		} else {
+			// reset  
+			seName.setText("");
+			seIcon.setImage(errorIcon);
+			
+			if (selectedElement == valueMediatorTreeItem.getUmlElement()) { // link to its self
+				String text = "It is not allowed to link an element with itself.";
+				seName.setText(text);
+			}
+			else if ( selectedElement instanceof Property
+					&& ((Property)selectedElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null){
+				String text = "It is not allowed to link a Value Mediator to another Value Mediator.";
+				seName.setText(text);
+			}
+			else if (selectedElement != null) {
+				String text = selectedElement.eClass().getName() + " is not allowed!";
+				seName.setText(text);
+			}
+			else {
+				String text = "Not a valid selection";
+				seName.setText(text);
+			}
+
+			// disable the OK button
+			bttOK.setEnabled(false);
+		}
+	}
 	
 	/**
 	 * This method initializes sShell
@@ -204,7 +223,7 @@ public class ElementSelectionDialog extends Dialog {
 		sShell.setImage(this.image); 
 		
 //		sShell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		sShell.setSize(545, 241);
+		sShell.setSize(545, 258);
 		
 		sShell.addDisposeListener(new DisposeListener() {
 			@Override
@@ -245,61 +264,70 @@ public class ElementSelectionDialog extends Dialog {
 		seIcon.setBounds(10, 23, 16, 16);
 		
 		bttOK = new Button(sShell, SWT.NONE);
-		bttOK.setBounds(385, 172, 68, 23);
+		bttOK.setBounds(385, 191, 68, 23);
 		bttOK.setText("OK");
+		
 		bttOK.addMouseListener(new org.eclipse.swt.events.MouseAdapter() {
 			public void mouseDown(org.eclipse.swt.events.MouseEvent e) {
 				setValue(SWT.OK);
 				
 				if (selectedElement instanceof NamedElement) {
+					boolean newElementCreated = TreeUtls.storeMediatorReference(valueMediatorTreeItem.getUmlElement(), selectedElement, mode); // create a dependency from value mediator to client/provider
 					
-					addValueToStereotypeProperty_List();
-					
-					TreeObject item = new TreeParent( ((NamedElement)selectedElement).getName());
-					item.setUmlElement((NamedElement)selectedElement);
-					
-					TreeObject[] children = valueMediatorTreeItem.getChildren();
-					for (int i = 0; i < children.length; i++) {
-						if (mode.equals("addValueClient") && children[i].isValueClientsNode() ) {
-							
-//							TreeParent titleNode = new TreeParent( Constants.valueClientsTitleName );
-//							selectedTreeParent.addChild(titleNode);
-//							titleNode.addChild(item);
-							
-							// add the new item
-							((TreeParent) children[i]).addChild(item);
-							
-							// add the cyclic read only nodes to the new item 
-							treeBuilder.addReadOnlyNodes((TreeParent)item);
-							
-//							viewer.add(selectedTreeParent, titleNode);
-//							viewer.add(titleNode, item);							
-							viewer.add(children[i], item);
-							
-						}
-						else if (mode.equals("addValueProvider") && children[i].isValueProvidersNode()) {
-//							TreeParent titleNode = new TreeParent( Constants.valueProvidersTitleName );
-//							selectedTreeParent.addChild(titleNode);
-//							titleNode.addChild(item);
-							
-							// add the new item
-							((TreeParent) children[i]).addChild(item);
-							// add the cyclic read only nodes to the new item 
-							treeBuilder.addReadOnlyNodes((TreeParent)item);
+					// only update the tree if the new element was created in the UML model
+					if (newElementCreated) {
+						TreeObject item = new TreeParent( ((NamedElement)selectedElement).getName());
+						item.setUmlElement((NamedElement)selectedElement);
+						
+						TreeObject[] children = valueMediatorTreeItem.getChildren();
+						
+						for (int i = 0; i < children.length; i++) {
+							if (mode == Constants.MODE_ADD_CLIENT && children[i].isValueClientsNode() ) {
 
-//							viewer.add(selectedTreeParent, titleNode);
-//							viewer.add(titleNode, item);
-							viewer.add(children[i], item);
+								// add the new item
+								((TreeParent) children[i]).addChild(item);
+								item.setIsValueClient();
+								if (selectedInstantiationTreeObject != null ) {
+									item.setInstantiationTreeObject(selectedInstantiationTreeObject);
+								}
+
+//								// OBSOLETE: add the cyclic read only nodes to the new item 
+//								if (treeBuilder != null) {
+//									treeBuilder.addReadOnlyNodes((TreeParent)item, null);
+//								}
+
+								viewer.add(children[i], item);
+								viewer.setSelection(new StructuredSelection(item), true);
+								
+							}
+							else if (mode == Constants.MODE_ADD_PROVIDER && children[i].isValueProvidersNode()) {
+								// add the new item
+								((TreeParent) children[i]).addChild(item);
+								item.setIsValueProvider();
+
+								if (selectedInstantiationTreeObject != null ) {
+									item.setInstantiationTreeObject(selectedInstantiationTreeObject);
+								}
+								
+//								// OBSOLETE: add the cyclic read only nodes to the new item
+//								if (treeBuilder != null) {
+// 									treeBuilder.addReadOnlyNodes((TreeParent)item, null);
+//								}
+
+								viewer.add(children[i], item);
+								viewer.setSelection(new StructuredSelection(item), true);
+							}
 						}
+						
+						viewer.refresh();
+						sShell.dispose();
 					}
-					viewer.refresh();
 				}
-				sShell.dispose();
 			}
 		});
 		
 		bttCancel = new Button(sShell, SWT.NONE);
-		bttCancel.setBounds(459, 172, 68, 23);
+		bttCancel.setBounds(459, 191, 68, 23);
 		bttCancel.setText("Cancel");
 		bttCancel.addMouseListener(new org.eclipse.swt.events.MouseAdapter() {
 			public void mouseDown(org.eclipse.swt.events.MouseEvent e) {
@@ -307,111 +335,197 @@ public class ElementSelectionDialog extends Dialog {
 				sShell.dispose();
 			}
 		});
-		
 	}
 	
-	private Stereotype getStereotype(){
-		String stereotypeQName = "";
-		Stereotype stereotype = null;
-		
-		if (this.mode.equals("addValueClient")) {
-			stereotypeQName = Constants.stereotypeQName_ValueClient;
-		}
-		else if (this.mode.equals("addValueProvider")) {
-			stereotypeQName = Constants.stereotypeQName_ValueProvider;
-		}
-		
-		if (this.selectedElement instanceof NamedElement) {
-			// get stereotype
-			stereotype = ((NamedElement)this.selectedElement).getAppliedStereotype(stereotypeQName);
-			
-			// apply stereotype if not yet applied
-			if (stereotype == null) {
-				final Stereotype s = ((NamedElement)this.selectedElement).getApplicableStereotype(stereotypeQName);
-				if (s != null) {
-					
-					//########## storing start
-					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-					CompoundCommand cc = new CompoundCommand();
-					Command command = new RecordingCommand(editingDomain) {
-						@Override
-						protected void doExecute() {
-							((NamedElement)selectedElement).applyStereotype(s);
-						}
-					};
-					cc.append(command);
-					editingDomain.getCommandStack().execute(cc);
-					
-					
-					// get stereotype
-					stereotype = ((NamedElement)this.selectedElement).getAppliedStereotype(stereotypeQName); 
-				}
-			}
-		}
-		return stereotype;
-	}
+//	private Stereotype getStereotype(){
+//		String stereotypeQName = "";
+//		Stereotype stereotype = null;
+//		
+//		if (mode == Constants.MODE_ADD_CLIENT) {
+//			stereotypeQName = Constants.stereotypeQName_ValueClient;
+//		}
+//		else if (mode == Constants.MODE_ADD_PROVIDER) {
+//			stereotypeQName = Constants.stereotypeQName_ValueProvider;
+//		}
+//		
+//		if (this.selectedElement instanceof NamedElement) {
+//			// get stereotype
+//			stereotype = ((NamedElement)this.selectedElement).getAppliedStereotype(stereotypeQName);
+//			
+//			// apply stereotype if not yet applied
+//			if (stereotype == null) {
+//				final Stereotype s = ((NamedElement)this.selectedElement).getApplicableStereotype(stereotypeQName);
+//				if (s != null) {
+//					
+//					//########## storing start
+//					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+//					CompoundCommand cc = new CompoundCommand();
+//					Command command = new RecordingCommand(editingDomain) {
+//						@Override
+//						protected void doExecute() {
+//							((NamedElement)selectedElement).applyStereotype(s);
+//						}
+//					};
+//					cc.append(command);
+//					editingDomain.getCommandStack().execute(cc);
+//					
+//					
+//					// get stereotype
+//					stereotype = ((NamedElement)this.selectedElement).getAppliedStereotype(stereotypeQName); 
+//				}
+//			}
+//		}
+//		return stereotype;
+//	}
 
-	private String getStereotypePropertyName(){
-		String stereotypeProperty_name = null;
-		if (this.mode.equals("addValueClient")) {
-			stereotypeProperty_name = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-		}
-		else if (this.mode.equals("addValueProvider")) {
-			stereotypeProperty_name = Constants.stereotypeQName_ValueProvider_providesValueFor;
-		}
-		return stereotypeProperty_name;
-	}
+//	private String getStereotypePropertyName(){
+//		String stereotypeProperty_name = null;
+//		if (this.mode.equals("addValueClient")) {
+//			stereotypeProperty_name = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
+//		}
+//		else if (this.mode.equals("addValueProvider")) {
+//			stereotypeProperty_name = Constants.stereotypeQName_ValueProvider_providesValueFor;
+//		}
+//		return stereotypeProperty_name;
+//	}
 	
-	@SuppressWarnings("rawtypes")
-	private boolean containsObject(EList list, EObject eObject){
-		if (list instanceof EList) {
-			for (Object object : (EList)list) {
-				if (object instanceof EObject) {
-//					if (((EObject)object).eCrossReferences().get(0) == eObject) {
-					if (UMLUtil.getBaseElement((EObject)object) == eObject) {
-						return true;
-					}
-				}	
-			}
-		}
-		return false;
-	}
+//	private String getDependecyStereotypeQName(){
+//		//The stereotype for the dependency from the mediator to the selected client or provider
+//		
+//		if (mode == Constants.MODE_ADD_CLIENT) {
+//			return Constants.stereotypeQName_ProvidesValueFor;
+//		}
+//		else if (mode == Constants.MODE_ADD_PROVIDER) {
+//			return Constants.stereotypeQName_ObtainsValueFrom;
+//		}
+//		return null;
+//	}
+//	
+//	private String getDependecyName(){
+//		//The stereotype for the dependency from the mediator to the selected client or provider
+//		
+//		if (mode == Constants.MODE_ADD_CLIENT) {
+//			return "Provides value for: ";
+//		}
+//		else if (mode == Constants.MODE_ADD_PROVIDER) {
+//			return "Obtains value from: ";
+//		}
+//		return null;
+//	}
 	
-	void addValueToStereotypeProperty_List(){
-		
-		if (this.selectedElement instanceof NamedElement) {
-			// get stereotype
-			final Stereotype stereotype = getStereotype();
-			final String stereotypeProperty_name = getStereotypePropertyName();
-			if ( stereotype != null && stereotypeProperty_name != null) {
-				final Object list = ((NamedElement)this.selectedElement).getValue(stereotype, stereotypeProperty_name);
-				
-				if (list instanceof EList) {
-//					########## storing start
-					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-					CompoundCommand cc = new CompoundCommand("Add value mediator reference");
-					Command command = new RecordingCommand(editingDomain) {
-						@SuppressWarnings({ "unchecked", "rawtypes" })
-						@Override
-						protected void doExecute() {
-							if (!containsObject((EList) list, valueMediatorTreeItem.getUmlElement())) {
-								// get the value mediator stereotype
-								final Stereotype valueMediatorStereotype = valueMediatorTreeItem.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
-								
-								// Important: use the getStereotypeApplication to get an EObject! 
-								DynamicEObjectImpl eObject =(DynamicEObjectImpl)valueMediatorTreeItem.getUmlElement().getStereotypeApplication(valueMediatorStereotype);
-								
-								// add value to the list
-								((EList)list).add(eObject);
-							}
-						}
-					};
-					cc.append(command);
-					editingDomain.getCommandStack().execute(cc);
-				}
-			}
-		}
-	}
+	
+//	@SuppressWarnings("rawtypes")
+//	private boolean containsObject(EList list, EObject eObject){
+//		if (list instanceof EList) {
+//			for (Object object : (EList)list) {
+//				if (object instanceof EObject) {
+////					if (((EObject)object).eCrossReferences().get(0) == eObject) {
+//					if (UMLUtil.getBaseElement((EObject)object) == eObject) {
+//						return true;
+//					}
+//				}	
+//			}
+//		}
+//		return false;
+//	}
+	
+	
+//	private boolean storeReference(){
+//		
+//		final Element valueMediatorElement = valueMediatorTreeItem.getUmlElement();
+//		final EObject valueClientOrProviderElement = selectedElement;
+//		
+//		if (valueMediatorElement instanceof Property && valueClientOrProviderElement instanceof NamedElement) {
+//			EList<Dependency> mediatorDependencies = ((Property)valueMediatorElement).getClientDependencies();
+//			boolean targetAlreadyExists = false;
+//			
+//			for (Dependency dep : mediatorDependencies) {
+//				for (Element element : dep.getTargets()) {
+//					if (element == valueClientOrProviderElement) {
+//						
+//						// set the indicator 
+//						targetAlreadyExists = true;
+//						
+//						// inform the user
+//						MessageDialog.openError(new Shell(), "Error", 
+//								((NamedElement)valueMediatorElement).getQualifiedName() 
+//								+ "already has a reference to the element " + ((NamedElement)valueClientOrProviderElement).getQualifiedName()
+//								+ "\nNo reference was stored or updated."); 
+//						return false;
+//					}
+//				}
+//			}
+//				
+//			if ( !targetAlreadyExists ) {
+//				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+//				CompoundCommand cc = new CompoundCommand("Add value mediator reference");
+//				Command command = new RecordingCommand(editingDomain) {
+//					@Override
+//					protected void doExecute() {
+//						Dependency dependency = ((Property)valueMediatorElement).createDependency((NamedElement) valueClientOrProviderElement);
+//						if (dependency != null) {
+//							dependency.setName(getDependecyName() + ((NamedElement)valueClientOrProviderElement).getName());
+//
+//							Stereotype dependencyStereotype = dependency.getApplicableStereotype(getDependecyStereotypeQName());
+//							if (dependencyStereotype != null) {
+//								dependency.applyStereotype(dependencyStereotype);
+//							}
+//							else {
+//								MessageDialog.openError(new Shell(), "Error", 
+//										"Could not set the Stereotype " + getDependecyStereotypeQName() + " for " 
+//										+ ((NamedElement)valueMediatorElement).getQualifiedName() + " to reference the element "
+//										+ ((NamedElement)valueClientOrProviderElement).getQualifiedName()
+//										+ "\nCheck if the ModelicaML Value Bindings Profile is applied."
+//										+ "\n\nNo reference was stored or updated.");
+//
+//								// delete the dependency because a stereotype must be applied ...
+//								dependency.destroy();
+//							}
+//						}
+//					}
+//				};
+//				cc.append(command);
+//				editingDomain.getCommandStack().execute(cc);
+//			}
+//		}
+//		return true;
+//	}
+//	
+//	void addValueToStereotypeProperty_List(){
+//		
+//		if (this.selectedElement instanceof NamedElement) {
+//			// get stereotype
+//			final Stereotype stereotype = getStereotype();
+//			final String stereotypeProperty_name = getStereotypePropertyName();
+//			if ( stereotype != null && stereotypeProperty_name != null) {
+//				final Object list = ((NamedElement)this.selectedElement).getValue(stereotype, stereotypeProperty_name);
+//				
+//				if (list instanceof EList) {
+////					########## storing start
+//					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+//					CompoundCommand cc = new CompoundCommand("Add value mediator reference");
+//					Command command = new RecordingCommand(editingDomain) {
+//						@SuppressWarnings({ "unchecked", "rawtypes" })
+//						@Override
+//						protected void doExecute() {
+//							if (!containsObject((EList) list, valueMediatorTreeItem.getUmlElement())) {
+//								// get the value mediator stereotype
+//								final Stereotype valueMediatorStereotype = valueMediatorTreeItem.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
+//								
+//								// Important: use the getStereotypeApplication to get an EObject! 
+//								DynamicEObjectImpl eObject =(DynamicEObjectImpl)valueMediatorTreeItem.getUmlElement().getStereotypeApplication(valueMediatorStereotype);
+//								
+//								// add value to the list
+//								((EList)list).add(eObject);
+//							}
+//						}
+//					};
+//					cc.append(command);
+//					editingDomain.getCommandStack().execute(cc);
+//				}
+//			}
+//		}
+//	}
 	
 	
 	
@@ -432,14 +546,13 @@ public class ElementSelectionDialog extends Dialog {
 	}
 	
 	
-	protected EObject adaptSelectedElement( Object selection) {
+	protected EObject adaptSelectedElement( Object selection ) {
 		EObject eObject = null;
 		if(selection != null) {
 			
 			if (selection instanceof org.openmodelica.modelicaml.common.instantiation.TreeParent) { // this is an object from components tree view plugin
 				return ((org.openmodelica.modelicaml.common.instantiation.TreeParent)selection).getProperty();
 			}
-			
 			if(selection instanceof IAdaptable) {
 				selection = ((IAdaptable)selection).getAdapter(EObject.class);
 			}
