@@ -308,67 +308,13 @@ public interface ClientPackage extends EPackage
   int PRIMARY__EXPR = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 2;
 
   /**
-   * The feature id for the '<em><b>Sum</b></em>' attribute.
+   * The feature id for the '<em><b>Binding</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PRIMARY__SUM = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 3;
-
-  /**
-   * The feature id for the '<em><b>Prod</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PRIMARY__PROD = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 4;
-
-  /**
-   * The feature id for the '<em><b>Min</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PRIMARY__MIN = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 5;
-
-  /**
-   * The feature id for the '<em><b>Max</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PRIMARY__MAX = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 6;
-
-  /**
-   * The feature id for the '<em><b>Avr</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PRIMARY__AVR = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 7;
-
-  /**
-   * The feature id for the '<em><b>Size</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PRIMARY__SIZE = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 8;
-
-  /**
-   * The feature id for the '<em><b>Result</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PRIMARY__RESULT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 9;
+  int PRIMARY__BINDING = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 3;
 
   /**
    * The number of structural features of the '<em>primary</em>' class.
@@ -377,7 +323,7 @@ public interface ClientPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 10;
+  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 4;
 
   /**
    * The meta object id for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.component_referenceImpl <em>component reference</em>}' class.
@@ -565,81 +511,15 @@ public interface ClientPackage extends EPackage
   EReference getprimary_Expr();
 
   /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSum <em>Sum</em>}'.
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getBinding <em>Binding</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Sum</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSum()
+   * @return the meta object for the attribute '<em>Binding</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getBinding()
    * @see #getprimary()
    * @generated
    */
-  EAttribute getprimary_Sum();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getProd <em>Prod</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Prod</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getProd()
-   * @see #getprimary()
-   * @generated
-   */
-  EAttribute getprimary_Prod();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMin <em>Min</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Min</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMin()
-   * @see #getprimary()
-   * @generated
-   */
-  EAttribute getprimary_Min();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMax <em>Max</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Max</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMax()
-   * @see #getprimary()
-   * @generated
-   */
-  EAttribute getprimary_Max();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr <em>Avr</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Avr</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr()
-   * @see #getprimary()
-   * @generated
-   */
-  EAttribute getprimary_Avr();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize <em>Size</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Size</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize()
-   * @see #getprimary()
-   * @generated
-   */
-  EAttribute getprimary_Size();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getResult <em>Result</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Result</em>'.
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getResult()
-   * @see #getprimary()
-   * @generated
-   */
-  EAttribute getprimary_Result();
+  EAttribute getprimary_Binding();
 
   /**
    * Returns the meta object for class '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.component_reference <em>component reference</em>}'.
@@ -777,60 +657,12 @@ public interface ClientPackage extends EPackage
     EReference PRIMARY__EXPR = eINSTANCE.getprimary_Expr();
 
     /**
-     * The meta object literal for the '<em><b>Sum</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Binding</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute PRIMARY__SUM = eINSTANCE.getprimary_Sum();
-
-    /**
-     * The meta object literal for the '<em><b>Prod</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PRIMARY__PROD = eINSTANCE.getprimary_Prod();
-
-    /**
-     * The meta object literal for the '<em><b>Min</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PRIMARY__MIN = eINSTANCE.getprimary_Min();
-
-    /**
-     * The meta object literal for the '<em><b>Max</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PRIMARY__MAX = eINSTANCE.getprimary_Max();
-
-    /**
-     * The meta object literal for the '<em><b>Avr</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PRIMARY__AVR = eINSTANCE.getprimary_Avr();
-
-    /**
-     * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PRIMARY__SIZE = eINSTANCE.getprimary_Size();
-
-    /**
-     * The meta object literal for the '<em><b>Result</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PRIMARY__RESULT = eINSTANCE.getprimary_Result();
+    EAttribute PRIMARY__BINDING = eINSTANCE.getprimary_Binding();
 
     /**
      * The meta object literal for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.component_referenceImpl <em>component reference</em>}' class.

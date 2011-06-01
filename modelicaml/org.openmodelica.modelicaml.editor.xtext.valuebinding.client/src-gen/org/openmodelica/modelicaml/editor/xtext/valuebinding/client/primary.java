@@ -21,13 +21,7 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name_Function;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getName_Function <em>Name Function</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getInitial_ref <em>Initial ref</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getExpr <em>Expr</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSum <em>Sum</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getProd <em>Prod</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMin <em>Min</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMax <em>Max</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr <em>Avr</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize <em>Size</em>}</li>
- *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getResult <em>Result</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getBinding <em>Binding</em>}</li>
  * </ul>
  * </p>
  *
@@ -116,185 +110,29 @@ public interface primary extends org.openmodelica.modelicaml.editor.xtext.model.
   void setExpr(ExprDer value);
 
   /**
-   * Returns the value of the '<em><b>Sum</b></em>' attribute.
+   * Returns the value of the '<em><b>Binding</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Sum</em>' attribute isn't clear,
+   * If the meaning of the '<em>Binding</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Sum</em>' attribute.
-   * @see #setSum(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Sum()
+   * @return the value of the '<em>Binding</em>' attribute.
+   * @see #setBinding(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Binding()
    * @model
    * @generated
    */
-  String getSum();
+  String getBinding();
 
   /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSum <em>Sum</em>}' attribute.
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getBinding <em>Binding</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Sum</em>' attribute.
-   * @see #getSum()
+   * @param value the new value of the '<em>Binding</em>' attribute.
+   * @see #getBinding()
    * @generated
    */
-  void setSum(String value);
-
-  /**
-   * Returns the value of the '<em><b>Prod</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Prod</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Prod</em>' attribute.
-   * @see #setProd(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Prod()
-   * @model
-   * @generated
-   */
-  String getProd();
-
-  /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getProd <em>Prod</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Prod</em>' attribute.
-   * @see #getProd()
-   * @generated
-   */
-  void setProd(String value);
-
-  /**
-   * Returns the value of the '<em><b>Min</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Min</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Min</em>' attribute.
-   * @see #setMin(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Min()
-   * @model
-   * @generated
-   */
-  String getMin();
-
-  /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMin <em>Min</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Min</em>' attribute.
-   * @see #getMin()
-   * @generated
-   */
-  void setMin(String value);
-
-  /**
-   * Returns the value of the '<em><b>Max</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Max</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Max</em>' attribute.
-   * @see #setMax(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Max()
-   * @model
-   * @generated
-   */
-  String getMax();
-
-  /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getMax <em>Max</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Max</em>' attribute.
-   * @see #getMax()
-   * @generated
-   */
-  void setMax(String value);
-
-  /**
-   * Returns the value of the '<em><b>Avr</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Avr</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Avr</em>' attribute.
-   * @see #setAvr(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Avr()
-   * @model
-   * @generated
-   */
-  String getAvr();
-
-  /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getAvr <em>Avr</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Avr</em>' attribute.
-   * @see #getAvr()
-   * @generated
-   */
-  void setAvr(String value);
-
-  /**
-   * Returns the value of the '<em><b>Size</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Size</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Size</em>' attribute.
-   * @see #setSize(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Size()
-   * @model
-   * @generated
-   */
-  String getSize();
-
-  /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getSize <em>Size</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Size</em>' attribute.
-   * @see #getSize()
-   * @generated
-   */
-  void setSize(String value);
-
-  /**
-   * Returns the value of the '<em><b>Result</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Result</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Result</em>' attribute.
-   * @see #setResult(String)
-   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage#getprimary_Result()
-   * @model
-   * @generated
-   */
-  String getResult();
-
-  /**
-   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.primary#getResult <em>Result</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Result</em>' attribute.
-   * @see #getResult()
-   * @generated
-   */
-  void setResult(String value);
+  void setBinding(String value);
 
 } // primary

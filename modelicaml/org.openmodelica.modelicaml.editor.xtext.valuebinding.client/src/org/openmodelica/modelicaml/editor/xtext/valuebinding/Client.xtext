@@ -12,11 +12,6 @@ ClientOperation : // ModelicaML specific. All rules are made optional in order t
 left_hand_component_reference : // ModelicaML specific. 
 	('.')? ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)*;
 
-//ClientOperation : 
-//	(Expr=expression)? // optional expression
-//	;
-
-
 primary :
 num=UNSIGNED_NUMBER
 | int=INT
@@ -25,17 +20,9 @@ num=UNSIGNED_NUMBER
 | Name_Function=name_Function
 | Initial_ref=initial_ref
 | Expr=ExprDer
-//| reductionFunction=ReductionFunction // ModelicaML Value Binding Concept specific
-	| sum=SumFunction
-	| prod=ProductFunction 
-	| min=MinFunction
-	| max=MaxFunction
-	| avr=AverageFunction
-	| size=SizeFunction
-	
-	| result=GetResultFunction
 
-//| specificFunction=SpecificFunction // only for Value Provider
+| binding=GetBindingFunction
+
 | Component_reference=component_reference
 | '(' output_expr_list=output_expression_list ')'
 | '[' Expre_list=expression_list ( ';' Expression_list+=expression_list)* ']'
@@ -43,65 +30,17 @@ num=UNSIGNED_NUMBER
 | End='end'
 ;
 
-//// ModelicaML specific list reduction or value client operation functions
-//ReductionFunction : 
-//	SumFunction
-//	| ProductFunction 
-//	| MinFunction
-//	| MaxFunction
-//	| GetResultFunction
-//	;
+GetBindingFunction :
+	'getBinding' Brackets;
 
-ProductFunction :
-	'product' ReductionFunctionCallArgs;
-SumFunction :
-	'sum' ReductionFunctionCallArgs;
-MinFunction :
-	'min' ReductionFunctionCallArgs;
-MaxFunction :
-	'max' ReductionFunctionCallArgs;
-AverageFunction :
-	'avr' ReductionFunctionCallArgs;
-SizeFunction :
-	'size' ReductionFunctionCallArgs;
-GetResultFunction :
-	'getResult' Brackets;
-
-
-SpecificFunction : // only for Value Provider
-	'getOwnPath()'
-	;
-
-ReductionFunctionCallArgs : 
-	'(' + ':' + ')';
 Brackets : 
 	'(' ')';
-
-	
-//// override the definition from the reused grammar.
-//name : {name}
-//	('.')? name_ID=IDENT ( '.' nam_ID+=IDENT )*
-//	| reduction_function = ReductionFunction 
-////	| specific_function = SpecificFunction '.' name_ID=IDENT ( '.' nam_ID+=IDENT )* // TODO: name in this case should only refer to subcomponents
-//;
-//
 
 component_reference:
 	ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)* 
 	| ('.')? ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)*
-//	| specific_function = SpecificFunction '.' name_ID=IDENT ( '.' nam_ID+=IDENT )* // TODO: name in this case should only refer to subcomponents
 	;
 
 
 
 
-
-
-
-
-
-//Model:
-//	greetings+=Greeting*;
-//	
-//Greeting:
-//	'Hello' name=ID '!';

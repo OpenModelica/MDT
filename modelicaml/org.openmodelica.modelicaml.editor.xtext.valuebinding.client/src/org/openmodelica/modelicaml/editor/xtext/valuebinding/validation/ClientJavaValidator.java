@@ -1,8 +1,10 @@
 package org.openmodelica.modelicaml.editor.xtext.valuebinding.validation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.xtext.validation.Check;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.ModeleditorPackage;
 import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.component_reference;
@@ -17,7 +19,15 @@ public class ClientJavaValidator extends AbstractClientJavaValidator {
 	public void checkLeft_hand_component_reference(left_hand_component_reference cr) 
 	{
 		List<String> cList = ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList();
-
+		List<String> cListCopy = new ArrayList<String>();
+		cListCopy.addAll(cList);
+		for (String string : cListCopy) {
+			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
+				cList.remove(string);
+				cList.add(string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_clientPath));
+			}
+		}
+		
 		String dotPath = cr.getRef();
 		String ref1DotPath = ""; 
 		
@@ -36,7 +46,15 @@ public class ClientJavaValidator extends AbstractClientJavaValidator {
 	public void checkComponent_reference(component_reference cr) 
 	{
 		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
-
+		List<String> cListCopy = new ArrayList<String>();
+		cListCopy.addAll(cList);
+		for (String string : cListCopy) {
+			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
+				cList.remove(string);
+				cList.add(string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_clientPath));
+			}
+		}
+		
 		String dotPath = cr.getRef();
 		String ref1DotPath = ""; 
 		
@@ -56,6 +74,14 @@ public class ClientJavaValidator extends AbstractClientJavaValidator {
 	public void checkname(name cr) 
 	{
 		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
+		List<String> cListCopy = new ArrayList<String>();
+		cListCopy.addAll(cList);
+		for (String string : cListCopy) {
+			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
+				cList.remove(string);
+				cList.add(string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_clientPath));
+			}
+		}
 		
 		cList.addAll(ModelicaMLContentAssist.getTypeSpecifierSortedList()); // use for redeclare in modifications ...
 		

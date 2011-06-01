@@ -25,13 +25,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//primary/Name_Function"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//primary/Initial_ref"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Client.ecore#//primary/Expr"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/sum"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/prod"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/min"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/max"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/avr"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/size"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/result"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Client.ecore#//primary/binding"/>
     </genClasses>
     <genClasses ecoreClass="Client.ecore#//component_reference"/>
   </genPackages>
