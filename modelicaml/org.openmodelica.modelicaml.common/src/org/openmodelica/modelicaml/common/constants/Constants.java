@@ -61,6 +61,7 @@ public class Constants {
 	
 	public static final String propertyName_operation 				= "operation";
 	public static final String propertyName_preferredProviders 		= "preferredProviders";
+	public static final String preferredProvidersAssignmentSeparator	= " --> ";
 	
 	
 	public static final String valueClientsNodeName 			= "Clients";
