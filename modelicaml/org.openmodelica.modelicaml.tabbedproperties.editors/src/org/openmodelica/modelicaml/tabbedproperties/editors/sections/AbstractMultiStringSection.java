@@ -89,7 +89,7 @@ public abstract class AbstractMultiStringSection extends AbstractPropertySection
 	protected org.eclipse.swt.widgets.List modificationList = null;
 	
 	/** The selected uml element. */
-	private Element selectedUmlElement;
+	protected Element selectedUmlElement;
 	
 	
 	/** The i dialog. */
@@ -193,7 +193,47 @@ public abstract class AbstractMultiStringSection extends AbstractPropertySection
 		this.modificationList.setLayoutData(data);
 		this.modificationList.addMouseListener(listlistener);
 		
+		addButtons(composite, data);
+		
+//		// ///////////////////////////////////////////////////////////////////////////
+//		// Create and place button vertically on the left side
+//		// Button : Add Element
+//		// Button Delete Element
+//
+//		button = new Button(composite, SWT.PUSH);
+//		button.setText("Edit");
+//		data = new FormData();
+//		data.left = new FormAttachment(modificationList, 5);
+//		data.top = new FormAttachment(overviewLabel, 0);
+//		button.setLayoutData(data);
+//		button.addMouseListener(editButtonlistener);
+//		
+//		
+//		addButton = new Button(composite, SWT.PUSH);
+//		addButton.setVisible(true);
+//		addButton.setImage(ImageManager.IMG_ADD);
+//		addButton.setToolTipText("Add a new element");
+//
+//		data = new FormData();
+//		data.top = new FormAttachment(overviewLabel, 0);
+//		data.left = new FormAttachment(button, 5);
+//		addButton.setLayoutData(data);
+//		addButton.addMouseListener(addButtonlistener);
+//		
+//		
+//		removeButton = new Button(composite, SWT.PUSH);
+//		removeButton.setVisible(true);
+//		removeButton.setImage(ImageManager.IMG_DELETE);
+//		removeButton.setToolTipText("Delete selected element(s)");
+//		data = new FormData();
+//		data.top = new FormAttachment(overviewLabel, 0);
+//		data.left = new FormAttachment(addButton, 5);
+//		removeButton.setLayoutData(data);
+//		removeButton.addMouseListener(deleteButtonlistener);
+	}
 
+	
+	protected void addButtons(Composite composite, FormData data){
 		// ///////////////////////////////////////////////////////////////////////////
 		// Create and place button vertically on the left side
 		// Button : Add Element
@@ -229,13 +269,8 @@ public abstract class AbstractMultiStringSection extends AbstractPropertySection
 		data.left = new FormAttachment(addButton, 5);
 		removeButton.setLayoutData(data);
 		removeButton.addMouseListener(deleteButtonlistener);
-		
-
-	
-	
-
 	}
-
+	
 	/**
 	 * Checks for attribute.
 	 * 
@@ -276,11 +311,16 @@ public abstract class AbstractMultiStringSection extends AbstractPropertySection
 					Iterator<Stereotype> iterator = sList.iterator();
 					while (iterator.hasNext()) {
 					Stereotype stereotype = ((Stereotype)iterator.next());
-						if(hasAttribute(stereotype, stereotypPropertieName))
-						{
-							button.setEnabled(true);
-							addButton.setEnabled(true);
-							removeButton.setEnabled(true);
+						if(hasAttribute(stereotype, stereotypPropertieName)){
+							if (button != null ) {
+								button.setEnabled(true);								
+							}
+							if (addButton != null ) {
+								addButton.setEnabled(true);	
+							}
+							if (removeButton != null ) {
+								removeButton.setEnabled(true);	
+							}
 							modificationList.setEnabled(true);
 							EList<?> list =(EList<?>) element.getValue(stereotype, stereotypPropertieName);
 							ArrayList<String> stateList = new ArrayList<String>();
