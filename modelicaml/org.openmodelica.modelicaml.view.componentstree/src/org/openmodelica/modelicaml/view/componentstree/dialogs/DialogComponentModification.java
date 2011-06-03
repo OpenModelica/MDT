@@ -351,9 +351,10 @@ public class DialogComponentModification extends Dialog {
     	final DeriveValueBindingCodeHelper deriveValueBindingCodeHelper = new DeriveValueBindingCodeHelper();
     	deriveValueBindingCodeHelper.initialize(root, false);
     	
-    	deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, false);
-    	final String derivedCode = deriveValueBindingCodeHelper.getCode(); 
-    	final String errosString = deriveValueBindingCodeHelper.getErrorString();
+    	// the user shall select the providers, so don't activate the automatic selection of preferred providers and the deletion of old bindings!
+    	deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, false, false);
+//    	final String derivedCode = deriveValueBindingCodeHelper.getCode(); 
+//    	final String errosString = deriveValueBindingCodeHelper.getErrorString();
 
     	deriveButton = createButton(parent, 11, "Derive Code ...    ", false);
     	deriveButton.addListener(3, new Listener() {
@@ -366,7 +367,7 @@ public class DialogComponentModification extends Dialog {
 				deriveValueBindingCodeHelper.clearLog();
 
 				// derive code once again, but now with user guidance
-				deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, true);
+				deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, true, false);
 				String code = deriveValueBindingCodeHelper.getCode();
 				if (code != null) {
 					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), treeObject.getDotPathWithoutFirstLevelComponent() + " = " + code, DialogDerivedCode.MODE_CODE, deriveValueBindingCodeHelper, treeObject);
@@ -383,35 +384,22 @@ public class DialogComponentModification extends Dialog {
 					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), log, DialogDerivedCode.MODE_ERROR_MESSAGE, deriveValueBindingCodeHelper, treeObject);
 					dialog.open(); // do nothing after closing the dialog.
 				}
-
-//				if (deriveValueBindingCodeHelper.errorsDetected()) {
-//					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), errosString, DialogDerivedCode.ERROR_MESSAGE, treeObject);
-//					dialog.open(); // do nothing after closing the dialog.
-//				}
-//				else if (derivedCode != null) {
-//					// derive code once again, but now with user guidance
-//					deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, true);
-//					DialogDerivedCode dialog = new DialogDerivedCode(getParentShell(), treeObject.getDotPathWithoutFirstLevelComponent() + " = " + deriveValueBindingCodeHelper.getCode(), DialogDerivedCode.CODE, treeObject);
-//					dialog.open();
-//					if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
-//						String string = dialog.getCode();
-//						if (string != null) {
-//							editor.setTextToEdit(string);
-//						}
-//					}
-//				}
 			}
 		});
     	
-    	if (deriveValueBindingCodeHelper.errorsDetected()) {
-    		deriveButton.setImage(SWTResourceManager.getImage(Activator.class, "/org/eclipse/jface/dialogs/images/message_error.gif"));
+    	if (deriveValueBindingCodeHelper.isUserSelectionRequired()) {
+    		deriveButton.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/obj16/warn_tsk.gif"));
 		}
+    	else if (deriveValueBindingCodeHelper.errorsDetected()) {
+    		deriveButton.setImage(SWTResourceManager.getImage(Activator.class, "/org/eclipse/jface/dialogs/images/message_error.gif"));
+    	}
     	else {
     		deriveButton.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png"));
     	}
-    	if (errosString == null && derivedCode == null) { // not applicable, i.e. no code could be derived and nothing is to report.
-    		deriveButton.setVisible(false);
-		}
+//    	if (errosString == null && derivedCode == null) { // i.e. no code could be derived and nothing is to report.
+//    		deriveButton.setVisible(false);
+//		}
+    	
     	setButtonLayoutData(deriveButton);
     	
     	

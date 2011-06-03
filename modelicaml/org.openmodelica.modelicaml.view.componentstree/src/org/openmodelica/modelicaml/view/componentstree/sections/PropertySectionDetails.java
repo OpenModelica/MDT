@@ -331,12 +331,14 @@ public class PropertySectionDetails extends AbstractPropertySection {
 				
 				Type cFinalType = (Classifier) item.getComponentType();
 				String cFinalTypeString = "";
-				if ( !(cFinalType instanceof PrimitiveType) ) {
-					cFinalTypeString = "<a href=\"final\">" + cFinalType.getName() + "</a>";
-					linkType.setToolTipText(cFinalType.getQualifiedName());
-				}
-				else {
-					cFinalTypeString = cFinalType.getName();
+				if (cFinalType != null ) {
+					if ( !(cFinalType instanceof PrimitiveType) ) {
+						cFinalTypeString = "<a href=\"final\">" + cFinalType.getName() + "</a>";
+						linkType.setToolTipText(cFinalType.getQualifiedName());
+					}
+					else {
+						cFinalTypeString = cFinalType.getName();
+					}
 				}
 	            
 	            if (item.hasRedeclaredType() && cFinalType!= null && cOriginalType!= null) {

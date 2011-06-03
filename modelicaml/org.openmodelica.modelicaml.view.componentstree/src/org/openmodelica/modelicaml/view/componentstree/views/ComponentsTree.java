@@ -111,7 +111,7 @@ import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandle
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
-import org.openmodelica.modelicaml.view.componentstree.dialogs.ConfirmationWithCheckOptionDialog;
+import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
@@ -534,73 +534,73 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 */
 	private void makeActions() {
 		
-		actionAddValueProvider = new Action("actionAddValueProvider") {
-			public void run() {
-				
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				if (obj instanceof TreeObject) {
-					TreeObject item = (TreeObject)obj;
-					if (item.isValueClient()) {
-						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
-						listOfAllowedMetaClassesNames.add("Property");
-						String title = "Value Provider Selection";
-						String message = "Click on a model element to be associated as Value Provider."; 
-
-						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
-								new Shell(), 
-								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
-								title, 
-								message, 
-								listOfAllowedMetaClassesNames,
-								item,
-								viewer,
-								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_PROVIDER,
-								actionEditModification,
-								actionLinkWithEditor);
-						dialog.open();
-					}
-				}
-			}
-		};
-		actionAddValueProvider.setText("Add a Value Provider");
-		actionAddValueProvider.setToolTipText("Add a Value Provider");
-		actionAddValueProvider.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueProviders.png"));
+//		actionAddValueProvider = new Action("actionAddValueProvider") {
+//			public void run() {
+//				
+//				ISelection selection = viewer.getSelection();
+//				Object obj = ((IStructuredSelection) selection).getFirstElement();
+//				if (obj instanceof TreeObject) {
+//					TreeObject item = (TreeObject)obj;
+//					if (item.isValueClient()) {
+//						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
+//						listOfAllowedMetaClassesNames.add("Property");
+//						String title = "Value Provider Selection";
+//						String message = "Click on a model element to be associated as Value Provider."; 
+//
+//						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
+//								new Shell(), 
+//								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
+//								title, 
+//								message, 
+//								listOfAllowedMetaClassesNames,
+//								item,
+//								viewer,
+//								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_PROVIDER,
+//								actionEditModification,
+//								actionLinkWithEditor);
+//						dialog.open();
+//					}
+//				}
+//			}
+//		};
+//		actionAddValueProvider.setText("Add a Value Provider");
+//		actionAddValueProvider.setToolTipText("Add a Value Provider");
+//		actionAddValueProvider.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueProviders.png"));
 
 		
 		
-		actionAddValueClient = new Action("actionAddValueClient") {
-			public void run() {
-				
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				if (obj instanceof TreeObject) {
-					TreeObject item = (TreeObject)obj;
-					if (item.isValueProvider()) {
-						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
-						listOfAllowedMetaClassesNames.add("Property");
-						String title = "Value Client Selection";
-						String message = "Click on a model element to be associated as Value Client."; 
-
-						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
-								new Shell(), 
-								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
-								title, 
-								message, 
-								listOfAllowedMetaClassesNames,
-								item,
-								viewer,
-								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_CLIENT,
-								actionEditModification,
-								actionLinkWithEditor);
-						dialog.open();
-					}
-				}
-			}
-		};
-		actionAddValueClient.setText("Add a Value Client");
-		actionAddValueClient.setToolTipText("Add a Value actionAddValueClient");
-		actionAddValueClient.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueClient.png"));
+//		actionAddValueClient = new Action("actionAddValueClient") {
+//			public void run() {
+//				
+//				ISelection selection = viewer.getSelection();
+//				Object obj = ((IStructuredSelection) selection).getFirstElement();
+//				if (obj instanceof TreeObject) {
+//					TreeObject item = (TreeObject)obj;
+//					if (item.isValueProvider()) {
+//						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
+//						listOfAllowedMetaClassesNames.add("Property");
+//						String title = "Value Client Selection";
+//						String message = "Click on a model element to be associated as Value Client."; 
+//
+//						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
+//								new Shell(), 
+//								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
+//								title, 
+//								message, 
+//								listOfAllowedMetaClassesNames,
+//								item,
+//								viewer,
+//								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_CLIENT,
+//								actionEditModification,
+//								actionLinkWithEditor);
+//						dialog.open();
+//					}
+//				}
+//			}
+//		};
+//		actionAddValueClient.setText("Add a Value Client");
+//		actionAddValueClient.setToolTipText("Add a Value actionAddValueClient");
+//		actionAddValueClient.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueClient.png"));
 
 		
 		
@@ -621,14 +621,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				if (obj instanceof TreeParent) {
 					TreeParent item = (TreeParent)obj;
 					
-					String title = "Update Bindings Confirmation";
-					String text = "Shall all unambiguous bindings in the sub-tree of '" + item.getName() + "' be updated? " +
-							"\r\nNote, this action cannot be undone.";
-					String checkOptionText = "Delete all bindings that are based on Value Mediators before updating.";
-					
 					// open the confirmation dialog
 					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-					ConfirmationWithCheckOptionDialog confirmationDialog = new ConfirmationWithCheckOptionDialog(shell, title, text, checkOptionText);
+					UpdateBindingsConfirmationDialog confirmationDialog = new UpdateBindingsConfirmationDialog(shell, item);
 					confirmationDialog.open();
 				
 					int result = confirmationDialog.getReturnCode();
@@ -638,7 +633,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						
 						// update bindings
 						ValueBindingCreator vc = new ValueBindingCreator();
-						vc.updateBindings( item, root, deleteOldBindings );
+						vc.updateBindings( item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true);
 						
 						// get the updated items
 						List<TreeObject> updatedItems = vc.getUpdatedItems();
@@ -651,21 +646,20 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						String infoText = "The following updates were performed: \n";
 						String message = "";
 						String separator = "\n\n---------------------------------------------" + 
-											"--------------------------------------------------------------------" +
-											"---------------------------- \n\n";
+											"------------------------------------------------" +
+											"--------------------- \n\n";
 						
 						// update the deleted modification items in viewer 
 						for (TreeObject deletedItemModificationItem : deletedItemsModifications) {
-//							System.err.println("item: " + deletedItemModificationItem.getDotPath());
 							// update in viewer
 							updateItem(deletedItemModificationItem);
 						}
 						
-						// TODO: not nice because it will collapse the tree ...
-//						TreePath[] path = viewer.getExpandedTreePaths();
 						viewer.refresh();
-						viewer.expandToLevel(2);
-//						viewer.setExpandedTreePaths(path);
+						
+						// select the item again in view
+						TreeUtls.selectInView(obj, root, viewer);
+						viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 						
 						// create message for deleted modifications
 						for (String string : deletedModifications) {
@@ -678,10 +672,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								// update in viewer
 								updateItem(updatedTreeObject);
 								
-								// create message
+								// create message for updated modifications
 								message = message + "UPDATED: " +  updatedTreeObject.getDotPath()+ " = " + updatedModifications.get(updatedTreeObject)
 										+ separator ;
 							}
+							
+							// show results.
 							DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, message);
 							dialog.open();
 							
@@ -690,21 +686,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						}
 						
 					}
-					
-//					Boolean go = MessageDialog.openConfirm(new Shell(), "Confirmation", 
-//							"This action will update all unambiguous bindings in the sub-tree of '" + item.getName() +"'." +
-//							"\n\nThis action cannot be undone.");
-					
-//					if (go) {
-//						
-//						// ask if old bindings shall be deleted
-//						boolean deleteOldBindings = MessageDialog.openQuestion(new Shell(), 
-//								"Question", "Shall all bindings that are based on Value Providers be deleted before updating? " +
-//								"\n\nNote that after that only unambiguous bindings will be set." + 
-//								"\n\nThis action cannot be undone."); 
-//						
-//						
-//					}
 				}
 			}
 		};
@@ -1644,15 +1625,24 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		sel = selection;
 		par = sourcepart;
 		
-//		System.err.println(sourcepart.getSite().getId());
-		// only listen to the Papyrus Model Explorer
+		// remember the last selected item
+		IStructuredSelection viewerSelection = (IStructuredSelection) viewer.getSelection();
+		TreeObject obj = (TreeObject) viewerSelection.getFirstElement();
+		
+		// Only listen to the Papyrus Model Explorer selection
 		if (sourcepart != null && sourcepart.getSite() != null 
 				&& sourcepart.getSite().getId()!= null 
 				&& sourcepart.getSite().getId().equals("org.eclipse.papyrus.modelexplorer.modelexplorer")) {
+			
+			// set new input from the selection.
 			viewer.setInput(getViewSite());
-			viewer.setAutoExpandLevel(2);
-//			viewer.expandToLevel(2);
+			
 		}
+
+		// select the item again in view
+		TreeUtls.selectInView(obj, root, viewer);			
+//		viewer.setSelection(new StructuredSelection(viewerSelection)); // does not work
+		viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 	}
 	
 //	private void showItems(Object[] items) {

@@ -34,14 +34,15 @@ public class TreeUtls {
 //	}
 	
 	public static HashSet<Object> findTreeItems(TreeObject selectedItem, TreeParent parent, HashSet<Object> list) {
+
 		if (parent != null) {
 			TreeObject[] items = parent.getChildren();
 			
 			for (int i = 0; i < items.length; i++) {
-//				if ( items[i] == selectedItem) {
+//				if ( items[i] == selectedItem) { // does not work
 //					list.add(items[i]);
 //				}
-//				if ( items[i].equals(selectedItem) ) {
+//				if ( items[i].equals(selectedItem) ) { // does not work
 //					list.add(items[i]);
 //				}
 				if ( items[i].getDotPath().equals(selectedItem.getDotPath()) ) {
@@ -61,6 +62,7 @@ public class TreeUtls {
 	
 
 	public static void selectInView(Object obj, TreeParent treeRoot, TreeViewer viewer){
+
 		if ( obj instanceof TreeObject ) {
 			TreeObject item = (TreeObject)obj;
 

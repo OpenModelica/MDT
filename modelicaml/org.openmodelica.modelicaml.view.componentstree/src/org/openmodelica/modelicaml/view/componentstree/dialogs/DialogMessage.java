@@ -47,10 +47,11 @@ public class DialogMessage extends Dialog {
 
 		lblMessage.setText(this.infoText);
 
-		text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL);
+		text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		text.setLayout(new GridLayout());
         GridData textGD = new GridData(SWT.FILL, SWT.FILL, true, true);
         textGD.heightHint = convertHorizontalDLUsToPixels(130);
+        textGD.widthHint = convertHorizontalDLUsToPixels(400);
         text.setLayoutData(textGD);
         
 		text.setText(this.message + "\n\n");	
