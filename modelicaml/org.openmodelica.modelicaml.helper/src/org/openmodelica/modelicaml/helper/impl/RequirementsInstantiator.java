@@ -16,7 +16,6 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
-import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
@@ -29,9 +28,10 @@ public class RequirementsInstantiator {
 	final static String reqPropertyPrefix = "req_";
 	
 	public void instantiateRequirements(Class containingClass, HashSet<Class> reqClasses, HashMap<Class, Integer> selectedNumberOfInstantiations){
-		ClassInstantiation ast = new ClassInstantiation(containingClass, true);
-		ast.createTree();
-		TreeParent astRoot = ast.getTreeRoot();
+		
+//		ClassInstantiation ast = new ClassInstantiation(containingClass, true);
+//		ast.createTree();
+//		TreeParent astRoot = ast.getTreeRoot();
 		
 		EList<Property> instantiatedRequirements = new BasicEList<Property>();
 		
@@ -65,67 +65,89 @@ public class RequirementsInstantiator {
 			}
 		}
 
-		bindReqInputProperties(instantiatedRequirements, containingClass, astRoot);
+		bindReqInputProperties(instantiatedRequirements, containingClass);
 	}
 	
-	public void bindReqInputProperties(EList<Property> instantiatedRequirementList, Class containingClass, TreeParent astRoot) {
+	public void bindReqInputProperties(EList<Property> instantiatedRequirementList, Class containingClass) {
+		
+		// class instantiation after the requirements were added
+		ClassInstantiation ast = new ClassInstantiation(containingClass, true);
+		ast.createTree();
+		TreeParent treeRoot = ast.getTreeRoot();
+		
+		// find the instantiation class tree items based on the created UML properties
+		HashSet<TreeObject> instantiationClassTreeItems = new HashSet<TreeObject>();
+		for (Property property : instantiatedRequirementList) {
+			HashSet<TreeObject> treeItems = findTreeItems(property, treeRoot, new HashSet<TreeObject>());
+			instantiationClassTreeItems.addAll(treeItems);
+		}
+		
+		// update bindings
+		ValueBindingCreator vc = new ValueBindingCreator();
 
-		for (Property instantiatedRequirement : instantiatedRequirementList) {
-			Type pType =  instantiatedRequirement.getType();
-			
-			if (pType != null && pType instanceof Class) {
-				EList<Property> reqProperties = getRequirementInputPropertiesList(((Class)pType) );
-				for (Property reqProperty : reqProperties) {
-
-					// collect all binding data from the model 
-					// simulate as the reqProperty is already in the tree by passing the tempListOfReqElement
-					ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
-					dc.collectElementsFromInstantiationTree(astRoot);
-					
-					HashSet<Element> umlElementsInTreeInstantiation = dc.getUmlElementsInInstantiationTree();
-					// add the property in order to simulate that it is a class instantiation tree item 
-					umlElementsInTreeInstantiation.add(reqProperty);
-					// collect used mediators (i.e. mediators that have references to tree items)
-					dc.collectMeditorsDataFromUmlModel(containingClass.getModel(), umlElementsInTreeInstantiation);
-					
-					DeriveValueBindingCodeHelper deriveCodeHelper = new DeriveValueBindingCodeHelper();
-					// set the data collection manually in order to ensure that the properties are simulated as tree items in the class instantiation tree.
-					deriveCodeHelper.setDataCollection(dc);
-					
-					// set the client in order to simulate that this is a tree item client
-	    			deriveCodeHelper.setClient(null, reqProperty, false);
-	    			
-	    			// find the mediator(s)
-	    			deriveCodeHelper.findMediator(null, reqProperty, false);
-	    			
-					// if this property is a client at all
-					if ( deriveCodeHelper.getDataCollection().getReferencedClients().contains(reqProperty) ) {
-						
-			    		// Find the tree item for property in the components tree
-						HashSet<TreeObject> list = findTreeItems(reqProperty, astRoot, new HashSet<TreeObject>());
-
-						// get the mediator found. If there is no mediator then either there are multiple mediators for selection or none at all found.
-		    			Element selectedMediator = deriveCodeHelper.getMediatorElement();
-		    			
-		    			if (selectedMediator != null) {
-		    				
-		    				// call it in order to set the providers
-		    				deriveCodeHelper.findProviders(selectedMediator, false);
-	    					HashSet<TreeObject> providers = deriveCodeHelper.getProviders();
-		    				
-		    				// get mediator script in order to see if multiple providers will be reduced to one.
-		    				String mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(selectedMediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
-
-		    				String bindingCode = deriveCodeHelper.deriveCode(null, null, selectedMediator, mediatorOperation, providers);
-
-				    		if (bindingCode != null && !bindingCode.equals("")) {
-				    			ModificationManager.addComponentModification(instantiatedRequirement, StringUtls.replaceSpecChar(reqProperty.getName()), bindingCode, true);	
-							}
-		    			}
-					}
-				}
+		for (TreeObject treeObject : instantiationClassTreeItems) {
+			if (treeObject instanceof TreeParent) {
+				vc.updateBindings( (TreeParent)treeObject, treeRoot, false, true, false);
 			}
 		}
+		
+		
+//		for (Property instantiatedRequirement : instantiatedRequirementList) {
+//			Type pType =  instantiatedRequirement.getType();
+//			
+//			if (pType != null && pType instanceof Class) {
+//				EList<Property> reqProperties = getRequirementInputPropertiesList(((Class)pType) );
+//				for (Property reqProperty : reqProperties) {
+//
+//					// collect all binding data from the model 
+//					// simulate as the reqProperty is already in the tree by passing the tempListOfReqElement
+//					ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
+//					dc.collectElementsFromInstantiationTree(astRoot);
+//					
+//					HashSet<Element> umlElementsInTreeInstantiation = dc.getUmlElementsInInstantiationTree();
+//					// add the property in order to simulate that it is a class instantiation tree item 
+//					umlElementsInTreeInstantiation.add(reqProperty);
+//					// collect used mediators (i.e. mediators that have references to tree items)
+//					dc.collectMeditorsDataFromUmlModel(containingClass.getModel(), umlElementsInTreeInstantiation);
+//					
+//					DeriveValueBindingCodeHelper deriveCodeHelper = new DeriveValueBindingCodeHelper();
+//					// set the data collection manually in order to ensure that the properties are simulated as tree items in the class instantiation tree.
+//					deriveCodeHelper.setDataCollection(dc);
+//					
+//					// set the client in order to simulate that this is a tree item client
+//	    			deriveCodeHelper.setClient(null, reqProperty, false);
+//	    			
+//	    			// find the mediator(s)
+//	    			deriveCodeHelper.findMediator(null, reqProperty, false);
+//	    			
+//					// if this property is a client at all
+//					if ( deriveCodeHelper.getDataCollection().getReferencedClients().contains(reqProperty) ) {
+//						
+//			    		// Find the tree item for property in the components tree
+//						HashSet<TreeObject> list = findTreeItems(reqProperty, astRoot, new HashSet<TreeObject>());
+//
+//						// get the mediator found. If there is no mediator then either there are multiple mediators for selection or none at all found.
+//		    			Element selectedMediator = deriveCodeHelper.getMediatorElement();
+//		    			
+//		    			if (selectedMediator != null) {
+//		    				
+//		    				// call it in order to set the providers
+//		    				deriveCodeHelper.findProviders(selectedMediator, false, false);
+//	    					HashSet<TreeObject> providers = deriveCodeHelper.getProviders();
+//		    				
+//		    				// get mediator script in order to see if multiple providers will be reduced to one.
+//		    				String mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(selectedMediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+//
+//		    				String bindingCode = deriveCodeHelper.deriveCode(null, null, selectedMediator, mediatorOperation, providers);
+//
+//				    		if (bindingCode != null && !bindingCode.equals("")) {
+//				    			ModificationManager.addComponentModification(instantiatedRequirement, StringUtls.replaceSpecChar(reqProperty.getName()), bindingCode, true);	
+//							}
+//		    			}
+//					}
+//				}
+//			}
+//		}
 	}
 
 	
@@ -252,6 +274,7 @@ public class RequirementsInstantiator {
 		
     	for (Property property : inputsList) {
     		if (astRoot != null) {
+    			
     			// set the client in order to simulate that this is a tree item client
     			deriveCodeHelper.setClient(null, property, false);
     			
@@ -263,7 +286,7 @@ public class RequirementsInstantiator {
     			
     			if (selectedMediator != null) {
     				// call it in order to set the providers
-    				deriveCodeHelper.findProviders(selectedMediator, false);
+    				deriveCodeHelper.findProviders(selectedMediator, false, false);
     				
     				// get mediator script in order to see if multiple providers will be reduced to one.
     				String mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(selectedMediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);

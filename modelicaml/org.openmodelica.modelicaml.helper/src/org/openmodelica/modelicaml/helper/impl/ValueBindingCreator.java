@@ -22,7 +22,11 @@ public class ValueBindingCreator {
 	
 	private DeriveValueBindingCodeHelper deriveCodeHelper;
 
-	public void updateBindings(TreeParent treeParent, TreeParent treeRoot, boolean deleteOldBindings){
+	public void updateBindings(TreeParent treeParent, 
+			TreeParent treeRoot, 
+			boolean deleteOldBindings, 
+			boolean isAutomaticSelectionOfPreferredProvidersEnabled,
+			boolean showProgressMonitor){
 
 		// clear all static lists
 		updatedItems.clear();
@@ -31,14 +35,16 @@ public class ValueBindingCreator {
 		deletedItemsModification.clear();
 		deletedModifications.clear();
 		
+		// derive code helper
 		deriveCodeHelper = new DeriveValueBindingCodeHelper();
-		deriveCodeHelper.initialize(treeRoot, true);
+		// initialize the helper in order to collect the data from the model and the instantiated class.
+		deriveCodeHelper.initialize(treeRoot, showProgressMonitor); 
 		
 		// update bindings
-		update(treeParent, treeRoot, deleteOldBindings);
+		update(treeParent, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled);
 	}
 	
-	private void update(TreeParent treeParent,  TreeParent treeRoot, boolean deleteOldBindings){
+	private void update(TreeParent treeParent,  TreeParent treeRoot, boolean deleteOldBindings, boolean isAutomaticSelectionOfPreferredProvidersEnabled){
 		
 		if (treeParent != null && treeRoot != null) {
 			
@@ -59,16 +65,21 @@ public class ValueBindingCreator {
 				}
 				
 				if (element instanceof Property) {
-					// no user guidance. 
-					// TODO: think about the option to guide, 
-					// therefore the user should be able to cancel single code derivation or the overall "update all bindings" function. 
-					deriveCodeHelper.deriveBindingCodeForClient(item, false); 
+					// No user guidance is possible so far. 
+					// TODO: Think about the option to guide, 
+					// therefore the user should be able to cancel single code derivation or the overall "update all bindings" function.
+					// Moreover, the code derivation dialogs should always include the information about client, mediator, provider.
+					// This is not the case so far, for example, in the provider selection dialog.
+					
+					deriveCodeHelper.deriveBindingCodeForClient(item, false, isAutomaticSelectionOfPreferredProvidersEnabled); 
 					String code = deriveCodeHelper.getCode(); 
 					
 		    		// delete old bindings
-					// if the client element was found based on the selected tree item or the upper level scripts -> this means that in general there is a binding.
+					// if the client element was found based on the selected tree item or the upper level scripts 
+					// -> this means that in general there is a binding.
 					// -> If the option is selected then delete the binding for the current tree item. 
 					// -> However, it may happen that the binding code cannot be derived without user guidance so that the modification of the current item will be empty at the end. 
+					
 					if ( deriveCodeHelper.getClientElement() != null && modificationStoreLocation != null && deleteOldBindings ) {
 		    			String result = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
 		    			if (result != null && !result.trim().equals("")) {
@@ -80,12 +91,6 @@ public class ValueBindingCreator {
 							item.setFinalModificationSource( null );
 						}
 					}
-					
-//					if (deriveCodeHelper.getClientElement() != null ) {
-//						System.err.println("item: " + item);
-//						System.err.println("client: " +  deriveCodeHelper.getClientElement());
-//						System.err.println("code: " + code);	
-//					}
 					
 		    		// add modifications
 		    		if (deriveCodeHelper.getClientElement() != null && code != null && modificationStoreLocation != null) {
@@ -101,7 +106,7 @@ public class ValueBindingCreator {
 				}
 			
 				if (item instanceof TreeParent) {
-					update((TreeParent)item, treeRoot, deleteOldBindings);
+					update((TreeParent)item, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled);
 				}
 			}
 		}
