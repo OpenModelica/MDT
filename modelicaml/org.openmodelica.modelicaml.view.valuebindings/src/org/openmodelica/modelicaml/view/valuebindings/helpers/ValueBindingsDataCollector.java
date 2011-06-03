@@ -32,6 +32,7 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 	private HashSet<Element> umlElementsInInstantiationTree = new HashSet<Element>();
 	private HashMap<Element,HashSet<TreeObject>> elementToInstantiationTreeObjects = new HashMap<Element,HashSet<TreeObject>>();
 	private HashMap<Element,HashSet<Element>> clientToMediators = new HashMap<Element,HashSet<Element>>();
+	private HashMap<Element,HashSet<Element>> mediatorToClients = new HashMap<Element,HashSet<Element>>();
 	private HashMap<Element,HashSet<Element>> mediatorToProviders = new HashMap<Element,HashSet<Element>>();
 
 	private String log = "";
@@ -59,9 +60,30 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 			// collect mediators and references to clients, other mediators and providers
 			addToLog("Collecting data from the UML Model '" + ((NamedElement)umlRootModel).getQualifiedName() + "'... \n");
 			collectMeditorsDataFromUmlModel(umlRootModel, umlElementsInInstantiationTree);
+			
+			// remove all mediators that have not clients in the instantiation tree.
+			 removeMediatorsWithNoClientsInInstantiationTree();
 		}
 		else {
 			addToLog("ERROR: Was not able to collect data ...");
+		}
+	}
+	
+	public void removeMediatorsWithNoClientsInInstantiationTree(){
+		HashSet<Element> usedMediatorsCopy = new HashSet<Element>();
+		usedMediatorsCopy.addAll(usedMediators);
+		
+		for (Element mediator : usedMediatorsCopy) {
+			if (mediatorToClients.get(mediator) != null && mediatorToClients.get(mediator).size() > 0) {
+				// ok, do nothing
+			}
+			else {
+				usedMediators.remove(mediator);
+				
+				// TODO: keep the information that mediators exist with providers even if they are not used because 
+				// there are are clients in the instantiated tree or not.
+				//mediatorToProviders.remove(mediator);
+			}
 		}
 	}
 	
@@ -99,20 +121,26 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 					EList<Dependency> depList = mediator.getClientDependencies();
 					for (Dependency dependency : depList) {
 						
-						// reference to a clients
+						// reference to clients
 						if (dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null ) { 
 							EList<Element> targets = dependency.getTargets();
 							for (Element element : targets) {
 								if (element instanceof NamedElement) {
 									// add only mediators and referenced elements if they are used in the instantiation tree
 									if (umlElementsInInstantiationTree.contains(element)) {
+										
 										// Add to referenced client elements
 										referencedClients.add(element);
+										
 										// Add to referenced client tree items
 										if (elementToInstantiationTreeObjects.get(element) != null) {
 											referencedClientTreeItems.addAll(elementToInstantiationTreeObjects.get(element));	
 										}
+										
 										addToClientToMediatorsMap(element, mediator);
+										
+										addToMediatorToClientsMap(mediator, element);
+										
 										usedMediators.add(mediator);
 									}
 								}
@@ -221,6 +249,23 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 			clientToMediators.put(client, updatedSet);
 		}
 	}
+	
+	
+	private void addToMediatorToClientsMap(Element mediator, Element client){
+		HashSet<Element> set = mediatorToClients.get(mediator);
+		HashSet<Element> updatedSet = new HashSet<Element>();
+		
+		if (set != null && set.size() > 0 ) {
+			updatedSet.addAll(set);
+			updatedSet.add(client);
+			mediatorToClients.put(mediator, updatedSet);
+		}
+		else {
+			updatedSet.add(client);
+			mediatorToClients.put(mediator, updatedSet);
+		}
+	}
+	
 	
 	private void addToMediatorToProvidersMap(Element mediator, Element provider){
 		HashSet<Element> set = mediatorToProviders.get(mediator);

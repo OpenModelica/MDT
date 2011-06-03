@@ -80,6 +80,12 @@
                id="org.openmodelica.modelicaml.view.valuebindings.properties.tab.provideroperationeditor"
                label="Provider Operation">
          </propertyTab>
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.mediatoroperationeditor"
+               category="org.eclipse.papyrus.modelicaml"
+               id="org.openmodelica.modelicaml.view.valuebindings.properties.tab.mediatorpreferredbindings"
+               label="Preferred Bindings">
+         </propertyTab>
       </propertyTabs>
    </extension>
    <extension
@@ -117,6 +123,15 @@
                filter="org.openmodelica.modelicaml.view.valuebindings.filters.PropertySectionFilter_ProviderOperation"
                id="org.openmodelica.modelicaml.view.valuebindings.propertySection.providerperationeditor"
                tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.provideroperationeditor">
+            <input
+                  type="org.openmodelica.modelicaml.view.valuebindings.model.TreeObject">
+            </input>
+         </propertySection>
+         <propertySection
+               class="org.openmodelica.modelicaml.view.valuebindings.sections.PropertySection_MediatorPreferredProviders"
+               filter="org.openmodelica.modelicaml.view.valuebindings.filters.PropertySectionFilter_MediatorPreferredProviders"
+               id="org.openmodelica.modelicaml.view.valuebindings.propertySection.mediatorpreferredbindings"
+               tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.mediatorpreferredbindings">
             <input
                   type="org.openmodelica.modelicaml.view.valuebindings.model.TreeObject">
             </input>

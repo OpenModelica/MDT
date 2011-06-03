@@ -31,27 +31,47 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
-import org.eclipse.swt.widgets.Label;
 
 public class SelectValueProviderDialog extends Dialog {
 
 	private String title;
-	private List<TreeObject> elementsForSelection;
-	
-	private Element mediatorElement;
-	private String toolTipTextValueMediator;
-	
 	private String groupTitle;
 	private String messageText;
+
 	
+	// providers list
+	private List<TreeObject> elementsForSelection;
+	
+	// the mediator
+	private Element mediatorElement;
+	
+	// deduced client instantiation tree item
+	private TreeObject clientTreeObject; 
+	
+	// data collection for getting information about the mediator and providers 
 	private ValueBindingsDataCollector dataCollection;
 	
-	private TreeObject selectedElement = null;
+	// provider selected by the user
+	private TreeObject selectedProvider = null;
+
+	// preferred providers option
+	private boolean addToPrefferedProviders = false;
+	private String selectedProviderPath = "";
+	
+	private String preferredProvidersSelectionOptionToolTipText = "This action will remember " +
+					"your selection decision by storing the client and selected provider pair as follows:";
+
+	private String preferredProvidersSelectionOptionToolTipTextExplanation = 
+			"\nThis information will be used to pre-select providers in this diaolog. " +
+			"\nMoreover, the 'Update binding' feature will use this information to " +
+			"\nautomatically select one provider if there are multiple.";
+
+	
 	
 	public SelectValueProviderDialog(Shell parentShell, 
 			String title, 
+			TreeObject clientTreeObject,
 			Element mediatorElement,
-			String toolTipTextValueMediator,
 			String groupTitle,
 			String messageText,
 			List<TreeObject> elementsForSelection,
@@ -61,8 +81,9 @@ public class SelectValueProviderDialog extends Dialog {
 		super(parentShell);
 		
 		this.title = title;
+		this.clientTreeObject = clientTreeObject;
 		this.mediatorElement = mediatorElement;
-		this.toolTipTextValueMediator = toolTipTextValueMediator;
+//		this.toolTipTextValueMediator = toolTipTextValueMediator;
 		this.groupTitle = groupTitle;
 		this.messageText = messageText;
 		this.elementsForSelection = elementsForSelection;
@@ -151,8 +172,12 @@ public class SelectValueProviderDialog extends Dialog {
 		group.setText(groupTitle);
 		
 		final Button btnAddtoPreferredProviders = new Button(composite, SWT.CHECK);
-		btnAddtoPreferredProviders.setToolTipText("This action will remember the selection decision by storing the qualified names pair of the client and the selected provider.");
-		btnAddtoPreferredProviders.setText("remember this selction (i.e., add to preferred providers)");
+		btnAddtoPreferredProviders.setEnabled(false);
+		btnAddtoPreferredProviders.setToolTipText("This action will remember " +
+				"the selection decision by storing the client and the selected provider pair as follows:" +
+				"\n" + clientTreeObject.getDotPath() + " --> " +  selectedProviderPath
+				+ "\n");
+		btnAddtoPreferredProviders.setText("Remember this selection (i.e., add to preferred providers)");
 		
 		btnAddtoPreferredProviders.addSelectionListener(new SelectionListener() {
 			
@@ -170,6 +195,8 @@ public class SelectValueProviderDialog extends Dialog {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		
+		EList<String> preferredProviders = TreeUtls.getStringListPropertyFromElement(mediatorElement, Constants.stereotypeQName_ValueMediator, Constants.propertyName_preferredProviders);
 		
 		for (TreeObject provider : elementsForSelection) {
 			NamedElement providerElement = (NamedElement) provider.getUmlElement();
@@ -216,16 +243,24 @@ public class SelectValueProviderDialog extends Dialog {
 				rb.setToolTipText(toolTipTextSelectionItem);
 				rb.setText(provider.getDotPath());
 				rb.setData(provider);
+				
+				
+				// preselect the radio button if this provider is a preferred provider for the client.
+				if (TreeUtls.isPreferredProviderForClient(preferredProviders, clientTreeObject.getDotPath(), provider.getDotPath())) {
+					rb.setSelection(true);
+					setSelectedElement(provider);
+				}
+				
 				rb.addSelectionListener(new SelectionListener() {
 					
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						setSelectedElement((TreeObject) rb.getData());
+						providerSelectionAction((TreeObject) rb.getData(), btnAddtoPreferredProviders);
 					}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						setSelectedElement((TreeObject) rb.getData());
+						providerSelectionAction((TreeObject) rb.getData(), btnAddtoPreferredProviders);
 					}
 				});
 			}
@@ -235,14 +270,37 @@ public class SelectValueProviderDialog extends Dialog {
 	}
 
 	
-	private boolean addToPrefferedProviders = false;
+	private void providerSelectionAction(TreeObject selectedProvider, Button btnAddtoPreferredProviders){
+		
+		// set the selected provider
+		setSelectedElement(selectedProvider);
+		
+		//enable the remember button and set its tool tip text
+		if (getSelectedElement() != null) {
+			btnAddtoPreferredProviders.setEnabled(true);
+			selectedProviderPath = getSelectedElement().getDotPath();
+			btnAddtoPreferredProviders.setToolTipText(preferredProvidersSelectionOptionToolTipText 
+					+ "\n\n" + TreeUtls.getPreferredProviderAssignmentString(clientTreeObject.getDotPath(), selectedProviderPath) + "\n"
+					+ preferredProvidersSelectionOptionToolTipTextExplanation + "\n");
+			
+		}
+		// disable the remember button and set its tool tip text
+		else {
+			btnAddtoPreferredProviders.setEnabled(false);
+			selectedProviderPath = "";
+			btnAddtoPreferredProviders.setToolTipText(preferredProvidersSelectionOptionToolTipText
+					+ "\n\n" + TreeUtls.getPreferredProviderAssignmentString(clientTreeObject.getDotPath(), selectedProviderPath) + "\n"
+					+ preferredProvidersSelectionOptionToolTipTextExplanation + "\n");
+		}
+	}
+	
 	
 	public void setSelectedElement(TreeObject selectedElement) {
-		this.selectedElement = selectedElement;
+		this.selectedProvider = selectedElement;
 	}
 
 	public TreeObject getSelectedElement() {
-		return selectedElement;
+		return selectedProvider;
 	}
 
 	public void setAddToPrefferedProviders(boolean addToPrefferedProviders) {

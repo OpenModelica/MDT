@@ -28,45 +28,10 @@ import org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView;
 
 public class TreeUtls {
 
-	public static EList<Element> getAllValueProviders(List<Element> mediators){
-		EList<Element> providers = new BasicEList<Element>();
-		for (Element mediator : mediators) {
-			if (mediator instanceof NamedElement) {
-				EList<Dependency> dependencies = ((NamedElement)mediator).getClientDependencies();
-				for (Dependency dependency : dependencies) {
-					if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null) {
-						EList<Element> targets = dependency.getTargets();
-						providers.addAll(targets);
-					}
-				}
-			}
-		}
-		return providers;
-	}
 	
-	public static EList<Element> getValueProvidersFromTree(List<Element> mediators, org.openmodelica.modelicaml.common.instantiation.TreeObject treeRoot){
-		EList<Element> providers = new BasicEList<Element>();
+	
+	
 
-		return providers;
-	}
-	
-	
-	public static EList<Element> getMeditorsFromUmlModel(EObject umlRootElement){
-		EList<Element> mediators = new BasicEList<Element>();
-		if (umlRootElement != null) {
-			Iterator<EObject> i = umlRootElement.eAllContents();
-			while (i.hasNext()) {
-				EObject object = i.next() ;
-				if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
-					mediators.add((Property) object);
-				}
-			}
-		}
-		else {
-			System.err.println("Cannot access the root ModelicaML model to search for Value Mediators.");
-		}
-		return mediators;
-	}
 	
 	public static String getStringPropertyFromElement(Element element, String stereotypeQName, String propertyName) {
 		String stringProperty = null;
@@ -80,6 +45,19 @@ public class TreeUtls {
 		}
 		
 		return stringProperty;
+	}
+	
+	public static EList<String> getStringListPropertyFromElement(Element element, String stereotypeQName, String propertyName) {
+		EList<String> stringPropertyList = null;
+		
+		Stereotype stereotype = element.getAppliedStereotype(stereotypeQName);
+		if (stereotype != null) {
+			Object o = element.getValue(stereotype, propertyName);
+			if (o instanceof EList<?>) {
+				stringPropertyList = (EList<String>)o;
+			}
+		}
+		return stringPropertyList;
 	}
 	
 	public static EList<Element> getReferencingMediators(Element targetElement, EList<Element> mediators, String dependencyStereotypeQName){
@@ -135,30 +113,59 @@ public class TreeUtls {
 	}
 	
 	
+	//###################################### Store and Delete
+	
 	public static boolean storeMediatorReference(final Element valueMediatorElement, final EObject valueClientOrProviderElement, final int mode){
 
 		if (valueMediatorElement instanceof Property && valueClientOrProviderElement instanceof NamedElement) {
 			EList<Dependency> mediatorDependencies = ((Property)valueMediatorElement).getClientDependencies();
 			boolean targetAlreadyExists = false;
 			
+			List<Dependency> exisitingDepToClient = new ArrayList<Dependency>();
+			List<Dependency> exisitingDepToProvider = new ArrayList<Dependency>();
+			
 			for (Dependency dep : mediatorDependencies) {
-				for (Element element : dep.getTargets()) {
-					if (element == valueClientOrProviderElement) {
-						
-						// set the indicator 
-						targetAlreadyExists = true;
-						
-						// inform the user
-						MessageDialog.openError(new Shell(SWT.ON_TOP), "Error", 
-								"'" + ((NamedElement)valueMediatorElement).getQualifiedName() + "' \n"
-								+ " already has a reference to the element \n" +
-										"'" + ((NamedElement)valueClientOrProviderElement).getQualifiedName() + "'\n"
-								+ "\n\nNo reference was stored or updated."); 
-						return false;
+				for (Element target : dep.getTargets()) {
+					
+					// dep to a provider or other mediator
+					Stereotype depStereotype = dep.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom);
+					if (depStereotype == null) {
+						depStereotype = dep.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
+					}
+					
+					if (target == valueClientOrProviderElement) {
+						if (dep.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null) {
+							exisitingDepToClient.add(dep);
+						}
+						if (dep.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null) {
+							exisitingDepToProvider.add(dep);
+						}
 					}
 				}
 			}
-				
+			
+			String modeName = "";
+			if (mode == Constants.MODE_ADD_CLIENT && exisitingDepToClient.size() > 0) {
+				// set the indicator 
+				targetAlreadyExists = true;
+				modeName = "client reference";
+			}
+			else if (mode == Constants.MODE_ADD_PROVIDER && exisitingDepToProvider.size() > 0) {
+				// set the indicator 
+				targetAlreadyExists = true;
+				modeName = "provider reference";
+			}
+
+			if (targetAlreadyExists) {
+				// inform the user
+				MessageDialog.openError(new Shell(SWT.ON_TOP), "Error", 
+						"'" + ((NamedElement)valueMediatorElement).getQualifiedName() + "' \n"
+						+ " already has a " + modeName + " to the element \n" +
+								"'" + ((NamedElement)valueClientOrProviderElement).getQualifiedName() + "'\n"
+						+ "\n\nNo reference was stored or updated."); 
+				return false;
+			}
+			
 			if ( !targetAlreadyExists ) {
 				TransactionalEditingDomain editingDomain = getTransactionalEditingDomain();
 				CompoundCommand cc = new CompoundCommand("Add value mediator reference");
@@ -217,8 +224,6 @@ public class TreeUtls {
 		}
 		return null;
 	}
-	
-	
 	
 	
 	
@@ -282,7 +287,108 @@ public class TreeUtls {
 	}
 	
 	
+	//############################## Preferred Providers Handling
+	public static String getPreferredProviderAssignmentString(String clientPath, String providerPath){
+		if (clientPath != null  && !clientPath.equals("") && providerPath != null && !providerPath.equals("") ) {
+			return clientPath + Constants.preferredProvidersAssignmentSeparator + providerPath;
+		}
+		return null;
+	}
+
+	public static boolean addToPreferredProvider(final Element mediator, String clientPath, String providerPath){
+		
+		if (mediator != null && !clientPath.isEmpty() && !providerPath.isEmpty()) {
+			
+			EList<String> tempList = null; // working list
+			
+			EList<String> preferredPoviders = getStringListPropertyFromElement(mediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_preferredProviders);
+
+			if (preferredPoviders != null) { // if a list exists
+				
+				// create the final list
+				tempList = new BasicEList<String>();
+				
+				// collect only items that do not start with client path
+				for (String string : preferredPoviders) {
+					if ( !startsWithPath(string, clientPath) ) {
+						tempList.add(string);
+					}
+				}
+				
+				// add the new assigment to the final list
+				tempList.add(getPreferredProviderAssignmentString(clientPath, providerPath));
+			}
+			else {
+				// add new list
+				tempList = new BasicEList<String>();
+				tempList.add(getPreferredProviderAssignmentString(clientPath, providerPath));
+			}
+			
+			// if the list was created -> store it in the mediator
+			if (tempList != null) {
+
+				final EList<String> finalList = tempList;
+				
+				TransactionalEditingDomain editingDomain = getTransactionalEditingDomain();
+				CompoundCommand cc = new CompoundCommand("Add preferred providers to the mediator.");
+				Command command = new RecordingCommand(editingDomain) {
+					@Override
+					protected void doExecute() {
+						Stereotype stereotype = mediator.getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
+						if (stereotype != null) {
+							mediator.setValue(stereotype, Constants.propertyName_preferredProviders, finalList);
+						}
+					}
+				};
+				cc.append(command);
+				editingDomain.getCommandStack().execute(cc);
+				
+				return true;
+			}
+			
+		}
+		return false;
+	}
+
 	
+	private static boolean startsWithPath(String preferredProviderAssignment, String path){
+		String[] splitted = preferredProviderAssignment.split(Constants.preferredProvidersAssignmentSeparator);
+		if (splitted.length == 2 ) { // if there is a pair with the separator
+			if (splitted[0].trim().equals(path)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isPreferredProviderForClient(EList<String> preferredProviders, String clientPath, String providerPath){
+		if (preferredProviders != null) {
+			for (String preferredProviderAssignment : preferredProviders) {
+				String[] splitted = preferredProviderAssignment.split(Constants.preferredProvidersAssignmentSeparator);
+				if (splitted.length == 2 ) { // if there is a pair with the separator
+					if (splitted[0].trim().equals(clientPath) && splitted[1].trim().equals(providerPath)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	public static org.openmodelica.modelicaml.common.instantiation.TreeObject getPreferredProviderForClient(Element mediator, 
+			HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> providers, 
+			String clientPath ){
+		if (mediator != null && providers != null) {
+			EList<String> preferredProviders = TreeUtls.getStringListPropertyFromElement(mediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_preferredProviders);
+			for ( org.openmodelica.modelicaml.common.instantiation.TreeObject treeObject : providers) {
+				if (isPreferredProviderForClient(preferredProviders, clientPath, treeObject.getDotPath())) {
+					return treeObject;
+				}
+			}
+		}
+		return null;
+	}
 	
 	// #############################	TreeViewer management
 	
@@ -378,5 +484,53 @@ public class TreeUtls {
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	//#################### OBSOLETE
+	
+//	public static EList<Element> getAllValueProviders(List<Element> mediators){
+//	EList<Element> providers = new BasicEList<Element>();
+//	for (Element mediator : mediators) {
+//		if (mediator instanceof NamedElement) {
+//			EList<Dependency> dependencies = ((NamedElement)mediator).getClientDependencies();
+//			for (Dependency dependency : dependencies) {
+//				if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null) {
+//					EList<Element> targets = dependency.getTargets();
+//					providers.addAll(targets);
+//				}
+//			}
+//		}
+//	}
+//	return providers;
+//}
+
+//public static EList<Element> getValueProvidersFromTree(List<Element> mediators, org.openmodelica.modelicaml.common.instantiation.TreeObject treeRoot){
+//	EList<Element> providers = new BasicEList<Element>();
+//
+//	return providers;
+//}
+
+
+//public static EList<Element> getMeditorsFromUmlModel(EObject umlRootElement){
+//	EList<Element> mediators = new BasicEList<Element>();
+//	if (umlRootElement != null) {
+//		Iterator<EObject> i = umlRootElement.eAllContents();
+//		while (i.hasNext()) {
+//			EObject object = i.next() ;
+//			if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+//				mediators.add((Property) object);
+//			}
+//		}
+//	}
+//	else {
+//		System.err.println("Cannot access the root ModelicaML model to search for Value Mediators.");
+//	}
+//	return mediators;
+//}
 	
 }

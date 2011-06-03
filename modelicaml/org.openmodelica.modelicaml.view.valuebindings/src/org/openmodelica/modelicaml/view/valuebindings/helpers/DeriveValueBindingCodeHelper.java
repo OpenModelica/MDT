@@ -48,6 +48,8 @@ public class DeriveValueBindingCodeHelper {
 	private String logString = ""; // logs all important information during the code derivation
 	private String errorString = null; // result of validation
 	private Boolean errorsDetected = false; // indicates if an error was detected.
+	
+	private Boolean userSelectionRequired = false; // indicates if an error was detected.
 
 	
 //	public DeriveValueBindingCodeHelper(TreeObject selectedTreeItem, TreeObject instantiationTreeRoot){
@@ -111,7 +113,7 @@ public class DeriveValueBindingCodeHelper {
 	}
 	
 	
-	public void deriveBindingCodeForClient(TreeObject selectedTreeItem, boolean isUserGuided){
+	public void deriveBindingCodeForClient(TreeObject selectedTreeItem, boolean isUserGuided, boolean isAutomaticSelectionOfPreferredProvidersEnabled){
 
 		// clear all in order to delete data from the previous call
 		clientElement = null;
@@ -142,7 +144,7 @@ public class DeriveValueBindingCodeHelper {
 				if (mediatorElement instanceof NamedElement) { // if the mediator was found or selected
 				
 					// find providers
-					findProviders(mediatorElement, isUserGuided);
+					findProviders(mediatorElement, isUserGuided, isAutomaticSelectionOfPreferredProvidersEnabled);
 					if ( (mediatorOperation != null && !DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(mediatorOperation)) 
 							|| (providers != null && providers.size() > 0)) {
 
@@ -295,7 +297,7 @@ public class DeriveValueBindingCodeHelper {
 		return providersSorted;
 	}
 	
-	public void findProviders(Element mediator, boolean isUserGuided){
+	public void findProviders(Element mediator, boolean isUserGuided, boolean isAutomaticSelectionOfPreferredProvidersEnabled){
 		// clear the list
 		providersForSelection.clear();
 		providers.clear(); 
@@ -320,25 +322,36 @@ public class DeriveValueBindingCodeHelper {
 				providers.add(singleProviderInstance);
 			}
 			else if ( providerInstances.size() > 1 ) {
-				// if the operation is compatible then add all providers
+				
+				// if the operation handles multiple providers then add all providers to the final list
 				if (DeriveValueBindingCodeUtls.isValidMediatorMultipleItemsScript(mediatorOperation)) {
 					providers.addAll(providerInstances);
 				}
-				else { // Select provider
+				else { // Provider selection: User selection or automatic selection
+					
+					// indicate that a manual selection should be done by the user
+					setUserSelectionRequired(true);
+					
 					// Catch the fact that there were multiple providers that were used for user selection
 					providersForSelection.addAll(providerInstances);
+					
+					//***** USER Selection
 					if (isUserGuided) {
 						String title = "Value Provider Selection";
-						String toolTipTextSourceTreeItem = "Element: " + ((NamedElement)mediatorElement).getQualifiedName();
 						String messageText = "There are multiple providers for the mediator and no operation is defined to handle multiple items. " +
 								"\nYou can select one provider that should be used to derive the code for the selected Value Mediator. " +
 								"\r\nNote, you can hover the elements to get more information. \r\n";
+
 						String groupTitle = "Value Providers";
 						
-						SelectValueProviderDialog dialog = new SelectValueProviderDialog(new Shell(), 
-								title, mediatorElement, 
-								toolTipTextSourceTreeItem, 
-								groupTitle, messageText, 
+						SelectValueProviderDialog dialog = new SelectValueProviderDialog(
+								new Shell(), 
+								title, 
+								clientTreeItem,
+								mediatorElement,
+//								toolTipTextSourceTreeItem, 
+								groupTitle, 
+								messageText, 
 								getSortedList(providerInstances),
 								dataCollection); 
 						
@@ -358,8 +371,17 @@ public class DeriveValueBindingCodeHelper {
 							}
 						}
 					}
+					
+					// *** AUTOMATIC Selection based on preferred providers
+					// if there is a preferred provider -> select it automatically
+					else if (isAutomaticSelectionOfPreferredProvidersEnabled) {
+						if (clientTreeItem != null && TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()) != null) {
+							providers.add(TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()));
+						}
+					}
 				}
 			}
+			// no providers were found
 			else {
 				String mediatorQName = ((NamedElement)mediator).getQualifiedName();
 				String message = "EMPTY: No providers were found for the mediator '"+mediatorQName+"'";
@@ -372,12 +394,7 @@ public class DeriveValueBindingCodeHelper {
 	
 	private void storePreferredProvider(Element mediator, TreeObject client, TreeObject provider) {
 		if (mediator != null && client != null && provider != null) {
-			String pair = client.getDotPath() + " = " + provider.getDotPath();
-			System.err.println("add to preferredProviders: " + pair);
-			// TODO: get the preferredProviders from the mediator
-			// if there exists a pair that starts witht the client.dotPath -> remove it from the list
-			// add the new pair to the list
-			// sore the new list in mediator preferredProviders 
+			boolean result = TreeUtls.addToPreferredProvider(mediator, client.getDotPath(), provider.getDotPath());
 		}
 		else {
 			MessageDialog.openError(new Shell(), "Error", "Could not add the provider to preferred providers.");
@@ -407,12 +424,12 @@ public class DeriveValueBindingCodeHelper {
 //			mediatorsForClient = mediatorsContainingClientOperationScript;
 //		}
 		
-		// if a search for the client was done before and there is an upper level client found that has references to the mediators
-		// -> use this list of mediators
+		// if a search for the client was done before and there is an upper level client was found that has references to the mediators
+		// -> use this list of mediators, otherwise get the mediators from the client UML element.
 		if (mediatorsContainingClientOperationScript.size() == 0) { 
 			mediatorsForClient = dataCollection.getClientToMediators().get(client);
 		}
-		else { // get the mediators from the client
+		else { 
 			mediatorsForClient = mediatorsContainingClientOperationScript;
 		}
 		
@@ -424,7 +441,7 @@ public class DeriveValueBindingCodeHelper {
 				if (mediator instanceof Property) { // TODO: what if it is a state?
 					
 					// NOTE: 	Reducing the mediator selection by checking the type compatibility is 
-					// 			NOT useful because type checking needs expression evaluation.
+					// 			NOT useful because type checking needs expression evaluation which is hard to do at ModelicaML level.
 
 					// TODO: Implement check for variability compatibility between client and mediator?
 
@@ -479,6 +496,7 @@ public class DeriveValueBindingCodeHelper {
 						mediators.add(mediator);
 					}
 					
+					// NOTE: the code below is not useful because there it may be on purpose in order to let the user select.
 //					// if there are more then 1 provider instances 
 //					// -> select the mediator if it has binding operation functions to handle multiple providers.
 //					if ( providerInstances.size() > 1 && DeriveValueBindingCodeUtls.isValidMediatorMultipleItemsScript(mediatorScript)) {
@@ -503,17 +521,22 @@ public class DeriveValueBindingCodeHelper {
 			}
 		}
 		
-		// Store the information when there are multiple mediators. This not used in this class but by other ...
-		mediatorsForSelection.addAll(mediators);
 		
 		if (mediators.size() > 1 ) { // too many -> let the user select
 
+			// indicate that a manual selection should be done by the user
+			setUserSelectionRequired(true);
+
+			// Store the information when there are multiple mediators. This not used in this class but by other ...
+			mediatorsForSelection.addAll(mediators);
+			
 			String clientName = ((NamedElement)client).getQualifiedName();
 			String message = "NOT VALID: Multiple mediators ("+ getItemsAsStringList(new BasicEList<Element>(mediators))+") are found for the client '"+clientName+"'." +
 					"\nYou have to select one. ";
 			setError(message);
 			addToLog(message);
 			
+			//*** USER Selection
 			if (isUserGuided) {
 				
 				String title = "Value Mediator Selection";
@@ -544,6 +567,8 @@ public class DeriveValueBindingCodeHelper {
 					addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"'.");
 				}
 			}
+			// TODO: is a preferred mediators feature sensible, similar to preferred providres? 
+			// The qualified name of the mediator UML property could be used for storing the user selections for clients.  
 		}
 		else if (mediators.size() == 1) { // ok, set the mediator element and its operation
 			Object[] m = mediators.toArray();
@@ -782,7 +807,7 @@ public class DeriveValueBindingCodeHelper {
 			clientName = ((NamedElement)client).getQualifiedName();
 		}
 		
-		String message = "EMPTY: No Value Mediators were found for the Value Client '" + clientName + "'."; 
+		String message = "EMPTY: No Value Mediators were found or selected for the Value Client '" + clientName + "'."; 
 		setError(message);
 		addToLog(message);
 		
@@ -797,7 +822,7 @@ public class DeriveValueBindingCodeHelper {
 			mediatorName = ((NamedElement)mediator).getQualifiedName();
 		}
 		
-		String message = "EMPTY: No Value Providers were found for the Value Mediator '" + mediatorName + "'."; 
+		String message = "EMPTY: No Value Providers were found or selected for the Value Mediator '" + mediatorName + "'."; 
 		setError(message);
 //		addToLog(message);
 		
@@ -912,6 +937,16 @@ public class DeriveValueBindingCodeHelper {
 			}
 		}
 		return string;
+	}
+
+
+	public void setUserSelectionRequired(Boolean userSelectionRequired) {
+		this.userSelectionRequired = userSelectionRequired;
+	}
+
+
+	public Boolean isUserSelectionRequired() {
+		return userSelectionRequired;
 	}
 	
 }

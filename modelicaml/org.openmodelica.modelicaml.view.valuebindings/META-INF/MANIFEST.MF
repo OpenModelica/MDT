@@ -24,7 +24,8 @@ Require-Bundle: org.eclipse.ui,
  org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.ui;bundle-version="1.0.0",
  org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator;bundle-version="1.0.0",
  org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.generator;bundle-version="1.0.0",
- org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui;bundle-version="1.0.0"
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui;bundle-version="1.0.0",
+ org.eclipse.papyrus.profile;bundle-version="0.7.4"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openmodelica.modelicaml.view.valuebindings.dialogs,

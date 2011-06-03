@@ -393,8 +393,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowClientPerspective.setText("Show Client Perspective");
-		actionShowClientPerspective.setToolTipText("Show Client Perspective");
+		actionShowClientPerspective.setText("Show Client Perspective (read-only)");
+		actionShowClientPerspective.setToolTipText("Show Client Perspective (read-only)");
 //		actionShowClientPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		
@@ -413,8 +413,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowProviderPerspective.setText("Show Provider Perspective");
-		actionShowProviderPerspective.setToolTipText("Show Provider Perspective");
+		actionShowProviderPerspective.setText("Show Provider Perspective (read-only)");
+		actionShowProviderPerspective.setToolTipText("Show Provider Perspective (read-only)");
 //		actionShowProviderPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		
