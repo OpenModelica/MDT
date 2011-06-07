@@ -136,12 +136,12 @@ import org.modelica.mdt.ui.view.ModelicaContentOutlinePage;
  * The editor is configured with following features:
  * 
  *  - modelica syntax highlighting
- *  - content assiastant
+ *  - content assistant
  *  - info-pops
  *  - action that invokes content assist on ctrl+space
  *  - folding(collapsing) of blocks of source code
- *  - outline syncronization
- *  - Modelica Project Viewer syncronization
+ *  - outline synchronization
+ *  - Modelica Project Viewer synchronization
  * 
  * @author Adrian Pop
  * @author MDT team
