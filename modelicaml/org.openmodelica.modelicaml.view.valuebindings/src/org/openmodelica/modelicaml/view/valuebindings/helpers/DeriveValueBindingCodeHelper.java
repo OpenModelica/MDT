@@ -313,7 +313,14 @@ public class DeriveValueBindingCodeHelper {
 			for (Element providerForMediator : providersForMediator) {
 				HashSet<TreeObject> providerInstancesForPovider = dataCollection.getInstantiationTreeObjects(providerForMediator);
 				if (providerInstancesForPovider != null && providerInstancesForPovider.size() > 0 ) {
-					providerInstances.addAll(providerInstancesForPovider);
+					for (TreeObject provider : providerInstancesForPovider) {
+						// a component may be client and provider at the same time.
+						// avoid cyclic references.
+						if (provider != clientTreeItem) {
+							providerInstances.add(provider);
+						}
+					}
+//					providerInstances.addAll(providerInstancesForPovider);
 				}
 			}
 			
@@ -375,8 +382,20 @@ public class DeriveValueBindingCodeHelper {
 					// *** AUTOMATIC Selection based on preferred providers
 					// if there is a preferred provider -> select it automatically
 					else if (isAutomaticSelectionOfPreferredProvidersEnabled) {
-						if (clientTreeItem != null && TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()) != null) {
+//						if (clientTreeItem != null && TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()) != null) {
+//							providers.add(TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()));
+//						}
+						HashSet<TreeObject> preferredPoviders = TreeUtls.getPreferredProvidersForClient(mediator, providerInstances, clientTreeItem.getDotPath());
+						if (clientTreeItem != null && preferredPoviders != null && preferredPoviders.size() == 1) {
 							providers.add(TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()));
+						}
+						else if (preferredPoviders.size() > 1 ) {
+							String mediatorQName = ((NamedElement)mediator).getQualifiedName();
+							EList<TreeObject> pProviders = new BasicEList<TreeObject>();
+							pProviders.addAll(preferredPoviders);
+							String message = "ERROR: Multiple preferred providers ("+getItemsAsStringList(pProviders)+") were found for '"+mediatorQName+"'";
+							setError(message);
+							addToLog(message);
 						}
 					}
 				}
@@ -455,6 +474,13 @@ public class DeriveValueBindingCodeHelper {
 							HashSet<TreeObject> providerInstancesForPovider = dataCollection.getInstantiationTreeObjects(providerForMediator);
 							if (providerInstancesForPovider != null && providerInstancesForPovider.size() > 0 ) {
 								providerInstances.addAll(providerInstancesForPovider);
+								
+								// a component may be client and provider 
+								// avoid cyclic references to it self.
+								if (providerInstances.contains(clientTreeItem)) {
+									providerInstances.remove(clientTreeItem);
+								}
+								
 							}
 						}
 					}

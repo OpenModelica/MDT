@@ -199,70 +199,76 @@ public class SelectValueProviderDialog extends Dialog {
 		EList<String> preferredProviders = TreeUtls.getStringListPropertyFromElement(mediatorElement, Constants.stereotypeQName_ValueMediator, Constants.propertyName_preferredProviders);
 		
 		for (TreeObject provider : elementsForSelection) {
-			NamedElement providerElement = (NamedElement) provider.getUmlElement();
 			
-			if (providerElement instanceof TypedElement) { // TODO: what if it is a State?
+			// a class component may be client and provider at the same time
+			// avoid referencing themself
+			if (provider != clientTreeObject) { 
+			
+				NamedElement providerElement = (NamedElement) provider.getUmlElement();
 				
-				final Button rb = new Button(group, SWT.RADIO);
-				rb.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/addValueProviders.png"));
-				
-				// name
-				String toolTipTextSelectionItem = "Provider Path: " + provider.getDotPath()
-						+ "\nElement: " + providerElement.getQualifiedName();
-				
-				// operation
-				EList<Dependency> depList = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, providerElement, Constants.stereotypeQName_ObtainsValueFrom);
-				String providerOperation = DeriveValueBindingCodeUtls.getOperationSpecification(depList.get(0), Constants.stereotypeQName_ObtainsValueFrom, Constants.propertyName_operation);
-				if (providerOperation == null) {
-					toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\nOperation: NONE.";
-				}
-				else {
-					toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\nOperation: " + providerOperation;
-				}
+				if (providerElement instanceof TypedElement) { // TODO: what if it is a State?
+					
+					final Button rb = new Button(group, SWT.RADIO);
+					rb.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/addValueProviders.png"));
+					
+					// name
+					String toolTipTextSelectionItem = "Provider Path: " + provider.getDotPath()
+							+ "\nElement: " + providerElement.getQualifiedName();
+					
+					// operation
+					EList<Dependency> depList = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, providerElement, Constants.stereotypeQName_ObtainsValueFrom);
+					String providerOperation = DeriveValueBindingCodeUtls.getOperationSpecification(depList.get(0), Constants.stereotypeQName_ObtainsValueFrom, Constants.propertyName_operation);
+					if (providerOperation == null) {
+						toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\nOperation: NONE.";
+					}
+					else {
+						toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\nOperation: " + providerOperation;
+					}
 
-				// type
-				if (providerElement instanceof TypedElement) {
-					Type providerType = ((TypedElement)providerElement).getType();
-					if (providerType != null ) {
-						String providerTypeString = "\r\nType: " + providerType.getName().replaceFirst("Modelica", "");
-						toolTipTextSelectionItem = toolTipTextSelectionItem + providerTypeString;
-					}
-				}
-				
-				// variability 
-				Stereotype varStereotype = providerElement.getAppliedStereotype(Constants.stereotypeQName_Variable);
-				if (varStereotype != null) {
-					Object o = providerElement.getValue(varStereotype, Constants.propertyName_variability);
-					if (o instanceof EnumerationLiteral) {
-						toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\nVariability: " + ((EnumerationLiteral)o).getName();
-					}	
-				}
-				
-				toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\n";
-				
-				rb.setToolTipText(toolTipTextSelectionItem);
-				rb.setText(provider.getDotPath());
-				rb.setData(provider);
-				
-				
-				// preselect the radio button if this provider is a preferred provider for the client.
-				if (TreeUtls.isPreferredProviderForClient(preferredProviders, clientTreeObject.getDotPath(), provider.getDotPath())) {
-					rb.setSelection(true);
-					setSelectedElement(provider);
-				}
-				
-				rb.addSelectionListener(new SelectionListener() {
-					
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						providerSelectionAction((TreeObject) rb.getData(), btnAddtoPreferredProviders);
+					// type
+					if (providerElement instanceof TypedElement) {
+						Type providerType = ((TypedElement)providerElement).getType();
+						if (providerType != null ) {
+							String providerTypeString = "\r\nType: " + providerType.getName().replaceFirst("Modelica", "");
+							toolTipTextSelectionItem = toolTipTextSelectionItem + providerTypeString;
+						}
 					}
 					
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-						providerSelectionAction((TreeObject) rb.getData(), btnAddtoPreferredProviders);
+					// variability 
+					Stereotype varStereotype = providerElement.getAppliedStereotype(Constants.stereotypeQName_Variable);
+					if (varStereotype != null) {
+						Object o = providerElement.getValue(varStereotype, Constants.propertyName_variability);
+						if (o instanceof EnumerationLiteral) {
+							toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\nVariability: " + ((EnumerationLiteral)o).getName();
+						}	
 					}
-				});
+					
+					toolTipTextSelectionItem = toolTipTextSelectionItem + "\r\n";
+					
+					rb.setToolTipText(toolTipTextSelectionItem);
+					rb.setText(provider.getDotPath());
+					rb.setData(provider);
+					
+					
+					// preselect the radio button if this provider is a preferred provider for the client.
+					if (TreeUtls.isPreferredProviderForClient(preferredProviders, clientTreeObject.getDotPath(), provider.getDotPath())) {
+						rb.setSelection(true);
+						setSelectedElement(provider);
+					}
+					
+					rb.addSelectionListener(new SelectionListener() {
+						
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							providerSelectionAction((TreeObject) rb.getData(), btnAddtoPreferredProviders);
+						}
+						
+						@Override
+						public void widgetDefaultSelected(SelectionEvent e) {
+							providerSelectionAction((TreeObject) rb.getData(), btnAddtoPreferredProviders);
+						}
+					});
+				}				
 			}
 		}
 		

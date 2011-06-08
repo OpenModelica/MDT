@@ -63,6 +63,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		// set text styled, override the default
 		if ( ((TreeObject)obj).isValueClientsNode() 
 				|| ((TreeObject)obj).isValueMediatorsNode() || ((TreeObject)obj).isValueProvidersNode()) {
+			
 			// name string 
 			String name = ((TreeObject)obj).getName() + " ";
 			
@@ -121,9 +122,9 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				if (((TreeObject)obj).getInstantiationTreeObject() != null) {
 					name = ((TreeObject)obj).getInstantiationTreeObject().getDotPath()  + " ";	
 				}
-				else {
-					name = ((NamedElement)umlElement).getName() + " ";
-				}
+//				else {
+//					name = ((NamedElement)umlElement).getName() + " ";
+//				}
 				
 				// number of children string 
 				String numberOfChildren = "";

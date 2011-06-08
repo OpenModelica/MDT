@@ -308,15 +308,20 @@ public class TreeUtls {
 				// create the final list
 				tempList = new BasicEList<String>();
 				
-				// collect only items that do not start with client path
-				for (String string : preferredPoviders) {
-					if ( !startsWithPath(string, clientPath) ) {
-						tempList.add(string);
-					}
-				}
+//				// collect only items that do not start with client path
+//				for (String string : preferredPoviders) {
+//					if ( !startsWithPath(string, clientPath) ) {
+//						tempList.add(string);
+//					}
+//				}
 				
-				// add the new assigment to the final list
-				tempList.add(getPreferredProviderAssignmentString(clientPath, providerPath));
+				tempList.addAll(preferredPoviders);
+				
+				// add the new assignment to the final list
+				// avoid duplicates, i.e. add only the new assignment if it is not contained in the list.
+				if ( !clientPreferredProviderPairExists(tempList, clientPath, providerPath)) {
+					tempList.add(getPreferredProviderAssignmentString(clientPath, providerPath));	
+				}
 			}
 			else {
 				// add new list
@@ -361,6 +366,18 @@ public class TreeUtls {
 		return false;
 	}
 	
+	private static boolean clientPreferredProviderPairExists(EList<String> preferredPoviders, String clientPath, String providerPath){
+		for (String preferredProviderAssignment : preferredPoviders) {
+			String[] splitted = preferredProviderAssignment.split(Constants.preferredProvidersAssignmentSeparator);
+			if (splitted.length == 2 ) { // if there is a pair with the separator
+				if (splitted[0].trim().equals(clientPath) && splitted[1].trim().equals(providerPath) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static boolean isPreferredProviderForClient(EList<String> preferredProviders, String clientPath, String providerPath){
 		if (preferredProviders != null) {
 			for (String preferredProviderAssignment : preferredProviders) {
@@ -375,6 +392,24 @@ public class TreeUtls {
 		return false;
 	}
 	
+	
+	public static HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> getPreferredProvidersForClient(
+			Element mediator, 
+			HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> providers, 
+			String clientPath ){
+		
+		HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> preferredProviders = new HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject>();
+		
+		if (mediator != null && providers != null) {
+			EList<String> preferredProvidersList = TreeUtls.getStringListPropertyFromElement(mediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_preferredProviders);
+			for ( org.openmodelica.modelicaml.common.instantiation.TreeObject treeObject : providers) {
+				if (isPreferredProviderForClient(preferredProvidersList, clientPath, treeObject.getDotPath())) {
+					preferredProviders.add(treeObject);
+				}
+			}
+		}
+		return preferredProviders;
+	}
 	
 	public static org.openmodelica.modelicaml.common.instantiation.TreeObject getPreferredProviderForClient(Element mediator, 
 			HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> providers, 

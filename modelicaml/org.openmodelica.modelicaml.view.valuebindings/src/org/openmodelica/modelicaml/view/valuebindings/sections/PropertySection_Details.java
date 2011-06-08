@@ -56,6 +56,16 @@ public class PropertySection_Details extends AbstractPropertySection {
 	
 	private TreeViewer viewer;
 
+	 ModifyListener modifyListener = new ModifyListener() {
+			
+	    	@Override
+			public void modifyText(ModifyEvent e) {
+				if (item != null && item.getUmlElement() != null && item.getUmlElement() instanceof NamedElement) {
+					storeText();
+				}
+			}
+		};
+	
     public void createControls(Composite parent, TabbedPropertySheetPage aTabbedPropertySheetPage) {
         super.createControls(parent, aTabbedPropertySheetPage);
         
@@ -71,34 +81,14 @@ public class PropertySection_Details extends AbstractPropertySection {
 		
 		textName = new Text(composite, SWT.BORDER);
 		textName.setBounds(65, 10, 579, 19);
-		textName.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (item != null && item.getUmlElement() != null && item.getUmlElement() instanceof NamedElement) {
-					final NamedElement element = (NamedElement)item.getUmlElement();
-					//########## storing start
-					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-					CompoundCommand cc = new CompoundCommand();
-					Command command = new RecordingCommand(editingDomain) {
-						@Override
-						protected void doExecute() {
-							String newName = textName.getText();
-							element.setName(newName);
-							item.setName(newName);
-							viewer.update(item, null);
-						}
-					};
-					cc.append(command);
-					if (editingDomain != null) {
-						editingDomain.getCommandStack().execute(cc);
-					}
-					else {
-						System.err.println("Cannot access the editing domain ...");
-					}
-					//########## storing end
-				}
-			}
-		});
+//		textName.addModifyListener(new ModifyListener() {
+//			@Override
+//			public void modifyText(ModifyEvent e) {
+//				if (item != null && item.getUmlElement() != null && item.getUmlElement() instanceof NamedElement) {
+//					storeText();
+//				}
+//			}
+//		});
 		
 		lblType = new Label(composite, SWT.NONE);
 		lblType.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -121,6 +111,8 @@ public class PropertySection_Details extends AbstractPropertySection {
 		textOwner.setText("<a>New Link</a>");
     }
 
+   
+    
     public void setInput(IWorkbenchPart part, ISelection selection) {
         super.setInput(part, selection);
         Assert.isTrue(selection instanceof IStructuredSelection);
@@ -144,12 +136,14 @@ public class PropertySection_Details extends AbstractPropertySection {
 		lblOwner.setVisible(ownerTextVisibility);    		
 		textOwner.setVisible(ownerTextVisibility);
 
+    	textName.removeModifyListener(modifyListener);
     	textName.setText(item.getName());
     	if (item != null && item.getUmlElement() instanceof NamedElement) {
     		textName.setEditable(true);		}
     	else {
     		textName.setEditable(false);
     	}
+    	textName.addModifyListener(modifyListener);
     	
     	// type
     	String type = "";
@@ -190,6 +184,30 @@ public class PropertySection_Details extends AbstractPropertySection {
     	textOwner.setText(owner);
     }
 
+    
+    private void storeText(){
+    	final NamedElement element = (NamedElement)item.getUmlElement();
+		//########## storing start
+		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+		CompoundCommand cc = new CompoundCommand();
+		Command command = new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				String newName = textName.getText();
+				element.setName(newName);
+				item.setName(newName);
+				viewer.update(item, null);
+			}
+		};
+		cc.append(command);
+		if (editingDomain != null) {
+			editingDomain.getCommandStack().execute(cc);
+		}
+		else {
+			System.err.println("Cannot access the editing domain ...");
+		}
+		//########## storing end
+    }
     
     private void locate(Object object){
 		if (object instanceof EObject) {

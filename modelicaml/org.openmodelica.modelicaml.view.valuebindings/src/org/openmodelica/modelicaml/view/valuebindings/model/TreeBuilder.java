@@ -3,7 +3,6 @@ package org.openmodelica.modelicaml.view.valuebindings.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.BasicEList;
@@ -12,8 +11,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
@@ -21,13 +18,20 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.view.valuebindings.helpers.MediatorsCollector;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataCollector;
 
 
 public class TreeBuilder {
 
-	private EList<Class> valueMediatorContainers = new BasicEList<Class>();
+	private EList<Element> valueMediatorContainers = new BasicEList<Element>();
 	private EList<Element> valueMediators = new BasicEList<Element>();
+	
+	// only the imported mediator containers
+	private HashSet<Element> importedMediatorContainers = new HashSet<Element>();
+	// only the imported mediators
+	private HashSet<Element> importedMediators = new HashSet<Element>(); 
+	
 //	private EList<Property> valueClients = new BasicEList<Property>();
 //	private EList<Property> valueProviders = new BasicEList<Property>();
 
@@ -166,14 +170,20 @@ public class TreeBuilder {
 			rootModelNode.setUmlElement((Element) getUmlModel());
 			treeRoot.addChild(rootModelNode);
 			
-			for (Class valueBindingContainer : valueMediatorContainers) {
+			for (Element valueBindingContainer : valueMediatorContainers) {
 				
 				Package nearestPackage = valueBindingContainer.getNearestPackage();
 				TreeParent packageNode = null;
-
+				
+				// import indicator
+				String importedPrefix = "";
+				if (importedMediatorContainers.contains(valueBindingContainer)) {
+					importedPrefix = "(imported) ";
+				}
+				
 				if (nearestPackage != null && nearestPackage != getUmlModel() ) {
 					
-					// see this package already exist.
+					// see if this package already exist.
 					TreeObject[] children = ((TreeParent)rootModelNode).getChildren();
 
 					for (int i = 0; i < children.length; i++) {
@@ -185,14 +195,15 @@ public class TreeBuilder {
 					
 					// if there is no package node yet then create one
 					if (packageNode == null) {
-						packageNode = new TreeParent(nearestPackage.getName());
+						packageNode = new TreeParent(importedPrefix + nearestPackage.getName());
 						// set the nearest package element and add item to tree.
 						packageNode.setUmlElement(nearestPackage);
 						rootModelNode.addChild(packageNode);
 					}
 		
 					// add the container item to the tree.
-					TreeParent item = new TreeParent(valueBindingContainer.getName());
+//					TreeParent item = new TreeParent(importedPrefix + ((NamedElement)valueBindingContainer).getName());
+					TreeParent item = new TreeParent(((NamedElement)valueBindingContainer).getName());
 					item.setUmlElement(valueBindingContainer);
 					packageNode.addChild(item);
 					
@@ -200,7 +211,8 @@ public class TreeBuilder {
 					addValueMediators(item);
 				}
 				else { // if there is no package for containers then add them to the root model node.
-					TreeParent item = new TreeParent(valueBindingContainer.getName());
+//					TreeParent item = new TreeParent(importedPrefix + ((NamedElement)valueBindingContainer).getName());
+					TreeParent item = new TreeParent(((NamedElement)valueBindingContainer).getName());
 					item.setUmlElement(valueBindingContainer);
 					rootModelNode.addChild(item);
 					
@@ -225,7 +237,11 @@ public class TreeBuilder {
 	
 	
 	public void addValueMediators(TreeParent valueBindingsContainer){
-		EList<Property> list = ((Class)valueBindingsContainer.getUmlElement()).getAllAttributes();
+		
+		// TODO: this should be adopted when inheritance wil be allowed for mediators.
+//		EList<Property> list = ((Class)valueBindingsContainer.getUmlElement()).getAllAttributes();
+		EList<Property> list = ((Class)valueBindingsContainer.getUmlElement()).getAttributes();
+		
 		for (Property property : list) {
 			if (property.getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
 				Element valueMediatorElement = property;
@@ -471,95 +487,32 @@ public class TreeBuilder {
 		}
 	}
 	
-	
-	
-////	TODO: re implement it for the dependecies approach!
-//	private List<Element> getValueMediators(Element element, String stereotypeQName, String propertyName){
-//		List<Element> list = new ArrayList<Element>();
-//		
-//		Stereotype stereotype = element.getAppliedStereotype(stereotypeQName);
-//		if (stereotype != null) {
-//			Object listOfMediators = element.getValue(stereotype, propertyName);
-//			if (listOfMediators instanceof List) {
-//				for (Object mediator : (List)listOfMediators) {
-//					if (mediator instanceof EObject) {
-//						list.add(UMLUtil.getBaseElement((EObject)mediator));
-//					}
-//				}
-//			}
-//		}
-//		return list;
-//	}
-	
 	// ###################### READ-ONLY nodes END 
 	
 	
+	// ###################### START: Collect and sort data 
 	
 	public void collectElementsFromModel(EObject umlRootElement){
-		
 		// null means that the the root of the UML model that is currently open in the browser will be used.
 		setUmlModel(umlRootElement); // sets this.umlModel that is used in getUmlModel()
 		
 		if (getUmlModel() != null) {
-			Iterator<EObject> i = getUmlModel().eAllContents();
-			while (i.hasNext()) {
-				EObject object = i.next() ;
-				if (object instanceof Class && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediatorsContainer) != null) {
-					valueMediatorContainers.add((Class) object) ;
-				}
-				else if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
-					valueMediators.add((Property) object);
-				}
-//				else if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
-//					valueClients.add((Property) object);
-//				}
-//				else if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
-//					valueProviders.add((Property) object);
-//				}
-			}
+			
+			MediatorsCollector mc = new MediatorsCollector();
+			mc.collectElementsFromModel(getUmlModel());
+			
+			valueMediatorContainers = mc.getValueMediatorContainers();
+			valueMediators = mc.getValueMediators();
+			
+			importedMediatorContainers = mc.getImportedMediatorContainers();
+			importedMediators = mc.getImportedMediators();
 		}
 		else {
+			// Do nothing because the the user will be informed in the viewer to reload the tree ...
 //			System.err.println("Cannot access the root ModelicaML model for searching for value binding containers.");
 		}
 	}
-	
-	
-	
-//	public void collectElementsFromModel(){
-//		UmlModel papyrusModel = UmlUtils.getUmlModel();
-//		if (papyrusModel != null ) {
-//			try {
-//				setUmlModel(papyrusModel.lookupRoot());
-////				System.err.println(model);
-//			} catch (NotFoundException e) {
-//				// TODO Auto-generated catch block
-////				e.printStackTrace();
-//			}
-//		}
-//		if (umlModel != null) {
-//			Iterator<EObject> i = umlModel.eAllContents();
-//			while (i.hasNext()) {
-//				EObject object = i.next() ;
-//				if (object instanceof Class && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediatorsContainer) != null) {
-//					valueMediatorContainers.add((Class) object) ;
-//				}
-//				else if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
-//					valueMediators.add((Property) object);
-//				}
-//				else if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueClient) != null) {
-//					valueClients.add((Property) object);
-//				}
-//				else if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
-//					valueProviders.add((Property) object);
-//				}
-//			}
-//		}
-//		else {
-////			System.err.println("Cannot access the root ModelicaML model for searching for value binding containers.");
-//		}
-//	}
-	
-	
+		
 	
 	private void sortData(){
 		for (Element valueMediator : valueMediators) {
@@ -587,6 +540,199 @@ public class TreeBuilder {
 			}
 		}
 	}
+	
+	// ###################### END: Collect and sort data
+	
+	
+	public EObject getUmlModel() {
+		return umlModel;
+	}
+
+	public void setUmlModel(EObject umlRootElement) {
+		if (umlRootElement == null) {
+			UmlModel papyrusModel = UmlUtils.getUmlModel();
+			if (papyrusModel != null ) {
+				try {
+					setUmlModel(papyrusModel.lookupRoot());
+//					System.err.println(model);
+				} catch (NotFoundException e) {
+					// TODO Auto-generated catch block
+//					e.printStackTrace();
+				}
+			}
+		}
+		else {
+			this.umlModel = umlRootElement;
+		}
+	}
+	
+	private void addToMapList(HashMap map, Element key, Element value){
+		Object list = map.get(key);
+		if (list instanceof HashSet) {
+			((HashSet<Element>)list).add(value);
+			map.put(key, list);
+		}
+		else{
+			HashSet<Element> newList = new HashSet<Element>();
+			newList.add(value);
+			map.put(key, newList);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ##################### OBSOLETE
+
+	
+
+//	private HashSet<Element> importedMembers = new HashSet<Element>();
+	
+//	public void collectElementsFromModel(EObject umlRootElement){
+//		
+//		// clear the imported members list.
+//		importedMembers.clear();
+//		
+//		// null means that the the root of the UML model that is currently open in the browser will be used.
+//		setUmlModel(umlRootElement); // sets this.umlModel that is used in getUmlModel()
+//		
+//		if (getUmlModel() != null) {
+//			// collect the imported members for the root element
+//			if (getUmlModel() instanceof Namespace) {
+//				
+//				Namespace element = (Namespace)getUmlModel();
+//				EList<PackageableElement> importedElements = getImportedMembers(element);
+//				if (importedElements != null && importedElements.size() > 0) {
+////					importedMembers.addAll(importedElements);
+//					for (PackageableElement packageableElement : importedElements) {
+//						collectFromImportedMember(packageableElement);
+//					}
+//				}
+//			}
+//			
+//			// get the iterator and all direct contents. 
+//			Iterator<EObject> i = getUmlModel().eAllContents();
+//
+//			while (i.hasNext()) {
+//				EObject object = i.next() ;
+//				
+//				// collect all imported elements 
+//				if (object instanceof Namespace) {
+//					EList<PackageableElement> importedElements = getImportedMembers((Namespace)object);
+//					if (importedElements != null && importedElements.size() > 0) {
+//						for (PackageableElement packageableElement2 : importedElements) {
+//							collectFromImportedMember(packageableElement2);
+//						}
+//					}
+//				}
+//				
+//				// collect mediator containers and mediators.
+//				if (object instanceof Element) {
+//					collectMediators((Element)object);
+//				}
+//				
+//				// OLD
+////				if (object instanceof Class && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediatorsContainer) != null) {
+////					valueMediatorContainers.add((Class) object) ;
+////				}
+////				else if (object instanceof Property && ((Element)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+////					valueMediators.add((Property) object);
+////				}
+//			}
+//		}
+//		else {
+////			System.err.println("Cannot access the root ModelicaML model for searching for value binding containers.");
+//		}
+//	}
+//	
+//	
+//	private void collectFromImportedMember(EObject importedMember) {
+//		
+//		// get imported members from itself
+//		if (importedMember instanceof Namespace) {
+//			Namespace element = (Namespace)getUmlModel();
+//			EList<PackageableElement> importedElements = getImportedMembers(element);
+//			
+//			if (importedElements != null && importedElements.size() > 0) {
+//				
+//				// add to imported members in order enable recognizing cyclic runs.  
+//				importedMembers.addAll(importedElements);
+//				for (PackageableElement packageableElement : importedElements) {
+//					// collect mediator containers and mediators.
+//					if (packageableElement instanceof Element) {
+//						collectMediators((Element)packageableElement);
+//					}
+//					// not yet considered -> recursively call
+//					if (!importedMembers.contains(packageableElement)) {
+//						if (packageableElement instanceof Namespace) {
+//							collectFromImportedMember(packageableElement);
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//		// iterate over all contained elements, collect mediators, and recursively collect mediators from all imported members
+//		Iterator<EObject> i = importedMember.eAllContents();
+//		while (i.hasNext()) {
+//			EObject object = i.next() ;
+//			
+//			// collect mediator containers and mediators.
+//			if (object instanceof Element) {
+//				collectMediators((Element)object);
+//			}
+//			// not yet considered -> recursively call
+//			if (!importedMembers.contains(object)) {
+//				if (object instanceof Namespace) {
+//					collectFromImportedMember(object);
+//				}
+//			}
+//		}
+//	}
+//	
+//	private void collectMediators(Element element){
+//		// collect mediator containers and mediators
+//		// avoid duplicates that can occure due to the multiple imports of the same mediators
+//		
+//		if (element instanceof Class && ((Element)element).getAppliedStereotype(Constants.stereotypeQName_ValueMediatorsContainer) != null
+//				&& !valueMediatorContainers.contains(element)) {
+//			
+//			valueMediatorContainers.add((Class) element) ;
+//		}
+//		else if (element instanceof Property && ((Element)element).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null
+//				&& !valueMediators.contains(element)) {
+//			
+//			valueMediators.add((Property) element);
+//		}
+//	}
+//	
+//	private EList<PackageableElement> getImportedMembers(Namespace element){
+//		if (element != null) {
+//			return element.getImportedMembers();
+//		}
+//		return null;
+//	}
+	
+	
+	
+	
 	
 //	private void sortData(){
 //		for (Element valueClient : valueClients) {
@@ -626,40 +772,25 @@ public class TreeBuilder {
 //		}
 //	}
 	
-	public EObject getUmlModel() {
-		return umlModel;
-	}
-
-	public void setUmlModel(EObject umlRootElement) {
-		if (umlRootElement == null) {
-			UmlModel papyrusModel = UmlUtils.getUmlModel();
-			if (papyrusModel != null ) {
-				try {
-					setUmlModel(papyrusModel.lookupRoot());
-//					System.err.println(model);
-				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
-//					e.printStackTrace();
-				}
-			}
-		}
-		else {
-			this.umlModel = umlRootElement;
-		}
-	}
 	
-	private void addToMapList(HashMap map, Element key, Element value){
-		Object list = map.get(key);
-		if (list instanceof HashSet) {
-			((HashSet<Element>)list).add(value);
-			map.put(key, list);
-		}
-		else{
-			HashSet<Element> newList = new HashSet<Element>();
-			newList.add(value);
-			map.put(key, newList);
-		}
-	}
+////TODO: remove it.
+//	private List<Element> getValueMediators(Element element, String stereotypeQName, String propertyName){
+//		List<Element> list = new ArrayList<Element>();
+//		
+//		Stereotype stereotype = element.getAppliedStereotype(stereotypeQName);
+//		if (stereotype != null) {
+//			Object listOfMediators = element.getValue(stereotype, propertyName);
+//			if (listOfMediators instanceof List) {
+//				for (Object mediator : (List)listOfMediators) {
+//					if (mediator instanceof EObject) {
+//						list.add(UMLUtil.getBaseElement((EObject)mediator));
+//					}
+//				}
+//			}
+//		}
+//		return list;
+//	}
+	
 	
 }
 

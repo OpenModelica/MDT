@@ -107,17 +107,20 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 		}
 	}
 
-		
+	
 	public void collectMeditorsDataFromUmlModel(EObject umlRootElement, HashSet<Element> umlElementsInInstantiationTree){
 		if (umlRootElement instanceof NamedElement) {
 			
-			Iterator<EObject> i = umlRootElement.eAllContents();
-			while (i.hasNext()) {
-				EObject object = i.next();
+			// collect all mediators
+			MediatorsCollector mc = new MediatorsCollector();
+			mc.collectElementsFromModel(umlRootElement);
+			
+			for ( Element object : mc.getValueMediators() ) {
 				if (object instanceof NamedElement 
 						&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
 					
 					NamedElement mediator = (NamedElement)object;
+
 					EList<Dependency> depList = mediator.getClientDependencies();
 					for (Dependency dependency : depList) {
 						
@@ -194,9 +197,103 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 						addToLog(message);
 					}
 				}
-			}		
+			}
 		}
 	}
+	
+//	public void collectMeditorsDataFromUmlModel(EObject umlRootElement, HashSet<Element> umlElementsInInstantiationTree){
+//		if (umlRootElement instanceof NamedElement) {
+//			
+//			Iterator<EObject> i = ((NamedElement)umlRootElement).eAllContents();
+//			
+//			while (i.hasNext()) {
+//				
+//				EObject object = i.next();
+//				
+//				if (object instanceof NamedElement 
+//						&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+//					
+//					NamedElement mediator = (NamedElement)object;
+//
+//					EList<Dependency> depList = mediator.getClientDependencies();
+//					for (Dependency dependency : depList) {
+//						
+//						// reference to clients
+//						if (dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null ) { 
+//							EList<Element> targets = dependency.getTargets();
+//							for (Element element : targets) {
+//								if (element instanceof NamedElement) {
+//									// add only mediators and referenced elements if they are used in the instantiation tree
+//									if (umlElementsInInstantiationTree.contains(element)) {
+//										
+//										// Add to referenced client elements
+//										referencedClients.add(element);
+//										
+//										// Add to referenced client tree items
+//										if (elementToInstantiationTreeObjects.get(element) != null) {
+//											referencedClientTreeItems.addAll(elementToInstantiationTreeObjects.get(element));	
+//										}
+//										
+//										addToClientToMediatorsMap(element, mediator);
+//										
+//										addToMediatorToClientsMap(mediator, element);
+//										
+//										usedMediators.add(mediator);
+//									}
+//								}
+//							}
+//						}
+//						// reference to providers or other mediators
+//						else if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null ) {
+//							EList<Element> targets = dependency.getTargets();
+//							for (Element element : targets) {
+//								if (element instanceof NamedElement) {
+//									
+//									// if it is a medtiator that is reused by another mediator
+//									if (((NamedElement)element).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+//										// TODO: implement the reusage of mediators
+//										
+//										// add only mediators and referenced elements if they are used in the instantiation tree
+//										if (umlElementsInInstantiationTree.contains(element)) {
+//											referencedMediators.add(element);
+//											usedMediators.add(mediator);
+//										}
+//										else {
+//											//TODO: log that the mediator or its providers was discarded because they are not used in the instantiation tree.
+//										}
+//									}
+//									// it is a provider
+//									else {
+//										// add only mediators and referenced elements if they are used in the instantiation tree
+//										if (umlElementsInInstantiationTree.contains(element)) {
+//											// Add to referenced provider elements
+//											referencedProviders.add(element);
+//											// Add to referenced provider tree items
+//											if (elementToInstantiationTreeObjects.get(element) != null) {
+//												referencedProviderTreeItems.addAll(elementToInstantiationTreeObjects.get(element));	
+//											}
+//											addToMediatorToProvidersMap(mediator, element);
+//											usedMediators.add(mediator);
+//										}
+//										else {
+//											String message = "DISCARDED: Provider '" + ((NamedElement)element).getQualifiedName() + "' for mediator '"+mediator.getQualifiedName()+"' is not used in the instantiated class.";
+//											addToLog(message);
+//										}
+//
+//									}
+//								}
+//							}
+//						}
+//					}
+//					
+//					if ( !usedMediators.contains(mediator) ) {
+//						String message = "DISCARDED: Mediator'" + mediator .getQualifiedName() + "' has no clients or providers that are used in the instantiated class.";
+//						addToLog(message);
+//					}
+//				}
+//			}		
+//		}
+//	}
 
 	
 	private void addToLog(String message) {

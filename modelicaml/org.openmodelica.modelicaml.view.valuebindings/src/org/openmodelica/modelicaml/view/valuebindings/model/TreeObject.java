@@ -15,22 +15,35 @@ public class TreeObject implements IAdaptable {
 	
 	// only used for instantiated class mode
 	private org.openmodelica.modelicaml.common.instantiation.TreeObject instantiationTreeObject = null;
-	private boolean isInstantiatedClass = false; // only for the root of the instantiated class tree.
+	
+	// only for the root of the instantiated class tree.
+	private boolean isInstantiatedClass = false; 
 	
 	private boolean isValueClient = false;
 	private boolean isValueProvider = false;
-
+	
+	// is used for different perspective items, that are not underneath the "normal" root, 
+	// in order to disable actions on items
 	private boolean isReadOnly = false;
 	
 	
 	public TreeObject(String name) {
 		this.name = name;
 	}
+	
 	public String getName() {
-		if (getUmlElement() instanceof NamedElement) {
+//		if (getUmlElement() instanceof NamedElement) {
+//			return ((NamedElement)getUmlElement()).getName();
+//		}
+//		return name;
+		
+		if ( !this.name.equals("") ) {
+			return this.name;	
+		}
+		else if (getUmlElement() instanceof NamedElement) {
 			return ((NamedElement)getUmlElement()).getName();
 		}
-		return name;
+		return this.name;
 	}
 	
 	public void setName(String name){
