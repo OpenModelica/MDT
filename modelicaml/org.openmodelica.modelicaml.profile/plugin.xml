@@ -537,7 +537,7 @@
             <command
                   commandId="org.openmodelica.modelicaml.commands.CreateModelicaComponentCommand"
                   icon="resources/icons/icons16/component.png"
-                  label="Component (System Model Usage)"
+                  label="Component (Model Usage)"
                   style="push">
                <visibleWhen
                      checkEnabled="true">
