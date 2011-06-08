@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui
 Bundle-Vendor: My Company
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.openmodelica.modelicaml.editor.xtext.valuebinding.client;visibility:=reexport,
