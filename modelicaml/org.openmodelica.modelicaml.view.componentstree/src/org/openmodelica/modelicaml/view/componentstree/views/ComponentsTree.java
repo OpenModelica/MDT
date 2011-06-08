@@ -691,7 +691,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		};
 		actionUpdateBindings.setText("Update Bindings in Sub-Tree");
 		actionUpdateBindings.setToolTipText("Update Bindings in Sub-Tree");
-		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/updateBindings.png"));
+//		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/updateBindings.png"));
+		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png")));
 		
 		
 //		showPathAction = new Action() {
