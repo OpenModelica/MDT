@@ -81,7 +81,7 @@ public class Constants {
 	
 	
 	// used by value binding provider xtext editor
-	public static final String MACRO_ownPath 				= "ownPath"; // OBSOLETE
+//	public static final String MACRO_ownPath 				= "ownPath"; // OBSOLETE
 	public static final String MACRO_clientPath 			= "clientPath";
 	public static final String MACRO_providerPath 			= "providerPath";
 	
