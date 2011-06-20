@@ -40,6 +40,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.papyrus.core.utils.EditorUtils;
@@ -126,6 +127,26 @@ public class ModificationManager {
 			//########## storing end
 			
 			//component.eNotify(new NotificationImpl(PapyrusNotification.SET, null, null)); // notify Papyrus
+		}
+		
+	}
+	
+	
+	public static void deleteAllComponentModifications( final Element element){
+		final Stereotype stereotype = getElementStereotype(element);
+		if (stereotype != null) {
+			//########## storing start
+			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			CompoundCommand cc = new CompoundCommand();
+			Command command = new RecordingCommand(editingDomain) {
+				@Override
+				protected void doExecute() {
+					element.setValue(stereotype, Constants.propertyName_modification, new ArrayList<String>()); // set the value
+				}
+			};
+			cc.append(command);
+			editingDomain.getCommandStack().execute(cc);
+			//########## storing end
 		}
 		
 	}
