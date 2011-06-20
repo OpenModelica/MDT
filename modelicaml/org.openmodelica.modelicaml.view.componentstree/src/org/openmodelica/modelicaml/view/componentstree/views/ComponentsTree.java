@@ -467,9 +467,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 				
 				// delete all modifications from first level components.
-				if (item instanceof TreeParent && ((TreeParent)item).getChildren().length > 0) {
+				if (item.getUmlElement() instanceof Property && item.getFirstLevelComponent() instanceof Property 
+						&& item.getUmlElement() == item.getFirstLevelComponent()) {
 					manager.add(new Separator());
-					manager.add(actionAllDeleteModifications);
+					manager.add(actionAllDeleteModifications);					
 				}
 			}
 
@@ -626,7 +627,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						}
 						
 						String title = "Delete all modifications";
-						String message = "Are you sure you want to delete all modifications from the following first level components of " + "'" + item.getName() + "'?" 
+						String message = "Are you sure you want to delete all modifications from the following first-level components of " + "'" + item.getName() + "'?" 
 								+ "\n\n" + childrenNameList
 								+ "\nThis action cannot be undone.";
 						Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
@@ -751,8 +752,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionUpdateBindings.setText("Update Bindings in Sub-Tree");
-		actionUpdateBindings.setToolTipText("Update Bindings in Sub-Tree");
+		actionUpdateBindings.setText("Update bindings in sub-tree");
+		actionUpdateBindings.setToolTipText("Update bindings in sub-tree");
 //		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/updateBindings.png"));
 		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png")));
 		
