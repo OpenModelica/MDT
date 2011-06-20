@@ -175,7 +175,7 @@ private EList<Element> createdElements = new BasicEList<Element>();
 								// apply ModelicaML stereotype
 								if (stereotype == null && element != null) {
 									Shell shell = new Shell();
-									MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML Testing profile is applied to the top-level model/package.");
+									MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML Value Bindings profile is applied to the top-level model/package.");
 								}
 								else {
 									element.applyStereotype(stereotype);
@@ -195,7 +195,7 @@ private EList<Element> createdElements = new BasicEList<Element>();
 						// apply ModelicaML stereotype
 						if (stereotype == null && element != null) {
 							Shell shell = new Shell();
-							MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML Testing profile is applied to the top-level model/package.");
+							MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML Value Bindings  profile is applied to the top-level model/package.");
 						}
 						else {
 							element.applyStereotype(stereotype);

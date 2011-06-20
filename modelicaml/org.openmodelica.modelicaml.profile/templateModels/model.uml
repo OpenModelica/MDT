@@ -2,6 +2,7 @@
 <uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_0rWUEEZ4EeCNwcQ1br55sQ" name="ModelicaMLModel">
   <packagedElement xmi:type="uml:Package" xmi:id="_9hl8AEZ4EeCNwcQ1br55sQ" name="Requirements"/>
   <packagedElement xmi:type="uml:Package" xmi:id="_9hl8AUZ4EeCNwcQ1br55sQ" name="Design"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_hHqtkJsxEeCoH8eQBqr4Qw" name="TestCases"/>
   <packagedElement xmi:type="uml:Package" xmi:id="_9hl8AkZ4EeCNwcQ1br55sQ" name="Simulations"/>
   <profileApplication xmi:id="_KnDK0EaDEeCQpY_u5Ewuhg">
     <eAnnotations xmi:id="_KnyxsEaDEeCQpY_u5Ewuhg" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -47,7 +48,7 @@
   </profileApplication>
   <profileApplication xmi:id="_Ku8ikUaDEeCQpY_u5Ewuhg">
     <eAnnotations xmi:id="_KvGTkEaDEeCQpY_u5Ewuhg" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_Kpwz41aVEd-OiJEhN960pA"/>
+      <references xmi:type="ecore:EPackage" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_vy2cMHfdEeC8VcOgJ0vxlw"/>
     </eAnnotations>
     <appliedProfile href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_-Xax8F5KEd6vy6oEr0QneQ"/>
   </profileApplication>
@@ -68,5 +69,17 @@
       <references xmi:type="ecore:EPackage" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_KqEVwlaVEd-OiJEhN960pA"/>
     </eAnnotations>
     <appliedProfile href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_zPJyIGC9Ed6v450MT6BnSw"/>
+  </profileApplication>
+  <profileApplication xmi:id="_eQtHgJsxEeCoH8eQBqr4Qw">
+    <eAnnotations xmi:id="_eRJMYJsxEeCoH8eQBqr4Qw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_F0fzcHyJEeCz14mjmAfPTw"/>
+    </eAnnotations>
+    <appliedProfile href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_ImIGME4pEeC4rN7SNTLq6w"/>
+  </profileApplication>
+  <profileApplication xmi:id="_eRJMYZsxEeCoH8eQBqr4Qw">
+    <eAnnotations xmi:id="_eRl4UJsxEeCoH8eQBqr4Qw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_AhFsgIxVEeCL2qVcoCeT8g"/>
+    </eAnnotations>
+    <appliedProfile href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_mmn7EEsYEeCLrv7S0OCHfw"/>
   </profileApplication>
 </uml:Model>
