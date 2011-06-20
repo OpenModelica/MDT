@@ -38,7 +38,7 @@ public class DeriveValueBindingCodeUtls {
 	
 	
 	public static boolean hasMediatorBindingScriptFunctions(String scriptCode){
-		if (scriptCode != null) {
+		if (scriptCode != null && !scriptCode.trim().equals("")) {
 			// any array reduction function
 			if ( scriptCode.matches("(.+)\\((\\s+)?\\:(\\s+)?\\)(.+)?")) {
 				return true;

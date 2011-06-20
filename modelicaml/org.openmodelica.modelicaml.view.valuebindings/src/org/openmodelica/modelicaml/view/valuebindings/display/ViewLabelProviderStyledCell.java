@@ -175,6 +175,10 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				
 				if (((TreeObject)obj).isValueMediator() ) {
 					
+					// mediator operation
+					String valueMediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(((TreeObject)obj).getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+					// TODO: show operation if it has no binding functions ...
+					
 					// numbers of clients and providers
 					int numberOfClients = getNumberOfClients(obj);
 					int numberOfProviders = getNumberOfProviders(obj);
@@ -201,8 +205,16 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 					if (item.getParent() != null && item.getParent().getParent() != null && item.getParent().getParent().isValueClient()) {
 						styledString.append(", ");
 
-						if (numberOfProviders == 0) {styledString.append(providersString, stylerRed); }
-						else { styledString.append(providersString); }
+						// if the mediator script has only constant values, that do not depend on providers
+						// -> show the mediator operation
+						if (valueMediatorOperation != null && !DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(valueMediatorOperation)) {
+							styledString.append(" = " + valueMediatorOperation, stylerRed);
+						}
+						// else show the number of providers
+						else {
+							if (numberOfProviders == 0) {styledString.append(providersString, stylerRed); }
+							else { styledString.append(providersString); }
+						}
 					}
 
 					if ( !item.isReadOnly() ) { // if it is not a read-only item then show the number of both: clients and providers
@@ -212,9 +224,17 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 						else { styledString.append(clientsString); }
 
 						styledString.append(", ");
-
-						if (numberOfProviders == 0) {styledString.append(providersString, stylerRed); }
-						else { styledString.append(providersString); }
+						
+						// if the mediator script has only constant values, that do not depend on providers
+						// -> show the mediator operation
+						if (valueMediatorOperation != null && !DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(valueMediatorOperation)) {
+							styledString.append(" = " + valueMediatorOperation, stylerRed);
+						}
+						// else show the number of providers
+						else {
+							if (numberOfProviders == 0) {styledString.append(providersString, stylerRed); }
+							else { styledString.append(providersString); }
+						}
 					}
 					
 					// set text and styles
@@ -458,8 +478,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	
 	// ################################################### VALIDATION END
 
-	
-	
 	
 	private String getOperationSpecification(Element element, String stereotypeQName, String propertyName){
 		if (element != null) {
