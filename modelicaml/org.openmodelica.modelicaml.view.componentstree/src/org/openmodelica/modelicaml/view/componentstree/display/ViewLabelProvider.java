@@ -401,7 +401,10 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		
 		// if property is input and has no declaration and no binding equation exists for it in its first level component modification
 		if (treeParent.isInput() && treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null) {
-			list.add(treeParent);
+			// TODO: check if the item is a component of a port that has causality input ...
+			if (treeParent.getUmlElement() != null && !(treeParent.getUmlElement() instanceof Port)) {
+				list.add(treeParent);
+			}
 			return list;
 		}
 

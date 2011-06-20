@@ -41,8 +41,6 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
-import org.eclipse.emf.edit.ui.dnd.ViewerDragAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -70,7 +68,6 @@ import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -83,7 +80,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
@@ -106,18 +102,16 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
-import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogMessage;
+import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
 import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
 import org.openmodelica.modelicaml.view.componentstree.listeners.DragListener;
-import org.openmodelica.modelicaml.view.valuebindings.dialogs.NOT_USED_SelectValueClientOrProviderDialog;
 /**
  * The Class ComponentsTree.
  */
@@ -230,6 +224,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	public Action actionAddValueClient;
 
 	private Action actionInstantiateRequirements;
+
+	private Action actionAllDeleteModifications;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
@@ -469,6 +465,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					manager.add(new Separator());
 					manager.add(actionLocate);
 				}
+				
+				// delete all modifications from first level components.
+				if (item instanceof TreeParent && ((TreeParent)item).getChildren().length > 0) {
+					manager.add(new Separator());
+					manager.add(actionAllDeleteModifications);
+				}
 			}
 
 			
@@ -486,6 +488,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				else {
 //					manager.add(new Separator());
 					manager.add(actionAddReqTestEvaluationElements);					
+				}
+				// delete all modifications from first level components.
+				if (item instanceof TreeParent && ((TreeParent)item).getChildren().length > 0) {
+					manager.add(new Separator());
+					manager.add(actionAllDeleteModifications);
 				}
 			}
 			
@@ -602,6 +609,61 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //		actionAddValueClient.setToolTipText("Add a Value actionAddValueClient");
 //		actionAddValueClient.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueClient.png"));
 
+		
+		actionAllDeleteModifications = new Action("actionAllDeleteModifications") {
+			public void run() {
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof TreeParent) {
+					TreeParent item = (TreeParent)obj;
+					if (item.isRoot() && item.getChildren().length > 0 ) {
+						TreeObject[] chldren = item.getChildren();
+
+						String childrenNameList = "";
+						for (int i = 0; i < chldren.length; i++) {
+							TreeObject treeObject = chldren[i];
+							childrenNameList = childrenNameList + "    - " + treeObject.getDotPath() + "\n";
+						}
+						
+						String title = "Delete all modifications";
+						String message = "Are you sure you want to delete all modifications from the following first level components of " + "'" + item.getName() + "'?" 
+								+ "\n\n" + childrenNameList
+								+ "\nThis action cannot be undone.";
+						Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+						
+						if (go) {
+							for (int i = 0; i < chldren.length; i++) {
+								TreeObject treeObject = chldren[i];
+								if (treeObject.getUmlElement() != null && treeObject.getUmlElement()==treeObject.getFirstLevelComponent()) {
+									ModificationManager.deleteAllComponentModifications(treeObject.getUmlElement());
+								}
+							}
+						}
+					}
+					else if (item.getUmlElement() != null && item.getUmlElement()==item.getFirstLevelComponent()) {
+						
+						HashSet<String> modList = ModificationManager.getModifications(item.getUmlElement());
+						String modListString = "";
+						for (String string : modList) {
+							modListString = modListString + "    - " + string + "\n";
+						}
+						
+						String title = "Delete all modifications";
+						String message = "Are you sure you want to delete the following modifications from " + "'" + item.getDotPath() + "'?"
+								+ "\n\n"
+								+ modListString 
+								+ "\nThis action cannot be undone.";
+						Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+						if (go) {
+							ModificationManager.deleteAllComponentModifications(item.getUmlElement());
+						}
+					}
+				}
+			}
+		};
+		actionAllDeleteModifications.setText("Delete all modifications");
+		actionAllDeleteModifications.setToolTipText("Delete all modifications");
+		actionAllDeleteModifications.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
 		
 		actionReload = new Action("actionReload") {
