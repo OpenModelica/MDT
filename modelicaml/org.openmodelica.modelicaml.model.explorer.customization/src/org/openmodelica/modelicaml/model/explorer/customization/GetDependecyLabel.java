@@ -18,18 +18,19 @@ public class GetDependecyLabel implements IJavaModelQuery<Dependency, String> {
 //			System.err.println("client: " + client.eClass());
 //			String clientName = "??";
 			
-			Element supplier = context.getSuppliers().get(0);
-//			System.err.println("supplier: " + supplier.eClass());
-//			String supplierName = "??";
-			
-			if (client instanceof Class) {
-//				clientName = ((Class)client).getName();
-				if (supplier instanceof Class || supplier instanceof Enumeration) {
-					return "import of " + ((NamedElement)supplier).getName();
+			if (context.getSuppliers() != null && context.getSuppliers().size() > 0) {
+				Element supplier = context.getSuppliers().get(0);
+//				System.err.println("supplier: " + supplier.eClass());
+//				String supplierName = "??";
+				
+				if (client instanceof Class) {
+//					clientName = ((Class)client).getName();
+					if (supplier instanceof Class || supplier instanceof Enumeration) {
+						return "import of " + ((NamedElement)supplier).getName();
+					}
 				}
 			}
 		}
-		
 		return context.getName();
 	}
 }
