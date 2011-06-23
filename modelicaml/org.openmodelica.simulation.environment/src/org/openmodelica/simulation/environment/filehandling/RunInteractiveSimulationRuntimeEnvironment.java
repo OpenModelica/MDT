@@ -4,7 +4,7 @@
 package org.openmodelica.simulation.environment.filehandling;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Map;
 import java.util.Scanner;
 
 // TODO: Auto-generated Javadoc
@@ -52,6 +52,21 @@ public class RunInteractiveSimulationRuntimeEnvironment implements Runnable {
 				"-interactive", "-port", runtimecontrolserverPort };
 		try {
 			ProcessBuilder builder = new ProcessBuilder(command);
+			
+			Map<String, String> env = builder.environment();
+			String pathFromEnv = "";
+			
+			if(env.get("Path") != null){
+				pathFromEnv = "Path";
+			} else if(env.get("PATH") != null){
+				pathFromEnv = "PATH";
+			} else if(env.get("path") != null){
+				pathFromEnv = "path";
+			} else
+				throw new Exception("path variable not available");
+			
+			env.put(pathFromEnv, env.get(pathFromEnv) + ";" + env.get("OPENMODELICAHOME") + "/bin/");
+			
 			builder.directory(new File(pathToExecutable + "/"));
 			p = builder.start();
 			Scanner s = new Scanner( p.getInputStream() ).useDelimiter( "\\n" );
@@ -59,8 +74,9 @@ public class RunInteractiveSimulationRuntimeEnvironment implements Runnable {
 				System.err.println( "RUNTIME > " + s.next() );
 			}
 //			p.waitFor();
-		} catch (IOException e) {
-			System.err.println("IOException starting process!");
+		} catch (Exception e) {
+//			System.err.println("IOException starting process!");
+			e.getStackTrace();
 		}
 	}
 	

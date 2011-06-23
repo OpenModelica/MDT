@@ -1,38 +1,31 @@
-/*
- * 
- */
 package org.openmodelica.simulation.environment.filehandling;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class RunNonInteractiveSimulationRuntimeEnvironment.
- *
+ * 
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ *
  */
 public class RunNonInteractiveSimulationRuntimeEnvironment implements Runnable{
 
-	/** The path to executable. */
 	String pathToExecutable;
-	
-	/** The runtime name. */
 	String runtimeName;
 	
-	/**
-	 * Instantiates a new run non interactive simulation runtime environment.
-	 */
 	public RunNonInteractiveSimulationRuntimeEnvironment(){
 		super();
 	}
 	
 	/**
-	 * A Runnable thread to execute the simulation runtime.
-	 *
-	 * @param pathToExecutable The folder path to the executable runtime NOTE: complete the
-	 * string without a last slash
-	 * @param runtimeName name of the runtime
+	 * A Runnable thread to execute the simulation runtime
+	 * 
+	 * @param pathToExecutable
+	 *            The folder path to the executable runtime NOTE: complete the
+	 *            string without a last slash
+	 * @param runtimeName
+	 *            name of the runtime
+
 	 */
 	public RunNonInteractiveSimulationRuntimeEnvironment(String pathToExecutable,
 			String runtimeName){
@@ -41,33 +34,39 @@ public class RunNonInteractiveSimulationRuntimeEnvironment implements Runnable{
 		this.runtimeName = runtimeName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
 	public void run() {
 
         String[] command = {pathToExecutable + "/" + runtimeName};
         try 
         {
-     	   ProcessBuilder builder = new ProcessBuilder(command); 
+     	   ProcessBuilder builder = new ProcessBuilder(command);
+     	   
+     	  Map<String, String> env = builder.environment();
+			String pathFromEnv = "";
+			
+			if(env.get("Path") != null){
+				pathFromEnv = "Path";
+			} else if(env.get("PATH") != null){
+				pathFromEnv = "PATH";
+			} else if(env.get("path") != null){
+				pathFromEnv = "path";
+			} else
+				throw new Exception("path variable not available");
+			
+		   env.put(pathFromEnv, env.get(pathFromEnv) + ";" + env.get("OPENMODELICAHOME") + "/bin/");
+     	   
      	   builder.directory(new File(pathToExecutable + "/")); 
      	   Process p = builder.start();
      	   p.waitFor();
         }
-        catch(IOException e) 
-        {
-            System.err.println("IOException starting process!");
-        }
-        catch(InterruptedException e) 
-        {
-            System.err.println("Interrupted waiting for process!");
-        }
+        catch (Exception e) {
+//			System.err.println("IOException starting process!");
+			e.getStackTrace();
+		}
 	}
 	
 	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		
