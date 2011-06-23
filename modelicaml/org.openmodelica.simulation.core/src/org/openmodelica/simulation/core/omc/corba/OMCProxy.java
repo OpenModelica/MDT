@@ -1,35 +1,42 @@
 /*
- * This file is part of OpenModelica.
+ * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 1998-CurrentYear, Open Source Modelica Consortium (OSMC),
- * c/o Linköpings universitet, Department of Computer and Information Science,
- * SE-58183 Linköping, Sweden.
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Computer and Information Science, PELAB
  *
  * All rights reserved.
  *
- * THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 LICENSE OR 
- * THIS OSMC PUBLIC LICENSE (OSMC-PL). 
- * ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE
- * OF THE OSMC PUBLIC LICENSE OR THE GPL VERSION 3, ACCORDING TO RECIPIENTS CHOICE. 
+ * (The new BSD license, see also
+ * http://www.opensource.org/licenses/bsd-license.php)
  *
- * The OpenModelica software and the Open Source Modelica
- * Consortium (OSMC) Public License (OSMC-PL) are obtained
- * from OSMC, either from the above address,
- * from the URLs: http://www.ida.liu.se/projects/OpenModelica or  
- * http://www.openmodelica.org, and in the OpenModelica distribution. 
- * GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
  *
- * This program is distributed WITHOUT ANY WARRANTY; without
- * even the implied warranty of  MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
- * IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS OF OSMC-PL.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
  *
- * See the full OSMC Public License conditions for more details.
+ * * Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
  *
- * Contributors: 
- *   Wladimir Schamai, EADS Innovation Works 2009-2011
- *   Uwe Pohlmann, University of Paderborn 2009-2010
- *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011
+ * * Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ *
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 package org.openmodelica.simulation.core.omc.corba;
@@ -41,6 +48,8 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.omg.CORBA.ORB;
+import org.openmodelica.simulation.core.omc.corba.OmcCommunication;
+import org.openmodelica.simulation.core.omc.corba.OmcCommunicationHelper;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -374,6 +383,12 @@ public class OMCProxy
 	{
 		/* Can't remember why this is needed. But it is. */
 		String args[] = {null};
+		
+		/* set the CORBA read timeout to a larger 
+		 * value as we send huge ammounts of data from OMC to MDT
+		 */
+		System.setProperty("com.sun.CORBA.transport.ORBTCPReadTimeouts", "1:60000:300:1");
+
 		
 		ORB orb;
 		orb = ORB.init(args, null);
