@@ -26,10 +26,11 @@
  *
  * See the full OSMC Public License conditions for more details.
  *
+ * Main author: Wladimir Schamai, EADS Innovation Works / Linköping University, 2009-now
+ *
  * Contributors: 
- *   Wladimir Schamai, EADS Innovation Works 2009-2011
- *   Uwe Pohlmann, University of Paderborn 2009-2010
- *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011
+ *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
+ *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
 package org.openmodelica.modelicaml.view.componentstree.views;
 
@@ -40,6 +41,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -1397,7 +1399,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-//		actionLinkWithEditor.setChecked(true); // to avoid performance issues
+		Boolean linkClassComponentsTreeWithModelExplorer = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "linkClassComponentsTreeWithModelExplorer", true, null);
+		if (linkClassComponentsTreeWithModelExplorer) {
+			actionLinkWithEditor.setChecked(true); 
+		}
+
 		actionLinkWithEditor.setText("Link with Papyrus Model Explorer");
 		actionLinkWithEditor.setToolTipText("Link with Papyrus Model Explorer");
 		actionLinkWithEditor.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
