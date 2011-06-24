@@ -25,7 +25,10 @@ public class ModeleditorJavaValidator extends AbstractModeleditorJavaValidator {
 			}
 			dotPath = dotPath + ref1DotPath;
 		}
-		if ( !cList.contains(dotPath) ) {
+		// TODO: do not raise errors for functions from the MSL because there is no validation yet.
+		// i.e. there is no list of MSL functions available for code completion validation.
+		if ( !dotPath.startsWith("Modelica.") && !dotPath.startsWith(".Modelica.") 
+				&& !cList.contains(dotPath) ) {
 			error("component_reference '" + dotPath + "' cannot be resolved to a class component", ModeleditorPackage.COMPONENT_REFERENCE);
 		}
 	}
@@ -38,7 +41,10 @@ public class ModeleditorJavaValidator extends AbstractModeleditorJavaValidator {
 		
 		cList.addAll(ModelicaMLContentAssist.getTypeSpecifierSortedList()); // use for redeclare in modifications ...
 		
-		if ( !cList.contains(cr.getName_ID()) ) {
+		// TODO: do not raise errors for functions from the MSL because there is no validation yet.
+		// i.e. there is no list of MSL functions available for code completion validation.
+		if ( !cr.getName_ID().startsWith("Modelica.") && !cr.getName_ID().startsWith(".Modelica.") 
+				&& !cList.contains(cr.getName_ID()) ) {
 			error("name '" + cr.getName_ID() + "' cannot be resolved", ModeleditorPackage.NAME__NAME_ID);
 		}
 	}
