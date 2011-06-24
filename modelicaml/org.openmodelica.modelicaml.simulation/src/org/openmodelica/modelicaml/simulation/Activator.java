@@ -26,10 +26,11 @@
  *
  * See the full OSMC Public License conditions for more details.
  *
+ * Main author: Wladimir Schamai, EADS Innovation Works / Linköping University, 2009-now
+ *
  * Contributors: 
- *   Wladimir Schamai, EADS Innovation Works 2009-2011
- *   Uwe Pohlmann, University of Paderborn 2009-2010
- *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011
+ *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
+ *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
 package org.openmodelica.modelicaml.simulation;
 
