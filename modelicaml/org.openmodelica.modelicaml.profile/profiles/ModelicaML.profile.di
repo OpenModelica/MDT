@@ -35,6 +35,9 @@
         <children>
           <emfPageIdentifier href="ModelicaML.profile.notation#_ltbbAH-WEeC-I9oqZ53S4w"/>
         </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_Ch0o4H-WEeC-I9oqZ53S4w"/>
+        </children>
       </children>
     </windows>
   </sashModel>

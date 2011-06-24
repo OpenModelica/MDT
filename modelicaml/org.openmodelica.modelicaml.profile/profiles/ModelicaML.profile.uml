@@ -1581,6 +1581,72 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_O77w0FNNEd6YXtyPQ2LL6Q" name="ModelicaRelationsConstructs" metaclassReference="_kWcXUFNdEd6YXtyPQ2LL6Q _Gk4DoGvVEd65MZ8o9QNr-w">
     <eAnnotations xmi:id="_KhbWvlNcEd6YXtyPQ2LL6Q" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <contents xmi:type="ecore:EPackage" xmi:id="_G9EUkJ40EeCPeNyTZD_kaw" name="ModelicaRelationsConstructs" nsURI="http://ModelicaML/schemas/ModelicaRelationsConstructs/_G8nooJ40EeCPeNyTZD_kaw/104" nsPrefix="ModelicaRelationsConstructs">
+        <eAnnotations xmi:id="_G-QnYJ40EeCPeNyTZD_kaw" source="PapyrusVersion">
+          <details xmi:id="_G-QnYZ40EeCPeNyTZD_kaw" key="Version" value="0.0.103"/>
+          <details xmi:id="_G-QnYp40EeCPeNyTZD_kaw" key="Comment" value=""/>
+          <details xmi:id="_G-QnY540EeCPeNyTZD_kaw" key="Copyright" value=""/>
+          <details xmi:id="_G-QnZJ40EeCPeNyTZD_kaw" key="Date" value="2011-06-24"/>
+          <details xmi:id="_G-QnZZ40EeCPeNyTZD_kaw" key="Author" value=""/>
+        </eAnnotations>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_G9EUkZ40EeCPeNyTZD_kaw" name="TypeRelation">
+          <eAnnotations xmi:id="_G9EUkp40EeCPeNyTZD_kaw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_ljL3QFNdEd6YXtyPQ2LL6Q"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_G9EUk540EeCPeNyTZD_kaw" name="modification" ordered="false" unique="false" upperBound="-1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_G9EUlZ40EeCPeNyTZD_kaw" name="arraySize" ordered="false" unique="false" upperBound="-1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_G9EUl540EeCPeNyTZD_kaw" name="base_Generalization" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Generalization"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_G9EUmZ40EeCPeNyTZD_kaw" name="ExtendsRelation">
+          <eAnnotations xmi:id="_G9EUmp40EeCPeNyTZD_kaw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_1VfSYFNdEd6YXtyPQ2LL6Q"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_G9EUm540EeCPeNyTZD_kaw" name="modification" ordered="false" unique="false" upperBound="-1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_G9EUnZ40EeCPeNyTZD_kaw" name="base_Generalization" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Generalization"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_G9EUn540EeCPeNyTZD_kaw" name="RedeclareRelation">
+          <eAnnotations xmi:id="_G9EUoJ40EeCPeNyTZD_kaw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_QvgxQAUYEd-XJpWQfXQU0A"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_G9EUoZ40EeCPeNyTZD_kaw" name="modification" ordered="false" unique="false" upperBound="-1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_G9EUo540EeCPeNyTZD_kaw" name="base_Dependency" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_G9EUpZ40EeCPeNyTZD_kaw" name="ConstrainedByRelation">
+          <eAnnotations xmi:id="_G9EUpp40EeCPeNyTZD_kaw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_TwVd8AUYEd-XJpWQfXQU0A"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_G9EUp540EeCPeNyTZD_kaw" name="modification" ordered="false" unique="false" upperBound="-1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_G9EUqZ40EeCPeNyTZD_kaw" name="base_Dependency" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_G9EUq540EeCPeNyTZD_kaw" name="PartialDerivativeOfFunctionRelation">
+          <eAnnotations xmi:id="_G9EUrJ40EeCPeNyTZD_kaw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_X5ddMAUdEd-XJpWQfXQU0A"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_G9EUrZ40EeCPeNyTZD_kaw" name="base_Dependency" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_G9EUr540EeCPeNyTZD_kaw" name="arguments" ordered="false" unique="false" lowerBound="1" upperBound="-1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_G9EUsZ40EeCPeNyTZD_kaw" name="Import">
+          <eAnnotations xmi:id="_G9EUsp40EeCPeNyTZD_kaw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_FArQ8H-WEeC-I9oqZ53S4w"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_G9EUs540EeCPeNyTZD_kaw" name="alias" ordered="false">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_G9EUtZ40EeCPeNyTZD_kaw" name="base_Dependency" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+      </contents>
       <contents xmi:type="ecore:EPackage" xmi:id="_KpwzwVaVEd-OiJEhN960pA" name="ModelicaRelationsConstructs" nsURI="http://ModelicaML/schemas/ModelicaRelationsConstructs/_KpwzwFaVEd-OiJEhN960pA/103" nsPrefix="ModelicaRelationsConstructs">
         <eAnnotations xmi:id="_KqNf_VaVEd-OiJEhN960pA" source="PapyrusVersion">
           <details xmi:id="_KqNf_laVEd-OiJEhN960pA" key="Version" value="0.0.102"/>

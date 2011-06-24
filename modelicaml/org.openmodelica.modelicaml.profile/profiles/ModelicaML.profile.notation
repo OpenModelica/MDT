@@ -1374,7 +1374,7 @@
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FB3j0H-WEeC-I9oqZ53S4w"/>
       </children>
       <element xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_FArQ8H-WEeC-I9oqZ53S4w"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FB3jwX-WEeC-I9oqZ53S4w" x="175" y="175"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FB3jwX-WEeC-I9oqZ53S4w" x="175" y="160"/>
     </children>
     <styles xmi:type="notation:DiagramStyle" xmi:id="_Ch0o4X-WEeC-I9oqZ53S4w"/>
     <element xmi:type="uml:Profile" href="ModelicaML.profile.uml#_O77w0FNNEd6YXtyPQ2LL6Q"/>
