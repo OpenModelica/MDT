@@ -89,7 +89,7 @@ end <%name.replaceSpecChar()%>_Definition;
 
 
 <%script type="uml.Classifier" name="import_clause" post="trim()"%>
-<%for (clientDependency){%><%--  TODO: Use the <<ModelicaImport>> stereotype. --%>
+<%for (clientDependency[hasStereotype(getProperty("s_import"))]){%><%--  TODO: Use the <<Import>> stereotype. --%>
 import <%target.filter("NamedElement").getQualifiedName().replaceSpecCharExceptThis("::").replaceAll("::", ".")%>;
 <%}%>
 <%-- TODO: stereotypes  for imports  --%>
