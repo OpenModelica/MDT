@@ -51,7 +51,9 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Port;
+import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.Signal;
@@ -380,7 +382,7 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	
 	public boolean hasErrors(TreeParent treeParent) {
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
-		list.addAll(findNextInvalidItem(treeParent));
+		list.addAll(findNextInvalidItem(treeParent, false));
 		if (list.size() > 0 ) {
 //			for (TreeObject treeObject : list) {
 //				System.err.println(treeObject.getName());
@@ -391,28 +393,63 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	}
 	
 	
-	private HashSet<TreeObject> findNextInvalidItem(TreeParent treeParent){
+	private HashSet<TreeObject> findNextInvalidItem(TreeParent treeParent, boolean parentIsInput){
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		boolean parentIsAnInput = false;
 		
-		// if property has no type 
+		// if property has no type -> indicate error
 		if (treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
 			list.add(treeParent);
+			
+			// stop searching here
 			return list;
+		}
+		
+		Element umlElement = treeParent.getUmlElement();
+		
+		// if one of the parents is input
+		if ( parentIsInput ) {
+			if (umlElement != null ) {
+				// if it is a primitive type -> indicate an error
+				if ( ((Property)umlElement).getType() instanceof PrimitiveType 
+						&& (treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null)) {
+					list.add(treeParent);
+				}
+			}
 		}
 		
 		// if property is input and has no declaration and no binding equation exists for it in its first level component modification
 		if (treeParent.isInput() && treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null) {
-			// TODO: check if the item is a component of a port that has causality input ...
-			if (treeParent.getUmlElement() != null && !(treeParent.getUmlElement() instanceof Port)) {
-				list.add(treeParent);
+			
+			if (umlElement != null ) {
+				
+				// check if the item is a component of a port that has causality input ...
+				if (umlElement instanceof Property  && !(umlElement instanceof Port) ) { 
+
+					// if it is a primitive type -> indicate an error
+					if ( ((Property)umlElement).getType() instanceof PrimitiveType) {
+						list.add(treeParent);
+						
+						// stop here
+						return list;
+					}
+					// not of primitive type -> remember that this parent was an input in order to check its children
+					else {
+
+//						System.err.println(treeParent.getDotPath() + " parentIsInput: " + parentIsInput);
+						parentIsAnInput = true;
+					}
+				}
 			}
-			return list;
+//			// stop here
+//			return list;
 		}
 
+		// go on with search ...
 		TreeObject[] children = treeParent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof TreeParent) {
-				list.addAll(findNextInvalidItem( (TreeParent)children[i] ));	
+				list.addAll(findNextInvalidItem( (TreeParent)children[i] , parentIsAnInput));	
 			}
 		}
 		return list;
