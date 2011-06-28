@@ -86,6 +86,11 @@ public class ModelicaMLContentAssist {
 	/** The predefined variable properties list. */
 	private static HashSet<String> predefinedVariablePropertiesList = new HashSet<String>();
 	
+	public static HashSet<String> getPredefinedVariablePropertiesList() {
+		return predefinedVariablePropertiesList;
+	}
+
+
 	/** The states list. */
 	private static HashSet<String> statesList = new HashSet<String>();
 	
@@ -274,6 +279,8 @@ public class ModelicaMLContentAssist {
 		sortedList.add("i");
 		
 		// add the rest (predefined properties) in order to support the validation
+		
+		// TODO: here a concurrent modification error occurres somtimes 
 		sortedList.addAll(predefinedVariablePropertiesList);
 		sortedList.addAll(predefinedFunctionsList);
 		sortedList.addAll(predefinedStatePropertiesList);
