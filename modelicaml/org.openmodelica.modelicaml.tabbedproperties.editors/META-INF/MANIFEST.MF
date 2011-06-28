@@ -27,11 +27,11 @@ Require-Bundle: org.eclipse.ui,
  org.openmodelica.modelicaml.editor.xtext.equationsection;bundle-version="1.0.0",
  org.openmodelica.modelicaml.editor.xtext.modeleditor;bundle-version="1.0.0",
  org.openmodelica.modelicaml.editor.xtext.modification;bundle-version="1.0.0",
- org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression;bundle-version="1.0.0"
+ org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression;bundle-version="1.0.0",
+ com.google.inject;bundle-version="2.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: com.google.inject;version="2.0.0",
- org.eclipse.core.resources,
+Import-Package: org.eclipse.core.resources,
  org.eclipse.emf.ecore,
  org.eclipse.emf.transaction,
  org.eclipse.papyrus.core.utils,
