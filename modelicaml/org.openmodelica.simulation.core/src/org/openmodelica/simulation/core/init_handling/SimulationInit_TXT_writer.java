@@ -1,48 +1,11 @@
-/*
- * This file is part of OpenModelica.
- *
- * Copyright (c) 1998-CurrentYear, Open Source Modelica Consortium (OSMC),
- * c/o Linköpings universitet, Department of Computer and Information Science,
- * SE-58183 Linköping, Sweden.
- *
- * All rights reserved.
- *
- * THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 LICENSE OR 
- * THIS OSMC PUBLIC LICENSE (OSMC-PL). 
- * ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE
- * OF THE OSMC PUBLIC LICENSE OR THE GPL VERSION 3, ACCORDING TO RECIPIENTS CHOICE. 
- *
- * The OpenModelica software and the Open Source Modelica
- * Consortium (OSMC) Public License (OSMC-PL) are obtained
- * from OSMC, either from the above address,
- * from the URLs: http://www.ida.liu.se/projects/OpenModelica or  
- * http://www.openmodelica.org, and in the OpenModelica distribution. 
- * GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
- *
- * This program is distributed WITHOUT ANY WARRANTY; without
- * even the implied warranty of  MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
- * IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS OF OSMC-PL.
- *
- * See the full OSMC Public License conditions for more details.
- *
- * Main author: Wladimir Schamai, EADS Innovation Works / Linköping University, 2009-now
- *
- * Contributors: 
- *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
- *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
- */
-package org.openmodelica.simulation.core.init_txt_handling;
+package org.openmodelica.simulation.core.init_handling;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
-
-//TODO: Auto-generated Javadoc
+// TODO: Auto-generated Javadoc
 /**
  * Generates an text file including all data from the model_init.txt file in the same structure
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
@@ -51,15 +14,15 @@ import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_rea
 public class SimulationInit_TXT_writer {
 
 	/**
-	 * Reads a init.txt file from a specified path and creates an InitTXT object
+	 * Reads a init.txt file from a specified path and creates an InitData object
 	 * which contains all initial values and simulation settings
 	 *
 	 * @param pathToInit Absoulut path to the "_init.txt" file
 	 * @param modifiedInitData the modified init data
-	 * @return An InitTXT object containing all initial values and simulation
+	 * @return An InitData object containing all initial values and simulation
 	 * settings
 	 */
-	public static boolean writeInit(String pathToInit, InitTXT modifiedInitData) {
+	public static boolean writeInit(String pathToInit, InitData modifiedInitData) {
 			
 			File initFile = new File(pathToInit);
 			
@@ -182,12 +145,13 @@ public class SimulationInit_TXT_writer {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
-		InitTXT modifiedInitData;
+		InitData modifiedInitData;
 		try {
-			modifiedInitData = SimulationInit_TXT_reader.readInit("D:/OpenModelica1.6.0/tmp/TwoTanksExample.Simulations.TanksSystemSimulation1_init.txt");
+			String projectPath = "C:\\AircraftWaterTankSystem.TestEnvironment_init.xml";
+			modifiedInitData = SimulationInit_XML_reader.readFromXML(projectPath);
 			modifiedInitData.step = 1.8;
 			System.out.println(modifiedInitData.n_int_variablesProperties);
-			writeInit("D:/OpenModelica1.6.0/tmp/TwoTanksExample.Simulations.TanksSystemSimulation1_init.txt", modifiedInitData);
+			writeInit("C:\\AircraftWaterTankSystem.TestEnvironment_init.xml", modifiedInitData);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
