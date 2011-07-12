@@ -75,7 +75,7 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 	private String modelExeFilePath;
 	
 	/** The model init txt file path. */
-	private String modelInitTxtFilePath;
+	private String modelInitXMLFilePath;
 	
 	/** The project parent folder. */
 	private File projectParentFolder;
@@ -209,7 +209,7 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 			});
 		}
 		
-		//MODEL INIT TXT FILE
+		//MODEL INIT XML FILE
 		{
 			Label label = new Label(compositePath, SWT.NULL);
 			GridData labelLData = new GridData();
@@ -217,24 +217,25 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 			labelLData.horizontalSpan = 3;
 			labelLData.horizontalAlignment = GridData.FILL;
 			label.setLayoutData(labelLData);
-			label.setText("Model init file (*.txt):");
+			label.setText("Model init file (*.xml):");
 		}
 		{
-			textPathToModelInitTxtFile = new Text(compositePath, SWT.BORDER | SWT.SINGLE);
+			textPathToModelInitXMLFile = new Text(compositePath, SWT.BORDER | SWT.SINGLE);
 			GridData gd = new GridData();
 			gd.horizontalSpan = 2;
 			gd.horizontalAlignment = GridData.FILL;
 			gd.grabExcessHorizontalSpace = true;
-			textPathToModelInitTxtFile.setLayoutData(gd);
-			textPathToModelInitTxtFile.setText("init.txt");
-			textPathToModelInitTxtFile.addSelectionListener(new SelectionAdapter() {
+			textPathToModelInitXMLFile.setLayoutData(gd);
+			textPathToModelInitXMLFile.setText("init.xml");
+			textPathToModelInitXMLFile.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
-					if(textPathToModelInitTxtFile.getText().equals("init.txt")){
-						textPathToModelInitTxtFile.setText("");
+					if(textPathToModelInitXMLFile.getText().equals("init.xml")){
+
+						textPathToModelInitXMLFile.setText("");
 					}
 				}
 			});
-			textPathToModelInitTxtFile.addModifyListener(new ModifyListener() {
+			textPathToModelInitXMLFile.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					dialogChanged();
 				}
@@ -249,13 +250,16 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 			button.setText("Browse...");
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					String modelicaModelInitTxtFile = null;
-					if(modelExeFilePath!=null) modelicaModelInitTxtFile =handleBrowseForFile("Please select the model init text file", modelExeFilePath, "*.txt", "Text files (*.txt)");
-					else modelicaModelInitTxtFile = handleBrowseForFile("Please select the model init text file", null, "*.txt", "Text files (*.txt)");
+
+					String modelicaModelInitXMLFile = null;
+					if(modelExeFilePath!=null) modelicaModelInitXMLFile =handleBrowseForFile("Please select the model init text file", modelExeFilePath, "*.xml", "Text files (*.xml)");
+					else modelicaModelInitXMLFile = handleBrowseForFile("Please select the model init text file", null, "*.xml", "Text files (*.xml)");
 					
-					if(modelicaModelInitTxtFile!=null){
-						textPathToModelInitTxtFile.setText(modelicaModelInitTxtFile);
-						modelInitTxtFilePath = modelicaModelInitTxtFile;
+
+
+					if(modelicaModelInitXMLFile!=null){
+						textPathToModelInitXMLFile.setText(modelicaModelInitXMLFile);
+						modelInitXMLFilePath = modelicaModelInitXMLFile;
 					}
 				}
 			});
@@ -478,8 +482,8 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 	 * the container field.
 	 * @param message the message to be displayed on the file browser
 	 * @param dir the directory path to point on at start @see #org.eclipse.swt.widgets.FileDialog
-	 * @param extension filter file by this an extension e.g. *.txt
-	 * @param extensionDescription description for the extension filter e.g. Text files (*.txt)
+	 * @param extension filter file by this an extension e.g. *.xml
+	 * @param extensionDescription description for the extension filter e.g. Text files (*.xml)
 	 * 
 	 * @return A file, null if nothing has been selected
 	 */
@@ -500,7 +504,7 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 	}
 	
 	/**
-	 * Select a folder to work with in different ways.
+	 * Select a folder to work with in different ways
 	 *
 	 * @param dir is the Current Directory where the file chooser should point on. Passing in null sets the file chooser to point to the user's default directory.
 	 * @param message the message
@@ -630,8 +634,8 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 	 *
 	 * @return the model init txt file
 	 */
-	public String getModelInitTxtFile(){
-		return modelInitTxtFilePath;
+	public String getModelInitXMLFile(){
+		return modelInitXMLFilePath;
 	}
 	
 	/**

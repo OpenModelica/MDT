@@ -52,8 +52,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
+import org.openmodelica.simulation.core.init_handling.InitData;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_reader;
 import org.openmodelica.simulation.core.models.simulation.SimulationProject;
 import org.openmodelica.simulation.core.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.simulation.core.xml.generator.SimulationInitial_XML_generator;
@@ -251,7 +251,7 @@ public class NewSimulationProjectFromExistingCodeWizard extends Wizard implement
 	}
 	
 	/**
-	 * Reads the user specified data from the first new file wizard page to create a simulation project.
+	 * Reads the user specified data from the first new file wizard page to create a simulation project
 	 *
 	 * @return the project page data
 	 */
@@ -350,7 +350,7 @@ public class NewSimulationProjectFromExistingCodeWizard extends Wizard implement
 		
 		
 		//Build model
-		omcReturnString = omcc.buildModel(page1.getModelicaMainclassName());
+		omcReturnString = omcc.buildModel(page1.getModelicaMainclassName(), "plt");
 		
 		if(omcReturnString.contains("{\"\",\"\"}") || omcReturnString.contains("Error")){
 //			System.err.println("buildModel ERROR");
@@ -382,10 +382,10 @@ public class NewSimulationProjectFromExistingCodeWizard extends Wizard implement
 		final String modelComment = page2.getModelComment();
 		
 		/*
-		 * There should only be one _init.txt file so we can choose the index [0] of the String array returned from .list()
+		 * There should only be one _init.xml file so we can choose the index [0] of the String array returned from .list()
 		 */
-		String initTxtFileName = projectFolder.list(new OnlyExtension("_init.txt"))[0];
-		InitTXT initTXTFile = SimulationInit_TXT_reader.readInit(projectFolder.getAbsolutePath() + "/" + initTxtFileName);
+		String initTxtFileName = projectFolder.list(new OnlyExtension("_init.xml"))[0];
+		InitData initTXTFile = SimulationInit_XML_reader.readFromXML(projectFolder.getAbsolutePath() + "/" + initTxtFileName);
 		
 		String fullqualifiedname = page1.getModelicaMainclassName();
 		String mainclassName = fullqualifiedname.substring(fullqualifiedname.lastIndexOf('.') +1);
@@ -398,7 +398,7 @@ public class NewSimulationProjectFromExistingCodeWizard extends Wizard implement
 	}
 	
 	/**
-	 * Deletes a project if the compilation failed.
+	 * Deletes a project if the compilation failed
 	 */
 	private void deleteCreatedProject() {
 
@@ -411,7 +411,7 @@ public class NewSimulationProjectFromExistingCodeWizard extends Wizard implement
 		}
 	
 	/**
-	 * Recursive method to delete contend files from a Directory.
+	 * Recursive method to delete contend files from a Directory
 	 *
 	 * @param f the f
 	 */

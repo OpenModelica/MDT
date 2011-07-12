@@ -50,9 +50,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_writer;
+import org.openmodelica.simulation.core.init_handling.InitData;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_reader;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_writer;
 import org.openmodelica.simulation.core.models.modelica.ModelicaModel;
 import org.openmodelica.simulation.core.models.simulation.SimulationProject;
 import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
@@ -72,19 +72,20 @@ import org.openmodelica.simulation.environment.preferences.page.WorkbenchPrefere
  */
 public class SessionConfiguration_InteractiveWizard extends Wizard{
 
-	/** The one. */
 	private SessionConfiguration_ChangeSetupInteractiveWizardPage one;
 	
-	/** The two. */
 	private SessionConfiguration_ChangeModelInteractiveWizardPage two;
 	
-	/** The ss. */
 	public SimulationSetting ss;
 	
-	/** The mm. */
 	public ModelicaModel mm;
 	
 	/** Use this variable to setup the wizard page default = Create a new setup using the default settings from properties change = Change an existing configuration using a sample configuration use = Create a new setup using an existing configuration as sample. */
+
+
+
+
+
 	String option = "";
 
 	/**
@@ -270,11 +271,13 @@ public class SessionConfiguration_InteractiveWizard extends Wizard{
 		final SimulationSessionConfiguration selectedSimulationSessionConfiguration = selectedSimulationProject
 				.getSimSessConfig(selectedSessionConfigName);
 
+
 //		MessageDialog
 //		.openError(
 //			getShell(),
 //			"Start Simulation Runtime",
 //			"Please start the simulation runtime (*.exe or *.bat)\nusing the parameter -interactive -port 10501 and press OK");
+
 		
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, true,
@@ -301,7 +304,7 @@ public class SessionConfiguration_InteractiveWizard extends Wizard{
 												public void run() {
 													// Modifying init.txt
 													/**
-													 * Path to model_init.txt
+													 * Path to model_init.xml
 													 */
 													String initFilePath = spc
 															.getSimulationProjectPath(selectedSimulationProject
@@ -309,9 +312,8 @@ public class SessionConfiguration_InteractiveWizard extends Wizard{
 															+ "/"
 															+ selectedSimulationProject
 																	.getFullQualifiedModelicaModelName()
-															+ "_init.txt";
-													SimulationInit_TXT_writer
-															.writeInit(
+															+ "_init.xml";
+													SimulationInit_XML_writer.writeInit(
 																	initFilePath,
 																	createInitTXTObject(initFilePath));
 												}
@@ -467,13 +469,14 @@ public class SessionConfiguration_InteractiveWizard extends Wizard{
 	}
 	
 	/**
-	 * Create an InitTXT object using the setting and configured model file.
+	 * Create an InitData object using the setting and configured model file
+
 	 *
 	 * @param initFilePath the init file path
-	 * @return a full initialized InitTXT object with data from setting and
-	 * configured model
+	 * @return a full initialized InitData object with data from setting and
+	 *         configured model
 	 */
-	private InitTXT createInitTXTObject(String initFilePath) {
+	private InitData createInitTXTObject(String initFilePath) {
 
 		SimulationProject selectedSimulationProject = Activator
 				.getSimulationProjectCenter().getSelectedSimulationProject();
@@ -490,19 +493,18 @@ public class SessionConfiguration_InteractiveWizard extends Wizard{
 		 * eingehalten werden sondern auch die exacte folge der variablen…
 		 */
 		
-		InitTXT originalInitTXT = null;
+		InitData originalInitTXT = null;
 		
 		//TODO [20110309] After the first parsing of the init file the exception won't occure anymore
 		try {
-			originalInitTXT = SimulationInit_TXT_reader
-			.readInit(initFilePath);
+			originalInitTXT = SimulationInit_XML_reader.readFromXML(initFilePath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		originalInitTXT.fileName = selectedSimulationProject
-				.getFullQualifiedModelicaModelName() + "_init.txt";
+				.getFullQualifiedModelicaModelName() + "_init.xml";
 
 		originalInitTXT.start = new Double(
 				selectedSimulationSessionConfiguration.getSimSetting()
@@ -625,6 +627,7 @@ public class SessionConfiguration_InteractiveWizard extends Wizard{
 	}
 
 	/**
+
 	 * Creates the config folder.
 	 *
 	 * @return path to session config folder

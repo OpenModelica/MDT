@@ -266,12 +266,13 @@ public class NewSimulationProjectModellingEnvironmentWizardPage extends WizardPa
 				labelConfiguration.setLayoutData(labelConfigurationLData);
 				labelConfiguration.setText("Please select the simulation type.");
 			}
-//			{
-//				buttonInteractive = new Button(compositeCreateConfiguraion, SWT.RADIO | SWT.LEFT);
-//				GridData buttonInteractiveLData = new GridData();
-//				buttonInteractive.setLayoutData(buttonInteractiveLData);
-//				buttonInteractive.setText("Interactive Simulation");
-//			}
+			{
+
+				buttonInteractive = new Button(compositeCreateConfiguraion, SWT.RADIO | SWT.LEFT);
+				GridData buttonInteractiveLData = new GridData();
+				buttonInteractive.setLayoutData(buttonInteractiveLData);
+				buttonInteractive.setText("Interactive Simulation");
+			}
 			{
 				buttonCreateNonInteractive = new Button(compositeCreateConfiguraion, SWT.RADIO | SWT.LEFT);
 				GridData buttonCreateNonInteractiveLData = new GridData();

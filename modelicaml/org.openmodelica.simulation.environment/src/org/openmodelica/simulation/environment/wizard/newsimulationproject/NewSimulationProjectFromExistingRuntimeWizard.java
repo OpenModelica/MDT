@@ -53,8 +53,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
+import org.openmodelica.simulation.core.init_handling.InitData;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_reader;
 import org.openmodelica.simulation.core.models.simulation.SimulationProject;
 import org.openmodelica.simulation.core.xml.generator.SimulationInitial_XML_generator;
 import org.openmodelica.simulation.core.xml.generator.SimulationProject_XML_generator;
@@ -65,7 +65,7 @@ import org.openmodelica.simulation.environment.Activator;
  * This is a new file wizard. Its role is to create a new simulation project file 
  * resource in the provided container. The wizard creates a project folder with a user specified name. 
  * 
- * This wizard will be used if a simulation runtime (model.exe) and its corresponding initial file (model_init.txt) is available yet.
+ * This wizard will be used if a simulation runtime (model.exe) and its corresponding initial file (model_init.xml) is available yet.
  * 
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
  */
@@ -275,9 +275,9 @@ public class NewSimulationProjectFromExistingRuntimeWizard extends Wizard
 		org.openmodelica.simulation.environment.filehandling.cp
 				.copyFile(srcFile, destFile);
 		
-		srcFile = page1.getModelInitTxtFile();
+		srcFile = page1.getModelInitXMLFile();
 		destFile= projectFolder.getPath() + "/"
-		+ (new File(page1.getModelInitTxtFile()).getName());
+		+ (new File(page1.getModelInitXMLFile()).getName());
 		org.openmodelica.simulation.environment.filehandling.cp
 		.copyFile(srcFile, destFile);
 	}
@@ -297,7 +297,7 @@ public class NewSimulationProjectFromExistingRuntimeWizard extends Wizard
 		final String modelCompany = page2.getModelCompany();
 		final String modelComment = page2.getModelComment();
 		
-		InitTXT initTXTFile = SimulationInit_TXT_reader.readInit(page1.getModelInitTxtFile());
+		InitData initTXTFile = SimulationInit_XML_reader.readFromXML(page1.getModelInitXMLFile());
 		
 		Scanner sc = new Scanner((new File(page1.getModelExeFile())).getName());
 		sc.useDelimiter(".exe");

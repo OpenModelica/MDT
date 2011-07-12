@@ -53,8 +53,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
+import org.openmodelica.simulation.core.init_handling.InitData;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_reader;
 import org.openmodelica.simulation.core.models.simulation.SimulationProject;
 import org.openmodelica.simulation.core.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.simulation.core.xml.generator.SimulationInitial_XML_generator;
@@ -373,7 +373,7 @@ public class NewSimulationProjectFromModellingEnvironmentWizard extends Wizard i
 		else
 			omcReturnString = "";
 
-		omcReturnString = omcc.buildModel(modelicaMainclassName);
+		omcReturnString = omcc.buildModel(modelicaMainclassName, "plt");
 
 		if (omcReturnString.contains("{\"\",\"\"}")
 				|| omcReturnString.toLowerCase().contains("error")) {
@@ -406,10 +406,10 @@ public class NewSimulationProjectFromModellingEnvironmentWizard extends Wizard i
 		final String modelComment = page2.getModelComment();
 		
 		/*
-		 * There should only be one _init.txt file so we can choose the index [0] of the String array returned from .list()
+		 * There should only be one _init.xml file so we can choose the index [0] of the String array returned from .list()
 		 */
-		String initTxtFileName = projectFolder.list(new OnlyExtension("_init.txt"))[0];
-		InitTXT initTXTFile = SimulationInit_TXT_reader.readInit(projectFolder.getAbsolutePath() + "\\" + initTxtFileName);
+		String initTxtFileName = projectFolder.list(new OnlyExtension("_init.xml"))[0];
+		InitData initTXTFile = SimulationInit_XML_reader.readFromXML(projectFolder.getAbsolutePath() + "\\" + initTxtFileName);
 		
 		String fullqualifiedname = modelicaMainclassName;
 		String mainclassName = fullqualifiedname.substring(fullqualifiedname.lastIndexOf('.') +1);

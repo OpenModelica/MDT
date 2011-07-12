@@ -49,9 +49,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_writer;
+import org.openmodelica.simulation.core.init_handling.InitData;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_reader;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_writer;
 import org.openmodelica.simulation.core.models.modelica.ModelicaModel;
 import org.openmodelica.simulation.core.models.simulation.SimulationProject;
 import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
@@ -63,7 +63,6 @@ import org.openmodelica.simulation.environment.Activator;
 import org.openmodelica.simulation.environment.core.SimulationProjectCenter;
 import org.openmodelica.simulation.environment.preferences.page.WorkbenchPreferencePageDefaultConfiguration;
 
-// TODO: Auto-generated Javadoc
 /**
  * Wizard to create or modify Simulation Session Configuration files for non interactive simulations.
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
@@ -71,24 +70,23 @@ import org.openmodelica.simulation.environment.preferences.page.WorkbenchPrefere
  */
 public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 
-	/** The one. */
 	private SessionConfiguration_ChangeSetupNonInteractiveWizardPage one;
-	
-	/** The two. */
 	private SessionConfiguration_ChangeModelNonInteractiveWizardPage two;
 	
-	/** The ss. */
 	public SimulationSetting ss;
-	
-	/** The mm. */
 	public ModelicaModel mm;
 	
-	/** Use this variable to setup the wizard page default = Create a new setup using the default settings from properties change = Change an existing configuration using a sample configuration use = Create a new setup using an existing configuration as sample. */
+	/**
+	 * Use this variable to setup the wizard page
+	 * default = Create a new setup using the default settings from properties
+	 * change = Change an existing configuration using a sample configuration
+	 * use = Create a new setup using an existing configuration as sample
+	 */
 	String option = "";
 
 	/**
-	 * Use this constructor to create a new session configuration using the initial model and default setup from preferences.
-	 *
+	 * Use this constructor to create a new session configuration using the initial model and default setup from preferences
+	 * @param simulationType The type will be needed to display different pages. "i"=interactive, "ni"=not interactive
 	 */
 	public SessionConfiguration_NonInteractiveWizard() {
 		super();
@@ -120,8 +118,7 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 	}
 	
 	/**
-	 * Creates a default simulation setting object for a non interactive simulation using the data from eclipse preferences.
-	 *
+	 * Creates a default simulation setting object for a non interactive simulation using the data from eclipse preferences
 	 * @return a new SimulationSetting object filled with default setting and model data
 	 */
 	private SimulationSetting createDefaultNonInteractiveSettingFromPreferences() {
@@ -171,9 +168,6 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		one = new SessionConfiguration_ChangeSetupNonInteractiveWizardPage("Simulation Session Configuration: Setting", ss, option);
@@ -183,9 +177,6 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 		getContainer().getShell().setSize(550, 650);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 
@@ -246,9 +237,8 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 	}
 	
 	/**
-	 * This method is called when "Start Simulation" button is pressed.
-	 *
-	 * @return true, if successful
+	 * This method is called when "Start Simulation" button is pressed
+	 * @param selected TreeItem
 	 */
 	private boolean prepareNonInteractiveSimulation() {
 
@@ -284,7 +274,7 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 												public void run() {
 													// Modifying init.txt
 													/**
-													 * Path to model_init.txt
+													 * Path to model_init.xml
 													 */
 													String initFilePath = spc
 															.getSimulationProjectPath(selectedSimulationProject
@@ -292,9 +282,8 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 															+ "/"
 															+ selectedSimulationProject
 																	.getFullQualifiedModelicaModelName()
-															+ "_init.txt";
-													SimulationInit_TXT_writer
-															.writeInit(
+															+ "_init.xml";
+													SimulationInit_XML_writer.writeInit(
 																	initFilePath,
 																	createInitTXTObject(initFilePath));
 												}
@@ -388,13 +377,12 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 	}
 	
 	/**
-	 * Create an InitTXT object using the setting and configured model file.
-	 *
-	 * @param initFilePath the init file path
-	 * @return a full initialized InitTXT object with data from setting and
-	 * configured model
+	 * Create an InitData object using the setting and configured model file
+	 * 
+	 * @return a full initialized InitData object with data from setting and
+	 *         configured model
 	 */
-	private InitTXT createInitTXTObject(String initFilePath) {
+	private InitData createInitTXTObject(String initFilePath) {
 
 		SimulationProject selectedSimulationProject = Activator
 				.getSimulationProjectCenter().getSelectedSimulationProject();
@@ -410,19 +398,18 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 		 * und alg zu teilen. PROBLEM nicht nur die Reihenfolge der typen muss
 		 * eingehalten werden sondern auch die exacte folge der variablen…
 		 */
-		InitTXT originalInitTXT = null;
+		InitData originalInitTXT = null;
 		
 		//TODO [20110309] After the first parsing of the init file the exception won't occure anymore
 		try {
-			originalInitTXT = SimulationInit_TXT_reader
-			.readInit(initFilePath);
+			originalInitTXT = SimulationInit_XML_reader.readFromXML(initFilePath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		originalInitTXT.fileName = selectedSimulationProject
-				.getFullQualifiedModelicaModelName() + "_init.txt";
+				.getFullQualifiedModelicaModelName() + "_init.xml";
 
 		originalInitTXT.start = new Double(
 				selectedSimulationSessionConfiguration.getSimSetting()
@@ -545,8 +532,7 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 	}
 
 	/**
-	 * Creates the config folder.
-	 *
+	 * 
 	 * @return path to session config folder
 	 */
 	private String createConfigFolder(){
@@ -561,12 +547,6 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 		return simSessConfigFolder.getAbsolutePath();
 	}
 	
-	/**
-	 * Creates the setting file.
-	 *
-	 * @param pathToSessionConfigFolder the path to session config folder
-	 * @throws Exception the exception
-	 */
 	private void createSettingFile(String pathToSessionConfigFolder) throws Exception{
 		String selectedSimulationProject = Activator.getSimulationProjectCenter().getSelectedSimulationProject().getProjectName();
 		
@@ -574,12 +554,6 @@ public class SessionConfiguration_NonInteractiveWizard extends Wizard{
 		SimulationSetting_XML_generator.createXML(selectedSimulationProject, mm.getId(), one.createSimulationSetting(), pathToSessionConfigFolder);
 	}
 	
-	/**
-	 * Creates the configured model.
-	 *
-	 * @param pathToSessionConfigFolder the path to session config folder
-	 * @throws Exception the exception
-	 */
 	private void createConfiguredModel(String pathToSessionConfigFolder) throws Exception {
 		
 		two.adoptAllPropertySettings();
