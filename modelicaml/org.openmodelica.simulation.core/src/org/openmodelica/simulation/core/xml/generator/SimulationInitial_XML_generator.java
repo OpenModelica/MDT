@@ -42,12 +42,11 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Serializer;
 
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
+import org.openmodelica.simulation.core.init_handling.InitData;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_reader;
 
-// TODO: Auto-generated Javadoc
 /**
- * Generates the SimInit.xml file from the SimProj.xml and init.txt
+ * Generates the SimInit.xml file from the SimProj.xml and init.xml
  * 
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
  * 
@@ -56,11 +55,11 @@ import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_rea
 public class SimulationInitial_XML_generator {
 
 	/**
-	 * Use this method to create a ModelInit.xml with a path to an init.txt file but not available InitTXT class.
+	 * Use this method to create a ModelInit.xml with a path to an init.xml file but not available InitData class.
 	 *
 	 * @param modelName Modelica Model Name, usually this is the name of the Modelica mainclass
 	 * @param projectID Unique identifier for the simulation project
-	 * @param pathToInit Path where the init.txt file can be found
+	 * @param pathToInit Path where the init.xml file can be found
 	 * @param path Path where the ModelInit.xml has to be stored
 	 * @param modelversion Version of the Modelica model
 	 * @param modelauthor Author of this model
@@ -73,7 +72,7 @@ public class SimulationInitial_XML_generator {
 			String modelcompany, String modelcomment) throws Exception {
 
 		write(appendToRoot(modelName, projectID, modelversion, modelauthor, modelcompany,
-				modelcomment, SimulationInit_TXT_reader.readInit(pathToInit)),
+				modelcomment, SimulationInit_XML_reader.readFromXML(pathToInit)),
 				path);
 	}
 	
@@ -91,7 +90,7 @@ public class SimulationInitial_XML_generator {
 	 * @throws Exception the exception
 	 */
 	public static void createXML(String modelName, String projectID,
-			InitTXT initTXTFile, String projectFolderPath, String modelversion,
+			InitData initTXTFile, String projectFolderPath, String modelversion,
 			String modelauthor, String modelcompany, String modelcomment) throws Exception {
 		System.out.println("ModelInit createXML: " + modelName);
 			write(appendToRoot(modelName, projectID, modelversion, modelauthor, modelcompany,
@@ -119,7 +118,7 @@ public class SimulationInitial_XML_generator {
 	 */
 	private static Document appendToRoot(String modelName, String simprojID,
 			String modelversion, String modelauthor, String modelcompany,
-			String modelcomment, InitTXT initdata) {
+			String modelcomment, InitData initdata) {
 		
 		Element root = new Element("model");
 		// --model general
@@ -557,13 +556,13 @@ public class SimulationInitial_XML_generator {
 	 */
 	public static void main(String[] args) {
 
-		String pathToInit = "D:/TwoTanksSystemExample.Simulations.SimpleSimulation_init.txt";
+		String pathToInit = "C:\\AircraftWaterTankSystem.TestEnvironment_init.xml";
 
 		try {
 				createXML(
 					"TestProj", "123",
 					pathToInit,
-					"D:\\TwoTanksSystemExample.Simulations.SimpleSimulation_SimInit.xml",
+					"C:\\AircraftWaterTankSystem.TestEnvironment_SimInit.xml",
 					"1.3", "Parham Vasaiely", "EADS IW", "No comment yet");
 		} catch (Exception e) {
 			e.printStackTrace();

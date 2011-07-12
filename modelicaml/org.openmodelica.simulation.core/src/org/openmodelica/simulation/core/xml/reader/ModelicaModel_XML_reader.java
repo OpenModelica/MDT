@@ -1,37 +1,3 @@
-/*
- * This file is part of OpenModelica.
- *
- * Copyright (c) 1998-CurrentYear, Open Source Modelica Consortium (OSMC),
- * c/o Linköpings universitet, Department of Computer and Information Science,
- * SE-58183 Linköping, Sweden.
- *
- * All rights reserved.
- *
- * THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 LICENSE OR 
- * THIS OSMC PUBLIC LICENSE (OSMC-PL). 
- * ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE
- * OF THE OSMC PUBLIC LICENSE OR THE GPL VERSION 3, ACCORDING TO RECIPIENTS CHOICE. 
- *
- * The OpenModelica software and the Open Source Modelica
- * Consortium (OSMC) Public License (OSMC-PL) are obtained
- * from OSMC, either from the above address,
- * from the URLs: http://www.ida.liu.se/projects/OpenModelica or  
- * http://www.openmodelica.org, and in the OpenModelica distribution. 
- * GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
- *
- * This program is distributed WITHOUT ANY WARRANTY; without
- * even the implied warranty of  MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
- * IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS OF OSMC-PL.
- *
- * See the full OSMC Public License conditions for more details.
- *
- * Main author: Wladimir Schamai, EADS Innovation Works / Linköping University, 2009-now
- *
- * Contributors: 
- *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
- *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
- */
 package org.openmodelica.simulation.core.xml.reader;
 
 import java.io.File;
@@ -50,7 +16,6 @@ import org.openmodelica.simulation.core.models.modelica.ModelicaParameter;
 import org.openmodelica.simulation.core.models.modelica.ModelicaProperty;
 import org.openmodelica.simulation.core.models.modelica.ModelicaVariable;
 
-// TODO: Auto-generated Javadoc
 /**
  * Reads the *_SimInitial.xml and the *_SimConfig.xml, parses it and creates the ModelicaModel 
  * 
@@ -549,7 +514,7 @@ public class ModelicaModel_XML_reader {
 //		System.out.println(f2.list()[0]);
 //		System.out.println(p);
 //		File f = new File("E:\\workspace_EADS_OMI_02\\org.openmodelica.simulation.projects\\SimulationProject002_NonInteractive\\TwoTanks_SimInit.xml");
-		String path = "D:\\ModelInit.xml";
+		String path = "C:\\AircraftWaterTankSystem.TestEnvironment_init.xml";
 		ModelicaModel mopro = ModelicaModel_XML_reader.readFromXML(path);
 		System.out.println(mopro.toString());
 	}

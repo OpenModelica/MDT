@@ -109,7 +109,7 @@ public class ModelicaMainclass {
 	
 	/**
 	 * OpenModelica uses the Type as unique identifier of the simulation system. This full qualified name represents the main class
-	 * and will be used as executable name, init.txt file name,...
+	 * and will be used as executable name, init.xml file name,...
 	 *
 	 * @return the type
 	 */
