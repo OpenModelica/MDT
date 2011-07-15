@@ -202,7 +202,8 @@ public class PropertySection_ProviderOperationEditor extends AbstractPropertySec
 	
 	@Override
 	public void refresh() {
-		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
+//		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
+		if (isValidElement() ) { // Only react if a different (new) element was selected
 			
 			//############## Adjust here: start
 			

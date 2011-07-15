@@ -188,7 +188,8 @@ public class PropertySection_MediatorOperationEditor extends AbstractPropertySec
 	
 	@Override
 	public void refresh() {
-		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
+//		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
+		if (isValidElement() ) { // Only react if a different (new) element was selected
 			
 //			valueClient = null; // reset the element. important when another element of the same meta-type is selected.
 			
