@@ -109,8 +109,8 @@ public class UpdateBindingsConfirmationDialog extends Dialog {
 		lblImage.setImage(SWTResourceManager.getImage(UpdateBindingsConfirmationDialog.class, "/org/eclipse/jface/dialogs/images/help.gif"));
 		
 		lblText = new Label(composite, SWT.NONE);
-		lblText.setText( "Shall all unambiguous bindings in " +
-						"the sub-tree of '" + rootTreeObject.getDotPath() + "'.\" be updated? " +
+		lblText.setText( "Shall all unambiguous bindings in all sub-components of " +
+						"'" + getDotPath(rootTreeObject) + "' be updated? " +
 						"\r\nNote, this action cannot be undone." );
 		
 		// 3 raw
@@ -158,7 +158,14 @@ public class UpdateBindingsConfirmationDialog extends Dialog {
 		
 		return parent;
 	}
-
+	
+	private String getDotPath(TreeObject component){
+		if (component.isRoot()) {
+			return component.getName();
+		}
+		return component.getDotPath();
+	}
+	
 	public void setDeleteAllBindings(boolean deleteAllBindings) {
 		this.deleteAllBindings = deleteAllBindings;
 	}

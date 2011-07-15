@@ -37,6 +37,7 @@ package org.openmodelica.modelicaml.view.componentstree.views;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -105,6 +106,7 @@ import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
+import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
@@ -228,6 +230,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private Action actionInstantiateRequirements;
 
 	private Action actionAllDeleteModifications;
+
+	private Action actionInstantiateTestScenarios;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
@@ -454,13 +458,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						manager.add(new Separator());
 						manager.add(actionLocate);
 						
-						if ( item.getProperty().getType() != null ) {
-							if (!(item.getProperty().getType() instanceof PrimitiveType)) { //Primitive types should not be located.
-//								actionLocateType.setText("Locate '" + item.getProperty().getType().getName() + "', the type of '" + item.getProperty().getName() + "', in Papyrus Outline View");
-								manager.add(new Separator());
-								manager.add(actionLocateType);
-							}
-						}
+//						if ( item.getProperty().getType() != null ) {
+//							if (!(item.getProperty().getType() instanceof PrimitiveType)) { //Primitive types should not be located.
+////								actionLocateType.setText("Locate '" + item.getProperty().getType().getName() + "', the type of '" + item.getProperty().getName() + "', in Papyrus Outline View");
+//								manager.add(new Separator());
+//								manager.add(actionLocateType);
+//							}
+//						}
 					}
 				}
 				else if (item.getUmlElement() instanceof NamedElement) {
@@ -477,19 +481,24 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			}
 
 			
-			// delete actions
+			// root actions
 			if (item.isRoot() && isSimulation(selectedClass)) {
 				
 				// instantiate requirements handler can only be used for the root that returns the selected uml class
 //				manager.add(new Separator());
 				manager.add(actionInstantiateRequirements);
+				actionInstantiateRequirements.setText("Instantiate requirements");
+				
+				manager.add(actionInstantiateTestScenarios);
+				actionInstantiateTestScenarios.setText("Instantiate test scenarios");
+				
 				
 				if (TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, false)) {
-//					manager.add(new Separator());
+					manager.add(new Separator());
 					manager.add(actionDeleteReqTestEvaluationElements);
 				}
 				else {
-//					manager.add(new Separator());
+					manager.add(new Separator());
 					manager.add(actionAddReqTestEvaluationElements);					
 				}
 				// delete all modifications from first level components.
@@ -497,6 +506,22 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					manager.add(new Separator());
 					manager.add(actionAllDeleteModifications);
 				}
+			}
+			
+			// used for instantiating requirements from an instantiated test scenario.
+			if (item.getProperty() != null && typeIsATestScenarioSimulation(item.getProperty())) {
+				manager.add(new Separator());
+				actionInstantiateRequirements.setText("Find linked requirements");
+				manager.add(actionInstantiateRequirements);
+				manager.add(new Separator());
+			}
+			
+			// instantiate test scenarios based on selected requirements
+			if (areRequirementsSelected(viewer.getSelection()) != null) {
+				manager.add(new Separator());
+				actionInstantiateTestScenarios.setText("Find test scenarios");
+				manager.add(actionInstantiateTestScenarios);
+				manager.add(new Separator());
 			}
 			
 			if (!item.isPredefinedModelicaProperty()) {
@@ -513,6 +538,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		//manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
+	
+	private boolean typeIsATestScenarioSimulation(Property property) {
+		Type type = property.getType();
+		
+		if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_TestScenario) != null) {
+			return true;
+		}
+		return false;
+	}
 	
 	private boolean isSimulation(Class aClass) {
 		if (aClass.getAppliedStereotype(Constants.stereotypeQName_Simulation) != null) {
@@ -754,8 +788,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionUpdateBindings.setText("Update bindings in sub-tree");
-		actionUpdateBindings.setToolTipText("Update bindings in sub-tree");
+//		actionUpdateBindings.setText("Update bindings in all sub-components");
+//		actionUpdateBindings.setToolTipText("Update bindings in all sub-components");
+		actionUpdateBindings.setText("Update bindings");
+		actionUpdateBindings.setToolTipText("Update bindings in all sub-components");
 //		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/updateBindings.png"));
 		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png")));
 		
@@ -1329,7 +1365,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
+					
 					InstantiateRequirementsHandler ri = new InstantiateRequirementsHandler();
+					
+					// if it is an instantiated test scenario -> collect linked requirements. 
+					if ( ((TreeObject)obj).getProperty() instanceof Property && typeIsATestScenarioSimulation(((TreeObject)obj).getProperty())) {
+						ri.collectLinkedItems(selectedClass, ((TreeObject)obj).getProperty());
+					}
+					
 					try {
 						ri.execute(null);
 						viewer.refresh();
@@ -1346,6 +1389,84 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionInstantiateRequirements.setText("Instantiate Requirements");
 		actionInstantiateRequirements.setToolTipText("Instantiate Requirements");
 		actionInstantiateRequirements.setImageDescriptor(ImageDescriptor.createFromFile(InstantiateRequirementsHandler.class, "/icons/list-accept.png"));
+		
+		
+		// instantiate test scenarios
+		actionInstantiateTestScenarios = new Action("actionInstantiateTestScenarios") {
+			public void run() 
+			{
+				HashSet<Element> selectedRequirementsObjects = new HashSet<Element>();
+				HashSet<Element> selectedRequirements = null;
+				Class containigClass = null;
+
+				ISelection selection = viewer.getSelection();
+				Boolean go = false;
+				
+				if (selection instanceof IStructuredSelection) {
+
+					Object obj = ((IStructuredSelection) selection).getFirstElement();
+					if (obj instanceof TreeParent && ((TreeParent)obj).isRoot() ) {
+						// class was selected -> instantiate test scenarios 
+						containigClass = ((TreeParent)obj).getSelectedClass();
+						go = true;
+					}
+					
+					// requirements were selected -> instantiate test cases based on selected requirements
+					else {
+						containigClass = selectedClass;
+						
+						for (Object object : ((IStructuredSelection)selection).toList()) {
+							if (object instanceof TreeParent) {
+
+								Type type = ((TreeParent)object).getComponentType();
+								if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+									selectedRequirementsObjects.add(((TreeParent)object).getProperty());
+									go = true;
+								}
+							}
+						}
+					}
+				}
+				
+				if (selectedRequirementsObjects.size() > 0 ) {
+					selectedRequirements = new HashSet<Element>();
+					selectedRequirements.addAll(selectedRequirementsObjects);
+				}
+				
+				if (go) {
+					InstantiateTestScenarioHandler tsi = new InstantiateTestScenarioHandler();
+					tsi.setData(containigClass, selectedRequirements);
+					
+					try {
+						tsi.execute(null);
+						viewer.refresh();
+						viewer.expandToLevel(2);
+						
+						// if selected test scenarios were instantiated
+						if (tsi.instantiatedElements != null && tsi.instantiatedElements.size() > 0) {
+							
+							Boolean updateBindings = MessageDialog.openQuestion(new Shell(), 
+									"Update bindings", "Do you want to update bindings in '" + root.getName() + "'?");
+							
+							if (updateBindings) {
+								List<TreeParent> newSelection = new ArrayList<TreeParent>();
+								newSelection.add(root);
+								viewer.setSelection(new StructuredSelection(newSelection));
+								actionUpdateBindings.run();						
+							}
+						}
+						
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+		};
+		actionInstantiateTestScenarios.setText("Instantiate Test Scenarios");
+		actionInstantiateTestScenarios.setToolTipText("Instantiate Test Scenarios");
+		actionInstantiateTestScenarios.setImageDescriptor(ImageDescriptor.createFromFile(InstantiateRequirementsHandler.class, "/icons/listOfActions.png"));
 
 		
 		actionAddReqTestEvaluationElements = new Action("actionReqTestEvaluationElements") {
@@ -1361,8 +1482,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionAddReqTestEvaluationElements.setText("Add Requirements Evaluation Code");
-		actionAddReqTestEvaluationElements.setToolTipText("Add Requirements Evaluation Code");
+		actionAddReqTestEvaluationElements.setText("Add requirements test oracle code");
+		actionAddReqTestEvaluationElements.setToolTipText("Add requirements test oracle code");
 		actionAddReqTestEvaluationElements.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		
 		actionDeleteReqTestEvaluationElements = new Action("actionReqTestEvaluationElements") {
@@ -1445,6 +1566,27 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //		});
 //	}
 
+	
+	private HashSet<Element> areRequirementsSelected(ISelection selection){
+		HashSet<Element> selectedRequirementsObjects = new HashSet<Element>();
+		
+		if (selection instanceof IStructuredSelection) {
+
+				for (Object object : ((IStructuredSelection)selection).toList()) {
+					if (object instanceof TreeParent) {
+						Type type = ((TreeParent)object).getComponentType();
+						if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+							selectedRequirementsObjects.add(((TreeParent)object).getProperty());
+						}
+					}
+				}
+			}
+		if (selectedRequirementsObjects.size() > 0) {
+			return selectedRequirementsObjects;
+		}
+		return null;
+	}
+	
 	
 	// ############################### FILTERS 
 	
