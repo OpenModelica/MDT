@@ -37,7 +37,13 @@ package org.openmodelica.modelicaml.tabbedproperties.editors.sections;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.domain.IEditingDomainProvider;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.uml2.uml.Activity;
 import org.eclipse.uml2.uml.ActivityEdge;
 import org.eclipse.uml2.uml.Behavior;
@@ -59,6 +65,46 @@ import org.eclipse.uml2.uml.Transition;
  * The Class Utils.
  */
 public class Utils {
+	
+	public static EObject adaptSelectedElement( Object selection) {
+		EObject eObject = null;
+		if(selection != null) {
+			if(selection instanceof IAdaptable) {
+				selection = ((IAdaptable)selection).getAdapter(EObject.class);
+			}
+			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
+			if(businessObject instanceof EObject) {
+				eObject = (EObject)businessObject;
+			}
+		}
+		return eObject;
+	}
+	
+	
+	public static EditingDomain getEditingDomain(IWorkbenchPart part) {
+		if(part.getAdapter(EditingDomain.class) != null) {
+			return (EditingDomain)part.getAdapter(EditingDomain.class);
+		}
+
+		if(part instanceof IEditingDomainProvider) {
+			return ((IEditingDomainProvider)part).getEditingDomain();
+		}
+
+		if(part.getAdapter(IEditingDomainProvider.class) != null) {
+			return ((IEditingDomainProvider)part.getAdapter(IEditingDomainProvider.class)).getEditingDomain();
+		}
+
+//		if(part instanceof PageBookView) {
+//			IPage page = ((PageBookView)part).getCurrentPage();
+//			if(page instanceof IEditingDomainProvider) {
+//				return ((IEditingDomainProvider)page).getEditingDomain();
+//			}
+//		}
+
+		return null;
+	}
+	
+	
 	
 	/**
 	 * Gets the context class.

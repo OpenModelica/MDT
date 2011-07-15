@@ -35,14 +35,17 @@
 
 package org.openmodelica.modelicaml.tabbedproperties.editors.sections;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.umlutils.OpaqueExpressionUtil;
@@ -152,7 +155,7 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 		});
 		
 		// Get Papyrus editing domain
-		editingDomain = EditorUtils.getTransactionalEditingDomain();
+//		editingDomain = EditorUtils.getTransactionalEditingDomain();
 	}
 	
 	/**
@@ -162,7 +165,6 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 	 */
 	private Boolean isValidElement(){
 		// ################################ Adjust start
-		//Note UML FunctionBehavior is a sub-type of OpaqueBehavior 
 		if ( this.selectedUmlElement instanceof Transition ) {
 			return true;
 		}
@@ -175,13 +177,11 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 	 */
 	@Override
 	public void refresh() {
-		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
-			
+//		if (isNewSelection && isValidElement() ) { // Only react if a different (new) element was selected
+		if ( isValidElement() ) { // Only react if a different (new) element was selected
 			// ################################ Adjust start
 			if (selectedUmlElement instanceof Transition ) {
 				contextElement = ((Transition)selectedUmlElement);
-				//textToEdit = (String) "" + retrieveBody( (OpaqueExpression)((Transition)selectedUmlElement).getGuard().getSpecification(), LANGUAGE);
-				//textToEdit = (String) "" + retrieveBody( (OpaqueExpression)((Transition)selectedUmlElement).getGuard().getSpecification(), LANGUAGE);
 				textToEdit = "";
 				//String exisingGuardString = OpaqueExpressionUtil.getBodyForLanguage((OpaqueExpression)((Transition)selectedUmlElement).getGuard().getSpecification(), LANGUAGE);
 				
@@ -206,7 +206,6 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 			
 			editor.setTextToEdit(textToEdit);
 			editor.setContextElement(contextElement);
-			
 			
 			// marker support
 			if (selectedUmlElement instanceof NamedElement) {
@@ -235,6 +234,21 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 				@Override
 				protected void doExecute() {
 					if ( !bodyText.trim().equals("") ) {
+						
+						// delete the language expression 
+						if ( ((Transition)element).getGuard() != null && ((Transition)element).getGuard().getSpecification() instanceof OpaqueExpression) {
+							OpaqueExpression opaqueExpression = (OpaqueExpression) ((Transition)element).getGuard().getSpecification();
+							int index = opaqueExpression.getLanguages().indexOf(LANGUAGE);
+							if (index > -1 ) {
+								opaqueExpression.getLanguages().remove(index);
+								opaqueExpression.getBodies().remove(index);
+								
+								((Transition)element).getGuard().destroy(); // reset the guard
+								//((Transition)element).setGuard(null); // reset the guard 
+							}
+						}	
+						
+						// create a new guard
 						Constraint c = ((Transition)element).createGuard("ModelicaGuardCode");
 						OpaqueExpressionUtil.setBodyForLanguage((OpaqueExpression)c.createSpecification("ModelicaGuardCode", null, UMLPackage.Literals.OPAQUE_EXPRESSION), LANGUAGE, bodyText);
 					}
@@ -246,8 +260,9 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 							if (index > -1 ) {
 								opaqueExpression.getLanguages().remove(index);
 								opaqueExpression.getBodies().remove(index);
-								
-								((Transition)element).setGuard(null); // reset the guard 
+
+								((Transition)element).getGuard().destroy(); // reset the guard
+//								((Transition)element).setGuard(null); // reset the guard 
 							}
 						}	
 					}
@@ -340,21 +355,36 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 	 */
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
-		
+
 		// get the selectedUmlElement
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				this.selectedUmlElement = (Element)eObject;
-				isNewSelection = true;
-			}
-		}
-		else if (input instanceof IUMLEditPart) {
+//		if (adaptSelectedElement(input) instanceof Element) {
+//			this.selectedUmlElement = (Element) adaptSelectedElement(input);
+//			isNewSelection = true;
+//		}
+		
+//		if (input instanceof ModelElementItem) {
+//			EObject eObject = ((ModelElementItem)input).getEObject();
+//			if ( eObject instanceof Element ) {
+//				this.selectedUmlElement = (Element)eObject;
+//				isNewSelection = true;
+//			}
+//		}
+		
+		// treat the object selected on a diagram and in the model explorer separately.
+		if (input instanceof IUMLEditPart) {
 			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
 			isNewSelection = true;
 		}
+		else if (Utils.adaptSelectedElement(input) instanceof Element) {
+			this.selectedUmlElement = (Element) Utils.adaptSelectedElement(input);
+			isNewSelection = true;
+		}
+		
+		// Get Papyrus editing domain.
+		editingDomain = (TransactionalEditingDomain) Utils.getEditingDomain(part);
+
 	}
 
 //	@Override
@@ -364,7 +394,7 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 //		// (e.g. from Properties view to Console View, etc.). 
 //		storeText(contextElement, editor.getText());
 //	}
-
+	
 }
 
 	

@@ -37,6 +37,7 @@ package org.openmodelica.modelicaml.tabbedproperties.editors.sections;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
@@ -45,6 +46,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.umlutils.OpaqueBehaviorUtil;
@@ -159,7 +161,7 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 		});
 		
 		// Get Papyrus editing domain
-		editingDomain = EditorUtils.getTransactionalEditingDomain();
+//		editingDomain = EditorUtils.getTransactionalEditingDomain();
 	}
 	
 	/**
@@ -403,24 +405,45 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 		// get the selectedUmlElement
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				selectedUmlElement = (Element)eObject;
-				if (selectedUmlElement instanceof State) {
-					isNewSelection = true;
-					selectedState = (State)selectedUmlElement;
-				}
-			}
-		}
-		else if (input instanceof IUMLEditPart) {
-			selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
+//		if (input instanceof ModelElementItem) {
+//			EObject eObject = ((ModelElementItem)input).getEObject();
+//			if ( eObject instanceof Element ) {
+//				selectedUmlElement = (Element)eObject;
+//				if (selectedUmlElement instanceof State) {
+//					isNewSelection = true;
+//					selectedState = (State)selectedUmlElement;
+//				}
+//			}
+//		}
+//		else if (input instanceof IUMLEditPart) {
+//			selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
+//			isNewSelection = true;
+//			if (selectedUmlElement instanceof State) {
+//				isNewSelection = true;
+//				selectedState = (State)selectedUmlElement;
+//			}
+//		}
+		
+		// treat the object selected on a diagram and in the model explorer separately.
+		if (input instanceof IUMLEditPart) {
+			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
 			isNewSelection = true;
 			if (selectedUmlElement instanceof State) {
-				isNewSelection = true;
+//				isNewSelection = true;
 				selectedState = (State)selectedUmlElement;
 			}
 		}
+		else if (Utils.adaptSelectedElement(input) instanceof Element) {
+			this.selectedUmlElement = (Element) Utils.adaptSelectedElement(input);
+			isNewSelection = true;
+			if (selectedUmlElement instanceof State) {
+//				isNewSelection = true;
+				selectedState = (State)selectedUmlElement;
+			}
+		}
+		
+		// Get Papyrus editing domain.
+		editingDomain = (TransactionalEditingDomain) Utils.getEditingDomain(part);
 	}
 
 //	@Override
