@@ -186,7 +186,8 @@ public class ClassInstantiation {
 			String[] splitted = string.trim().split("=");
 			if (splitted.length > 1) {
 				String leftHand = prefix + splitted[0].trim();
-				String rightHand = splitted[1].trim();
+				//String rightHand = splitted[1].trim();
+				String rightHand = getRightHandAfterFirstEqSign(splitted[0], string.trim());
 				if ( !this.firstLevelComponentsModifications.containsKey(leftHand) ) { // TODO: do we need it?!
 					this.firstLevelComponentsModifications.put(leftHand, rightHand); // contains modifications that are defined first level components
 					// Add to modification source in order to always know where this modification came from
@@ -202,9 +203,12 @@ public class ClassInstantiation {
 		else { // match others, e.g. redeclaration of the component type
 			addRedeclaredComponentTypeEntry(string, dotPath, sourceOfModification);
 		}
-		
 	}
 	
+	private String getRightHandAfterFirstEqSign(String lefthand, String entireString){
+		String righthandString = entireString;
+		return righthandString.replaceFirst(lefthand, "").trim().replaceFirst("=", "").trim();
+	}
 	
 	private void addRedeclaredComponentTypeEntry(String string, String dotPath, NamedElement sourceOfModification){
 		String prefix = "";

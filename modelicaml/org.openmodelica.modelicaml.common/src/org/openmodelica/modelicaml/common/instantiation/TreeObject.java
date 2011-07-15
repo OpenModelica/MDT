@@ -243,14 +243,14 @@ public class TreeObject implements IAdaptable {
 	}
 	
 
-	public String getFinalModificationRightHand(){ // TODO: rename to getEditedModification
+	public String getFinalModificationRightHand(){ 
 		if (this.finalModificationRightHand == null) {
 			return getModificationRightHand();
 		}
 		return this.finalModificationRightHand;
 	}
 	
-	public void setFinalModificationRightHand( String value ){ // TODO: rename to setEditedModification
+	public void setFinalModificationRightHand( String value ){
 		this.finalModificationRightHand = value;
 	}
 	

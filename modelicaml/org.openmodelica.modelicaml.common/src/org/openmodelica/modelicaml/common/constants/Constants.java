@@ -59,6 +59,15 @@ public class Constants {
 
 	public static final String stereotypeQName_Simulation 		= "ModelicaML::ModelicaSimulationConstructs::Simulation";
 	
+	public static final String stereotypeQName_TestScenario 		= "ModelicaML::TestDefinition::TestScenario";
+	public static final String propertyName_usedToVerify 			= "usedToVerify";
+
+	public static final String stereotypeQName_TestSuite 		= "ModelicaML::TestDefinition::TestSuite";
+	public static final String propertyName_includes 		= "includes";
+
+	
+	
+	
 	// composite constructs
 	public static final String stereotypeQName_Variable 		= "ModelicaML::ModelicaCompositeConstructs::Variable";
 	public static final String stereotypeQName_FunctionArgument = "ModelicaML::ModelicaCompositeConstructs::FunctionArgument";
@@ -74,6 +83,10 @@ public class Constants {
 	public static final String stereotypeQName_ImportRelation		= "ModelicaML::ModelicaRelationsConstructs::Import";
 	
 	// stereotype properties 
+	
+	public static final String propertyName_id 					= "id";
+	public static final String propertyName_text	 			= "text";
+	
 	public static final String propertyName_modification 		= "modification";
 	public static final String propertyName_causality 			= "causality";
 	public static final String propertyName_variability 		= "variability";
