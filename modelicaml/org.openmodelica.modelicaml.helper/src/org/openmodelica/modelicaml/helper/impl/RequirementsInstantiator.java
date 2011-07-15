@@ -223,10 +223,10 @@ public class RequirementsInstantiator {
 	public Property instantiateRequirement(Class containingClass, Class reqClass){
 		EList<Property> pList = containingClass.getAllAttributes();
 		int numberOfReqInstancesWithSameType = 0;
-		String prefix = reqPropertyPrefix;
+//		String prefix = reqPropertyPrefix;
 		for (Property property : pList) {
 			String pName = StringUtls.replaceSpecChar(property.getName());
-			if (pName.substring(0, pName.length() - 2).startsWith(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase()) ) {
+			if (pName.substring(0, pName.length() - 2).startsWith(reqPropertyPrefix + getRequirementId(reqClass) + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase()) ) {
 				numberOfReqInstancesWithSameType ++; 
 			}
 		}
@@ -234,7 +234,7 @@ public class RequirementsInstantiator {
 		String postfixString = "_" + postfix.toString();
 		
 		// create Property
-		Property p = containingClass.createOwnedAttribute(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase() + postfixString, reqClass);
+		Property p = containingClass.createOwnedAttribute(reqPropertyPrefix + getRequirementId(reqClass) + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase() + postfixString, reqClass);
 		// apply stereotype
 		Stereotype s = p.getApplicableStereotype(Constants.stereotypeQName_RequirementInstance);
 		if (s != null) {
@@ -245,6 +245,20 @@ public class RequirementsInstantiator {
 			MessageDialog.openError(new Shell(), "Error:", "Cannot apply ModelicaML stereotype to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 		}
 		return null;
+	}
+	
+	
+	private String getRequirementId(Class requirement){
+		String id = "";
+		Stereotype s = requirement.getAppliedStereotype(Constants.stereotypeQName_Requirement);
+		if (s != null) {
+			Object o = requirement.getValue(s, Constants.propertyName_id);
+			if (o instanceof String) {
+				id = "_" + (String) o + "_";
+			}
+		}
+		
+		return id;
 	}
 	
 	

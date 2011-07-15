@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.helper.handlers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +45,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -56,12 +56,13 @@ import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
-import org.eclipse.uml2.uml.Stereotype;
-import org.openmodelica.modelicaml.common.services.StringUtls;
+import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
 import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
+import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
 
 
 
@@ -75,16 +76,56 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 	/** The selected element. */
 	private EObject selectedElement = null;
 	
+	// list of requirements that shall be displayed (e.g. used to filter requirements that are referenced by a test scenario)
+	private ArrayList<Class> preselectedList = null;
+	
+	public void collectLinkedItems(Class containingClass, Property selectedProperty) {
+		
+		// if it is a property that was selected, e.g., an instantiated test scenario 
+		// for which linked requirements should be instantiated.  
+		if (selectedProperty != null && containingClass != null) {
+			// get the test case class
+			Type testCaseClass = selectedProperty.getType();
+			if ( testCaseClass != null) {
+				HashSet<Class> itemsFound = new HashSet<Class>();
+				
+				TestScenariosCollector tsc = new TestScenariosCollector();
+				for (Element element : tsc.collectRequirementsForTestCase(testCaseClass)) {
+					if (element instanceof Class) {
+						itemsFound.add((Class) element);
+					}
+				}
+				
+				// set the preselected list
+				if (itemsFound.size() > 0 ) {
+				 	preselectedList = new ArrayList<Class>();
+					preselectedList.addAll(itemsFound);
+
+					// set the containing class
+					selectedElement = containingClass;
+				}
+				else {
+					MessageDialog.openInformation(new Shell(), "Linked requirements search", 
+							"No requirements, that are referenced by the selected test scenario, are found in the model.");
+				}
+				
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+		// if setData was not called or was not successful -> use structured selection. 
+		if (selectedElement == null) {
+			selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));	
+		}
 		
 		if (selectedElement instanceof Class) {
 			
-			InstantiateRequirementsDialog dialog = new InstantiateRequirementsDialog(new Shell(), (Class) selectedElement);
+			InstantiateRequirementsDialog dialog = new InstantiateRequirementsDialog(new Shell(), (Class) selectedElement, preselectedList);
 			dialog.open();
 			
 			if (dialog.getReturnCode() == 0) {
@@ -92,22 +133,20 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 				HashMap<Class, Integer> selectedNumberOfInstantiations = dialog.getSelectedNumberOfInstantiations();
 				
 				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-//				for (Class reqClass : selectedReq) {
-//					editingDomain.getCommandStack().execute(getCommand(editingDomain, reqClass, (Class) selectedElement));
-//				}
 				
 				// instantiate requirements
 				editingDomain.getCommandStack().execute(getCommand(editingDomain, selectedReq, selectedNumberOfInstantiations, (Class) selectedElement));
 				
-				if (selectedReq.size() > 0) { // if new requirements were instantiated
-					// ask for creating requirements evaluation elements and code 
-					boolean go = MessageDialog.openQuestion(new Shell(), "Confirmation", 
-							"Should the requirements evaluation elements and respective code be created or updated " +
-							"in '" + ((Class)selectedElement).getName() + "'?");
-					if (go) {
-						editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
-					}
-				}
+				// Requirements test oracle code 
+//				if (selectedReq.size() > 0) { // if new requirements were instantiated
+//					// ask for creating requirements evaluation elements and code 
+//					boolean go = MessageDialog.openQuestion(new Shell(), "Confirmation", 
+//							"Should the requirements evaluation elements and respective code be created or updated " +
+//							"in '" + ((Class)selectedElement).getName() + "'?");
+//					if (go) {
+//						editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
+//					}
+//				}
 			}
 		}
 		return null;
@@ -124,7 +163,6 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 	 *            the owning class
 	 * @return the command
 	 */
-//	protected Command getCommand(TransactionalEditingDomain editingDomain, final Class reqClass, final Class owningClass) {
 	protected Command getCommand(TransactionalEditingDomain editingDomain, final HashSet<Class> selectedReq, final HashMap<Class, Integer> selectedNumberOfInstantiations, final Class owningClass) {
 		CompoundCommand cc = new CompoundCommand("Instantiate Requirements in " + owningClass.getName() );
 		

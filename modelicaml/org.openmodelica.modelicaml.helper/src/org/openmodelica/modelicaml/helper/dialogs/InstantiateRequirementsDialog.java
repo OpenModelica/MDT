@@ -38,12 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -68,12 +64,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
-import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
-import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
 
@@ -86,6 +81,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 
 	/** The req list. */
 	private List<Class> reqList = new ArrayList<Class>();
+	private List<Class> preSelectedReqList = null;
 	
 	/** The selected req list. */
 	private HashSet<Class> selectedReqList = new HashSet<Class>();
@@ -109,7 +105,8 @@ public class InstantiateRequirementsDialog extends Dialog {
 	private List<Group> reqGroupsList = new ArrayList<Group>();
 	
 	/** The key word list. */
-	private List<String> keyWordList = new ArrayList<String>();
+//	private List<String> keyWordList = new ArrayList<String>();
+	private HashSet<String> keyWordList = null;
 
 	private HashMap<Class, Integer> selectedNumberOfInstantiations = new HashMap<Class, Integer>();
 
@@ -121,11 +118,18 @@ public class InstantiateRequirementsDialog extends Dialog {
 	 * @param containingClass
 	 *            the containing class
 	 */
-	public InstantiateRequirementsDialog(Shell shell, Class containingClass){
+	public InstantiateRequirementsDialog(Shell shell, Class containingClass, List<Class> preSelectedList){
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.containingClass = containingClass; 
-		this.reqList = getAllRequirementsFromModel(this.containingClass.getModel());
+
+		if (preSelectedList != null) {
+			this.preSelectedReqList = preSelectedList;
+			this.reqList = this.preSelectedReqList;
+		}
+		else {
+			this.reqList = getAllRequirementsFromModel(this.containingClass.getModel());
+		}
 	}
 	
 	/**
@@ -215,11 +219,14 @@ public class InstantiateRequirementsDialog extends Dialog {
 		btnSearch.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				keyWordList.clear();
+				//keyWordList.clear();
+				keyWordList = new HashSet<String>();
 				String keyWordsString = keyWords.getText();
 				String[] keyWords = keyWordsString.split(" ");
 				for (int i = 0; i < keyWords.length; i++) {
-					keyWordList.add(keyWords[i]);
+					if (!keyWords[i].trim().equals("")) {
+						keyWordList.add(keyWords[i]);	
+					}
 				}
 				update();
 			}
@@ -232,6 +239,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 			public void modifyText(ModifyEvent e) {
 				if (keyWords.getText().equals("")) {
 					btnSearch.setText("Show all");
+					keyWordList = null;
 				}
 				else {
 					btnSearch.setText("Search");
@@ -264,72 +272,94 @@ public class InstantiateRequirementsDialog extends Dialog {
 	 *            the model
 	 * @return the all requirements from model
 	 */
+    
     private List<Class> getAllRequirementsFromModel(Model model){
 		if (model != null) {
-			Iterator<EObject> i = model.eAllContents();
+			
+//			RequirementsCollector rc = new RequirementsCollector();
+//			rc.collectElementsFromModel(model);
+			
+			ElementsCollector ec = new ElementsCollector();
+			ec.collectElementsFromModel(model, Constants.stereotypeQName_Requirement);
+			
 			List<Class> requirements = new ArrayList<Class>();
-			
-			HashMap<String, Class> map = new HashMap<String, Class>();
-			
-			while (i.hasNext()) {
-				EObject object = i.next() ;
-				if (object instanceof Class) {
-					if ( ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+			for (Element element : ec.getElements()) {
+				if (element instanceof Class) {
+					requirements.add((Class) element);
+				}
+			}
 
-						//TODO: bug: once the key words search was performed the sorting based on name or id does not work ...
-						
-						if (keyWordList != null && keyWordList.size() > 0) { // search
-							Stereotype stereotype = ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement);
-							String name = ((Class)object).getName();
-							String id = "" + (String) ((Class)object).getValue(stereotype, "id");
-							String text = "" + (String) ((Class)object).getValue(stereotype, "text");
-							for (String keyword : keyWordList) {
-								if (text != null && text.toUpperCase().contains(keyword.toUpperCase())) {
-									map.put(((Class)object).getName(), (Class) object);
-								}
-								else if (name != null &&  name.toUpperCase().contains(keyword.toUpperCase())) {
-									map.put(((Class)object).getName(), (Class) object);
-								} 
-								else if (id != null && id.toUpperCase().contains(keyword.toUpperCase())) {
-									map.put(((Class)object).getName(), (Class) object);
-								}
-							}
+			List<Class> filteredList = filter(requirements);
+			return filteredList;
+		}
+		return null;
+	}
+	
+    private List<Class> filter(List<Class> list){
+    	
+    	List<Class> filteredList = new ArrayList<Class>();
+    	HashMap<String, Class> map = new HashMap<String, Class>();
+    	
+    	for (Class object : list) {
+
+    		if ( ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+	
+				//TODO: bug: once the key words search was performed the sorting based on name or id does not work ...
+				if ( keyWordList != null && keyWordList.size() > 0 ) { // search
+					
+					Stereotype stereotype = ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement);
+					String name = ((Class)object).getName();
+					String id = "" + (String) ((Class)object).getValue(stereotype, "id");
+					String text = "" + (String) ((Class)object).getValue(stereotype, "text");
+					
+					for (String keyword : keyWordList) {
+						if (text != null && text.toUpperCase().contains(keyword.toUpperCase())) {
+							map.put(((Class)object).getName(), (Class) object);
 						}
-						else { //no search -> use the sortFilter
-							if (sortFilter.equals("name")) {
-								map.put(((Class)object).getName(), (Class) object);
-							}
-							else if (sortFilter.equals("id")) {
-								Stereotype stereotype = ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement);
-								String id = "" + (String) ((Class)object).getValue(stereotype, "id");
-								
-								if (stereotype!= null) {
-									// put the id
-									map.put(id, (Class) object);
-								}
-								else {
-									// put the name instead
-									map.put(((Class)object).getName(), (Class) object);
-								}
-							}
+						else if (name != null &&  name.toUpperCase().contains(keyword.toUpperCase())) {
+							map.put(((Class)object).getName(), (Class) object);
+						} 
+						else if (id != null && id.toUpperCase().contains(keyword.toUpperCase())) {
+							map.put(((Class)object).getName(), (Class) object);
+						}
+					}
+				}
+				
+				else { //no search -> use the sortFilter
+					
+					if (sortFilter.equals("name")) {
+						map.put(((Class)object).getName(), (Class) object);
+					}
+					
+					else if (sortFilter.equals("id")) {
+						Stereotype stereotype = ((Class)object).getAppliedStereotype(Constants.stereotypeQName_Requirement);
+						String id = "" + (String) ((Class)object).getValue(stereotype, "id");
+						
+						if (stereotype!= null) {
+							// put the id
+							map.put(id, (Class) object);
+						}
+						else {
+							// put the name instead
+							map.put(((Class)object).getName(), (Class) object);
 						}
 					}
 				}
 			}
-			
-			List<String> sortedList = new ArrayList<String>(map.keySet());
-			Collections.sort(sortedList, String.CASE_INSENSITIVE_ORDER);
-			
-			for (String string : sortedList) {
-				Class class1 = map.get(string);
-				requirements.add(class1);
-			}
-			
-			return requirements;
-		}
-		return null;
-	}
+    	}
+    	
+    	List<String> sortedList = new ArrayList<String>(map.keySet());
+		Collections.sort(sortedList, String.CASE_INSENSITIVE_ORDER);
 		
+		for (String string : sortedList) {
+			Class class1 = map.get(string);
+			filteredList .add(class1);
+		}
+		return filteredList;
+	}
+    	
+    
+    
     /*
      * (non-Javadoc)
      * 
@@ -348,7 +378,12 @@ public class InstantiateRequirementsDialog extends Dialog {
 	 */
     private void update(){
     	// Update the requirements list
-    	reqList = getAllRequirementsFromModel(this.containingClass.getModel());
+    	if (preSelectedReqList != null) {
+    		reqList = filter(preSelectedReqList);
+		}
+    	else {
+        	reqList = getAllRequirementsFromModel(this.containingClass.getModel());    		
+    	}
 
     	// dispose the old list
     	for (Group item : reqGroupsList) {
