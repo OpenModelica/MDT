@@ -49,6 +49,11 @@ public class GetDependecyLabel implements IJavaModelQuery<Dependency, String> {
 	public String evaluate(final Dependency context, final ParameterValueList parameterValues)
 			throws ModelQueryExecutionException {
 		
+		// indicate an inconsistency
+		if (context.getClients() == null || context.getSuppliers() == null) {
+			return "ERROR! " + context.getName();
+		}
+		
 		if (context.getClients() != null && context.getClients().size() > 0 ) {
 			Element client = context.getClients().get(0);
 //			System.err.println("client: " + client.eClass());

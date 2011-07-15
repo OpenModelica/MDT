@@ -54,21 +54,25 @@ public class GetImportsLabel implements IJavaModelQuery<Classifier, String> {
 		
 		EList<Dependency> clientsList = context.getClientDependencies();
 		
-		for (Dependency dependency : clientsList) {
-			Element supplier = dependency.getSuppliers().get(0);
-			if (supplier instanceof Class || supplier instanceof Enumeration) {
-				hasImports = true;
-				if (label.equals("")) {
-					label = ((NamedElement)supplier).getName();
-				}
-				else {
-					label = label + ", " + ((NamedElement)supplier).getName();
+		if (clientsList != null) {
+			for (Dependency dependency : clientsList) {
+				Element supplier = dependency.getSuppliers().get(0);
+				if (supplier instanceof Class || supplier instanceof Enumeration) {
+					hasImports = true;
+					if (label.equals("")) {
+						label = ((NamedElement)supplier).getName();
+					}
+					else {
+						label = label + ", " + ((NamedElement)supplier).getName();
+					}
 				}
 			}
 		}
+		
 		if (hasImports) {
 			return "import " + label;
 		}
+		
 		return null;
 	}
 }

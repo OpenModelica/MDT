@@ -46,11 +46,11 @@ public class HasValueBindingStereotype implements IJavaModelQuery<Element, Boole
 			throws ModelQueryExecutionException {
 		if (context instanceof Dependency) {
 			if (context.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null) {
-				System.err.println("stereotypeQName_ProvidesValueFor" + context);
+//				System.err.println("stereotypeQName_ProvidesValueFor" + context);
 				return true;
 			}
 			if (context.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null) {
-				System.err.println("stereotypeQName_ObtainsValueFrom" + context);
+//				System.err.println("stereotypeQName_ObtainsValueFrom" + context);
 				return true;
 			}
 		}

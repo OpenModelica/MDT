@@ -81,13 +81,6 @@
         <defaultValue xsi:type="uicustom:StaticFeatureValue" value="comments"/>
       </customizedFeatures>
     </references>
-    <references referenceName="clientDependency">
-      <customizedFeatures customizedFeature="label">
-        <defaultValue xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getImportsLabel"/>
-        </defaultValue>
-      </customizedFeatures>
-    </references>
   </types>
   <types metaclassName="uml.Property">
     <customizedFeatures customizedFeature="icon">
@@ -271,9 +264,6 @@
       <defaultValue xsi:type="uicustom:DerivedFeatureValue">
         <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getDependecyLabel"/>
       </defaultValue>
-    </customizedFeatures>
-    <customizedFeatures customizedFeature="metaclassVisible">
-      <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
     </customizedFeatures>
   </types>
   <types metaclassName="uml.Region">
