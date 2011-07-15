@@ -793,6 +793,12 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
         </eAnnotations>
       </icon>
     </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_DggxgGCiEd6yLItwWIt9kg" name="Extension_Component" memberEnd="_DhjTUGCiEd6yLItwWIt9kg _DhtEUGCiEd6yLItwWIt9kg">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_DhjTUGCiEd6yLItwWIt9kg" name="extension_Component" type="_amVAwFNgEd6YXtyPQ2LL6Q" aggregation="composite" association="_DggxgGCiEd6yLItwWIt9kg"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_EA13YGCiEd6yLItwWIt9kg" name="Extension_Variable" memberEnd="_EBvPQGCiEd6yLItwWIt9kg _EB5AQGCiEd6yLItwWIt9kg">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_EBvPQGCiEd6yLItwWIt9kg" name="extension_Variable" type="_pxvbAFNgEd6YXtyPQ2LL6Q" aggregation="composite" association="_EA13YGCiEd6yLItwWIt9kg"/>
+    </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_b4wgMGDNEd6v450MT6BnSw" name="Connection">
       <ownedComment xmi:id="_0egG4GDNEd6v450MT6BnSw" annotatedElement="_b4wgMGDNEd6v450MT6BnSw">
         <body>This stereotype is used to represent the Modelica &quot;connection&quot; clause and implies its associated semantics (Kirchhoff's laws).</body>
@@ -810,6 +816,9 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_G_9T0R_UEd-Go6HscxdbvQ" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_G_9T0B_UEd-Go6HscxdbvQ"/>
       </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_enjBsGDNEd6v450MT6BnSw" name="Extension_Connection" memberEnd="_e1jogGDNEd6v450MT6BnSw _e1jogWDNEd6v450MT6BnSw">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_e1jogGDNEd6v450MT6BnSw" name="extension_Connection" type="_b4wgMGDNEd6v450MT6BnSw" aggregation="composite" association="_enjBsGDNEd6v450MT6BnSw"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_-TiUwGoBEd6MDfyi5Yk5ng" name="FunctionArgument">
       <ownedComment xmi:id="_daoVQG-4Ed6iXf-hfUoLSw" annotatedElement="_-TiUwGoBEd6MDfyi5Yk5ng">
@@ -851,6 +860,12 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_JqL-93wUEd6RNZXM0YwVGw"/>
       </ownedAttribute>
     </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_DgbdMGu_Ed65MZ8o9QNr-w" name="Extension_ConnectionPort" memberEnd="_Dm1nMGu_Ed65MZ8o9QNr-w _Dm-xIGu_Ed65MZ8o9QNr-w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_Dm1nMGu_Ed65MZ8o9QNr-w" name="extension_ConnectionPort" type="_h86MwFNgEd6YXtyPQ2LL6Q" aggregation="composite" association="_DgbdMGu_Ed65MZ8o9QNr-w"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_RdGuQGvREd65MZ8o9QNr-w" name="Extension_FunctionArgument" memberEnd="_RktLEGvREd65MZ8o9QNr-w _RktLEWvREd65MZ8o9QNr-w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_RktLEGvREd65MZ8o9QNr-w" name="extension_FunctionArgument" type="_-TiUwGoBEd6MDfyi5Yk5ng" aggregation="composite" association="_RdGuQGvREd65MZ8o9QNr-w"/>
+    </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_xezo0GvUEd65MZ8o9QNr-w" name="CalculatedProperty">
       <ownedComment xmi:id="_xyiyQGvWEd65MZ8o9QNr-w" annotatedElement="_xezo0GvUEd65MZ8o9QNr-w">
         <body>Does not represent a physical system part. This component supplies other components with calculated values.</body>
@@ -861,21 +876,6 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
           <details xmi:id="_QGwU8emJEd60SK7fYbFboQ" key="image_kind_key" value="icon"/>
         </eAnnotations>
       </icon>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_DggxgGCiEd6yLItwWIt9kg" name="Extension_Component" memberEnd="_DhjTUGCiEd6yLItwWIt9kg _DhtEUGCiEd6yLItwWIt9kg">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_DhjTUGCiEd6yLItwWIt9kg" name="extension_Component" type="_amVAwFNgEd6YXtyPQ2LL6Q" aggregation="composite" association="_DggxgGCiEd6yLItwWIt9kg"/>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_EA13YGCiEd6yLItwWIt9kg" name="Extension_Variable" memberEnd="_EBvPQGCiEd6yLItwWIt9kg _EB5AQGCiEd6yLItwWIt9kg">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_EBvPQGCiEd6yLItwWIt9kg" name="extension_Variable" type="_pxvbAFNgEd6YXtyPQ2LL6Q" aggregation="composite" association="_EA13YGCiEd6yLItwWIt9kg"/>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_enjBsGDNEd6v450MT6BnSw" name="Extension_Connection" memberEnd="_e1jogGDNEd6v450MT6BnSw _e1jogWDNEd6v450MT6BnSw">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_e1jogGDNEd6v450MT6BnSw" name="extension_Connection" type="_b4wgMGDNEd6v450MT6BnSw" aggregation="composite" association="_enjBsGDNEd6v450MT6BnSw"/>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_DgbdMGu_Ed65MZ8o9QNr-w" name="Extension_ConnectionPort" memberEnd="_Dm1nMGu_Ed65MZ8o9QNr-w _Dm-xIGu_Ed65MZ8o9QNr-w">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_Dm1nMGu_Ed65MZ8o9QNr-w" name="extension_ConnectionPort" type="_h86MwFNgEd6YXtyPQ2LL6Q" aggregation="composite" association="_DgbdMGu_Ed65MZ8o9QNr-w"/>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_RdGuQGvREd65MZ8o9QNr-w" name="Extension_FunctionArgument" memberEnd="_RktLEGvREd65MZ8o9QNr-w _RktLEWvREd65MZ8o9QNr-w">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_RktLEGvREd65MZ8o9QNr-w" name="extension_FunctionArgument" type="_-TiUwGoBEd6MDfyi5Yk5ng" aggregation="composite" association="_RdGuQGvREd65MZ8o9QNr-w"/>
     </packagedElement>
     <profileApplication xmi:id="_bgmHkF5LEd6vy6oEr0QneQ" appliedProfile="_-Xax8F5KEd6vy6oEr0QneQ">
       <eAnnotations xmi:id="_bh8LYF5LEd6vy6oEr0QneQ" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
@@ -1814,60 +1814,8 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       <eAnnotations xmi:id="_rDmOAGvWEd65MZ8o9QNr-w" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
     </profileApplication>
   </packagedElement>
-  <packagedElement xmi:type="uml:Profile" xmi:id="_GnDQYGC9Ed6v450MT6BnSw" name="ModelicaRequirementConstructs" metaclassReference="_pe6fwGDAEd6v450MT6BnSw _zlr7cGDAEd6v450MT6BnSw _A09-MGDXEd60nrRVgVTh_Q _eXarUKx7EeC2GJQ4iCzxPg">
+  <packagedElement xmi:type="uml:Profile" xmi:id="_GnDQYGC9Ed6v450MT6BnSw" name="ModelicaRequirementConstructs" metaclassReference="_pe6fwGDAEd6v450MT6BnSw _zlr7cGDAEd6v450MT6BnSw _A09-MGDXEd60nrRVgVTh_Q">
     <eAnnotations xmi:id="_w_wl32DBEd6v450MT6BnSw" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <contents xmi:type="ecore:EPackage" xmi:id="_1VS8Uax7EeC2GJQ4iCzxPg" name="ModelicaRequirementConstructs" nsURI="http://ModelicaML/schemas/ModelicaRequirementConstructs/_1VS8UKx7EeC2GJQ4iCzxPg/69" nsPrefix="ModelicaRequirementConstructs">
-        <eAnnotations xmi:id="_1WoZEKx7EeC2GJQ4iCzxPg" source="PapyrusVersion">
-          <details xmi:id="_1WoZEax7EeC2GJQ4iCzxPg" key="Version" value="0.0.103"/>
-          <details xmi:id="_1WoZEqx7EeC2GJQ4iCzxPg" key="Comment" value="NEW: BasedOn stereotype"/>
-          <details xmi:id="_1WoZE6x7EeC2GJQ4iCzxPg" key="Copyright" value=""/>
-          <details xmi:id="_1WoZFKx7EeC2GJQ4iCzxPg" key="Date" value="2011-07-12"/>
-          <details xmi:id="_1WoZFax7EeC2GJQ4iCzxPg" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_1VS8Uqx7EeC2GJQ4iCzxPg" name="Requirement" eSuperTypes="_KpBM4laVEd-OiJEhN960pA">
-          <eAnnotations xmi:id="_1VS8U6x7EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_bks90FsREd6lR6a_09Qo9g"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_1VS8VKx7EeC2GJQ4iCzxPg" name="id" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_1VS8Vqx7EeC2GJQ4iCzxPg" name="text" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_1VS8WKx7EeC2GJQ4iCzxPg" name="specifiesType" ordered="false" unique="false" upperBound="-1" eType="_KpBM4laVEd-OiJEhN960pA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_1VS8Wqx7EeC2GJQ4iCzxPg" name="base_Class" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_1VS8XKx7EeC2GJQ4iCzxPg" name="specifiesObject" ordered="false" unique="false" upperBound="-1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_1VS8a6x7EeC2GJQ4iCzxPg" name="Traceability">
-          <eAnnotations xmi:id="_1VS8bKx7EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_0Pj-4GDAEd6v450MT6BnSw"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_1VS8bax7EeC2GJQ4iCzxPg" name="specifiedByRequirement" ordered="false" unique="false" upperBound="-1" eType="_1VS8Uqx7EeC2GJQ4iCzxPg"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_1VS8b6x7EeC2GJQ4iCzxPg" name="base_NamedElement" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//NamedElement"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_1VS8cax7EeC2GJQ4iCzxPg" name="RequirementInstance" eSuperTypes="_KpUH4FaVEd-OiJEhN960pA">
-          <eAnnotations xmi:id="_1VS8cqx7EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_frQN8H23Ed61e442Za0IMg"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_1VS8h6x7EeC2GJQ4iCzxPg" name="RequirementRepresentative" eSuperTypes="_KpBM4laVEd-OiJEhN960pA">
-          <eAnnotations xmi:id="_1VS8iKx7EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_1VS8iax7EeC2GJQ4iCzxPg" name="specifiesType" ordered="false" unique="false" upperBound="-1" eType="_KpBM4laVEd-OiJEhN960pA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_1VS8i6x7EeC2GJQ4iCzxPg" name="specifiesObject" ordered="false" unique="false" upperBound="-1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_1VS8jax7EeC2GJQ4iCzxPg" name="designModelReference" ordered="false" unique="false" lowerBound="1" eType="_KpBM4laVEd-OiJEhN960pA"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_1VS8kKx7EeC2GJQ4iCzxPg" name="MeasureOfEffectiveness" eSuperTypes="_KpBM4laVEd-OiJEhN960pA">
-          <eAnnotations xmi:id="_1VS8kax7EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_1VS8k6x7EeC2GJQ4iCzxPg" name="BasedOn">
-          <eAnnotations xmi:id="_1VS8lKx7EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_1VS8lax7EeC2GJQ4iCzxPg" name="base_Dependency" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-      </contents>
       <contents xmi:type="ecore:EPackage" xmi:id="_Kp6kwVaVEd-OiJEhN960pA" name="ModelicaRequirementConstructs" nsURI="http://ModelicaML/schemas/ModelicaRequirementConstructs/_Kp6kwFaVEd-OiJEhN960pA/68" nsPrefix="ModelicaRequirementConstructs">
         <eAnnotations xmi:id="_KqNgFlaVEd-OiJEhN960pA" source="PapyrusVersion">
           <details xmi:id="_KqNgF1aVEd-OiJEhN960pA" key="Version" value="0.0.102"/>
@@ -1900,7 +1848,7 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
           </eStructuralFeatures>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_Kp6k4VaVEd-OiJEhN960pA" name="RequirementRepresentative" eSuperTypes="_KpBM4laVEd-OiJEhN960pA">
-          <eAnnotations xmi:id="_Kp6k4laVEd-OiJEhN960pA" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+          <eAnnotations xmi:id="_Kp6k4laVEd-OiJEhN960pA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_9S5OkGxbEd65MZ8o9QNr-w"/>
           <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_Kp6k41aVEd-OiJEhN960pA" name="specifiesType" ordered="false" unique="false" upperBound="-1" eType="_KpBM4laVEd-OiJEhN960pA"/>
           <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_Kp6k5VaVEd-OiJEhN960pA" name="specifiesObject" ordered="false" unique="false" upperBound="-1">
             <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -1908,7 +1856,7 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
           <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_Kp6k51aVEd-OiJEhN960pA" name="designModelReference" ordered="false" unique="false" lowerBound="1" eType="_KpBM4laVEd-OiJEhN960pA"/>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_Kp6k6laVEd-OiJEhN960pA" name="MeasureOfEffectiveness" eSuperTypes="_KpBM4laVEd-OiJEhN960pA">
-          <eAnnotations xmi:id="_Kp6k61aVEd-OiJEhN960pA" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+          <eAnnotations xmi:id="_Kp6k61aVEd-OiJEhN960pA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_MBVhsGyYEd6HeYj6Yc-zCw"/>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_Kp6k7VaVEd-OiJEhN960pA" name="RequirementInstance" eSuperTypes="_KpUH4FaVEd-OiJEhN960pA">
           <eAnnotations xmi:id="_Kp6k7laVEd-OiJEhN960pA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_frQN8H23Ed61e442Za0IMg"/>
@@ -1923,9 +1871,6 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
     </elementImport>
     <elementImport xmi:id="_A09-MGDXEd60nrRVgVTh_Q" alias="NamedElement">
       <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#NamedElement"/>
-    </elementImport>
-    <elementImport xmi:id="_eXarUKx7EeC2GJQ4iCzxPg" alias="Dependency">
-      <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_bks90FsREd6lR6a_09Qo9g" name="Requirement">
       <ownedComment xmi:id="_D38m8Fy5Ed6lR6a_09Qo9g" annotatedElement="_bks90FsREd6lR6a_09Qo9g">
@@ -1978,17 +1923,6 @@ Moreover, a requirement can have variables and behavior defined which can be eva
         </eAnnotations>
       </icon>
     </packagedElement>
-    <packagedElement xmi:type="uml:Stereotype" xmi:id="_frQN8H23Ed61e442Za0IMg" name="RequirementInstance">
-      <ownedComment xmi:id="_kejk4H23Ed61e442Za0IMg" annotatedElement="_frQN8H23Ed61e442Za0IMg">
-        <body>This stereotype indicates that this component is an instantiation of a requirement.</body>
-      </ownedComment>
-      <generalization xmi:id="_jf9OoH23Ed61e442Za0IMg" general="_amVAwFNgEd6YXtyPQ2LL6Q"/>
-      <icon xmi:id="_gF3dAOmJEd60SK7fYbFboQ" content="-119%80%78%71%13%10%26%10%0%0%0%13%73%72%68%82%0%0%0%16%0%0%0%16%8%6%0%0%0%31%-13%-1%97%0%0%0%4%115%66%73%84%8%8%8%8%124%8%100%-120%0%0%0%9%112%72%89%115%0%0%13%-41%0%0%13%-41%1%66%40%-101%120%0%0%0%25%116%69%88%116%83%111%102%116%119%97%114%101%0%119%119%119%46%105%110%107%115%99%97%112%101%46%111%114%103%-101%-18%60%26%0%0%1%-70%73%68%65%84%56%-115%-83%-109%49%104%83%81%20%-122%-65%115%-33%77%-102%-41%82%91%-116%-125%-28%33%-12%85%4%17%116%-48%73%-80%1%7%109%55%17%21%39%81%20%-95%1%-99%-99%-85%-126%-109%-109%69%-69%-88%4%7%7%7%23%65%4%29%-84%58%8%69%-108%80%-55%32%70%-47%-37%4%-95%-107%8%41%-47%-9%-34%-67%14%54%-31%81%-94%80%-30%25%15%124%31%-1%57%-121%35%-50%57%-6%41%-43%23%-3%63%4%26%32%44%-107%-77%27%-28%108%-19%-42%-23%24%64%-121%-91%114%30%120%4%68%27%16%-44%-127%-109%-99%4%2%-76%62%45%15%78%-122%35%-51%45%-1%-94%34%39%-111%-50%-24%81%-32%70%-89%-89%-7%-77%-121%-31%-79%124%107%-101%35%-13%1%-28%107%111%-36%101%53%-14%13%-36%113%96%56%45%-112%78%-61%69%-19%-91%-24%-15%-27%41%-64%1%-85%-58%-104%47%0%97%24%-26%-110%-15%-119%41%111%-57%-63%25%68%-87%-76%64%-83%9%6%1%-20%82%-59%7%-34%-117%-56%61%-96%18%4%-63%115%17%-15%-30%56%-34%-109%84%-97%61%116%-83%-107%-52%26%-29%-89%5%-23%18%32%-50%28%-70%90%36%59%116%12%40%6%-37%119%-19%-109%-127%77%127%-67%-110%-18%-110%94%-30%80%-34%8%74%105%-69%92%-7%-95%-14%99%-98%91%93%113%-103%-30%-123%121%-41%52%-110%-52%-33%4%103%127%-83%23%116%19%124%-100%61%-9%57%126%-13%-32%44%-42%-38%104%-31%-2%43%91%95%-116%93%-77%62%89%-101%59%-109%75%94%-50%77%0%-76%-97%94%63%-38%75%-32%-128%-83%97%-87%-36%-42%123%79%-36%65%-108%26%56%114%109%-65%42%-20%-42%50%-76%-7%73%56%125%-73%-19%29%-104%126%1%-112%59%124%-87%10%-68%5%126%118%-109%-89%-97%-87%80%40%-100%18%-111%-37%-58%-104%108%16%4%59%-127%69%-32%-94%82%106%-63%90%-5%58%73%-110%-15%70%-93%81%-21%57%2%-128%-25%121%-17%68%-28%10%-128%49%-90%10%-100%23%17%11%24%96%-58%-9%-3%-17%-21%71%-112%126%-33%-7%55%-95%-66%-105%-30%47%-65%65%-64%0%0%0%0%73%69%78%68%-82%66%96%-126%">
-        <eAnnotations xmi:id="_gcOHgOmJEd60SK7fYbFboQ" source="image_papyrus">
-          <details xmi:id="_gcOHgemJEd60SK7fYbFboQ" key="image_kind_key" value="icon"/>
-        </eAnnotations>
-      </icon>
-    </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_0Pj-4GDAEd6v450MT6BnSw" name="Traceability">
       <ownedComment xmi:id="_4vBz0GDAEd6v450MT6BnSw" annotatedElement="_0Pj-4GDAEd6v450MT6BnSw">
         <body>This stereotype can be applied to any model element. &#xD;
@@ -2001,6 +1935,43 @@ It has properties that can be used for setting up the traceability between requi
       <ownedAttribute xmi:id="_DibC8GDXEd60nrRVgVTh_Q" name="base_NamedElement" isUnique="false" association="_DhiSIGDXEd60nrRVgVTh_Q">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#NamedElement"/>
       </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_frQN8H23Ed61e442Za0IMg" name="RequirementInstance">
+      <ownedComment xmi:id="_kejk4H23Ed61e442Za0IMg" annotatedElement="_frQN8H23Ed61e442Za0IMg">
+        <body>This stereotype indicates that this component is an instantiation of a requirement.</body>
+      </ownedComment>
+      <generalization xmi:id="_jf9OoH23Ed61e442Za0IMg" general="_amVAwFNgEd6YXtyPQ2LL6Q"/>
+      <icon xmi:id="_gF3dAOmJEd60SK7fYbFboQ" content="-119%80%78%71%13%10%26%10%0%0%0%13%73%72%68%82%0%0%0%16%0%0%0%16%8%6%0%0%0%31%-13%-1%97%0%0%0%4%115%66%73%84%8%8%8%8%124%8%100%-120%0%0%0%9%112%72%89%115%0%0%13%-41%0%0%13%-41%1%66%40%-101%120%0%0%0%25%116%69%88%116%83%111%102%116%119%97%114%101%0%119%119%119%46%105%110%107%115%99%97%112%101%46%111%114%103%-101%-18%60%26%0%0%1%-70%73%68%65%84%56%-115%-83%-109%49%104%83%81%20%-122%-65%115%-33%77%-102%-41%82%91%-116%-125%-28%33%-12%85%4%17%116%-48%73%-80%1%7%109%55%17%21%39%81%20%-95%1%-99%-99%-85%-126%-109%-109%69%-69%-88%4%7%7%7%23%65%4%29%-84%58%8%69%-108%80%-55%32%70%-47%-37%4%-95%-107%8%41%-47%-9%-34%-67%14%54%-31%81%-94%80%-30%25%15%124%31%-1%57%-121%35%-50%57%-6%41%-43%23%-3%63%4%26%32%44%-107%-77%27%-28%108%-19%-42%-23%24%64%-121%-91%114%30%120%4%68%27%16%-44%-127%-109%-99%4%2%-76%62%45%15%78%-122%35%-51%45%-1%-94%34%39%-111%-50%-24%81%-32%70%-89%-89%-7%-77%-121%-31%-79%124%107%-101%35%-13%1%-28%107%111%-36%101%53%-14%13%-36%113%96%56%45%-112%78%-61%69%-19%-91%-24%-15%-27%41%-64%1%-85%-58%-104%47%0%97%24%-26%-110%-15%-119%41%111%-57%-63%25%68%-87%-76%64%-83%9%6%1%-20%82%-59%7%-34%-117%-56%61%-96%18%4%-63%115%17%-15%-30%56%-34%-109%84%-97%61%116%-83%-107%-52%26%-29%-89%5%-23%18%32%-50%28%-70%90%36%59%116%12%40%6%-37%119%-19%-109%-127%77%127%-67%-110%-18%-110%94%-30%80%-34%8%74%105%-69%92%-7%-95%-14%99%-98%91%93%113%-103%-30%-123%121%-41%52%-110%-52%-33%4%103%127%-83%23%116%19%124%-100%61%-9%57%126%-13%-32%44%-42%-38%104%-31%-2%43%91%95%-116%93%-77%62%89%-101%59%-109%75%94%-50%77%0%-76%-97%94%63%-38%75%-32%-128%-83%97%-87%-36%-42%123%79%-36%65%-108%26%56%114%109%-65%42%-20%-42%50%-76%-7%73%56%125%-73%-19%29%-104%126%1%-112%59%124%-87%10%-68%5%126%118%-109%-89%-97%-87%80%40%-100%18%-111%-37%-58%-104%108%16%4%59%-127%69%-32%-94%82%106%-63%90%-5%58%73%-110%-15%70%-93%81%-21%57%2%-128%-25%121%-17%68%-28%10%-128%49%-90%10%-100%23%17%11%24%96%-58%-9%-3%-17%-21%71%-112%126%-33%-7%55%-95%-66%-105%-30%47%-65%65%-64%0%0%0%0%73%69%78%68%-82%66%96%-126%">
+        <eAnnotations xmi:id="_gcOHgOmJEd60SK7fYbFboQ" source="image_papyrus">
+          <details xmi:id="_gcOHgemJEd60SK7fYbFboQ" key="image_kind_key" value="icon"/>
+        </eAnnotations>
+      </icon>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_9S5OkGxbEd65MZ8o9QNr-w" name="RequirementRepresentative">
+      <ownedComment xmi:id="_NO170GyGEd65MZ8o9QNr-w" annotatedElement="_9S5OkGxbEd65MZ8o9QNr-w">
+        <body>The requirement observer represents a requirement. It is used to bind same requirements to multiple design models.</body>
+      </ownedComment>
+      <generalization xmi:id="_ZLUZ4HExEd66-9CF-gZknQ" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
+      <ownedAttribute xmi:id="_adlTAHExEd66-9CF-gZknQ" name="specifiesType" type="_SSA0cFNQEd6YXtyPQ2LL6Q" isUnique="false">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_eP68MHExEd66-9CF-gZknQ" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ePxyQHExEd66-9CF-gZknQ"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_eQN3IHExEd66-9CF-gZknQ" name="specifiesObject" isUnique="false">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_G6RO8HEyEd66-9CF-gZknQ" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_G6Hd8HEyEd66-9CF-gZknQ"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_vvAn8HnyEd6HTZA5rjYUOg" name="designModelReference" type="_SSA0cFNQEd6YXtyPQ2LL6Q" isUnique="false">
+        <ownedComment xmi:id="_zDQpgIGeEd63K7K6juYJ8g" annotatedElement="_vvAn8HnyEd6HTZA5rjYUOg">
+          <body>A reference to the system desing model.</body>
+        </ownedComment>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_MBVhsGyYEd6HeYj6Yc-zCw" name="MeasureOfEffectiveness">
+      <ownedComment xmi:id="_mptckGyaEd6HeYj6Yc-zCw" annotatedElement="_MBVhsGyYEd6HeYj6Yc-zCw">
+        <body>This stereotype is used to represent a model that measures performances of other system models and compares them in order to determine the best potential design solution.</body>
+      </ownedComment>
+      <generalization xmi:id="_VL3XkGyYEd6HeYj6Yc-zCw" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_xgJyUGDAEd6v450MT6BnSw" name="Extension_Requirement" memberEnd="_xiFsAGDAEd6v450MT6BnSw _xiFsAWDAEd6v450MT6BnSw">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_xiFsAGDAEd6v450MT6BnSw" name="extension_Requirement" type="_bks90FsREd6lR6a_09Qo9g" aggregation="composite" association="_xgJyUGDAEd6v450MT6BnSw"/>
@@ -2609,135 +2580,6 @@ It indicates that the element, the stereotype is applied to, shall not be includ
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_ImIGME4pEeC4rN7SNTLq6w" name="TestDefinition" metaclassReference="_N4Rf0E4qEeC4rN7SNTLq6w _UnFhME4qEeC4rN7SNTLq6w _WS5KMH-XEeC-I9oqZ53S4w _oS_5oH-XEeC-I9oqZ53S4w">
     <eAnnotations xmi:id="_QfwqAE4rEeC4rN7SNTLq6w" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <contents xmi:type="ecore:EPackage" xmi:id="_xNja4K0rEeCRXd3mzS9MqQ" name="TestDefinition" nsURI="http://ModelicaML/schemas/TestDefinition/_xNQf8K0rEeCRXd3mzS9MqQ/7" nsPrefix="TestDefinition">
-        <eAnnotations xmi:id="_xOvtsK0rEeCRXd3mzS9MqQ" source="PapyrusVersion">
-          <details xmi:id="_xOvtsa0rEeCRXd3mzS9MqQ" key="Version" value="0.1.4"/>
-          <details xmi:id="_xOvtsq0rEeCRXd3mzS9MqQ" key="Comment" value=""/>
-          <details xmi:id="_xOvts60rEeCRXd3mzS9MqQ" key="Copyright" value=""/>
-          <details xmi:id="_xOvttK0rEeCRXd3mzS9MqQ" key="Date" value="2011-07-13"/>
-          <details xmi:id="_xOvtta0rEeCRXd3mzS9MqQ" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_xNja4a0rEeCRXd3mzS9MqQ" name="TestSuite">
-          <eAnnotations xmi:id="_xNja4q0rEeCRXd3mzS9MqQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_XzXFYE4pEeC4rN7SNTLq6w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_xNja460rEeCRXd3mzS9MqQ" name="includes" ordered="false" upperBound="-1" eType="_xNja560rEeCRXd3mzS9MqQ"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_xNja5a0rEeCRXd3mzS9MqQ" name="base_Package" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_xNja560rEeCRXd3mzS9MqQ" name="TestScenario">
-          <eAnnotations xmi:id="_xNja6K0rEeCRXd3mzS9MqQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_T-xLcH-XEeC-I9oqZ53S4w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_xNja6a0rEeCRXd3mzS9MqQ" name="base_Class" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_xNja660rEeCRXd3mzS9MqQ" name="usedToVerify" ordered="false" upperBound="-1" eType="_1VS8Uqx7EeC2GJQ4iCzxPg"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_xNjbBq0rEeCRXd3mzS9MqQ" name="UsedToVerify">
-          <eAnnotations xmi:id="_xNjbB60rEeCRXd3mzS9MqQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_8VZHcK0qEeCRXd3mzS9MqQ"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_xNjbCK0rEeCRXd3mzS9MqQ" name="base_Dependency" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_xNjbCq0rEeCRXd3mzS9MqQ" name="Includes">
-          <eAnnotations xmi:id="_xNjbC60rEeCRXd3mzS9MqQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="__tBKkK0qEeCRXd3mzS9MqQ"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_xNjbDK0rEeCRXd3mzS9MqQ" name="base_Dependency" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-      </contents>
-      <contents xmi:type="ecore:EPackage" xmi:id="_BZFHMKyQEeC2GJQ4iCzxPg" name="TestDefinition" nsURI="http://ModelicaML/schemas/TestDefinition/_BY7WMKyQEeC2GJQ4iCzxPg/6" nsPrefix="TestDefinition">
-        <eAnnotations xmi:id="_BZYCIKyQEeC2GJQ4iCzxPg" source="PapyrusVersion">
-          <details xmi:id="_BZYCIayQEeC2GJQ4iCzxPg" key="Version" value="0.1.3"/>
-          <details xmi:id="_BZYCIqyQEeC2GJQ4iCzxPg" key="Comment" value=""/>
-          <details xmi:id="_BZYCI6yQEeC2GJQ4iCzxPg" key="Copyright" value=""/>
-          <details xmi:id="_BZYCJKyQEeC2GJQ4iCzxPg" key="Date" value="2011-07-12"/>
-          <details xmi:id="_BZYCJayQEeC2GJQ4iCzxPg" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_BZFHMayQEeC2GJQ4iCzxPg" name="TestSuite">
-          <eAnnotations xmi:id="_BZFHMqyQEeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_XzXFYE4pEeC4rN7SNTLq6w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_BZFHM6yQEeC2GJQ4iCzxPg" name="includes" ordered="false" upperBound="-1" eType="_BZFHN6yQEeC2GJQ4iCzxPg"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_BZFHNayQEeC2GJQ4iCzxPg" name="base_Package" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_BZFHN6yQEeC2GJQ4iCzxPg" name="TestScenario">
-          <eAnnotations xmi:id="_BZFHOKyQEeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_T-xLcH-XEeC-I9oqZ53S4w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_BZFHOayQEeC2GJQ4iCzxPg" name="base_Class" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_BZFHO6yQEeC2GJQ4iCzxPg" name="usedToVerify" ordered="false" upperBound="-1" eType="_1VS8Uqx7EeC2GJQ4iCzxPg"/>
-        </eClassifiers>
-      </contents>
-      <contents xmi:type="ecore:EPackage" xmi:id="_aRCUsayPEeC2GJQ4iCzxPg" name="TestDefinition" nsURI="http://ModelicaML/schemas/TestDefinition/_aRCUsKyPEeC2GJQ4iCzxPg/5" nsPrefix="TestDefinition">
-        <eAnnotations xmi:id="_aRVPoayPEeC2GJQ4iCzxPg" source="PapyrusVersion">
-          <details xmi:id="_aRVPoqyPEeC2GJQ4iCzxPg" key="Version" value="0.1.2"/>
-          <details xmi:id="_aRVPo6yPEeC2GJQ4iCzxPg" key="Comment" value="test definition modifications"/>
-          <details xmi:id="_aRVPpKyPEeC2GJQ4iCzxPg" key="Copyright" value=""/>
-          <details xmi:id="_aRVPpayPEeC2GJQ4iCzxPg" key="Date" value="2011-07-12"/>
-          <details xmi:id="_aRVPpqyPEeC2GJQ4iCzxPg" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_aRCUsqyPEeC2GJQ4iCzxPg" name="TestSuite">
-          <eAnnotations xmi:id="_aRCUs6yPEeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_XzXFYE4pEeC4rN7SNTLq6w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_aRCUtKyPEeC2GJQ4iCzxPg" name="includes" ordered="false" upperBound="-1" eType="_aRCUuKyPEeC2GJQ4iCzxPg"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_aRCUtqyPEeC2GJQ4iCzxPg" name="base_Package" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_aRCUuKyPEeC2GJQ4iCzxPg" name="TestScenario">
-          <eAnnotations xmi:id="_aRCUuayPEeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_T-xLcH-XEeC-I9oqZ53S4w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_aRCUuqyPEeC2GJQ4iCzxPg" name="base_Class" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_aRCUvKyPEeC2GJQ4iCzxPg" name="usedToVerify" ordered="false" upperBound="-1" eType="_1VS8Uqx7EeC2GJQ4iCzxPg"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_aRCUvqyPEeC2GJQ4iCzxPg" name="basedOn" ordered="false" upperBound="-1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//ENamedElement"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-      </contents>
-      <contents xmi:type="ecore:EPackage" xmi:id="_LWmiQKx6EeC2GJQ4iCzxPg" name="TestDefinition" nsURI="http://ModelicaML/schemas/TestDefinition/_LWTnUKx6EeC2GJQ4iCzxPg/4" nsPrefix="TestDefinition">
-        <eAnnotations xmi:id="_LXf6IKx6EeC2GJQ4iCzxPg" source="PapyrusVersion">
-          <details xmi:id="_LXf6Iax6EeC2GJQ4iCzxPg" key="Version" value="0.1.1"/>
-          <details xmi:id="_LXf6Iqx6EeC2GJQ4iCzxPg" key="Comment" value="Test definition stereotypes enhancements."/>
-          <details xmi:id="_LXf6I6x6EeC2GJQ4iCzxPg" key="Copyright" value=""/>
-          <details xmi:id="_LXf6JKx6EeC2GJQ4iCzxPg" key="Date" value="2011-07-12"/>
-          <details xmi:id="_LXf6Jax6EeC2GJQ4iCzxPg" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_LWmiQax6EeC2GJQ4iCzxPg" name="TestSuite">
-          <eAnnotations xmi:id="_LWmiQqx6EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_XzXFYE4pEeC4rN7SNTLq6w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_LWmiQ6x6EeC2GJQ4iCzxPg" name="base_Package" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_LWmiRax6EeC2GJQ4iCzxPg" name="TestScenario">
-          <eAnnotations xmi:id="_LWmiRqx6EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_T-xLcH-XEeC-I9oqZ53S4w"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_LWmiR6x6EeC2GJQ4iCzxPg" name="base_Class" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_LWmiSax6EeC2GJQ4iCzxPg" name="Includes">
-          <eAnnotations xmi:id="_LWmiSqx6EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_LWmiS6x6EeC2GJQ4iCzxPg" name="base_Dependency" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_LWmiTax6EeC2GJQ4iCzxPg" name="BasedOn">
-          <eAnnotations xmi:id="_LWmiTqx6EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_LWmiT6x6EeC2GJQ4iCzxPg" name="base_Dependency" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_LWmiUax6EeC2GJQ4iCzxPg" name="UsedToVerify">
-          <eAnnotations xmi:id="_LWmiUqx6EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_LWmiU6x6EeC2GJQ4iCzxPg" name="base_Dependency" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_LWmiVax6EeC2GJQ4iCzxPg" name="PointOfObservation">
-          <eAnnotations xmi:id="_LWmiVqx6EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_LWmiV6x6EeC2GJQ4iCzxPg" name="PointOfControl">
-          <eAnnotations xmi:id="_LWmiWKx6EeC2GJQ4iCzxPg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
-        </eClassifiers>
-      </contents>
       <contents xmi:type="ecore:EPackage" xmi:id="_F0fzcHyJEeCz14mjmAfPTw" name="TestDefinition" nsURI="http://ModelicaML/schemas/TestDefinition/_F0WCcHyJEeCz14mjmAfPTw/3" nsPrefix="TestDefinition">
         <eAnnotations xmi:id="_F08fYHyJEeCz14mjmAfPTw" source="PapyrusVersion">
           <details xmi:id="_F08fYXyJEeCz14mjmAfPTw" key="Version" value="0.1.0"/>
@@ -2753,7 +2595,7 @@ It indicates that the element, the stereotype is applied to, shall not be includ
           </eStructuralFeatures>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_F0o9ZHyJEeCz14mjmAfPTw" name="IncludesSimulation">
-          <eAnnotations xmi:id="_F0o9ZXyJEeCz14mjmAfPTw" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+          <eAnnotations xmi:id="_F0o9ZXyJEeCz14mjmAfPTw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_RY_0kE4qEeC4rN7SNTLq6w"/>
           <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_F0o9ZnyJEeCz14mjmAfPTw" name="base_Dependency" ordered="false" lowerBound="1">
             <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
           </eStructuralFeatures>
@@ -2774,7 +2616,7 @@ It indicates that the element, the stereotype is applied to, shall not be includ
           </eStructuralFeatures>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_dWq8JnfaEeCiIrs8wuP5zg" name="IncludesSimulation">
-          <eAnnotations xmi:id="_dWq8J3faEeCiIrs8wuP5zg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+          <eAnnotations xmi:id="_dWq8J3faEeCiIrs8wuP5zg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_RY_0kE4qEeC4rN7SNTLq6w"/>
           <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_dWq8KHfaEeCiIrs8wuP5zg" name="base_Dependency" ordered="false" lowerBound="1">
             <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
           </eStructuralFeatures>
@@ -2795,7 +2637,7 @@ It indicates that the element, the stereotype is applied to, shall not be includ
           </eStructuralFeatures>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_TGvtRXGHEeCymoXP7CzS_g" name="IncludesSimulation">
-          <eAnnotations xmi:id="_TGvtRnGHEeCymoXP7CzS_g" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+          <eAnnotations xmi:id="_TGvtRnGHEeCymoXP7CzS_g" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_RY_0kE4qEeC4rN7SNTLq6w"/>
           <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_TGvtR3GHEeCymoXP7CzS_g" name="base_Dependency" ordered="false" lowerBound="1">
             <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
           </eStructuralFeatures>
@@ -2816,7 +2658,7 @@ It indicates that the element, the stereotype is applied to, shall not be includ
           </eStructuralFeatures>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_QfwqBk4rEeC4rN7SNTLq6w" name="IncludesSimulation">
-          <eAnnotations xmi:id="_QfwqB04rEeC4rN7SNTLq6w" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+          <eAnnotations xmi:id="_QfwqB04rEeC4rN7SNTLq6w" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_RY_0kE4qEeC4rN7SNTLq6w"/>
           <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_QfwqCE4rEeC4rN7SNTLq6w" name="base_Dependency" ordered="false" lowerBound="1">
             <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
           </eStructuralFeatures>
@@ -2836,62 +2678,44 @@ It indicates that the element, the stereotype is applied to, shall not be includ
       <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Property"/>
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_XzXFYE4pEeC4rN7SNTLq6w" name="TestSuite">
-      <ownedComment xmi:id="_ARfEcKx5EeC2GJQ4iCzxPg">
-        <body>Test suite is a collection of test scenario that are grouped for specific purpose. </body>
-      </ownedComment>
-      <ownedAttribute xmi:id="_VvPr4KyMEeC2GJQ4iCzxPg" name="includes" type="_T-xLcH-XEeC-I9oqZ53S4w">
-        <ownedComment xmi:id="_20oIcKx4EeC2GJQ4iCzxPg">
-          <body>List of test scenarios that test suite contains. </body>
-        </ownedComment>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_YR-HUKyMEeC2GJQ4iCzxPg" value="*"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_YRhbYKyMEeC2GJQ4iCzxPg"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_4ihoIKyNEeC2GJQ4iCzxPg" name="base_Package" association="_4ihoIayNEeC2GJQ4iCzxPg">
+      <ownedAttribute xmi:id="_OyivsE4qEeC4rN7SNTLq6w" name="base_Package" association="_OyivsU4qEeC4rN7SNTLq6w">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Package"/>
       </ownedAttribute>
     </packagedElement>
-    <packagedElement xmi:type="uml:Stereotype" xmi:id="_T-xLcH-XEeC-I9oqZ53S4w" name="TestScenario">
-      <ownedComment xmi:id="_QfTBwKx3EeC2GJQ4iCzxPg">
-        <body>Test scenario a step by step description of action that stimulate the system under test. Usually a test scenario also includes the initialization of the system under test in order to ensure the required pre-condition are met. Test scenario may used to verify system design against system requirements. </body>
-      </ownedComment>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_RY_0kE4qEeC4rN7SNTLq6w" name="IncludesSimulation">
+      <ownedAttribute xmi:id="_YK7bYE4qEeC4rN7SNTLq6w" name="base_Dependency" association="_YK7bYU4qEeC4rN7SNTLq6w">
+        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_OyivsU4qEeC4rN7SNTLq6w" name="E_TestSuite_Package0" memberEnd="_Oyivsk4qEeC4rN7SNTLq6w _OyivsE4qEeC4rN7SNTLq6w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_Oyivsk4qEeC4rN7SNTLq6w" name="extension_TestSuite" type="_XzXFYE4pEeC4rN7SNTLq6w" aggregation="composite" association="_OyivsU4qEeC4rN7SNTLq6w"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_YK7bYU4qEeC4rN7SNTLq6w" name="E_IncludesSimulation_Dependency0" memberEnd="_YK7bYk4qEeC4rN7SNTLq6w _YK7bYE4qEeC4rN7SNTLq6w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_YK7bYk4qEeC4rN7SNTLq6w" name="extension_IncludesSimulation" type="_RY_0kE4qEeC4rN7SNTLq6w" aggregation="composite" association="_YK7bYU4qEeC4rN7SNTLq6w"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_T-xLcH-XEeC-I9oqZ53S4w" name="TestCase">
       <ownedAttribute xmi:id="_X9JskH-XEeC-I9oqZ53S4w" name="base_Class" association="_X9JskX-XEeC-I9oqZ53S4w">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_JQ1DYKyMEeC2GJQ4iCzxPg" name="usedToVerify" type="_bks90FsREd6lR6a_09Qo9g">
-        <ownedComment xmi:id="_Jm4GgKx5EeC2GJQ4iCzxPg">
-          <body>This relation indicates that this test scenario can be used to verify the listed requirements.</body>
-        </ownedComment>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_LuCFoKyMEeC2GJQ4iCzxPg" value="*"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LtmAwKyMEeC2GJQ4iCzxPg"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_X9JskX-XEeC-I9oqZ53S4w" name="E_TestCase_Class0" memberEnd="_X9Jskn-XEeC-I9oqZ53S4w _X9JskH-XEeC-I9oqZ53S4w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_X9Jskn-XEeC-I9oqZ53S4w" name="extension_TestCase" type="_T-xLcH-XEeC-I9oqZ53S4w" aggregation="composite" association="_X9JskX-XEeC-I9oqZ53S4w"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_o000UH-XEeC-I9oqZ53S4w" name="PointOfObservation">
+      <ownedAttribute xmi:id="_q9VY8H-XEeC-I9oqZ53S4w" name="base_Property" association="_q9VY8X-XEeC-I9oqZ53S4w">
+        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Property"/>
       </ownedAttribute>
     </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_X9JskX-XEeC-I9oqZ53S4w" name="E_TestScenario_Class0" memberEnd="_X9Jskn-XEeC-I9oqZ53S4w _X9JskH-XEeC-I9oqZ53S4w">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_X9Jskn-XEeC-I9oqZ53S4w" name="extension_TestScenario" type="_T-xLcH-XEeC-I9oqZ53S4w" aggregation="composite" association="_X9JskX-XEeC-I9oqZ53S4w"/>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_q9VY8X-XEeC-I9oqZ53S4w" name="E_PointOfObservation_Property0" memberEnd="_q9VY8n-XEeC-I9oqZ53S4w _q9VY8H-XEeC-I9oqZ53S4w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_q9VY8n-XEeC-I9oqZ53S4w" name="extension_PointOfObservation" type="_o000UH-XEeC-I9oqZ53S4w" aggregation="composite" association="_q9VY8X-XEeC-I9oqZ53S4w"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_4ihoIayNEeC2GJQ4iCzxPg" name="E_TestSuite_Package0" memberEnd="_4ihoIqyNEeC2GJQ4iCzxPg _4ihoIKyNEeC2GJQ4iCzxPg">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_4ihoIqyNEeC2GJQ4iCzxPg" name="extension_TestSuite" type="_XzXFYE4pEeC4rN7SNTLq6w" aggregation="composite" association="_4ihoIayNEeC2GJQ4iCzxPg"/>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Stereotype" xmi:id="_8VZHcK0qEeCRXd3mzS9MqQ" name="UsedToVerify">
-      <ownedComment xmi:id="_HpdcsK0rEeCRXd3mzS9MqQ">
-        <body>This relation indicates that the test scenario, it points from, can be used to verify the requirements it points to.</body>
-      </ownedComment>
-      <ownedAttribute xmi:id="_-j2jEK0qEeCRXd3mzS9MqQ" name="base_Dependency" association="_-j2jEa0qEeCRXd3mzS9MqQ">
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_RXjPkH-tEeC-I9oqZ53S4w" name="Verify">
+      <ownedAttribute xmi:id="_ZVNpsH-tEeC-I9oqZ53S4w" name="base_Dependency" association="_ZVNpsX-tEeC-I9oqZ53S4w">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
       </ownedAttribute>
     </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_-j2jEa0qEeCRXd3mzS9MqQ" name="E_UsedToVerify_Dependency0" memberEnd="_-j2jEq0qEeCRXd3mzS9MqQ _-j2jEK0qEeCRXd3mzS9MqQ">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_-j2jEq0qEeCRXd3mzS9MqQ" name="extension_UsedToVerify" type="_8VZHcK0qEeCRXd3mzS9MqQ" aggregation="composite" association="_-j2jEa0qEeCRXd3mzS9MqQ"/>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Stereotype" xmi:id="__tBKkK0qEeCRXd3mzS9MqQ" name="Includes">
-      <ownedComment xmi:id="_PQccMK0rEeCRXd3mzS9MqQ">
-        <body>This relation indicates that the test suite, it points from, contains the test scenario it points to. </body>
-      </ownedComment>
-      <ownedAttribute xmi:id="_A3OT4K0rEeCRXd3mzS9MqQ" name="base_Dependency" association="_A3OT4a0rEeCRXd3mzS9MqQ">
-        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
-      </ownedAttribute>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_A3OT4a0rEeCRXd3mzS9MqQ" name="E_Includes_Dependency0" memberEnd="_A3OT4q0rEeCRXd3mzS9MqQ _A3OT4K0rEeCRXd3mzS9MqQ">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_A3OT4q0rEeCRXd3mzS9MqQ" name="extension_Includes" type="__tBKkK0qEeCRXd3mzS9MqQ" aggregation="composite" association="_A3OT4a0rEeCRXd3mzS9MqQ"/>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_ZVNpsX-tEeC-I9oqZ53S4w" name="E_Verify_Dependency0" memberEnd="_ZVNpsn-tEeC-I9oqZ53S4w _ZVNpsH-tEeC-I9oqZ53S4w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_ZVNpsn-tEeC-I9oqZ53S4w" name="extension_Verify" type="_RXjPkH-tEeC-I9oqZ53S4w" aggregation="composite" association="_ZVNpsX-tEeC-I9oqZ53S4w"/>
     </packagedElement>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_mmn7EEsYEeCLrv7S0OCHfw" name="ValueBinding" metaclassReference="_rky3AH-WEeC-I9oqZ53S4w">
@@ -3439,18 +3263,6 @@ It indicates that the element, the stereotype is applied to, shall not be includ
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bCtVcHfaEeCiIrs8wuP5zg"/>
       </ownedAttribute>
     </packagedElement>
-    <packagedElement xmi:type="uml:Stereotype" xmi:id="_suGocH-WEeC-I9oqZ53S4w" name="ObtainsValueFrom">
-      <generalization xmi:id="_0PkOwH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
-      <ownedAttribute xmi:id="_6Gov0H-WEeC-I9oqZ53S4w" name="base_Dependency" association="_6Gov0X-WEeC-I9oqZ53S4w">
-        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
-      </ownedAttribute>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Stereotype" xmi:id="_uW3WAH-WEeC-I9oqZ53S4w" name="ProvidesValueFor">
-      <generalization xmi:id="_zoFYAH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
-      <ownedAttribute xmi:id="_5qBsUH-WEeC-I9oqZ53S4w" name="base_Dependency" association="_5qBsUX-WEeC-I9oqZ53S4w">
-        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
-      </ownedAttribute>
-    </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_YOthsUsVEeCWwP2csDYIyw" name="E_ValueMediatorsContainer_Class0" memberEnd="_YOthsksVEeCWwP2csDYIyw _YOthsEsVEeCWwP2csDYIyw">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_YOthsksVEeCWwP2csDYIyw" name="extension_ValueMediatorsContainer" type="_PTFDcEsVEeCWwP2csDYIyw" aggregation="composite" association="_YOthsUsVEeCWwP2csDYIyw"/>
     </packagedElement>
@@ -3465,6 +3277,18 @@ It indicates that the element, the stereotype is applied to, shall not be includ
     </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_1kd6wUsVEeCLrv7S0OCHfw" name="E_ValueClient_Property0" memberEnd="_1kd6wksVEeCLrv7S0OCHfw _1kd6wEsVEeCLrv7S0OCHfw">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_1kd6wksVEeCLrv7S0OCHfw" name="extension_ValueClient" type="_yg9GcEsVEeCLrv7S0OCHfw" aggregation="composite" association="_1kd6wUsVEeCLrv7S0OCHfw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_suGocH-WEeC-I9oqZ53S4w" name="ObtainsValueFrom">
+      <generalization xmi:id="_0PkOwH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
+      <ownedAttribute xmi:id="_6Gov0H-WEeC-I9oqZ53S4w" name="base_Dependency" association="_6Gov0X-WEeC-I9oqZ53S4w">
+        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_uW3WAH-WEeC-I9oqZ53S4w" name="ProvidesValueFor">
+      <generalization xmi:id="_zoFYAH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
+      <ownedAttribute xmi:id="_5qBsUH-WEeC-I9oqZ53S4w" name="base_Dependency" association="_5qBsUX-WEeC-I9oqZ53S4w">
+        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
+      </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_5qBsUX-WEeC-I9oqZ53S4w" name="E_ProvidesValueFor_Dependency0" memberEnd="_5qBsUn-WEeC-I9oqZ53S4w _5qBsUH-WEeC-I9oqZ53S4w">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_5qBsUn-WEeC-I9oqZ53S4w" name="extension_ProvidesValueFor" type="_uW3WAH-WEeC-I9oqZ53S4w" aggregation="composite" association="_5qBsUX-WEeC-I9oqZ53S4w"/>
