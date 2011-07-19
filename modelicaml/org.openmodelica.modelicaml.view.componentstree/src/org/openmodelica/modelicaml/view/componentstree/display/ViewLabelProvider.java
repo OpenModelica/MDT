@@ -444,12 +444,17 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 //			// stop here
 //			return list;
 		}
+		
+		// if it is a required client and there is no binding eqation (modification) for it -> error
+		if (treeParent.isValueClient_required() && treeParent.getModificationRightHand() == null) {
+			list.add(treeParent);
+		}
 
 		// go on with search ...
 		TreeObject[] children = treeParent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof TreeParent) {
-				list.addAll(findNextInvalidItem( (TreeParent)children[i] , parentIsAnInput));	
+				list.addAll(findNextInvalidItem( (TreeParent)children[i] , parentIsAnInput));
 			}
 		}
 		return list;

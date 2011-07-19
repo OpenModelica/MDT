@@ -37,7 +37,6 @@ package org.openmodelica.modelicaml.view.componentstree.views;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -99,6 +98,7 @@ import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
@@ -111,7 +111,6 @@ import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
-import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
 import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
@@ -732,7 +731,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						
 						// update bindings
 						ValueBindingCreator vc = new ValueBindingCreator();
-						vc.updateBindings( item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true);
+						vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true);
 						
 						// get the updated items
 						List<TreeObject> updatedItems = vc.getUpdatedItems();
