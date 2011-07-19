@@ -1,11 +1,7 @@
 package org.openmodelica.modelicaml.helper.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -14,6 +10,7 @@ import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
@@ -57,6 +54,25 @@ public class TestScenariosCollector {
 		if ( umlRoolModel != null ) {
 			ElementsCollector ec = new ElementsCollector();
 			ec.collectElementsFromModel(umlRoolModel, Constants.stereotypeQName_TestScenario);
+			
+			this.allTS.addAll(ec.getElements());
+			
+			// sort data (i.e. fill other sets and maps)
+			if (sortData) { sortData();}
+			
+			return true; // successful execution
+		}
+		
+		return false;
+	}
+	
+	public boolean collectTestCasesFromPackage(Package rootPackage, boolean sortData){
+		// clear the list in order to enable multiple calls of this method in the the same object
+		this.allTS.clear();
+		
+		if ( rootPackage != null ) {
+			ElementsCollector ec = new ElementsCollector();
+			ec.collectElementsFromModel((EObject) rootPackage, Constants.stereotypeQName_TestScenario);
 			
 			this.allTS.addAll(ec.getElements());
 			

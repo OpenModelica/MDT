@@ -49,7 +49,7 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 
 public class TestScenarioInstantiator {
 	
-	final static String propertyPrefix = "ts_";
+	final static String propertyPrefix = Constants.testScenarioPropertyNamePrefix;
 //	private HashSet<Element> instantiatedElements = new HashSet<Element>();
 	
 	public EList<Property> instantiateTestScenarios(Class containingClass, HashSet<Element> testScenarioClasses){

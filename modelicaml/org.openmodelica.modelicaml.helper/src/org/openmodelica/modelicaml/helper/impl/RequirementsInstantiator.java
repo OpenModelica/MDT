@@ -59,7 +59,7 @@ import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataC
 
 public class RequirementsInstantiator {
 	
-	final static String reqPropertyPrefix = "req_";
+	final static String reqPropertyPrefix = Constants.reqirementPropertyNamePrefix;
 	
 	public void instantiateRequirements(Class containingClass, HashSet<Class> reqClasses, HashMap<Class, Integer> selectedNumberOfInstantiations){
 		
@@ -121,7 +121,7 @@ public class RequirementsInstantiator {
 
 		for (TreeObject treeObject : instantiationClassTreeItems) {
 			if (treeObject instanceof TreeParent) {
-				vc.updateBindings( (TreeParent)treeObject, treeRoot, false, true, false);
+				vc.updateAllBindings( ((TreeParent)treeObject).getSelectedClass().getModel(), (TreeParent)treeObject, treeRoot, false, true, false);
 			}
 		}
 		

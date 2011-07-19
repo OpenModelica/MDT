@@ -22,6 +22,10 @@
             id="org.openmodelica.modelicaml.helper.commands.updateTestOracleElements"
             name="Create/Update Test Oracle Elements">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
+            name="Generate Simulation Models">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -71,6 +75,49 @@
       <handler
             class="org.openmodelica.modelicaml.helper.handlers.GenerateTestOracleElementsHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.updateTestOracleElements">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <and>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Class">
+                        </instanceof>
+                        <or>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Block"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Model"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                        </or>
+                        <and>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Behavior">
+                              </instanceof>
+                           </not>
+                        </and>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.SimulationModelsGenaratorHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels">
          <activeWhen>
             <with
                   variable="selection">
