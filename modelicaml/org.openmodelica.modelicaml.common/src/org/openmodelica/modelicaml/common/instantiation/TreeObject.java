@@ -123,6 +123,7 @@ public class TreeObject implements IAdaptable {
 	public Boolean hasValueProviders = null;
 	
 	private boolean isValueClient = false;
+	private boolean isValueClient_required = false;
 	private boolean isValueProvider = false;
 
 	public TreeObject(	String name, 
@@ -631,6 +632,16 @@ public class TreeObject implements IAdaptable {
 
 	public Boolean isPredefinedModelicaProperty() {
 		return isPredefinedModelicaProperty;
+	}
+
+
+	public void setValueClient_required(boolean isValueClient_required) {
+		this.isValueClient_required = isValueClient_required;
+	}
+
+
+	public boolean isValueClient_required() {
+		return isValueClient_required;
 	}
 
 

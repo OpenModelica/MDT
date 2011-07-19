@@ -69,6 +69,8 @@ public class ClassInstantiation {
 	private TreeParent treeRoot;
 	
 	private HashSet<Element> referencedClients = new HashSet<Element>();
+	private HashSet<Element> referencedRequiredClients = new HashSet<Element>();
+	
 	private HashSet<Element> referencedProviders = new HashSet<Element>();
 	
 	/** The action show state machines. */
@@ -400,6 +402,10 @@ public class ClassInstantiation {
 					child.setIsValueClient(true);
 					parent.setHasValueClients(treeRoot);
 				}
+				if (this.referencedRequiredClients.contains(property)) {
+					child.setValueClient_required(true);
+				}
+
 				if (this.referencedProviders.contains(property)) {
 					child.setIsValueProvider(true);
 					parent.setHasValueProviders(treeRoot);
@@ -440,6 +446,10 @@ public class ClassInstantiation {
 					newParent.setIsValueClient(true);
 					newParent.setHasValueClients(treeRoot);
 				}
+				if (this.referencedRequiredClients.contains(property)) {
+					newParent.setValueClient_required(true);
+				}
+
 				if (this.referencedProviders.contains(property)) {
 					newParent.setIsValueProvider(true);
 					newParent.setHasValueProviders(treeRoot);
@@ -653,12 +663,20 @@ public class ClassInstantiation {
 				for (Dependency dependency : depList) {
 					
 					// reference to a clients
-					if (dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null ) { 
+					Stereotype s_providesValueFor = dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
+					if (s_providesValueFor != null ) { 
 						EList<Element> targets = dependency.getTargets();
 						for (Element element : targets) {
 							if (element instanceof NamedElement) {
 								// add only mediators and referenced elements if they are used in the instantiation tree
-								referencedClients.add(element);	
+								referencedClients.add(element);
+								Object o = dependency.getValue(s_providesValueFor, "isRequired");
+								if (o instanceof Boolean) {
+									if ((Boolean)o == true) {
+//										System.err.println("required client: " + ((NamedElement)element).getQualifiedName());
+										referencedRequiredClients.add(element);
+									}
+								}
 							}
 						}
 					}

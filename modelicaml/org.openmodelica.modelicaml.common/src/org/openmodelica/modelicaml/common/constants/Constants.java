@@ -145,4 +145,12 @@ public class Constants {
 	public static final String MACRO_min 					= "min";
 	public static final String MACRO_max 					= "max";
 	
+	
+	// simulation model generation
+	public final static String simModelsPackageNamePrefix = "GenSimModels for: ";
+	public final static String simModelsNamePrefix = "SiM for: ";
+	public final static String systemModelPropertyNamePrefix = "systemModel_";
+	public final static String testScenarioPropertyNamePrefix = "ts_";
+	public final static String reqirementPropertyNamePrefix = "req_";
+	
 }
