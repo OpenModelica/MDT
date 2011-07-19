@@ -29,6 +29,9 @@
         <children>
           <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
         </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_ltbbAH-WEeC-I9oqZ53S4w"/>
+        </children>
       </children>
     </windows>
   </sashModel>

@@ -220,7 +220,6 @@
          </toolbar>
       </menuContribution>
    </extension>
-<!--
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -256,10 +255,22 @@
                   </equals>
                </with>
             </visibleWhen>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator1">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
+                  icon="resources/icons/icons16/generateSimMopdels.png"
+                  label="Generate Simulation Models"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
          </menu>
       </menuContribution>
    </extension>
--->
+
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution

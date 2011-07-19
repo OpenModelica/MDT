@@ -1398,6 +1398,10 @@
           <element xmi:type="uml:Property" href="ModelicaML.profile.uml#_2SxLcHGGEeCymoXP7CzS_g"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_EoBq8X-XEeC-I9oqZ53S4w"/>
         </children>
+        <children xmi:type="notation:Shape" xmi:id="_420OILIUEeCqz59dgZCCXw" type="3002" fontHeight="8" lineColor="0">
+          <element xmi:type="uml:Property" href="ModelicaML.profile.uml#_4ziQoLIUEeCqz59dgZCCXw"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_420OIbIUEeCqz59dgZCCXw"/>
+        </children>
         <styles xmi:type="notation:SortingStyle" xmi:id="_uXUB9n-WEeC-I9oqZ53S4w"/>
         <styles xmi:type="notation:FilteringStyle" xmi:id="_uXUB93-WEeC-I9oqZ53S4w"/>
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_uXUB-H-WEeC-I9oqZ53S4w"/>
