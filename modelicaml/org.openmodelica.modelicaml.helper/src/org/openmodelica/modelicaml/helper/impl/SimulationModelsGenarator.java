@@ -227,20 +227,12 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 				
 				// update bindings
 				ValueBindingCreator vbc = new ValueBindingCreator();
-				vbc.updateAllBindings((Package)valueBindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false);
+				vbc.updateAllBindings((Package)valueBindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
 			}
 		}
 	}
 	
-	private String getRequirementId(NamedElement req){
-		Stereotype s_req = req.getAppliedStereotype(Constants.stereotypeQName_Requirement);
-		Object o = req.getValue(s_req, Constants.propertyName_id);
-		if (o instanceof String) {
-			return (String) o;
-		}
-		return "";
-	}
-	
+
 	private void findTestSenariosAndRequirementsToBeInstantiated(ClassInstantiation ciSourceModel, Class testScenario){
 		// add system model to the simulated instantiation of the 
 		TreeParent simulatedInstantiationTreeRoot = new TreeParent("Simulated Instantiation", null, null, "", false, true, null, null, true);
@@ -256,7 +248,7 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		/* get the list of system model clients for which the code could be derived (even if a user interaction would be necessary) 
 		from the test scenario providers */
 		ValueBindingCreator vbc = new ValueBindingCreator();
-		vbc.updateAllBindings((Package)valueBindingsPackage, ciSourceModel.getTreeRoot(), simulatedInstantiationTreeRoot, false, true, false);
+		vbc.updateAllBindings((Package)valueBindingsPackage, ciSourceModel.getTreeRoot(), simulatedInstantiationTreeRoot, false, true, false, true);
 
 		/* If there is at least one client that uses one of the test scenario providers -> go for requirements
 		 * else stop here -> this test scenario can not be used to stimulate this system model.
@@ -287,7 +279,8 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 				ciReq.createTree();
 				
 				simulatedInstantiationTreeRoot_reqAndSystemModel.addChild(ciReq.getTreeRoot());
-				vbc.updateAllBindings((Package)valueBindingsPackage, ciReq.getTreeRoot(), simulatedInstantiationTreeRoot_reqAndSystemModel, false, true, false);
+				vbc.updateAllBindings((Package)valueBindingsPackage, ciReq.getTreeRoot(), 
+						simulatedInstantiationTreeRoot_reqAndSystemModel, false, true, false, true);
 				
 				// if it was possible to derive code for all clients of this requirement using the system model providers
 				if (vbc.getAllClientsFound().size() > 0 
@@ -345,6 +338,16 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 	}
 	
 	// Utls ##########################################################
+	
+	private String getRequirementId(NamedElement req){
+		Stereotype s_req = req.getAppliedStereotype(Constants.stereotypeQName_Requirement);
+		Object o = req.getValue(s_req, Constants.propertyName_id);
+		if (o instanceof String) {
+			return (String) o;
+		}
+		return "";
+	}
+	
 	private HashSet<TreeObject> getAllTreeItems(TreeParent treeParent){
 		HashSet<TreeObject> allTreeItems = new HashSet<TreeObject>();
 		allTreeItems.add(treeParent);

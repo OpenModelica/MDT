@@ -80,7 +80,8 @@ public class ValueBindingCreator {
 			TreeParent treeRoot, 
 			boolean deleteOldBindings, 
 			boolean isAutomaticSelectionOfPreferredProvidersEnabled,
-			boolean showProgressMonitor){
+			boolean showProgressMonitor,
+			boolean onlySimulate){
 
 		// clear all lists
 		clearAllLists();
@@ -91,7 +92,7 @@ public class ValueBindingCreator {
 		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, showProgressMonitor); 
 		
 		// update bindings for all sub-components (recursively) of the selected tree item.
-		updateAllSubComponents(treeParent, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled);
+		updateAllSubComponents(treeParent, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
 	}
 	
 	public void updateSingleBinding(
@@ -100,7 +101,8 @@ public class ValueBindingCreator {
 			TreeParent treeRoot, 
 			boolean deleteOldBindings, 
 			boolean isAutomaticSelectionOfPreferredProvidersEnabled,
-			boolean showProgressMonitor){
+			boolean showProgressMonitor,
+			boolean onlySimulate){
 
 		// clear all lists
 		clearAllLists();
@@ -111,7 +113,7 @@ public class ValueBindingCreator {
 		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, showProgressMonitor); 
 		
 		// update the binding only for the selected tree item
-		updateSingle(treeItem, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled);
+		updateSingle(treeItem, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
 	}
 	
 	private void clearAllLists(){
@@ -126,7 +128,12 @@ public class ValueBindingCreator {
 		allClientsWithPossibleBindingCodeDerivation.clear();
 	}
 	
-	private void updateAllSubComponents(TreeParent treeParent, TreeParent treeRoot, boolean deleteOldBindings, boolean isAutomaticSelectionOfPreferredProvidersEnabled){
+	private void updateAllSubComponents(
+			TreeParent treeParent, 
+			TreeParent treeRoot, 
+			boolean deleteOldBindings, 
+			boolean isAutomaticSelectionOfPreferredProvidersEnabled,
+			boolean onlySimulate){
 		
 		if (treeParent != null && treeRoot != null) {
 			
@@ -137,7 +144,7 @@ public class ValueBindingCreator {
 				TreeObject item = children[i];
 				
 				// update a single item
-				updateSingle(item, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled);
+				updateSingle(item, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
 
 				// replaced by the updateSingle() 
 //				Element element = item.getUmlElement();
@@ -193,14 +200,19 @@ public class ValueBindingCreator {
 //				}
 			
 				if (item instanceof TreeParent) {
-					updateAllSubComponents((TreeParent)item, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled);
+					updateAllSubComponents((TreeParent)item, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
 				}
 			}
 		}
 	}
 	
 	
-	private void updateSingle(TreeObject item, TreeParent treeRoot, boolean deleteOldBindings, boolean isAutomaticSelectionOfPreferredProvidersEnabled){
+	private void updateSingle(
+			TreeObject item, 
+			TreeParent treeRoot, 
+			boolean deleteOldBindings, 
+			boolean isAutomaticSelectionOfPreferredProvidersEnabled, 
+			boolean onlySimulate){
 
 		Element element = item.getUmlElement();
 		
@@ -226,7 +238,7 @@ public class ValueBindingCreator {
 			
 			// collect all clients found and those for which it is possible to derive the binding code.
 			// if this tree item is a client (note, the actual client element, that contains the client script, may be of an upper tree item)
-			if (deriveCodeHelper.getClientElement() != null){
+			if (deriveCodeHelper.getClientElement() != null ){
 				
 				allClientsFound.add(item);
 				
@@ -251,38 +263,42 @@ public class ValueBindingCreator {
 				}
 			}
 			
-    		/* Delete old bindings:
-    		 * If the client element was found based on the selected tree item or the upper level scripts
-    		 * -> this means that in general there is a binding.
-    		 * -> If the option is selected then delete the binding for the current tree item.
-    		 * -> However, it may happen that the binding code cannot be derived without user guidance so that the modification of the current item will be empty at the end.
-    		 */
-			
-			if ( deriveCodeHelper.getClientElement() != null && modificationStoreLocation != null && deleteOldBindings ) {
-    			String result = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
-    			if (result != null && !result.trim().equals("")) {
-    				
-    				deletedModifications.add(result);
-					deletedItemsModification.add(item);
+			/* if it should not be only a simulation of binding code derivation
+			 * -> create modifications
+			 */
+			if ( !onlySimulate ) {
+	    		/* Delete old bindings:
+	    		 * If the client element was found based on the selected tree item or the upper level scripts
+	    		 * -> this means that in general there is a binding.
+	    		 * -> If the option is selected then delete the binding for the current tree item.
+	    		 * -> However, it may happen that the binding code cannot be derived without user guidance so that the modification of the current item will be empty at the end.
+	    		 */
+				
+				if ( deriveCodeHelper.getClientElement() != null && modificationStoreLocation != null && deleteOldBindings ) {
+	    			String result = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
+	    			if (result != null && !result.trim().equals("")) {
+	    				
+	    				deletedModifications.add(result);
+						deletedItemsModification.add(item);
+						
+						item.setFinalModificationRightHand( null ); 
+						item.setFinalModificationSource( null );
+					}
+				}
+				
+	    		// add modifications
+	    		if (deriveCodeHelper.getClientElement() != null && code != null && modificationStoreLocation != null) {
+
+	    			ModificationManager.addComponentModification( modificationStoreLocation, componentPath, code, true);
 					
-					item.setFinalModificationRightHand( null ); 
-					item.setFinalModificationSource( null );
+	    			item.setFinalModificationRightHand(code); 
+					item.setFinalModificationSource( modificationStoreLocation );
+	    			
+					updatedItems.add(item);
+	    			updatedItemsToNewModification.put(item, code);		    			
 				}
 			}
-			
-    		// add modifications
-    		if (deriveCodeHelper.getClientElement() != null && code != null && modificationStoreLocation != null) {
-
-    			ModificationManager.addComponentModification( modificationStoreLocation, componentPath, code, true);
-				
-    			item.setFinalModificationRightHand(code); 
-				item.setFinalModificationSource( modificationStoreLocation );
-    			
-				updatedItems.add(item);
-    			updatedItemsToNewModification.put(item, code);		    			
-			}
 		}
-		
 	}
 	
 	

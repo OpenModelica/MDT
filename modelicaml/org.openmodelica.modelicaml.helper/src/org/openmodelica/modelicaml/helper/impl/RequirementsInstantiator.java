@@ -121,7 +121,7 @@ public class RequirementsInstantiator {
 
 		for (TreeObject treeObject : instantiationClassTreeItems) {
 			if (treeObject instanceof TreeParent) {
-				vc.updateAllBindings( ((TreeParent)treeObject).getSelectedClass().getModel(), (TreeParent)treeObject, treeRoot, false, true, false);
+				vc.updateAllBindings( ((TreeParent)treeObject).getSelectedClass().getModel(), (TreeParent)treeObject, treeRoot, false, true, false, false);
 			}
 		}
 		
