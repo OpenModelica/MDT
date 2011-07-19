@@ -731,7 +731,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						
 						// update bindings
 						ValueBindingCreator vc = new ValueBindingCreator();
-						vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true);
+						vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true, false);
 						
 						// get the updated items
 						List<TreeObject> updatedItems = vc.getUpdatedItems();
