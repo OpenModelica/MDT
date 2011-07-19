@@ -37,7 +37,6 @@ package org.openmodelica.modelicaml.view.valuebindings.helpers;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
@@ -85,18 +84,24 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 ////		collect();
 //	}
 	
-	public void collectAll(Element umlRootModel, TreeObject instantiationTreeRoot){
+	public void collectAll(Element valueBindingsPackage, TreeObject instantiationTreeRoot){
 		// collect uml elements that exist in the instantiation tree
-		if (instantiationTreeRoot instanceof TreeParent && umlRootModel instanceof NamedElement) {
-			addToLog("Collecting data from the instantiated class '" + instantiationTreeRoot.getSelectedClass().getQualifiedName() + "' ... \n");
+		if (instantiationTreeRoot instanceof TreeParent && valueBindingsPackage instanceof NamedElement) {
+			if (instantiationTreeRoot.getSelectedClass() != null) {
+				addToLog("Collecting data from the instantiated class '" + instantiationTreeRoot.getSelectedClass().getQualifiedName() + "' ... \n");	
+			}
+			else {
+				addToLog("Collecting data from the instantiated class '" + instantiationTreeRoot.getName() + "' ... \n");	
+			}
+			
 			collectElementsFromInstantiationTree(instantiationTreeRoot);
 
 			// collect mediators and references to clients, other mediators and providers
-			addToLog("Collecting data from the UML Model '" + ((NamedElement)umlRootModel).getQualifiedName() + "'... \n");
-			collectMeditorsDataFromUmlModel(umlRootModel, umlElementsInInstantiationTree);
+			addToLog("Collecting data from the UML Model '" + ((NamedElement)valueBindingsPackage).getQualifiedName() + "'... \n");
+			collectMeditorsDataFromUmlModel(valueBindingsPackage, umlElementsInInstantiationTree);
 			
 			// remove all mediators that have not clients in the instantiation tree.
-			 removeMediatorsWithNoClientsInInstantiationTree();
+			removeMediatorsWithNoClientsInInstantiationTree();
 		}
 		else {
 			addToLog("ERROR: Was not able to collect data ...");

@@ -50,15 +50,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueMediatorDialog;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueProviderDialog;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 public class DeriveValueBindingCodeHelper {
-//	private TreeObject selectedTreeItem;
+	
+	//	private TreeObject selectedTreeItem;
 	
 	private TreeObject clientTreeItem;
 	private Element clientElement = null; // is the determined element that owns the script for the selected tree item client. 
@@ -118,15 +121,16 @@ public class DeriveValueBindingCodeHelper {
 //		}
 //	}
 	
-	public void initialize(TreeObject instantiationTreeRoot, boolean showProgressMonitor){
-		Element element = instantiationTreeRoot.getSelectedClass();
-		if (element instanceof NamedElement) {
-			
-			Element umlRootModel = element.getModel();
+	public void initialize(Package valueBindingsPackage, TreeObject instantiationTreeRoot, boolean showProgressMonitor){
+
+		if (instantiationTreeRoot instanceof TreeParent) {
+			if (valueBindingsPackage == null) {
+				valueBindingsPackage = (Package) instantiationTreeRoot.getSelectedClass().getModel();
+			}
 			if (showProgressMonitor) {
 				try {
 					dataCollection = new ValueBindingsDataCollector();
-					dataCollection.collectAll(umlRootModel, instantiationTreeRoot);
+					dataCollection.collectAll((Element) valueBindingsPackage, instantiationTreeRoot);
 					new ProgressMonitorDialog(new Shell()).run(true, true, dataCollection);
 		        } catch (InvocationTargetException e) {
 		        	MessageDialog.openError(new Shell(), "Error", e.getMessage());
@@ -136,7 +140,7 @@ public class DeriveValueBindingCodeHelper {
 			}
 			else {
 				dataCollection = new ValueBindingsDataCollector();
-				dataCollection.collectAll(umlRootModel, instantiationTreeRoot);
+				dataCollection.collectAll((Element) valueBindingsPackage, instantiationTreeRoot);
 			}
 		}
 		else {
@@ -165,7 +169,6 @@ public class DeriveValueBindingCodeHelper {
 		errorString = null;
 		
 		code = null;
-		
 		
 		if (dataCollection != null && !dataCollection.wasCancelled()) {
 			
