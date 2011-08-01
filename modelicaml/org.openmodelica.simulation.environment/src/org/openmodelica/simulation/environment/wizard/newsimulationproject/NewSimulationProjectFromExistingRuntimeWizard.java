@@ -67,7 +67,7 @@ import org.openmodelica.simulation.environment.Activator;
  * 
  * This wizard will be used if a simulation runtime (model.exe) and its corresponding initial file (model_init.xml) is available yet.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class NewSimulationProjectFromExistingRuntimeWizard extends Wizard
 		implements INewWizard {
@@ -327,7 +327,7 @@ public class NewSimulationProjectFromExistingRuntimeWizard extends Wizard
 	/**
 	 * Recursive method to delete contend files from a Directory.
 	 *
-	 * @param f the f
+	 * @param f
 	 */
 	private void deleteAll(File f) {
 		if (f.isFile())

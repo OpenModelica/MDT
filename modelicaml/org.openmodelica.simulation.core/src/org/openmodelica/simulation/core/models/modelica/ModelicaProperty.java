@@ -39,7 +39,7 @@ package org.openmodelica.simulation.core.models.modelica;
  * Represents a Modelica property this could be variable, parameter, input or output variable
  * A Property has a name and a comment. A Property can be plotted on a view during an simulation or non.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public abstract class ModelicaProperty {

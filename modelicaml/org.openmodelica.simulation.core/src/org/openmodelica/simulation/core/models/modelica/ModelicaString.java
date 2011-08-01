@@ -38,7 +38,7 @@ package org.openmodelica.simulation.core.models.modelica;
 /**
  * Represents the primitive data type "String" from the Modelica language.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class ModelicaString extends ModelicaPrimitiveDataType{
 

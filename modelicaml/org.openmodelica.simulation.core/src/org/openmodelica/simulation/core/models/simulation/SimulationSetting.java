@@ -40,7 +40,7 @@ package org.openmodelica.simulation.core.models.simulation;
  * A Simulation Setting is part of a Session Configuration and helps the user to run a simulation in different settings and to archive this settings
  * 
  * A Setting is not changeable, because otherwise the used data get lost. The user can overwrite an existing setting
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 abstract public class SimulationSetting {

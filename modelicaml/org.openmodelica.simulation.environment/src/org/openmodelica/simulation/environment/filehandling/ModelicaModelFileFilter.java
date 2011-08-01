@@ -49,7 +49,7 @@ import javax.swing.filechooser.FileFilter;
 	 * 
 	 * In this case the type extension is a Modelica file (*.mo)
 	 *
-	 * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+	 * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
 	 */
 	public class ModelicaModelFileFilter extends FileFilter{
 

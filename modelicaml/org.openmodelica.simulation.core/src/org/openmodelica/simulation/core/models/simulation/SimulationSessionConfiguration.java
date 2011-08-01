@@ -45,7 +45,7 @@ import org.openmodelica.simulation.core.xml.reader.SimulationSetting_XML_reader;
  * The modified model data will be stored in a SimConfig.xml
  * The modified simulation settings will be stored in a SimSetting.xml
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationSessionConfiguration {

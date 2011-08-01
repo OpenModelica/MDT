@@ -67,7 +67,7 @@ import org.openmodelica.simulation.environment.preferences.page.WorkbenchPrefere
 // TODO: Auto-generated Javadoc
 /**
  * Wizard to create or modify Simulation Session Configuration files for interactive simulations.
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SessionConfiguration_InteractiveWizard extends Wizard{

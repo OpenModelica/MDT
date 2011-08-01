@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * 
  * <b>NOTE1:</b> the properties order of the original init.txt have be respected! otherwise an error occurs while writing the data back to the init.txt
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class InitData {
 

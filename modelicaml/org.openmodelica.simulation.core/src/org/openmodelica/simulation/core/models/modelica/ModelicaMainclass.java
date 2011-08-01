@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * Represents the Modelica main class which contains all properties and their values.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class ModelicaMainclass {
 	

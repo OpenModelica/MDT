@@ -38,7 +38,7 @@ package org.openmodelica.simulation.core.models.modelica;
 /**
  * This class represents Modelica output variables.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class ModelicaOutputVariable extends ModelicaProperty{
 

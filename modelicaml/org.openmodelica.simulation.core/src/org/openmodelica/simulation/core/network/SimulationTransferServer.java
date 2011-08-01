@@ -50,7 +50,7 @@ import org.openmodelica.simulation.core.simulationdata.SimulationResultManager_I
  * As default the ip of a simulation runtime control server is localhost
  * (127.0.0.1) and the port is 10502. The user can change the port
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  * 
  */
 public class SimulationTransferServer extends Thread {

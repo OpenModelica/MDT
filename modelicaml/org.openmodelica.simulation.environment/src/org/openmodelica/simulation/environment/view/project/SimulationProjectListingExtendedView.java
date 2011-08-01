@@ -84,7 +84,7 @@ import org.openmodelica.simulation.environment.Activator;
  * Lists all last used projects which are explicitly stored into another folder by the user.
  * Offers management of projects such as delete, new, import, export
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationProjectListingExtendedView extends ViewPart implements Observer{

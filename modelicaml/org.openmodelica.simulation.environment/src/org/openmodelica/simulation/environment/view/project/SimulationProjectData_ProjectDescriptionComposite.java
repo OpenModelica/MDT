@@ -57,7 +57,7 @@ import org.openmodelica.simulation.environment.Activator;
  * This Class can be used to instantiate composite objects to be used in the
  * SimulationProjectDataView TabFolder as a TabItems control composite.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class SimulationProjectData_ProjectDescriptionComposite extends Composite implements Observer{
 	

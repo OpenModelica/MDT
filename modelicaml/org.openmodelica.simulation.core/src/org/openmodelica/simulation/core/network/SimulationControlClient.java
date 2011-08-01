@@ -48,7 +48,7 @@ import org.openmodelica.simulation.core.models.modelica.ModelicaVariable;
 /**
  * Simulation Control Client is a TCP/IP based communication unit to control a simulation runtime using message parsing
  * As default the ip of a simulation runtime control server is localhost (127.0.0.1) and the port is 10501. The user can change the port
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationControlClient {

@@ -34,7 +34,7 @@
  */
 package org.openmodelica.simulation.core.xml.generator;
 
-	import java.io.File;
+import java.io.File;
 import java.io.FileOutputStream;
 
 import nu.xom.Attribute;
@@ -47,10 +47,11 @@ import org.openmodelica.simulation.core.models.modelica.ModelicaParameter;
 import org.openmodelica.simulation.core.models.modelica.ModelicaProperty;
 import org.openmodelica.simulation.core.xml.reader.ModelicaModel_XML_reader;
 // TODO: Auto-generated Javadoc
+
 /**
  * Generates the *_SimConfig.xml
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 	public class SimulationConfiguration_XML_generator {

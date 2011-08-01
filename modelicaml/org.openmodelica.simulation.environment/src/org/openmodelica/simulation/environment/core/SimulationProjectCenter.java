@@ -52,7 +52,7 @@ import org.openmodelica.simulation.core.xml.reader.SimulationProject_XML_reader;
  * The Simulation Project Center manages all data concerning the available modelica projects
  * For example: All Projects, Session Configurations, Environment Setting and Properties...
  *  
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationProjectCenter extends Observable{

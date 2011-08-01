@@ -66,7 +66,7 @@ import org.openmodelica.simulation.environment.preferences.page.WorkbenchPrefere
  * This "New" wizard page allows creating a simulation project using existing Modelica code.
  * Option 1: The user selects Modelica classes and a Modelica main class to be load from OMC.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class NewSimulationProjectModellingEnvironmentWizardPage extends WizardPage {
 

@@ -67,7 +67,7 @@ import org.openmodelica.simulation.environment.Activator;
  * 
  * This wizard will be used if a Modelica model is available yet.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 
 public class NewSimulationProjectFromExistingCodeWizard extends Wizard implements INewWizard {

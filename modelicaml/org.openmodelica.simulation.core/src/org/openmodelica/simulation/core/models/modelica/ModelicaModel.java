@@ -39,7 +39,7 @@ package org.openmodelica.simulation.core.models.modelica;
  * Represents the whole Modelica model with all data which are necessary to simulate a model
  * It contains general model information and a Modelica main class with all properties and their values.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class ModelicaModel {
 	

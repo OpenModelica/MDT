@@ -41,7 +41,7 @@ import java.io.IOException;
 /**
  * The Class RunEXE.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class RunEXE {
 

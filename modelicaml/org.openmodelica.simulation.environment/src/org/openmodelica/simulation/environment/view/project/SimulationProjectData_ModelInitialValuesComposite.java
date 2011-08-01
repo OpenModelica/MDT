@@ -67,7 +67,7 @@ import org.openmodelica.simulation.environment.Activator;
  * This composite displays all data from the init.xml file. 
  * The data can not be modified, the user can only views the property names and its values.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationProjectData_ModelInitialValuesComposite extends org.eclipse.swt.widgets.Composite implements Observer{
@@ -90,7 +90,9 @@ public class SimulationProjectData_ModelInitialValuesComposite extends org.eclip
 	/** The label search. */
 	private Label labelSearch;
 	
-	/** Last position in the foundTreeItem list. */
+	/**
+	 * Last position in the foundTreeItem list
+	 */
 	private int foundPosition;
 	/**
 	 * Lists all search results to be selected with the search button (next...)
@@ -297,8 +299,17 @@ public class SimulationProjectData_ModelInitialValuesComposite extends org.eclip
 			}
 			
 			for (String fullQualifiedName : fullQualifiedVariableNames) {
+				System.out.println(fullQualifiedName);
+				System.out.println(fullQualifiedName.contains("der("));
+				if(fullQualifiedName.contains("der(")){
+					System.out.println("der...");
+					fullQualifiedName = fullQualifiedName.replaceAll("der\\(", "");
+					fullQualifiedName = fullQualifiedName.replaceAll("\\)", "");
+					createModelElement(modelicaModel, rootItem, fullQualifiedName, fullQualifiedName,
+					'd');
+				}
 				createModelElement(modelicaModel, rootItem, fullQualifiedName, fullQualifiedName,
-				'v');
+				'v'); //TODO [20110708] der(h) wird weg gelassen!
 			}
 		}else{
 			treeModel.removeAll();
@@ -306,12 +317,10 @@ public class SimulationProjectData_ModelInitialValuesComposite extends org.eclip
 	}
 	
 	/**
-	 * Recursive method to build the treeModel with all nodes and child elements.
-	 *
-	 * @param modelicaModel the modelica model
+	 * Recursive method to build the treeModel with all nodes and child elements
 	 * @param itemParent parant tree item
-	 * @param restOfFullQualifiedName the rest of full qualified name
-	 * @param fullQualifiedName the full qualified name
+	 * @param restOfFullQualifiedName
+	 * @param fullQualifiedName
 	 * @param propertyType Type of the Property, only for documentation or symbols!!
 	 */
 	private void createModelElement(ModelicaModel modelicaModel, TreeItem itemParent,
@@ -341,8 +350,8 @@ public class SimulationProjectData_ModelInitialValuesComposite extends org.eclip
 						createModelElement(modelicaModel, newChildItem, sc.nextLine(),
 								fullQualifiedName, propertyType);
 					} else {
-						newChildItem.setData(fullQualifiedName);
 						if (propertyType == 'v') {
+							newChildItem.setData(fullQualifiedName);
 							newChildItem.setText(newChildItem.getText()
 									+ "  [Value: "
 									+ modelicaModel.getMainclass()
@@ -350,12 +359,20 @@ public class SimulationProjectData_ModelInitialValuesComposite extends org.eclip
 													fullQualifiedName)
 											.getPrimitiveValue() + " | Typ: Variable]");
 						} else if (propertyType == 'p') {
+							newChildItem.setData(fullQualifiedName);
 							newChildItem.setText(newChildItem.getText()
 									+ "  [Value: "
 									+ modelicaModel.getMainclass()
 											.getParameterByName(
 													fullQualifiedName)
 											.getPrimitiveValue() + " | Typ: Parameter]");
+						}  else if (propertyType == 'd') {
+							newChildItem.setData("der(" + fullQualifiedName + ")");
+							newChildItem.setText("der(" + newChildItem.getText() + ")"
+									+ "  [Value: "
+									+ modelicaModel.getMainclass()
+											.getVariableByName(fullQualifiedName)
+											.getPrimitiveValue() + " | Typ: Variable]");
 						}
 					}
 				}
@@ -366,19 +383,27 @@ public class SimulationProjectData_ModelInitialValuesComposite extends org.eclip
 					createModelElement(modelicaModel, newChildItem, sc.nextLine(),
 							fullQualifiedName, propertyType);
 				} else {
-					newChildItem.setData(fullQualifiedName);
 					if (propertyType == 'v') {
+						newChildItem.setData(fullQualifiedName);
 						newChildItem.setText(newChildItem.getText()
 								+ "  [Value: "
 								+ modelicaModel.getMainclass()
 										.getVariableByName(fullQualifiedName)
 										.getPrimitiveValue() + " | Typ: Variable]");
 					} else if (propertyType == 'p') {
+						newChildItem.setData(fullQualifiedName);
 						newChildItem.setText(newChildItem.getText()
 								+ "  [Value: "
 								+ modelicaModel.getMainclass()
 										.getParameterByName(fullQualifiedName)
 										.getPrimitiveValue() + " | Typ: Parameter]");
+					} else if (propertyType == 'd') {
+						newChildItem.setData("der(" + fullQualifiedName + ")");
+						newChildItem.setText("der(" + newChildItem.getText() + ")"
+								+ "  [Value: "
+								+ modelicaModel.getMainclass()
+										.getVariableByName(fullQualifiedName)
+										.getPrimitiveValue() + " | Typ: Variable]");
 					}
 				}
 			}

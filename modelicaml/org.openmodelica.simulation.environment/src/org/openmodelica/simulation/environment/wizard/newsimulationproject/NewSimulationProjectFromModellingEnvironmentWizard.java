@@ -71,7 +71,7 @@ import org.openmodelica.simulation.environment.Activator;
  *  and the package.mo file and the Modelica main class file are available
  * 
  *  
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 
 public class NewSimulationProjectFromModellingEnvironmentWizard extends Wizard implements INewWizard {

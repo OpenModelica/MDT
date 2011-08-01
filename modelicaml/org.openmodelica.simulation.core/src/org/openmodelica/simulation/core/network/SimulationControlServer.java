@@ -46,7 +46,7 @@ import java.util.Scanner;
  * simulation runtime control server is localhost (127.0.0.1) and the port is
  * 10500. The user can change the port
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  * 
  */
 public class SimulationControlServer extends Thread {

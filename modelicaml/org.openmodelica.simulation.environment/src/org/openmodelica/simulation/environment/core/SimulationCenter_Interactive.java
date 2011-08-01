@@ -56,7 +56,7 @@ import org.openmodelica.simulation.environment.filehandling.RunInteractiveSimula
  * The Simulation Center is the central management unit to run an interactive simulation. 
  * It contains all information and data to simulate a system using
  * the OpenModelica Compiler (OMC). 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationCenter_Interactive {

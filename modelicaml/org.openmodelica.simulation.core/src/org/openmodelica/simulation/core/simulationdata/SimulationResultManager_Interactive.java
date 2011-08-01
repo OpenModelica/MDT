@@ -43,7 +43,7 @@ import java.util.Observable;
  * The Result Mananger stores all calculated simulation data from a model using an interactive simulation. 
  * This is the main storing and organization unit used by Transfer to store data and all views and plots to get result values.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationResultManager_Interactive extends Observable{

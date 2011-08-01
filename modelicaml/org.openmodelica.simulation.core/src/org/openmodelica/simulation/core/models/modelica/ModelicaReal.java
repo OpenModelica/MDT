@@ -38,7 +38,7 @@ package org.openmodelica.simulation.core.models.modelica;
 /**
  * Represents the primitive data type "Real" from the Modelica language
  * A Real can has a min and max value.
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class ModelicaReal extends ModelicaPrimitiveDataType{

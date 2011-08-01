@@ -19,7 +19,7 @@ import org.openmodelica.simulation.core.models.modelica.ModelicaVariable;
 /**
  * Reads the *_SimInitial.xml and the *_SimConfig.xml, parses it and creates the ModelicaModel 
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class ModelicaModel_XML_reader {

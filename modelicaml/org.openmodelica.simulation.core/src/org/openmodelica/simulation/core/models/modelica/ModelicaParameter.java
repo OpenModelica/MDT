@@ -40,7 +40,7 @@ package org.openmodelica.simulation.core.models.modelica;
  * Represents a Modelica parameter.
  * Unlike a variable type, the parameter can be modified interactively during a simulation  
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class ModelicaParameter extends ModelicaProperty{

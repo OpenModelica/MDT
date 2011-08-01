@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * A page to add information about the model and its developer.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class NewSimulationProject_ModelicaModelWizardPage  extends WizardPage {
 

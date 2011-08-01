@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class RunNonInteractiveSimulationRuntimeEnvironment implements Runnable{

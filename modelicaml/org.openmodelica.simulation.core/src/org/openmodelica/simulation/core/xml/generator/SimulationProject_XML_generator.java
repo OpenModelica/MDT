@@ -46,7 +46,7 @@ import org.openmodelica.simulation.core.models.simulation.SimulationProject;
 /**
  * This class is responsible to create a simulation project XML file.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationProject_XML_generator {

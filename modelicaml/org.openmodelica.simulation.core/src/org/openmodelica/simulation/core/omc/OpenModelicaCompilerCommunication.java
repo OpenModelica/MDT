@@ -9,7 +9,7 @@ import org.openmodelica.simulation.core.omc.corba.OMCProxy;
 /**
  * The Class OpenModelicaCompilerCommunication.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  * 
  * Direct communication with the OM Compiler using a Java and CORBA implementation of the OM developers
  */

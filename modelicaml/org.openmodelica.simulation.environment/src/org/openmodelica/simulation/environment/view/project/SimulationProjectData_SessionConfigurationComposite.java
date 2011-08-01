@@ -75,9 +75,9 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.openmodelica.simulation.core.init_txt_handling.InitTXT;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_reader;
-import org.openmodelica.simulation.core.init_txt_handling.SimulationInit_TXT_writer;
+import org.openmodelica.simulation.core.init_handling.InitData;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_reader;
+import org.openmodelica.simulation.core.init_handling.SimulationInit_XML_writer;
 import org.openmodelica.simulation.core.models.modelica.ModelicaModel;
 import org.openmodelica.simulation.core.models.simulation.SimulationProject;
 import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
@@ -756,7 +756,7 @@ public class SimulationProjectData_SessionConfigurationComposite extends
 											new Runnable() {
 												public void run() {
 													/**
-													 * Path to model_init.txt
+													 * Path to model_init.xml
 													 */
 													String initFilePath = spc
 															.getSimulationProjectPath(selectedSimulationProject
@@ -764,8 +764,8 @@ public class SimulationProjectData_SessionConfigurationComposite extends
 															+ "/"
 															+ selectedSimulationProject
 																	.getFullQualifiedModelicaModelName()
-															+ "_init.txt";
-													SimulationInit_TXT_writer
+															+ "_init.xml";
+													SimulationInit_XML_writer
 															.writeInit(
 																	initFilePath,
 																	createInitTXTObject(initFilePath, ti));
@@ -963,10 +963,10 @@ public class SimulationProjectData_SessionConfigurationComposite extends
 									Display.getDefault().asyncExec(
 											new Runnable() {
 												public void run() {
-													// Modifying init.txt
+													// Modifying init.xml
 //													System.out.println(" 2 Modifying init.txt");
 													/**
-													 * Path to model_init.txt
+													 * Path to model_init.xml
 													 */
 													String initFilePath = spc
 															.getSimulationProjectPath(selectedSimulationProject
@@ -974,9 +974,9 @@ public class SimulationProjectData_SessionConfigurationComposite extends
 															+ "/"
 															+ selectedSimulationProject
 																	.getFullQualifiedModelicaModelName()
-															+ "_init.txt";
+															+ "_init.xml";
 													
-													SimulationInit_TXT_writer
+													SimulationInit_XML_writer
 															.writeInit(
 																	initFilePath,
 																	createInitTXTObject(initFilePath, ti));
@@ -1648,14 +1648,14 @@ public class SimulationProjectData_SessionConfigurationComposite extends
 	}
 
 	/**
-	 * Create an InitTXT object using the setting and configured model file.
+	 * Create an InitData object using the setting and configured model file.
 	 *
 	 * @param initFilePath the init file path
 	 * @param ti the ti
-	 * @return a full initialized InitTXT object with data from setting and
+	 * @return a full initialized InitData object with data from setting and
 	 * configured model
 	 */
-	private InitTXT createInitTXTObject(String initFilePath, TreeItem ti) {
+	private InitData createInitTXTObject(String initFilePath, TreeItem ti) {
 
 		SimulationProject selectedSimulationProject = Activator
 				.getSimulationProjectCenter().getSelectedSimulationProject();
@@ -1664,14 +1664,14 @@ public class SimulationProjectData_SessionConfigurationComposite extends
 				.getSimSessConfig(selectedSessionConfigName);
 
 //		/**
-//		 * Path to model_init.txt
+//		 * Path to model_init.xml
 //		 */
 //		String initFilePath = Activator.getSimulationProjectCenter()
 //				.getSimulationProjectPath(
 //						selectedSimulationProject.getProjectName())
 //				+ "/"
 //				+ selectedSimulationProject.getFullQualifiedModelicaModelName()
-//				+ "_init.txt";
+//				+ "_init.xml";
 		/*
 		 * The original init.txt file have to be read again to specified the
 		 * order of variables into it TODO [201009] Erzeugen, Property
@@ -1680,12 +1680,11 @@ public class SimulationProjectData_SessionConfigurationComposite extends
 		 * und alg zu teilen. PROBLEM nicht nur die Reihenfolge der typen muss
 		 * eingehalten werden sondern auch die exacte folge der variablen…
 		 */
-		InitTXT originalInitTXT = null;
+		InitData originalInitTXT = null;
 		
 		//TODO [20110309] After the first parsing of the init file the exception won't occure anymore
 		try {
-			originalInitTXT = SimulationInit_TXT_reader
-			.readInit(initFilePath);
+			originalInitTXT = SimulationInit_XML_reader.readFromXML(initFilePath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

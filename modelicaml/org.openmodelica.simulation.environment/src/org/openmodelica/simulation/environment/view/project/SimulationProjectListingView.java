@@ -53,7 +53,7 @@ import org.openmodelica.simulation.environment.Activator;
  * Simple View containing a tree
  * WILL ONLY BE USED AS DEMONSTRATION AND TESTING.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class SimulationProjectListingView extends ViewPart {
 	

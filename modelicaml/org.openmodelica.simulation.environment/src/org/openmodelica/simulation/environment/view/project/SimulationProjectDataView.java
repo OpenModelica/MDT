@@ -47,7 +47,7 @@ import org.openmodelica.simulation.environment.Activator;
 // TODO: Auto-generated Javadoc
 /**
  * Contains all composites to view all project data (Information, Initial Values, Configurations...)
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationProjectDataView extends ViewPart{
@@ -60,16 +60,16 @@ public class SimulationProjectDataView extends ViewPart{
 	 */
 	private TabItem tabItemProjectData;
 	/**
-	 * Displays all initial values which are read from the initial file (e.g. init.txt)
+	 * Displays all initial values which are read from the initial file (e.g. init.)
 	 */
 	private TabItem tabItemInitialValues;
-	
-	/** Displays all simulation setting & model configuration files from the SimulationSessionConfig folder. */
-	private TabItem tabItemSimulationSessionConfiguration;
-	
 	/**
-	 * Instantiates a new simulation project data view.
+	 * Displays all simulation setting & model configuration files from the SimulationSessionConfig folder
 	 */
+	private TabItem tabItemSimulationSessionConfiguration;
+	/**
+	* Instantiates a new simulation project data view.
+	*/
 	public SimulationProjectDataView() {
 	}
 

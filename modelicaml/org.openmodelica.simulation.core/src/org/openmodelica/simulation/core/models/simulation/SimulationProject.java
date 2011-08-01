@@ -47,7 +47,7 @@ import org.openmodelica.simulation.core.xml.reader.SimulationProject_XML_reader;
  * which are stored for example in the org.openmodelica.simulation.projects path of the eclipse
  * workspace
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  * 
  */
 public class SimulationProject {

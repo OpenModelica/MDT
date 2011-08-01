@@ -38,7 +38,7 @@ package org.openmodelica.simulation.core.models.modelica;
 /**
  * Represents the primitive data type "Integer" from the Modelica language
  * An Integer can has a min and max value.
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class ModelicaInteger extends ModelicaPrimitiveDataType{

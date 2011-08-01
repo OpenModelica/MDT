@@ -38,7 +38,7 @@ package org.openmodelica.simulation.core.models.modelica;
 /**
  * Represents a Modelica Variable.
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class ModelicaVariable extends ModelicaProperty{

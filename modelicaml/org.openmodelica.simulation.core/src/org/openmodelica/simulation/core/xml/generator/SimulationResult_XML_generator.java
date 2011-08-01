@@ -48,7 +48,7 @@ import org.openmodelica.simulation.core.simulationresult_txt_handling.Result_TXT
 /**
  * Generates the SimInit.xml file from the SimProj.xml and init.txt
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  * 
  */
 

@@ -32,43 +32,28 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
-package org.openmodelica.simulation.core.models.modelica;
+package org.openmodelica.simulation.environment;
 
-// TODO: Auto-generated Javadoc
-/**
- * Represents an abstract class for all primitive data type of Modelica
- * This types could be Real, Integer, String or Boolean.
- *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
- */
-public abstract class ModelicaPrimitiveDataType {
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jface.preference.IPreferenceStore;
 
-	/** Type specification can be Real, Integer, String, Boolean. */
-	private String modelicaType;
+public class AbstractPreferenceInitializerForOMI extends
+		AbstractPreferenceInitializer {
 
-	/**
-	 * Instantiates a new modelica primitive data type.
-	 *
-	 * @param type the type
-	 */
-	public ModelicaPrimitiveDataType(String type) {
-		super();
-		this.modelicaType = type;
+	public AbstractPreferenceInitializerForOMI() {
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * Gets the type.
-	 *
-	 * @return the Modelica Type as a String
-	 */
-	public String getType() {
-		return modelicaType;
-	}	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString(){
-		return " ModelicaType: " + modelicaType;
+	@Override
+	public void initializeDefaultPreferences() {
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		store.setDefault("START", "0.0");
+		store.setDefault("STOP", "1.0");
+		store.setDefault("OUTPUT", "0.1");
+		store.setDefault("SimulationControlServerPort", "10500");
+		store.setDefault("RuntimeControlServerPort", "10501");
+		store.setDefault("SimulationTransferServerPort", "10502");
+		store.setDefault("TOLERANCE", "1e-4");
 	}
+
 }

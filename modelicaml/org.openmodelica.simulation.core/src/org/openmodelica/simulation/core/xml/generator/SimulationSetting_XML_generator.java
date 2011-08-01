@@ -49,7 +49,7 @@ import org.openmodelica.simulation.core.models.simulation.SimulationSettingInter
 /**
  * This class is responsible to create a simulation setting XML file. 
  * 
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationSetting_XML_generator {

@@ -65,7 +65,7 @@ import org.openmodelica.simulation.environment.preferences.page.WorkbenchPrefere
 
 /**
  * Wizard to create or modify Simulation Session Configuration files for non interactive simulations.
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SessionConfiguration_NonInteractiveWizard extends Wizard{

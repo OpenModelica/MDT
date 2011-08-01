@@ -61,7 +61,7 @@ import org.openmodelica.simulation.environment.Activator;
  * WizardPage to modify the session configuration setup
  * This WizardPage can be used to create a new page from initial or using an sample.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class SessionConfiguration_ChangeSetupInteractiveWizardPage extends WizardPage {
 

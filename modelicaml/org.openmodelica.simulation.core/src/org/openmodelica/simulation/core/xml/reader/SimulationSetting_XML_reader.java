@@ -16,7 +16,7 @@ import nu.xom.ParsingException;
 /**
  * The Class SimulationSetting_XML_reader.
  *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
 public class SimulationSetting_XML_reader {
 	

@@ -44,7 +44,7 @@ import java.io.OutputStream;
 /**
  * Simple File Copy Class.
  * Copies byte to byte
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  * 
  */
 public class cp {

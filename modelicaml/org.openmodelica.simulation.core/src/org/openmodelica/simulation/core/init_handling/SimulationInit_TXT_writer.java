@@ -8,7 +8,7 @@ import java.io.Writer;
 // TODO: Auto-generated Javadoc
 /**
  * Generates an text file including all data from the model_init.txt file in the same structure
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@gmx.de
+ * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
 public class SimulationInit_TXT_writer {
