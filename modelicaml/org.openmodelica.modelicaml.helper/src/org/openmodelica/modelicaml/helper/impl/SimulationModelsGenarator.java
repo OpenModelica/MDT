@@ -6,6 +6,7 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
@@ -102,20 +103,10 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 				// generate simulation models for the source model 
 				generateSimulationModels(sourceModel);
 			}
-			
-//			if there are some messages -> display them
-//			if ( !getLog().trim().equals("") ) {
-//				String infoText = "";
-//				// show translation messages
-//				DialogMessage dialog = new DialogMessage(new Shell(), "Notes on Simulation Models Generation", infoText, getLog());
-//				dialog.open();
-//			}
 		}
 	}
 	
 	private void clearAllLists(){
-//		allRequirements.clear();
-//		allTestScenarios.clear();
 		testScenariosToBeInstantiated.clear();
 		testScenariosDiscarded.clear();
 		requirementsToBeInstantiated.clear();
@@ -146,27 +137,39 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 
 	private void createSimulationModels(Element sourceModel){
 		
-		PackageableElement p = ((Package)targetPackage).createPackagedElement(Constants.simModelsPackageNamePrefix + ((NamedElement)sourceModel).getName(), 
+		/*TODO: create dialog that lets the user select the found test scenarios and requirements
+		 * and shows which test scenarios are discarded and which requirements are not selected. 
+		 */
+		
+		PackageableElement simulationModelsPackage = (
+				(Package)targetPackage).createPackagedElement(Constants.simModelsPackageNamePrefix + ((NamedElement)sourceModel).getName(),
 				UMLPackage.Literals.PACKAGE);
+		
 		for (Element testScenario : testScenariosToBeInstantiated) {
-			if (testScenario instanceof NamedElement) {
+			
+			if (testScenario instanceof Classifier) {
 				
 				// add class
 				String simulationModelName = Constants.simModelsNamePrefix + ((NamedElement)testScenario).getName();
-				Class c = ((Package)p).createOwnedClass(simulationModelName, false);
-				Stereotype s_model = c.getApplicableStereotype(Constants.stereotypeQName_Model);
-				Stereotype s_simulation = c.getApplicableStereotype(Constants.stereotypeQName_Simulation);
+				Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
+				
+				// TODO: here copy the simulation annotation values 
+				// from the TestScenario stereotype to the Simulation (or Test) stereotype
+				
+				Stereotype s_model = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Model);
+				Stereotype s_simulation = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Simulation);
 				if (s_model != null && s_simulation != null) {
-					c.applyStereotype(s_model);
-					c.applyStereotype(s_simulation);
+					simulationModel.applyStereotype(s_model);
+					simulationModel.applyStereotype(s_simulation);
 				}
 				else {
-					String msg = "ERROR: Cannot apply the stereotypes 'Model' and 'Simulation' to the '" + c.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
+					String msg = "ERROR: Cannot apply the stereotypes 'Model' and 'Simulation' to the '" 
+						+ simulationModel.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
 					addToLog(msg);
 				}
 				
 				// add system model property
-				Property p_systemModel = c.createOwnedAttribute(
+				Property p_systemModel = simulationModel.createOwnedAttribute(
 						Constants.systemModelPropertyNamePrefix 
 						+ StringUtls.replaceSpecChar(((NamedElement)sourceModel).getName().toLowerCase()), 
 						(Type)sourceModel);
@@ -175,12 +178,13 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 					p_systemModel.applyStereotype(s_component);
 				}
 				else {
-					String msg = "ERROR: Cannot apply the stereotypes 'Component' to the '" + p_systemModel.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
+					String msg = "ERROR: Cannot apply the stereotypes 'Component' to the '" 
+						+ p_systemModel.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
 					addToLog(msg);
 				}
 
 				// add test scenario property
-				Property p_testScenario = c.createOwnedAttribute(
+				Property p_testScenario = simulationModel.createOwnedAttribute(
 						Constants.testScenarioPropertyNamePrefix 
 						+ StringUtls.replaceSpecChar(((NamedElement)testScenario).getName().toLowerCase()), 
 						(Type)testScenario);
@@ -198,35 +202,39 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 				for (Element requirement : tsc.getTsToReq().get(testScenario)) {
 					// if this requirement was selected, i.e. was not discarded
 					if (!requirementsDiscarded.contains(requirement) && requirement instanceof Class) {
-
-						// get the number of required instantiations
-						int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(c, (Class) requirement);
-						for (int i = 0; i < requiredNumberOfInstantions; i++) {
-							Property p_req = c.createOwnedAttribute(
-									Constants.reqirementPropertyNamePrefix + 
-									getRequirementId((NamedElement) requirement) + "_" + 
-									StringUtls.replaceSpecChar(((NamedElement)requirement).getName().toLowerCase()), 
-									(Type) requirement);
-							
-							Stereotype s_reqInst = p_req.getApplicableStereotype(Constants.stereotypeQName_RequirementInstance);
-							
-							if (s_reqInst != null) {
-								p_req.applyStereotype(s_reqInst);
-							}
-							else {
-								String msg = "ERROR: Cannot apply the stereotypes 'requirementInstantance' to the '" + p_req.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
-								addToLog(msg);
+						if (requirement instanceof Classifier) {
+							// get the number of required instantiations
+							int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement);
+							for (int i = 0; i < requiredNumberOfInstantions; i++) {
+								Property p_req = simulationModel.createOwnedAttribute(
+										Constants.reqirementPropertyNamePrefix + 
+										getRequirementId((NamedElement) requirement) + "_" + 
+										StringUtls.replaceSpecChar(((NamedElement)requirement).getName().toLowerCase()), 
+										(Type) requirement);
+								
+								Stereotype s_reqInst = p_req.getApplicableStereotype(Constants.stereotypeQName_RequirementInstance);
+								
+								if (s_reqInst != null) {
+									p_req.applyStereotype(s_reqInst);
+								}
+								else {
+									String msg = "ERROR: Cannot apply the stereotypes 'requirementInstantance' to the '" + p_req.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
+									addToLog(msg);
+								}
 							}
 						}
 					}
 				}
 				
 				// instantiate the class
-				ClassInstantiation ci = new ClassInstantiation((Class) c, true);
+				ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true);
 				ci.createTree();
 				
 				// update bindings
 				ValueBindingCreator vbc = new ValueBindingCreator();
+				/* Note, the updateAllBindings() is called with the last argument simulateOnly = false  
+				 * so that modifications are created in components.
+				 */
 				vbc.updateAllBindings((Package)valueBindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
 			}
 		}
@@ -248,20 +256,23 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		/* get the list of system model clients for which the code could be derived (even if a user interaction would be necessary) 
 		from the test scenario providers */
 		ValueBindingCreator vbc = new ValueBindingCreator();
+		
+		/* Note, the updateAllBindings() is called with the last argument simulateOnly = true  
+		 * so that no modifications are created in components because we only want to analyze possible bindings.
+		 */
 		vbc.updateAllBindings((Package)valueBindingsPackage, ciSourceModel.getTreeRoot(), simulatedInstantiationTreeRoot, false, true, false, true);
 
 		/* If there is at least one client that uses one of the test scenario providers -> go for requirements
 		 * else stop here -> this test scenario can not be used to stimulate this system model.
 		 */
 		
-		/* NOTE: Checking if test clients are all satisfied by the system model
+		/* NOTE: Checking if test scenario clients are all satisfied by the system model
 		 * is not necessary because a test scenario must not have all clients bound to other model.
 		 * If it is used to test different design alternatives then some of the test scenario clients may be specific to
-		 * one alternative and are not provided by another. 
+		 * one design alternative and are not satisfied by another design alternative. 
 		 */
 		
-		
-		//TODO: rework: use the required client attribute to see if all required clients are satisfied
+		//TODO: Check if all required clients are satisfied! 
 		
 		if (treeContainsOneOf(vbc.getUsedProviders(), ciTestScenario.getTreeRoot())) {
 //			System.err.println( "selected test scenario: " + ((NamedElement)testScenario).getName());
@@ -279,6 +290,9 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 				ciReq.createTree();
 				
 				simulatedInstantiationTreeRoot_reqAndSystemModel.addChild(ciReq.getTreeRoot());
+				/* Note, the updateAllBindings() is called with the last argument simulateOnly = true  
+				 * so that no modifications are created in components because we only want to analyze possible bindings.
+				 */
 				vbc.updateAllBindings((Package)valueBindingsPackage, ciReq.getTreeRoot(), 
 						simulatedInstantiationTreeRoot_reqAndSystemModel, false, true, false, true);
 				

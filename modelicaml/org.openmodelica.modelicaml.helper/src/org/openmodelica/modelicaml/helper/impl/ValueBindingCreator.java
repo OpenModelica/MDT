@@ -92,7 +92,11 @@ public class ValueBindingCreator {
 		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, showProgressMonitor); 
 		
 		// update bindings for all sub-components (recursively) of the selected tree item.
-		updateAllSubComponents(treeParent, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
+		updateAllSubComponents(treeParent, 
+				treeRoot, 
+				deleteOldBindings, 
+				isAutomaticSelectionOfPreferredProvidersEnabled, 
+				onlySimulate);
 	}
 	
 	public void updateSingleBinding(
@@ -113,7 +117,11 @@ public class ValueBindingCreator {
 		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, showProgressMonitor); 
 		
 		// update the binding only for the selected tree item
-		updateSingle(treeItem, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
+		updateSingle(treeItem, 
+				treeRoot, 
+				deleteOldBindings, 
+				isAutomaticSelectionOfPreferredProvidersEnabled, 
+				onlySimulate);
 	}
 	
 	private void clearAllLists(){
@@ -145,62 +153,13 @@ public class ValueBindingCreator {
 				
 				// update a single item
 				updateSingle(item, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
-
-				// replaced by the updateSingle() 
-//				Element element = item.getUmlElement();
-//				
-//				Element modificationStoreLocation = item.getModificationStoreLocation();
-//				String componentPath = "";
-//				if (modificationStoreLocation instanceof Property) {
-//					componentPath = item.getDotPathWithoutFirstLevelComponent();
-//				}
-//				else if (modificationStoreLocation instanceof Generalization) {
-//					componentPath = item.getDotPath();
-//				}
-//				
-//				if (element instanceof Property) {
-//					// No user guidance is possible so far. 
-//					// TODO: Think about the option to guide, 
-//					// therefore the user should be able to cancel single code derivation or the overall "update all bindings" function.
-//					// Moreover, the code derivation dialogs should always include the information about client, mediator, provider.
-//					// This is not the case so far, for example, in the provider selection dialog.
-//					
-//					deriveCodeHelper.deriveBindingCodeForClient(item, false, isAutomaticSelectionOfPreferredProvidersEnabled); 
-//					String code = deriveCodeHelper.getCode(); 
-//					
-//		    		// delete old bindings
-//					// if the client element was found based on the selected tree item or the upper level scripts 
-//					// -> this means that in general there is a binding.
-//					// -> If the option is selected then delete the binding for the current tree item. 
-//					// -> However, it may happen that the binding code cannot be derived without user guidance so that the modification of the current item will be empty at the end. 
-//					
-//					if ( deriveCodeHelper.getClientElement() != null && modificationStoreLocation != null && deleteOldBindings ) {
-//		    			String result = ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
-//		    			if (result != null && !result.trim().equals("")) {
-//		    				
-//		    				deletedModifications.add(result);
-//							deletedItemsModification.add(item);
-//							
-//	    					item.setFinalModificationRightHand( null ); 
-//							item.setFinalModificationSource( null );
-//						}
-//					}
-//					
-//		    		// add modifications
-//		    		if (deriveCodeHelper.getClientElement() != null && code != null && modificationStoreLocation != null) {
-//
-//		    			ModificationManager.addComponentModification( modificationStoreLocation, componentPath, code, true);
-//						
-//		    			item.setFinalModificationRightHand(code); 
-//						item.setFinalModificationSource( modificationStoreLocation );
-//		    			
-//						updatedItems.add(item);
-//		    			updatedItemsToNewModification.put(item, code);		    			
-//					}
-//				}
 			
 				if (item instanceof TreeParent) {
-					updateAllSubComponents((TreeParent)item, treeRoot, deleteOldBindings, isAutomaticSelectionOfPreferredProvidersEnabled, onlySimulate);
+					updateAllSubComponents((TreeParent)item, 
+							treeRoot, 
+							deleteOldBindings, 
+							isAutomaticSelectionOfPreferredProvidersEnabled, 
+							onlySimulate);
 				}
 			}
 		}
