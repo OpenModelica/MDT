@@ -54,6 +54,7 @@ public class TreeObject implements IAdaptable {
 	private boolean isInstantiatedClass = false; 
 	
 	private boolean isValueClient = false;
+	private boolean isValueClient_required = false;
 	private boolean isValueProvider = false;
 	
 	// is used for different perspective items, that are not underneath the "normal" root, 
@@ -211,5 +212,13 @@ public class TreeObject implements IAdaptable {
 	}
 	public org.openmodelica.modelicaml.common.instantiation.TreeObject getInstantiationTreeObject() {
 		return instantiationTreeObject;
+	}
+
+	public void setValueClient_required(boolean isValueClient_required) {
+		this.isValueClient_required = isValueClient_required;
+	}
+
+	public boolean isValueClient_required() {
+		return isValueClient_required;
 	}
 }

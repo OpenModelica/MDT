@@ -49,8 +49,12 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.papyrus.core.services.ServiceException;
+import org.eclipse.papyrus.core.services.ServicesRegistry;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.papyrus.core.utils.ServiceUtils;
+import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -172,7 +176,16 @@ public class PropertySection_MediatorOperationEditor extends AbstractPropertySec
 		});
 		
 		// Get Papyrus editing domain
-		editingDomain = EditorUtils.getTransactionalEditingDomain();
+//		editingDomain = EditorUtils.getTransactionalEditingDomain();
+		ServicesRegistry serviceRegistry;
+		try {
+			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private Boolean isValidElement(){

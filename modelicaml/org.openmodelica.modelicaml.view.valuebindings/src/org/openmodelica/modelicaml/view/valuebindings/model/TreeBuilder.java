@@ -51,6 +51,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.MediatorsCollector;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataCollector;
@@ -289,6 +290,8 @@ public class TreeBuilder {
 				
 //				HashSet<Element> listOfClients = valueMediatorToValueClients.get(property);
 				EList<Element> listOfClients = getValueClients(valueMediatorElement);
+				EList<Element> listOfRequiredClients = getRequiredValueClients(valueMediatorElement);
+				
 				if (listOfClients != null ) {
 					for (Element element : listOfClients) {
 						if (element instanceof Property) {
@@ -297,6 +300,11 @@ public class TreeBuilder {
 							valueClientItem.setUmlElement(element); // set the reference to the UML model element
 							valueClientItem.setIsValueClient(); 
 							valueClientsTitle.addChild(valueClientItem); 
+							
+							// set required client
+							if (listOfRequiredClients.contains(element)) {
+								valueClientItem.setValueClient_required(true);
+							}
 							
 							valueClientsTreeItems.add(valueClientItem);
 							
@@ -392,6 +400,23 @@ public class TreeBuilder {
 			}
 		}
 		return clientList;
+	}
+	
+	public EList<Element> getRequiredValueClients(Element valueMediator){
+		EList<Element> requiredClientList = new BasicEList<Element>();
+		if (valueMediator instanceof Property) {
+			EList<Dependency> mediatorDependencies = ((Property)valueMediator).getClientDependencies();
+			for (Dependency dependency : mediatorDependencies) {
+				Stereotype s_providesValueFor = dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor); 
+				if ( s_providesValueFor != null) {
+					Object o = dependency.getValue(s_providesValueFor, Constants.propertyName_isRequired);
+					if (o instanceof Boolean && ((Boolean)o) == true) {
+						requiredClientList.addAll(dependency.getTargets());	
+					}
+				}
+			}
+		}
+		return requiredClientList;
 	}
 	
 	public EList<Element> getValueProviders(Element valueMediator){

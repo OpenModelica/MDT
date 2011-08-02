@@ -306,7 +306,8 @@ public class ElementSelectionDialog extends Dialog {
 				setValue(SWT.OK);
 				
 				if (selectedElement instanceof NamedElement) {
-					boolean newElementCreated = TreeUtls.storeMediatorReference(valueMediatorTreeItem.getUmlElement(), selectedElement, mode); // create a dependency from value mediator to client/provider
+					// create a dependency from value mediator to client/provider
+					boolean newElementCreated = TreeUtls.storeMediatorReference(valueMediatorTreeItem.getUmlElement(), selectedElement, mode); 
 					
 					// only update the tree if the new element was created in the UML model
 					if (newElementCreated) {

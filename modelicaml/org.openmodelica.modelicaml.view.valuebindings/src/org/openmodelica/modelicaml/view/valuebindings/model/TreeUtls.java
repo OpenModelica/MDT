@@ -213,6 +213,16 @@ public class TreeUtls {
 							Stereotype dependencyStereotype = dependency.getApplicableStereotype(getDependecyStereotypeQName(mode));
 							if (dependencyStereotype != null) {
 								dependency.applyStereotype(dependencyStereotype);
+								
+								// Clients of a requirement should always be required. 
+								// if it is a dependency from a mediator to a client 
+								if (dependencyStereotype.getQualifiedName().equals(Constants.stereotypeQName_ProvidesValueFor)) {
+									// if it is a client property of a requirement -> set is required
+									if (valueClientOrProviderElement instanceof Property &&
+									((Property)valueClientOrProviderElement).getNamespace().getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+										dependency.setValue(dependencyStereotype, Constants.propertyName_isRequired, true);
+									}
+								}
 							}
 							else {
 								MessageDialog.openError(new Shell(), "Error", 

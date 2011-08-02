@@ -40,26 +40,36 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.papyrus.core.services.ServiceException;
+import org.eclipse.papyrus.core.services.ServicesRegistry;
 import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.papyrus.core.utils.ServiceUtils;
+import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -67,12 +77,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 import org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView;
 
 public class PropertySection_Details extends AbstractPropertySection {
@@ -87,6 +101,10 @@ public class PropertySection_Details extends AbstractPropertySection {
 	private Label lblType;
 
 	private Label lblOwner;
+
+	// only for clients
+	private Label lblIsRequired;
+	private Button btIsRequired;
 	
 	private TreeViewer viewer;
 
@@ -99,7 +117,24 @@ public class PropertySection_Details extends AbstractPropertySection {
 				}
 			}
 		};
-	
+		
+	SelectionListener selectionListener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setValueClient_isRequired(btIsRequired.getSelection());
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if (item.isValueClient_required()) {
+					btIsRequired.setSelection(true);
+				}
+				else {
+					btIsRequired.setSelection(false);
+				}
+			}
+		};
+		
     public void createControls(Composite parent, TabbedPropertySheetPage aTabbedPropertySheetPage) {
         super.createControls(parent, aTabbedPropertySheetPage);
         
@@ -143,6 +178,21 @@ public class PropertySection_Details extends AbstractPropertySection {
 		textOwner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		textOwner.setBounds(65, 43, 579, 13);
 		textOwner.setText("<a>New Link</a>");
+		
+		lblIsRequired = new Label(composite, SWT.NONE);
+		lblIsRequired.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		lblIsRequired.setBounds(10, 82, 49, 13);
+		lblIsRequired.setText("isRequired:");
+		String toolTipText_isRequired = "If the client is required then " +
+										"\nthere must be a binding equation " +
+										"\nfor this components when it is instantiated.";
+		lblIsRequired.setToolTipText(toolTipText_isRequired);
+		
+		btIsRequired = new Button(composite, SWT.CHECK);
+		btIsRequired.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		btIsRequired.setBounds(65, 82, 579, 13);
+		btIsRequired.setToolTipText(toolTipText_isRequired);
+		
     }
 
    
@@ -163,13 +213,23 @@ public class PropertySection_Details extends AbstractPropertySection {
 
     	boolean typeTextVisibility = item.isValueClient() || item.isValueMediator() || item.isValueProvider();
     	boolean ownerTextVisibility = !item.isValueClientsNode() && !item.isValueProvidersNode() && item.getUmlElement() != null &&  item.getUmlElement().getOwner() instanceof NamedElement;
-		
+    	boolean isRequiredVisibility = item.isValueClient();
+    	
     	lblType.setVisible(typeTextVisibility);
 		textType.setVisible(typeTextVisibility);
-
+		
+		// START: required value client
+		lblIsRequired.setVisible(isRequiredVisibility);
+		btIsRequired.removeSelectionListener(selectionListener);
+		btIsRequired.setVisible(isRequiredVisibility);
+		btIsRequired.setSelection(item.isValueClient_required());
+		btIsRequired.addSelectionListener(selectionListener);
+		// END: required value client
+		
 		lblOwner.setVisible(ownerTextVisibility);    		
 		textOwner.setVisible(ownerTextVisibility);
 
+		// START: name
     	textName.removeModifyListener(modifyListener);
     	textName.setText(item.getName());
     	if (item != null && item.getUmlElement() instanceof NamedElement) {
@@ -178,6 +238,7 @@ public class PropertySection_Details extends AbstractPropertySection {
     		textName.setEditable(false);
     	}
     	textName.addModifyListener(modifyListener);
+		// END: required value client
     	
     	// type
     	String type = "";
@@ -222,7 +283,19 @@ public class PropertySection_Details extends AbstractPropertySection {
     private void storeText(){
     	final NamedElement element = (NamedElement)item.getUmlElement();
 		//########## storing start
-		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+//		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+		ServicesRegistry serviceRegistry;
+		TransactionalEditingDomain editingDomain = null;
+
+		try {
+			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		CompoundCommand cc = new CompoundCommand();
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
@@ -241,6 +314,66 @@ public class PropertySection_Details extends AbstractPropertySection {
 			System.err.println("Cannot access the editing domain ...");
 		}
 		//########## storing end
+    }
+    
+    private void setValueClient_isRequired(final Boolean isRequired){
+    	Dependency dependencyToClient = null;
+    	Element element = item.getUmlElement();
+		
+		if (item.isValueClient() && element instanceof NamedElement) {
+			TreeObject mediator = TreeUtls.getNearestMediator(item);
+			Element mediatorElement = mediator.getUmlElement();
+
+			if (mediatorElement instanceof NamedElement) {
+				EList<Dependency> depList = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement)element, Constants.stereotypeQName_ProvidesValueFor);
+				if (depList != null && depList.size() == 1) {
+					dependencyToClient = depList.get(0);
+					
+				}
+				else {
+					MessageDialog.openError(new Shell(), "Value Mediator Inconsitency", "There are multiple links form the Mediator '" + mediator.getName() + "' " +
+							" to the the Value Client '" + item.getName() + "'. This is not allowed."  );
+				}
+			}
+		}
+		
+		final NamedElement dependency = dependencyToClient;
+		if (dependency != null) {
+			
+			//########## storing start
+//			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			ServicesRegistry serviceRegistry;
+			TransactionalEditingDomain editingDomain = null;
+
+			try {
+				serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+				editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			CompoundCommand cc = new CompoundCommand();
+			Command command = new RecordingCommand(editingDomain) {
+				@Override
+				protected void doExecute() {
+					Stereotype s_providesValueFor = dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
+					if (s_providesValueFor != null) {
+						dependency.setValue(s_providesValueFor, Constants.propertyName_isRequired, isRequired);
+						item.setValueClient_required(isRequired);
+					}
+				}
+			};
+			cc.append(command);
+			if (editingDomain != null) {
+				editingDomain.getCommandStack().execute(cc);
+			}
+			else {
+				System.err.println("Cannot access the editing domain ...");
+			}
+
+		}
     }
     
     private void locate(Object object){
