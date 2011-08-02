@@ -670,7 +670,7 @@ public class ClassInstantiation {
 							if (element instanceof NamedElement) {
 								// add only mediators and referenced elements if they are used in the instantiation tree
 								referencedClients.add(element);
-								Object o = dependency.getValue(s_providesValueFor, "isRequired");
+								Object o = dependency.getValue(s_providesValueFor, Constants.propertyName_isRequired);
 								if (o instanceof Boolean) {
 									if ((Boolean)o == true) {
 //										System.err.println("required client: " + ((NamedElement)element).getQualifiedName());

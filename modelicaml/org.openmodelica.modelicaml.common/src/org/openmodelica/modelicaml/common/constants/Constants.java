@@ -93,6 +93,9 @@ public class Constants {
 	public static final String propertyName_input 				= "input";
 	public static final String propertyName_output 				= "output";
 	
+	// value bindings
+	public static final String propertyName_isRequired			= "isRequired";
+	
 
 	// primarily used by the value bindings plugin  
 	public static final String stereotypeQName_ValueMediatorsContainer 	= "ModelicaML::ValueBinding::ValueMediatorsContainer";
