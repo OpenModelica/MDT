@@ -672,6 +672,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								TreeObject treeObject = chldren[i];
 								if (treeObject.getUmlElement() != null && treeObject.getUmlElement()==treeObject.getFirstLevelComponent()) {
 									ModificationManager.deleteAllComponentModifications(treeObject.getUmlElement());
+									viewer.refresh();
+									viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 								}
 							}
 						}
@@ -692,6 +694,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
 						if (go) {
 							ModificationManager.deleteAllComponentModifications(item.getUmlElement());
+							viewer.refresh();
+							viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 						}
 					}
 				}
@@ -1187,7 +1191,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //									}
 									//item.addToModificationList(storeString); // Store with braces if there are any!
 									item.setFinalModificationRightHand(rightHandPart); // verify this against the line above!
-									item.setFinalModificationSource(item.getFirstLevelComponent()); // TODO: this is wrong if the modification source id Generalization! 
+									item.setFinalModificationSource(item.getFirstLevelComponent()); // TODO: this is wrong if the modification source is Generalization! 
 //									viewer.update(item, null);
 									updateItem(item);
 								}
