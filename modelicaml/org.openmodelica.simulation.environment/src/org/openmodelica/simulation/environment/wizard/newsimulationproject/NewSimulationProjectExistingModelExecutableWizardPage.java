@@ -87,7 +87,7 @@ public class NewSimulationProjectExistingModelExecutableWizardPage extends Wizar
 	private Text textPathToModelExeFile;
 	
 	/** The text path to model init txt file. */
-	private Text textPathToModelInitTxtFile;
+	private Text textPathToModelInitXMLFile;
 	
 	/** The text project name. */
 	private Text textProjectName;
