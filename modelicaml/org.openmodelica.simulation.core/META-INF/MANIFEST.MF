@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Simulation Core
 Bundle-SymbolicName: org.openmodelica.simulation.core;singleton:=true
-Bundle-Version: 0.7.1.v201003091320
+Bundle-Version: 0.7.2.v201106260100
 Bundle-Activator: org.openmodelica.simulation.core.Activator
 Bundle-Vendor: OpenModelica
 Require-Bundle: org.eclipse.ui,
