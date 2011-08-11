@@ -184,6 +184,46 @@ public class TreeObject implements IAdaptable {
 		return false;
 	}
 	
+	// *********************************************
+	// TODO: test it! Maybe it is necessary to use the path as string to uniquely identify the tree objects.
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof TreeObject) {
+			TreeObject item = (TreeObject) obj;
+			if ( (item.getName().equals(this.getName()))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 0;
+		
+		// get the name 
+		result = result + this.getName().hashCode();
+		
+		// get the qualified name of the uml element
+		if (this.getUmlElement() instanceof NamedElement) {
+			result = result +  ((NamedElement)this.getUmlElement()).getQualifiedName().hashCode();
+		}
+		
+		if (this.getParent() != null ) {
+			// get the qualified name of parent
+			result = result +  this.getParent().getName().hashCode();
+			// get the qualified name of the parent uml element
+			if (this.getParent().getUmlElement() instanceof NamedElement) {
+				result = result + ((NamedElement)this.getParent().getUmlElement()).getQualifiedName().hashCode();
+			}
+		}
+		
+		return result;
+	}
+	// *********************************************
+
+	
 	
 	public Object getAdapter(java.lang.Class adapter) {
 		

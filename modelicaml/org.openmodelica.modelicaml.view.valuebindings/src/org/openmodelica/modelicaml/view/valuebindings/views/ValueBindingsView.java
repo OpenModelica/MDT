@@ -41,7 +41,12 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gmt.modisco.infra.browser.uicore.internal.util.EMFUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -57,11 +62,14 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -228,6 +236,37 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				} 
 				else {
 					viewer.expandToLevel(firstElement, 1);
+				}
+			}
+		});
+		
+		//add selection listener for reloading in case if uml resource were modified
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (event.getSelection() instanceof StructuredSelection) {
+					Object selectedTreeObject = ((StructuredSelection)event.getSelection()).getFirstElement();
+					if ( selectedTreeObject instanceof TreeObject) {
+						TreeObject item = (TreeObject)selectedTreeObject;
+						// After saving of loaded resources the tree items uml elements are proxies that need to be resolved.
+						// detect it : if it is a mediator and its uml element is a proxy or it is client/provider and its mediator is not loaded.
+						// and reload the view.
+	
+						if (	!item.isReadOnly() && (
+									(item.getUmlElement() != null && ((EObject)item.getUmlElement()).eIsProxy()) 
+									|| ((item.isValueClient() || item.isValueProvider()) && !TreeUtls.mediatorIsLoaded(item))
+								)
+							) {
+							// reload the view and set the element that was selected befor reload.
+							actionReload.run();
+							
+							List<Object> list = new ArrayList<Object>();
+							list.add(item);
+							ISelection selection = new StructuredSelection(list);
+							viewer.setSelection(selection);
+						}
+					}
 				}
 			}
 		});
@@ -486,8 +525,11 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		
 		actionReload = new Action("actionReload") {
 			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
+//				ISelection selection = viewer.getSelection();
+//				Object obj = ((IStructuredSelection)selection).getFirstElement();
+				
+				Object[] expandedElements = viewer.getExpandedElements();
+				TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 				
 				TreeObject[] children = invisibleRoot.getChildren();
 				for (int i = 0; i < children.length; i++) {
@@ -501,10 +543,13 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					treeBuilder.buildTreeFromUmlModel(invisibleRoot);	
 				}
 				viewer.setInput(getViewSite());
+				
+				viewer.setExpandedElements(expandedElements);
+				viewer.setExpandedTreePaths(expandedTreePaths);
 
-				// select in view
-				TreeUtls.selectInView(obj, invisibleRoot, viewer);
-				viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+//				// select in view
+//				TreeUtls.selectInView(obj, invisibleRoot, viewer);
+//				viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
 
 			}
 		};

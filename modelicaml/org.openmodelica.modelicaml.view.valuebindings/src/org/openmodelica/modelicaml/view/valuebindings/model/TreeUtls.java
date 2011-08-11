@@ -471,6 +471,29 @@ public class TreeUtls {
 	
 	// #############################	TreeViewer management
 	
+	public static boolean mediatorIsLoaded(TreeObject item){
+		boolean mediatorIsLoaded = false;
+		if (item.isValueClient() || item.isValueProvider()) {
+	    	TreeObject mediator = TreeUtls.getNearestMediator(item);
+	    	if (mediator != null) {
+	    		Element mediatorElement = mediator.getUmlElement();
+	    		EList<Dependency> clientDep = null;
+	    		if (item.isValueClient()) {
+	    			clientDep = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement) item.getUmlElement(), Constants.stereotypeQName_ProvidesValueFor);	
+				}
+	    		else if (item.isValueProvider()) {
+	    			clientDep = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement) item.getUmlElement(), Constants.stereotypeQName_ObtainsValueFrom);
+				}
+	    		
+	    		if (clientDep != null && clientDep.size() == 1) {
+	    			mediatorIsLoaded = true;
+	    		}
+			}
+		}
+		return mediatorIsLoaded;
+	}
+	
+	
 	public static void removeTreeItem(EObject object, TreeParent treeRoot, TreeViewer viewer) {
 		TreeObject[] items = treeRoot.getChildren();
 		for (int i = 0; i < items.length; i++) {
@@ -544,22 +567,34 @@ public class TreeUtls {
 	public static void selectInView(Object obj, TreeParent treeRoot, TreeViewer viewer){
 		if ( obj instanceof TreeObject ) {
 			TreeObject item = (TreeObject)obj;
-			if (item.isValueClient() || item.isValueMediator() || item.isValueProvider()) {
+			
+			if (item.isValueClient() 
+					|| item.isValueMediator() 
+					|| item.isValueProvider()
+					|| item.isValueMediatorContainer()
+					|| item.isPackage()) {
 //				HashSet<Object> objects = findTreeItems( (TreeObject)obj , invisibleRoot, new HashSet<Object>());
 				EObject eObject = item.getUmlElement();
 				if (eObject != null) {
 					HashSet<Object> objects = findTreeItems( eObject, treeRoot, new HashSet<Object>());
+//					objects.addAll(findTreeItems((TreeObject)obj, treeRoot, new HashSet<Object>()));
+					
 					List<Object> items = new ArrayList<Object>();
 					items.addAll(objects);
 					viewer.setSelection(new StructuredSelection(items), true);
 				}
 				else {
 					viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+//					System.err.println("'Cannot get the uml element ...");
 				}
 			}
 			else {
 				viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+//				System.err.println("Not a mediator or client or provider!");
 			}
+		}
+		else {
+//			System.err.println("Not a treeObject!");
 		}
 	}
 

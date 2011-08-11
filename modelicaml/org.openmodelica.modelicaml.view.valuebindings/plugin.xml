@@ -94,6 +94,7 @@
             contributorId="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView">
          <propertySection
                class="org.openmodelica.modelicaml.view.valuebindings.sections.PropertySection_Details"
+               filter="org.openmodelica.modelicaml.view.valuebindings.filters.PropertySectionFilter_Details"
                id="org.openmodelica.modelicaml.view.valuebindings.propertySection.details"
                tab="org.openmodelica.modelicaml.view.valuebindings.properties.tab.details">
             <input

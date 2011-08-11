@@ -33,46 +33,66 @@
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
 package org.openmodelica.modelicaml.view.valuebindings.filters;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.IFilter;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Dependency;
+import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
-import org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 
-public class PropertySectionFilter_MediatorOperation implements IFilter {
+public class PropertySectionFilter_Details implements IFilter {
 
 	@Override
 	public boolean select(Object toTest) {
 		if (toTest instanceof TreeObject) {
 			TreeObject item = (TreeObject)toTest;
-			
-//			/* TODO: This seems to be a bug. After saving of imported models the applied stereotypes are null.
-//			 * WORKAROUND: If the uml element or the stereotype is null -> ask user to reload the view.  
-//			 */
-//			if (item.getUmlElement() == null 
-//					|| item.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator) == null) {
-//				
-//				String title = "Value Bindings View - Reload Confirmation";
-//				String message = "The value bindings resource were modified. " +
-//						"The Value Bindings view must be synchronized in order to allow further action." +
-//						"\n\nShould the Value Bindings be reloaded? ";
-//				
-//				boolean go = MessageDialog.openQuestion(new Shell(), title, message);
-//				
-//				if (go) {
-//					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView");
-//					if (view instanceof ValueBindingsView) {
-//						((ValueBindingsView)view).actionReload.run();
-//					}
+
+			if ( !item.isReadOnly() ) {
+				
+				if (item.getUmlElement() == null && ( item.isValueClientsNode() || item.isValueProvidersNode() ) ) {
+					return true;
+				}
+				
+//				if (item.getUmlElement() != null && ( 
+//						(item.isValueMediatorContainer()) && !((EObject)item.getUmlElement()).eIsProxy()) 
+//						) {
+//					return true;
 //				}
-//			}
-			
-			if ( item.isValueMediator() && !item.isReadOnly() ) {
-				return true;
+				
+				if (item.isValueClient() || item.isValueProvider()) {
+					boolean mediatorIsLoaded = false;
+			    	TreeObject mediator = TreeUtls.getNearestMediator(item);
+			    	if (mediator != null) {
+			    		Element mediatorElement = mediator.getUmlElement();
+			    		EList<Dependency> clientDep = null;
+			    		if (item.isValueClient()) {
+			    			clientDep = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement) item.getUmlElement(), Constants.stereotypeQName_ProvidesValueFor);	
+						}
+			    		else if (item.isValueProvider()) {
+			    			clientDep = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement) item.getUmlElement(), Constants.stereotypeQName_ObtainsValueFrom);
+						}
+			    		
+			    		if (clientDep != null && clientDep.size() == 1) {
+			    			mediatorIsLoaded = true;
+			    			return true;
+			    		}
+					}
+				}
+				
+				if (item.isValueMediator() && item.getUmlElement() != null 
+						&& item.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+					 return true;
+				}
+				
+				// if it is a package or model or class ...
+				if (item.getUmlElement() != null) {
+					return true;
+				}
+				
 			}
 		}
 		return false;

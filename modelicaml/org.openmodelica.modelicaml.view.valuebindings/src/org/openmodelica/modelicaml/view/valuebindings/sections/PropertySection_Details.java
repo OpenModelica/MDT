@@ -213,7 +213,21 @@ public class PropertySection_Details extends AbstractPropertySection {
 
     	boolean typeTextVisibility = item.isValueClient() || item.isValueMediator() || item.isValueProvider();
     	boolean ownerTextVisibility = !item.isValueClientsNode() && !item.isValueProvidersNode() && item.getUmlElement() != null &&  item.getUmlElement().getOwner() instanceof NamedElement;
-    	boolean isRequiredVisibility = item.isValueClient();
+
+    	boolean mediatorIsLoaded = false;
+    	
+    	TreeObject mediator = TreeUtls.getNearestMediator(item);
+    	if (mediator != null) {
+    		Element mediatorElement = mediator.getUmlElement();
+    		EList<Dependency> clientDep = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement) item.getUmlElement(), Constants.stereotypeQName_ProvidesValueFor);
+    		
+    		if (clientDep.size() == 1) {
+    			mediatorIsLoaded = true;
+    		}
+		}
+    	boolean isRequiredVisibility = item.isValueClient()
+    									&& item.getUmlElement() != null 
+    									&& mediatorIsLoaded;
     	
     	lblType.setVisible(typeTextVisibility);
 		textType.setVisible(typeTextVisibility);
@@ -232,7 +246,11 @@ public class PropertySection_Details extends AbstractPropertySection {
 		// START: name
     	textName.removeModifyListener(modifyListener);
     	textName.setText(item.getName());
-    	if (item != null && item.getUmlElement() instanceof NamedElement) {
+    	if (item != null  
+    			&& (item.isValueMediator() || item.isValueMediatorContainer()) 
+    			&& item.getUmlElement() != null
+    			&& !((EObject)item.getUmlElement()).eIsProxy() 
+    			) {
     		textName.setEditable(true);		}
     	else {
     		textName.setEditable(false);
@@ -326,13 +344,12 @@ public class PropertySection_Details extends AbstractPropertySection {
 
 			if (mediatorElement instanceof NamedElement) {
 				EList<Dependency> depList = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, (NamedElement)element, Constants.stereotypeQName_ProvidesValueFor);
-				if (depList != null && depList.size() == 1) {
+				if (depList != null && depList.size() > 0 && depList.size() == 1) {
 					dependencyToClient = depList.get(0);
-					
 				}
 				else {
 					MessageDialog.openError(new Shell(), "Value Mediator Inconsitency", "There are multiple links form the Mediator '" + mediator.getName() + "' " +
-							" to the the Value Client '" + item.getName() + "'. This is not allowed."  );
+							" to the Value Client '" + item.getName() + "'. \n\nThis is not allowed."  );
 				}
 			}
 		}

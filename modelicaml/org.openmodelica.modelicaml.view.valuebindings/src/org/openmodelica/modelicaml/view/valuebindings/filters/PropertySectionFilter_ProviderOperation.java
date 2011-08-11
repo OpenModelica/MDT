@@ -33,10 +33,14 @@
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
 package org.openmodelica.modelicaml.view.valuebindings.filters;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.IFilter;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 
 public class PropertySectionFilter_ProviderOperation implements IFilter {
@@ -46,13 +50,17 @@ public class PropertySectionFilter_ProviderOperation implements IFilter {
 		if (toTest instanceof TreeObject) {
 			TreeObject item = (TreeObject)toTest;
 			
-//			Element element = item.getUmlElement();
-//			if (element != null) {
-//				if (element.getAppliedStereotype(Constants.stereotypeQName_ValueProvider) != null) {
-//					return true;					
-//				}
-//			}
-			if (item.isValueProvider() && !item.isReadOnly()) {
+			boolean mediatorIsLoaded = false;
+	    	TreeObject mediator = TreeUtls.getNearestMediator(item);
+	    	if (mediator != null) {
+	    		Element mediatorElement = mediator.getUmlElement();
+	    		EList<Dependency> clientDep = TreeUtls.getMediatorDependency((NamedElement)mediatorElement, 
+	    				(NamedElement) item.getUmlElement(), Constants.stereotypeQName_ObtainsValueFrom);
+	    		if (clientDep.size() == 1) {
+	    			mediatorIsLoaded = true;
+	    		}
+			}
+			if (item.isValueProvider()  && !item.isReadOnly() && mediatorIsLoaded) {
 				return true;
 			}
 		}
