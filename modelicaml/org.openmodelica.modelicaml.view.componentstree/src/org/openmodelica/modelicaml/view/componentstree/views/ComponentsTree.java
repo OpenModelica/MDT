@@ -62,6 +62,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -1840,9 +1841,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		sel = selection;
 		par = sourcepart;
 		
-		// remember the last selected item
-		IStructuredSelection viewerSelection = (IStructuredSelection) viewer.getSelection();
-		TreeObject obj = (TreeObject) viewerSelection.getFirstElement();
+		Object[] expandedElements = viewer.getExpandedElements();
+		TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+		
+//		// remember the last selected item
+//		IStructuredSelection viewerSelection = (IStructuredSelection) viewer.getSelection();
+//		TreeObject obj = (TreeObject) viewerSelection.getFirstElement();
 		
 		// Only listen to the Papyrus Model Explorer selection
 		if (sourcepart != null && sourcepart.getSite() != null 
@@ -1854,10 +1858,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			
 		}
 
+		viewer.setExpandedElements(expandedElements);
+		viewer.setExpandedTreePaths(expandedTreePaths);
+		
 		// select the item again in view
-		TreeUtls.selectInView(obj, root, viewer);			
-//		viewer.setSelection(new StructuredSelection(viewerSelection)); // does not work
-		viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
+//		TreeUtls.selectInView(obj, root, viewer);			
+////		viewer.setSelection(new StructuredSelection(viewerSelection)); // does not work
+//		viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 	}
 	
 //	private void showItems(Object[] items) {
