@@ -19,11 +19,11 @@ import org.openmodelica.modelicaml.gen.modelica.validation.validation_helper
 
 <%script type="uml.StateMachine" name="statemachine_validation_rules" post="trim()"%>
 <%for (ownedElement.filter("Pseudostate")){%>
-	<%if (kind=="entryPoint" && transitionsFromEntryPointLeadToTargetsInSameRegion()){%>
+<%-- BUGGY	<%if (kind=="entryPoint" && transitionsFromEntryPointLeadToTargetsInSameRegion()){%>
 			<%}else{%>
 <%alert("error","NOT VALID(sm01): All transitions from an entryPoint must lead to the targets that are containted in the same region.")%>
 		<%}%>
-	<%if (kind=="exitPoint"){%>
+--%>	<%if (kind=="exitPoint"){%>
 		<%if (incoming.nSize() > 1){%>
 <%alert("error","NOT VALID (sm02): exitPoints can have at most one imcoming transition.")%>
 		<%}%>
@@ -120,7 +120,8 @@ import org.openmodelica.modelicaml.gen.modelica.validation.validation_helper
 	<%}%>
 <%-- ############################################################### --%>
 <%-- CONSTRAINT DESCRIPTION: Choice or Junction should have an else branch. --%>
-	<%if (outgoing[guard.specification.filter("LiteralString").value.trim() =="else"].nSize() < 1 ){%>
+<%--<%if (outgoing[guard.specification.filter("LiteralString").value.trim() =="else"].nSize() < 1 ){%>--%>
+<%if (outgoing[guard.specification.filter("OpaqueExpression").body.trim() =="else"].nSize() < 1 ){%>
 <%alert("warning","MISSING(sm33): One outgoing transition with 'else' guard. This may lead to an unexpected behavior if the guards of multiple transitions can be true at the same time.")%>
 	<%}%>
 <%}%>

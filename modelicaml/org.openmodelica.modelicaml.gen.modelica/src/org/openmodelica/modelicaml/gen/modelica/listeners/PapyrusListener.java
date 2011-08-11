@@ -351,7 +351,7 @@ private String project = null;
 					}
 					job.setPriority(Job.BUILD);
 					//job.setUser(true);
-					job.schedule(1000); // wait a second in order to let Papyrus time to same the model.
+					job.schedule(1000); // wait a second in order to let Papyrus time to save the model.
 				}
 			}
 		}

@@ -608,7 +608,7 @@ public class ModelicaMLServices {
 			}
 		}
 		if (lowestCommonAncestor.equals("")) {
-			throw new NullPointerException();
+//			throw new NullPointerException();
 		}
 		return lowestCommonAncestor;
 

@@ -297,8 +297,8 @@ end if;
     <%pseudostateTargetTransitionCode(args(0),args(1).filter("State"))%>
     <%}%>
      <%}else{%>
-     /*start interlevel transition <%args(0)%>*/ 
-     <%if (source.eClass().name == "State" && (target.eClass().name == "State" || target.eClass().name == "FinalState")){%>
+<%--     /*start interlevel transition <%args(0)%>*/ 
+--%>     <%if (source.eClass().name == "State" && (target.eClass().name == "State" || target.eClass().name == "FinalState")){%>
 		<%interLevelTransition(args(0))%>		
 		 <%}else{%>
 <%pseudostateTargetTransitionCode(args(0),args(1).filter("State"))%>
@@ -358,7 +358,8 @@ end if;
 <%deactivateActiveSubstate(args(0))%>
 <%source.container.lowestCommonAncestorExit(args(0),lowestCommonAncestorQualifiedName())%>
 <%target.filter("Pseudostate").getConnectionPointReference(args(1).filter("State").nGet(0)).filter("ConnectionPointReference").exitTargetCode(args(0),source,args(1).filter("State"),Effect)%>
-end if;
+<%-- TODO: this "end if;" seemts to be too much ... test it --%>
+<%--end if;--%>
 <%}%>
 
 <%if (target.filter("Pseudostate")[kind == "choice"]){%>
@@ -775,6 +776,7 @@ end if;
 
 <%script type="uml.Transition" name="interLevelTransition" post="trim()"%>
 <%guardCode(args(0)+"."+source.container.name.replaceSpecChar()+"."+source.name.replaceSpecChar())%> then
+/*start interlevel transition <%args(0)%>*/ 
 <%deactivateActiveSubstate(args(0))%>
 <%if (effect){%>
 <%Effect%>
