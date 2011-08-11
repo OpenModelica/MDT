@@ -144,6 +144,7 @@ public class TestScenariosCollector {
 				// get the list of referenced requirements
 				Object o = ((NamedElement)testCase).getValue(s_ts, Constants.propertyName_usedToVerify);
 				if (o instanceof EList) {
+					@SuppressWarnings("unchecked")
 					EList<EObject> list = (EList<EObject>) o;
 					for (EObject req : list) {
 						Element umlElement = UMLUtil.getBaseElement(req);

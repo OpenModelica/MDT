@@ -39,13 +39,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Package;
+import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 
 public class ValueBindingCreator {
@@ -68,6 +74,13 @@ public class ValueBindingCreator {
 	 * Often it means that a user interaction is necessary in order to select one mediator or provider from multiple choices.  
 	 */
 	private HashSet<TreeObject> allClientsWithPossibleBindingCodeDerivation = new HashSet<TreeObject>();
+	
+	/*
+	 * All clients that have isRequired checked to indicate that they always need a bindings
+	 * even if the default value is set in its declarion.
+	 */
+	private HashSet<TreeObject> allRequiredClientsFound = new HashSet<TreeObject>();
+	
 	
 	/* All providers that were used for deriving the code for all clients found */
 	private HashSet<TreeObject> usedProviders = new HashSet<TreeObject>();
@@ -201,7 +214,24 @@ public class ValueBindingCreator {
 				
 				allClientsFound.add(item);
 				
-				// if code could be derive -> add
+				// add to required clients list
+				if (deriveCodeHelper.getMediatorElement() != null ) {
+					EList<Dependency> clientDep = org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls.
+											getMediatorDependency((NamedElement)deriveCodeHelper.getMediatorElement(), 
+													(NamedElement)deriveCodeHelper.getClientElement(), 
+													Constants.stereotypeQName_ProvidesValueFor);
+					if (clientDep.size() == 1) { // only one dependency is allowed.
+						Dependency dep = (Dependency)clientDep.get(0);
+						Stereotype sProvidesValueFor = dep.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
+						if (sProvidesValueFor != null) {
+							if (dep.getValue(sProvidesValueFor, Constants.propertyName_isRequired) != null) {
+								allRequiredClientsFound.add(item);
+							}
+						}
+					}
+				}
+				
+				// if code could be derive -> add to possible code derivation clients
 				if (code != null ) {
 					allClientsWithPossibleBindingCodeDerivation.add(item);
 				}
@@ -288,5 +318,13 @@ public class ValueBindingCreator {
 
 	public HashMap<TreeObject, String> getUpdatedItemsToNewModification() {
 		return updatedItemsToNewModification;
+	}
+
+	public void setAllRequiredClientsFound(HashSet<TreeObject> allRequiredClientsFound) {
+		this.allRequiredClientsFound = allRequiredClientsFound;
+	}
+
+	public HashSet<TreeObject> getAllRequiredClientsFound() {
+		return allRequiredClientsFound;
 	}
 }

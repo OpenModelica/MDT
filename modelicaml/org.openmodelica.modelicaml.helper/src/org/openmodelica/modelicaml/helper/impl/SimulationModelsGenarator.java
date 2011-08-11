@@ -4,9 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
@@ -14,7 +17,9 @@ import org.eclipse.uml2.uml.PackageableElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
+import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
@@ -77,6 +82,13 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 	public void generate(){
 		
 		if (sourceModels != null) {
+			
+			/*
+			 * TODO: Implement a GUI for selecting the packages were to search for 
+			 * test scenarios, requirements, value mediators and 	
+			 * for selecting the targetPackage to generate the simulation models into.
+			 */
+			
 			// find all test scenarios
 			tsc = new TestScenariosCollector();
 			tsc.collectTestCasesFromPackage((Package) testScenariosPackage, true);
@@ -137,8 +149,8 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 
 	private void createSimulationModels(Element sourceModel){
 		
-		/*TODO: create dialog that lets the user select the found test scenarios and requirements
-		 * and shows which test scenarios are discarded and which requirements are not selected. 
+		/* TODO: Implement a GUI to show the collected and discarded test scenarios and requirements.
+		 * It should enable a selection of test scenarios and requirements (e.g. in 2 separated tabs) to be instantiated. 
 		 */
 		
 		PackageableElement simulationModelsPackage = (
@@ -163,7 +175,7 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 					simulationModel.applyStereotype(s_simulation);
 				}
 				else {
-					String msg = "ERROR: Cannot apply the stereotypes 'Model' and 'Simulation' to the '" 
+					String msg = "ERROR: Cannot apply the stereotype 'Model' and 'Simulation' to '" 
 						+ simulationModel.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
 					addToLog(msg);
 				}
@@ -178,7 +190,7 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 					p_systemModel.applyStereotype(s_component);
 				}
 				else {
-					String msg = "ERROR: Cannot apply the stereotypes 'Component' to the '" 
+					String msg = "ERROR: Cannot apply the stereotype 'Component' to '" 
 						+ p_systemModel.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
 					addToLog(msg);
 				}
@@ -193,7 +205,7 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 					p_testScenario.applyStereotype(s_calProp);
 				}
 				else {
-					String msg = "ERROR: Cannot apply the stereotypes 'CalculatedProperty' to the '" + p_testScenario.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
+					String msg = "ERROR: Cannot apply the stereotype 'CalculatedProperty' to '" + p_testScenario.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
 					addToLog(msg);
 				}
 
@@ -218,19 +230,61 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 									p_req.applyStereotype(s_reqInst);
 								}
 								else {
-									String msg = "ERROR: Cannot apply the stereotypes 'requirementInstantance' to the '" + p_req.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
+									String msg = "ERROR: Cannot apply the stereotype 'requirementInstantance' to '" + p_req.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
 									addToLog(msg);
 								}
 							}
 						}
 					}
 				}
+
+				/*
+				 *  Based on Dependency <<Requires>>, for all test scenarios 
+				 *  and requirements to be instantiated, find models that should be instantiated in addition.
+				 */
 				
-				// instantiate the class
+				// instantiate the created simulation model class (it is not complete yet!)
+				ClassInstantiation ciTemp = new ClassInstantiation((Class) simulationModel, true);
+				ciTemp.createTree();
+				
+				HashSet<Element> addtionalModels = getAdditionalModels(sourceModels, 
+						testScenariosToBeInstantiated, 
+						requirementsToBeInstantiated,
+						ciTemp);
+				
+				for (Element additionalModel : addtionalModels) {
+					
+					// create property
+					Property p_additionalModel = simulationModel.createOwnedAttribute(
+							Constants.additionalModelPrefix 
+							+ StringUtls.replaceSpecChar(((NamedElement)additionalModel).getName().toLowerCase()), 
+							(Type)additionalModel);
+					
+					// apply stereotype
+					Stereotype s_componentForAdditionalComponent = null;
+					if (additionalModel.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null
+							|| additionalModel.getAppliedStereotype(Constants.stereotypeQName_TestScenario) != null) {
+						s_componentForAdditionalComponent = p_systemModel.getApplicableStereotype(Constants.stereotypeQName_CalculatedProperty);	
+					}
+					else {
+						s_componentForAdditionalComponent = p_systemModel.getApplicableStereotype(Constants.stereotypeQName_Component);
+					}
+					if (s_componentForAdditionalComponent != null) {
+						p_additionalModel.applyStereotype(s_componentForAdditionalComponent);
+					}
+					else {
+						String msg = "ERROR: Cannot apply the required stereotype to '" 
+							+ p_additionalModel.getQualifiedName() + "'. Check if the ModelicaML profile is applied.";
+						addToLog(msg);
+					}
+				}
+				
+				
+				// instantiate the created simulation model class
 				ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true);
 				ci.createTree();
 				
-				// update bindings
+				// update bindings in the created simulation model class
 				ValueBindingCreator vbc = new ValueBindingCreator();
 				/* Note, the updateAllBindings() is called with the last argument simulateOnly = false  
 				 * so that modifications are created in components.
@@ -240,7 +294,52 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		}
 	}
 	
-
+	
+	@SuppressWarnings("rawtypes")
+	private HashSet<Element> getAdditionalModels(
+			HashSet<Element> sourceModels, 
+			HashSet<Element> testScenariosToBeInstantiated, 
+			HashSet<Element> requirementsToBeInstantiated,
+			ClassInstantiation ciTemp){
+		
+		HashSet<Element> listOfAdditionalModels = new HashSet<Element>();
+		
+//		// all models that were selected: system models, test scenarios and requirements
+//		HashSet<Element> allCollectedModels = new HashSet<Element>();
+//		allCollectedModels.addAll(sourceModels);
+//		allCollectedModels.addAll(testScenariosToBeInstantiated);
+//		allCollectedModels.addAll(requirementsToBeInstantiated);
+		
+		// all models that will be instantiated: system models, test scenarios and requirements
+		HashSet<Element> allModelsInInstantiationTree = new HashSet<Element>();
+		allModelsInInstantiationTree.addAll(getAllTreeItemsClasses(ciTemp.getTreeRoot()));
+		
+		for (Element element : allModelsInInstantiationTree) {
+			if (element instanceof NamedElement) {
+				for (Element dep : ((NamedElement)element).getClientDependencies()) {
+					Stereotype s = dep.getAppliedStereotype(Constants.stereotypeQName_Requires);
+					if (s != null) {
+						Object list = dep.getValue(s, Constants.propertyName_onlyIncombinationWith);
+						if ( list instanceof EList && ((EList)list).size() > 0) { // check restriction
+							for (Object referencedModel : (EList<?>)list) {
+								Element referencedModelElement = UMLUtil.getBaseElement((EObject) referencedModel);
+								if (referencedModelElement instanceof Element 
+										&& allModelsInInstantiationTree.contains(referencedModelElement) ) {
+									// add the dependency target to the models that should be instantiated in addition
+									listOfAdditionalModels.add( ((Dependency)dep).getTargets().get(0) );
+								}
+							}
+						}
+						else { // no restriction -> add the dependency target to the list. 
+							listOfAdditionalModels.add( ((Dependency)dep).getTargets().get(0) );
+						}
+					}
+				}
+			}
+		}
+		return listOfAdditionalModels;
+	}
+	
 	private void findTestSenariosAndRequirementsToBeInstantiated(ClassInstantiation ciSourceModel, Class testScenario){
 		// add system model to the simulated instantiation of the 
 		TreeParent simulatedInstantiationTreeRoot = new TreeParent("Simulated Instantiation", null, null, "", false, true, null, null, true);
@@ -262,8 +361,9 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		 */
 		vbc.updateAllBindings((Package)valueBindingsPackage, ciSourceModel.getTreeRoot(), simulatedInstantiationTreeRoot, false, true, false, true);
 
-		/* If there is at least one client that uses one of the test scenario providers -> go for requirements
-		 * else stop here -> this test scenario can not be used to stimulate this system model.
+		/* If there is at least one client that uses one of the test scenario providers
+		 * and all test scenario required clients are satisfied by the system model -> search for associated requirements
+		 * else stop here -> this test scenario is not appropriate to be used to stimulate this system model.
 		 */
 		
 		/* NOTE: Checking if test scenario clients are all satisfied by the system model
@@ -272,9 +372,12 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		 * one design alternative and are not satisfied by another design alternative. 
 		 */
 		
-		//TODO: Check if all required clients are satisfied! 
+		// TODO: Test it the code below to replace the next if condition ...
+//		if (treeContainsOneOf(vbc.getUsedProviders(), ciTestScenario.getTreeRoot())
+//				&& vbc.getAllRequiredClientsFound().size() > 0 
+//				&& vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllRequiredClientsFound())) {
 		
-		if (treeContainsOneOf(vbc.getUsedProviders(), ciTestScenario.getTreeRoot())) {
+		if ( treeContainsOneOf(vbc.getUsedProviders(), ciTestScenario.getTreeRoot()) ) {
 //			System.err.println( "selected test scenario: " + ((NamedElement)testScenario).getName());
 			
 			// create a new simulated instantiation
@@ -296,9 +399,15 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 				vbc.updateAllBindings((Package)valueBindingsPackage, ciReq.getTreeRoot(), 
 						simulatedInstantiationTreeRoot_reqAndSystemModel, false, true, false, true);
 				
-				// if it was possible to derive code for all clients of this requirement using the system model providers
+				// if it was possible to derive code for all (required) clients of this requirement using the system model providers
 				if (vbc.getAllClientsFound().size() > 0 
 						&& vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllClientsFound())) {
+					// add to req.list to be instantiated
+					requirementsToBeInstantiated.add(requirement);
+//					System.err.println("selected req.: " + ((NamedElement)requirement).getName());
+				}
+				else if (vbc.getAllRequiredClientsFound().size() > 0 
+						&& vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllRequiredClientsFound())) {
 					// add to req.list to be instantiated
 					requirementsToBeInstantiated.add(requirement);
 //					System.err.println("selected req.: " + ((NamedElement)requirement).getName());
@@ -376,6 +485,22 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		
 		return allTreeItems;
 	}
+	
+	private HashSet<Element> getAllTreeItemsClasses(TreeParent treeParent){
+		HashSet<Element> allTreeItems = new HashSet<Element>();
+		
+		TreeObject[] children = treeParent.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getUmlElement() instanceof TypedElement && ((TypedElement)children[i].getUmlElement()).getType() instanceof Classifier) {
+				allTreeItems.add(((TypedElement)children[i].getUmlElement()).getType());
+			}
+			if (children[i] instanceof TreeParent) {
+				allTreeItems.addAll(getAllTreeItemsClasses((TreeParent)children[i]));
+			}
+		}
+		return allTreeItems;
+	}
+	
 	
 	private boolean treeContainsOneOf(HashSet<TreeObject> treeItems, TreeParent treeParent){
 		HashSet<TreeObject> allTreeItems = getAllTreeItems(treeParent);
