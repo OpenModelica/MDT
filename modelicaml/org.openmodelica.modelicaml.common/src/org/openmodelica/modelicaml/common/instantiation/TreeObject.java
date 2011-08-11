@@ -645,6 +645,20 @@ public class TreeObject implements IAdaptable {
 	}
 
 
-
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof TreeObject) {
+			TreeObject item = (TreeObject) obj;
+			if (item.getDotPath().equals(this.getDotPath())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.getDotPath().hashCode();
+	}
 	
 }

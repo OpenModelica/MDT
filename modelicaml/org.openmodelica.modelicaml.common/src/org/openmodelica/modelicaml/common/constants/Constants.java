@@ -59,8 +59,8 @@ public class Constants {
 
 	public static final String stereotypeQName_Simulation 		= "ModelicaML::ModelicaSimulationConstructs::Simulation";
 	
-	public static final String stereotypeQName_TestScenario 		= "ModelicaML::TestDefinition::TestScenario";
-	public static final String propertyName_usedToVerify 			= "usedToVerify";
+	public static final String stereotypeQName_TestScenario 	= "ModelicaML::TestDefinition::TestScenario";
+	public static final String propertyName_usedToVerify 		= "usedToVerify";
 
 	public static final String stereotypeQName_TestSuite 		= "ModelicaML::TestDefinition::TestSuite";
 	public static final String propertyName_includes 		= "includes";
@@ -72,8 +72,8 @@ public class Constants {
 	public static final String stereotypeQName_Variable 		= "ModelicaML::ModelicaCompositeConstructs::Variable";
 	public static final String stereotypeQName_FunctionArgument = "ModelicaML::ModelicaCompositeConstructs::FunctionArgument";
 	public static final String stereotypeQName_RequirementInstance 		= "ModelicaML::ModelicaRequirementConstructs::RequirementInstance";
-	public static final String stereotypeQName_Component = "ModelicaML::ModelicaCompositeConstructs::Component";
-	public static final String stereotypeQName_ConnectionPort = "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
+	public static final String stereotypeQName_Component 		= "ModelicaML::ModelicaCompositeConstructs::Component";
+	public static final String stereotypeQName_ConnectionPort 	= "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
 	public static final String stereotypeQName_CalculatedProperty = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
 	
 
@@ -124,6 +124,10 @@ public class Constants {
 	public static final int MODE_ADD_PROVIDER 				= 2;
 	
 	
+	// primarily used by test models generation plugin
+	public static final String stereotypeQName_Requires 			= "ModelicaML::TestDefinition::Requires";
+	public static final String propertyName_onlyIncombinationWith	= "onlyInCombinationWith";
+	
 	// used by components tree plugin
 	public static final String inputsComponentName 			= "_inputs";
 	public static final String inputsClassName 				= "_Inputs";
@@ -153,6 +157,7 @@ public class Constants {
 	public final static String simModelsPackageNamePrefix = "GenSimModels for: ";
 	public final static String simModelsNamePrefix = "SiM for: ";
 	public final static String systemModelPropertyNamePrefix = "systemModel_";
+	public final static String additionalModelPrefix = "add_";
 	public final static String testScenarioPropertyNamePrefix = "ts_";
 	public final static String reqirementPropertyNamePrefix = "req_";
 	
