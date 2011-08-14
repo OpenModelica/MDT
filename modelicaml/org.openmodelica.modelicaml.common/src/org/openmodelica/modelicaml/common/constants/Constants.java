@@ -60,6 +60,7 @@ public class Constants {
 	public static final String stereotypeQName_Simulation 		= "ModelicaML::ModelicaSimulationConstructs::Simulation";
 	
 	public static final String stereotypeQName_TestScenario 	= "ModelicaML::TestDefinition::TestScenario";
+	public static final String stereotypeQName_Test 			= "ModelicaML::TestDefinition::Test";
 	public static final String propertyName_usedToVerify 		= "usedToVerify";
 
 	public static final String stereotypeQName_TestSuite 		= "ModelicaML::TestDefinition::TestSuite";
@@ -152,6 +153,11 @@ public class Constants {
 	public static final String MACRO_min 					= "min";
 	public static final String MACRO_max 					= "max";
 	
+	
+	public final static String propertyName_startTime = "startTime";
+	public final static String propertyName_stopTime = "stopTime";
+	public final static String propertyName_numberOfIntervals = "numberOfIntervals";
+	public final static String propertyName_tolerance = "tolerance";
 	
 	// simulation model generation
 	public final static String simModelsPackageNamePrefix = "GenSimModels for: ";
