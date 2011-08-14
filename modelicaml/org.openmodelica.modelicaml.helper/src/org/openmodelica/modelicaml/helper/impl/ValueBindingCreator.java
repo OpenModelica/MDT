@@ -52,6 +52,7 @@ import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
+import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 
 public class ValueBindingCreator {
@@ -226,6 +227,13 @@ public class ValueBindingCreator {
 						if (sProvidesValueFor != null) {
 							if (dep.getValue(sProvidesValueFor, Constants.propertyName_isRequired) != null) {
 								allRequiredClientsFound.add(item);
+								
+								if (code == null) {
+									// Generate marker 
+									String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
+									ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+									ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+								}
 							}
 						}
 					}
@@ -235,9 +243,14 @@ public class ValueBindingCreator {
 				if (code != null ) {
 					allClientsWithPossibleBindingCodeDerivation.add(item);
 				}
-				// if no code could be derived because a user interaction is required -> add
+				// if NO code could be derived because a user interaction is required -> add to "possible" and generate a marker
 				else if (code == null && deriveCodeHelper.isUserSelectionRequired()) {
 					allClientsWithPossibleBindingCodeDerivation.add(item);
+
+					// Generate marker 
+					String message = "No binding code could be automatically generated for '"+ item.getDotPath() + "'. User decision is require."; 
+					ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+					ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
 				}
 				
 				// collect the providers used

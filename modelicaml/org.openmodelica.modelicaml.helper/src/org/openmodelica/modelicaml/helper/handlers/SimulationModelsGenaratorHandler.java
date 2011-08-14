@@ -112,7 +112,7 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 			Boolean go = MessageDialog.openQuestion(new Shell(), "Please confirm ...", "This helper will create a package " +
 					"that will contain miltiple simulation models each including one test scenario and all requirements "+ 
 					"that can be tested using this test scenario and the selected system model." +
-					"\n\nNote, only simulation models that have test scenarios and requirements with appropriate value bindings will be generated." +
+					"\n\nNote, only simulation models that have test scenarios and requirements with appropriate value bindings will be collected." +
 					"\n\n" +
 					
 					"   - Selected system model: '" + ((Class)selectedElement).getName() + "'\n" + 
@@ -137,6 +137,9 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 					// execute 
 					editingDomain.getCommandStack().execute(getCommand(editingDomain));
 					
+					
+					// OBSOLETE: this is solved by a "Log" button in the GUI for selecting the test scenarios and requirements.
+					
 					/* TODO: prepare a better generation results overview for 
 					 * which simulation models were created 
 					 * which requirements were discarded 
@@ -144,22 +147,22 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 					 * which test scenarios are discarded
 					 */
 					
-					// Simple results overview
-					if ( !smg.getLog().trim().equals("") ) {
-						String infoText = "Simulation Models Generation:";
-						String msg = "";
-						msg = msg + "Number of created simulation models for '" + ((NamedElement)selectedElement).getName() 
-										+ "' : " + smg.getTestScenariosToBeInstantiated().size() + "\n";
-						msg = msg + "Number of discarded test scenarios: " + smg.getTestScenariosDiscarded().size() + "\n";
-						msg = msg + "Number requirements that are instantiated: " + smg.getRequirementsToBeInstantiated().size() + "\n";
-						msg = msg + "Number of discarded requirements: " + smg.getRequirementsDiscarded().size() + "\n";
-						
-						msg = msg + "\n   *** Generation log messages ***";
-						msg = msg + smg.getLog();
-						// show translation messages
-						DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, msg);
-						dialog.open();
-					}
+//					// Simple results overview
+//					if ( !smg.isCanceled() && !smg.getLog().trim().equals("") ) {
+//						String infoText = "Simulation Models Generation:";
+//						String msg = "";
+//						msg = msg + "Number of created simulation models for '" + ((NamedElement)selectedElement).getName() 
+//										+ "' : " + smg.getTestScenariosToBeInstantiated().size() + "\n";
+//						msg = msg + "Number of discarded test scenarios: " + smg.getTestScenariosDiscarded().size() + "\n";
+//						msg = msg + "Number requirements that are instantiated: " + smg.getRequirementsToBeInstantiated().size() + "\n";
+//						msg = msg + "Number of discarded requirements: " + smg.getRequirementsDiscarded().size() + "\n";
+//						
+//						msg = msg + "\n   *** Generation log messages ***";
+//						msg = msg + smg.getLog();
+//						// show translation messages
+//						DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, msg);
+//						dialog.open();
+//					}
 
 				} catch (ServiceException e) {
 					// TODO Auto-generated catch block
