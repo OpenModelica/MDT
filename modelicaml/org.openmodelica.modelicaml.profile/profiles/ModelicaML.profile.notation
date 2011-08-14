@@ -1365,16 +1365,6 @@
       <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_2zYaEMQYEeC6UZUtnVcSgg" id="(0.5895953757225434,0.22)"/>
       <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_2zYaEcQYEeC6UZUtnVcSgg" id="(0.4,0.19)"/>
     </edges>
-    <edges xmi:type="notation:Connector" xmi:id="_F7N74MQZEeC6UZUtnVcSgg" type="4002" source="_FLFfcMQZEeC6UZUtnVcSgg" target="_2IwvwMQYEeC6UZUtnVcSgg" lineColor="0">
-      <children xmi:type="notation:DecorationNode" xmi:id="_F7N748QZEeC6UZUtnVcSgg" type="6007">
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_F7N75MQZEeC6UZUtnVcSgg" y="60"/>
-      </children>
-      <styles xmi:type="notation:FontStyle" xmi:id="_F7N74cQZEeC6UZUtnVcSgg" fontHeight="8"/>
-      <element xmi:type="uml:Generalization" href="ModelicaML.profile.uml#_F7Ex8MQZEeC6UZUtnVcSgg"/>
-      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_F7N74sQZEeC6UZUtnVcSgg" points="[-22, 7, 116, 0]$[-119, -11, 19, -18]"/>
-      <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_F7Xs4MQZEeC6UZUtnVcSgg" id="(0.22,0.17)"/>
-      <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_F7Xs4cQZEeC6UZUtnVcSgg" id="(0.81,0.21)"/>
-    </edges>
   </notation:Diagram>
   <notation:Diagram xmi:id="_Ch0o4H-WEeC-I9oqZ53S4w" type="PapyrusUMLProfileDiagram" name="Import Relation" measurementUnit="Pixel">
     <children xmi:type="notation:Shape" xmi:id="_ESn4IH-WEeC-I9oqZ53S4w" type="1031" fontHeight="8" lineColor="0">
