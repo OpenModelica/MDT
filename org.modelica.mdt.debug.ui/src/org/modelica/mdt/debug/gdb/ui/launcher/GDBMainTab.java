@@ -30,6 +30,8 @@
  */
 package org.modelica.mdt.debug.gdb.ui.launcher;
 
+import java.awt.Checkbox;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -46,6 +48,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -73,6 +76,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 	private Text fGDBPathTextBox;
 	private Button fGDBWorkspaceBrowseButton;
 	private Button fGDBFileSystemBrowseButton;
+	private Button fDebugCSourceCheckBox;
 	private Text fProgramArguments;
 	
 	/* (non-Javadoc)
@@ -88,17 +92,15 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(compLayout);
 		comp.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		comp.setFont(font);
-		createVerticalSpacer(comp, 4);
 		
 		Composite top = new Composite(comp, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
-		topLayout.verticalSpacing   = 0;
+		topLayout.verticalSpacing = 0;
 		topLayout.horizontalSpacing = 2;		
 		topLayout.numColumns = 4;
 		top.setLayout(topLayout);
 		top.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		top.setFont(font);
-		createVerticalSpacer(top, 4);
 		
 		Label programLabel = new Label(top, SWT.NONE);
 		programLabel.setText("&Program:");
@@ -116,7 +118,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fProgramWorkspaceBrowseButton = createPushButton(top, "&Workspace...", null); //$NON-NLS-1$
+		fProgramWorkspaceBrowseButton = createPushButton(top, "&Workspace...", null);
 		fProgramWorkspaceBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String result = browseWorkspaceEXEFiles();
@@ -125,7 +127,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fProgramFileSystemBrowseButton = createPushButton(top, "&File System...", null); //$NON-NLS-1$
+		fProgramFileSystemBrowseButton = createPushButton(top, "&File System...", null);
 		fProgramFileSystemBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String result = browseFileSystemEXEFiles();
@@ -150,7 +152,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkDirectoryWorkspaceBrowseButton = createPushButton(top, "&Workspace...", null); //$NON-NLS-1$
+		fWorkDirectoryWorkspaceBrowseButton = createPushButton(top, "&Workspace...", null);
 		fWorkDirectoryWorkspaceBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String result = browseWorkspaceDirectory();
@@ -159,7 +161,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkDirectoryFileSystemBrowseButton = createPushButton(top, "&File System...", null); //$NON-NLS-1$
+		fWorkDirectoryFileSystemBrowseButton = createPushButton(top, "&File System...", null);
 		fWorkDirectoryFileSystemBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String result = browseFileSystemDirectory();
@@ -169,7 +171,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 		});
 		
 		Label gdbLabel = new Label(top, SWT.NONE);
-		gdbLabel.setText("&GDB Path:");
+		gdbLabel.setText("&GDB path:");
 		gd = new GridData(GridData.BEGINNING);
 		gdbLabel.setLayoutData(gd);
 		gdbLabel.setFont(font);
@@ -185,7 +187,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fGDBWorkspaceBrowseButton = createPushButton(top, "&Workspace...", null); //$NON-NLS-1$
+		fGDBWorkspaceBrowseButton = createPushButton(top, "&Workspace...", null);
 		fGDBWorkspaceBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String result = browseWorkspaceEXEFiles();
@@ -194,7 +196,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fGDBFileSystemBrowseButton = createPushButton(top, "&File System...", null); //$NON-NLS-1$
+		fGDBFileSystemBrowseButton = createPushButton(top, "&File System...", null);
 		fGDBFileSystemBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String result = browseFileSystemEXEFiles();
@@ -203,7 +205,26 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-
+		createSeparator(comp, 1);
+		Composite middle = new Composite(comp, SWT.NONE);
+		GridLayout middleLayout = new GridLayout(1, false);
+		middleLayout.verticalSpacing = 0;
+		middleLayout.horizontalSpacing = 2;
+		middle.setLayout(middleLayout);
+		middle.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		middle.setFont(font);
+		fDebugCSourceCheckBox = createCheckButton(middle, "Debug C source files");
+		fDebugCSourceCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				updateLaunchConfigurationDialog();
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
 		createSeparator(comp, 1);
 				
 		Composite bottom = new Composite(comp, SWT.NONE);
@@ -211,7 +232,6 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 		bottom.setLayout(bottomLayout);
 		bottom.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		bottom.setFont(font);
-		createVerticalSpacer(bottom, 3);
 		
 		Label programArgumentsLabel = new Label(bottom, SWT.NONE);
 		gd = new GridData(GridData.BEGINNING);				
@@ -219,8 +239,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 		programArgumentsLabel.setLayoutData(gd);
 		programArgumentsLabel.setFont(font);
 
-		gd = new GridData(GridData.FILL, GridData.FILL, true, true);	
-		gd.grabExcessVerticalSpace = true;
+		gd = new GridData(GridData.FILL, GridData.FILL, true, true);
 		fProgramArguments = new Text(bottom, SWT.MULTI | SWT.BORDER);
 		fProgramArguments.setLayoutData(gd);
 		fProgramArguments.setFont(font);
@@ -333,6 +352,12 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			if (gdbPath != null) {
 				fGDBPathTextBox.setText(gdbPath);
 			}
+			String debugCSource = configuration.getAttribute(IMDTConstants.ATTR_MDT_DEBUG_C_SOURCE,  "false");
+			if (debugCSource.equals("true")) {
+				fDebugCSourceCheckBox.setSelection(true);
+			} else {
+				fDebugCSourceCheckBox.setSelection(false);
+			}
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
 		}
@@ -371,6 +396,14 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			gdbPath = null;
 		}
 		configuration.setAttribute(IMDTConstants.ATTR_MDT_GDB_PATH, gdbPath);
+		
+		String debugCSource;
+		if (fDebugCSourceCheckBox.getSelection()) {
+			debugCSource = "true";
+		} else {
+			debugCSource = "false";
+		}
+		configuration.setAttribute(IMDTConstants.ATTR_MDT_DEBUG_C_SOURCE, debugCSource);
 	}
 
 	/* (non-Javadoc)

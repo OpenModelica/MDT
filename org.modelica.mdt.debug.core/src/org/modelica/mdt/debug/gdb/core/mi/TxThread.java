@@ -55,7 +55,6 @@ public class TxThread extends Thread {
 	}
 	public void run () {
 		try {
-
 			// signal by the session of time to die.
 			OutputStream out;
 			while ((out = session.getChannelOutputStream()) != null) {
@@ -84,7 +83,6 @@ public class TxThread extends Thread {
 								cmd.notifyAll();
 							}
 						}
-					
 						// shove in the pipe
 						if (out != null) {
 							out.write(str.getBytes());

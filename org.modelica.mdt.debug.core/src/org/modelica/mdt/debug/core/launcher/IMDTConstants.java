@@ -18,4 +18,5 @@ public interface IMDTConstants
 	
 	public static final String ATTR_MDT_WORK_DIRECTORY = ID_MDT_DEBUG_MODEL + ".ATTR_MDT_WORK_DIRECTORY";
 	public static final String ATTR_MDT_GDB_PATH = ID_MDT_DEBUG_MODEL + ".ATTR_MDT_GDB_PATH";
+	public static final String ATTR_MDT_DEBUG_C_SOURCE = ID_MDT_DEBUG_MODEL + ".ATTR_MDT_DEBUG_C_SOURCE";
 }

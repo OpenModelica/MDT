@@ -115,6 +115,7 @@ import java.util.StringTokenizer;
 public class MIParser {
 	
 	public String primaryPrompt = "(gdb)";
+	public String cliPrompt = primaryPrompt;
 	public String secondaryPrompt = ">";
 
 	/**

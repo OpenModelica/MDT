@@ -14,7 +14,7 @@ import org.osgi.framework.BundleContext;
 public class MDTDebugCorePlugin extends Plugin 
 {
 
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 	
 	// The shared instance.
 	private static MDTDebugCorePlugin plugin;

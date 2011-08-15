@@ -15,5 +15,14 @@ Export-Package: org.modelica.mdt.debug.core,
  org.modelica.mdt.debug.core.breakpoints,
  org.modelica.mdt.debug.core.launcher,
  org.modelica.mdt.debug.core.model,
- org.modelica.mdt.debug.core.sourcelookup
+ org.modelica.mdt.debug.core.sourcelookup,
+ org.modelica.mdt.debug.gdb.core,
+ org.modelica.mdt.debug.gdb.core.launcher,
+ org.modelica.mdt.debug.gdb.core.mi,
+ org.modelica.mdt.debug.gdb.core.mi.command,
+ org.modelica.mdt.debug.gdb.core.mi.event,
+ org.modelica.mdt.debug.gdb.core.mi.output,
+ org.modelica.mdt.debug.gdb.core.mi.pty,
+ org.modelica.mdt.debug.gdb.core.model,
+ org.modelica.mdt.debug.gdb.core.sourcelookup
 Eclipse-LazyStart: true

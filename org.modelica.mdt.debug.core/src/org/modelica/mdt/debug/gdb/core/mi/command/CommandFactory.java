@@ -70,7 +70,7 @@ public class CommandFactory {
 		// TODO Auto-generated method stub
 		// return null here to signal that we do not support
 		// -exec-interrupt and to use to drop a signal to gdb
-		// instead via the MIProcess class
+		// instead via the MISession class
 		return null;
 	}
 
@@ -90,13 +90,30 @@ public class CommandFactory {
 		return new CLIInfoProgram();
 	}
 
-	/**
-	 * @param strings
-	 * @return
-	 */
 	public MIExecRun createMIExecRun(String[] args) {
 		// TODO Auto-generated method stub
 		return new MIExecRun(args);
+	}
+	
+	public MIExecContinue createMIExecContinue() {
+		// TODO Auto-generated method stub
+		return new MIExecContinue();
+	}
+	
+	/**
+	 * @return
+	 */
+	public MIExecNext createMIExecNext() {
+		// TODO Auto-generated method stub
+		return new MIExecNext();
+	}
+	
+	/**
+	 * @return
+	 */
+	public MIExecStep createMIExecStep() {
+		// TODO Auto-generated method stub
+		return new MIExecStep();
 	}
 	
 	public MIBreakInsert createMIBreakInsert(String line) {
@@ -107,4 +124,105 @@ public class CommandFactory {
 			 String condition, int ignoreCount, String line, int tid) {
 		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line, tid);
 	}
+	
+	/**
+	 * @param breakPointNumbers
+	 * @return
+	 */
+	public MIBreakDelete createMIBreakDelete(int[] breakPointNumbers) {
+		// TODO Auto-generated method stub
+		return new MIBreakDelete(breakPointNumbers);
+	}
+	
+	public MIStackInfoFrame createMIStackInfoFrame() {
+		return new MIStackInfoFrame();
+	}
+	
+	public MIStackListFrames createMIStackListFrames() {
+		return new MIStackListFrames();
+	}
+
+	public MIStackListFrames createMIStackListFrames(int lowFrame, int highFrame) {
+		return new MIStackListFrames(lowFrame, highFrame);
+	}
+	
+	/**
+	 * @param showValues
+	 * @return
+	 */
+	public MIStackListVariables createMIStackListVariables(String[] params) {
+		// TODO Auto-generated method stub
+		return new MIStackListVariables(params);
+	}
+	
+	public MIDataEvaluateExpression createMIDataEvaluateExpression(String expression) {
+		return new MIDataEvaluateExpression(expression);
+	}
+
+	public MIDataEvaluateExpression createMIGetTypeOfAny(String expression) {
+		return new MIDataEvaluateExpression("(char*)getTypeOfAny(" + expression + ")");
+	}
+	
+	/**
+	 * @param variableName
+	 * @return
+	 */
+	public MIDataEvaluateExpression createMIAnyString(String variableName) {
+		// TODO Auto-generated method stub
+		return new MIDataEvaluateExpression("(char*)anyString(" + variableName + ")");
+	}
+
+	/**
+	 * @return MIStackInfoDepth
+	 * 
+	 */
+	public MIStackInfoDepth createMIStackInfoDepth() {
+		// TODO Auto-generated method stub
+		return new MIStackInfoDepth();
+	}
+
+	/**
+	 * @param fName
+	 * @return
+	 */
+	public CLIPType createCLIPType(String variableName) {
+		// TODO Auto-generated method stub
+		return new CLIPType(variableName);
+	}
+
+	/**
+	 * @param fName
+	 * @return
+	 */
+	public CLIWhatis createCLIWhatis(String variableName) {
+		// TODO Auto-generated method stub
+		return new CLIWhatis(variableName);
+	}
+
+	/**
+	 * @param strings
+	 * @return
+	 */
+	public MIGDBSet createMIGDBSet(String[] strings) {
+		// TODO Auto-generated method stub
+		return new MIGDBSet(strings);
+	}
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	public MIInterpreterExecConsole createMIInterpreterExecConsole(String cmd) {
+		// TODO Auto-generated method stub
+		return new MIInterpreterExecConsole(cmd);
+	}
+
+	/**
+	 * @return
+	 */
+	public MIGDBShowPrompt createMIGDBShowPrompt() {
+		// TODO Auto-generated method stub
+		return new MIGDBShowPrompt();
+	}
+	
 }

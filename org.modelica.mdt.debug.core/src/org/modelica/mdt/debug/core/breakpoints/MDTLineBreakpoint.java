@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
@@ -19,18 +18,18 @@ import org.modelica.mdt.debug.core.model.IMDTEventListener;
 import org.modelica.mdt.debug.core.model.MDTDebugTarget;
 import org.modelica.mdt.debug.core.model.MDTThread;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.MISession;
+import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDelete;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakInsert;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
-import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
-import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
-import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakInsertInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakpoint;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 import org.modelica.mdt.debug.gdb.core.model.GDBThread;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IThread;
 
@@ -44,6 +43,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 	private MDTDebugTarget fTarget;
 	// GDB Debug Target
 	private GDBDebugTarget fGDBTarget;
+	private int fBreakPointNumber;
 	
 	/**
 	 * Default constructor is required for the breakpoint manager
@@ -124,13 +124,20 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
     	getGDBDebugTarget().getMISession().addObserver(this);
     	// insert the break point in gdb now.
     	String lineBreakpoint = getMarker().getResource().getName() + ":" + getLineNumber();
-	    MIBreakInsert breakInsertCommand = getGDBDebugTarget().getMISession().getCommandFactory().createMIBreakInsert(lineBreakpoint);
-	    getGDBDebugTarget().getMISession().postCommand(breakInsertCommand);
-	    MIBreakInsertInfo info = breakInsertCommand.getMIBreakInsertInfo();
-		if (info == null) {
+	    MIBreakInsert breakInsertCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIBreakInsert(lineBreakpoint);
+	    getGDBDebugTarget().getMISession().postCommand(breakInsertCmd);
+	    MIBreakInsertInfo breakInsertinfo = breakInsertCmd.getMIBreakInsertInfo();
+		if (breakInsertinfo == null) {
 			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-					MDTDebugCorePlugin.getResourceString("GDB.Breakpoint.No_answer"), null));
+				MDTDebugCorePlugin.getResourceString("MDTLineBreakpoint.removeBreakPoint.BreakInsert.NoAnswer"), null));
 		}
+		// get the breakpoint number
+		if (breakInsertinfo.getMIBreakpoints().length > 0) {
+			// we only read the zero index result since -break-insert filename:linenumber only add one breakpoint
+			MIBreakpoint breakPoint = breakInsertinfo.getMIBreakpoints()[0]; 
+			setBreakPointNumber(breakPoint.getNumber());
+		}
+		breakInsertinfo.getMIBreakpoints();
     }
     
     /**
@@ -162,19 +169,42 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
     }
     
     /**
-     * Removes this breakpoint from the given interprettor.
+     * Removes this breakpoint from the given interpreter.
      * Removes this breakpoint as an event listener and clears
-     * the request for the interprettor.
+     * the request for the interpreter.
      * 
-     * @param target MDT interprettor
+     * @param target MDT interpreter
      * @throws CoreException if removal fails
      */
     public void remove(MDTDebugTarget target) throws CoreException {
     	target.removeEventListener(this);
     	clearRequest(target);
     	fTarget = null;
-    	
     }
+    
+    /**
+     * 
+     * Removes the breakpoint in gdb.
+     * Unregisters this breakpoint as an observer of MISession. 
+     * Sends the -break-delete command to gdb.
+     * 
+	 * @param gdbDebugTarget
+     * @throws MIException 
+     * @throws CoreException 
+	 */
+	public void removeBreakpoint(GDBDebugTarget gdbDebugTarget) throws MIException, CoreException {
+		// TODO Auto-generated method stub
+		MISession miSession = getGDBDebugTarget().getMISession();
+		miSession.deleteObserver(this);
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakDelete breakDeleteCmd = factory.createMIBreakDelete(new int[]{getBreakPointNumber()});
+		miSession.postCommand(breakDeleteCmd);
+		if (breakDeleteCmd.getMIInfo() == null) {
+			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+				MDTDebugCorePlugin.getResourceString("MDTLineBreakpoint.removeBreakPoint.BreakDelete.NoAnswer"), null));
+		}
+		fGDBTarget = null;
+	}
     
     /**
      * Returns the target this breakpoint is installed in or <code>null</code>.
@@ -211,7 +241,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
     }
     
     /**
-     * Notify's the MDT interprettor that this breakpoint has been hit.
+     * Notify's the MDT interpretor that this breakpoint has been hit.
      */
     protected void notifyGDBThread() {
     	if (fGDBTarget != null) {
@@ -222,7 +252,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 	    			thread.suspendedBy(this);
 	    		}
 			} catch (DebugException e) {
-			}    		
+			}
     	}
     }
 
@@ -272,14 +302,9 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		// TODO Auto-generated method stub
 		MIEvent miEvent = (MIEvent)event;
 
-		try {
-			if (miEvent instanceof MIBreakpointHitEvent) {
-				getGDBDebugTarget().suspend();
-				handleBreakpointHit((MIBreakpointHitEvent)event);
-			}
-		} catch (DebugException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (miEvent instanceof MIBreakpointHitEvent) {
+			//getGDBDebugTarget().suspend();
+			handleBreakpointHit((MIBreakpointHitEvent)event);
 		}
 	}
 
@@ -299,4 +324,18 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		} catch (CoreException e) {
 		}
 	}
+
+	/**
+	 * @param fBreakPointNumber the fBreakPointNumber to set
+	 */
+	public void setBreakPointNumber(int fBreakPointNumber) {
+		this.fBreakPointNumber = fBreakPointNumber;
+	}
+
+	/**
+	 * @return the fBreakPointNumber
+	 */
+	public int getBreakPointNumber() {
+		return fBreakPointNumber;
+	}	
 }

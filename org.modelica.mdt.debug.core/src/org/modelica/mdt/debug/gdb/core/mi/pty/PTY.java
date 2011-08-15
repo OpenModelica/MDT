@@ -109,7 +109,7 @@ public class PTY {
 		}
 
 		if (slave == null) {
-			throw new IOException(MDTDebugCorePlugin.getResourceString("src.PTY.cannotCreatePty"));
+			throw new IOException(MDTDebugCorePlugin.getResourceString("PTY.cannotCreatePty"));
 		}
 		
 		in = new PTYInputStream(new MasterFD());
@@ -160,7 +160,7 @@ public class PTY {
 		} catch (UnsatisfiedLinkError ule) {
 			if (!setTerminalSizeErrorAlreadyLogged) {
 				setTerminalSizeErrorAlreadyLogged = true;
-				System.out.println(MDTDebugCorePlugin.getResourceString("src.PTY.cannotSetTerminalSize"));
+				System.out.println(MDTDebugCorePlugin.getResourceString("PTY.setTerminalSize.cannotSetTerminalSize"));
 			}
 		}
 	}

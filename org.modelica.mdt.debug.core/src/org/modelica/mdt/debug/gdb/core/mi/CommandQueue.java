@@ -38,7 +38,7 @@ import org.modelica.mdt.debug.gdb.core.mi.command.Command;
  *
  */
 /**
- * Simple thread-safe Queue implemetation.
+ * Simple thread-safe Queue implementation.
  */
 public class CommandQueue extends Queue {
 	

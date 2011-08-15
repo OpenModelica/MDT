@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.core.model.MDTDebugTarget;
+import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 
 /**
  * View of the MDT VM data stack 
@@ -38,6 +39,7 @@ import org.modelica.mdt.debug.core.model.MDTDebugTarget;
 public class DataStackView extends AbstractDebugView implements ISelectionListener {
     
     private MDTDebugTarget fTarget;
+    private GDBDebugTarget fGDBTarget;
     private PopAction fPopAction;
     private PushAction fPushAction;
 	
@@ -157,20 +159,34 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
     private synchronized void update() {
 		IAdaptable adaptable = DebugUITools.getDebugContext();
 		fTarget = null;
+		fGDBTarget = null;
 		if (adaptable != null) {
 			IDebugElement element = (IDebugElement) adaptable.getAdapter(IDebugElement.class);
 			if (element != null) {
 				if (element.getModelIdentifier().equals(MDTDebugCorePlugin.ID_MDT_DEBUG_MODEL)) {
-					fTarget = (MDTDebugTarget) element.getDebugTarget();
+					if (element.getDebugTarget() instanceof MDTDebugTarget)
+						fTarget = (MDTDebugTarget) element.getDebugTarget();
+					else if (element.getDebugTarget() instanceof GDBDebugTarget)
+						fGDBTarget = (GDBDebugTarget) element.getDebugTarget();
 				}
 			}
-		}        
-		Object input = null;
-		if (fTarget != null && fTarget.isSuspended()) {
-		    input = fTarget;
 		}
-		getViewer().setInput(input);
-		fPushAction.setDebugTarget(fTarget);
-		getViewer().refresh();
+		if (fTarget != null) {
+			Object input = null;
+			if (fTarget.isSuspended()) {
+			    input = fTarget;
+			}
+			getViewer().setInput(input);
+			fPushAction.setDebugTarget(fTarget);
+			getViewer().refresh();
+		} else if (fGDBTarget != null) {
+			Object input = null;
+			if (fGDBTarget.isSuspended()) {
+			    input = fGDBTarget;
+			}
+			getViewer().setInput(input);
+			fPushAction.setGDBDebugTarget(fGDBTarget);
+			getViewer().refresh();
+		}
     }
 }

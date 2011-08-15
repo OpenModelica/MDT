@@ -45,6 +45,15 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.MISession;
+import org.modelica.mdt.debug.gdb.core.mi.command.CLIWhatis;
+import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
+import org.modelica.mdt.debug.gdb.core.mi.output.CLIWhatisInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIDataEvaluateExpressionInfo;
+import org.modelica.mdt.debug.gdb.helper.ModelicaType;
+import org.modelica.mdt.debug.gdb.helper.ModelicaValue;
 
 /**
  * @author Adeel Asghar
@@ -82,10 +91,14 @@ public class GDBVariable extends GDBDebugElement implements IVariable {
 	
 	// name & stack frmae
 	private String fName;
-	private int fNumber; /* variable Number in the frame */
-	private IValue fValue = null;
+	private String fDisplayName;
+	private int fNumber = 1; /* variable Number in the frame */
+	private GDBValue fValue = null;
 	private String fReferenceTypeName;
 	private GDBStackFrame fFrame;
+	private boolean fValueChanged = false;
+	private boolean fReferenceTypeChanged = false;
+	private boolean fDisplayNameChanged = false;
 	
 	private Socket fCommandSocket;	
 	private PrintWriter fCommandWriter;
@@ -99,15 +112,15 @@ public class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @param frame owning stack frame
 	 * @param name variable name
 	 */
-	public GDBVariable(GDBStackFrame frame, String name, int Number) {
+	public GDBVariable(GDBStackFrame frame, String name) {
 		super(frame.getGDBDebugTarget());
 		fFrame = frame;
 		fName = name;
-		fNumber = Number;
-		fReferenceTypeName = "reaplaceable type Any";
-//		fCommandSocket = frame.getGDBDebugTarget().getCommandSocket();
-//		fCommandWriter = frame.getGDBDebugTarget().getCommandWriter();
-//		fReplyReader = frame.getGDBDebugTarget().getReplyReader();
+		// since the variable names always starts with _ so remove _ for variable display
+		if (name.startsWith("_"))
+			fDisplayName = name.substring(1, name.length());
+		//fNumber = Number;
+		fReferenceTypeName = "replaceable type Any";
 		fValue = null;
 	}
 	
@@ -115,23 +128,36 @@ public class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
 	public synchronized IValue getValue() throws DebugException {
-		if (fValue == null)
-		{
-			sendRequest(
-				IGDBDebugCommands.CMD_FRAME_VARIABLE_VALUE + " " + 
-				getStackFrame().getIdentifier() + ":" + 
-				getNumber());
-			
-			// now we have the variable into treeModel
-			// get the root:
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
-			// get the first variable
-			ModelicaVariableInfo vi = (ModelicaVariableInfo)root.getUserObject();
-			// set the type
-			fReferenceTypeName = vi.rmlType;
-			fValue = buildGDBValue(root);
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		// get type and value of variable
+		miSession.getRxThread().setEnableConsole(false);
+		CLIWhatis cliWhatIsCmd = factory.createCLIWhatis(fName);
+		CLIWhatisInfo cliWhatIsInfo = null;
+		
+		String value;
+		try {
+			miSession.postCommand(cliWhatIsCmd);
+			cliWhatIsInfo = cliWhatIsCmd.getMIWhatisInfo();
+			fReferenceTypeName = ModelicaType.getModelicaType(fName, cliWhatIsInfo.getType(), getGDBDebugTarget());
+			value = ModelicaValue.getModelicaValue(fName, cliWhatIsInfo.getType(), getGDBDebugTarget());
+			if (fValue == null) {
+				setValueChanged(false);
+				setReferenceTypeChanged(false);
+				setDisplayNameChanged(false);
+				fValue = new GDBValue(getGDBDebugTarget(), value, new IVariable[0]);
+			} else if (!fValue.getValueString().equals(value)) {
+				setValueChanged(true);
+				setReferenceTypeChanged(true);
+				setDisplayNameChanged(true);
+				fValue.setValueString(value);
+			}
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return fValue;
+		miSession.getRxThread().setEnableConsole(true);
+		return fValue; 
 	}
 
 	class ComponentVariable extends GDBDebugElement implements IVariable
@@ -206,8 +232,14 @@ public class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
 	public String getName() throws DebugException {
+		//return fName;
+		return fDisplayName;
+	}
+	
+	public String getOriginalName() {
 		return fName;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
@@ -224,7 +256,18 @@ public class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
 	public boolean hasValueChanged() throws DebugException {
-		return false;
+		if (isValueChanged()) {
+			setValueChanged(false);
+			return true;
+		} else if (isReferenceTypeChanged()) {
+			setReferenceTypeChanged(false);
+			return true;
+		} else if (isDisplayNameChanged()) {
+			setDisplayNameChanged(false);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
@@ -491,7 +534,49 @@ public class GDBVariable extends GDBDebugElement implements IVariable {
 		return fFrame;
 	}
 
-    private class ModelicaVariableInfo 
+    /**
+	 * @param change the fValueChanged to set
+	 */
+	public void setValueChanged(boolean change) {
+		this.fValueChanged = change;
+	}
+
+	/**
+	 * @return the fValueChanged
+	 */
+	public boolean isValueChanged() {
+		return fValueChanged;
+	}
+
+	/**
+	 * @param change the fReferenceTypeChanged to set
+	 */
+	public void setReferenceTypeChanged(boolean change) {
+		this.fReferenceTypeChanged = change;
+	}
+
+	/**
+	 * @return the fReferenceTypeChanged
+	 */
+	public boolean isReferenceTypeChanged() {
+		return fReferenceTypeChanged;
+	}
+
+	/**
+	 * @param change the fDisplayNameChanged to set
+	 */
+	public void setDisplayNameChanged(boolean change) {
+		this.fDisplayNameChanged = change;
+	}
+
+	/**
+	 * @return the fDisplayNameChanged
+	 */
+	public boolean isDisplayNameChanged() {
+		return fDisplayNameChanged;
+	}
+
+	private class ModelicaVariableInfo 
 	{
         int nKind;
     	String rmlName = null;

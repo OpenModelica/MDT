@@ -30,10 +30,6 @@
  */
 package org.modelica.mdt.debug.gdb.core.launcher;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -88,8 +84,9 @@ public class GDBLaunchDelegate extends LaunchConfigurationDelegate {
 			try {
 				GDBDebugger gdbDebugger = new GDBDebugger(debugTargetProgram, debugTargetCommandLineArguments,
 						debugTargetWorkDirectory, debugTargetGDBPath);
-				IProcess process = DebugPlugin.newProcess(launch, gdbDebugger.getMISession().getSessionProcess(), debugTargetProgram);
-				
+				//IProcess process = DebugPlugin.newProcess(launch, gdbDebugger.getMISession().getSessionProcess(), debugTargetProgram);
+				IProcess process = DebugPlugin.newProcess(launch, gdbDebugger.getMISession().getGDBInferior(), debugTargetProgram);
+				// create a debug target
 				IDebugTarget target = new GDBDebugTarget(launch, process, gdbDebugger.getMISession());
 				launch.addDebugTarget(target);
 			} catch (MIException e) {

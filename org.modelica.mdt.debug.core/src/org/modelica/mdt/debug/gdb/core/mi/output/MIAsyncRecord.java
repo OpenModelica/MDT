@@ -41,6 +41,7 @@ public abstract class MIAsyncRecord extends MIOOBRecord {
 	
 	public final static String RUNNING ="running";
 	public final static String STOPPED ="stopped";
+	public final static String READING_SYMBOL_FROM ="Reading symbols from";
 	public final static String THREAD_GROUP_ADDED ="thread-group-added";
 	public final static String THREAD_GROUP_STARTED ="thread-group-started";
 	public final static String THREAD_CREATED ="thread-created";

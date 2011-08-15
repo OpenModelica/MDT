@@ -31,8 +31,6 @@
 package org.modelica.mdt.debug.gdb.core.model;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -71,6 +69,10 @@ public class GDBValue extends GDBDebugElement implements IValue {
 	 */
 	public String getValueString() throws DebugException {
 		return fValue;
+	}
+	
+	public void setValueString(String value) {
+		fValue = value;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()

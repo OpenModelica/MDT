@@ -36,7 +36,7 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
  * @author Adeel Asghar
  *
  */
-public class RawCommand  extends Command {
+public class RawCommand extends Command {
 
 	String fRaw;
 

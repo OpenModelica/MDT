@@ -44,13 +44,11 @@ package org.modelica.mdt.debug.gdb.core.mi.command;
  */
 public class MIExecRun extends MICommand {
 	
-	private static String fCommand = "-exec-run";
-	
 	public MIExecRun() {
-		super(fCommand);
+		super("-exec-run");
 	}
 
 	public MIExecRun(String[] args) {
-		super(fCommand, args);
+		super("-exec-run", args);
 	}
 }

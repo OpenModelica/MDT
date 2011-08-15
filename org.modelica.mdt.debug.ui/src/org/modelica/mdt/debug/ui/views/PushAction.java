@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.Window;
 import org.modelica.mdt.debug.core.model.MDTDebugTarget;
+import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 import org.modelica.mdt.debug.ui.MDTDebugUIPlugin;
 
 /**
@@ -25,6 +26,7 @@ import org.modelica.mdt.debug.ui.MDTDebugUIPlugin;
 public class PushAction extends Action {
     
     private MDTDebugTarget fTarget;
+    private GDBDebugTarget fGDBTarget;
     private DataStackView fView;
 
     /**
@@ -55,6 +57,13 @@ public class PushAction extends Action {
         fTarget = target;
         setEnabled(fTarget != null && fTarget.canPush());
     }
-    
-    
+
+	/**
+	 * @param target
+	 */
+	protected void setGDBDebugTarget(GDBDebugTarget target) {
+		// TODO Auto-generated method stub
+		fGDBTarget = target;
+        setEnabled(fGDBTarget != null && fGDBTarget.canPush());
+	}
 }

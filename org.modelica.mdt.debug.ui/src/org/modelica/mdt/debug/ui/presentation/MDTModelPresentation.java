@@ -19,6 +19,9 @@ import org.modelica.mdt.debug.core.breakpoints.MDTWatchpoint;
 import org.modelica.mdt.debug.core.model.MDTDebugTarget;
 import org.modelica.mdt.debug.core.model.MDTStackFrame;
 import org.modelica.mdt.debug.core.model.MDTThread;
+import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
+import org.modelica.mdt.debug.gdb.core.model.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.model.GDBThread;
 
 /**
  * Renders MDT debug elements
@@ -30,7 +33,6 @@ public class MDTModelPresentation extends LabelProvider implements
 	IDebugEditorPresentation
 	*/
 {
-
 	public void setAttribute(String attribute, Object value) {
 	}
 
@@ -40,10 +42,16 @@ public class MDTModelPresentation extends LabelProvider implements
 	public String getText(Object element) {
 		if (element instanceof MDTDebugTarget) {
 			return getTargetText((MDTDebugTarget)element);
+		} else if (element instanceof GDBDebugTarget) {
+	        return getTargetText((GDBDebugTarget)element);
 		} else if (element instanceof MDTThread) {
 	        return getThreadText((MDTThread)element);
+		} else if (element instanceof GDBThread) {
+	        return getThreadText((GDBThread)element);
 	    } else if (element instanceof MDTStackFrame) {
 	        return getStackFrameText((MDTStackFrame)element);
+	    } else if (element instanceof GDBStackFrame) {
+	        return getStackFrameText((GDBStackFrame)element);
 	    } else if (element instanceof MDTWatchpoint) {
 	        return getWatchpointText((MDTWatchpoint)element);
 	    }
@@ -89,10 +97,29 @@ public class MDTModelPresentation extends LabelProvider implements
 			}
 		} catch (CoreException e) {
 		}
-		return "MDT";
-		
+		return "MDT";	
 	}
-	
+	/**
+	 * Returns a label for the given debug target
+	 * 
+	 * @param target debug target
+	 * @return a label for the given debug target
+	 */
+	private String getTargetText(GDBDebugTarget target) {
+		try {
+			String pgmPath = target.getLaunch().getLaunchConfiguration().getAttribute(MDTDebugCorePlugin.ATTR_MDT_PROGRAM, (String)null);
+			if (pgmPath != null) {
+			    IPath path = new Path(pgmPath);
+			    String label = "";
+			    if (target.isTerminated()) {
+			    	label = "<terminated>";
+			    }
+			    return label + "MDT [" + path.lastSegment() + "]";
+			}
+		} catch (CoreException e) {
+		}
+		return "MDT";	
+	}
 	/**
 	 * Returns a label for the given stack frame
 	 * 
@@ -110,7 +137,20 @@ public class MDTModelPresentation extends LabelProvider implements
 	    return null;
 
 	}
-	
+	/**
+	 * Returns a label for the given stack frame
+	 * 
+	 * @param frame a stack frame
+	 * @return a label for the given stack frame 
+	 */
+	private String getStackFrameText(GDBStackFrame frame) {
+	    try {
+	       return frame.getName() + " at " + frame.getSourceName() + ":" + frame.getLineNumber(); 
+	    } catch (DebugException e) {
+	    }
+	    return null;
+
+	}
 	/**
 	 * Returns a label for the given thread
 	 * 
@@ -154,7 +194,48 @@ public class MDTModelPresentation extends LabelProvider implements
 	    
 	    return label;
 	}
-	
+	/**
+	 * Returns a label for the given thread
+	 * 
+	 * @param thread a thread
+	 * @return a label for the given thread
+	 */
+	private String getThreadText(GDBThread thread) {
+	    String label = thread.getName();
+	    if (thread.isStepping()) {
+	        label += " (stepping)";
+	    } else if (thread.isSuspended()) {
+	        IBreakpoint[] breakpoints = thread.getBreakpoints();
+	        if (breakpoints.length == 0) {
+	        	if (thread.getError() == null) {
+	        		label += " (suspended)";
+	        	} else {
+	        		label += " (" + thread.getError() + ")";
+	        	}
+	        } else {
+	            IBreakpoint breakpoint = breakpoints[0]; // there can only be one in MDT
+	            if (breakpoint instanceof MDTLineBreakpoint) {
+	            	MDTLineBreakpoint pdaBreakpoint = (MDTLineBreakpoint) breakpoint;
+	            	if (pdaBreakpoint instanceof MDTWatchpoint) {
+	            	    try {
+		            	    MDTWatchpoint watchpoint = (MDTWatchpoint)pdaBreakpoint;
+		            	    label += " (watchpoint: " + watchpoint.getSuspendType() + " " + watchpoint.getVariableName() + ")";
+	            	    } catch (CoreException e) {
+	            	    }
+	            	} else if (pdaBreakpoint.isRunToLineBreakpoint()) {
+	            		label += " (run to line)";
+	            	} else {
+	            		label += " (suspended at line breakpoint)";
+	            	}
+	            }
+	        }
+	    } else if (thread.isTerminated() || thread.getDebugTarget().isTerminated()) {
+	        label = "<terminated> " + label;
+	    } else {
+	        label += " (running)";
+	    }
+	    return label;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

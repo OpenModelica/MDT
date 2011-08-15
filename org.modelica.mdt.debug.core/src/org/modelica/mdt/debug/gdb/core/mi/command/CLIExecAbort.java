@@ -36,18 +36,16 @@ package org.modelica.mdt.debug.gdb.core.mi.command;
  */
 /**
  * 
- *  -exec-finish
+ *  kill
  *
- *  Asynchronous command.  Resumes the execution of the inferior program
- *  until the current function is exited.  Displays the results returned by
- *  the function.
+ *  Kill the inferior running program.
+ *  
+ *  the corresponding MI command is -exec-abort
  * 
  */
 public class CLIExecAbort extends CLICommand {
 	
-	private static String fCommand = "kill";
-	
 	public CLIExecAbort() {
-		super(fCommand);
+		super("kill");
 	}
 }

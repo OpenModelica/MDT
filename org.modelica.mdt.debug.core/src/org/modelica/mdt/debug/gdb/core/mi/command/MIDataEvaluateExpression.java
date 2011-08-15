@@ -50,10 +50,8 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
  */
 public class MIDataEvaluateExpression extends MICommand {
 	
-	private static String fCommand = "-data-evaluate-expression";
-	
 	public MIDataEvaluateExpression(String expr) {
-		super(fCommand, new String[]{expr});
+		super("-data-evaluate-expression", new String[]{expr});
 	}
 
 	public MIDataEvaluateExpressionInfo getMIDataEvaluateExpressionInfo() throws MIException {

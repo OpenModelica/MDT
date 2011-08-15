@@ -55,6 +55,7 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIRunningEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MISharedLibEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIAsyncRecord;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIConsoleStreamOutput;
@@ -102,7 +103,6 @@ public class RxThread extends Thread {
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MI Rx Thread " + line);
-				
 				setPrompt(line);
 				processMIOutput(line + "\n");
 			}
@@ -116,6 +116,7 @@ public class RxThread extends Thread {
 		if (session.getChannelInputStream() != null) {
 			Runnable cleanup = new Runnable() {
 				public void run() {
+					session.getGDBInferior().setTerminated();
 					session.terminate();
 				}
 			};
@@ -182,11 +183,9 @@ public class RxThread extends Thread {
 			if (rr != null) {
 				int id = rr.getToken();
 				Command cmd = rxQueue.removeCommand(id);
-
 				// Get a snapshot of the accumulated stream records. We clear
 				// the collection below (with each new Result Command response).
 				MIStreamRecord[] streamRecords = fStreamRecords.toArray(new MIStreamRecord[fStreamRecords.size()]);
-
 				// Check if the state changed.
 				String state = rr.getResultClass();
 				if ("running".equals(state)) {
@@ -219,6 +218,7 @@ public class RxThread extends Thread {
 					list.add(event);
 				} else if ("exit".equals(state)) {
 					// No need to do anything, terminate() will.
+					session.getGDBInferior().setTerminated();
 				} else if ("connected".equals(state)) {
 					session.getGDBInferior().setConnected();
 				} else if ("error".equals(state)) {
@@ -361,7 +361,7 @@ public class RxThread extends Thread {
 				String str = out.getString();
 				// Process the console stream too.
 				setPrompt(str);
-				if (str != null) {
+				if (str != null && isEnableConsole()) {
 					try {
 						console.write(str.getBytes());
 						console.flush();
@@ -373,7 +373,7 @@ public class RxThread extends Thread {
 			// Some commands will put valuable info  in the Console Stream.
 			fStreamRecords.add(stream);
 		} else if (stream instanceof MITargetStreamOutput) {
-			OutputStream target = session.getConsolePipe();
+			OutputStream target = session.getGDBInferior().getPipedOutputStream();
 			if (target != null) {
 				MITargetStreamOutput out = (MITargetStreamOutput) stream;
 				String str = out.getString();
@@ -394,7 +394,7 @@ public class RxThread extends Thread {
 			if (log != null) {
 				MILogStreamOutput out = (MILogStreamOutput) stream;
 				String str = out.getString();
-				if (str != null) {
+				if (str != null && isEnableConsole()) {
 					try {
 						log.write(str.getBytes());
 						log.flush();
@@ -473,14 +473,19 @@ public class RxThread extends Thread {
 			} else if (rr != null) {
 				event = new MIInferiorExitEvent(session, rr);
 			}
-			//session.getGDBInferior().setTerminated(0,false);
+			session.getGDBInferior().setTerminated(0,false);
 		} else if ("breakpoint-hit".equals(reason)) {
 			if (exec != null) {
 				event = new MIBreakpointHitEvent(session, exec);
 			} else if (rr != null) {
 				event = new MIBreakpointHitEvent(session, rr);
 			}
-			//session.getGDBInferior().setSuspended();
+		} else if ("end-stepping-range".equals(reason)) {
+			if (exec != null) {
+				event = new MISteppingRangeEvent(session, exec);
+			} else if (rr != null) {
+				event = new MISteppingRangeEvent(session, rr);
+			}
 		}
 //		} else if (
 //			"watchpoint-trigger".equals(reason)

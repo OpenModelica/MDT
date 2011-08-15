@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -55,13 +56,16 @@ import org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
-import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakInsert;
+import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIExecStep;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
-import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
-import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakInsertInfo;
+import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.helper.GDBHelper;
 
 /**
  * @author Adeel Asghar
@@ -79,7 +83,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 
 	// terminated state
 	private boolean fTerminated = false;
-	private ArrayList<GDBThread> fThreads;
+	private ArrayList<GDBThread> fThreads;	
 	/**
 	 * Constructs a new debug target in the given launch for the associated GDB
 	 * VM process.
@@ -102,12 +106,11 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		fMISession.addObserver(this);
 		
 		GDBThread x = new GDBThread(this);
-		x.fireCreationEvent();
 		fThreads.add(x);
+		started();
 		IBreakpointManager breakpointManager = getBreakpointManager();
         breakpointManager.addBreakpointListener(this);
 		breakpointManager.addBreakpointManagerListener(this);
-		started();
 	}
 
 	/*
@@ -327,9 +330,12 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			try {
 				if ((breakpoint.isEnabled() && getBreakpointManager().isEnabled()) || !breakpoint.isRegistered()) {
 					MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
-					//mdtBreakpoint.insertBreakpoint(this);
+					mdtBreakpoint.insertBreakpoint(this);
 				}
 			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -344,14 +350,17 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
-//			try 
-//			{
-//			    MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
-//				mdtBreakpoint.remove(this);
-//			} 
-//			catch (CoreException e) 
-//			{
-//			}
+			try 
+			{
+			    MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
+				mdtBreakpoint.removeBreakpoint(this);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -429,7 +438,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		installDeferredBreakpoints();
 		try {
 			((GDBThread)getThread()).start();
-			//resume();
 		} catch (DebugException e) {
 		}
 	}
@@ -543,19 +551,56 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	public void update(Observable arg, Object event) {
 		// TODO Auto-generated method stub
 		MIEvent miEvent = (MIEvent)event;
-
 		try {
 			if (miEvent instanceof MIInferiorExitEvent || miEvent instanceof MIGDBExitEvent) {
+				if (miEvent instanceof MIInferiorExitEvent) {
+					if (MDTDebugCorePlugin.DEBUG) System.out.println("MIInferiorExitEvent caught in gdb debug target");
+				} else if (miEvent instanceof MIGDBExitEvent)
+					if (MDTDebugCorePlugin.DEBUG) System.out.println("MIGDBExitEvent caught in gdb debug target");
 				terminate();
 			} else if (miEvent instanceof MIBreakpointHitEvent) {
-				System.out.println("break point hit event caught in gdb debug target breakpoint");
-				suspend();
-			} else if (miEvent instanceof MIStoppedEvent) {
-				fireSuspendEvent(DebugEvent.BREAKPOINT);
+				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIBreakpointHitEvent caught in gdb debug target");
+				((GDBThread)getThread()).suspended(DebugEvent.BREAKPOINT);
+			} else if (miEvent instanceof MISteppingRangeEvent) {
+				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIBreakpointHitEvent caught in gdb debug target");
+				if (skipSteppedInFrames(miEvent)) {
+					((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
+				}
 			}
 		} catch (DebugException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param miEvent
+	 * @return 
+	 */
+	private boolean skipSteppedInFrames(MIEvent miEvent) {
+		// TODO Auto-generated method stub
+		MISteppingRangeEvent steppingRangeEvent = (MISteppingRangeEvent)miEvent;
+		MIFrame miFrame = steppingRangeEvent.getFrame();
+		// if we reach to a c file with step in we should keep on stepping in.
+		if (GDBHelper.isCFile(miFrame.getFile())) {
+			CommandFactory factory = fMISession.getCommandFactory();
+			MIExecStep execStepCommand = factory.createMIExecStep();
+			try {
+				fMISession.postCommand(execStepCommand);
+				MIInfo info = execStepCommand.getMIInfo();
+				if (info == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBDebugTarget.skipSteppedInFrames.ExecStep.NoAnswer"), null));
+				}
+			} catch (MIException e) {
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return false;
+		} else {
+			return true;
 		}
 	}
 

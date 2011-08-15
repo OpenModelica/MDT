@@ -30,59 +30,75 @@
  */
 package org.modelica.mdt.debug.gdb.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
+import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.MISession;
+import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIExecContinue;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIExecNext;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecRun;
-import org.modelica.mdt.debug.gdb.core.mi.command.MIGDBExit;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIExecStep;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIStackInfoDepth;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIStackListFrames;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIStackInfoDepthInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIStackListFramesInfo;
+import org.modelica.mdt.debug.gdb.helper.GDBHelper;
 
 /**
  * @author Adeel Asghar
  *
  */
 /**
- * A MDT Debugger thread. A MDT Debugger is single threaded.
+ * A MDT GDB Debugger thread. A MDT GDB Debugger is single threaded.
  */
 public class GDBThread extends GDBDebugElement implements IThread {
-	
 	/**
 	 * Breakpoint this thread is suspended at or <code>null</code>
 	 * if none.
 	 */
 	private IBreakpoint fBreakpoint;
-	
 	/**
 	 * Whether this thread is stepping
 	 */
 	private boolean fStepping = false;
-	
 	/**
-	 * Wether this thread is suspended
+	 * Whether this thread is suspended
 	 */
 	private boolean fSuspended = false;
-
 	private boolean fTerminated = false;
-
-	private boolean fRunning = false;	
-	
+	private boolean fRunning = false;		
 	/**
 	 * Most recent error event or <code>null</code>
 	 */
 	private String fErrorEvent;
-	
 	/**
 	 * Table mapping stack frames to current variables
 	 */
 	private Map<IStackFrame, IVariable[]> fVariables = new HashMap<IStackFrame, IVariable[]>();
-	
-	private IStackFrame[] fStackFrames = null; 
+	private List<GDBStackFrame> fGDBStackFrames = new ArrayList<GDBStackFrame>();
+	int fStackDepth = 0;
+	private final static int MAX_STACK_DEPTH = 100;
 	/**
 	 * Constructs a new thread for the given target
 	 * 
@@ -90,29 +106,196 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public GDBThread(GDBDebugTarget target) {
 		super(target);
-		//getGDBDebugTarget().addEventListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException {
-		fStackFrames = new IStackFrame[0];		
-//		if (isSuspended()) {
-//			String framesData = sendRequest(IGDBDebugCommands.CMD_STACK);
-//			if (framesData != null) {
-//				String[] frames = framesData.split("#");
-//				fStackFrames = new IStackFrame[frames.length];
-//				for (int i = 0; i < frames.length; i++) {
-//					String data = frames[i];
-//					fStackFrames[frames.length - i - 1] = new GDBStackFrame(this, data, i);
-//				}
-//				return fStackFrames;
-//			}
-//		}
-		return fStackFrames;
+		computeStackFrames();
+		return (IStackFrame[])fGDBStackFrames.toArray(new IStackFrame[fGDBStackFrames.size()]);
 	}
 	
+	/**
+	 * @param lowFrame
+	 * @param highFrame
+	 * @return
+	 */
+	private void getStackFrames(int lowFrame, int highFrame) {
+		// TODO Auto-generated method stub
+		try {
+			// get the list of frames from GDB
+			MISession miSession = getGDBDebugTarget().getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIStackListFrames stackListFramesCmd = factory.createMIStackListFrames(lowFrame, highFrame);
+			miSession.postCommand(stackListFramesCmd);
+			MIStackListFramesInfo stackListFramesInfo = stackListFramesCmd.getMIStackListFramesInfo();
+			if (stackListFramesInfo == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.getStackFrames.StackListFrames.NoAnswer"), null));
+			}
+			// first remove the frames that are removed from the stacks list
+			removeStackFrames(stackListFramesInfo.getMIFrames());
+			compareStackFrames(stackListFramesInfo.getMIFrames());
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param miFrames
+	 */
+	private void removeStackFrames(MIFrame[] miFrames) {
+		// TODO Auto-generated method stub
+//		for (int i = 0 ; i < miFrames.length ; i++) {
+//			GDBStackFrame = getStackFrame(miFrames.)
+//		}
+//		for (MIArg miArg : variablesList) {
+//			GDBVariable gdbVariable = getVariable(miArg.getName());
+//			if (!variableExists(miArg.getName())) {
+//				fGDBVariables.remove(gdbVariable);
+//			}
+//		}
+	}
+
+	/**
+	 * 
+	 */
+	private void computeStackFrames() {
+		// TODO Auto-generated method stub
+		if (isSuspended()) {
+			int depth = getStackInfoDepth();
+			if (depth >= getMaxStackDepth())
+				depth = getMaxStackDepth() - 1;
+			getStackFrames(0, depth - 1);
+		}
+	}	
+
+	/**
+	 * Compares the stack frames received from GDB with the existing stack frames
+	 * If the stack is already loaded we just update it.
+	 * Also filters out the .c file depending on the debug_c_files flag.
+	 * 
+	 * @param miFrames
+	 */
+	private void compareStackFrames(MIFrame[] miFrames) {
+		// TODO Auto-generated method stub
+		List<MIFrame> miFramesList = new ArrayList<MIFrame>(Arrays.asList(miFrames));
+		int i = -1;
+		while (i + 1 < miFramesList.size()) {
+			i++;
+			for (GDBStackFrame gdbStackFrame : fGDBStackFrames) {
+				if (gdbStackFrame.compareMIFrame(miFramesList.get(i))) {
+					gdbStackFrame.updateMe(miFramesList.get(i));
+					miFramesList.remove(i);
+					i = -1;		// restart the loop since the list is updated.
+					break;
+				}
+			}
+		}
+		
+		for (i = 0 ; i < miFramesList.size() ; i++) {
+			if (!filterCFiles(miFramesList.get(i))) {
+				fGDBStackFrames.add(new GDBStackFrame(this, miFramesList.get(i)));
+			}
+		}
+		// sort the stack frames
+		Collections.sort(fGDBStackFrames, new Comparator<GDBStackFrame>() {
+			@Override
+			public int compare(GDBStackFrame stackFrame1, GDBStackFrame stackFrame2) {
+				// TODO Auto-generated method stub
+				Integer id1 = new Integer(stackFrame1.getIdentifier());
+				Integer id2 = new Integer(stackFrame2.getIdentifier());
+				return id1.compareTo(id2);
+			}
+		});
+	}
+	
+	/**
+	 * @param miFrame
+	 * @return
+	 */
+	private boolean filterCFiles(MIFrame miFrame) {
+		// TODO Auto-generated method stub
+		try {
+			String debugCSource = getGDBDebugTarget().getLaunch().getLaunchConfiguration().getAttribute(IMDTConstants.ATTR_MDT_DEBUG_C_SOURCE, "false");
+			if (debugCSource.equals("true")) {
+				// if debugcsource is true we return false but we have to make sure that
+				// user don't get any bootstrapped c file
+				Path filePath = new Path(miFrame.getFile());
+				if (filePath.segment(filePath.segmentCount() - 2).equals("bootstrapping")) {
+					return true;
+				}
+				return false;
+			} else {
+				return GDBHelper.isCFile(miFrame.getFile());
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * @return
+	 */
+	private int getMaxStackDepth() {
+		// TODO Auto-generated method stub
+		return MAX_STACK_DEPTH;
+	}
+
+	/**
+	 * @return
+	 */
+	private int getStackInfoDepth() {
+		// TODO Auto-generated method stub
+		if (fStackDepth == 0) { 
+			try {
+				MISession miSession = getGDBDebugTarget().getMISession();
+				CommandFactory factory = miSession.getCommandFactory();
+				MIStackInfoDepth stackInfoDepthCmd = factory.createMIStackInfoDepth();
+				MIStackInfoDepthInfo stackInfoDepthInfo;
+				miSession.postCommand(stackInfoDepthCmd);
+				try {
+					stackInfoDepthInfo = stackInfoDepthCmd.getMIStackInfoDepthInfo();
+					if (stackInfoDepthInfo == null) {
+						throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+								MDTDebugCorePlugin.getResourceString("GDBThread.getStackInfoDepth.StackInfoDepth.NoAnswer"), null));
+					}
+					fStackDepth = stackInfoDepthInfo.getDepth();
+				} catch (MIException e) {
+					// First try fails, retry. gdb patches up the corrupt frame
+					// so retry should give us a frame count that is safe.
+					stackInfoDepthCmd = factory.createMIStackInfoDepth();
+					miSession.postCommand(stackInfoDepthCmd);
+					stackInfoDepthInfo = stackInfoDepthCmd.getMIStackInfoDepthInfo();
+					if (stackInfoDepthInfo == null) {
+						try {
+							throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+									MDTDebugCorePlugin.getResourceString("GDBThread.getStackInfoDepth.StackInfoDepth.NoAnswer"), null));
+						} catch (CoreException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					fStackDepth = stackInfoDepthInfo.getDepth();
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (MIException e) {
+				// 1 is safe to return
+				return 1;
+			}
+		}
+		return fStackDepth;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#hasStackFrames()
 	 */
@@ -129,17 +312,18 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
 	public IStackFrame getTopStackFrame() throws DebugException {
-		getStackFrames();
-		if (fStackFrames.length > 0) {
-			return fStackFrames[0];
+		computeStackFrames();
+		if (fGDBStackFrames.size() > 0) {
+			return fGDBStackFrames.get(0);
 		}
 		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getName()
 	 */
 	public String getName() {
-		return "Main thread";
+		return "Main Thread";
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
@@ -158,7 +342,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public void suspendedBy(IBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
-		suspended(DebugEvent.BREAKPOINT);
+		//suspended(DebugEvent.BREAKPOINT);
 	}
 	
 	/* (non-Javadoc)
@@ -187,17 +371,22 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		setSuspended(false);
 		setStepping(false);
 		resumed(DebugEvent.CLIENT_REQUEST);
-		//sendRequest(IGDBDebugCommands.CMD_RUN);
+		// send gdb the -exec-continue commmand
+		try {
+			MIExecContinue execContinueCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecContinue();
+			execContinueCmd.setQuiet(true);
+			getGDBDebugTarget().getMISession().postCommand(execContinueCmd);
+			if (execContinueCmd.getMIInfo() == null)
+				System.out.println(MDTDebugCorePlugin.getResourceString("GDBThread.resume.ExecContinue.NoAnswer"));
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	/** 
 	 * 
 	 */
 	public void start() throws DebugException {
-		setRunning(true);
-		setSuspended(false);
-		setStepping(false);
-		resumed(DebugEvent.CREATE);
-//		sendRequest(IGDBDebugCommands.CMD_RUN);
 		try {
 			MIExecRun execRunCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecRun(new String[0]);
 			getGDBDebugTarget().getMISession().postCommand(execRunCmd);
@@ -217,7 +406,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			return;
 		}
 		setStepping(true);
-		setRunning(false);		
+		setRunning(false);
 	    //sendSignal(IGDBDebugCommands.CMD_SUSPEND);		
 	}
 	/* (non-Javadoc)
@@ -248,15 +437,44 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
 	public void stepInto() throws DebugException {
-		sendRequest(IGDBDebugCommands.CMD_STEP);
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIExecStep execStepCommand = factory.createMIExecStep();
+		try {
+			miSession.postCommand(execStepCommand);
+			MIInfo info = execStepCommand.getMIInfo();
+			if (info == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.stepInto.ExecStep.NoAnswer"), null));
+			}
+		} catch (MIException e) {
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		resumed(DebugEvent.STEP_INTO);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
 	public void stepOver() throws DebugException {
-		sendRequest(IGDBDebugCommands.CMD_STEP_OVER);
-		resumed(DebugEvent.STEP_OVER);		
+		CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
+		MIExecNext execNextCmd = factory.createMIExecNext();
+		try {
+			getGDBDebugTarget().getMISession().postCommand(execNextCmd);
+			MIInfo info = execNextCmd.getMIInfo();
+			if (info == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.stepOver.ExecNext.NoAnswer"), null));
+			}
+		} catch (MIException e) {
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		resumed(DebugEvent.STEP_OVER);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
@@ -284,10 +502,8 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		setTerminated(true);
 		setStepping(false);
 		setRunning(false);
-//		sendSignal(IGDBDebugCommands.EVENT_SUSPEND); // first put the debugger in step mode
-//		sendSignal(IGDBDebugCommands.EVENT_QUIT);    // end the event handler
 		// terminate the MI Session. It will exit the GDB as well.
-		getGDBDebugTarget().getMISession().terminate();
+		getGDBDebugTarget().getMISession().getSessionProcess().destroy();
 	}
 	
 	/**
@@ -304,7 +520,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * 
 	 * @param suspended whether suspended
 	 */
-	private void setSuspended(boolean suspended) {
+	public void setSuspended(boolean suspended) {
 		fSuspended = suspended;
 	}
 
@@ -350,7 +566,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * 
 	 * @param detail reason for the suspend
 	 */
-	private void suspended(int detail) {
+	public void suspended(int detail) {
 		setStepping(true);
 		setSuspended(true);
 		setRunning(false);
@@ -363,7 +579,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
      */
     private void exceptionHit() {
     	suspended(DebugEvent.BREAKPOINT);
-    }  
+    }
 	
 	/**
 	 * Sets the current variables for the given stack frame. Called
@@ -425,10 +641,10 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		setTerminated(true);
 		setStepping(false);
 		setRunning(false);
-		fireTerminateEvent();		
+		
 		try { terminate(); } catch (DebugException e) {}
-	}	
-	
+		fireTerminateEvent();
+	}
 	
 	/**
 	 * Sets whether this thread is currently executing.
@@ -441,6 +657,13 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		fRunning = running;
 	}
 	
+	/**
+	 *  
+	 * @return true if thread is running otherwise false
+	 */
+	protected boolean isRunning() {
+		return fRunning;
+	}
 	/**
 	 * Sets whether this thread is terminated
 	 * 

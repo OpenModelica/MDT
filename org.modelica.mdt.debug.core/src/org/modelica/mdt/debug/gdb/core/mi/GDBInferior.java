@@ -93,11 +93,11 @@ public class GDBInferior extends Process {
 			out = new OutputStream() {
 				public void write(int b) throws IOException {
 					if (!isRunning()) {
-						throw new IOException(MDTDebugCorePlugin.getResourceString("src.GDBInferior.target_is_suspended"));
+						throw new IOException(MDTDebugCorePlugin.getResourceString("GDBInferior.getOutputStream.target_is_suspended"));
 					}
 					OutputStream channel = session.getChannelOutputStream();
 					if (channel == null) {
-						throw new IOException(MDTDebugCorePlugin.getResourceString("src.GDBInferior.No_session"));
+						throw new IOException(MDTDebugCorePlugin.getResourceString("GDBInferior.getOutputStream.no_session"));
 					}
 					channel.write(b);
 				}
@@ -158,10 +158,10 @@ public class GDBInferior extends Process {
 			if (!session.isTerminated()) {
 				if (!exitCodeKnown) {
 					CommandFactory factory = session.getCommandFactory();
-					MIGDBShowExitCode code = factory.createMIGDBShowExitCode();
+					MIGDBShowExitCode showExitCodeCmd = factory.createMIGDBShowExitCode();
 					try {
-						session.postCommand(code);
-						MIGDBShowExitCodeInfo info = code.getMIGDBShowExitCodeInfo();
+						session.postCommand(showExitCodeCmd);
+						MIGDBShowExitCodeInfo info = showExitCodeCmd.getMIGDBShowExitCodeInfo();
 						exitCode = info.getCode();
 					} catch (MIException e) {
 						// no rethrown.
@@ -199,11 +199,11 @@ public class GDBInferior extends Process {
 			if (isSuspended()) {
 				try {
 					CommandFactory factory = session.getCommandFactory();
-					CLIExecAbort abort = factory.createCLIExecAbort();
-					session.postCommand(abort, -1);
+					CLIExecAbort execAbortCmd = factory.createCLIExecAbort();
+					session.postCommand(execAbortCmd, -1);
 					// do not wait for the answer.
 					//abort.getMIInfo();
-					token = abort.getToken();
+					token = execAbortCmd.getToken();
 				} catch (MIException e) {
 					// ignore the error
 				}
@@ -216,12 +216,12 @@ public class GDBInferior extends Process {
 		// Check if they can handle the interrupt
 		// Try the exec-interrupt; this will be for "gdb --async"
 		CommandFactory factory = session.getCommandFactory();
-		MIExecInterrupt interrupt = factory.createMIExecInterrupt();
-		if (interrupt != null) {
+		MIExecInterrupt execInterruptCmd = factory.createMIExecInterrupt();
+		if (execInterruptCmd != null) {
 			try {
-				session.postCommand(interrupt);
+				session.postCommand(execInterruptCmd);
 				// call getMIInfo() even if we discard the value;
-				interrupt.getMIInfo();
+				execInterruptCmd.getMIInfo();
 				// Allow MI command timeout for the interrupt to propagate.
 				long maxSec = session.getCommandTimeout()/1000 + 1;
 				synchronized(this) {
@@ -238,7 +238,7 @@ public class GDBInferior extends Process {
 
 		// If we've failed throw an exception up.
 		if (state == RUNNING) {
-			throw new MIException(MDTDebugCorePlugin.getResourceString("src.GDBInferior.Failed_to_interrupt"));
+			throw new MIException(MDTDebugCorePlugin.getResourceString("GDBInferior.interrupt.no_session"));
 		}
 	}
 
@@ -341,12 +341,12 @@ public class GDBInferior extends Process {
 			if (!isConnected()) {
 				// Try to discover the pid using GDB/CLI Command "info proc"
 				CommandFactory factory = session.getCommandFactory();
-				CLIInfoProc proc = factory.createCLIInfoProc();
+				CLIInfoProc infoProcCmd = factory.createCLIInfoProc();
 				try {
 					RxThread rxThread = session.getRxThread();
 					rxThread.setEnableConsole(false);
-					session.postCommand(proc); 
-					CLIInfoProcInfo infoProc = proc.getMIInfoProcInfo();
+					session.postCommand(infoProcCmd); 
+					CLIInfoProcInfo infoProc = infoProcCmd.getMIInfoProcInfo();
 					pid = infoProc.getPID();
 				} catch (MIException e) {
 					// no rethrown.
@@ -356,9 +356,9 @@ public class GDBInferior extends Process {
 				// "info proc" can fail on certain platforms like Windows :)
 				try {
 					if(pid <= 0){ 
-					CLIInfoProgram prog = factory.createCLIInfoProgram();
-					session.postCommand(prog);
-					CLIInfoProgramInfo info = prog.getMIInfoProgramInfo();
+					CLIInfoProgram infoProgramCmd = factory.createCLIInfoProgram();
+					session.postCommand(infoProgramCmd);
+					CLIInfoProgramInfo info = infoProgramCmd.getMIInfoProgramInfo();
 					pid = info.getPID();
 					}
 				} catch (MIException e) {

@@ -32,6 +32,7 @@ package org.modelica.mdt.debug.gdb.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
+import org.modelica.mdt.debug.gdb.core.model.GDBStackFrame;
 
 /**
  * @author Adeel Asghar
@@ -45,9 +46,9 @@ public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant 
 	@Override
 	public String getSourceName(Object object) throws CoreException {
 		// TODO Auto-generated method stub
-//		if (object instanceof MDTStackFrame) {
-//			return ((MDTStackFrame) object).getSourceName();
-//		}
+		if (object instanceof GDBStackFrame) {
+			return ((GDBStackFrame) object).getSourceName();
+		}
 		return null;
 	}
 }

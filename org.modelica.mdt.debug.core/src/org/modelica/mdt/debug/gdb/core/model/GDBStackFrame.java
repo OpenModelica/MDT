@@ -30,12 +30,28 @@
  */
 package org.modelica.mdt.debug.gdb.core.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
+import org.modelica.mdt.debug.core.launcher.IMDTConstants;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.MISession;
+import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIStackListVariables;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIArg;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIStackListVariablesInfo;
 
 /**
  * @author Adeel Asghar
@@ -47,63 +63,129 @@ import org.eclipse.debug.core.model.IVariable;
 public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	
 	private GDBThread fThread;
+	private MIFrame fFrame;
 	private String fName = "Unknown";
 	private int fLineNumber = -1;
 	private int fStartChar = -1;
 	private int fEndChar = -1;	
 	private String fFileName;
 	private int fId;
-	private int fMMCStackPointer;	
-	private String fCallType;
+	private List<GDBVariable> fGDBVariables = new ArrayList<GDBVariable>();
 	
 	/**
 	 * Constructs a stack frame in the given thread with the given
 	 * frame data.
 	 * 
 	 * @param thread
-	 * @param data frame data
-	 * @param id stack frame id (0 is the bottom of the stack)
+	 * @param frame stack frame id (0 is the bottom of the stack)
 	 */
-	public GDBStackFrame(GDBThread thread, String data, int id) {
+	public GDBStackFrame(GDBThread thread, MIFrame frame) {
 		super(thread.getGDBDebugTarget());
-		fId = id;
 		fThread = thread;
-		init(data);
+		fFrame = frame;
+		initialize();
 	}
 	
 	/**
 	 * Initializes this frame based on its data
-	 * 
+	 *
 	 * @param data
 	 */
-	private void init(String data) {
-		String[] strings = data.split("\\|");
-		String fileName = strings[0];
-		fFileName = (new Path(fileName)).lastSegment();
-		fLineNumber = Integer.parseInt(strings[1]);
-		fStartChar = Integer.parseInt(strings[2]);
-		fEndChar = Integer.parseInt(strings[3]);
-		if (fStartChar == -1 || fEndChar == -1) 
-		{
-			// make each -1 if one of them it is.
-			fStartChar = -1;
-			fEndChar   = -1;
+	private void initialize() {
+		fId = fFrame.getLevel();
+		fFileName = (new Path(fFrame.getFile())).lastSegment();
+		fLineNumber = fFrame.getLine();
+		fStartChar = -1;
+		fEndChar = -1;
+		String[] fileName = fFileName.split("\\.");
+		int beginIndex = fileName[0].length() + 2;
+		fName = fFrame.getFunction().substring(beginIndex);
+		// get locals from GDB
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIArg[] args = null;
+		MIStackListVariablesInfo stackListVariablesInfo = null;
+		MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", "1", "--frame", Integer.toString(getIdentifier()), "--no-values"});
+		try {
+			miSession.postCommand(stackListVariablesCmd);
+			stackListVariablesInfo = stackListVariablesCmd.getMIStackListVariablesInfo();
+			if (stackListVariablesInfo == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.getStackFrames.StackListVariables.NoAnswer"), null));
+			}
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		else
-		{
-			fStartChar=fStartChar-2; fEndChar=fEndChar-1;
+		args = stackListVariablesInfo.getLocals();
+		List<MIArg> variablesList = new ArrayList<MIArg>();
+		//List<IVariable> variablesList = new ArrayList<IVariable>();
+		if (args != null) {
+			for (int i = 0; i < args.length; i++) {
+				if (args[i].getName().startsWith("_")) {
+					//variablesList.add(new GDBVariable(this, args[i].getName(), i));
+					variablesList.add(args[i]);
+				}
+			}
 		}
-		fName = strings[4];
-		fMMCStackPointer = Integer.parseInt(strings[5]);
-		fCallType = strings[6];
-		int numVars = strings.length - 7;
-		IVariable[] vars = new IVariable[numVars];
-		for (int i = 0; i < numVars; i++) {
-			vars[i] = new GDBVariable(this, strings[i + 7], i);
-		}
-		fThread.setVariables(this, vars);
+		// first remove the variables that are removed from this frame
+		removevariables(variablesList);
+		// compare and create IVariable
+		compareVariables(variablesList);
+//		IVariable[] vars = null;
+//		vars = (IVariable[])variablesList.toArray(new IVariable[variablesList.size()]);
+//		fThread.setVariables(this, vars);
 	}
-	
+	/**
+	 * @param variablesList
+	 */
+	private void removevariables(List<MIArg> variablesList) {
+		// TODO Auto-generated method stub
+		Boolean isFound;
+		for(Iterator<GDBVariable> i = fGDBVariables.iterator(); i.hasNext();) {
+			isFound = false;
+			GDBVariable variable = i.next();
+			for (MIArg miArg : variablesList) {
+				if (variable.getOriginalName().equals(miArg.getName())) {
+					isFound = true;
+					break;
+				}
+			}
+			if (!isFound) {
+				i.remove();
+			}
+		}
+	}
+
+	/**
+	 * @param variablesList
+	 */
+	private void compareVariables(List<MIArg> variablesList) {
+		// TODO Auto-generated method stub
+		for (MIArg miArg : variablesList) {
+			if (!variableExists(miArg.getName())) {
+				fGDBVariables.add(new GDBVariable(this, miArg.getName()));
+			}
+		}
+	}
+
+	/**
+	 * @param miArg
+	 * @return
+	 */
+	private boolean variableExists(String name) {
+		// TODO Auto-generated method stub
+		for (GDBVariable variable : fGDBVariables) {
+			if (variable.getOriginalName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
@@ -114,7 +196,8 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		return fThread.getVariables(this);
+		return (IVariable[])fGDBVariables.toArray(new IVariable[fGDBVariables.size()]);
+		//return fThread.getVariables(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
@@ -145,23 +228,6 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 */
 	public String getName() throws DebugException {
 		return fName;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
-	 */
-	public int getMMCStackPointer() throws DebugException {
-		return fMMCStackPointer;
-	}	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
-	 */
-	public String getCallType() throws DebugException {		
-		if (fCallType.equalsIgnoreCase("f")) return "failure";
-		if (fCallType.equalsIgnoreCase("s")) return "success";
-		if (fCallType.equalsIgnoreCase("n")) return "normal";
-		if (fCallType.equalsIgnoreCase("h")) return "shared";
-		if (fCallType.equalsIgnoreCase("e")) return "extern";
-		return "unknown";
 	}	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
@@ -287,9 +353,8 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 				sf.fStartChar == fStartChar &&
 				sf.fEndChar == fEndChar &&
 				sf.fLineNumber == fLineNumber &&
-				sf.fId == fId &&
-				sf.fCallType.equals(fCallType);
-				
+				sf.fId == fId;/* &&
+				sf.fCallType.equals(fCallType);*/
 		}
 		return false;
 	}
@@ -308,5 +373,36 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 */
 	protected int getIdentifier() {
 		return fId;
-	}	
+	}
+
+	/**
+	 * @return
+	 */
+	public MIFrame getMIFrame() {
+		// TODO Auto-generated method stub
+		return fFrame;
+	}
+
+	/**
+	 * @param miFrame
+	 * @return
+	 */
+	public boolean compareMIFrame(MIFrame miFrame) {
+		// TODO Auto-generated method stub
+		if (getMIFrame().getFile().equals(miFrame.getFile())) {
+			if (getMIFrame().getFunction().equals(miFrame.getFunction())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param miFrame
+	 */
+	public void updateMe(MIFrame miFrame) {
+		// TODO Auto-generated method stub
+		fFrame = miFrame;
+		initialize();
+	}
 }

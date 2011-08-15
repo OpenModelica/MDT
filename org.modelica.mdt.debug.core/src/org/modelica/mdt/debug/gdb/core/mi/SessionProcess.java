@@ -34,6 +34,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.modelica.mdt.debug.gdb.core.mi.command.CLICommand;
+import org.modelica.mdt.debug.gdb.core.mi.command.Command;
+import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.RawCommand;
+
 /**
  * @author Adeel Asghar
  *
@@ -81,10 +86,47 @@ public class SessionProcess extends Process {
 	public OutputStream getOutputStream() {
 		if (out == null) {
 			out = new OutputStream() {
+				StringBuffer buf = new StringBuffer();
 				@Override
 				public void write(int b) throws IOException {
 					// TODO Auto-generated method stub
-					// we dont want to write anything.
+					buf.append((char)b);
+					if (b == '\n') {
+						post();
+					}
+				}
+				// Encapsulate the string sent to gdb in a fake
+				// command and post it to the TxThread.
+				public void post() throws IOException {
+					// Throw away the newline.
+					String str = buf.toString().trim();
+					buf.setLength(0);
+					Command cmd = null;
+					// 1-
+					// if We have the secondary prompt it means
+					// that GDB is waiting for more feedback, use a RawCommand
+					// 2-
+					// Do not use the interpreterexec for stepping operation
+					// the UI will fall out of step.
+					// 3-
+					// Normal Command Line Interface.
+					boolean secondary = session.inSecondaryPrompt();
+					if (secondary) {
+						cmd = new RawCommand(str);
+					} else if (session.useExecConsole() && str.length() > 0) { 
+							//&& !CLIProcessor.isSteppingOperation(str)) {
+						CommandFactory factory = session.getCommandFactory();
+						cmd = factory.createMIInterpreterExecConsole(str);
+					} else {
+						cmd = new CLICommand(str);
+					}
+					try {
+						// Do not wait around for the answer.
+						session.postCommand(cmd, -1);
+					} catch (MIException e) {
+						//e.printStackTrace();
+						throw new IOException(e.getMessage());
+					}
 				}
 			};
 		}
