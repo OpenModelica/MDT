@@ -134,9 +134,10 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 							testScenariosPackage, 
 							valueMediatorsPackage);
 					
-					// execute 
-					editingDomain.getCommandStack().execute(getCommand(editingDomain));
-					
+					if (!smg.isCanceled()) {
+						// execute 
+						editingDomain.getCommandStack().execute(getCommand(editingDomain));
+					}
 					
 					// OBSOLETE: this is solved by a "Log" button in the GUI for selecting the test scenarios and requirements.
 					

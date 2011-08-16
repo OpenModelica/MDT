@@ -179,7 +179,6 @@ public class ValueBindingCreator {
 		}
 	}
 	
-	
 	private void updateSingle(
 			TreeObject item, 
 			TreeParent treeRoot, 
@@ -231,7 +230,9 @@ public class ValueBindingCreator {
 								if (code == null) {
 									// Generate marker 
 									String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
+									// delete the marker if there was one from previous actions.
 									ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+									// generate new marker
 									ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
 								}
 							}
@@ -248,7 +249,7 @@ public class ValueBindingCreator {
 					allClientsWithPossibleBindingCodeDerivation.add(item);
 
 					// Generate marker 
-					String message = "No binding code could be automatically generated for '"+ item.getDotPath() + "'. User decision is require."; 
+					String message = "No binding code could be automatically generated for '"+ item.getDotPath() + "'. User decision is required."; 
 					ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
 					ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
 				}

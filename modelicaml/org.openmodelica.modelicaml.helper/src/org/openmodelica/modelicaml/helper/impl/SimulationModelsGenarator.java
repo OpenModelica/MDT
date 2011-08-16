@@ -7,10 +7,7 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.DialogCellEditor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
@@ -156,11 +153,10 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		}
 	}
 	
-
 	private void createSimulationModels(Element sourceModel){
 
-		/* TODO: Implement a GUI to show the collected and discarded test scenarios and requirements.
-		 * It should enable a selection of test scenarios and requirements (e.g. in 2 separated tabs) to be instantiated. 
+		/* GUI to show the collected and discarded test scenarios and requirements.
+		 * It should enable a selection of test scenarios and requirements to be finally instantiated. 
 		 */
 
 		SelectTestScenariosAndRequirementsDialog dialog = new SelectTestScenariosAndRequirementsDialog(
@@ -175,8 +171,8 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		
 		dialog.open();
 		
-		if (dialog.getReturnCode() == 1) { // OK return code
-			canceled = true; // indicate abort and stop here. 
+		if (dialog.getReturnCode() == 1) { // Cancel return code
+			setCanceled(true); // indicate abort and stop here. 
 		}
 		else {
 			// Get the selected test scenarios and requirements from the dialog.  
@@ -185,9 +181,9 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 			userSelectedTestScenarios.addAll(userSelectedTestScenariosAndRequirements.keySet());
 			
 			if (userSelectedTestScenarios.size() > 0) {
-				PackageableElement simulationModelsPackage = (
-						(Package)targetPackage).createPackagedElement(Constants.simModelsPackageNamePrefix + ((NamedElement)sourceModel).getName(),
-						UMLPackage.Literals.PACKAGE);
+				String pkgName = Constants.simModelsPackageNamePrefix + ((NamedElement)sourceModel).getName();
+				String postFix = getNamePostFix((Package)targetPackage, pkgName);
+				PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 			
 			
 	//			for (Element testScenario : testScenariosToBeInstantiated) {
@@ -199,9 +195,10 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 						String simulationModelName = Constants.simModelsNamePrefix + ((NamedElement)testScenario).getName();
 						Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
 						
-						// TODO: here copy the simulation annotation values 
-						// from the TestScenario stereotype to the Simulation (or Test) stereotype
-						
+						/*
+						 *  Copy the simulation annotation values 
+						 *  from the TestScenario stereotype to the Simulation (or Test) stereotype 
+						 */
 						Stereotype s_model = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Model);
 						Stereotype s_simulation = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Simulation);
 						Stereotype s_test = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Test);
@@ -285,7 +282,9 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 						 *  and requirements to be instantiated, find models that should be instantiated in addition.
 						 */
 						
-						// instantiate the created simulation model class (it is not complete yet!)
+						/*
+						 *  instantiate the created simulation model class in order to search for required additional models
+						 */
 						ClassInstantiation ciTemp = new ClassInstantiation((Class) simulationModel, true);
 						ciTemp.createTree();
 						
@@ -322,16 +321,25 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 						}
 						
 						
-						// instantiate the created simulation model class
+						/* 
+						 * instantiate the created simulation model class
+						 * (it not contains all components)
+						 */
 						ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true);
 						ci.createTree();
 						
 						// update bindings in the created simulation model class
 						ValueBindingCreator vbc = new ValueBindingCreator();
 						/* Note, the updateAllBindings() is called with the last argument simulateOnly = false  
-						 * so that modifications are created in components.
+						 * so that modifications ARE created in components.
 						 */
 						vbc.updateAllBindings((Package)valueBindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
+						
+						/*
+						 * Create test verdict code
+						 */
+						TestOracleElementsCreator.createTestEvaluationElements(simulationModel);
+						
 					}
 				}
 			}
@@ -480,7 +488,7 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 
 					// add to log
 					String msg = "DISCARDED: Requirement ("+ModelicaMLServices.getRequirementID(requirement)+") '" + ((NamedElement)requirement).getQualifiedName() + "'" +  
-								"\nFor none of its clients the binding code can be derived using " +
+								"\nFor some of its clients the binding code could NOT be derived using " +
 								"the providers of '"+ciSourceModel.getSelectedClass().getName()+"'. \n" ;
 					addToLog(msg);
 				}
@@ -575,6 +583,32 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 		return false;
 	}
 
+	private String getNamePostFix(NamedElement owner, String name){
+		String postfix = "_";
+		int highestPostFixNumber = 0;
+	
+		EList<Element> ownedElements = owner.getOwnedElements();
+		for (Element element : ownedElements) {
+			if (element instanceof NamedElement && ((NamedElement)element).getName().startsWith(name)) {
+				
+				String namePart = ((NamedElement)element).getName();
+				String postFix = namePart.replaceFirst(name, "").replaceAll("_", "").trim();
+				
+				if (!postFix.equals("")) {
+					try {
+						int postFixNumber = Integer.valueOf(postFix);
+						if (postFixNumber > highestPostFixNumber) {
+							highestPostFixNumber = postFixNumber;
+						}
+					} catch (Exception e) {
+						// ignore, do nothing.
+					}
+				}
+			}
+		}
+		return postfix + (highestPostFixNumber + 1);	
+	}
+
 	private void addToLog(String msg){
 		this.log = this.log + "\n" + msg;
 	}
@@ -644,20 +678,23 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 	private boolean indeterminate = true; 
 	
 	@Override
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
-	    monitor.beginTask("Simulation models generator is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
-	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
-	      Thread.sleep(INCREMENT);
-	      monitor.worked(INCREMENT);
-	      if (total == TOTAL_TIME / 8) monitor.subTask("Collecting data ...");
-	      if (total == TOTAL_TIME / 4) monitor.subTask("Preparing simulation models to be created ...");
-	      if (total == TOTAL_TIME / 2) monitor.subTask("Creating models ...");
-	    }
-	    monitor.done();
-	    if (monitor.isCanceled()){
-	    	throw new InterruptedException("Simulation models generatorion was cancelled.");
-	    }   
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		
+		if (!isCanceled()) {
+		   
+			monitor.beginTask("Simulation models generator is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
+		    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
+		      Thread.sleep(INCREMENT);
+		      monitor.worked(INCREMENT);
+		      if (total == TOTAL_TIME / 8) monitor.subTask("Collecting data ...");
+		      if (total == TOTAL_TIME / 4) monitor.subTask("Preparing simulation models to be created ...");
+		      if (total == TOTAL_TIME / 2) monitor.subTask("Creating models ...");
+		    }
+		    monitor.done();
+		    if (monitor.isCanceled()){
+		    	throw new InterruptedException("Simulation models generatorion was cancelled.");
+		    }   
+		}
 	}
 
 	public void setCanceled(boolean canceled) {

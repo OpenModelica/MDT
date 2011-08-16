@@ -25,6 +25,9 @@ public class TestScenariosCollector {
 
 	// test scenarios that can be used to test selected requirements
 	private HashSet<Element> matchedTS = new HashSet<Element>();
+
+	// package (or any element that is the direct owner of the test scenario) and all test scenarios found in it
+	private HashMap<Element,HashSet<Element>> pkgToTS = new HashMap<Element,HashSet<Element>>();
 	
 	// test scenarios mapped to requirements
 	private HashMap<Element,HashSet<Element>> tsToReq = new HashMap<Element,HashSet<Element>>();
@@ -92,6 +95,9 @@ public class TestScenariosCollector {
 		reqToTS.clear();
 		
 		for (Element testScenario : allTS) {
+			// add the owner to map
+			addToPkgToTSMap(testScenario.getOwner(), testScenario);
+			
 			// get referenced requirements
 			HashSet<Element> linkedReqList = collectRequirementsForTestCase(testScenario);
 			
@@ -203,6 +209,21 @@ public class TestScenariosCollector {
 	
 	
 	
+	private void addToPkgToTSMap(Element key, Element item){
+		HashSet<Element> set = pkgToTS.get(key);
+		HashSet<Element> updatedSet = new HashSet<Element>();
+		
+		if (set != null && set.size() > 0 ) {
+			updatedSet.addAll(set);
+			updatedSet.add(item);
+			pkgToTS.put(key, updatedSet);
+		}
+		else {
+			updatedSet.add(item);
+			pkgToTS.put(key, updatedSet);
+		}
+	}
+	
 	private void addToReqToTSMap(Element key, Element item){
 		HashSet<Element> set = reqToTS.get(key);
 		HashSet<Element> updatedSet = new HashSet<Element>();
@@ -274,5 +295,13 @@ public class TestScenariosCollector {
 
 	public HashSet<Element> getSelectedReq() {
 		return selectedReq;
+	}
+
+	public void setPkgToTS(HashMap<Element,HashSet<Element>> pkgToTS) {
+		this.pkgToTS = pkgToTS;
+	}
+
+	public HashMap<Element,HashSet<Element>> getPkgToTS() {
+		return pkgToTS;
 	}
 }
