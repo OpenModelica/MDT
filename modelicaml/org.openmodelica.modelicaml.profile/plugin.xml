@@ -261,7 +261,7 @@
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
                   icon="resources/icons/icons16/generateSimMopdels.png"
-                  label="Generate Simulation Models"
+                  label="Generate Test Simulation Models"
                   style="push">
                <visibleWhen
                      checkEnabled="true">
