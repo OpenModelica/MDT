@@ -1110,6 +1110,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					if (modificationStringDialog.getReturnCode() == 0) { // OK button pressed
 						String string = modificationStringDialog.getValue();
 						Shell shell = new Shell();
+						
 						if ( string.trim().equals("")) {
 							// Delete modification in items firstLevelComponent
 							// Delete modification
@@ -1129,7 +1130,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 							item.setFinalModificationRightHand(null); // TODO: verify against the line above
 							item.setFinalModificationSource(null);
 //							viewer.update(item, null);
-							updateItem(item);
+//							updateItem(item);
 						}
 						else {
 							Boolean hasOutterBraces = string.trim().startsWith("(");
@@ -1156,7 +1157,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								item.setFinalModificationRightHand(null); // verify against the line above
 								item.setFinalModificationSource(null);
 //								viewer.update(item, null);
-								updateItem(item);
+//								updateItem(item);
+
 							}
 
 							
@@ -1194,7 +1196,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 									item.setFinalModificationRightHand(rightHandPart); // verify this against the line above!
 									item.setFinalModificationSource(item.getFirstLevelComponent()); // TODO: this is wrong if the modification source is Generalization! 
 //									viewer.update(item, null);
-									updateItem(item);
+//									updateItem(item);
 								}
 								else {
 									//System.err.println("ModelicaML modifications parsing error ComponentsTree.class 03, no right hand part found: " + string);
@@ -1486,8 +1488,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionAddReqTestEvaluationElements.setText("Add requirements test oracle code");
-		actionAddReqTestEvaluationElements.setToolTipText("Add requirements test oracle code");
+		actionAddReqTestEvaluationElements.setText("Add requirements test verdict");
+		actionAddReqTestEvaluationElements.setToolTipText("Add requirements test verdict");
 		actionAddReqTestEvaluationElements.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		
 		actionDeleteReqTestEvaluationElements = new Action("actionReqTestEvaluationElements") {
@@ -1497,8 +1499,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 //					TreeParent item = ( (TreeParent)obj);
-					String title = "Delete requirements test evaluation elements";
-					String message = "Are you sure you want to delete the requirements test result evaluation elements?" +
+					String title = "Delete requirements test verdict";
+					String message = "Are you sure you want to delete the requirements test verdict elements?" +
 							"\nThis action cannot be undone.";
 					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
 
@@ -1510,8 +1512,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionDeleteReqTestEvaluationElements.setText("Delete Requirements Evaluation Code");
-		actionDeleteReqTestEvaluationElements.setToolTipText("Delete Requirements Evaluation Code");
+		actionDeleteReqTestEvaluationElements.setText("Delete requirements test verdict");
+		actionDeleteReqTestEvaluationElements.setToolTipText("Delete requirements test verdict");
 		actionDeleteReqTestEvaluationElements.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
 		
@@ -1759,7 +1761,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	}
 	
 	private void updateAllParents(TreeObject item){
-		if (item.getParent() != null) {
+		if (item.getParent() != null && !item.isRoot()) {
 			viewer.update(item.getParent(), null);
 			updateAllParents(item.getParent());
 		}

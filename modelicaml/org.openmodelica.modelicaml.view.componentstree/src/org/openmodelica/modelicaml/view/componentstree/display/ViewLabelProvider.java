@@ -207,7 +207,16 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			
 			// #######################################################################################
 			// set text
-			if (!treeObject.isLeaf() && !treeObject.isRoot() && treeObject.getChildren().length > 0) { // tree with children object 
+			
+			if (treeObject.isRoot()) { // only for inputs or outputs root node
+				StyledString styledString = new StyledString("");
+				styledString.append(treeObject.toString(), StyledString.QUALIFIER_STYLER);
+				cell.setText(styledString.toString());
+				cell.setStyleRanges(styledString.getStyleRanges());
+				super.update(cell);
+			}
+			
+			else if (!treeObject.isLeaf() && !treeObject.isRoot() && treeObject.getChildren().length > 0) { // tree object with children  
 				
 				String hasRedecalaredTypeString = "";
 				if (treeObject.hasRedeclaredType()) {
@@ -238,23 +247,22 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 				
 				super.update(cell);
 			}
-			else if (treeObject.isRoot()) { // only for inputs or outputs root node
-				
-				StyledString styledString = new StyledString("");
-				
-				if (treeObject.isInput()) {
-					styledString.append(treeObject.toString(), StyledString.COUNTER_STYLER);
-				}
-				else if (treeObject.isOutput()) {
-					styledString.append(treeObject.toString(), StyledString.DECORATIONS_STYLER);
-				}
-				else {
-					styledString.append(treeObject.toString(), StyledString.QUALIFIER_STYLER);	
-				}
-				cell.setText(styledString.toString());
-				cell.setStyleRanges(styledString.getStyleRanges());
-				super.update(cell);
-			}
+//			else if (treeObject.isRoot()) { // only for inputs or outputs root node
+//				StyledString styledString = new StyledString("");
+//				
+//				if (treeObject.isInput()) {
+//					styledString.append(treeObject.toString(), StyledString.COUNTER_STYLER);
+//				}
+//				else if (treeObject.isOutput()) {
+//					styledString.append(treeObject.toString(), StyledString.DECORATIONS_STYLER);
+//				}
+//				else {
+//					styledString.append(treeObject.toString(), StyledString.QUALIFIER_STYLER);
+//				}
+//				cell.setText(styledString.toString());
+//				cell.setStyleRanges(styledString.getStyleRanges());
+//				super.update(cell);
+//			}
 			
 			else if (treeObject.isInput() || treeObject.isOutput()) {
 				String tNameString = "";
@@ -445,8 +453,8 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 //			return list;
 		}
 		
-		// if it is a required client and there is no binding eqation (modification) for it -> error
-		if (treeParent.isValueClient_required() && treeParent.getModificationRightHand() == null) {
+		// if it is a required client and there is no binding equation (modification) for it -> error
+		if (treeParent.isValueClient_required() && treeParent.getFinalModificationRightHand() == null) {
 			list.add(treeParent);
 		}
 
