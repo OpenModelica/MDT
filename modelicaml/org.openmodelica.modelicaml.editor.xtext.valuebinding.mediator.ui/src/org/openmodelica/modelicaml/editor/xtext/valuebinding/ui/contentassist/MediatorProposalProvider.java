@@ -132,6 +132,52 @@ public class MediatorProposalProvider extends AbstractMediatorProposalProvider {
 	}
 	
 	@Override
+	public void complete_ANDFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
+		
+		super.complete_name(model, ruleCall, context, acceptor);
+	
+		List<String> cList = new ArrayList<String>();
+		cList.add("AND(:)");
+		
+		for (String string : cList) {
+			String completionString = string;
+			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
+			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
+			acceptor.accept(completionProposal);
+		}
+	}
+	@Override
+	public void complete_ORFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
+		
+		super.complete_name(model, ruleCall, context, acceptor);
+	
+		List<String> cList = new ArrayList<String>();
+		cList.add("OR(:)");
+		
+		for (String string : cList) {
+			String completionString = string;
+			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
+			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
+			acceptor.accept(completionProposal);
+		}
+	}
+	@Override
+	public void complete_XORFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
+		
+		super.complete_name(model, ruleCall, context, acceptor);
+	
+		List<String> cList = new ArrayList<String>();
+		cList.add("XOR(:)");
+		
+		for (String string : cList) {
+			String completionString = string;
+			String displayString = ModelicaMLContentAssist.getDisplayCompletionString(context.getPrefix(), completionString);
+			ICompletionProposal completionProposal = createCompletionProposal(completionString, displayString, SWTResourceManager.getImage(SWTResourceManager.class, "/icons/valueMediator.png"), context);
+			acceptor.accept(completionProposal);
+		}
+	}
+	
+	@Override
 	public void complete_GetSingleProviderFunction(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
 		
 		super.complete_name(model, ruleCall, context, acceptor);

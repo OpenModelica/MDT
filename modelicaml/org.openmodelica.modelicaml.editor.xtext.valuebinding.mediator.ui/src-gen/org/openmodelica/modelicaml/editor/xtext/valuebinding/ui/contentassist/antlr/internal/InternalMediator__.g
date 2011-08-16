@@ -37,52 +37,55 @@ T40 : 'max' ;
 T41 : 'avg' ;
 T42 : 'size' ;
 T43 : 'toArray' ;
-T44 : 'getSingleProvider' ;
-T45 : ':' ;
-T46 : '.' ;
-T47 : 'if' ;
-T48 : 'then' ;
-T49 : 'elseif' ;
-T50 : 'else' ;
-T51 : 'or' ;
-T52 : 'and' ;
-T53 : 'not' ;
-T54 : 'initial' ;
-T55 : 'der' ;
-T56 : ',' ;
-T57 : 'for' ;
-T58 : '=' ;
-T59 : 'in' ;
-T60 : 'end' ;
+T44 : 'AND' ;
+T45 : 'OR' ;
+T46 : 'XOR' ;
+T47 : 'getSingleProvider' ;
+T48 : ':' ;
+T49 : '.' ;
+T50 : 'if' ;
+T51 : 'then' ;
+T52 : 'elseif' ;
+T53 : 'else' ;
+T54 : 'or' ;
+T55 : 'and' ;
+T56 : 'not' ;
+T57 : 'initial' ;
+T58 : 'der' ;
+T59 : ',' ;
+T60 : 'for' ;
+T61 : '=' ;
+T62 : 'in' ;
+T63 : 'end' ;
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7876
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8212
 RULE_UNSIGNED_NUMBER : (('0'..'9')+ '.' ('0'..'9')* (('E'|'e') ('+'|'-')? ('0'..'9')+)?|('0'..'9')+ ('E'|'e') ('+'|'-')? ('0'..'9')+);
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7878
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8214
 RULE_BOOL_VAL : ('true'|'false');
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7880
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8216
 RULE_INT : ('0'..'9')+;
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7882
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8218
 RULE_STRING : '"' ('\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\')|~(('\\'|'"')))* '"';
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7884
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8220
 RULE_IDENT : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'.')*;
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7886
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8222
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7888
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8224
 RULE_ML_COMMENT : '/*' ( options {greedy=false;} : . )*'*/';
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7890
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8226
 RULE_SL_COMMENT : '//' ~(('\n'|'\r'))* ('\r'? '\n')?;
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7892
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8228
 RULE_WS : (' '|'\t'|'\r'|'\n')+;
 
-// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 7894
+// $ANTLR src "../org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui/src-gen/org/openmodelica/modelicaml/editor/xtext/valuebinding/ui/contentassist/antlr/internal/InternalMediator.g" 8230
 RULE_ANY_OTHER : .;
 
 
