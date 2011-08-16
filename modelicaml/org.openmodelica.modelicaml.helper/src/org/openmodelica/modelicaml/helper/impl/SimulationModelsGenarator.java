@@ -7,6 +7,7 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Class;
@@ -133,6 +134,11 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 	}
 	
 	private void generateSimulationModels(Element sourceModel){
+		
+		String errorTitle = "Test Simulation Models Generation Helper";
+		String errorMessage = "No test scenarios were found that can be used to stimulate the model " +
+				"'"+((NamedElement)sourceModel).getName()+"'.";
+
 		if (allTestScenarios.size() > 0) {
 			
 			// Instantiate the system model. This is used to determine the required coherence of clients and providers.
@@ -150,7 +156,17 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 				// Create simulation model for each test scenario and all its referenced (and selected) requirements
 				createSimulationModels(sourceModel);
 			}
+			else {
+				informError(errorTitle, errorMessage);
+			}
 		}
+		else {
+			informError(errorTitle, errorMessage);
+		}
+	}
+	
+	private void informError(String title, String message){
+		MessageDialog.openError(new Shell(), title, message);
 	}
 	
 	private void createSimulationModels(Element sourceModel){
@@ -681,7 +697,6 @@ public class SimulationModelsGenarator implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		
 		if (!isCanceled()) {
-		   
 			monitor.beginTask("Simulation models generator is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
 		    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
 		      Thread.sleep(INCREMENT);
