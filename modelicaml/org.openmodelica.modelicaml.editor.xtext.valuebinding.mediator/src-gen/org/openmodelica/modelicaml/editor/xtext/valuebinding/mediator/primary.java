@@ -28,6 +28,9 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name_Function;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAvg <em>Avg</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSize <em>Size</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getToArray <em>To Array</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAnd <em>And</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getOr <em>Or</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getXor <em>Xor</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSingleProvider <em>Single Provider</em>}</li>
  * </ul>
  * </p>
@@ -297,6 +300,84 @@ public interface primary extends org.openmodelica.modelicaml.editor.xtext.model.
    * @generated
    */
   void setToArray(String value);
+
+  /**
+   * Returns the value of the '<em><b>And</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>And</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>And</em>' attribute.
+   * @see #setAnd(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_And()
+   * @model
+   * @generated
+   */
+  String getAnd();
+
+  /**
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAnd <em>And</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>And</em>' attribute.
+   * @see #getAnd()
+   * @generated
+   */
+  void setAnd(String value);
+
+  /**
+   * Returns the value of the '<em><b>Or</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Or</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Or</em>' attribute.
+   * @see #setOr(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_Or()
+   * @model
+   * @generated
+   */
+  String getOr();
+
+  /**
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getOr <em>Or</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Or</em>' attribute.
+   * @see #getOr()
+   * @generated
+   */
+  void setOr(String value);
+
+  /**
+   * Returns the value of the '<em><b>Xor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Xor</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Xor</em>' attribute.
+   * @see #setXor(String)
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.MediatorPackage#getprimary_Xor()
+   * @model
+   * @generated
+   */
+  String getXor();
+
+  /**
+   * Sets the value of the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getXor <em>Xor</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Xor</em>' attribute.
+   * @see #getXor()
+   * @generated
+   */
+  void setXor(String value);
 
   /**
    * Returns the value of the '<em><b>Single Provider</b></em>' attribute.

@@ -25,6 +25,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/avg"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/size"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/toArray"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/and"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/or"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/xor"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Mediator.ecore#//primary/singleProvider"/>
     </genClasses>
     <genClasses ecoreClass="Mediator.ecore#//component_reference"/>

@@ -27,6 +27,9 @@ primary :
 	| avg=AverageFunction // ModelicaML Value Binding Concept specific
 	| size=SizeFunction // ModelicaML Value Binding Concept specific
 	| toArray=ToArrayFunction // ModelicaML Value Binding Concept specific
+	| and=ANDFunction // ModelicaML Value Binding Concept specific
+	| or=ORFunction // ModelicaML Value Binding Concept specific
+	| xor=XORFunction // ModelicaML Value Binding Concept specific
 	
 	| singleProvider=GetSingleProviderFunction // ModelicaML Value Binding Concept specific
 
@@ -52,6 +55,12 @@ SizeFunction :
 	'size' ReductionFunctionCallArgs;
 ToArrayFunction :
 	'toArray' ReductionFunctionCallArgs;
+ANDFunction :
+	'AND' ReductionFunctionCallArgs;
+ORFunction :
+	'OR' ReductionFunctionCallArgs;
+XORFunction :
+	'XOR' ReductionFunctionCallArgs;
 GetSingleProviderFunction :
 	'getSingleProvider' Brackets;
 

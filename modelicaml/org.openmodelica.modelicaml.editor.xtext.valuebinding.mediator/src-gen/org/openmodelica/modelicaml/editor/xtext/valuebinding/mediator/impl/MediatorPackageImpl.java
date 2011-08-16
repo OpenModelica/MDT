@@ -248,9 +248,39 @@ public class MediatorPackageImpl extends EPackageImpl implements MediatorPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getprimary_SingleProvider()
+  public EAttribute getprimary_And()
   {
     return (EAttribute)primaryEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getprimary_Or()
+  {
+    return (EAttribute)primaryEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getprimary_Xor()
+  {
+    return (EAttribute)primaryEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getprimary_SingleProvider()
+  {
+    return (EAttribute)primaryEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -307,6 +337,9 @@ public class MediatorPackageImpl extends EPackageImpl implements MediatorPackage
     createEAttribute(primaryEClass, PRIMARY__AVG);
     createEAttribute(primaryEClass, PRIMARY__SIZE);
     createEAttribute(primaryEClass, PRIMARY__TO_ARRAY);
+    createEAttribute(primaryEClass, PRIMARY__AND);
+    createEAttribute(primaryEClass, PRIMARY__OR);
+    createEAttribute(primaryEClass, PRIMARY__XOR);
     createEAttribute(primaryEClass, PRIMARY__SINGLE_PROVIDER);
 
     component_referenceEClass = createEClass(COMPONENT_REFERENCE);
@@ -362,6 +395,9 @@ public class MediatorPackageImpl extends EPackageImpl implements MediatorPackage
     initEAttribute(getprimary_Avg(), ecorePackage.getEString(), "avg", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getprimary_Size(), ecorePackage.getEString(), "size", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getprimary_ToArray(), ecorePackage.getEString(), "toArray", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getprimary_And(), ecorePackage.getEString(), "and", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getprimary_Or(), ecorePackage.getEString(), "or", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getprimary_Xor(), ecorePackage.getEString(), "xor", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getprimary_SingleProvider(), ecorePackage.getEString(), "singleProvider", null, 0, 1, primary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(component_referenceEClass, component_reference.class, "component_reference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

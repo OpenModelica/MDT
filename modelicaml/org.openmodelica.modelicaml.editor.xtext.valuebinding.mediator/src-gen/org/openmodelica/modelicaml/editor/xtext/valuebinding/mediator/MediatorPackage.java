@@ -307,13 +307,40 @@ public interface MediatorPackage extends EPackage
   int PRIMARY__TO_ARRAY = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 9;
 
   /**
+   * The feature id for the '<em><b>And</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRIMARY__AND = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 10;
+
+  /**
+   * The feature id for the '<em><b>Or</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRIMARY__OR = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 11;
+
+  /**
+   * The feature id for the '<em><b>Xor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRIMARY__XOR = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 12;
+
+  /**
    * The feature id for the '<em><b>Single Provider</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PRIMARY__SINGLE_PROVIDER = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 10;
+  int PRIMARY__SINGLE_PROVIDER = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 13;
 
   /**
    * The number of structural features of the '<em>primary</em>' class.
@@ -322,7 +349,7 @@ public interface MediatorPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 11;
+  int PRIMARY_FEATURE_COUNT = ModeleditorPackage.PRIMARY_FEATURE_COUNT + 14;
 
   /**
    * The meta object id for the '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.component_referenceImpl <em>component reference</em>}' class.
@@ -522,6 +549,39 @@ public interface MediatorPackage extends EPackage
   EAttribute getprimary_ToArray();
 
   /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAnd <em>And</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>And</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getAnd()
+   * @see #getprimary()
+   * @generated
+   */
+  EAttribute getprimary_And();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getOr <em>Or</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Or</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getOr()
+   * @see #getprimary()
+   * @generated
+   */
+  EAttribute getprimary_Or();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getXor <em>Xor</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Xor</em>'.
+   * @see org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getXor()
+   * @see #getprimary()
+   * @generated
+   */
+  EAttribute getprimary_Xor();
+
+  /**
    * Returns the meta object for the attribute '{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary#getSingleProvider <em>Single Provider</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -672,6 +732,30 @@ public interface MediatorPackage extends EPackage
      * @generated
      */
     EAttribute PRIMARY__TO_ARRAY = eINSTANCE.getprimary_ToArray();
+
+    /**
+     * The meta object literal for the '<em><b>And</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRIMARY__AND = eINSTANCE.getprimary_And();
+
+    /**
+     * The meta object literal for the '<em><b>Or</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRIMARY__OR = eINSTANCE.getprimary_Or();
+
+    /**
+     * The meta object literal for the '<em><b>Xor</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PRIMARY__XOR = eINSTANCE.getprimary_Xor();
 
     /**
      * The meta object literal for the '<em><b>Single Provider</b></em>' attribute feature.

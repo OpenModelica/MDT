@@ -66,31 +66,37 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSizeSizeFunctionParserRuleCall_12_0 = (RuleCall)cSizeAssignment_12.eContents().get(0);
 		private final Assignment cToArrayAssignment_13 = (Assignment)cAlternatives.eContents().get(13);
 		private final RuleCall cToArrayToArrayFunctionParserRuleCall_13_0 = (RuleCall)cToArrayAssignment_13.eContents().get(0);
-		private final Assignment cSingleProviderAssignment_14 = (Assignment)cAlternatives.eContents().get(14);
-		private final RuleCall cSingleProviderGetSingleProviderFunctionParserRuleCall_14_0 = (RuleCall)cSingleProviderAssignment_14.eContents().get(0);
-		private final Assignment cComponent_referenceAssignment_15 = (Assignment)cAlternatives.eContents().get(15);
-		private final RuleCall cComponent_referenceComponent_referenceParserRuleCall_15_0 = (RuleCall)cComponent_referenceAssignment_15.eContents().get(0);
-		private final Group cGroup_16 = (Group)cAlternatives.eContents().get(16);
-		private final Keyword cLeftParenthesisKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
-		private final Assignment cOutput_expr_listAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
-		private final RuleCall cOutput_expr_listOutput_expression_listParserRuleCall_16_1_0 = (RuleCall)cOutput_expr_listAssignment_16_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_16_2 = (Keyword)cGroup_16.eContents().get(2);
-		private final Group cGroup_17 = (Group)cAlternatives.eContents().get(17);
-		private final Keyword cLeftSquareBracketKeyword_17_0 = (Keyword)cGroup_17.eContents().get(0);
-		private final Assignment cExpre_listAssignment_17_1 = (Assignment)cGroup_17.eContents().get(1);
-		private final RuleCall cExpre_listExpression_listParserRuleCall_17_1_0 = (RuleCall)cExpre_listAssignment_17_1.eContents().get(0);
-		private final Group cGroup_17_2 = (Group)cGroup_17.eContents().get(2);
-		private final Keyword cSemicolonKeyword_17_2_0 = (Keyword)cGroup_17_2.eContents().get(0);
-		private final Assignment cExpression_listAssignment_17_2_1 = (Assignment)cGroup_17_2.eContents().get(1);
-		private final RuleCall cExpression_listExpression_listParserRuleCall_17_2_1_0 = (RuleCall)cExpression_listAssignment_17_2_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_17_3 = (Keyword)cGroup_17.eContents().get(3);
-		private final Group cGroup_18 = (Group)cAlternatives.eContents().get(18);
-		private final Keyword cLeftCurlyBracketKeyword_18_0 = (Keyword)cGroup_18.eContents().get(0);
-		private final Assignment cF_argumentsAssignment_18_1 = (Assignment)cGroup_18.eContents().get(1);
-		private final RuleCall cF_argumentsFunction_argumentsParserRuleCall_18_1_0 = (RuleCall)cF_argumentsAssignment_18_1.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_18_2 = (Keyword)cGroup_18.eContents().get(2);
-		private final Assignment cEndAssignment_19 = (Assignment)cAlternatives.eContents().get(19);
-		private final Keyword cEndEndKeyword_19_0 = (Keyword)cEndAssignment_19.eContents().get(0);
+		private final Assignment cAndAssignment_14 = (Assignment)cAlternatives.eContents().get(14);
+		private final RuleCall cAndANDFunctionParserRuleCall_14_0 = (RuleCall)cAndAssignment_14.eContents().get(0);
+		private final Assignment cOrAssignment_15 = (Assignment)cAlternatives.eContents().get(15);
+		private final RuleCall cOrORFunctionParserRuleCall_15_0 = (RuleCall)cOrAssignment_15.eContents().get(0);
+		private final Assignment cXorAssignment_16 = (Assignment)cAlternatives.eContents().get(16);
+		private final RuleCall cXorXORFunctionParserRuleCall_16_0 = (RuleCall)cXorAssignment_16.eContents().get(0);
+		private final Assignment cSingleProviderAssignment_17 = (Assignment)cAlternatives.eContents().get(17);
+		private final RuleCall cSingleProviderGetSingleProviderFunctionParserRuleCall_17_0 = (RuleCall)cSingleProviderAssignment_17.eContents().get(0);
+		private final Assignment cComponent_referenceAssignment_18 = (Assignment)cAlternatives.eContents().get(18);
+		private final RuleCall cComponent_referenceComponent_referenceParserRuleCall_18_0 = (RuleCall)cComponent_referenceAssignment_18.eContents().get(0);
+		private final Group cGroup_19 = (Group)cAlternatives.eContents().get(19);
+		private final Keyword cLeftParenthesisKeyword_19_0 = (Keyword)cGroup_19.eContents().get(0);
+		private final Assignment cOutput_expr_listAssignment_19_1 = (Assignment)cGroup_19.eContents().get(1);
+		private final RuleCall cOutput_expr_listOutput_expression_listParserRuleCall_19_1_0 = (RuleCall)cOutput_expr_listAssignment_19_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_19_2 = (Keyword)cGroup_19.eContents().get(2);
+		private final Group cGroup_20 = (Group)cAlternatives.eContents().get(20);
+		private final Keyword cLeftSquareBracketKeyword_20_0 = (Keyword)cGroup_20.eContents().get(0);
+		private final Assignment cExpre_listAssignment_20_1 = (Assignment)cGroup_20.eContents().get(1);
+		private final RuleCall cExpre_listExpression_listParserRuleCall_20_1_0 = (RuleCall)cExpre_listAssignment_20_1.eContents().get(0);
+		private final Group cGroup_20_2 = (Group)cGroup_20.eContents().get(2);
+		private final Keyword cSemicolonKeyword_20_2_0 = (Keyword)cGroup_20_2.eContents().get(0);
+		private final Assignment cExpression_listAssignment_20_2_1 = (Assignment)cGroup_20_2.eContents().get(1);
+		private final RuleCall cExpression_listExpression_listParserRuleCall_20_2_1_0 = (RuleCall)cExpression_listAssignment_20_2_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_20_3 = (Keyword)cGroup_20.eContents().get(3);
+		private final Group cGroup_21 = (Group)cAlternatives.eContents().get(21);
+		private final Keyword cLeftCurlyBracketKeyword_21_0 = (Keyword)cGroup_21.eContents().get(0);
+		private final Assignment cF_argumentsAssignment_21_1 = (Assignment)cGroup_21.eContents().get(1);
+		private final RuleCall cF_argumentsFunction_argumentsParserRuleCall_21_1_0 = (RuleCall)cF_argumentsAssignment_21_1.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_21_2 = (Keyword)cGroup_21.eContents().get(2);
+		private final Assignment cEndAssignment_22 = (Assignment)cAlternatives.eContents().get(22);
+		private final Keyword cEndEndKeyword_22_0 = (Keyword)cEndAssignment_22.eContents().get(0);
 		
 		//primary:
 		//	num=UNSIGNED_NUMBER | int=INT | str=STRING | Bool=BOOL_VAL | Name_Function=name_Function | Initial_ref=initial_ref |
@@ -101,7 +107,10 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		//	MaxFunction | avg= // ModelicaML Value Binding Concept specific
 		//	AverageFunction | size= // ModelicaML Value Binding Concept specific
 		//	SizeFunction | toArray= // ModelicaML Value Binding Concept specific
-		//	ToArrayFunction | singleProvider= // ModelicaML Value Binding Concept specific
+		//	ToArrayFunction | and= // ModelicaML Value Binding Concept specific
+		//	ANDFunction | or= // ModelicaML Value Binding Concept specific
+		//	ORFunction | xor= // ModelicaML Value Binding Concept specific
+		//	XORFunction | singleProvider= // ModelicaML Value Binding Concept specific
 		//	GetSingleProviderFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" |
 		//	"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
 		//	End="end";
@@ -115,7 +124,10 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		//MaxFunction | avg= // ModelicaML Value Binding Concept specific
 		//AverageFunction | size= // ModelicaML Value Binding Concept specific
 		//SizeFunction | toArray= // ModelicaML Value Binding Concept specific
-		//ToArrayFunction | singleProvider= // ModelicaML Value Binding Concept specific
+		//ToArrayFunction | and= // ModelicaML Value Binding Concept specific
+		//ANDFunction | or= // ModelicaML Value Binding Concept specific
+		//ORFunction | xor= // ModelicaML Value Binding Concept specific
+		//XORFunction | singleProvider= // ModelicaML Value Binding Concept specific
 		//GetSingleProviderFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" |
 		//"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
 		//End="end"
@@ -219,82 +231,106 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 		//ToArrayFunction
 		public RuleCall getToArrayToArrayFunctionParserRuleCall_13_0() { return cToArrayToArrayFunctionParserRuleCall_13_0; }
 
+		//and= // ModelicaML Value Binding Concept specific
+		//ANDFunction
+		public Assignment getAndAssignment_14() { return cAndAssignment_14; }
+
+		//// ModelicaML Value Binding Concept specific
+		//ANDFunction
+		public RuleCall getAndANDFunctionParserRuleCall_14_0() { return cAndANDFunctionParserRuleCall_14_0; }
+
+		//or= // ModelicaML Value Binding Concept specific
+		//ORFunction
+		public Assignment getOrAssignment_15() { return cOrAssignment_15; }
+
+		//// ModelicaML Value Binding Concept specific
+		//ORFunction
+		public RuleCall getOrORFunctionParserRuleCall_15_0() { return cOrORFunctionParserRuleCall_15_0; }
+
+		//xor= // ModelicaML Value Binding Concept specific
+		//XORFunction
+		public Assignment getXorAssignment_16() { return cXorAssignment_16; }
+
+		//// ModelicaML Value Binding Concept specific
+		//XORFunction
+		public RuleCall getXorXORFunctionParserRuleCall_16_0() { return cXorXORFunctionParserRuleCall_16_0; }
+
 		//singleProvider= // ModelicaML Value Binding Concept specific
 		//GetSingleProviderFunction
-		public Assignment getSingleProviderAssignment_14() { return cSingleProviderAssignment_14; }
+		public Assignment getSingleProviderAssignment_17() { return cSingleProviderAssignment_17; }
 
 		//// ModelicaML Value Binding Concept specific
 		//GetSingleProviderFunction
-		public RuleCall getSingleProviderGetSingleProviderFunctionParserRuleCall_14_0() { return cSingleProviderGetSingleProviderFunctionParserRuleCall_14_0; }
+		public RuleCall getSingleProviderGetSingleProviderFunctionParserRuleCall_17_0() { return cSingleProviderGetSingleProviderFunctionParserRuleCall_17_0; }
 
 		//Component_reference=component_reference
-		public Assignment getComponent_referenceAssignment_15() { return cComponent_referenceAssignment_15; }
+		public Assignment getComponent_referenceAssignment_18() { return cComponent_referenceAssignment_18; }
 
 		//component_reference
-		public RuleCall getComponent_referenceComponent_referenceParserRuleCall_15_0() { return cComponent_referenceComponent_referenceParserRuleCall_15_0; }
+		public RuleCall getComponent_referenceComponent_referenceParserRuleCall_18_0() { return cComponent_referenceComponent_referenceParserRuleCall_18_0; }
 
 		//"(" output_expr_list=output_expression_list ")"
-		public Group getGroup_16() { return cGroup_16; }
+		public Group getGroup_19() { return cGroup_19; }
 
 		//"("
-		public Keyword getLeftParenthesisKeyword_16_0() { return cLeftParenthesisKeyword_16_0; }
+		public Keyword getLeftParenthesisKeyword_19_0() { return cLeftParenthesisKeyword_19_0; }
 
 		//output_expr_list=output_expression_list
-		public Assignment getOutput_expr_listAssignment_16_1() { return cOutput_expr_listAssignment_16_1; }
+		public Assignment getOutput_expr_listAssignment_19_1() { return cOutput_expr_listAssignment_19_1; }
 
 		//output_expression_list
-		public RuleCall getOutput_expr_listOutput_expression_listParserRuleCall_16_1_0() { return cOutput_expr_listOutput_expression_listParserRuleCall_16_1_0; }
+		public RuleCall getOutput_expr_listOutput_expression_listParserRuleCall_19_1_0() { return cOutput_expr_listOutput_expression_listParserRuleCall_19_1_0; }
 
 		//")"
-		public Keyword getRightParenthesisKeyword_16_2() { return cRightParenthesisKeyword_16_2; }
+		public Keyword getRightParenthesisKeyword_19_2() { return cRightParenthesisKeyword_19_2; }
 
 		//"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]"
-		public Group getGroup_17() { return cGroup_17; }
+		public Group getGroup_20() { return cGroup_20; }
 
 		//"["
-		public Keyword getLeftSquareBracketKeyword_17_0() { return cLeftSquareBracketKeyword_17_0; }
+		public Keyword getLeftSquareBracketKeyword_20_0() { return cLeftSquareBracketKeyword_20_0; }
 
 		//Expre_list=expression_list
-		public Assignment getExpre_listAssignment_17_1() { return cExpre_listAssignment_17_1; }
+		public Assignment getExpre_listAssignment_20_1() { return cExpre_listAssignment_20_1; }
 
 		//expression_list
-		public RuleCall getExpre_listExpression_listParserRuleCall_17_1_0() { return cExpre_listExpression_listParserRuleCall_17_1_0; }
+		public RuleCall getExpre_listExpression_listParserRuleCall_20_1_0() { return cExpre_listExpression_listParserRuleCall_20_1_0; }
 
 		//(";" Expression_list+=expression_list)*
-		public Group getGroup_17_2() { return cGroup_17_2; }
+		public Group getGroup_20_2() { return cGroup_20_2; }
 
 		//";"
-		public Keyword getSemicolonKeyword_17_2_0() { return cSemicolonKeyword_17_2_0; }
+		public Keyword getSemicolonKeyword_20_2_0() { return cSemicolonKeyword_20_2_0; }
 
 		//Expression_list+=expression_list
-		public Assignment getExpression_listAssignment_17_2_1() { return cExpression_listAssignment_17_2_1; }
+		public Assignment getExpression_listAssignment_20_2_1() { return cExpression_listAssignment_20_2_1; }
 
 		//expression_list
-		public RuleCall getExpression_listExpression_listParserRuleCall_17_2_1_0() { return cExpression_listExpression_listParserRuleCall_17_2_1_0; }
+		public RuleCall getExpression_listExpression_listParserRuleCall_20_2_1_0() { return cExpression_listExpression_listParserRuleCall_20_2_1_0; }
 
 		//"]"
-		public Keyword getRightSquareBracketKeyword_17_3() { return cRightSquareBracketKeyword_17_3; }
+		public Keyword getRightSquareBracketKeyword_20_3() { return cRightSquareBracketKeyword_20_3; }
 
 		//"{" f_arguments=function_arguments "}"
-		public Group getGroup_18() { return cGroup_18; }
+		public Group getGroup_21() { return cGroup_21; }
 
 		//"{"
-		public Keyword getLeftCurlyBracketKeyword_18_0() { return cLeftCurlyBracketKeyword_18_0; }
+		public Keyword getLeftCurlyBracketKeyword_21_0() { return cLeftCurlyBracketKeyword_21_0; }
 
 		//f_arguments=function_arguments
-		public Assignment getF_argumentsAssignment_18_1() { return cF_argumentsAssignment_18_1; }
+		public Assignment getF_argumentsAssignment_21_1() { return cF_argumentsAssignment_21_1; }
 
 		//function_arguments
-		public RuleCall getF_argumentsFunction_argumentsParserRuleCall_18_1_0() { return cF_argumentsFunction_argumentsParserRuleCall_18_1_0; }
+		public RuleCall getF_argumentsFunction_argumentsParserRuleCall_21_1_0() { return cF_argumentsFunction_argumentsParserRuleCall_21_1_0; }
 
 		//"}"
-		public Keyword getRightCurlyBracketKeyword_18_2() { return cRightCurlyBracketKeyword_18_2; }
+		public Keyword getRightCurlyBracketKeyword_21_2() { return cRightCurlyBracketKeyword_21_2; }
 
 		//End="end"
-		public Assignment getEndAssignment_19() { return cEndAssignment_19; }
+		public Assignment getEndAssignment_22() { return cEndAssignment_22; }
 
 		//"end"
-		public Keyword getEndEndKeyword_19_0() { return cEndEndKeyword_19_0; }
+		public Keyword getEndEndKeyword_22_0() { return cEndEndKeyword_22_0; }
 	}
 
 	public class ProductFunctionElements extends AbstractParserRuleElementFinder {
@@ -433,6 +469,66 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"toArray"
 		public Keyword getToArrayKeyword_0() { return cToArrayKeyword_0; }
+
+		//ReductionFunctionCallArgs
+		public RuleCall getReductionFunctionCallArgsParserRuleCall_1() { return cReductionFunctionCallArgsParserRuleCall_1; }
+	}
+
+	public class ANDFunctionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ANDFunction");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cANDKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cReductionFunctionCallArgsParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		
+		//ANDFunction returns ecore::EString:
+		//	"AND" ReductionFunctionCallArgs;
+		public ParserRule getRule() { return rule; }
+
+		//"AND" ReductionFunctionCallArgs
+		public Group getGroup() { return cGroup; }
+
+		//"AND"
+		public Keyword getANDKeyword_0() { return cANDKeyword_0; }
+
+		//ReductionFunctionCallArgs
+		public RuleCall getReductionFunctionCallArgsParserRuleCall_1() { return cReductionFunctionCallArgsParserRuleCall_1; }
+	}
+
+	public class ORFunctionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ORFunction");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cORKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cReductionFunctionCallArgsParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		
+		//ORFunction returns ecore::EString:
+		//	"OR" ReductionFunctionCallArgs;
+		public ParserRule getRule() { return rule; }
+
+		//"OR" ReductionFunctionCallArgs
+		public Group getGroup() { return cGroup; }
+
+		//"OR"
+		public Keyword getORKeyword_0() { return cORKeyword_0; }
+
+		//ReductionFunctionCallArgs
+		public RuleCall getReductionFunctionCallArgsParserRuleCall_1() { return cReductionFunctionCallArgsParserRuleCall_1; }
+	}
+
+	public class XORFunctionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "XORFunction");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cXORKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cReductionFunctionCallArgsParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		
+		//XORFunction returns ecore::EString:
+		//	"XOR" ReductionFunctionCallArgs;
+		public ParserRule getRule() { return rule; }
+
+		//"XOR" ReductionFunctionCallArgs
+		public Group getGroup() { return cGroup; }
+
+		//"XOR"
+		public Keyword getXORKeyword_0() { return cXORKeyword_0; }
 
 		//ReductionFunctionCallArgs
 		public RuleCall getReductionFunctionCallArgsParserRuleCall_1() { return cReductionFunctionCallArgsParserRuleCall_1; }
@@ -619,6 +715,9 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 	private AverageFunctionElements pAverageFunction;
 	private SizeFunctionElements pSizeFunction;
 	private ToArrayFunctionElements pToArrayFunction;
+	private ANDFunctionElements pANDFunction;
+	private ORFunctionElements pORFunction;
+	private XORFunctionElements pXORFunction;
 	private GetSingleProviderFunctionElements pGetSingleProviderFunction;
 	private ReductionFunctionCallArgsElements pReductionFunctionCallArgs;
 	private BracketsElements pBrackets;
@@ -666,7 +765,10 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 	//	MaxFunction | avg= // ModelicaML Value Binding Concept specific
 	//	AverageFunction | size= // ModelicaML Value Binding Concept specific
 	//	SizeFunction | toArray= // ModelicaML Value Binding Concept specific
-	//	ToArrayFunction | singleProvider= // ModelicaML Value Binding Concept specific
+	//	ToArrayFunction | and= // ModelicaML Value Binding Concept specific
+	//	ANDFunction | or= // ModelicaML Value Binding Concept specific
+	//	ORFunction | xor= // ModelicaML Value Binding Concept specific
+	//	XORFunction | singleProvider= // ModelicaML Value Binding Concept specific
 	//	GetSingleProviderFunction | Component_reference=component_reference | "(" output_expr_list=output_expression_list ")" |
 	//	"[" Expre_list=expression_list (";" Expression_list+=expression_list)* "]" | "{" f_arguments=function_arguments "}" |
 	//	End="end";
@@ -747,6 +849,36 @@ public class MediatorGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getToArrayFunctionRule() {
 		return getToArrayFunctionAccess().getRule();
+	}
+
+	//ANDFunction returns ecore::EString:
+	//	"AND" ReductionFunctionCallArgs;
+	public ANDFunctionElements getANDFunctionAccess() {
+		return (pANDFunction != null) ? pANDFunction : (pANDFunction = new ANDFunctionElements());
+	}
+	
+	public ParserRule getANDFunctionRule() {
+		return getANDFunctionAccess().getRule();
+	}
+
+	//ORFunction returns ecore::EString:
+	//	"OR" ReductionFunctionCallArgs;
+	public ORFunctionElements getORFunctionAccess() {
+		return (pORFunction != null) ? pORFunction : (pORFunction = new ORFunctionElements());
+	}
+	
+	public ParserRule getORFunctionRule() {
+		return getORFunctionAccess().getRule();
+	}
+
+	//XORFunction returns ecore::EString:
+	//	"XOR" ReductionFunctionCallArgs;
+	public XORFunctionElements getXORFunctionAccess() {
+		return (pXORFunction != null) ? pXORFunction : (pXORFunction = new XORFunctionElements());
+	}
+	
+	public ParserRule getXORFunctionRule() {
+		return getXORFunctionAccess().getRule();
 	}
 
 	//GetSingleProviderFunction returns ecore::EString:

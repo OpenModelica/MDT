@@ -34,6 +34,9 @@ import org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.primary;
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getAvg <em>Avg</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getSize <em>Size</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getToArray <em>To Array</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getAnd <em>And</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getOr <em>Or</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getXor <em>Xor</em>}</li>
  *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.impl.primaryImpl#getSingleProvider <em>Single Provider</em>}</li>
  * </ul>
  * </p>
@@ -211,6 +214,66 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * @ordered
    */
   protected String toArray = TO_ARRAY_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getAnd() <em>And</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnd()
+   * @generated
+   * @ordered
+   */
+  protected static final String AND_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAnd() <em>And</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnd()
+   * @generated
+   * @ordered
+   */
+  protected String and = AND_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getOr() <em>Or</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOr()
+   * @generated
+   * @ordered
+   */
+  protected static final String OR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOr() <em>Or</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOr()
+   * @generated
+   * @ordered
+   */
+  protected String or = OR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getXor() <em>Xor</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getXor()
+   * @generated
+   * @ordered
+   */
+  protected static final String XOR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getXor() <em>Xor</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getXor()
+   * @generated
+   * @ordered
+   */
+  protected String xor = XOR_EDEFAULT;
 
   /**
    * The default value of the '{@link #getSingleProvider() <em>Single Provider</em>}' attribute.
@@ -563,6 +626,75 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getAnd()
+  {
+    return and;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAnd(String newAnd)
+  {
+    String oldAnd = and;
+    and = newAnd;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__AND, oldAnd, and));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getOr()
+  {
+    return or;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOr(String newOr)
+  {
+    String oldOr = or;
+    or = newOr;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__OR, oldOr, or));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getXor()
+  {
+    return xor;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setXor(String newXor)
+  {
+    String oldXor = xor;
+    xor = newXor;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MediatorPackage.PRIMARY__XOR, oldXor, xor));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getSingleProvider()
   {
     return singleProvider;
@@ -631,6 +763,12 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return getSize();
       case MediatorPackage.PRIMARY__TO_ARRAY:
         return getToArray();
+      case MediatorPackage.PRIMARY__AND:
+        return getAnd();
+      case MediatorPackage.PRIMARY__OR:
+        return getOr();
+      case MediatorPackage.PRIMARY__XOR:
+        return getXor();
       case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
         return getSingleProvider();
     }
@@ -676,6 +814,15 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return;
       case MediatorPackage.PRIMARY__TO_ARRAY:
         setToArray((String)newValue);
+        return;
+      case MediatorPackage.PRIMARY__AND:
+        setAnd((String)newValue);
+        return;
+      case MediatorPackage.PRIMARY__OR:
+        setOr((String)newValue);
+        return;
+      case MediatorPackage.PRIMARY__XOR:
+        setXor((String)newValue);
         return;
       case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
         setSingleProvider((String)newValue);
@@ -724,6 +871,15 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
       case MediatorPackage.PRIMARY__TO_ARRAY:
         setToArray(TO_ARRAY_EDEFAULT);
         return;
+      case MediatorPackage.PRIMARY__AND:
+        setAnd(AND_EDEFAULT);
+        return;
+      case MediatorPackage.PRIMARY__OR:
+        setOr(OR_EDEFAULT);
+        return;
+      case MediatorPackage.PRIMARY__XOR:
+        setXor(XOR_EDEFAULT);
+        return;
       case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
         setSingleProvider(SINGLE_PROVIDER_EDEFAULT);
         return;
@@ -761,6 +917,12 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
         return SIZE_EDEFAULT == null ? size != null : !SIZE_EDEFAULT.equals(size);
       case MediatorPackage.PRIMARY__TO_ARRAY:
         return TO_ARRAY_EDEFAULT == null ? toArray != null : !TO_ARRAY_EDEFAULT.equals(toArray);
+      case MediatorPackage.PRIMARY__AND:
+        return AND_EDEFAULT == null ? and != null : !AND_EDEFAULT.equals(and);
+      case MediatorPackage.PRIMARY__OR:
+        return OR_EDEFAULT == null ? or != null : !OR_EDEFAULT.equals(or);
+      case MediatorPackage.PRIMARY__XOR:
+        return XOR_EDEFAULT == null ? xor != null : !XOR_EDEFAULT.equals(xor);
       case MediatorPackage.PRIMARY__SINGLE_PROVIDER:
         return SINGLE_PROVIDER_EDEFAULT == null ? singleProvider != null : !SINGLE_PROVIDER_EDEFAULT.equals(singleProvider);
     }
@@ -792,6 +954,12 @@ public class primaryImpl extends org.openmodelica.modelicaml.editor.xtext.model.
     result.append(size);
     result.append(", toArray: ");
     result.append(toArray);
+    result.append(", and: ");
+    result.append(and);
+    result.append(", or: ");
+    result.append(or);
+    result.append(", xor: ");
+    result.append(xor);
     result.append(", singleProvider: ");
     result.append(singleProvider);
     result.append(')');
