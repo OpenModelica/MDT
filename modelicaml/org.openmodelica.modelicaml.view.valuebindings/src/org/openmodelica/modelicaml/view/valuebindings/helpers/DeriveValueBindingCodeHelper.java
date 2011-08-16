@@ -231,21 +231,39 @@ public class DeriveValueBindingCodeHelper {
 	
 	public String translateMediatorScript(String mediatorOperation, List<String> providerCodeItems){
 		if ( mediatorOperation != null ) {
+
+			// replace AND(:) by ( (provider_1 operation) and (provider_2 operation) and ... (provider_n operation))
+			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_AND + "\\((\\s+)?\\:(\\s+)?\\)", 
+					getLogicalOperatorOperation("and", providerCodeItems));
+			
+			// replace XOR(:) by ( not ((provider_1 operation) and (provider_2 operation) and  ... (provider_n operation)) 
+			//							and ((provider_1 operation) or (provider_2 operation) or  ... (provider_n operation) ) )
+			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_XOR + "\\((\\s+)?\\:(\\s+)?\\)", 
+					getXOROperation(providerCodeItems));
+			
+			// replace OR(:) by ( (provider_1 operation) or (provider_2 operation) or  ... (provider_n operation))
+			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_OR + "\\((\\s+)?\\:(\\s+)?\\)", 
+					getLogicalOperatorOperation("or", providerCodeItems));
+
 			// replace toArray(:) by a {p1,p2,p3,etc.}
-			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_toArray + "\\((\\s+)?\\:(\\s+)?\\)", "{" + getItemsSeparated(", ", providerCodeItems) + "}" );
+			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_toArray + "\\((\\s+)?\\:(\\s+)?\\)", 
+					"{" + getItemsSeparated(", ", providerCodeItems) + "}" );
 			
 			// replace size(:) numberOfProviders
-			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_size + "\\((\\s+)?\\:(\\s+)?\\)", String.valueOf(providerCodeItems.size()) );
+			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_size + "\\((\\s+)?\\:(\\s+)?\\)", 
+					String.valueOf(providerCodeItems.size()) );
 			
 			// replace avg(:) with  ( sum(:) / numberOfProviders). Note, sum(:) will be expanded below.
-			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_avg + "\\((\\s+)?\\:(\\s+)?\\)", "(sum(:) / " + String.valueOf(providerCodeItems.size()) + ")");
+			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_avg + "\\((\\s+)?\\:(\\s+)?\\)", 
+					"(sum(:) / " + String.valueOf(providerCodeItems.size()) + ")");
 			
 			// replace ( : ) with ( i for i in {comp1.name, comp2, etc.})
-			mediatorOperation = mediatorOperation.replaceAll("\\((\\s+)?\\:(\\s+)?\\)", "( i for i in {" + getItemsSeparated(", ", providerCodeItems) + "})");
+			mediatorOperation = mediatorOperation.replaceAll("\\((\\s+)?\\:(\\s+)?\\)", 
+					"( i for i in {" + getItemsSeparated(", ", providerCodeItems) + "})");
 
-			// * Special case for one provider.
+			// *Special case for one provider.
 			// It is used by value mediator in order to enable an additional manipulation of code derived from a single provider.
-			// This is only valid if codeItems has only one item, however, it is still returned as a comma-separated list in order to enable the detection potential errors.
+			// This is only valid if codeItems has only one item, however, it is still returned as a comma-separated list in order to enable the detection of potential errors.
 			mediatorOperation = mediatorOperation.replaceAll(Constants.MACRO_getSingleProvider+ "\\((\\s+)?\\)", getItemsSeparated(", ", new ArrayList<String>(providerCodeItems)) ); 
 		}
 		
@@ -264,6 +282,29 @@ public class DeriveValueBindingCodeHelper {
 		}
 		
 		return mediatorOperation;
+	}
+	
+	
+	private String getXOROperation(List<String> items){
+		return "( not " + getLogicalOperatorOperation("and", items) + " and " + getLogicalOperatorOperation("or", items) + " )";
+	}
+	
+	private String getLogicalOperatorOperation(String separator, List<String> items){
+		String code = "";
+		separator = " " + separator.trim() + " ";
+		
+		for (int i = 0; i < items.size(); i++) {
+			if (i == 0) { // first item
+				code = code + "(" + items.get(i) + ")";
+			}
+			else if (i == items.size() - 1 ) { // last item
+				code = code + separator + "(" + items.get(i) + ")";
+			}
+			else {
+				code = code + separator + "(" + items.get(i) + ")";
+			}
+		}
+		return "(" + code + ")";
 	}
 	
 	

@@ -418,7 +418,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		return list;
 	}
 	
-	
+	// TODO: refactor this method!
 	private HashSet<TreeObject> findNextEmptyProvidersMediator(TreeParent treeParent){
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
 
@@ -441,7 +441,14 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			else if (numberOfProviders == 1 ) {
 				// if there is one provider with an invalid script -> error
 				String script = DeriveValueBindingCodeUtls.getOperationSpecification(treeParent.getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
-				if ( script != null && !DeriveValueBindingCodeUtls.isValidMediatorSingleItemsScript(script) ) {
+				/*
+				 *  if there is only one provider but mediator has array reduction functions (functions for handling multiple providers) 
+				 *  -> no error, because potentially there will be more providers in the instance hierarchy
+				 */
+				if ( script != null && DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(script) ) {
+					// do nothing
+				}
+				else if ( script != null && !DeriveValueBindingCodeUtls.isValidMediatorSingleItemsScript(script) ) {
 					list.add(treeParent);					
 				}
 			}
@@ -466,7 +473,14 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				else if (numberOfProviders == 1 ) {
 					// if there is one provider with an invalid script -> error
 					String script = DeriveValueBindingCodeUtls.getOperationSpecification(children[i].getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
-					if ( script != null && !DeriveValueBindingCodeUtls.isValidMediatorSingleItemsScript(script) ) {
+					/*
+					 *  if there is only one provider but mediator has array reduction functions (functions for handling multiple providers) 
+					 *  -> no error, because potentially there will be more providers in the instance hierarchy
+					 */
+					if ( script != null && DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(script) ) {
+						// do nothing
+					}
+					else if ( script != null && !DeriveValueBindingCodeUtls.isValidMediatorSingleItemsScript(script) ) {
 						list.add(treeParent);					
 					}
 				}
