@@ -146,6 +146,9 @@ public class Constants {
 	public static final String MACRO_toArray 				= "toArray";
 	public static final String MACRO_size 					= "size";
 	public static final String MACRO_avg 					= "avg";
+	public static final String MACRO_AND 					= "AND";
+	public static final String MACRO_OR 					= "OR";
+	public static final String MACRO_XOR 					= "XOR";
 	
 	// standard Modelica array reduction functions
 	public static final String MACRO_sum 					= "sum";
@@ -168,3 +171,4 @@ public class Constants {
 	public final static String reqirementPropertyNamePrefix = "req_";
 	
 }
+
