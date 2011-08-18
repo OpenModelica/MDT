@@ -28,27 +28,44 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+package org.modelica.mdt.debug.gdb.core.mi.output;
 
 /**
  * @author Adeel Asghar
  *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
+/**
+ * GDB/MI show parsing.
+ */
+public class MIGDBShowInfo extends MIInfo {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
+	String value = "";
+
+	public MIGDBShowInfo(MIOutput o) {
+		super(o);
+		parse();
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	void parse() {
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results =  rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("value")) {
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							value = ((MIConst)val).getString();
+						}
+					}
+				}
+			}
 		}
-		return null;
 	}
 }

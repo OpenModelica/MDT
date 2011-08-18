@@ -28,27 +28,40 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
+package org.modelica.mdt.debug.gdb.core.mi.command;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.output.CLIPTypeInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
 
 /**
  * @author Adeel Asghar
  *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
-		}
-		return null;
+/**
+ * ptype type
+ */
+public class CLIPType extends CLICommand {
+	
+	public CLIPType(String var) {
+		super("ptype " + var);
 	}
+
+	public CLIPTypeInfo getMIPtypeInfo() throws MIException {
+		return (CLIPTypeInfo)getMIInfo();
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new CLIPTypeInfo(out);
+			if (info.isError()) {
+				throwMIException(info, out);
+			}
+		}
+		return info;
+	}
+
 }

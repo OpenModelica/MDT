@@ -116,6 +116,14 @@ public class CommandFactory {
 		return new MIExecStep();
 	}
 	
+	/**
+	 * @return
+	 */
+	public MIExecFinish createMIExecFinish() {
+		// TODO Auto-generated method stub
+		return new MIExecFinish();
+	}
+	
 	public MIBreakInsert createMIBreakInsert(String line) {
 		return new MIBreakInsert(line);
 	}
@@ -161,6 +169,14 @@ public class CommandFactory {
 
 	public MIDataEvaluateExpression createMIGetTypeOfAny(String expression) {
 		return new MIDataEvaluateExpression("(char*)getTypeOfAny(" + expression + ")");
+	}
+	
+	public MIDataEvaluateExpression createMIGetListLength(String expression) {
+		return new MIDataEvaluateExpression("(int)listLength(" + expression + ")");
+	}
+	
+	public MIDataEvaluateExpression createMIGetListItem(String expression, int index) {
+		return new MIDataEvaluateExpression("listGet(" + expression + ", " + index + ")");
 	}
 	
 	/**

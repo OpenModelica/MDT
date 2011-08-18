@@ -28,27 +28,51 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+package org.modelica.mdt.debug.gdb.core.mi.output;
 
 /**
  * @author Adeel Asghar
  *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
+/**
+ * GDB/MI ptype parsing.
+ */
+public class CLIPTypeInfo extends MIInfo {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
+	String type;
+
+	public CLIPTypeInfo(MIOutput out) {
+		super(out);
+		parse();
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	void parse() {
+		StringBuffer buffer = new StringBuffer();
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIOOBRecord[] oobs = out.getMIOOBRecords();
+			for (int i = 0; i < oobs.length; i++) {
+				if (oobs[i] instanceof MIConsoleStreamOutput) {
+					MIStreamRecord cons = (MIStreamRecord) oobs[i];
+					String str = cons.getString();
+					// We are interested in the shared info
+					if (str != null) {
+						str = str.trim();
+						if (str.startsWith ("type")) {
+							int equal = str.indexOf('=');
+							if (equal > 0) {
+								str = str.substring(equal + 1);
+							}
+						}
+						buffer.append(str);
+					}
+				}
+			}
 		}
-		return null;
+		type = buffer.toString().trim();
 	}
 }

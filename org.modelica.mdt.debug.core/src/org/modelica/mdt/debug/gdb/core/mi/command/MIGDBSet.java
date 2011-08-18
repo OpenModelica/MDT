@@ -28,27 +28,30 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+package org.modelica.mdt.debug.gdb.core.mi.command;
 
 /**
  * @author Adeel Asghar
  *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
+/**
+ * -gdb-set
+ *
+ * Set an internal GDB option/variable.
+ * 
+ */
+public class MIGDBSet extends MICommand {
+	public MIGDBSet(String[] params) {
+		super("-gdb-set", params);
+	}
 	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
-		}
-		return null;
+	protected String parametersToString() {
+		/* gdb (at least up to 6.8) does not correctly process escaping for arguments.
+		 * pass argument without escaping. Just in case only do it for simple cases only like -gdb-set variable value.
+		 * For example set solib-search-path */
+	    if (fParameters!=null && fParameters.length==2 && (fOptions==null || fOptions.length==0)) {
+	    	return fParameters[0]+" "+fParameters[1];
+	    }
+	    return super.parametersToString();
 	}
 }

@@ -28,27 +28,53 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+package org.modelica.mdt.debug.gdb.core.mi.output;
 
 /**
  * @author Adeel Asghar
+ * 
+ * GDB/MI stack list variables parsing.
+ * -stack-list-variables --thread 1 --frame 0 --all-values
+ * ^done,variables=[{name="x",value="11"},{name="s",value="{a = 1, b = 2}"}]
  *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
+public class MIStackListVariablesInfo extends MIInfo {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
+	MIArg[] variables;
+
+	public MIStackListVariablesInfo(MIOutput out) {
+		super(out);
+		parse();
+	}
+
+	public MIArg[] getLocals() {
+		if (variables == null) {
+			parse();
 		}
-		return null;
+		return variables;
+	}
+
+	void parse() {
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results =  rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("variables")) {
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIList) {
+							variables = MIArg.getMIArgs((MIList)value);
+						} else if (value instanceof MITuple) {
+							variables = MIArg.getMIArgs((MITuple)value);
+						}
+					}
+				}
+			}
+		}
+		if (variables == null) {
+			variables = new MIArg[0];
+		}
 	}
 }

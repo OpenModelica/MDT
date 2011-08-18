@@ -44,10 +44,12 @@ public class MIArg {
 
 	String name;
 	String value;
+	String type;
 
-	public MIArg(String name, String value) {
+	public MIArg(String name, String value, String type) {
 		this.name = name;
 		this.value = value;
+		this.type = type;
 	}
 
 	public String getName() {
@@ -56,7 +58,11 @@ public class MIArg {
 
 	public String getValue() {
 		return value;
-	} 
+	}
+	
+	public String getType() {
+		return type;
+	}
 
 	/**
 	 * Parsing a MIList of the form:
@@ -80,7 +86,7 @@ public class MIArg {
 			MIValue value = results[i].getMIValue();
 			if (value instanceof MIConst) {
 				String str = ((MIConst)value).getCString();
-				aList.add(new MIArg(str, "")); //$NON-NLS-1$
+				aList.add(new MIArg(str, "", ""));
 			}
 		}
 		return ((MIArg[])aList.toArray(new MIArg[aList.size()]));
@@ -108,7 +114,7 @@ public class MIArg {
 			MIValue value = results[i].getMIValue();
 			if (value instanceof MIConst) {
 				String str = ((MIConst)value).getCString();
-				aList.add(new MIArg(str, "")); //$NON-NLS-1$
+				aList.add(new MIArg(str, "", ""));
 			}
 		}
 		return ((MIArg[])aList.toArray(new MIArg[aList.size()]));
@@ -131,18 +137,45 @@ public class MIArg {
 				aName = "";
 			}
 
-			// Value
+			// Value/Type
 			String aValue = "";
-			if (args.length == 2) {
+			String aType = "";
+			if (args.length > 1) {
 				value = args[1].getMIValue();
-				if (value != null && value instanceof MIConst) {
-					aValue = ((MIConst)value).getCString();
-				} else {
-					aValue = "";
+				if (args[1].getVariable().equals("value")) {
+					if (value != null && value instanceof MIConst) {
+						aValue = ((MIConst)value).getCString();
+					} else {
+						aValue = "";
+					}
+				} else if (args[1].getVariable().equals("type")) {
+					if (value != null && value instanceof MIConst) {
+						aType = ((MIConst)value).getCString();
+					} else {
+						aType = "";
+					}
+				}
+			}
+			
+			// Value/Type
+			if (args.length > 2) {
+				value = args[2].getMIValue();
+				if (args[2].getVariable().equals("value")) {
+					if (value != null && value instanceof MIConst) {
+						aValue = ((MIConst)value).getCString();
+					} else {
+						aValue = "";
+					}
+				} else if (args[2].getVariable().equals("type")) {
+					if (value != null && value instanceof MIConst) {
+						aType = ((MIConst)value).getCString();
+					} else {
+						aType = "";
+					}
 				}
 			}
 
-			arg = new MIArg(aName, aValue);
+			arg = new MIArg(aName, aValue, aType);
 		}
 		return arg;
 	}

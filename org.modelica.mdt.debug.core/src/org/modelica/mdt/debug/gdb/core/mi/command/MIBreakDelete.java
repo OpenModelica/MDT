@@ -28,27 +28,32 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+package org.modelica.mdt.debug.gdb.core.mi.command;
 
 /**
  * @author Adeel Asghar
  *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
-		}
-		return null;
+/**
+ * 
+ * -break-delete ( BREAKPOINT )+
+ *
+ * Delete the breakpoint(s) whose number(s) are specified in the
+ * argument list.  This is obviously reflected in the breakpoint list.
+ * 
+ * Result:
+ *  ^done
+ *
+ */
+public class MIBreakDelete extends MICommand {
+	public MIBreakDelete (int[] array) {
+		super("-break-delete");
+		if (array != null && array.length > 0) {
+			String[] brkids = new String[array.length];
+			for (int i = 0; i < array.length; i++) {
+				brkids[i] = Integer.toString(array[i]);
+			}
+			setParameters(brkids);
+		} 
 	}
 }

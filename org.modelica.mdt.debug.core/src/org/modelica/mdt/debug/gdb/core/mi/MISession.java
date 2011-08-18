@@ -157,15 +157,15 @@ public class MISession extends Observable {
 		// TODO Auto-generated method stub
 		// Disable a certain number of irritations from gdb.
 		// Like confirmation and screen size.
-		MIGDBSet confirm = getCommandFactory().createMIGDBSet(new String[]{"confirm", "off"}); //$NON-NLS-1$ //$NON-NLS-2$
+		MIGDBSet confirm = getCommandFactory().createMIGDBSet(new String[]{"confirm", "off"});
 		postCommand(confirm);
 		confirm.getMIInfo();
 
-		MIGDBSet width = getCommandFactory().createMIGDBSet(new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+		MIGDBSet width = getCommandFactory().createMIGDBSet(new String[]{"width", "0"});
 		postCommand(width);
 		width.getMIInfo();
 
-		MIGDBSet height = getCommandFactory().createMIGDBSet(new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+		MIGDBSet height = getCommandFactory().createMIGDBSet(new String[]{"height", "0"});
 		postCommand(height);
 		height.getMIInfo();
 		

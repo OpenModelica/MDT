@@ -27,7 +27,7 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakInsertInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakpoint;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
-import org.modelica.mdt.debug.gdb.core.model.GDBThread;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;

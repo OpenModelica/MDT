@@ -28,27 +28,41 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
+package org.modelica.mdt.debug.gdb.core.mi.command;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIStackListVariablesInfo;
 
 /**
  * @author Adeel Asghar
  *
+ *  -stack-list-variables print-values
+ *  Display the names of local variables and function arguments for the selected frame.
+ *  If print-values is 0 or --no-values, print only the names of the variables; 
+ *  if it is 1 or --all-values, print also their values.
+ * 
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
+public class MIStackListVariables extends MICommand {
+	
+	public MIStackListVariables(String[] params) {
+		super("-stack-list-variables", params);
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
+	public MIStackListVariablesInfo getMIStackListVariablesInfo() throws MIException {
+		return (MIStackListVariablesInfo)getMIInfo();
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIStackListVariablesInfo(out);
+			if (info.isError()) {
+				throwMIException(info, out);
+			}
 		}
-		return null;
+		return info;
 	}
 }

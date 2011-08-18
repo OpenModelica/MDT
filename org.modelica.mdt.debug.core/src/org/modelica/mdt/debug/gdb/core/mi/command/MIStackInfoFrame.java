@@ -28,27 +28,42 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
+package org.modelica.mdt.debug.gdb.core.mi.command;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIStackListFramesInfo;
 
 /**
  * @author Adeel Asghar
  *
+ * -stack-info-frame
+ * 
+ * Get info on the selected frame.
+ * 
+ * Returns
+ * ^done,frame={level="1",addr="0x0001076c",func="callee3",
+ * file="../../../devo/gdb/testsuite/gdb.mi/basics.c",
+ * fullname="/home/foo/bar/devo/gdb/testsuite/gdb.mi/basics.c",line="17"}
+ *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
+public class MIStackInfoFrame extends MICommand {
+	
+	public MIStackInfoFrame() {
+		super("-stack-info-frame");
+		// TODO Auto-generated constructor stub
+	}
+	
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIStackListFramesInfo(out);
+			if (info.isError()) {
+				throwMIException(info, out);
+			}
 		}
-		return null;
+		return info;
 	}
 }

@@ -52,9 +52,9 @@ import org.modelica.mdt.debug.gdb.core.mi.command.MIExecUntil;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIErrorEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MIFunctionFinishedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIRunningEvent;
-import org.modelica.mdt.debug.gdb.core.mi.event.MISharedLibEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIAsyncRecord;
@@ -317,12 +317,7 @@ public class RxThread extends Thread {
 				if (list.isEmpty()) {
 					String[] logs = getStreamRecords();
 					for (int i = 0; i < logs.length; i++) {
-						if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) {
-							session.getGDBInferior().setSuspended();
-							MIEvent e = new MISharedLibEvent(session, exec);
-							list.add(e);
-						}
-						else if (logs[i].startsWith("Catchpoint ")) {
+						if (logs[i].startsWith("Catchpoint ")) {
 							session.getGDBInferior().setSuspended();
 							// Example: "Catchpoint 1 (exception caught)"
 							StringTokenizer tokenizer = new StringTokenizer(logs[i]);
@@ -426,24 +421,6 @@ public class RxThread extends Thread {
 				}
 			}
 		}
-		// GDB does not have reason when stopping on shared, hopefully
-		// this will be fix in newer version meanwhile, we will use a hack
-		// to cope.  On most platform we can detect this state by looking at the
-		// console stream for the phrase:
-		// 	~"Stopped due to shared library event\n"
-		//
-		// Althought it is a _real_ bad idea to do this, we do not have
-		// any other alternatives.
-		if (list.isEmpty()) {
-			String[] logs = getStreamRecords();
-			for (int i = 0; i < logs.length; i++) {
-				if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) {
-					session.getGDBInferior().setSuspended();
-					MIEvent e = new MISharedLibEvent(session, rr);
-					list.add(e);
-				}
-			}
-		}
 		// We were stopped for some unknown reason, for example
 		// GDB for temporary breakpoints will not send the
 		// "reason" ??? still fire a stopped event.
@@ -486,74 +463,13 @@ public class RxThread extends Thread {
 			} else if (rr != null) {
 				event = new MISteppingRangeEvent(session, rr);
 			}
+		} else if ("function-finished".equals(reason)) {
+			if (exec != null) {
+				event = new MIFunctionFinishedEvent(session, exec);
+			} else if (rr != null) {
+				event = new MIFunctionFinishedEvent(session, rr);
+			}
 		}
-//		} else if (
-//			"watchpoint-trigger".equals(reason)
-//				|| "read-watchpoint-trigger".equals(reason)
-//				|| "access-watchpoint-trigger".equals(reason)) {
-//			if (exec != null) {
-//				event = new MIWatchpointTriggerEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MIWatchpointTriggerEvent(session, rr);
-//			}
-//			session.getMIInferior().setSuspended();
-//		} else if ("watchpoint-scope".equals(reason)) {
-//			if (exec != null) {
-//				event = new MIWatchpointScopeEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MIWatchpointScopeEvent(session, rr);
-//			}
-//			session.getMIInferior().setSuspended();
-//		} else if ("end-stepping-range".equals(reason)) {
-//			if (exec != null) {
-//				event = new MISteppingRangeEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MISteppingRangeEvent(session, rr);
-//			}
-//			session.getMIInferior().setSuspended();
-//		} else if ("signal-received".equals(reason)) {
-//			if (exec != null) {
-//				event = new MISignalEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MISignalEvent(session, rr);
-//			}
-//			session.getMIInferior().setSuspended();
-//		} else if ("location-reached".equals(reason)) {
-//			if (exec != null) {
-//				event = new MILocationReachedEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MILocationReachedEvent(session, rr);
-//			}
-//			session.getMIInferior().setSuspended();
-//		} else if ("function-finished".equals(reason)) {
-//			if (exec != null) {
-//				event = new MIFunctionFinishedEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MIFunctionFinishedEvent(session, rr);
-//			}
-//			session.getMIInferior().setSuspended();
-//		} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-2$
-//			if (exec != null) {
-//				event = new MIInferiorExitEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MIInferiorExitEvent(session, rr);
-//			}
-//			session.getMIInferior().setTerminated(0,false);
-//		} else if ("exited-signalled".equals(reason)) {
-//			if (exec != null) {
-//				event = new MIInferiorSignalExitEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MIInferiorSignalExitEvent(session, rr);
-//			}
-//			session.getMIInferior().setTerminated(0,false);
-//		} else if ("shlib-event".equals(reason)) {
-//			if (exec != null) {
-//				event = new MISharedLibEvent(session, exec);
-//			} else if (rr != null) {
-//				event = new MISharedLibEvent(session, rr);
-//			}
-//			session.getMIInferior().setSuspended();
-//		}
 		return event;
 	}
 

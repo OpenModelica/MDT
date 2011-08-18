@@ -64,30 +64,12 @@ public class GDBDebugElement extends DebugElement {
 	}
 	
 	/**
-	 * @param request command
-	 * @return reply
-	 * @throws DebugException if the request fails
-	 */	
-	public String sendRequest(String request) throws DebugException {
-		return getGDBDebugTarget().sendRequest(request);
-	}
-
-	/**
-	 * @param request signal
-	 * @return reply
-	 * @throws DebugException if the request fails
-	 */	
-	public void sendSignal(String signal) throws DebugException {
-		getGDBDebugTarget().sendSignal(signal);
-	}
-	
-	/**
 	 * Returns the debug target as a GDB target.
 	 * 
 	 * @return GDB debug target
 	 */
-	protected GDBDebugTarget getGDBDebugTarget() {
-	    return (GDBDebugTarget) getDebugTarget();
+	public GDBDebugTarget getGDBDebugTarget() {
+	    return (GDBDebugTarget)getDebugTarget();
 	}
 	
 	/**

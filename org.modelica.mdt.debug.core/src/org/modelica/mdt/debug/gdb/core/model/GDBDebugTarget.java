@@ -57,14 +57,18 @@ import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
-import org.modelica.mdt.debug.gdb.core.mi.command.MIExecStep;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIExecNext;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MIFunctionFinishedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MIRunningEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
 
 /**
@@ -495,10 +499,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @return whether popping the data stack is currently permitted
 	 */
 	public boolean canPop() {
-	    try {
-            return !isTerminated() && isSuspended() && getDataStack().length > 0;
-        } catch (DebugException e) {
-        }
         return false;
 	}
 	
@@ -509,12 +509,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @throws DebugException if the stack is empty or the request fails
 	 */
 	public IValue pop() throws DebugException {
-	    IValue[] dataStack = getDataStack();
-	    if (dataStack.length > 0) {
-	        sendRequest("popdata");
-	        return dataStack[0];
-	    }
-	    requestFailed("Empty stack", null);
 	    return null;
 	}
 	
@@ -534,7 +528,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @throws DebugException on failure
 	 */
 	public void push(String value) throws DebugException {
-	    //sendRequest("pushdata " + value);
 	}
 	
 	/* (non-Javadoc)
@@ -558,16 +551,32 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 				} else if (miEvent instanceof MIGDBExitEvent)
 					if (MDTDebugCorePlugin.DEBUG) System.out.println("MIGDBExitEvent caught in gdb debug target");
 				terminate();
-			} else if (miEvent instanceof MIBreakpointHitEvent) {
+			}
+			else if (miEvent instanceof MIBreakpointHitEvent) {
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIBreakpointHitEvent caught in gdb debug target");
+				((GDBThread)getThread()).setRefreshStackFrames(true);
 				((GDBThread)getThread()).suspended(DebugEvent.BREAKPOINT);
-			} else if (miEvent instanceof MISteppingRangeEvent) {
-				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIBreakpointHitEvent caught in gdb debug target");
+			}
+			// MISteppingRangeEvent can be caused by -exec-next and -exec-step
+			else if (miEvent instanceof MISteppingRangeEvent) {
+				if (MDTDebugCorePlugin.DEBUG) System.out.println("MISteppingRangeEvent caught in gdb debug target");
 				if (skipSteppedInFrames(miEvent)) {
+					((GDBThread)getThread()).setRefreshStackFrames(true);
 					((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
 				}
 			}
+			// MIFunctionFinishedEvent is caused by -exec-finish
+			else if (miEvent instanceof MIFunctionFinishedEvent) {
+				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIFunctionFinishedEvent caught in gdb debug target");
+				if (skipSteppedInFrames(miEvent)) {
+					((GDBThread)getThread()).setRefreshStackFrames(true);
+					((GDBThread)getThread()).suspended(DebugEvent.STEP_RETURN);
+				}
+			}
 		} catch (DebugException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -576,18 +585,19 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	/**
 	 * @param miEvent
 	 * @return 
+	 * @throws CoreException 
 	 */
-	private boolean skipSteppedInFrames(MIEvent miEvent) {
+	private boolean skipSteppedInFrames(MIEvent miEvent) throws CoreException {
 		// TODO Auto-generated method stub
-		MISteppingRangeEvent steppingRangeEvent = (MISteppingRangeEvent)miEvent;
-		MIFrame miFrame = steppingRangeEvent.getFrame();
-		// if we reach to a c file with step in we should keep on stepping in.
-		if (GDBHelper.isCFile(miFrame.getFile())) {
+		MIStoppedEvent stoppedEvent = (MIStoppedEvent)miEvent;
+		MIFrame miFrame = stoppedEvent.getFrame();
+		// if we reach to a c file with step in we should keep on executing -exec-next until we are back to .mo file.
+		if (GDBHelper.filterCFiles(getGDBDebugTarget(), miFrame)) {
 			CommandFactory factory = fMISession.getCommandFactory();
-			MIExecStep execStepCommand = factory.createMIExecStep();
+			MIExecNext execNextCommand = factory.createMIExecNext();
 			try {
-				fMISession.postCommand(execStepCommand);
-				MIInfo info = execStepCommand.getMIInfo();
+				fMISession.postCommand(execNextCommand);
+				MIInfo info = execNextCommand.getMIInfo();
 				if (info == null) {
 					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 							MDTDebugCorePlugin.getResourceString("GDBDebugTarget.skipSteppedInFrames.ExecStep.NoAnswer"), null));

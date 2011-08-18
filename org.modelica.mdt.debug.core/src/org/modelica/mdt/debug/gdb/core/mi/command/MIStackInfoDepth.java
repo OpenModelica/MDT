@@ -28,27 +28,48 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.sourcelookup;
+package org.modelica.mdt.debug.gdb.core.mi.command;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIStackInfoDepthInfo;
 
 /**
  * @author Adeel Asghar
  *
  */
-public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant {
+/**
+ * 
+ *  -stack-info-depth [ MAX-DEPTH ]
+ *
+ *  Return the depth of the stack.  If the integer argument MAX-DEPTH is
+ *  specified, do not count beyond MAX-DEPTH frames.
+ * 
+ */
+public class MIStackInfoDepth extends MICommand 
+{
+	public MIStackInfoDepth() {
+		super("-stack-info-depth");
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
-	@Override
-	public String getSourceName(Object object) throws CoreException {
-		// TODO Auto-generated method stub
-		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getSourceName();
+	public MIStackInfoDepth(int maxDepth) {
+		super("-stack-info-depth", new String[]{Integer.toString(maxDepth)});
+	}
+
+	public MIStackInfoDepthInfo getMIStackInfoDepthInfo() throws MIException {
+		return (MIStackInfoDepthInfo)getMIInfo();
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIStackInfoDepthInfo(out);
+			if (info.isError()) {
+				throwMIException(info, out);
+			}
 		}
-		return null;
+		return info;
 	}
 }
