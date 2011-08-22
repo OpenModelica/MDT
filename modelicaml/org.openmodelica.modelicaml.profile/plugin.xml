@@ -228,6 +228,7 @@
          <menu
                icon="resources/icons/plugin_go.png"
                label="ModelicaML: Helper">
+            <!--
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.instantiaterequirements"
                   icon="resources/icons/list-accept.png"
@@ -246,6 +247,7 @@
                      checkEnabled="true">
                </visibleWhen>
             </command>
+            -->
             <visibleWhen
                   checkEnabled="false">
                <with

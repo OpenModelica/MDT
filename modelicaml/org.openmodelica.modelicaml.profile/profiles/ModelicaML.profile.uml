@@ -2609,6 +2609,60 @@ It indicates that the element, the stereotype is applied to, shall not be includ
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_ImIGME4pEeC4rN7SNTLq6w" name="TestDefinition" metaclassReference="_N4Rf0E4qEeC4rN7SNTLq6w _UnFhME4qEeC4rN7SNTLq6w _WS5KMH-XEeC-I9oqZ53S4w _oS_5oH-XEeC-I9oqZ53S4w">
     <eAnnotations xmi:id="_QfwqAE4rEeC4rN7SNTLq6w" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <contents xmi:type="ecore:EPackage" xmi:id="_is480MjBEeCnxqjdSD5uGQ" name="TestDefinition" nsURI="http://ModelicaML/schemas/TestDefinition/_iscQ4MjBEeCnxqjdSD5uGQ/12" nsPrefix="TestDefinition">
+        <eAnnotations xmi:id="_iu0PccjBEeCnxqjdSD5uGQ" source="PapyrusVersion">
+          <details xmi:id="_iu0PcsjBEeCnxqjdSD5uGQ" key="Version" value="0.1.9"/>
+          <details xmi:id="_iu0Pc8jBEeCnxqjdSD5uGQ" key="Comment" value=""/>
+          <details xmi:id="_iu0PdMjBEeCnxqjdSD5uGQ" key="Copyright" value=""/>
+          <details xmi:id="_iu0PdcjBEeCnxqjdSD5uGQ" key="Date" value="2011-08-17"/>
+          <details xmi:id="_iu0PdsjBEeCnxqjdSD5uGQ" key="Author" value=""/>
+        </eAnnotations>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_is480cjBEeCnxqjdSD5uGQ" name="TestSuite">
+          <eAnnotations xmi:id="_is480sjBEeCnxqjdSD5uGQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_XzXFYE4pEeC4rN7SNTLq6w"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is4808jBEeCnxqjdSD5uGQ" name="includes" ordered="false" upperBound="-1" eType="_is4818jBEeCnxqjdSD5uGQ"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is481cjBEeCnxqjdSD5uGQ" name="base_Package" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_is4818jBEeCnxqjdSD5uGQ" name="TestScenario" eSuperTypes="_Kp6lBVaVEd-OiJEhN960pA">
+          <eAnnotations xmi:id="_is482MjBEeCnxqjdSD5uGQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_T-xLcH-XEeC-I9oqZ53S4w"/>
+          <eAnnotations xmi:id="_is482cjBEeCnxqjdSD5uGQ" source="duplicates">
+            <contents xmi:type="ecore:EReference" xmi:id="_is482sjBEeCnxqjdSD5uGQ" name="base_Class" ordered="false" unique="false" lowerBound="1">
+              <eAnnotations xmi:id="_is4828jBEeCnxqjdSD5uGQ" source="redefines"/>
+              <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+            </contents>
+          </eAnnotations>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is483cjBEeCnxqjdSD5uGQ" name="usedToVerify" ordered="false" upperBound="-1" eType="_1VS8Uqx7EeC2GJQ4iCzxPg"/>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_is49BcjBEeCnxqjdSD5uGQ" name="UsedToVerify">
+          <eAnnotations xmi:id="_is49BsjBEeCnxqjdSD5uGQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_8VZHcK0qEeCRXd3mzS9MqQ"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is49B8jBEeCnxqjdSD5uGQ" name="base_Dependency" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_is49CcjBEeCnxqjdSD5uGQ" name="Includes">
+          <eAnnotations xmi:id="_is49CsjBEeCnxqjdSD5uGQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="__tBKkK0qEeCRXd3mzS9MqQ"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is49C8jBEeCnxqjdSD5uGQ" name="base_Dependency" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_is49DcjBEeCnxqjdSD5uGQ" name="Requires">
+          <eAnnotations xmi:id="_is49DsjBEeCnxqjdSD5uGQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_4IrOgMQXEeC6UZUtnVcSgg"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is49D8jBEeCnxqjdSD5uGQ" name="onlyInCombinationWith" ordered="false" upperBound="-1" eType="_KpBM4laVEd-OiJEhN960pA"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is49EcjBEeCnxqjdSD5uGQ" name="base_Dependency" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Dependency"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_is49E8jBEeCnxqjdSD5uGQ" name="always" ordered="false" lowerBound="1" defaultValueLiteral="false">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_is49FcjBEeCnxqjdSD5uGQ" name="Test">
+          <eAnnotations xmi:id="_is49FsjBEeCnxqjdSD5uGQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_FK8VgMQZEeC6UZUtnVcSgg"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_is49F8jBEeCnxqjdSD5uGQ" name="base_Class" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+      </contents>
       <contents xmi:type="ecore:EPackage" xmi:id="_1JIh4cTgEeCHp7TGKxmB1g" name="TestDefinition" nsURI="http://ModelicaML/schemas/TestDefinition/_1JIh4MTgEeCHp7TGKxmB1g/11" nsPrefix="TestDefinition">
         <eAnnotations xmi:id="_1KLDscTgEeCHp7TGKxmB1g" source="PapyrusVersion">
           <details xmi:id="_1KLDssTgEeCHp7TGKxmB1g" key="Version" value="0.1.8"/>
@@ -3104,6 +3158,13 @@ It indicates that the element, the stereotype is applied to, shall not be includ
       </ownedAttribute>
       <ownedAttribute xmi:id="_JZBU8MQYEeC6UZUtnVcSgg" name="base_Dependency" association="_JZBU8cQYEeC6UZUtnVcSgg">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_Np65UMjBEeCnxqjdSD5uGQ" name="always">
+        <ownedComment xmi:id="_ejgFkMjBEeCnxqjdSD5uGQ">
+          <body>This property means that the target model shall always be instantiated together with the dependency client model.</body>
+        </ownedComment>
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+        <defaultValue xmi:type="uml:LiteralBoolean" xmi:id="ActivityPartition-isExternal-_defaultValue"/>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_JZBU8cQYEeC6UZUtnVcSgg" name="E_Requires_Dependency0" memberEnd="_JZBU8sQYEeC6UZUtnVcSgg _JZBU8MQYEeC6UZUtnVcSgg">
