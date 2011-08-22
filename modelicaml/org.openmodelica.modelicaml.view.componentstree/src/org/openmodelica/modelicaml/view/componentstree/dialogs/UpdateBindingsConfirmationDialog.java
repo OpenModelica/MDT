@@ -127,7 +127,7 @@ public class UpdateBindingsConfirmationDialog extends Dialog {
 				setDeleteAllBindings(btnCheckOption.getSelection());
 			}
 		});
-		btnCheckOption.setText( "Delete bindings for which the user selected the providers." );
+		btnCheckOption.setText( "Delete bindings for which user selected the providers manually." );
 		btnCheckOption.setToolTipText("If there are bindings available for a component " +
 				"then it will be deleted regardless of it will " +
 				"\nbe possible to derive binding code or not. " +
