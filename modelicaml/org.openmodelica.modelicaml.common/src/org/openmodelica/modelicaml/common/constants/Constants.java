@@ -127,6 +127,7 @@ public class Constants {
 	
 	// primarily used by test models generation plugin
 	public static final String stereotypeQName_Requires 			= "ModelicaML::TestDefinition::Requires";
+	public static final String propertyName_always	= "always";
 	public static final String propertyName_onlyIncombinationWith	= "onlyInCombinationWith";
 	
 	// used by components tree plugin
@@ -165,7 +166,7 @@ public class Constants {
 	// simulation model generation
 	public final static String simModelsPackageNamePrefix = "GenSimModels for: ";
 	public final static String simModelsNamePrefix = "SiM for: ";
-	public final static String systemModelPropertyNamePrefix = "systemModel_";
+	public final static String systemModelPropertyNamePrefix = "sm_";
 	public final static String additionalModelPrefix = "add_";
 	public final static String testScenarioPropertyNamePrefix = "ts_";
 	public final static String reqirementPropertyNamePrefix = "req_";

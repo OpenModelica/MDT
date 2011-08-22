@@ -649,16 +649,51 @@ public class TreeObject implements IAdaptable {
 	public boolean equals(Object obj) {
 		if (obj instanceof TreeObject) {
 			TreeObject item = (TreeObject) obj;
-			if (item.getDotPath().equals(this.getDotPath())) {
+
+			// if it is a root item -> check the class
+//			if (item.getSelectedClass() != null) {
+//				if (item.getSelectedClass() == this.getSelectedClass()) {
+//					return true;
+//				}
+//				else{
+//					return false;
+//				}
+//			}
+			// if it is a component -> use the dotpath and its 
+			if (item.getDotPath().equals(this.getDotPath()) 
+					&& item.getUmlElement() == this.getUmlElement()
+					&& item.getSelectedClass() == this.getSelectedClass()) {
 				return true;
 			}
+			
+//			if (item.getDotPath().equals(this.getDotPath())) {
+//				return true;
+//			}
 		}
 		return false;
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.getDotPath().hashCode();
+//		if (this.getSelectedClass() != null) {
+//			return this.getSelectedClass().hashCode();
+//		}
+//		else {
+//			return this.getDotPath().hashCode() + this.getUmlElement().hashCode();
+//		}
+		
+		int selectedClassHashCode = 0;
+		if (this.getSelectedClass() != null) {
+			selectedClassHashCode = this.getSelectedClass().hashCode(); 
+		}
+		int umlElementHashCode = 0;
+		if (this.getUmlElement() != null) {
+			umlElementHashCode = this.getUmlElement() .hashCode(); 
+		}
+		
+		return this.getDotPath().hashCode() + umlElementHashCode + selectedClassHashCode;
+		
+//		return this.getDotPath().hashCode();
 	}
 	
 }
