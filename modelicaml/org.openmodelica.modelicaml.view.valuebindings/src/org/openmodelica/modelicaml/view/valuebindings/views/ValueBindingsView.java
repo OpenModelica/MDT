@@ -453,7 +453,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionShowClientPerspective = new Action("actionShowClientPerspective", 8) { 
 			public void run() {
 				if (actionShowClientPerspective.isChecked()) {
-
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection)selection).getFirstElement();
 					

@@ -52,6 +52,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -66,6 +67,9 @@ public class DeriveValueBindingCodeHelper {
 	private TreeObject clientTreeItem;
 	private Element clientElement = null; // is the determined element that owns the script for the selected tree item client. 
 	private String clientOperation = null; // final operation script.
+	
+	private boolean isRequiredClient = false; // indicates if this client is required
+
 	
 	private HashSet<Element> mediatorsForSelection = new HashSet<Element>();  // intermediate, if there are multiple mediators and the user shall select one of them
 	private Element mediatorElement = null; // finally selected mediator
@@ -613,9 +617,9 @@ public class DeriveValueBindingCodeHelper {
 						mediators.add(mediator);
 					}
 					
-					// if there are no provider instances 
+					// if there are no provider instances and the mediator script does not contain constant values. 
 					// -> discard
-					if (providerInstances.size() < 1) {
+					if (providerInstances.size() == 0 && (mediatorScript == null || DeriveValueBindingCodeUtls.hasMediatorBindingScriptFunctions(mediatorScript))) {
 						String mediatorQName = ((NamedElement)mediator).getQualifiedName();
 						String message = "DISCARDED: The mediator '"+mediatorQName+"' " +
 								"has no providers that are present in the instantiated class."; 
@@ -678,6 +682,9 @@ public class DeriveValueBindingCodeHelper {
 			Object[] m = mediators.toArray();
 			mediatorElement = (Element) m[0];
 			mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(mediatorElement, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
+			addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"' " +
+					"\n with its mediator operation: " +
+					"\n   = " + mediatorOperation + "\n");
 		}
 		else { //No mediators found -> report an error
 			String clientName = ((NamedElement)client).getQualifiedName();
@@ -767,6 +774,8 @@ public class DeriveValueBindingCodeHelper {
 										if (clientElement == null && clientOperation == null) {
 											clientTreeItem = potentialClient;
 											clientElement = potentialClientElement;
+											setIsRequiredClient(dependencies.get(0));
+											
 											String script = DeriveValueBindingCodeUtls.getOperationSpecification(dependencies.get(0), Constants.stereotypeQName_ProvidesValueFor, Constants.propertyName_operation);
 											clientOperation = getScriptForClient(potentialClient, selectedTreeItem, script);
 											
@@ -784,6 +793,7 @@ public class DeriveValueBindingCodeHelper {
 												if (clientElement == null && clientOperation == null) {
 													clientTreeItem = potentialClient;
 													clientElement = potentialClientElement;
+													setIsRequiredClient(dependencies.get(0));
 													
 													clientOperation = potentialClientOperation;
 													mediatorsContainingClientOperationScript.add(mediator);
@@ -801,6 +811,20 @@ public class DeriveValueBindingCodeHelper {
 		}
 	}
 	
+
+
+	private void setIsRequiredClient(Dependency mediatorDependency){
+		Stereotype sProvidesValueFor = mediatorDependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
+		if (sProvidesValueFor != null) {
+			Object isRequired = mediatorDependency.getValue(sProvidesValueFor, Constants.propertyName_isRequired);
+			if (isRequired != null && isRequired instanceof Boolean && (Boolean)isRequired) {
+				setRequiredClient(true);
+			}
+			else {
+				setRequiredClient(false);
+			}
+		}
+	}
 	
 	private String getScriptForClient(TreeObject upperClientTeeItem, TreeObject selectedClientTreeItem, String script){
 		String finalScript = null;
@@ -967,6 +991,15 @@ public class DeriveValueBindingCodeHelper {
 	
 	public HashSet<TreeObject> getProviders() {
 		return providers;
+	}
+	
+	public boolean isRequiredClient() {
+		return isRequiredClient;
+	}
+
+
+	public void setRequiredClient(boolean isRequiredClient) {
+		this.isRequiredClient = isRequiredClient;
 	}
 
 	// ******************************************************************** GETTER / SETTER
