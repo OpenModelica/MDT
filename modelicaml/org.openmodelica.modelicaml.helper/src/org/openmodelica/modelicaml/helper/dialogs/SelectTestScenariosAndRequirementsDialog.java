@@ -1,13 +1,10 @@
 package org.openmodelica.modelicaml.helper.dialogs;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -24,6 +21,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -31,13 +30,14 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Namespace;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
+import org.openmodelica.modelicaml.helper.impl.TestSimulationModelCombination;
 
 public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 
@@ -46,8 +46,8 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	// test scenarios that are NOT appropriate for the system model 
 	private HashSet<Element> discardedTestScenarios;
 	
-	// requirements that are referenced by the test scenarios and for which all clients are satisfied 
-	private HashSet<Element> selectedRequirements;
+//	// requirements that are referenced by the test scenarios and for which all clients are satisfied 
+//	private HashSet<Element> selectedRequirements;
 
 	// requirements that are referenced by the test scenarios and for which NOT all clients are satisfied 
 	private HashSet<Element> discardedRequirements;
@@ -69,6 +69,8 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	 */
 	private List<TreeItem> treeItems = new ArrayList<TreeItem>();
 
+	private HashMap<Element, TestSimulationModelCombination> tsToTestSimulationModelCombination;
+	
 	private static final int DECORATION_WARNING = 0 ;
 	private static final int DECORATION_ERROR = 1 ;
 	private static final String testScenarioNamePrefix = "ts: ";
@@ -90,17 +92,19 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 			HashSet<Element> discardedRequirements,
 			Element systemModel,
 			TestScenariosCollector tsc,
-			String collectionLog) {
+			String collectionLog,
+			HashMap<Element, TestSimulationModelCombination> tsToTestSimulationModelCombination) {
 		
 		super(parentShell);
 		
 		this.selectedTestScenarios = selectedTestScenarios;
 		this.discardedTestScenarios = discardedTestScenarios;
-		this.selectedRequirements = selectedRequirements;
+//		this.selectedRequirements = selectedRequirements;
 		this.discardedRequirements = discardedRequirements;
 		this.systemModel = systemModel;
 		this.tsc = tsc;
 		this.collectionLog = collectionLog;
+		this.tsToTestSimulationModelCombination = tsToTestSimulationModelCombination;
 	}
 
 	@Override
@@ -128,18 +132,52 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 
 		TabFolder tabFolder = new TabFolder(container, SWT.NONE);
 		tabFolder.setBounds(10, 10, 616, 315);
-		
-		TabItem tbtmTestScenarios = new TabItem(tabFolder, SWT.NONE);
+
+		// TAB: Pre-selected test scenarios
+		TabItem tbtmPreSelectedTestScenarios = new TabItem(tabFolder, SWT.NONE);
 //		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
-		tbtmTestScenarios.setText("Test Scenarios");
+		String metricPreSelected = "("+selectedTestScenarios.size()+" of " + tsc.getAllTS().size() + ")";
+		tbtmPreSelectedTestScenarios.setText("Preselected Test Scenarios " + metricPreSelected);
 		
-		final Tree tree = new Tree(tabFolder, SWT.CHECK);
-		buildTree(tree);
+		final Tree treePreSelectedTestScenarios = new Tree(tabFolder, SWT.CHECK);
+		buildTree(treePreSelectedTestScenarios, false);
 		
-		// Add the listener
-		tree.addSelectionListener(new CheckboxTreeSelectionListener());
+		// Add listeners
+		treePreSelectedTestScenarios.addSelectionListener(new CheckboxTreeSelectionListener());
+		treePreSelectedTestScenarios.addListener(SWT.MouseDoubleClick, new Listener() {
+		      public void handleEvent(Event event) {
+		        Point point = new Point(event.x, event.y);
+		        TreeItem item = treePreSelectedTestScenarios.getItem(point);
+		        if (item != null) {
+		        	openDescription(item);
+		        }
+		      }
+		    });
+	
+		tbtmPreSelectedTestScenarios.setControl(treePreSelectedTestScenarios);
 		
-		tbtmTestScenarios.setControl(tree);
+		// TAB: Discarded test scenarios
+		TabItem tbtmDiscardedTestScenarios = new TabItem(tabFolder, SWT.NONE);
+//		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
+		String metricDiscarded  = "("+discardedTestScenarios.size()+" of " + tsc.getAllTS().size() + ")";
+		tbtmDiscardedTestScenarios.setText("Discarded Test Scenarios " + metricDiscarded);
+		
+		final Tree treeDiscardedTestScenarios = new Tree(tabFolder, SWT.CHECK);
+		buildTree(treeDiscardedTestScenarios, true);
+		
+		// Add listeners
+		treeDiscardedTestScenarios.addSelectionListener(new CheckboxTreeSelectionListener());
+		treeDiscardedTestScenarios.addListener(SWT.MouseDoubleClick, new Listener() {
+		      public void handleEvent(Event event) {
+		        Point point = new Point(event.x, event.y);
+		        TreeItem item = treeDiscardedTestScenarios.getItem(point);
+		        if (item != null) {
+		        	openDescription(item);
+		        }
+		      }
+		    });
+		tbtmDiscardedTestScenarios.setControl(treeDiscardedTestScenarios);
+		
 
 		Button btnSelectAll = new Button(container, SWT.NONE);
 		btnSelectAll.addMouseListener(new MouseAdapter() {
@@ -169,6 +207,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				for (TreeItem treeItem : treeItems) {
+					
 					treeItem.setChecked(false);
 					// remove from to maps.
 					TreeItemData data = (TreeItemData) treeItem.getData();
@@ -199,9 +238,13 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		btnRestore.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				tree.removeAll();
+				treePreSelectedTestScenarios.removeAll();
+				treeDiscardedTestScenarios.removeAll();
+				
 				clearAllLists();
-				buildTree(tree);
+				
+				buildTree(treePreSelectedTestScenarios, false);
+				buildTree(treeDiscardedTestScenarios, true);
 			}
 		});
 		btnRestore.setImage(ResourceManager.getPluginImage("org.eclipse.emf.common.ui", "/org/eclipse/emf/common/ui/Restore.gif"));
@@ -233,35 +276,27 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	}
 
 	
-	private void buildTree(Tree treeRoot){
-	
-			if (this.selectedTestScenarios != null) {
-	
-				/*
-				 *  collect packages (owner) of selected test scenarios and create tree items. 
-				 */
-				List<Element> packagesOfTheSelectedTestScenariosSorted = getSortedByName(getTestScenarioPackages(this.selectedTestScenarios));
-				createPkgTreeItems(treeRoot, packagesOfTheSelectedTestScenariosSorted, true, false);
-				
-				// Sort test scenarios alphabetically 
-				List<Element> selectedTestScenariosSorted = getSortedByName(this.selectedTestScenarios);
-				for (Element testScenario : selectedTestScenariosSorted) {
-					if (testScenario instanceof NamedElement) {
-						createTestScenarioTreeItem(treeRoot, testScenario, false);
-					}
-				}				
-			}
-			
-			if (discardedTestScenarios != null && discardedTestScenarios.size() > 0) {
-				List<Element> packagesOfTheDiscardedTestScenariosSorted = getSortedByName(getTestScenarioPackages(discardedTestScenarios));
-				createPkgTreeItems(treeRoot, packagesOfTheDiscardedTestScenariosSorted, false, true);
-	
-				// add discarded test scenarios so that the user can still decide to generate the simulation model for them
-				for (Element discardedTestScenario : discardedTestScenarios) {
-					createTestScenarioTreeItem(treeRoot, discardedTestScenario, true);
-				}
-			}
+	private void buildTree(Tree treeRoot, boolean isDiscardedTree){
+		
+		HashSet<Element> testScenarios = new HashSet<Element>();
+		if (this.selectedTestScenarios != null && !isDiscardedTree) {
+			testScenarios.addAll(this.selectedTestScenarios);
 		}
+		else if (this.discardedTestScenarios != null && isDiscardedTree) {
+			testScenarios.addAll(this.discardedTestScenarios);
+		}
+		
+		List<Element> packagesOfTheSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(getTestScenarioPackages(this.selectedTestScenarios));
+		createPkgTreeItems(treeRoot, packagesOfTheSelectedTestScenariosSorted, !isDiscardedTree, isDiscardedTree);
+		
+		List<Element> testScenariosSorted = ModelicaMLServices.getSortedByName(testScenarios);
+		for (Element testScenario : testScenariosSorted) {
+			if (testScenario instanceof NamedElement) {
+				createTestScenarioTreeItem(treeRoot, testScenario, isDiscardedTree);
+			}
+		}	
+
+	}
 
 	private HashSet<Element> getTestScenarioPackages(HashSet<Element> testScenarios){
 		HashSet<Element> pkgList = new HashSet<Element>();
@@ -304,6 +339,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	}
 	
 	private TreeItem getPackageTreeItem(Tree treeRoot, Element testScenario, boolean isDiscarded){
+		
 		TreeItem pkgItem = null;
 		// find the right package node at the 1 tree-level.
 		TreeItem[] pkgItems = treeRoot.getItems();
@@ -326,7 +362,6 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	
 	private void createTestScenarioTreeItem(Tree treeRoot, Element testScenario, boolean isDiscarded){
 
-//		TreeItem testScenarioItem = new TreeItem(treeRoot, 0);
 		TreeItem pkgItem = getPackageTreeItem(treeRoot, testScenario, isDiscarded);
 		TreeItem testScenarioItem = null;
 		if (pkgItem != null) {
@@ -364,34 +399,33 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		testScenarioItem.setText(testScenarioNamePrefix + discardedPrefixString + ((NamedElement)testScenario).getName());
 		
 		// sort requirements by requirement id
-		List<Element> associatedRequirements = getSortedByRequirementId(tsc.getTsToReq().get(testScenario));
+		List<Element> associatedRequirements = ModelicaMLServices.getSortedByRequirementId(tsc.getTsToReq().get(testScenario));
 		if (associatedRequirements != null) {
 			
-			// create info item
-			TreeItem testScenarioReqInfoNodeItem = new TreeItem(testScenarioItem, 0);
-//			treeItems.add(testScenarioReqInfoNodeItem); // there is no need to know info items.
-			String infoNodeTitle = "";
-			if (isDiscarded) {
-				infoNodeTitle = "Linked requirements:";
-			}
-			else {
-				infoNodeTitle = "Can be used to verify '" + ((NamedElement)systemModel).getName() + "' against the following requirements: ";
-			}
-			testScenarioReqInfoNodeItem.setText(infoNodeTitle);
-			testScenarioReqInfoNodeItem.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/obj16/info_tsk.gif"));
-			testScenarioReqInfoNodeItem.setGrayed(true);
+//			// create info item
+//			TreeItem testScenarioReqInfoNodeItem = new TreeItem(testScenarioItem, 0);
+////			treeItems.add(testScenarioReqInfoNodeItem); // there is no need to know info items.
+//			String infoNodeTitle = "";
+//			if (isDiscarded) {
+//				infoNodeTitle = "Linked requirements:";
+//			}
+//			else {
+//				infoNodeTitle = "Can be used to verify '" + ((NamedElement)systemModel).getName() + "' against the following requirements: ";
+//			}
+//			testScenarioReqInfoNodeItem.setText(infoNodeTitle);
+//			testScenarioReqInfoNodeItem.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/obj16/info_tsk.gif"));
+//			testScenarioReqInfoNodeItem.setGrayed(true);
 			
 			// create requirement items
 			for (Element req : associatedRequirements) {
-				createRequirementTreeItem(testScenarioReqInfoNodeItem, req, testScenario, isDiscarded);
+//				createRequirementTreeItem(testScenarioReqInfoNodeItem, req, testScenario, isDiscarded);
+				createRequirementTreeItem(testScenarioItem, req, testScenario, isDiscarded);
 			}
 		}
 	}
 	
 	private void createRequirementTreeItem(TreeItem parentItem, Element req, Element testScenario, boolean isDiscarded){
 		String prefix = requirementNamePrefix;
-		
-//		TreeItem reqItem = new TreeItem(testScenarioItem, 0);
 		TreeItem reqItem = new TreeItem(parentItem, 0);
 		treeItems.add(reqItem);
 		TreeItemData reqData = new TreeItemData();
@@ -399,30 +433,25 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		reqData.setRequirementElement(req);
 		reqData.setTestScenarioElement(testScenario);
 		
+		// if this is a requirement for which not all required clients are satisfied:
 		if (this.discardedRequirements.contains(req)) {
-			reqData.setIsDiscarded(true);
-			// prefix = prefix + "(INCONSISTENT) ";
-			reqItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif")));
-			
-			// indicate inconsistencies
-//			testScenarioItem.setImage(decorateWarning(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/calculationModel.gif")));
-
 			// DO NOT preselect 
 			reqItem.setChecked(false);
-			
+			reqData.setIsDiscarded(true);
+			reqItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif")));
 			// propagate error to all parents
 			propagateDecoration(reqItem, DECORATION_ERROR);
 		}
 		else {
 			reqData.setIsDiscarded(false);
-			
-			// preselect
-			reqItem.setChecked(true);
 			reqItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif"));
 			
+			// if the discarded tree is being built then do not preselect requirements and add them to the initial map.
 			if (!isDiscarded) {
 				// initially add to map
 				addToTestScenarioToRequirementsMap(testScenario, req);
+				// preselect
+				reqItem.setChecked(true);
 			}
 		}
 		
@@ -431,14 +460,119 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		reqItem.setText(prefix + ((NamedElement)req).getName()  + "  ("+((NamedElement)req.getOwner()).getQualifiedName()+")");
 		reqItem.setData(reqData);
 	}
+
+	// Tree Item Description Handling ************************************************************************ 
 	
+	private void openDescription(TreeItem item){
+		Object data = item.getData();
+    	if (data instanceof TreeItemData) {
+			Element testSceanrio = null;
+    		if ( ((TreeItemData)data).isRequirement) {
+				// get the test scenario and create a description of the combination
+				testSceanrio = ((TreeItemData)data).getTestScenarioElement();
+			}
+			if ( ((TreeItemData)data).isTestScenario) {
+				// get the test scenario and create a description of the combination
+				testSceanrio = ((TreeItemData)data).getTestScenarioElement();
+			}
+			
+			if (testSceanrio != null) {
+				String description = createDescription(testSceanrio);
+				DialogMessage dialog = new DialogMessage(new Shell(), "Test Simulation Model: Details", 
+						"Details of the selected combination of system model and test scenario:", 
+						description);
+				dialog.open();
+			}
+		}
+	}
 	
+	private String createDescription(Element testScenario){
+		String description = "";
+		TestSimulationModelCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
+		if (tsmc != null) {
+			Element systemModel = tsmc.getSystemModel();
+			description = description +
+					lineDelimiterString + 
+					"\nSystem Model: '"+((NamedElement)systemModel).getName()+"' ("+((NamedElement)systemModel).getQualifiedName()+")" +
+					getAdditionalModelsString(tsmc.getRequiredModels_systemModel(), tsmc, systemModel) + 
+					
+					lineDelimiterString + 
+					"\nTest Scenario: '"+((NamedElement)testScenario).getName()+"'("+((NamedElement)testScenario).getQualifiedName()+")" +
+					getAdditionalModelsString(tsmc.getRequiredModels_testScenario(), tsmc, testScenario) 
+					;
+			
+				description = description + getRequirementsString("", tsmc.getRequirements(), tsmc);
+		}
+		return description.trim();
+	}
 	
+	private static final String lineDelimiterString = "\n";
+//		"\n------------------------------------------------------------------------------ \n";
+
 	
+	private String getAdditionalModelsString(HashSet<Element> set, TestSimulationModelCombination tsmc, Element model){
+		String string = "";
+		if (set != null && set.size() > 0) {
+			string = "\n    - models required in addition: \n";
+			string = string + getAdditionalModelsStringParts(set, "         ", tsmc)
+			 + getUnsatisfiedClients("    ", model, tsmc);
+		}
+		
+		return string;
+	}
 	
+	private String getRequirementsString(String prefix, HashSet<Class> set, TestSimulationModelCombination tsmc){
+		String string  = "";
+		HashSet<Element> tempSet = new HashSet<Element>();
+		for (Element element : set) {
+			tempSet.add(element);
+		}
+		
+		List<Element> sortedList = ModelicaMLServices.getSortedByName(tempSet);
+		for (Element requirement : sortedList) {
+			if (requirement instanceof NamedElement) {
+				string = string + lineDelimiterString;
+				string = string + prefix +"Requirement: '" + ((NamedElement)requirement).getName() 
+						+ "' ("+((NamedElement)requirement).getQualifiedName()+")";
+				string = string + getAdditionalModelsString(tsmc.getRequiredModels_requirements().get(requirement), tsmc, requirement) + "\n";
+			}
+		}
+		return string;
+	}
+	
+	private String getAdditionalModelsStringParts(HashSet<Element> set, String prefix, TestSimulationModelCombination tsmc){
+		String string  = "";
+		List<Element> sortedList = ModelicaMLServices.getSortedByName(set);
+		for (Element element : sortedList) {
+			if (element instanceof NamedElement) {
+				string = string + prefix + "- " + getAlwaysIncludeString(element, tsmc) + ((NamedElement)element).getName() 
+				+ " ("+((NamedElement)element).getQualifiedName()+")\n";
+			}
+		}
+		return string;
+	}
+	
+	private String getAlwaysIncludeString(Element model, TestSimulationModelCombination tsmc){
+		String string = "";
+		if (tsmc.getAlwaysInclude().contains(model)) {
+			return "(always) ";
+		}
+		
+		return string;
+	}
+	
+	private String getUnsatisfiedClients(String prefix, Element element, TestSimulationModelCombination tsmc){
+		String string = "";
+		String unsatisfiedClientsString = tsmc.getClientsDotPathAsString(tsmc.getUnsatisfiedRequiredClients(element));
+		if (!unsatisfiedClientsString.trim().equals("")) {
+			string = prefix + "- unsatisfied required clients: " + "\n";
+			string = string + "         " + unsatisfiedClientsString;
+		}
+		return string;
+	}
 	
 	// Utls ************************************************************************ 
-	
+
 	private void clearAllLists(){
 		selectedTestScenariosWithRequirements.clear();
 		treeItems.clear();
@@ -471,59 +605,6 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 			}
 		}
 	}
-	
-	
-	private List<Element> getSortedByName(HashSet<Element> set){
-		if (set == null) { return null; }
-
-		List<Element> listSorted = new ArrayList<Element>(set);
-		Comparator<Element> c = new Comparator<Element>() {
-			@Override
-			public int compare(Element arg0, Element arg1) {
-				if (arg0 instanceof NamedElement) {
-					return ((NamedElement)arg0).getName().compareToIgnoreCase( ((NamedElement)arg1).getName());
-				}
-				return arg0.toString().compareToIgnoreCase(arg1.toString());
-			}
-		};
-		Collections.sort(listSorted, c);
-		
-		return listSorted;
-	}
-	
-	private List<Element> getSortedByQName(HashSet<Element> set){
-		if (set == null) { return null; }
-
-		List<Element> listSorted = new ArrayList<Element>(set);
-		Comparator<Element> c = new Comparator<Element>() {
-			@Override
-			public int compare(Element arg0, Element arg1) {
-				if (arg0 instanceof NamedElement) {
-					return ((NamedElement)arg0).getQualifiedName().compareToIgnoreCase( ((NamedElement)arg1).getQualifiedName());
-				}
-				return arg0.toString().compareToIgnoreCase(arg1.toString());
-			}
-		};
-		Collections.sort(listSorted, c);
-		
-		return listSorted;
-	}
-	
-	private List<Element> getSortedByRequirementId(HashSet<Element> set){
-		if (set == null) { return null; }
-		List<Element> listSorted = new ArrayList<Element>(set);
-		Comparator<Element> c = new Comparator<Element>() {
-			@Override
-			public int compare(Element arg0, Element arg1) {
-				return ModelicaMLServices.getRequirementID(arg0).trim().compareToIgnoreCase( ModelicaMLServices.getRequirementID(arg1).trim());
-			}
-		};
-		Collections.sort(listSorted, c);
-		
-		return listSorted;
-	}
-	
-	
 	
 	// Image handling ************************************************************************
 
@@ -587,11 +668,13 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 //							System.err.println("ADD test scenario to map.");
 							selectedTestScenariosWithRequirements.put(tesSscenario, new HashSet<Element>());
 							
-							// get the info node:
-							TreeItem[] infoNode = ((TreeItem)event.item).getItems();
+//							// get the info node:
+//							TreeItem[] infoNode = ((TreeItem)event.item).getItems();
+//							
+//							// add all test scenario linked requirements to map
+//							TreeItem[] requirementsItems = infoNode[0].getItems();
 							
-							// add all test scenario linked requirements to map
-							TreeItem[] requirementsItems = infoNode[0].getItems();
+							TreeItem[] requirementsItems = ((TreeItem)event.item).getItems();
 							for (int i = 0; i < requirementsItems.length; i++) {
 								TreeItem reqItem = requirementsItems[i];
 								if (reqItem.getChecked()) {
@@ -620,11 +703,13 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 								
 								if (testScenarioItem.getItems() != null && testScenarioItem.getItems().length > 0) {
 								
-									// get the info node
-									TreeItem[] infoNode = testScenarioItem.getItems();
+//									// get the info node
+//									TreeItem[] infoNode = testScenarioItem.getItems();
+//									
+//									// add all test scenario linked requirements to map
+//									TreeItem[] requirementsItems = infoNode[0].getItems();
 									
-									// add all test scenario linked requirements to map
-									TreeItem[] requirementsItems = infoNode[0].getItems();
+									TreeItem[] requirementsItems = testScenarioItem.getItems();
 									for (int j = 0; j < requirementsItems.length; j++) {
 										TreeItem reqItem = requirementsItems[j];
 										if (reqItem.getChecked()) {

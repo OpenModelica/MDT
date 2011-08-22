@@ -14,6 +14,7 @@
    
    <extension
          point="org.eclipse.ui.commands">
+      <!--
       <command
             id="org.openmodelica.modelicaml.helper.commands.instantiaterequirements"
             name="Instantiate Requirements">
@@ -22,6 +23,7 @@
             id="org.openmodelica.modelicaml.helper.commands.updateTestOracleElements"
             name="Create/Update Test Oracle Elements">
       </command>
+      -->
       <command
             id="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
             name="Generate Simulation Models">
@@ -29,6 +31,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
+      <!--
       <handler
             class="org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.instantiaterequirements">
@@ -115,8 +118,9 @@
             </with>
          </activeWhen>
       </handler>
+      -->
       <handler
-            class="org.openmodelica.modelicaml.helper.handlers.SimulationModelsGenaratorHandler"
+            class="org.openmodelica.modelicaml.helper.handlers.TestSimulationModelsGenaratorHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels">
          <activeWhen>
             <with

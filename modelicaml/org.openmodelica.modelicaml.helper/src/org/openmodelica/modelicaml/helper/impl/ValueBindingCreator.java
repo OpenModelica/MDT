@@ -215,30 +215,43 @@ public class ValueBindingCreator {
 				allClientsFound.add(item);
 				
 				// add to required clients list
-				if (deriveCodeHelper.getMediatorElement() != null ) {
-					EList<Dependency> clientDep = org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls.
-											getMediatorDependency((NamedElement)deriveCodeHelper.getMediatorElement(), 
-													(NamedElement)deriveCodeHelper.getClientElement(), 
-													Constants.stereotypeQName_ProvidesValueFor);
-					if (clientDep.size() == 1) { // only one dependency is allowed.
-						Dependency dep = (Dependency)clientDep.get(0);
-						Stereotype sProvidesValueFor = dep.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
-						if (sProvidesValueFor != null) {
-							if (dep.getValue(sProvidesValueFor, Constants.propertyName_isRequired) != null) {
-								allRequiredClientsFound.add(item);
-								
-								if (code == null) {
-									// Generate marker 
-									String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
-									// delete the marker if there was one from previous actions.
-									ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
-									// generate new marker
-									ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
-								}
-							}
-						}
+				if (deriveCodeHelper.isRequiredClient()) {
+					allRequiredClientsFound.add(item);
+					if (code == null) {
+						// Generate marker 
+						String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
+						// delete the marker if there was one from previous actions.
+						ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+						// generate new marker
+						ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
 					}
 				}
+				
+//				if (deriveCodeHelper.getMediatorElement() != null ) {
+//					EList<Dependency> clientDep = org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls.
+//											getMediatorDependency((NamedElement)deriveCodeHelper.getMediatorElement(), 
+//													(NamedElement)deriveCodeHelper.getClientElement(), 
+//													Constants.stereotypeQName_ProvidesValueFor);
+//					if (clientDep.size() == 1) { // only one dependency is allowed.
+//						Dependency dep = (Dependency)clientDep.get(0);
+//						Stereotype sProvidesValueFor = dep.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
+//						if (sProvidesValueFor != null) {
+//							Object isRequired = dep.getValue(sProvidesValueFor, Constants.propertyName_isRequired);
+//							if (isRequired != null && isRequired instanceof Boolean && (Boolean)isRequired) {
+//								allRequiredClientsFound.add(item);
+//								
+//								if (code == null) {
+//									// Generate marker 
+//									String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
+//									// delete the marker if there was one from previous actions.
+//									ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+//									// generate new marker
+//									ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+//								}
+//							}
+//						}
+//					}
+//				}
 				
 				// if code could be derive -> add to possible code derivation clients
 				if (code != null ) {
@@ -250,7 +263,9 @@ public class ValueBindingCreator {
 
 					// Generate marker 
 					String message = "No binding code could be automatically generated for '"+ item.getDotPath() + "'. User decision is required."; 
+					// delete the marker if there was one from previous actions.
 					ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+					// generate new marker
 					ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
 				}
 				

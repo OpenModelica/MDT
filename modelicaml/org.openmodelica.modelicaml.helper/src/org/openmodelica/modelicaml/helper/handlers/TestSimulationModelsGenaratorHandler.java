@@ -65,9 +65,9 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
-import org.openmodelica.modelicaml.helper.impl.SimulationModelsGenarator;
+import org.openmodelica.modelicaml.helper.impl.TestSimulationModelsGenarator;
 
-public class SimulationModelsGenaratorHandler extends AbstractHandler {
+public class TestSimulationModelsGenaratorHandler extends AbstractHandler {
 
 	private EObject selectedElement = null;
 	private HashSet<Element> sourceModels; 
@@ -75,7 +75,7 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 	private Element requirementsPackage; 
 	private Element testScenariosPackage; 
 	private Element valueMediatorsPackage;
-	private SimulationModelsGenarator smg;
+	private TestSimulationModelsGenarator smg;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
@@ -127,46 +127,28 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					
-					smg = new SimulationModelsGenarator(
+					smg = new TestSimulationModelsGenarator(
 							sourceModels, 
 							targetPackage,  
 							requirementsPackage, 
 							testScenariosPackage, 
 							valueMediatorsPackage);
 					
-					if (!smg.isCanceled()) {
+					if (!smg.isTestSimulationModelGenerationCanceled()) {
 						// execute 
 						editingDomain.getCommandStack().execute(getCommand(editingDomain));
 					}
-					
-					// OBSOLETE: this is solved by a "Log" button in the GUI for selecting the test scenarios and requirements.
-					
-					/* TODO: prepare a better generation results overview for 
-					 * which simulation models were created 
-					 * which requirements were discarded 
-					 * which requirements are not covered by this test suite
-					 * which test scenarios are discarded
-					 */
-					
-//					// Simple results overview
-//					if ( !smg.isCanceled() && !smg.getLog().trim().equals("") ) {
-//						String infoText = "Simulation Models Generation:";
-//						String msg = "";
-//						msg = msg + "Number of created simulation models for '" + ((NamedElement)selectedElement).getName() 
-//										+ "' : " + smg.getTestScenariosToBeInstantiated().size() + "\n";
-//						msg = msg + "Number of discarded test scenarios: " + smg.getTestScenariosDiscarded().size() + "\n";
-//						msg = msg + "Number requirements that are instantiated: " + smg.getRequirementsToBeInstantiated().size() + "\n";
-//						msg = msg + "Number of discarded requirements: " + smg.getRequirementsDiscarded().size() + "\n";
-//						
-//						msg = msg + "\n   *** Generation log messages ***";
-//						msg = msg + smg.getLog();
-//						// show translation messages
-//						DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, msg);
-//						dialog.open();
-//					}
+					if (!smg.isTestSimulationModelGenerationCanceled()) {
+						// show log
+						String msg = "Generation of Test Simulation Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
+									 "Number of created simulation models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
+
+						DialogMessage dialog = new DialogMessage(new Shell(), "Test Simulation Models Generation Log", 
+								"Data collecation and models generation log entries:", msg + smg.getLog().trim());
+						dialog.open();
+					}
 
 				} catch (ServiceException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -186,10 +168,6 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				// collect data, create uml elements
-				/* TODO: check if there performance issue. If yes then the data collection
-				 * and creation of the uml elements should be separated in the class SimulationModelsGenarator
-				 */
 				try {
 					smg.generate();
 					new ProgressMonitorDialog(new Shell()).run(true, true, smg);
@@ -200,8 +178,6 @@ public class SimulationModelsGenaratorHandler extends AbstractHandler {
 					e.printStackTrace();
 					MessageDialog.openError(new Shell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
 				}
-
-//				smg.generate();
 			}
 		};
 		cc.append(command);
