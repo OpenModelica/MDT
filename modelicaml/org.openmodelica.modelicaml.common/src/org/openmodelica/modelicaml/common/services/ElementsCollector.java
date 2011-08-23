@@ -52,11 +52,11 @@ public class ElementsCollector {
 	// all imported members
 	private HashSet<Element> importedMembers = new HashSet<Element>(); 
 	
-	// only the imported requirements
-	private HashSet<Element> importedElements = new HashSet<Element>();
+	// only the imported elements
+	protected HashSet<Element> importedElements = new HashSet<Element>();
 	
-	// all collected requirements
-	private EList<Element> elements = new BasicEList<Element>();
+	// all collected elements
+	protected EList<Element> elements = new BasicEList<Element>();
 
 	
 	public void collectElementsFromModel(EObject umlRootElement, String stereotypeQName){
@@ -70,7 +70,6 @@ public class ElementsCollector {
 		elements.clear();
 		
 		if (umlRootElement != null) {
-			
 			// collect elements that are imported by the selected root element
 			if (umlRootElement instanceof Namespace) {
 				
@@ -103,7 +102,7 @@ public class ElementsCollector {
 					if (importedElements != null && importedElements.size() > 0) {
 						for (PackageableElement packageableElement2 : importedElements) {
 							
-							// check if the imported member is and element
+							// check if the imported member is an element
 							if (packageableElement2 instanceof Element) {
 								collectElements(packageableElement2, true);
 							}
@@ -170,12 +169,16 @@ public class ElementsCollector {
 		}
 	}
 	
-	private void collectElements(Element element, boolean isImported){
+	
+	/*
+	 *  This method can be overridden for specific collections
+	 */
+	protected void collectElements(Element element, boolean isImported){
 		// collect elements
 		// avoid duplicates that can occur due to the multiple imports of the same elements
 		
 		if (element instanceof Class 
-				&& ((Element)element).getAppliedStereotype(stereotypeQName) != null
+				&& ((Element)element).getAppliedStereotype(this.stereotypeQName) != null
 				&& !elements.contains(element)) {
 			
 			elements.add(element) ;

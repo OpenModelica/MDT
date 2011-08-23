@@ -127,6 +127,7 @@ public class Constants {
 	
 	// primarily used by test models generation plugin
 	public static final String stereotypeQName_Requires 			= "ModelicaML::TestDefinition::Requires";
+	public static final String stereotypeQName_RequiredFor 			= "ModelicaML::TestDefinition::RequiredFor";
 	public static final String propertyName_always	= "always";
 	public static final String propertyName_onlyIncombinationWith	= "onlyInCombinationWith";
 	

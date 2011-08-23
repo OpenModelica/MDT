@@ -136,8 +136,7 @@ public class ModelicaMLMarkerSupport {
 		if (sourceElement instanceof NamedElement && project != null) {
 			IMarker[] markers = null;
 			try {
-				markers = project.findMarkers(null, true,
-						IResource.DEPTH_INFINITE);
+				markers = project.findMarkers(null, true,IResource.DEPTH_INFINITE);
 				for (IMarker marker : markers) {
 					Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
 					Object markerMessage = marker.getAttribute(IMarker.MESSAGE);
@@ -152,7 +151,6 @@ public class ModelicaMLMarkerSupport {
 				// e.printStackTrace();
 			}
 		}
-
 		return false;
 	}
 
