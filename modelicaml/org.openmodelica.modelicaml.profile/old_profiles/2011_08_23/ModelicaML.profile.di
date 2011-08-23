@@ -4,7 +4,9 @@
     <availablePage>
       <emfPageIdentifier href="ModelicaML.profile.notation#_hwBQEHfcEeC8VcOgJ0vxlw"/>
     </availablePage>
-    <availablePage/>
+    <availablePage>
+      <emfPageIdentifier href="ModelicaML.profile.notation#_NJ32AHfdEeC8VcOgJ0vxlw"/>
+    </availablePage>
     <availablePage>
       <emfPageIdentifier href="ModelicaML.profile.notation#_doV4kHyIEeCz14mjmAfPTw"/>
     </availablePage>
@@ -23,7 +25,20 @@
   </pageList>
   <sashModel currentSelection="//@sashModel/@windows.0/@children.0">
     <windows>
-      <children xsi:type="di:TabFolder"/>
+      <children xsi:type="di:TabFolder">
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_ltbbAH-WEeC-I9oqZ53S4w"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
+        </children>
+      </children>
     </windows>
   </sashModel>
 </di:SashWindowsMngr>

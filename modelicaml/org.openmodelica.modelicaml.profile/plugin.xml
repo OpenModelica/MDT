@@ -404,6 +404,31 @@
                </visibleWhen>
             </command>
             <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateTestScenarioCommand"
+                  icon="resources/icons/icons16/calculationModel.gif"
+                  label="Test Scenario(s)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="org.openmodelica.modelicaml.commands.CreateModelicaSimulationModelCommand"
                   icon="resources/icons/icons16/model.gif"
                   label="Simulation Model(s)"
@@ -1251,6 +1276,10 @@
             name="Create new Modelica Calculation Model">
       </command>
       <command
+            id="org.openmodelica.modelicaml.commands.CreateTestScenarioCommand"
+            name="Create new Test Scenario">
+      </command>
+      <command
             id="org.openmodelica.modelicaml.commands.CreateModelicaRequirementCommand"
             name="Create new Modelica Requirement">
       </command>
@@ -1771,6 +1800,46 @@
       <handler
             class="org.openmodelica.modelicaml.profile.handlers.CreateModelicaCalculationModelHandler"
             commandId="org.openmodelica.modelicaml.commands.CreateModelicaCalculationModelCommand">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <and>
+                        <not>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Function"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                        </not>
+                        <or>
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Class">
+                           </instanceof>
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </or>
+                        <and>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Behavior">
+                              </instanceof>
+                           </not>
+                        </and>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.profile.handlers.CreateTestScenarioHandler"
+            commandId="org.openmodelica.modelicaml.commands.CreateTestScenarioCommand">
          <activeWhen>
             <with
                   variable="selection">

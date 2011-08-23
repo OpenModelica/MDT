@@ -6,19 +6,7 @@
     </availablePage>
     <availablePage/>
     <availablePage>
-      <emfPageIdentifier href="ModelicaML.profile.notation#_doV4kHyIEeCz14mjmAfPTw"/>
-    </availablePage>
-    <availablePage>
-      <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
-    </availablePage>
-    <availablePage>
       <emfPageIdentifier href="ModelicaML.profile.notation#_Ch0o4H-WEeC-I9oqZ53S4w"/>
-    </availablePage>
-    <availablePage>
-      <emfPageIdentifier href="ModelicaML.profile.notation#_ltbbAH-WEeC-I9oqZ53S4w"/>
-    </availablePage>
-    <availablePage>
-      <emfPageIdentifier href="ModelicaML.profile.notation#_Sq6n8Kx7EeC2GJQ4iCzxPg"/>
     </availablePage>
   </pageList>
   <sashModel currentSelection="//@sashModel/@windows.0/@children.0">

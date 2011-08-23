@@ -72,7 +72,7 @@
   </profileApplication>
   <profileApplication xmi:id="_eQtHgJsxEeCoH8eQBqr4Qw">
     <eAnnotations xmi:id="_eRJMYJsxEeCoH8eQBqr4Qw" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_is480MjBEeCnxqjdSD5uGQ"/>
+      <references xmi:type="ecore:EPackage" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_nl028c19EeCDZMoKmHw59g"/>
     </eAnnotations>
     <appliedProfile href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_ImIGME4pEeC4rN7SNTLq6w"/>
   </profileApplication>
