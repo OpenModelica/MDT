@@ -108,7 +108,7 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
-import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
+import org.openmodelica.modelicaml.helper.impl.TestVerdictElementsGenerator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
@@ -493,7 +493,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				actionInstantiateTestScenarios.setText("Instantiate test scenarios");
 				
 				
-				if (TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, false)) {
+				if (TestVerdictElementsGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, false)) {
 					manager.add(new Separator());
 					manager.add(actionDeleteReqTestEvaluationElements);
 				}
@@ -1482,7 +1482,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					//TestPassFailCodeGenerator t = new TestPassFailCodeGenerator(selectedClass);
-					TestOracleElementsCreator t = new TestOracleElementsCreator(selectedClass);
+					TestVerdictElementsGenerator t = new TestVerdictElementsGenerator(selectedClass);
 					updateItem(obj);
 					showSelection(par, sel);
 				}
@@ -1505,7 +1505,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
 
 					if (go) {
-						TestOracleElementsCreator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
+						TestVerdictElementsGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
 						updateItem(obj);
 						showSelection(par, sel);
 					}
