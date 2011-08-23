@@ -5,7 +5,7 @@
 
 The Eclipse plugins provided by this update site are add-ons to the Papyrus (MDT) UML modeling tool. They customize Papyrus with ModelicaML modeling features, provide a Modelica code generator and a connection to the OpenModelica compiler.
    </description>
-   <feature url="features/org.openmodelica.modelicaml.feature_1.6.0.201107151444.jar" id="org.openmodelica.modelicaml.feature" version="1.6.0.201107151444">
+   <feature url="features/org.openmodelica.modelicaml.feature_1.7.0.201108231426.jar" id="org.openmodelica.modelicaml.feature" version="1.7.0.201108231426">
       <category name="org.openmodelica.modelicaml"/>
    </feature>
    <category-def name="org.openmodelica.modelicaml" label="ModelicaML - A UML Profile for System Dynamics Engineering using Modelica">
