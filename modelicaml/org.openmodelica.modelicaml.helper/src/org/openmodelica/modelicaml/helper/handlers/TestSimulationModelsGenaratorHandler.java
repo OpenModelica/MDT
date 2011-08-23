@@ -93,64 +93,76 @@ public class TestSimulationModelsGenaratorHandler extends AbstractHandler {
 			sourceModels = new HashSet<Element>();
 			sourceModels.add((Class)selectedElement);
 			
-			// get the uml model
+			// get the uml model that is open in Papyrus.
 			UmlModel papyrusModel = UmlUtils.getUmlModel();
 			if (papyrusModel != null ) {
 				try {
 					targetPackage = (Element) papyrusModel.lookupRoot();
+					requirementsPackage = (Element) papyrusModel.lookupRoot();
+					testScenariosPackage = (Element) papyrusModel.lookupRoot();
+					valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
+
+//					targetPackage = ((Class)selectedElement).getModel();
+//					requirementsPackage = ((Class)selectedElement).getModel(); 
+//					testScenariosPackage = ((Class)selectedElement).getModel(); 
+//					valueMediatorsPackage = ((Class)selectedElement).getModel();
+					
 				} catch (NotFoundException e) {
 					e.printStackTrace();
-					MessageDialog.openError(new Shell(), "Target Package Selection", "Cannot access the root model in Papyrus.");
+					MessageDialog.openError(new Shell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
 				}
 			}
-
-//			targetPackage = ((Class)selectedElement).getModel();
-			requirementsPackage = ((Class)selectedElement).getModel(); 
-			testScenariosPackage = ((Class)selectedElement).getModel(); 
-			valueMediatorsPackage = ((Class)selectedElement).getModel();
 			
-			Boolean go = MessageDialog.openQuestion(new Shell(), "Please confirm ...", "This helper will create a package " +
-					"that will contain miltiple simulation models each including one test scenario and all requirements "+ 
-					"that can be tested using this test scenario and the selected system model." +
-					"\n\nNote, only simulation models that have test scenarios and requirements with appropriate value bindings will be collected." +
-					"\n\n" +
-					
-					"   - Selected system model: '" + ((Class)selectedElement).getName() + "'\n" + 
-					"   - Package to store generated Sim. Models in: '" + ((NamedElement)targetPackage).getName() + "'\n" + 
-					"   - Package for Requirements search: '" + ((NamedElement)requirementsPackage).getName() + "'\n" +
-					"   - Package for Test Scnearios search: '" + ((NamedElement)testScenariosPackage).getName() + "'\n" +
-					"   - Package for Value Mediators search: '" + ((NamedElement)valueMediatorsPackage).getName() + "'\n"
-					);
+			boolean allPackagesAreSet = targetPackage != null && requirementsPackage != null && testScenariosPackage != null && valueMediatorsPackage != null;
 			
-			if (go) {
-				try {
-					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-					
-					smg = new TestSimulationModelsGenarator(
-							sourceModels, 
-							targetPackage,  
-							requirementsPackage, 
-							testScenariosPackage, 
-							valueMediatorsPackage);
-					
-					if (!smg.isTestSimulationModelGenerationCanceled()) {
-						// execute 
-						editingDomain.getCommandStack().execute(getCommand(editingDomain));
-					}
-					if (!smg.isTestSimulationModelGenerationCanceled()) {
-						// show log
-						String msg = "Generation of Test Simulation Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
-									 "Number of created simulation models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
+			if (allPackagesAreSet) {
+				boolean go = MessageDialog.openQuestion(new Shell(), "Please confirm ...", "This helper will create a package " +
+						"that will contain miltiple simulation models each including one test scenario and all requirements "+ 
+						"that can be tested using this test scenario and the selected system model." +
+						"\n\nNote, only simulation models that have test scenarios and requirements with appropriate value bindings will be collected." +
+						"\n\n" +
+						
+						"   - Selected system model: '" + ((Class)selectedElement).getName() + "'\n" + 
+						"   - Package to store generated Sim. Models in: '" + ((NamedElement)targetPackage).getName() + "'\n" + 
+						"   - Package for Requirements search: '" + ((NamedElement)requirementsPackage).getName() + "'\n" +
+						"   - Package for Test Scnearios search: '" + ((NamedElement)testScenariosPackage).getName() + "'\n" +
+						"   - Package for Value Mediators search: '" + ((NamedElement)valueMediatorsPackage).getName() + "'\n"
+						);
+				
+				if (go && allPackagesAreSet) {
+					try {
+						ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+						TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+						
+						smg = new TestSimulationModelsGenarator(
+								sourceModels, 
+								targetPackage,  
+								requirementsPackage, 
+								testScenariosPackage, 
+								valueMediatorsPackage);
+						
+						if (!smg.isTestSimulationModelGenerationCanceled()) {
+							// execute 
+							editingDomain.getCommandStack().execute(getCommand(editingDomain));
+						}
+						if (!smg.isTestSimulationModelGenerationCanceled()) {
+							// show log
+							String msg = "Generation of Test Simulation Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
+										 "Number of created simulation models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
 
-						DialogMessage dialog = new DialogMessage(new Shell(), "Test Simulation Models Generation Log", 
-								"Data collecation and models generation log entries:", msg + smg.getLog().trim());
-						dialog.open();
-					}
+							DialogMessage dialog = new DialogMessage(new Shell(), "Test Simulation Models Generation Log", 
+									"Data collecation and models generation log entries:", msg + smg.getLog().trim());
+							dialog.open();
+						}
 
-				} catch (ServiceException e) {
-					e.printStackTrace();
+					} catch (ServiceException e) {
+						e.printStackTrace();
+					}
 				}
+			}
+			else {
+				MessageDialog.openError(new Shell(), "Packages Selection for Test Simulation Models Generation",
+						"Cannot access the root model in Papyrus. Please try it again.");
 			}
 		}
 		return null;

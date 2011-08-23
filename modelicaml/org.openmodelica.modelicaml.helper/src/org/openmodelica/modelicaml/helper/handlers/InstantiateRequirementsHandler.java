@@ -61,7 +61,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
-import org.openmodelica.modelicaml.helper.impl.TestOracleElementsCreator;
+import org.openmodelica.modelicaml.helper.impl.TestVerdictElementsGenerator;
 import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
 
 
@@ -213,7 +213,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				TestOracleElementsCreator.createTestEvaluationElements(owningClass);
+				TestVerdictElementsGenerator.createTestEvaluationElements(owningClass);
 			}
 		};
 		cc.append(command);

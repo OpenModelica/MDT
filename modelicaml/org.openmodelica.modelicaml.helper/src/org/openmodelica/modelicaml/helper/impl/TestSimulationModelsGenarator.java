@@ -154,7 +154,7 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 				tsc = new TestScenariosCollector();
 				tsc.collectTestCasesFromPackage((Package) testScenariosPackage, true);
 				if (tsc.getAllTS().size() == 0) {
-					String message = "INFO: No test scnearios were found.";
+					String message = "INFO: No test scenarios were found.";
 					addToLog(message);
 				}
 
@@ -186,7 +186,9 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 						TestSimulationModelCombination tsmc = new TestSimulationModelCombination(systemModel, 
 								testScenarioToBeUsed, 
 								requirementsToBeUsed,
-								(Package) valueBindingsPackage);
+								(Package) valueBindingsPackage,
+								tsc.getAlwaysInclude(),
+								tsc.getModelToItsRequiredModels());
 						
 						// add to map
 						tsToTestSimulationModelCombination.put(testScenarioToBeUsed, tsmc);
@@ -459,7 +461,7 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 						/*
 						 * Create test verdict code
 						 */
-						TestOracleElementsCreator.createTestEvaluationElements(simulationModel);
+						TestVerdictElementsGenerator.createTestEvaluationElements(simulationModel);
 					}
 				}
 			}

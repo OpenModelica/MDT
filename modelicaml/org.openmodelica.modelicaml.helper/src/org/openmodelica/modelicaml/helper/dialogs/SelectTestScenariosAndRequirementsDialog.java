@@ -535,6 +535,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 				string = string + prefix +"Requirement: '" + ((NamedElement)requirement).getName() 
 						+ "' ("+((NamedElement)requirement).getQualifiedName()+")";
 				string = string + getAdditionalModelsString(tsmc.getRequiredModels_requirements().get(requirement), tsmc, requirement) + "\n";
+				string = string + getUnsatisfiedClients("    ", requirement, tsmc);
 			}
 		}
 		return string;
@@ -566,7 +567,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		String unsatisfiedClientsString = tsmc.getClientsDotPathAsString(tsmc.getUnsatisfiedRequiredClients(element));
 		if (!unsatisfiedClientsString.trim().equals("")) {
 			string = prefix + "- unsatisfied required clients: " + "\n";
-			string = string + "         " + unsatisfiedClientsString;
+			string = string + prefix + "         " + unsatisfiedClientsString;
 		}
 		return string;
 	}

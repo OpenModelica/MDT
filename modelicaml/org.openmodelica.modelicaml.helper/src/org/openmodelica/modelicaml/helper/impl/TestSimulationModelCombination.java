@@ -8,13 +8,10 @@ import java.util.List;
 
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
-import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
-import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.TypedElement;
-import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -77,6 +74,11 @@ public class TestSimulationModelCombination {
 	//Any model that was considered for the required models search
 	private HashSet<Element> alreadyConsideredForAdditionalModelsSearch = new HashSet<Element>();
 	
+	// all models that were found in the defined root model/package that should always be instantiated
+	private HashSet<Element> allAlwaysIncludeFound = new HashSet<Element>();
+	// all models that were found in the defined root model/package that have models that are required in addition
+	private HashMap<Element, HashSet<Element>> allModelsAndTheirRequiredModelsFound = new HashMap<Element, HashSet<Element>>();
+	
 	// All instantiated models
 	private HashSet<TreeParent> allModelInstantiations = new HashSet<TreeParent>();
 
@@ -102,17 +104,21 @@ public class TestSimulationModelCombination {
 	 *  Indicates that an error occurred during analysis
 	 */
 	private boolean isError = false;
-
 	
 	public TestSimulationModelCombination(Class systemModel, 
 			Class testScenario, 
 			HashSet<Class> requirements,
-			Package valueMediatorsPackage){
+			Package valueMediatorsPackage,
+			HashSet<Element> allAlwaysIncludeFound,
+			HashMap<Element, HashSet<Element>> allModelsAndTheirRequiredModelsFound){
 		
 		this.systemModel = systemModel;
 		this.testScenario = testScenario;
 		this.requirements = requirements;
 		this.valueMediatorsPackage = valueMediatorsPackage;
+		
+		this.allAlwaysIncludeFound.addAll(allAlwaysIncludeFound);
+		this.allModelsAndTheirRequiredModelsFound.putAll(allModelsAndTheirRequiredModelsFound);
 		
 		// initial information for the log
 		initializeLog();
@@ -171,38 +177,69 @@ public class TestSimulationModelCombination {
 			for (Element element : allModelsInInstantiationTree) {
 				if (element instanceof NamedElement) {
 
-					for (Element dep : ((NamedElement)element).getClientDependencies()) {
-						Stereotype s = dep.getAppliedStereotype(Constants.stereotypeQName_Requires);
-						if (s != null) {
-//							Object list = dep.getValue(s, Constants.propertyName_onlyIncombinationWith);
-							Object isAlways = dep.getValue(s, Constants.propertyName_always);
-
-							Element modelFound = ((Dependency)dep).getTargets().get(0);
+					HashSet<Element> requiredModels = this.allModelsAndTheirRequiredModelsFound.get(element);
+					if (requiredModels != null) {
+						for (Element requiredModelFound : requiredModels) {
 							
 							// check if this model should be discarded.
-							if (initialSetOfModels.contains(modelFound)) {
-								if (modelFound instanceof NamedElement) {
+							if (initialSetOfModels.contains(requiredModelFound)) {
+									if (requiredModelFound instanceof NamedElement) {
 									
 									String message = "DISCARDED (01): " +
-											"The additional model search found '"+((NamedElement)modelFound).getQualifiedName()
-											+ "'. This model already exists in the combination set and is discarded.";
+											"The additional model search found '"+((NamedElement)requiredModelFound).getQualifiedName()
+											+ "'\n referenced by '"+((NamedElement)element).getQualifiedName()+"'.\n"
+											+ "This model was already found once. This reference is discarded.";
 									
 									addToLog(message);
 								}
 							}
 							else {
 								// add to the collected additional models 
-								collectedAdditionalModels.add(modelFound );
+								collectedAdditionalModels.add( requiredModelFound );
 								
 								// add to the overall list of collected additional models
-								allCollectedAdditionalModels.add( modelFound );
+								allCollectedAdditionalModels.add( requiredModelFound );
 								
-								if (isAlways instanceof Boolean && (Boolean)isAlways) {
-									alwaysInclude.add(modelFound);
+								if (allAlwaysIncludeFound.contains( requiredModelFound )) {
+									alwaysInclude.add( requiredModelFound );
 								}
 							}
 						}
 					}
+					
+//					for (Element dep : ((NamedElement)element).getClientDependencies()) {
+//						Stereotype s = dep.getAppliedStereotype(Constants.stereotypeQName_Requires);
+//						if (s != null) {
+////							Object list = dep.getValue(s, Constants.propertyName_onlyIncombinationWith);
+//							Object isAlways = dep.getValue(s, Constants.propertyName_always);
+//
+//							Element modelFound = ((Dependency)dep).getTargets().get(0);
+//							
+//							// check if this model should be discarded.
+//							if (initialSetOfModels.contains(modelFound)) {
+//								if (modelFound instanceof NamedElement) {
+//									
+//									String message = "DISCARDED (01): " +
+//											"The additional model search found '"+((NamedElement)modelFound).getQualifiedName()
+//											+ "'\n referenced by '"+((NamedElement)element).getQualifiedName()+"'.\n"
+//											+ "This model was already found once. This reference is discarded.";
+//									
+//									addToLog(message);
+//								}
+//							}
+//							else {
+//								// add to the collected additional models 
+//								collectedAdditionalModels.add(modelFound );
+//								
+//								// add to the overall list of collected additional models
+//								allCollectedAdditionalModels.add( modelFound );
+//								
+//								if (isAlways instanceof Boolean && (Boolean)isAlways) {
+//									alwaysInclude.add(modelFound);
+//								}
+//							}
+//						}
+//					}
 				}
 			}
 			

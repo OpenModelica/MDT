@@ -218,12 +218,14 @@ public class ValueBindingCreator {
 				if (deriveCodeHelper.isRequiredClient()) {
 					allRequiredClientsFound.add(item);
 					if (code == null) {
-						// Generate marker 
-						String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
-						// delete the marker if there was one from previous actions.
-						ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
-						// generate new marker
-						ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+						if ( !onlySimulate ) {
+							// Generate marker 
+							String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
+							// delete the marker if there was one from previous actions.
+							ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+							// generate new marker
+							ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+						}
 					}
 				}
 				
@@ -260,13 +262,15 @@ public class ValueBindingCreator {
 				// if NO code could be derived because a user interaction is required -> add to "possible" and generate a marker
 				else if (code == null && deriveCodeHelper.isUserSelectionRequired()) {
 					allClientsWithPossibleBindingCodeDerivation.add(item);
-
-					// Generate marker 
-					String message = "No binding code could be automatically generated for '"+ item.getDotPath() + "'. User decision is required."; 
-					// delete the marker if there was one from previous actions.
-					ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
-					// generate new marker
-					ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+					
+					if (!onlySimulate) {
+						// Generate marker 
+						String message = "No binding code could be automatically generated for '"+ item.getDotPath() + "'. User decision is required."; 
+						// delete the marker if there was one from previous actions.
+						ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+						// generate new marker
+						ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+					}
 				}
 				
 				// collect the providers used

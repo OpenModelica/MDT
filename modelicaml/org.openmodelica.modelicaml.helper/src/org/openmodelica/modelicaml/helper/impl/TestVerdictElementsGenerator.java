@@ -63,7 +63,7 @@ import org.openmodelica.modelicaml.common.services.UmlServices;
 /**
  * Implementation class for ClassAction action.
  */
-public class TestOracleElementsCreator {
+public class TestVerdictElementsGenerator {
 	
 	/** The shell. */
 	private static Shell shell = new Shell();
@@ -102,7 +102,7 @@ public class TestOracleElementsCreator {
 	 * @param selectedClass
 	 *            the selected class
 	 */
-	public TestOracleElementsCreator(final Class selectedClass) { 
+	public TestVerdictElementsGenerator(final Class selectedClass) { 
 		final Shell shell = new Shell();
 		Boolean go = MessageDialog.openQuestion(shell, "Please confirm ...", "This helper will create or update the following additional elements in the class '"+ selectedClass.getName()+"': " +
 					"\n     - a nested class '"+resultsClassName+"' containing additional variables and behavior"+ 

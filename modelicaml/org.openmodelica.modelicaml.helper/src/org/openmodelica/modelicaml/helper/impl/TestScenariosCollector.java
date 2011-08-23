@@ -16,7 +16,6 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.services.ElementsCollector;
 
 public class TestScenariosCollector {
 	
@@ -35,6 +34,12 @@ public class TestScenariosCollector {
 	// requirements mapped to test scenarios 
 	private HashMap<Element,HashSet<Element>> reqToTS = new HashMap<Element,HashSet<Element>>();
 	
+	// additional models that should always be instantiated
+	private HashSet<Element> alwaysInclude = new HashSet<Element>();
+
+	// models to their additional models
+	private HashMap<Element,HashSet<Element>> modelToItsRequiredModels = new HashMap<Element,HashSet<Element>>();
+
 	// selected requirements that were provided for finding matching test cases.
 	private HashSet<Element> selectedReq = null;
 
@@ -52,12 +57,18 @@ public class TestScenariosCollector {
 	public boolean collectTestCasesFromModel(Boolean sortData){
 		// clear the list in order to enable multiple calls of this method in the the same object
 		this.allTS.clear();
+		this.alwaysInclude.clear();
+		this.modelToItsRequiredModels.clear();
 		
 		if ( umlRoolModel != null ) {
-			ElementsCollector ec = new ElementsCollector();
-			ec.collectElementsFromModel(umlRoolModel, Constants.stereotypeQName_TestScenario);
+//			ElementsCollector ec = new ElementsCollector();
+//			ec.collectElementsFromModel(umlRoolModel, Constants.stereotypeQName_TestScenario);
+			TestScenariosDataCollector ec = new TestScenariosDataCollector(umlRoolModel);
 			
-			this.allTS.addAll(ec.getElements());
+//			this.allTS.addAll(ec.getElements());
+			this.allTS.addAll(ec.getAllTestScenarios());
+			this.alwaysInclude.addAll(ec.getAlwaysInclude());
+			this.modelToItsRequiredModels.putAll(ec.getModelToItsRequiredModels());
 			
 			// sort data (i.e. fill other sets and maps)
 			if (sortData) { sortData();}
@@ -71,12 +82,18 @@ public class TestScenariosCollector {
 	public boolean collectTestCasesFromPackage(Package rootPackage, boolean sortData){
 		// clear the list in order to enable multiple calls of this method in the the same object
 		this.allTS.clear();
-		
+		this.alwaysInclude.clear();
+		this.modelToItsRequiredModels.clear();
+
 		if ( rootPackage != null ) {
-			ElementsCollector ec = new ElementsCollector();
-			ec.collectElementsFromModel((EObject) rootPackage, Constants.stereotypeQName_TestScenario);
-			
-			this.allTS.addAll(ec.getElements());
+//			ElementsCollector ec = new ElementsCollector();
+//			ec.collectElementsFromModel((EObject) rootPackage, Constants.stereotypeQName_TestScenario);
+			TestScenariosDataCollector ec = new TestScenariosDataCollector((EObject) rootPackage);
+
+//			this.allTS.addAll(ec.getElements());
+			this.allTS.addAll(ec.getAllTestScenarios());
+			this.alwaysInclude.addAll(ec.getAlwaysInclude());
+			this.modelToItsRequiredModels.putAll(ec.getModelToItsRequiredModels());
 			
 			// sort data (i.e. fill other sets and maps)
 			if (sortData) { sortData();}
@@ -303,4 +320,14 @@ public class TestScenariosCollector {
 	public HashMap<Element,HashSet<Element>> getPkgToTS() {
 		return pkgToTS;
 	}
+	
+	public HashSet<Element> getAlwaysInclude() {
+		return alwaysInclude;
+	}
+	
+	public HashMap<Element, HashSet<Element>> getModelToItsRequiredModels() {
+		return modelToItsRequiredModels;
+	}
+
+	
 }
