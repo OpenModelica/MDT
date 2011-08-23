@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Name: PapyrusUML_profile_report_v01
+Bundle-SymbolicName: org.openmodelica.modelicaml.profile.report;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Require-Bundle: fr.obeo.acceleo.gen,
+ org.eclipse.uml2;bundle-version="2.1.0"
+Import-Package: org.eclipse.uml2.uml
+Bundle-ManifestVersion: 2
