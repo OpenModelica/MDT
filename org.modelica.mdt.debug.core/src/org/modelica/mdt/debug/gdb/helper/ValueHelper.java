@@ -44,46 +44,62 @@ import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 public class ValueHelper {
 	
 	/**
+	 * Creates and sends the "-data-evaluate-expression (char*)anyString(void*)" command.
 	 * @param variableName
+	 * @param referenceType 
 	 * @param gdbDebugTarget
 	 * @return
 	 * @throws MIException 
 	 */
-	public static String getModelicaAnyString(String variableName,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+	public static String getAnyString(String variableName,
+			String referenceType, GDBDebugTarget gdbDebugTarget) throws MIException {
 		// TODO Auto-generated method stub
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIDataEvaluateExpression getTypeOfAnyCmd = factory.createMIAnyString(variableName);
 		miSession.postCommand(getTypeOfAnyCmd);
 		MIDataEvaluateExpressionInfo getTypeOfAnyInfo = getTypeOfAnyCmd.getMIDataEvaluateExpressionInfo();
-		/* the response received from -data-evaluate-expression is like this
-		 * ^done,value="0x1b488af \"value\""
-		 * we need to parse it so that only data type is returned 
-		*/
-		int beginIndex = getTypeOfAnyInfo.getExpression().indexOf("\"");
-		int endIndex = getTypeOfAnyInfo.getExpression().lastIndexOf("\"");
-		return getTypeOfAnyInfo.getExpression().substring(beginIndex + 1, endIndex);
+		if (referenceType.equals(GDBHelper.STRING)) {
+			return parseResultWithQuotes(getTypeOfAnyInfo.getExpression());
+		} else {
+			return parseResult(getTypeOfAnyInfo.getExpression());
+			
+		}
+		
 	}
 
 	/**
-	 * @param variableName 
-	 * @param gdbDebugTarget
+	 * Returns the result string with quotes
+	 * the response received from -data-evaluate-expression is like this
+	 * ^done,value="0x1b488af \"value\""
+	 * we need to parse it so that only data type is returned
+	 * @param expression
 	 * @return
-	 * @throws MIException 
 	 */
-	public static int getModelicaListLength(String variableName,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+	private static String parseResultWithQuotes(String expression) {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getListLengthCmd = factory.createMIGetListLength(variableName);
-		miSession.postCommand(getListLengthCmd);
-		MIDataEvaluateExpressionInfo getListLengthInfo = getListLengthCmd.getMIDataEvaluateExpressionInfo();
-		return Integer.parseInt(getListLengthInfo.getExpression());
+		int beginIndex = expression.indexOf("\"");
+		int endIndex = expression.lastIndexOf("\"");
+		return expression.substring(beginIndex, endIndex + 1);	// make sure we return ""(quotes) for strings
 	}
 
 	/**
+	 * Returns the result string without quotes
+	 * the response received from -data-evaluate-expression is like this
+	 * ^done,value="0x1b488af \"value\""
+	 * we need to parse it so that only data type is returned
+	 * @param expression
+	 * @return
+	 */
+	private static String parseResult(String expression) {
+		// TODO Auto-generated method stub
+		int beginIndex = expression.indexOf("\"");
+		int endIndex = expression.lastIndexOf("\"");
+		return expression.substring(beginIndex + 1, endIndex);
+	}
+
+	/**
+	 * Creates and sends the "-data-evaluate-expression expression" command.
 	 * @param variableName 
 	 * @param gdbDebugTarget
 	 * @return
@@ -97,5 +113,95 @@ public class ValueHelper {
 		MIDataEvaluateExpressionInfo dataEvaluateExpressionInfo = dataEvaluateExpressionCmd.getMIDataEvaluateExpressionInfo();
 		return dataEvaluateExpressionInfo.getExpression();
 	}
+	
+	/**
+	 * Creates and sends the "-data-evaluate-expression (int)listLength(void*)" command.
+	 * @param variableName 
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws MIException 
+	 */
+	public static int getListLength(String variableName,
+			GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = gdbDebugTarget.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIDataEvaluateExpression getListLengthCmd = factory.createMIGetListLength(variableName);
+		miSession.postCommand(getListLengthCmd);
+		MIDataEvaluateExpressionInfo getListLengthInfo = getListLengthCmd.getMIDataEvaluateExpressionInfo();
+		return Integer.parseInt(getListLengthInfo.getExpression());
+	}
+	
+	/**
+	 * Creates and sends the "-data-evaluate-expression listGet(void*,item)" command.
+	 * @param variableName
+	 * @param item
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws MIException 
+	 */
+	public static String getListItem(String variableName, int item,
+			GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = gdbDebugTarget.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIDataEvaluateExpression getListItemCmd = factory.createMIGetListItem(variableName, item);
+		miSession.postCommand(getListItemCmd);
+		return getListItemCmd.getMIDataEvaluateExpressionInfo().getExpression();
+	}
+	
+	/**
+	 * Creates and sends the "-data-evaluate-expression (int)arrayLength(void*)" command.
+	 * @param variableName 
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws MIException 
+	 */
+	public static int getRecordElements(String variableName,
+			GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = gdbDebugTarget.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIDataEvaluateExpression getRecordElementsCmd = factory.createMIGetRecordElements(variableName);
+		miSession.postCommand(getRecordElementsCmd);
+		MIDataEvaluateExpressionInfo getRecordElementsInfo = getRecordElementsCmd.getMIDataEvaluateExpressionInfo();
+		return Integer.parseInt(getRecordElementsInfo.getExpression());
+	}	
+
+	/**
+	 * Creates and sends the "-data-evaluate-expression arrayGet(void*,element)" command.
+	 * @param variableName
+	 * @param element
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws MIException 
+	 */
+	public static String getRecordElement(String variableName, int element,
+			GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = gdbDebugTarget.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIDataEvaluateExpression getRecordElementCmd = factory.createMIGetRecordElement(variableName, element);
+		miSession.postCommand(getRecordElementCmd);
+		return getRecordElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
+	}
+
+	/**
+	 * Creates and sends the "-data-evaluate-expression (char*)getRecordElementName(void*,element)" command.
+	 * @param variableName
+	 * @param element
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws MIException 
+	 */
+	public static String getRecordElementName(String variableName, int element,
+			GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = gdbDebugTarget.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIDataEvaluateExpression getRecordElementNameCmd = factory.createMIGetRecordElementName(variableName, element);
+		miSession.postCommand(getRecordElementNameCmd);
+		return parseResult(getRecordElementNameCmd.getMIDataEvaluateExpressionInfo().getExpression());
+	}	
 	
 }

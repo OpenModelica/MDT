@@ -38,7 +38,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
-import org.modelica.mdt.debug.gdb.helper.GDBHelper;
+import org.modelica.mdt.debug.gdb.helper.TypeHelper;
 import org.modelica.mdt.debug.gdb.helper.ValueHelper;
 import org.modelica.mdt.debug.gdb.helper.VariableHelper;
 
@@ -46,61 +46,36 @@ import org.modelica.mdt.debug.gdb.helper.VariableHelper;
  * @author Adeel Asghar
  *
  */
-public class GDBListValue extends GDBValue {
+public class GDBRecordValue extends GDBValue {
 
-	private int fListLength = 0;
+	private int fRecordElements = 0;
 	
 	/**
 	 * @param gdbVariable
 	 * @throws MIException 
 	 */
-	public GDBListValue(GDBVariable gdbVariable) throws MIException {
+	public GDBRecordValue(GDBVariable gdbVariable) throws MIException {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
-		setListLength(ValueHelper.getListLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
-		if (getListLength() > 1) {
-			setValue("<" + getListLength() + " items>");
-		} else {
-			setValue("<" + getListLength() + " item>");
-		}
+		setRecordElements(ValueHelper.getRecordElements(getGDBVariable().getOriginalName(),
+				getGDBDebugTarget()));
+		setValue(getGDBVariable().getReferenceTypeName());
 	}
 	
 	/**
-	 * @return
-	 * @throws MIException 
+	 * @param elements the fRecordElements to set
 	 */
-	public boolean hasValueChanged() throws MIException {
-		// TODO Auto-generated method stub
-		String oldValue = getValue();
-		setListLength(ValueHelper.getListLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
-		String newValue;
-		if (getListLength() > 1) {
-			newValue = "<" + getListLength() + " items>";
-		} else {
-			newValue = "<" + getListLength() + " item>";
-		}
-		if (oldValue.equals(newValue)) {
-			return false;
-		} else {
-			setValue(newValue);
-			return true;
-		}
+	public void setRecordElements(int elements) {
+		this.fRecordElements = elements;
 	}
 
 	/**
-	 * @param listLength the fListLength to set
+	 * @return the fRecordElements
 	 */
-	public void setListLength(int listLength) {
-		this.fListLength = listLength;
+	public int getRecordElements() {
+		return fRecordElements;
 	}
 
-	/**
-	 * @return the fListLength
-	 */
-	public int getListLength() {
-		return fListLength;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
@@ -110,10 +85,13 @@ public class GDBListValue extends GDBValue {
 		if (isRefreshChildren()) {
 			List<Variable> variablesList = new ArrayList<Variable>();
 			try {
-				for (int i = 1 ; i <= getListLength() ; i++) {
-					String voidPointer = ValueHelper.getListItem(getGDBVariable().getOriginalName(), i, 
-							getGDBDebugTarget());
-					String itemName = "[" + i + "]";
+				for (int i = 2 ; i <= getRecordElements() ; i++) {
+					// get the record element void pointer
+					String voidPointer = ValueHelper.getRecordElement(getGDBVariable().getOriginalName(),
+							i, getGDBDebugTarget());
+					// get the record element name
+					String itemName = ValueHelper.getRecordElementName(getGDBVariable().getOriginalName(),
+							i-2, getGDBDebugTarget());
 					String displayName = itemName;
 					variablesList.add(new Variable(itemName, displayName, voidPointer));
 				}
@@ -136,13 +114,17 @@ public class GDBListValue extends GDBValue {
 	@Override
 	public boolean hasVariables() throws DebugException {
 		// TODO Auto-generated method stub
-		return getListLength() > 0;
+		return getRecordElements() > 1;
 	}
-		
+
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#createVariable(org.modelica.mdt.debug.gdb.core.mi.output.MIArg)
+	 */
 	@Override
 	public void createVariable(Variable variable) {
 		// TODO Auto-generated method stub
-		String referenceType = GDBHelper.getListType(getGDBVariable().getReferenceTypeName());
+		// get the record element type
+		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBDebugTarget());
 		// based on the modelica type create the specific variable.
 		VariableHelper.createVariable(getGDBVariable().getStackFrame(), variable.getName(),
 				variable.getDisplayName(), "modelica_metatype", referenceType, getActualType(),

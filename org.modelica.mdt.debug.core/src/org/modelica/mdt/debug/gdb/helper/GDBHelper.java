@@ -30,28 +30,23 @@
  */
 package org.modelica.mdt.debug.gdb.helper;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
-import org.modelica.mdt.debug.gdb.core.model.variable.GDBCoreVariable;
-import org.modelica.mdt.debug.gdb.core.model.variable.GDBListVariable;
-import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 
 /**
  * @author Adeel Asghar
  *
  */
 public class GDBHelper {
-	
+	/* Meta Modelica Types */
 	public static String MODELICA_METATYPE = "modelica_metatype";
 	public static String MODELICA_BOOLEAN = "modelica_boolean";
 	public static String MODELICA_INETGER = "modelica_integer";
 	public static String MODELICA_REAL = "modelica_real";
+	/* Modelica Types */
 	public static String STRING = "String";
 	public static String BOOLEAN = "Boolean";
 	public static String INTEGER = "Integer";
@@ -90,28 +85,10 @@ public class GDBHelper {
 		}
 	}
 
-	/**
-	 * Creates the variables based on their type and adds it the the list passed.
-	 * 
-	 * @param gdbStackFrame the stack frame for the variable
-	 * @param name the internal name of the variable
-	 * @param displayName the external name of the variable
-	 * @param type the internal type of the variable
-	 * @param referenceType the external type of the variable
-	 * @param variablesList the list to be appended
-	 */
-	public static List<GDBVariable> createVariables(GDBStackFrame gdbStackFrame, String name, String displayName,
-			String type, String referenceType, List<GDBVariable> variablesList) {
-		// TODO Auto-generated method stub
-		if (referenceType.equals(GDBHelper.STRING) || referenceType.equals(GDBHelper.REAL) ||
-			referenceType.equals(GDBHelper.BOOLEAN) || referenceType.equals(GDBHelper.INTEGER)) {
-			variablesList.add(new GDBCoreVariable(gdbStackFrame, name, displayName, type,
-					referenceType));
-		} else if (referenceType.startsWith("list<")) {
-			variablesList.add(new GDBListVariable(gdbStackFrame, name, displayName, type,
-					referenceType));
-		}
-		return variablesList;
+	public static String getListType(String listType) {
+		int beginIndex = listType.indexOf("<");
+		int endIndex = listType.lastIndexOf(">");
+		return listType.substring(beginIndex + 1, endIndex);
 	}
-
+	
 }

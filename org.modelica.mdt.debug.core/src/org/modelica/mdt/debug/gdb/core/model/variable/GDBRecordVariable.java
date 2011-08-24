@@ -34,15 +34,13 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
-import org.modelica.mdt.debug.gdb.core.model.value.GDBCoreValue;
+import org.modelica.mdt.debug.gdb.core.model.value.GDBRecordValue;
 
 /**
  * @author Adeel Asghar
  *
- * Represents the core data types String, Boolean, Integer, Real.
- *
  */
-public class GDBCoreVariable extends GDBVariable {
+public class GDBRecordVariable extends GDBVariable {
 
 	/**
 	 * @param frame
@@ -50,14 +48,16 @@ public class GDBCoreVariable extends GDBVariable {
 	 * @param displayName
 	 * @param type
 	 * @param referenceType
+	 * @param actualType
 	 * @param voidPointer 
 	 */
-	public GDBCoreVariable(GDBStackFrame frame, String name,
-			String displayName, String type, String referenceType, String actualType, String voidPointer) {
+	public GDBRecordVariable(GDBStackFrame frame, String name,
+			String displayName, String type, String referenceType,
+			String actualType, String voidPointer) {
 		super(frame, name, displayName, type, referenceType, actualType, voidPointer);
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
@@ -67,9 +67,7 @@ public class GDBCoreVariable extends GDBVariable {
 		try {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
-					setGDBValue(new GDBCoreValue(this));
-				} else if (((GDBCoreValue)getGDBValue()).hasValueChanged()) {
-					setValueChanged(true);
+					setGDBValue(new GDBRecordValue(this));
 				} else {
 					setValueChanged(false);
 				}
@@ -81,5 +79,5 @@ public class GDBCoreVariable extends GDBVariable {
 		}
 		return getGDBValue();
 	}
-	
+
 }

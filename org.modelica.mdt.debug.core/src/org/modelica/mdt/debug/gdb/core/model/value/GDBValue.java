@@ -30,11 +30,20 @@
  */
 package org.modelica.mdt.debug.gdb.core.model.value;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.mi.MISession;
+import org.modelica.mdt.debug.gdb.core.mi.command.CLIPType;
+import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.output.CLIPTypeInfo;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugElement;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
+import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 
 /**
  * @author Adeel Asghar
@@ -46,7 +55,10 @@ import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 public abstract class GDBValue extends GDBDebugElement implements IValue {
 	
 	private String fValue = null;
+	private String fActualType = null;
 	private GDBVariable fGDBVariable = null;
+	private Boolean fRefreshChildren = true;
+	protected List<GDBVariable> fGDBChildVariables = new ArrayList<GDBVariable>();
 	
 	/**
 	 * @param gdbVariable
@@ -55,7 +67,12 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 		// TODO Auto-generated constructor stub
 		super(gdbVariable.getGDBDebugTarget());
 		setGDBVariable(gdbVariable);
-	}
+		if (getGDBVariable().getActualType() == null) {
+			retrieveActualType();
+		} else {
+			setActualType(getGDBVariable().getActualType());
+		}
+	}	
 
 	/**
 	 * @param value the fValue to set
@@ -91,12 +108,7 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 	@Override
 	public String getReferenceTypeName() throws DebugException {
 		// TODO Auto-generated method stub
-		try {
-			Integer.parseInt(fValue);
-		} catch (NumberFormatException e) {
-			return "text";
-		}
-		return "integer";
+		return getActualType();
 	}
 
 	/* (non-Javadoc)
@@ -133,6 +145,104 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 	public boolean hasVariables() throws DebugException {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/**
+	 * @param actualType the fActualType to set
+	 */
+	public void setActualType(String actualType) {
+		this.fActualType = actualType;
+	}
+
+	/**
+	 * @return the fActualType
+	 */
+	public String getActualType() {
+		return fActualType;
+	}
+	
+	/**
+	 * 
+	 */
+	private void retrieveActualType() {
+		// TODO Auto-generated method stub
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		CLIPType cliPTypeCmd = factory.createCLIPType(getGDBVariable().getOriginalName());
+		CLIPTypeInfo cliPTypeInfo;
+		try {
+			miSession.postCommand(cliPTypeCmd);
+			cliPTypeInfo = cliPTypeCmd.getMIPtypeInfo();
+			setActualType(cliPTypeInfo.getType());
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param refreshChildren the fRefreshChildren to set
+	 */
+	public void setRefreshChildren(Boolean refreshChildren) {
+		this.fRefreshChildren = refreshChildren;
+	}
+
+	/**
+	 * @return the fRefreshChildren
+	 */
+	public Boolean isRefreshChildren() {
+		return fRefreshChildren;
+	}
+
+	/**
+	 * @param gdbChildVariables the fGDBChildVariables to set
+	 */
+	public void setGDBChildVariables(List<GDBVariable> gdbChildVariables) {
+		fGDBChildVariables = gdbChildVariables;
+	}
+	
+	/**
+	 * @return the fGDBChildVariables
+	 */
+	public List<GDBVariable> getGDBChildVariables() {
+		return fGDBChildVariables;
+	}
+	
+	/**
+	 * @param variablesList
+	 */
+	public void compareVariables(List<Variable> variablesList) {
+		// TODO Auto-generated method stub
+		for (Variable variable : variablesList) {
+			GDBVariable gdbVariable = getGDBChildVariable(variable.getDisplayName());
+			if (gdbVariable == null) {
+				createVariable(variable);
+			} else {
+				gdbVariable.setRefreshValue(true);
+				if (gdbVariable.getGDBValue() != null) {
+					gdbVariable.getGDBValue().setRefreshChildren(true);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param variable
+	 */
+	public abstract void createVariable(Variable variable);
+
+	/**
+	 * @param displayName
+	 * @return
+	 */
+	private GDBVariable getGDBChildVariable(String displayName) {
+		// TODO Auto-generated method stub
+		for (GDBVariable variable : fGDBChildVariables) {
+			if (variable.getDisplayName().equals(displayName)) {
+				return variable;
+			}
+		}
+		return null;
 	}
 	
 }

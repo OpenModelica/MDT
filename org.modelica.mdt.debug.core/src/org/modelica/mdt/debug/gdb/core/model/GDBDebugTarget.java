@@ -57,18 +57,18 @@ import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
-import org.modelica.mdt.debug.gdb.core.mi.command.MIExecNext;
+import org.modelica.mdt.debug.gdb.core.mi.command.MICommand;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIFunctionFinishedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
-import org.modelica.mdt.debug.gdb.core.mi.event.MIRunningEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread.ExecuteCommand;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
 
 /**
@@ -591,13 +591,18 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		// TODO Auto-generated method stub
 		MIStoppedEvent stoppedEvent = (MIStoppedEvent)miEvent;
 		MIFrame miFrame = stoppedEvent.getFrame();
-		// if we reach to a c file with step in we should keep on executing -exec-next until we are back to .mo file.
+		// if we reach to a c file with step in we should keep on executing -exec-step or -exec-next until we are back to .mo file.
 		if (GDBHelper.filterCFiles(getGDBDebugTarget(), miFrame)) {
 			CommandFactory factory = fMISession.getCommandFactory();
-			MIExecNext execNextCommand = factory.createMIExecNext();
+			MICommand execCmd = null;
+			if (((GDBThread)getThread()).getExecuteCommand() == ExecuteCommand.EXECNEXT) {
+				execCmd = factory.createMIExecNext();
+			} else if (((GDBThread)getThread()).getExecuteCommand() == ExecuteCommand.EXECSTEP) {
+				execCmd = factory.createMIExecStep();
+			}
 			try {
-				fMISession.postCommand(execNextCommand);
-				MIInfo info = execNextCommand.getMIInfo();
+				fMISession.postCommand(execCmd);
+				MIInfo info = execCmd.getMIInfo();
 				if (info == null) {
 					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 							MDTDebugCorePlugin.getResourceString("GDBDebugTarget.skipSteppedInFrames.ExecStep.NoAnswer"), null));

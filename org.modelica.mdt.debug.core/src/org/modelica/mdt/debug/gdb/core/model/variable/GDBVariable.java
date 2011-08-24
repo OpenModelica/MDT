@@ -48,14 +48,14 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 
 	private String fName;
 	private String fDisplayName;
+	private String fVoidPointer = null;
 	private String fType;
 	private String fReferenceTypeName;
 	private GDBStackFrame fGDBStackFrame;
 	private boolean fValueChanged = false;
-	private boolean fReferenceTypeChanged = false;
-	private boolean fDisplayNameChanged = false;
 	private Boolean fRefreshValue = true;
 	private GDBValue fGDBValue = null;
+	private String fActualType = null;
 	
 	/**
 	 * Constructs a variable contained in the given stack frame
@@ -64,15 +64,18 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @param frame owning the variable
 	 * @param name variable name
 	 * @param type 
+	 * @param voidPointer 
 	 */
 	public GDBVariable(GDBStackFrame frame, String name, String displayName, String type,
-			String referenceType) {
+			String referenceType, String actualType, String voidPointer) {
 		super(frame.getGDBDebugTarget());
 		fGDBStackFrame = frame;
 		fName = name;
 		setDisplayName(displayName);
 		setType(type);
 		setReferenceTypeName(referenceType);
+		setActualType(actualType);
+		setVoidPointer(voidPointer);
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +91,12 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @return the fName
 	 */
 	public String getOriginalName() {
-		return fName;
+		// if fVoidPointer is set then return it
+		if (fVoidPointer == null) {
+			return fName;
+		} else {
+			return fVoidPointer;
+		}
 	}
 	
 	/**
@@ -96,8 +104,29 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 */
 	public void setDisplayName(String displayName) {
 		this.fDisplayName = displayName;
-	}	
+	}
+	
+	/**
+	 * @return the fDisplayName
+	 */
+	public String getDisplayName() {
+		return fDisplayName;
+	}
 
+	/**
+	 * @param voidPointer the fVoidPointer to set
+	 */
+	public void setVoidPointer(String voidPointer) {
+		this.fVoidPointer = voidPointer;
+	}
+
+	/**
+	 * @return the fType
+	 */
+	public String getVoidPointer() {
+		return fVoidPointer;
+	}
+	
 	/**
 	 * @param type the fType to set
 	 */
@@ -147,34 +176,6 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 */
 	public boolean isValueChanged() {
 		return fValueChanged;
-	}
-	
-	/**
-	 * @param change the fReferenceTypeChanged to set
-	 */
-	public void setReferenceTypeChanged(boolean change) {
-		this.fReferenceTypeChanged = change;
-	}
-	
-	/**
-	 * @return the fReferenceTypeChanged
-	 */
-	public boolean isReferenceTypeChanged() {
-		return fReferenceTypeChanged;
-	}
-	
-	/**
-	 * @param change the fDisplayNameChanged to set
-	 */
-	public void setDisplayNameChanged(boolean change) {
-		this.fDisplayNameChanged = change;
-	}
-	
-	/**
-	 * @return the fDisplayNameChanged
-	 */
-	public boolean isDisplayNameChanged() {
-		return fDisplayNameChanged;
 	}
 	
 	/**
@@ -265,18 +266,21 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	@Override
 	public synchronized boolean hasValueChanged() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isValueChanged()) {
-			setValueChanged(false);
-			return true;
-		} else if (isReferenceTypeChanged()) {
-			setReferenceTypeChanged(false);
-			return true;
-		} else if (isDisplayNameChanged()) {
-			setDisplayNameChanged(false);
-			return true;
-		} else {
-			return false;
-		}
+		return isValueChanged();
+	}
+
+	/**
+	 * @param depactualTypeth the fActualType to set
+	 */
+	public void setActualType(String actualType) {
+		this.fActualType = actualType;
+	}
+
+	/**
+	 * @return the fDepth
+	 */
+	public String getActualType() {
+		return fActualType;
 	}
 	
 }

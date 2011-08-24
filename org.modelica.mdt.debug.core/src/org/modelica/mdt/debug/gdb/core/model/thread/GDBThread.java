@@ -99,6 +99,11 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	private int fStackDepth = 0;
 	private final static int MAX_STACK_DEPTH = 100;
 	private Boolean fRefreshStackFrames = true;
+	public enum ExecuteCommand {
+		EXECNEXT,
+		EXECSTEP;
+	}
+	private ExecuteCommand fExecuteCommand = ExecuteCommand.EXECSTEP;
 	/**
 	 * Constructs a new thread for the given target
 	 * 
@@ -425,6 +430,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		MIExecStep execStepCommand = factory.createMIExecStep();
 		try {
 			miSession.postCommand(execStepCommand);
+			setExecuteCommand(ExecuteCommand.EXECSTEP);
 			MIInfo info = execStepCommand.getMIInfo();
 			if (info == null) {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
@@ -446,6 +452,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		MIExecNext execNextCmd = factory.createMIExecNext();
 		try {
 			getGDBDebugTarget().getMISession().postCommand(execNextCmd);
+			setExecuteCommand(ExecuteCommand.EXECNEXT);
 			MIInfo info = execNextCmd.getMIInfo();
 			if (info == null) {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
@@ -619,5 +626,19 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public Boolean isRefreshStackFrames() {
 		return fRefreshStackFrames;
+	}
+
+	/**
+	 * @param executeCommand the fExecuteCommand to set
+	 */
+	public void setExecuteCommand(ExecuteCommand executeCommand) {
+		this.fExecuteCommand = executeCommand;
+	}
+
+	/**
+	 * @return the fExecuteCommand
+	 */
+	public ExecuteCommand getExecuteCommand() {
+		return fExecuteCommand;
 	}	
 }

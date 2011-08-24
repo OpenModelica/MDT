@@ -33,6 +33,7 @@ package org.modelica.mdt.debug.gdb.core.model.value;
 import org.eclipse.debug.core.DebugException;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
+import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
 import org.modelica.mdt.debug.gdb.helper.ValueHelper;
 
@@ -51,10 +52,17 @@ public class GDBCoreValue extends GDBValue {
 	public GDBCoreValue(GDBVariable gdbVariable) throws MIException {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
-		if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
-			setValue(ValueHelper.getModelicaAnyString(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		if (getGDBVariable().getVoidPointer() != null) {
+			setValue(ValueHelper.getAnyString(getGDBVariable().getVoidPointer(),
+					getGDBVariable().getReferenceTypeName(), getGDBDebugTarget()));
 		} else {
-			setValue(ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+			if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
+				setValue(ValueHelper.getAnyString(getGDBVariable().getOriginalName(),
+						getGDBVariable().getReferenceTypeName(), getGDBDebugTarget()));
+			} else {
+				setValue(ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(),
+						getGDBDebugTarget()));
+			}
 		}
 	}
 	
@@ -66,11 +74,19 @@ public class GDBCoreValue extends GDBValue {
 		// TODO Auto-generated method stub
 		String oldValue = getValue();
 		String newValue;
-		if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
-			newValue = ValueHelper.getModelicaAnyString(getGDBVariable().getOriginalName(), getGDBDebugTarget());
+		if (getGDBVariable().getVoidPointer() != null) {
+			newValue = ValueHelper.getAnyString(getGDBVariable().getVoidPointer(),
+					getGDBVariable().getReferenceTypeName(), getGDBDebugTarget());
 		} else {
-			newValue = ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(), getGDBDebugTarget());
+			if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
+				newValue = ValueHelper.getAnyString(getGDBVariable().getOriginalName(),
+						getGDBVariable().getReferenceTypeName(), getGDBDebugTarget());
+			} else {
+				newValue = ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(),
+						getGDBDebugTarget());
+			}
 		}
+		
 		if (oldValue.equals(newValue)) {
 			return false;
 		} else {
@@ -97,6 +113,15 @@ public class GDBCoreValue extends GDBValue {
 		} else {
 			return super.getValueString();
 		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#createVariable(org.modelica.mdt.debug.gdb.core.model.variable.Variable)
+	 */
+	@Override
+	public void createVariable(Variable variable) {
+		// TODO Auto-generated method stub
 		
 	}
 

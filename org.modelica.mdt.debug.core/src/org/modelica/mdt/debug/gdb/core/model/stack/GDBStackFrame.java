@@ -31,7 +31,6 @@
 package org.modelica.mdt.debug.gdb.core.model.stack;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -54,11 +53,10 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIStackListVariablesInfo;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugElement;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
-import org.modelica.mdt.debug.gdb.core.model.variable.GDBCoreVariable;
-import org.modelica.mdt.debug.gdb.core.model.variable.GDBListVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
 import org.modelica.mdt.debug.gdb.helper.TypeHelper;
+import org.modelica.mdt.debug.gdb.helper.VariableHelper;
 
 /**
  * @author Adeel Asghar
@@ -104,9 +102,17 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		fLineNumber = fFrame.getLine();
 		fStartChar = -1;
 		fEndChar = -1;
-		String[] fileName = fFileName.split("\\.");
-		int beginIndex = fileName[0].length() + 2;
-		fName = fFrame.getFunction().substring(beginIndex);
+		/* for .mo files we have function names concatenated with file name like _Main_main but other files are normal
+		 * so in order to get the function name for .mo file we need to do some manipulations
+		 */
+		
+		if (GDBHelper.isCFile(fFrame.getFile())) {
+			fName = fFrame.getFunction();
+		} else {
+			String[] fileName = fFileName.split("\\.");
+			int beginIndex = fileName[0].length() + 2;
+			fName = fFrame.getFunction().substring(beginIndex);
+		}
 		// get locals from GDB
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
@@ -137,29 +143,9 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 			}
 		}
 		// first remove the variables that are removed from this frame
-		removevariables(variablesList);
+		VariableHelper.removeVariables(variablesList, fGDBVariables);
 		// compare and create IVariable
 		compareVariables(variablesList);
-	}
-	/**
-	 * @param variablesList
-	 */
-	private void removevariables(List<MIArg> variablesList) {
-		// TODO Auto-generated method stub
-		Boolean isFound;
-		for(Iterator<GDBVariable> i = fGDBVariables.iterator(); i.hasNext();) {
-			isFound = false;
-			GDBVariable variable = i.next();
-			for (MIArg miArg : variablesList) {
-				if (variable.getOriginalName().equals(miArg.getName())) {
-					isFound = true;
-					break;
-				}
-			}
-			if (!isFound) {
-				i.remove();
-			}
-		}
 	}
 
 	/**
@@ -170,9 +156,12 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		for (MIArg miArg : variablesList) {
 			GDBVariable gdbVariable = getGDBVariable(miArg.getName());
 			if (gdbVariable == null) {
-				createVariables(miArg);
+				createVariable(miArg);
 			} else {
 				gdbVariable.setRefreshValue(true);
+				if (gdbVariable.getGDBValue() != null) {
+					gdbVariable.getGDBValue().setRefreshChildren(true);
+				}
 			}
 		}
 	}
@@ -180,16 +169,17 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	/**
 	 * @param miArg
 	 */
-	private void createVariables(MIArg miArg) {
+	private void createVariable(MIArg miArg) {
 		// TODO Auto-generated method stub
 		String referenceType = TypeHelper.getModelicaType(miArg.getName(), miArg.getType(), getGDBDebugTarget());
 		String displayName = miArg.getName();
-		if (miArg.getName().startsWith("_")) {
-			displayName = miArg.getName().substring(1, miArg.getName().length());
-		}
+		/* since all the variables we are interested in starts with underscore 
+		 * so remove the underscore
+		 */
+		displayName = miArg.getName().substring(1, miArg.getName().length());
 		// based on the modelica type create the specific variable.
-		fGDBVariables = GDBHelper.createVariables(this, miArg.getName(), displayName, miArg.getType(),
-				referenceType, fGDBVariables);
+		VariableHelper.createVariable(this, miArg.getName(), displayName, miArg.getType(),
+				referenceType, null, null, fGDBVariables);
 	}
 
 	/**

@@ -40,7 +40,8 @@ package org.modelica.mdt.debug.gdb.core.mi.command;
 public class CommandFactory {
 
 	/**
-	 * @return
+	 * Creates the -gdb-exit command
+	 * @return MIGDBExit
 	 */
 	public MIGDBExit createMIGDBExit() {
 		// TODO Auto-generated method stub
@@ -48,7 +49,8 @@ public class CommandFactory {
 	}
 
 	/**
-	 * @return
+	 * Creates the -data-evaluate-expression $_exitcode command
+	 * @return MIGDBShowExitCode
 	 */
 	public MIGDBShowExitCode createMIGDBShowExitCode() {
 		// TODO Auto-generated method stub
@@ -56,7 +58,8 @@ public class CommandFactory {
 	}
 
 	/**
-	 * @return
+	 * Creates the kill command
+	 * @return CLIExecAbort
 	 */
 	public CLIExecAbort createCLIExecAbort() {
 		// TODO Auto-generated method stub
@@ -64,7 +67,7 @@ public class CommandFactory {
 	}
 
 	/**
-	 * @return
+	 * @return MIExecInterrupt
 	 */
 	public MIExecInterrupt createMIExecInterrupt() {
 		// TODO Auto-generated method stub
@@ -75,7 +78,8 @@ public class CommandFactory {
 	}
 
 	/**
-	 * @return
+	 * Creates the info proc command
+	 * @return CLIInfoProc
 	 */
 	public CLIInfoProc createCLIInfoProc() {
 		// TODO Auto-generated method stub
@@ -83,25 +87,38 @@ public class CommandFactory {
 	}
 
 	/**
-	 * @return
+	 * Creates the info program command
+	 * @return CLIInfoProgram
 	 */
 	public CLIInfoProgram createCLIInfoProgram() {
 		// TODO Auto-generated method stub
 		return new CLIInfoProgram();
 	}
-
+	
+	/* Program Execution Commands */
+	
+	/**
+	 * Creates the -exec-run command
+	 * @param args
+	 * @return MIExecRun
+	 */
 	public MIExecRun createMIExecRun(String[] args) {
 		// TODO Auto-generated method stub
 		return new MIExecRun(args);
 	}
 	
+	/**
+	 * Creates the -exec-continue command
+	 * @return MIExecContinue
+	 */
 	public MIExecContinue createMIExecContinue() {
 		// TODO Auto-generated method stub
 		return new MIExecContinue();
 	}
 	
 	/**
-	 * @return
+	 * Creates the -exec-next command
+	 * @return MIExecNext
 	 */
 	public MIExecNext createMIExecNext() {
 		// TODO Auto-generated method stub
@@ -109,7 +126,8 @@ public class CommandFactory {
 	}
 	
 	/**
-	 * @return
+	 * Creates the -exec-step command
+	 * @return MIExecStep
 	 */
 	public MIExecStep createMIExecStep() {
 		// TODO Auto-generated method stub
@@ -117,78 +135,90 @@ public class CommandFactory {
 	}
 	
 	/**
-	 * @return
+	 * Creates the -exec-finish command
+	 * @return MIExecFinish
 	 */
 	public MIExecFinish createMIExecFinish() {
 		// TODO Auto-generated method stub
 		return new MIExecFinish();
 	}
 	
+	/* Breakpoint Commands */
+	
+	/**
+	 * Creates the -break-insert command
+	 * @param line
+	 * @return MIBreakInsert
+	 */
 	public MIBreakInsert createMIBreakInsert(String line) {
 		return new MIBreakInsert(line);
 	}
 	
+	/**
+	 * Creates the -break-insert command with params
+	 * @param isTemporary
+	 * @param isHardware
+	 * @param condition
+	 * @param ignoreCount
+	 * @param line
+	 * @param tid
+	 * @return MIBreakInsert
+	 */
 	public MIBreakInsert createMIBreakInsert(boolean isTemporary, boolean isHardware,
 			 String condition, int ignoreCount, String line, int tid) {
 		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line, tid);
 	}
 	
 	/**
+	 * Creates the -break-delete command
 	 * @param breakPointNumbers
-	 * @return
+	 * @return MIBreakDelete
 	 */
 	public MIBreakDelete createMIBreakDelete(int[] breakPointNumbers) {
 		// TODO Auto-generated method stub
 		return new MIBreakDelete(breakPointNumbers);
 	}
 	
+	/* Stack Manipulation Commands */
+	
+	/**
+	 * Creates the -stack-info-frame command
+	 * @return MIStackInfoFrame
+	 */
 	public MIStackInfoFrame createMIStackInfoFrame() {
 		return new MIStackInfoFrame();
 	}
 	
+	/**
+	 * Creates the -stack-list-frame command
+	 * @return MIStackListFrames
+	 */
 	public MIStackListFrames createMIStackListFrames() {
 		return new MIStackListFrames();
 	}
 
+	/**
+	 * Creates the -stack-list-frame command with params
+	 * @param lowFrame
+	 * @param highFrame
+	 * @return MIStackListFrames
+	 */
 	public MIStackListFrames createMIStackListFrames(int lowFrame, int highFrame) {
 		return new MIStackListFrames(lowFrame, highFrame);
 	}
 	
 	/**
-	 * @param showValues
-	 * @return
+	 * Creates the -stack-list-variables command
+	 * @param params
+	 * @return MIStackListVariables
 	 */
 	public MIStackListVariables createMIStackListVariables(String[] params) {
 		// TODO Auto-generated method stub
 		return new MIStackListVariables(params);
 	}
 	
-	public MIDataEvaluateExpression createMIDataEvaluateExpression(String expression) {
-		return new MIDataEvaluateExpression(expression);
-	}
-
-	public MIDataEvaluateExpression createMIGetTypeOfAny(String expression) {
-		return new MIDataEvaluateExpression("(char*)getTypeOfAny(" + expression + ")");
-	}
-	
-	public MIDataEvaluateExpression createMIGetListLength(String expression) {
-		return new MIDataEvaluateExpression("(int)listLength(" + expression + ")");
-	}
-	
-	public MIDataEvaluateExpression createMIGetListItem(String expression, int index) {
-		return new MIDataEvaluateExpression("listGet(" + expression + ", " + index + ")");
-	}
-	
 	/**
-	 * @param variableName
-	 * @return
-	 */
-	public MIDataEvaluateExpression createMIAnyString(String variableName) {
-		// TODO Auto-generated method stub
-		return new MIDataEvaluateExpression("(char*)anyString(" + variableName + ")");
-	}
-
-	/**
+	 * Creates the -stack-info-depth [ MAX-DEPTH ] command
 	 * @return MIStackInfoDepth
 	 * 
 	 */
@@ -196,10 +226,88 @@ public class CommandFactory {
 		// TODO Auto-generated method stub
 		return new MIStackInfoDepth();
 	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIDataEvaluateExpression(String expression) {
+		return new MIDataEvaluateExpression(expression);
+	}
 
 	/**
-	 * @param fName
-	 * @return
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function anyString
+	 * @param variableName
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIAnyString(String variableName) {
+		// TODO Auto-generated method stub
+		return new MIDataEvaluateExpression("(char*)anyString(" + variableName + ")");
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function getTypeOfAny
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetTypeOfAny(String expression) {
+		return new MIDataEvaluateExpression("(char*)getTypeOfAny(" + expression + ")");
+	}
+	
+	/* List Manipulation Commands */
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function listLength
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetListLength(String expression) {
+		return new MIDataEvaluateExpression("(int)listLength(" + expression + ")");
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function listGet
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetListItem(String expression, int index) {
+		return new MIDataEvaluateExpression("listGet(" + expression + ", " + index + ")");
+	}
+	
+	/* Record Manipulation Commands */
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function arrayLength
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetRecordElements(String expression) {
+		return new MIDataEvaluateExpression("(int)arrayLength(" + expression + ")");
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function arrayGet
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetRecordElement(String expression, int index) {
+		return new MIDataEvaluateExpression("arrayGet(" + expression + ", " + index + ")");
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function getRecordElementName
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetRecordElementName(String expression, int index) {
+		return new MIDataEvaluateExpression("(char*)getRecordElementName(" + expression + ", " + index + ")");
+	}	
+
+	/**
+	 * Creates the ptype command
+	 * @param variableName
+	 * @return CLIPType
 	 */
 	public CLIPType createCLIPType(String variableName) {
 		// TODO Auto-generated method stub
@@ -207,8 +315,9 @@ public class CommandFactory {
 	}
 
 	/**
-	 * @param fName
-	 * @return
+	 * Creates the whatis command
+	 * @param variableName
+	 * @return CLIWhatis
 	 */
 	public CLIWhatis createCLIWhatis(String variableName) {
 		// TODO Auto-generated method stub
@@ -216,8 +325,9 @@ public class CommandFactory {
 	}
 
 	/**
+	 * Creates the -gdb-set command with params
 	 * @param strings
-	 * @return
+	 * @return MIGDBSet
 	 */
 	public MIGDBSet createMIGDBSet(String[] strings) {
 		// TODO Auto-generated method stub
@@ -225,16 +335,18 @@ public class CommandFactory {
 	}
 
 	/**
-	 * @param string
-	 * @return
+	 * Creates the -interpreter-exec command 
+	 * @param cmd
+	 * @return MIInterpreterExecConsole
 	 */
 	public MIInterpreterExecConsole createMIInterpreterExecConsole(String cmd) {
 		// TODO Auto-generated method stub
 		return new MIInterpreterExecConsole(cmd);
 	}
 
-	/**
-	 * @return
+	/** 
+	 * Creates the -gdb-show prompt command
+	 * @return MIGDBShowPrompt
 	 */
 	public MIGDBShowPrompt createMIGDBShowPrompt() {
 		// TODO Auto-generated method stub
