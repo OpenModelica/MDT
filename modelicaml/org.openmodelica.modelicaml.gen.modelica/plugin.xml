@@ -60,16 +60,32 @@
                id="org.openmodelica.modelicaml.modelicamlMarker.validation">
          </markerTypeReference>
          <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification">
+         </markerTypeReference>
+         <markerTypeReference
                id="org.openmodelica.modelicaml.modelicamlMarker.actionCode">
          </markerTypeReference>
          <markerTypeReference
                id="org.openmodelica.modelicaml.modelicamlMarker.omc">
          </markerTypeReference>
          <markerFieldReference
-               id="org.eclipse.ui.ide.severityAndDescriptionField">
+               id="org.eclipse.ui.ide.severityAndDescriptionField"
+               visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="org.eclipse.ui.ide.locationField">
+               id="org.eclipse.ui.ide.locationField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.creationTimeField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.markerType"
+               visible="true">
          </markerFieldReference>
       </markerContentGenerator>
    </extension>
