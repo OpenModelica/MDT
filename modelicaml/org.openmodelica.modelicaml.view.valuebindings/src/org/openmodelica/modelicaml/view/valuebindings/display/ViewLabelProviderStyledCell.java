@@ -36,6 +36,15 @@ package org.openmodelica.modelicaml.view.valuebindings.display;
 
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
@@ -43,6 +52,8 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -54,7 +65,6 @@ import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
-import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
@@ -69,6 +79,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+	
 	
 	@Override
 	public void update(ViewerCell cell) {
@@ -321,8 +332,9 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			}
 			
 			else if (treeObject.isValueClient() || treeObject.isValueProvider()) {
+				cell.setImage(decorateImage( treeObject , "/icons/Property.gif" ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/variable.png"));
-				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/Property.gif"));	
+//				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/Property.gif"));	
 			}
 			else if ( treeObject.isValueClientsNode() ) {
 				cell.setImage(decorateImage( treeObject , "/icons/addValueClient.png" ));
@@ -353,16 +365,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
 		super.update(cell);
 	}
-	
-	
-	
-//	private TreeParent getValueMedator(TreeObject item) {
-//		if (item.isValueProvidersNode() || item.isValueClientsNode()) {
-//			return item.getParent();
-//		}
-//		return null;
-//	}
-	
 	
 	// ################################################### VALIDATION
 	
@@ -524,9 +526,111 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		return 0;
 	}
 	
+	
+	// Operation Validation **************************************************************
+	
+	private String markerType = Constants.MARKERTYPE_VALUEBINDINGS;
+	
+	public boolean hasMarkers(TreeObject item){
+		
+		Element umlElement = null;
+		
+		if (item.isValueMediator()) {
+			umlElement = item.getUmlElement();
+		}
+		else if (item.isValueClient()) {
+			TreeObject mediator = TreeUtls.getNearestMediator(item);
+			if (mediator != null) {
+				umlElement = TreeUtls.getMediatorDependency((NamedElement)mediator.getUmlElement(), 
+						(NamedElement)item.getUmlElement(), 
+						Constants.stereotypeQName_ProvidesValueFor).get(0);
+			}
+		}
+		else if (item.isValueProvider()) {
+			TreeObject mediator = TreeUtls.getNearestMediator(item);
+			if (mediator != null) {
+				umlElement = TreeUtls.getMediatorDependency((NamedElement)mediator.getUmlElement(), 
+						(NamedElement)item.getUmlElement(), 
+						Constants.stereotypeQName_ObtainsValueFrom).get(0);
+			}
+		}
+		
+		if (umlElement instanceof NamedElement) {
+			// markers
+			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+			String projectName = umlModel.getResource().getURI().segment(1);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			
+			IMarker[] markers = null;
+			try {
+				if (iProject != null) {
+					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+					for (IMarker marker : markers) {
+						Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
+						Object sourceId = marker.getAttribute(IMarker.SOURCE_ID);
+//						Object markerMessage = marker.getAttribute(IMarker.MESSAGE);
+
+						String elementID = "";
+						Resource xmiResource = umlElement.eResource();
+						if( xmiResource != null ) {
+							elementID = ((XMLResource) xmiResource).getID(umlElement);
+						}
+						
+//						if (qualifiedName != null && markerMessage != null) {
+						if (qualifiedName != null) {
+							if (qualifiedName.equals(((NamedElement)umlElement).getQualifiedName())
+									&& elementID.equals(sourceId)) {
+								return true;				
+							}
+						}
+					}
+				}
+
+			} catch (CoreException e) {
+				//e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	
+	private boolean hasErrorsInItemOperationCode(TreeObject item){
+		if ((item.isValueClient() || item.isValueMediator() || item.isValueProvider() ) 
+				&& hasMarkers(item)) {
+				return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list = findNextItemWithErrorInOperationsCode((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashSet<TreeObject> findNextItemWithErrorInOperationsCode(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		TreeObject[] children = item.getChildren();
+		for (TreeObject child : children) {
+			if (child.isValueClient() || child.isValueMediator() || child.isValueProvider()) {
+				if (hasMarkers(child)) {
+					list.add(child);
+					return list;
+				}
+			}
+			if (child instanceof TreeParent) {
+				list.addAll(findNextItemWithErrorInOperationsCode((TreeParent) child));
+			}
+		}
+		return list;
+	}
+	
+	
 	// ################################################### VALIDATION END
 
-	
 	private String getOperationSpecification(Element element, String stereotypeQName, String propertyName){
 		if (element != null) {
 			Stereotype stereotype = element.getAppliedStereotype(stereotypeQName);
@@ -567,7 +671,11 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	
 	
 	public Image decorateImage(Object element, String imagePath) {
+
 		if (element instanceof TreeParent) {
+			if (hasErrorsInItemOperationCode((TreeObject) element)) {
+				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+			}
 			if (hasEmptyProvidersMediator((TreeParent)element)) {
 				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
 			}
@@ -575,6 +683,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
 			}
 		}
+		
 		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
 	

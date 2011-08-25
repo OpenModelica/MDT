@@ -34,12 +34,17 @@
  */
 package org.openmodelica.modelicaml.view.valuebindings.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -55,6 +60,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -84,14 +90,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
@@ -111,6 +120,7 @@ import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
+import org.openmodelica.modelicaml.view.valuebindings.validation.ValueBindingsValidator;
 
 public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetPageContributor, IAdaptable {
 
@@ -148,6 +158,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private Action actionInstantiatedClassMode;
 
 	private Action actionShowUserNoteForReadOnlyNodes;
+
+	private Action actionValidate;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
@@ -190,6 +202,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 			invisibleRoot = new TreeParent("");
 			treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+
 		}
 	}
 	
@@ -258,13 +271,14 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 									|| ((item.isValueClient() || item.isValueProvider()) && !TreeUtls.mediatorIsLoaded(item))
 								)
 							) {
-							// reload the view and set the element that was selected befor reload.
+							
+							// reload the view and set the element that was selected before reload.
 							actionReload.run();
 							
-							List<Object> list = new ArrayList<Object>();
-							list.add(item);
-							ISelection selection = new StructuredSelection(list);
-							viewer.setSelection(selection);
+//							List<Object> list = new ArrayList<Object>();
+//							list.add(item);
+//							ISelection selection = new StructuredSelection(list);
+//							viewer.setSelection(selection);
 						}
 					}
 				}
@@ -406,6 +420,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		manager.add(actionReload);
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
+//		manager.add(new Separator());
+//		manager.add(actionValidate);
 		manager.add(new Separator());
 		manager.add(actionInstantiatedClassMode);
 		manager.add(new Separator());
@@ -521,7 +537,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
 		
 		
-		
 		actionReload = new Action("actionReload") {
 			public void run() {
 //				ISelection selection = viewer.getSelection();
@@ -542,21 +557,74 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					treeBuilder.buildTreeFromUmlModel(invisibleRoot);	
 				}
 				viewer.setInput(getViewSite());
+
+				// validate the client, mediator or provider operation code
+				actionValidate.run();
 				
 				viewer.setExpandedElements(expandedElements);
 				viewer.setExpandedTreePaths(expandedTreePaths);
-
+				
 //				// select in view
 //				TreeUtls.selectInView(obj, invisibleRoot, viewer);
 //				viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
 
 			}
 		};
-		actionReload.setText("(Re)load");
-		actionReload.setToolTipText("(Re)load");
+		actionReload.setText("(Re)load and validate");
+		actionReload.setToolTipText("(Re)load and validate");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		
+		actionValidate = new Action("actionValidate") { //obviously a check box style
+			public void run() {
+				TreeObject[] children = invisibleRoot.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					TreeObject treeObject = children[i];
+					if (!treeObject.isReadOnly() && treeObject instanceof TreeParent) {
+						
+						final ValueBindingsValidator validator = new ValueBindingsValidator((TreeParent) treeObject);
+						
+//						Job job = new Job("Value Bindings Operations Validation") {
+//							protected IStatus run(IProgressMonitor monitor) {
+//								validator.validate();
+//								return Status.OK_STATUS;
+//							}
+//						};
+						
+						// UIJob is needed because composites are used for xtext editors. 
+						// TODO: refactor the editors glue code in order to don't use the any UI objects for the validation of action code. 
+						UIJob UIjob = new UIJob("Value Bindings Operations Validation") {
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								validator.validate();
+								viewer.refresh();
+								return Status.OK_STATUS;
+							}
+						};
+						
+						UIjob.setUser(true);
+						UIjob.schedule();
+						
+//						try {
+//							validator.validate();
+//							new ProgressMonitorDialog(new Shell()).run(true, true, validator);
+//						} catch (InvocationTargetException e) {
+//							e.printStackTrace();
+//							MessageDialog.openError(new Shell(), "Value Bindings Operations Validation", 
+//									"It was not possible to invoce the Value Bindings Operations Validation.");
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//							MessageDialog.openError(new Shell(), "Value Bindings Operations Validation Process Abort", 
+//									"The Value Bindings Operations Validation was canceled.");
+//						}
+					}
+				}
+//				viewer.refresh();
+			}
+		};
+		actionValidate.setText("Validate Client/Mediator/Privider Operations");
+		actionValidate.setToolTipText("Validate Client/Mediator/Privider Operations");
+		actionValidate.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/validate.gif"));
+
 		
 		actionCollapseAll = new Action("actionCollapseAll") { //obviously a check box style
 			public void run() {
@@ -904,7 +972,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionDeleteModelElement.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_DELETE));
 
 		
-		
 		doubleClickAction = new Action() {
 			public void run() {
 //				ISelection selection = viewer.getSelection();
@@ -934,93 +1001,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		viewer.getControl().setFocus();
 	}
 	
-	
-	
-	// #############################
-//	private TreeParent getValueMediator(TreeObject item) {
-//		if (item.isValueMediator()) {
-//			return (TreeParent) item;
-//		}
-//		else if (item.getParent() != null) {
-//			return getValueMediator(item.getParent());
-//		}
-//		return null;
-//	}
-//	
-//	private boolean containsObject(EList list, EObject eObject){
-//		if (list instanceof EList) {
-//			for (Object object : (EList)list) {
-//				if (object instanceof EObject) {
-////					if (((EObject)object).eCrossReferences().get(0) == eObject) {
-//					if (UMLUtil.getBaseElement((EObject)object) == eObject) {
-//						return true;
-//					}
-//				}	
-//			}
-//		}
-//		return false;
-//	}
-
-	
-	
-//	private void deleteDependencyFromMediator(final TreeObject dependencyTargetItem){
-//
-//		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-//		CompoundCommand cc = new CompoundCommand("Delete mediator reference");
-//		Command command = new RecordingCommand(editingDomain) {
-//			@Override
-//			protected void doExecute() {
-//					TreeObject mediator = TreeUtls.getNearestMediator(dependencyTargetItem);
-//					if (mediator != null) {
-//						Element mediatorElement = mediator.getUmlElement();
-//						Element clientOrProviderElement = dependencyTargetItem.getUmlElement();
-//						if (mediatorElement instanceof Property && clientOrProviderElement instanceof NamedElement) {
-//							EList<Dependency> mediatorDependencies = ((Property)mediatorElement).getClientDependencies();
-//							EList<Dependency> dependeciesToBeDeleted = new BasicEList<Dependency>();
-//							
-//							// find dependencies to the selected item (client or mediator)
-//							for (Dependency dependency : mediatorDependencies) {
-//								EList<Element> targets = dependency.getTargets();
-//								for (Element element : targets) {
-//									if (element == clientOrProviderElement) {
-//										// TODO: should we check also if the stereotype is applied? 
-//										dependeciesToBeDeleted.add(dependency);
-//									}
-//								}
-//							}
-//							
-//							// delete dependencies
-//							for (Dependency dependency : dependeciesToBeDeleted) {
-////								System.err.println("Deleting: " + dependency.getName());
-//								dependency.destroy();
-//							}
-//						}
-//						else {
-//							MessageDialog.openError(new Shell(), "Error", "Invalid mediator reference for " + dependencyTargetItem.getName());
-//						}
-//					}
-//					else {
-//						MessageDialog.openError(new Shell(), "Error", "Could not find the Mediator for " + dependencyTargetItem.getName());
-//					}
-//				}
-//		};
-//		cc.append(command);
-//		editingDomain.getCommandStack().execute(cc);
-//	}
-	
-	
-	
-//	private boolean areAllParentsReadOnly(TreeObject item){
-//		TreeObject parent = item.getParent();
-//		if (parent != null && parent.isReadOnly() ) {
-//			// go for next parent
-//			return areAllParentsReadOnly(parent);
-//		}
-//		else {
-//			return false;
-//		}
-//	}
-//	
 	//####################### FILTERS 
 	
 	// Filter for "Show Value Mediator Perspective" 
@@ -1116,8 +1096,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	ProviderPerspectiveFilter providerPerspectiveFilter = new ProviderPerspectiveFilter();
 	
 	
-	
-	
 	//##################### Selection handling
 	 private ISelectionListener selectionListener = new ISelectionListener() {
 		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
@@ -1128,9 +1106,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 				if ( selectedElement != null ) {
 					HashSet<Object> objects = TreeUtls.findTreeItems(selectedElement, invisibleRoot, new HashSet<Object>());
-					List<Object> items = new ArrayList<Object>();
-					items.addAll(objects);
-					viewer.setSelection(new StructuredSelection(items), true);
+					List<Object> newSelectionItems = new ArrayList<Object>();
+					newSelectionItems.addAll(objects);
+					viewer.setSelection(new StructuredSelection(newSelectionItems), true);
 				}
 	        }
 	    }
@@ -1191,6 +1169,4 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
         }
         return super.getAdapter(adapter);
     }
-	
-	
 }

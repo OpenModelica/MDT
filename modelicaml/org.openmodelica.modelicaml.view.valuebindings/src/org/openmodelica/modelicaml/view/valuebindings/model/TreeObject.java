@@ -36,6 +36,8 @@ package org.openmodelica.modelicaml.view.valuebindings.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
@@ -185,13 +187,76 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	// *********************************************
-	// TODO: test it! Maybe it is necessary to use the path as string to uniquely identify the tree objects.
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof TreeObject) {
 			TreeObject item = (TreeObject) obj;
-			if ( (item.getName().equals(this.getName()))) {
+			
+			boolean umlElementIsTheSame = true;
+			Element objUmlElement = item.getUmlElement();
+			Element umlElement = this.getUmlElement();
+			
+//			if (objUmlElement != null && umlElement != null) {
+			if (objUmlElement instanceof NamedElement && umlElement instanceof NamedElement ) {
+				String objUmlElementQName = ((NamedElement)objUmlElement).getQualifiedName();
+				String umlElementQName = ((NamedElement)umlElement).getQualifiedName();
+				
+				if (!objUmlElementQName.equals(umlElementQName)) {
+					umlElementIsTheSame = false;
+				}
+//				String objUmlElementID = "";
+//				Resource xmiResource = objUmlElement.eResource();
+//				if( xmiResource != null ) {
+//					objUmlElementID = ((XMLResource) xmiResource).getID(objUmlElement);
+//				}
+//				
+//				String umlElementID = "";
+//				Resource xmiResource2 = objUmlElement.eResource();
+//				if( xmiResource2 != null ) {
+//					umlElementID = ((XMLResource) xmiResource2).getID(umlElement);
+//				}
+//				
+//				if ( !objUmlElementID.equals(umlElementID)) {
+//					umlElementIsTheSame = false;
+//				}
+//				
+//				System.err.println(objUmlElementID);
+//				System.err.println(umlElementID);
+//				System.err.println();
+				
+//				if ( !objUmlElement.equals(umlElement)) {
+//					umlElementIsTheSame = false;
+//				}
+			}
+
+			boolean parentIsTheSame = true;
+			TreeParent objParent = item.getParent();
+			TreeParent parent = this.getParent();
+			if (parent != null && objParent != null) {
+				if (!objParent.equals(parent)) {
+					parentIsTheSame = false;
+				}
+			}
+			
+			if ( item.getName().equals(this.getName())
+//					&& umlElementIsTheSame
+					&& parentIsTheSame
+//					&& item.isReadOnly() == this.isReadOnly()
+//					&& item.isModel() == this.isModel()
+//					&& item.isPackage() == this.isPackage()
+//					&& item.isValueMediatorContainer() == this.isValueMediatorContainer() 
+//					
+//					&& item.isValueClientsNode() == this.isValueClientsNode()
+//					&& item.isValueMediatorsNode()== this.isValueMediatorsNode()
+//					&& item.isValueProvidersNode()== this.isValueProvidersNode()
+//					
+//					&& item.isValueClient() == this.isValueClient() 
+////					&& item.isValueClient_required()== this.isValueClient_required()
+//					&& item.isValueMediator() == this.isValueMediator()
+//					&& item.isValueProvider() == this.isValueProvider()
+					
+					) {
 				return true;
 			}
 		}
@@ -213,6 +278,7 @@ public class TreeObject implements IAdaptable {
 		if (this.getParent() != null ) {
 			// get the qualified name of parent
 			result = result +  this.getParent().getName().hashCode();
+			
 			// get the qualified name of the parent uml element
 			if (this.getParent().getUmlElement() instanceof NamedElement) {
 				result = result + ((NamedElement)this.getParent().getUmlElement()).getQualifiedName().hashCode();

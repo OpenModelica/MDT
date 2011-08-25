@@ -314,7 +314,7 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 	private void generateUMLModelMarker(){
 		// create a marker for the uml model element
 		String message = "The " + ((NamedElement)storeLocation).eClass().getName() 
-							+ " '" + ((NamedElement)storeLocation).getName() + "' has errors in its Value Provider operation code.";
+							+ " '" + ((NamedElement)storeLocation).getName() + "' has errors in its Value Client operation code.";
 		
 		if (editor.isDocumentHasErrors()) {
 			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)storeLocation);
