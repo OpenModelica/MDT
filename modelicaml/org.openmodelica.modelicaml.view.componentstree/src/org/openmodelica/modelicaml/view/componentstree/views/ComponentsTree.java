@@ -41,7 +41,10 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -84,6 +87,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
@@ -116,6 +120,7 @@ import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsCon
 import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
 import org.openmodelica.modelicaml.view.componentstree.listeners.DragListener;
+import org.openmodelica.modelicaml.view.componentstree.validation.ComponentModificationValidator;
 /**
  * The Class ComponentsTree.
  */
@@ -232,6 +237,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private Action actionAllDeleteModifications;
 
 	private Action actionInstantiateTestScenarios;
+
+	private Action actionValidate;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
@@ -563,6 +570,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
+		manager.add(actionValidate);
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
 		
@@ -710,12 +718,43 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionReload = new Action("actionReload") {
 			public void run() {
 				showSelection(par, sel);
+				// validate the component modifications
+				actionValidate.run();
 			}
 		};
-		actionReload.setText("(Re)load");
-		actionReload.setToolTipText("(Re)load");
+		actionReload.setText("(Re)load and validate");
+		actionReload.setToolTipText("(Re)load and validate");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
 		
+		
+		actionValidate = new Action("actionValidate") { //obviously a check box style
+			public void run() {
+				
+				if (root != null) {
+					final ComponentModificationValidator validator = new ComponentModificationValidator(root);
+					
+					// UIJob is needed because composites are used for xtext editors. 
+					// TODO: refactor the editors glue code in order to don't use the any UI objects for the validation of action code. 
+					UIJob UIjob = new UIJob("Component Modifications Validation") {
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							validator.validate();
+							viewer.refresh();
+							return Status.OK_STATUS;
+						}
+					};
+					
+					UIjob.setUser(true);
+					UIjob.schedule();
+				}
+				else {
+					MessageDialog.openError(new Shell(), "Component Validation", "Instantiate a class to be validated.");
+				}
+			}
+		};
+		actionValidate.setText("Validate Component Modifications");
+		actionValidate.setToolTipText("Validate Component Modifications");
+		actionValidate.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/validate.gif"));
+
 
 		actionUpdateBindings = new Action("actionUpdateBindings") {
 			public void run() {

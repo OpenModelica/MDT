@@ -37,7 +37,16 @@ package org.openmodelica.modelicaml.view.componentstree.display;
 
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
@@ -45,6 +54,8 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -52,6 +63,7 @@ import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
@@ -66,6 +78,7 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 
 // TODO: Auto-generated Javadoc
@@ -389,6 +402,9 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	
 	
 	public boolean hasErrors(TreeParent treeParent) {
+		if (hasMarkers(treeParent)) {
+			return true;
+		}
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
 		list.addAll(findNextInvalidItem(treeParent, false));
 		if (list.size() > 0 ) {
@@ -404,6 +420,13 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	private HashSet<TreeObject> findNextInvalidItem(TreeParent treeParent, boolean parentIsInput){
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
 		boolean parentIsAnInput = false;
+		
+		if (hasMarkers(treeParent)) {
+			list.add(treeParent);
+			
+			// stop searching here
+			return list;
+		}
 		
 		// if property has no type -> indicate error
 		if (treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
@@ -470,13 +493,48 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	
 
 	public Image decorateImage(Object element, String imagePath) {
-		if (element instanceof TreeParent) {
+		if (element instanceof TreeObject) {
 			if (hasErrors((TreeParent)element)) {
 				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
 			}
 		}
 		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
+	
+	
+	private String markerType = Constants.MARKERTYPE_COMPONENT_MODIFICATION;
+	
+	public boolean hasMarkers(TreeObject item){
+		
+		Element umlElement = item.getFirstLevelComponent();
+		
+		if (umlElement instanceof NamedElement) {
+			// markers
+			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+			String projectName = umlModel.getResource().getURI().segment(1);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			
+			IMarker[] markers = null;
+			try {
+				if (iProject != null) {
+					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+					for (IMarker marker : markers) {
+						Object sourceId = marker.getAttribute(IMarker.SOURCE_ID);
+							if (item.getDotPath().equals(sourceId)) {
+								return true;				
+						}
+					}
+				}
+			} catch (CoreException e) {
+				//e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	
 	
 //	/**
 //	 * Gets the modelica predefined type name.

@@ -62,4 +62,21 @@
          </propertySection>
       </propertySections>
    </extension>
+   <extension
+         id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification"
+         name="ModelicaML Value Bindings Operations Validation"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="generatedBy">
+      </attribute>
+   </extension>
 </plugin>
