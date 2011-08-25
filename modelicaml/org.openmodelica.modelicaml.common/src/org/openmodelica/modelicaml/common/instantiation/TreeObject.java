@@ -243,6 +243,9 @@ public class TreeObject implements IAdaptable {
 		return modificationRightHand;
 	}
 	
+	public String getEditedModificationRightHand(){ 
+		return this.finalModificationRightHand;
+	}
 
 	public String getFinalModificationRightHand(){ 
 		if (this.finalModificationRightHand == null) {

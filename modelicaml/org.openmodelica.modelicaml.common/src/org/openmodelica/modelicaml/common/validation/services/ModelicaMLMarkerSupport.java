@@ -73,7 +73,7 @@ public class ModelicaMLMarkerSupport {
 	private static IWorkspaceRoot root;
 	
 	/** The project. */
-	private static IProject project;
+	public static IProject project;
 	
 	/** The Constant markerTypeName. */
 	private final static String markerTypeName = "org.openmodelica.modelicaml.modelicamlMarker.actionCode";

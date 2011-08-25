@@ -172,5 +172,10 @@ public class Constants {
 	public final static String testScenarioPropertyNamePrefix = "ts_";
 	public final static String reqirementPropertyNamePrefix = "req_";
 	
+	
+	public final static String MARKERTYPE_VALUEBINDINGS = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings";
+	public final static String MARKERTYPE_COMPONENT_MODIFICATION = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification";
+	
+	
 }
 
