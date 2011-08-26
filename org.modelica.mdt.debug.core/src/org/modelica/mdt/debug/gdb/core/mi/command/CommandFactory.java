@@ -282,7 +282,7 @@ public class CommandFactory {
 	 * @param expression
 	 * @return MIDataEvaluateExpression
 	 */
-	public MIDataEvaluateExpression createMIGetRecordElements(String expression) {
+	public MIDataEvaluateExpression createMIGetArrayLength(String expression) {
 		return new MIDataEvaluateExpression("(int)arrayLength(" + expression + ")");
 	}
 	
@@ -291,7 +291,7 @@ public class CommandFactory {
 	 * @param expression
 	 * @return MIDataEvaluateExpression
 	 */
-	public MIDataEvaluateExpression createMIGetRecordElement(String expression, int index) {
+	public MIDataEvaluateExpression createMIGetArrayElement(String expression, int index) {
 		return new MIDataEvaluateExpression("arrayGet(" + expression + ", " + index + ")");
 	}
 	
@@ -302,7 +302,17 @@ public class CommandFactory {
 	 */
 	public MIDataEvaluateExpression createMIGetRecordElementName(String expression, int index) {
 		return new MIDataEvaluateExpression("(char*)getRecordElementName(" + expression + ", " + index + ")");
-	}	
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function getOptionValue
+	 * @param variableName
+	 * @return
+	 */
+	public MIDataEvaluateExpression createMIGetOptionValue(String expression) {
+		// TODO Auto-generated method stub
+		return new MIDataEvaluateExpression("(char*)getOptionValue(" + expression + ")");
+	}
 
 	/**
 	 * Creates the ptype command
@@ -351,6 +361,6 @@ public class CommandFactory {
 	public MIGDBShowPrompt createMIGDBShowPrompt() {
 		// TODO Auto-generated method stub
 		return new MIGDBShowPrompt();
-	}
+	}	
 	
 }

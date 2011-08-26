@@ -95,7 +95,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	/**
 	 * Table mapping stack frames to current variables
 	 */
-	private List<GDBStackFrame> fGDBStackFrames = new ArrayList<GDBStackFrame>();
+	private List<GDBStackFrame> fGDBStackFrames = null;
 	private int fStackDepth = 0;
 	private final static int MAX_STACK_DEPTH = 100;
 	private Boolean fRefreshStackFrames = true;
@@ -128,6 +128,10 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	private void getStackFrames(int lowFrame, int highFrame) {
 		// TODO Auto-generated method stub
+		// if fGDBStackFrames is null then initialize it
+		if (fGDBStackFrames == null) {
+			fGDBStackFrames = new ArrayList<GDBStackFrame>();
+		}
 		try {
 			// get the list of frames from GDB
 			MISession miSession = getGDBDebugTarget().getMISession();
@@ -168,6 +172,8 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			}
 			if (!isFound) {
 				i.remove();
+				stackFrame.dispose();
+				stackFrame = null;
 			}
 		}
 	}
@@ -212,6 +218,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			}
 		}
 		
+		// create stack frames
 		for (i = 0 ; i < miFramesList.size() ; i++) {
 			if (!GDBHelper.filterCFiles(getGDBDebugTarget(), (miFramesList.get(i)))) {
 				fGDBStackFrames.add(new GDBStackFrame(this, miFramesList.get(i)));

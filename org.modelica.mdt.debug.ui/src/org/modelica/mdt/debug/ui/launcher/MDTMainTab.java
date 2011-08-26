@@ -30,8 +30,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 
-import com.sun.org.apache.bcel.internal.generic.FDIV;
-
 /**
  * Tab to specify the MDT program to run/debug.
  */

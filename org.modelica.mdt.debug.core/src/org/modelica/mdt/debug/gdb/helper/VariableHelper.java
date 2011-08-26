@@ -37,7 +37,9 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIArg;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBCoreVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBListVariable;
+import org.modelica.mdt.debug.gdb.core.model.variable.GDBOptionVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBRecordVariable;
+import org.modelica.mdt.debug.gdb.core.model.variable.GDBTupleVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 
@@ -63,16 +65,31 @@ public class VariableHelper {
 			String displayName, String type, String referenceType, String actualType,
 			String voidPointer, List<GDBVariable> variablesList) {
 		// TODO Auto-generated method stub
+		// create core variables Real, String, Integere, Boolean
 		if (referenceType.equals(GDBHelper.STRING) || referenceType.equals(GDBHelper.REAL) ||
 			referenceType.equals(GDBHelper.BOOLEAN) || referenceType.equals(GDBHelper.INTEGER)) {
 			variablesList.add(new GDBCoreVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
-		} else if (referenceType.startsWith("list<")) {
+		}
+		// create list variables
+		else if (referenceType.startsWith(GDBHelper.LIST)) {
 			variablesList.add(new GDBListVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
-		} else if (referenceType.startsWith("record<")) {
+		}
+		// create record variables
+		else if (referenceType.startsWith(GDBHelper.RECORD)) {
 			referenceType = GDBHelper.getListType(referenceType);
 			variablesList.add(new GDBRecordVariable(gdbStackFrame, name, displayName, type,
+					referenceType, actualType, voidPointer));
+		}
+		// create tuple variables
+		else if (referenceType.startsWith(GDBHelper.TUPLE)) {
+			variablesList.add(new GDBTupleVariable(gdbStackFrame, name, displayName, type,
+					referenceType, actualType, voidPointer));
+		}
+		// create option variables
+		else if (referenceType.startsWith(GDBHelper.OPTION)) {
+			variablesList.add(new GDBOptionVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}
 	}
@@ -108,6 +125,8 @@ public class VariableHelper {
 			}
 			if (!isFound) {
 				i.remove();
+				variable.dispose();
+				variable = null;
 			}
 		}
 	}

@@ -30,7 +30,6 @@
  */
 package org.modelica.mdt.debug.gdb.core.model;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.DebugElement;

@@ -157,15 +157,15 @@ public class ValueHelper {
 	 * @return
 	 * @throws MIException 
 	 */
-	public static int getRecordElements(String variableName,
+	public static int getArrayLength(String variableName,
 			GDBDebugTarget gdbDebugTarget) throws MIException {
 		// TODO Auto-generated method stub
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getRecordElementsCmd = factory.createMIGetRecordElements(variableName);
-		miSession.postCommand(getRecordElementsCmd);
-		MIDataEvaluateExpressionInfo getRecordElementsInfo = getRecordElementsCmd.getMIDataEvaluateExpressionInfo();
-		return Integer.parseInt(getRecordElementsInfo.getExpression());
+		MIDataEvaluateExpression getArrayLengthCmd = factory.createMIGetArrayLength(variableName);
+		miSession.postCommand(getArrayLengthCmd);
+		MIDataEvaluateExpressionInfo getArrayLengthInfo = getArrayLengthCmd.getMIDataEvaluateExpressionInfo();
+		return Integer.parseInt(getArrayLengthInfo.getExpression());
 	}	
 
 	/**
@@ -176,14 +176,14 @@ public class ValueHelper {
 	 * @return
 	 * @throws MIException 
 	 */
-	public static String getRecordElement(String variableName, int element,
+	public static String getArrayElement(String variableName, int element,
 			GDBDebugTarget gdbDebugTarget) throws MIException {
 		// TODO Auto-generated method stub
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getRecordElementCmd = factory.createMIGetRecordElement(variableName, element);
-		miSession.postCommand(getRecordElementCmd);
-		return getRecordElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
+		MIDataEvaluateExpression getArrayElementCmd = factory.createMIGetArrayElement(variableName, element);
+		miSession.postCommand(getArrayElementCmd);
+		return getArrayElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
 	}
 
 	/**
@@ -202,6 +202,23 @@ public class ValueHelper {
 		MIDataEvaluateExpression getRecordElementNameCmd = factory.createMIGetRecordElementName(variableName, element);
 		miSession.postCommand(getRecordElementNameCmd);
 		return parseResult(getRecordElementNameCmd.getMIDataEvaluateExpressionInfo().getExpression());
+	}
+
+	/**
+	 * Creates and sends the "-data-evaluate-expression (char*)getOptionValue(void*)" command.
+	 * @param variableName
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws MIException 
+	 */
+	public static String getOptionValue(String variableName,
+			GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = gdbDebugTarget.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIDataEvaluateExpression getOptionValueCmd = factory.createMIGetOptionValue(variableName);
+		miSession.postCommand(getOptionValueCmd);
+		return parseResult(getOptionValueCmd.getMIDataEvaluateExpressionInfo().getExpression());
 	}	
 	
 }

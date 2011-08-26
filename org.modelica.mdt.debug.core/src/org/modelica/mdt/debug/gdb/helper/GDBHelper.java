@@ -52,6 +52,13 @@ public class GDBHelper {
 	public static String INTEGER = "Integer";
 	public static String REAL = "Real";
 	public static String REPLACEABLE_TYPE_ANY = "replaceable type Any";
+	public static String LIST = "list";
+	public static String RECORD = "record";
+	public static String TUPLE = "tuple";
+	public static String OPTION = "Option";
+	
+	public static String NONE = "NONE()";
+	public static String SOME = "SOME()";
 	
 	public static Boolean filterCFiles(GDBDebugTarget gdbDebugTarget, MIFrame miFrame) throws CoreException {
 		if (miFrame.getFile().isEmpty()) {
@@ -67,10 +74,23 @@ public class GDBHelper {
 			}
 			return false;
 		} else {
-			return isCFile(miFrame.getFile());
+			return !isMoFile(miFrame.getFile());
 		}
 	}
 	
+	/**
+	 * @param file
+	 * @return
+	 */
+	public static Boolean isMoFile(String file) {
+		// TODO Auto-generated method stub
+		if (new Path(file).getFileExtension().equals("mo")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public static Boolean isCFile(String file) {
 		if (new Path(file).getFileExtension().equals("c")) {
 			return true;

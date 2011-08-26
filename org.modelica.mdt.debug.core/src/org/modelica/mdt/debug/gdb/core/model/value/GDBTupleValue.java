@@ -39,6 +39,7 @@ import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
+import org.modelica.mdt.debug.gdb.helper.TypeHelper;
 import org.modelica.mdt.debug.gdb.helper.ValueHelper;
 import org.modelica.mdt.debug.gdb.helper.VariableHelper;
 
@@ -46,25 +47,26 @@ import org.modelica.mdt.debug.gdb.helper.VariableHelper;
  * @author Adeel Asghar
  *
  */
-public class GDBListValue extends GDBValue {
+public class GDBTupleValue extends GDBValue {
 
-	private int fListLength = 0;
+	private int fTupleElements = 0;
 	
 	/**
 	 * @param gdbVariable
 	 * @throws MIException 
 	 */
-	public GDBListValue(GDBVariable gdbVariable) throws MIException {
+	public GDBTupleValue(GDBVariable gdbVariable) throws MIException {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
-		setListLength(ValueHelper.getListLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
-		if (getListLength() > 1) {
-			setValue("<" + getListLength() + " items>");
+		setTupleElements(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(),
+				getGDBDebugTarget()));
+		if (getTupleElements() > 1) {
+			setValue("<" + getTupleElements() + " items>");
 		} else {
-			setValue("<" + getListLength() + " item>");
+			setValue("<" + getTupleElements() + " item>");
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
@@ -80,14 +82,14 @@ public class GDBListValue extends GDBValue {
 			}
 			List<Variable> variablesList = new ArrayList<Variable>();
 			try {
-				for (int i = 1 ; i <= getListLength() ; i++) {
-					String voidPointer = ValueHelper.getListItem(getGDBVariable().getOriginalName(), i, 
+				for (int i = 1 ; i <= getTupleElements() ; i++) {
+					String voidPointer = ValueHelper.getArrayElement(getGDBVariable().getOriginalName(), i, 
 							getGDBDebugTarget());
 					String itemName = "[" + i + "]";
 					String displayName = itemName;
 					variablesList.add(new Variable(itemName, displayName, voidPointer));
 				}
-				// first remove the variables that are removed from the List
+				// first remove the variables that are removed from the Tuple
 				VariableHelper.removeVariables(variablesList, fGDBChildVariables);
 				// compare and create IVariable
 				compareVariables(variablesList);
@@ -109,13 +111,17 @@ public class GDBListValue extends GDBValue {
 		if (isDisposed()) {
 			return false;
 		}
-		return getListLength() > 0;
+		return getTupleElements() > 0;
 	}
-		
+	
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#createVariable(org.modelica.mdt.debug.gdb.core.model.variable.Variable)
+	 */
 	@Override
 	public void createVariable(Variable variable) {
 		// TODO Auto-generated method stub
-		String referenceType = GDBHelper.getListType(getGDBVariable().getReferenceTypeName());
+		// get the record element type
+		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBDebugTarget());
 		// based on the modelica type create the specific variable.
 		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
 				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
@@ -132,12 +138,12 @@ public class GDBListValue extends GDBValue {
 			return false;
 		}
 		String oldValue = getValue();
-		setListLength(ValueHelper.getListLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setTupleElements(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
 		String newValue;
-		if (getListLength() > 1) {
-			newValue = "<" + getListLength() + " items>";
+		if (getTupleElements() > 1) {
+			newValue = "<" + getTupleElements() + " items>";
 		} else {
-			newValue = "<" + getListLength() + " item>";
+			newValue = "<" + getTupleElements() + " item>";
 		}
 		if (oldValue.equals(newValue)) {
 			return false;
@@ -148,17 +154,17 @@ public class GDBListValue extends GDBValue {
 	}
 
 	/**
-	 * @param listLength the fListLength to set
+	 * @param tupleElements the fTupleElements to set
 	 */
-	public void setListLength(int listLength) {
-		this.fListLength = listLength;
+	public void setTupleElements(int tupleElements) {
+		this.fTupleElements = tupleElements;
 	}
 
 	/**
-	 * @return the fListLength
+	 * @return the fTupleElements
 	 */
-	public int getListLength() {
-		return fListLength;
+	public int getTupleElements() {
+		return fTupleElements;
 	}
-	
+
 }

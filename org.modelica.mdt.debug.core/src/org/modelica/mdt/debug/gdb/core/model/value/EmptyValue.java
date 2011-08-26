@@ -28,61 +28,44 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
-package org.modelica.mdt.debug.gdb.core.model.variable;
+package org.modelica.mdt.debug.gdb.core.model.value;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
-import org.modelica.mdt.debug.gdb.core.mi.MIException;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
-import org.modelica.mdt.debug.gdb.core.model.value.EmptyValue;
-import org.modelica.mdt.debug.gdb.core.model.value.GDBRecordValue;
+import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
+import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 
 /**
  * @author Adeel Asghar
  *
+ * Represents the empty value.
+ *
  */
-public class GDBRecordVariable extends GDBVariable {
+public class EmptyValue extends GDBValue {
 
 	/**
-	 * @param frame
-	 * @param name
-	 * @param displayName
-	 * @param type
-	 * @param referenceType
-	 * @param actualType
-	 * @param voidPointer 
+	 * @param gdbVariable
 	 */
-	public GDBRecordVariable(GDBStackFrame frame, String name,
-			String displayName, String type, String referenceType,
-			String actualType, String voidPointer) {
-		super(frame, name, displayName, type, referenceType, actualType, voidPointer);
+	public EmptyValue(GDBVariable gdbVariable) {
+		super(gdbVariable);
 		// TODO Auto-generated constructor stub
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IValue#getValueString()
+	 */
+	@Override
+	public String getValueString() throws DebugException {
+		// TODO Auto-generated method stub
+		return "";
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IVariable#getValue()
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#createVariable(org.modelica.mdt.debug.gdb.core.model.variable.Variable)
 	 */
 	@Override
-	public synchronized IValue getValue() throws DebugException {
+	public void createVariable(Variable variable) {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
-			return new EmptyValue(this);
-		}
-		try {
-			if (isRefreshValue()) {
-				if (getGDBValue() == null) {
-					setGDBValue(new GDBRecordValue(this));
-				} else {
-					setValueChanged(false);
-					getGDBValue().setRefreshChildren(true);
-				}
-				setRefreshValue(false);
-			}
-		} catch (MIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return getGDBValue();
+		
 	}
 
 }

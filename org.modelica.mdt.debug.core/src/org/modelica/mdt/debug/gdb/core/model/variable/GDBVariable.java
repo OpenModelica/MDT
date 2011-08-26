@@ -56,6 +56,10 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	private Boolean fRefreshValue = true;
 	private GDBValue fGDBValue = null;
 	private String fActualType = null;
+	/**
+	 * Whether this variable has been disposed.
+	 */
+	private boolean fIsDisposed = false;
 	
 	/**
 	 * Constructs a variable contained in the given stack frame
@@ -138,6 +142,9 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @return the fType
 	 */
 	public String getType() {
+		if (isDisposed()) {
+			return null;
+		}
 		return fType;
 	}
 	
@@ -160,7 +167,7 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 * 
 	 * @return the stack frame owning this variable
 	 */
-	public GDBStackFrame getStackFrame() {
+	public GDBStackFrame getGDBStackFrame() {
 		return fGDBStackFrame;
 	}
 	
@@ -266,6 +273,9 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	@Override
 	public synchronized boolean hasValueChanged() throws DebugException {
 		// TODO Auto-generated method stub
+		if (isDisposed()) {
+			return false;
+		}
 		return isValueChanged();
 	}
 
@@ -281,6 +291,27 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 */
 	public String getActualType() {
 		return fActualType;
+	}
+
+	/**
+	 * Clears all the values inside the stack frame
+	 */
+	public void dispose() {
+		// TODO Auto-generated method stub
+		setDisposed(true);
+		if (fGDBValue == null) {
+			return;
+		}
+		fGDBValue.dispose();
+		fGDBValue = null;
+	}
+	
+	protected boolean isDisposed() {
+		return fIsDisposed;
+	}
+
+	protected void setDisposed(boolean isDisposed) {
+		fIsDisposed = isDisposed;
 	}
 	
 }

@@ -30,8 +30,6 @@
  */
 package org.modelica.mdt.debug.gdb.ui.launcher;
 
-import java.awt.Checkbox;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -214,6 +212,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 		middle.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		middle.setFont(font);
 		fDebugCSourceCheckBox = createCheckButton(middle, "Debug C source files");
+		fDebugCSourceCheckBox.setEnabled(false);
 		fDebugCSourceCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

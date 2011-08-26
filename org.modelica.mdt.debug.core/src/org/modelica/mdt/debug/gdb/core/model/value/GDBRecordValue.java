@@ -38,6 +38,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
+import org.modelica.mdt.debug.gdb.helper.GDBHelper;
 import org.modelica.mdt.debug.gdb.helper.TypeHelper;
 import org.modelica.mdt.debug.gdb.helper.ValueHelper;
 import org.modelica.mdt.debug.gdb.helper.VariableHelper;
@@ -57,37 +58,28 @@ public class GDBRecordValue extends GDBValue {
 	public GDBRecordValue(GDBVariable gdbVariable) throws MIException {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
-		setRecordElements(ValueHelper.getRecordElements(getGDBVariable().getOriginalName(),
-				getGDBDebugTarget()));
+		setRecordElements(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
 		setValue(getGDBVariable().getReferenceTypeName());
 	}
 	
-	/**
-	 * @param elements the fRecordElements to set
-	 */
-	public void setRecordElements(int elements) {
-		this.fRecordElements = elements;
-	}
-
-	/**
-	 * @return the fRecordElements
-	 */
-	public int getRecordElements() {
-		return fRecordElements;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	@Override
 	public synchronized IVariable[] getVariables() throws DebugException {
 		// TODO Auto-generated method stub
+		if (isDisposed()) {
+			return new IVariable[0];
+		}
 		if (isRefreshChildren()) {
+			if (fGDBChildVariables == null) {
+				fGDBChildVariables = new ArrayList<GDBVariable>();
+			}
 			List<Variable> variablesList = new ArrayList<Variable>();
 			try {
 				for (int i = 2 ; i <= getRecordElements() ; i++) {
 					// get the record element void pointer
-					String voidPointer = ValueHelper.getRecordElement(getGDBVariable().getOriginalName(),
+					String voidPointer = ValueHelper.getArrayElement(getGDBVariable().getOriginalName(),
 							i, getGDBDebugTarget());
 					// get the record element name
 					String itemName = ValueHelper.getRecordElementName(getGDBVariable().getOriginalName(),
@@ -114,6 +106,9 @@ public class GDBRecordValue extends GDBValue {
 	@Override
 	public boolean hasVariables() throws DebugException {
 		// TODO Auto-generated method stub
+		if (isDisposed()) {
+			return false;
+		}
 		return getRecordElements() > 1;
 	}
 
@@ -126,9 +121,22 @@ public class GDBRecordValue extends GDBValue {
 		// get the record element type
 		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBDebugTarget());
 		// based on the modelica type create the specific variable.
-		VariableHelper.createVariable(getGDBVariable().getStackFrame(), variable.getName(),
-				variable.getDisplayName(), "modelica_metatype", referenceType, getActualType(),
+		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
+				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
 				variable.getVoidPointer(), fGDBChildVariables);
 	}
 	
+	/**
+	 * @param elements the fRecordElements to set
+	 */
+	public void setRecordElements(int elements) {
+		this.fRecordElements = elements;
+	}
+
+	/**
+	 * @return the fRecordElements
+	 */
+	public int getRecordElements() {
+		return fRecordElements;
+	}	
 }

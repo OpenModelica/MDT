@@ -31,6 +31,7 @@
 package org.modelica.mdt.debug.gdb.core.model.stack;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -67,7 +68,7 @@ import org.modelica.mdt.debug.gdb.helper.VariableHelper;
  */
 public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	
-	private GDBThread fThread;
+	private GDBThread fGDBThread;
 	private MIFrame fFrame;
 	private String fName = "Unknown";
 	private int fLineNumber = -1;
@@ -75,7 +76,11 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	private int fEndChar = -1;	
 	private String fFileName;
 	private int fId;
-	private List<GDBVariable> fGDBVariables = new ArrayList<GDBVariable>();
+	private List<GDBVariable> fGDBVariables = null;
+	/**
+	 * Need this flag to prevent evaluations on disposed frames. 
+	 */
+	private boolean fIsDisposed = false;
 	
 	/**
 	 * Constructs a stack frame in the given thread with the given
@@ -86,7 +91,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 */
 	public GDBStackFrame(GDBThread thread, MIFrame frame) {
 		super(thread.getGDBDebugTarget());
-		fThread = thread;
+		fGDBThread = thread;
 		fFrame = frame;
 		initialize();
 	}
@@ -141,6 +146,9 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 					variablesList.add(args[i]);
 				}
 			}
+		}
+		if (fGDBVariables == null) {
+			fGDBVariables = new ArrayList<GDBVariable>();
 		}
 		// first remove the variables that are removed from this frame
 		VariableHelper.removeVariables(variablesList, fGDBVariables);
@@ -200,20 +208,22 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
 	public IThread getThread() {
-		return fThread;
+		return fGDBThread;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
+		if (isDisposed()) {
+			return new IVariable[0];
+		}
 		return (IVariable[])fGDBVariables.toArray(new IVariable[fGDBVariables.size()]);
-		//return fThread.getVariables(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
 	public boolean hasVariables() throws DebugException {
-		return getVariables().length > 0;
+		return (isDisposed()) ? false : (getVariables().length > 0);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getLineNumber()
@@ -414,5 +424,31 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		// TODO Auto-generated method stub
 		fFrame = miFrame;
 		initialize();
+	}
+
+	/**
+	 * Clears all the variables inside the stack frame
+	 * 
+	 */
+	public void dispose() {
+		// TODO Auto-generated method stub
+		setDisposed(true);
+		if (fGDBVariables == null) {
+			return;
+		}
+		Iterator<GDBVariable> it = fGDBVariables.iterator();
+		while (it.hasNext()) {
+			((GDBVariable)it.next()).dispose();
+		}
+		fGDBVariables.clear();
+		fGDBVariables = null;
+	}
+	
+	protected boolean isDisposed() {
+		return fIsDisposed;
+	}
+
+	private synchronized void setDisposed(boolean isDisposed) {
+		fIsDisposed = isDisposed;
 	}
 }

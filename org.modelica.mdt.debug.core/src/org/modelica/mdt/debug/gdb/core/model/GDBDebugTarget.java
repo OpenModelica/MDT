@@ -30,6 +30,7 @@
  */
 package org.modelica.mdt.debug.gdb.core.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -59,6 +60,7 @@ import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MICommand;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MIErrorEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIFunctionFinishedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
@@ -551,6 +553,16 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 				} else if (miEvent instanceof MIGDBExitEvent)
 					if (MDTDebugCorePlugin.DEBUG) System.out.println("MIGDBExitEvent caught in gdb debug target");
 				terminate();
+			}
+			else if (miEvent instanceof MIErrorEvent) {
+				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIErrorEvent caught in gdb debug target");
+				try {
+					getMISession().getGDBInferior().getPipedErrorStream().write(((MIErrorEvent)miEvent).getMessage().getBytes());
+					getMISession().getGDBInferior().getPipedErrorStream().write(((MIErrorEvent)miEvent).getLogMessage().getBytes());
+					getMISession().getGDBInferior().getPipedErrorStream().flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				}
 			}
 			else if (miEvent instanceof MIBreakpointHitEvent) {
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIBreakpointHitEvent caught in gdb debug target");

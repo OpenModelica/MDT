@@ -30,7 +30,7 @@
  */
 package org.modelica.mdt.debug.gdb.core.model.value;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -58,7 +58,8 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 	private String fActualType = null;
 	private GDBVariable fGDBVariable = null;
 	private Boolean fRefreshChildren = true;
-	protected List<GDBVariable> fGDBChildVariables = new ArrayList<GDBVariable>();
+	protected List<GDBVariable> fGDBChildVariables = null;
+	private boolean fIsDisposed = false;
 	
 	/**
 	 * @param gdbVariable
@@ -218,6 +219,8 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 			if (gdbVariable == null) {
 				createVariable(variable);
 			} else {
+				// update the void pointer because it may be changed
+				gdbVariable.setVoidPointer(variable.getVoidPointer());
 				gdbVariable.setRefreshValue(true);
 				if (gdbVariable.getGDBValue() != null) {
 					gdbVariable.getGDBValue().setRefreshChildren(true);
@@ -243,6 +246,31 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Clear all the child variables in the value
+	 */
+	public void dispose() {
+		// TODO Auto-generated method stub
+		setDisposed(true);
+		if (fGDBChildVariables == null) {
+			return;
+		}
+		Iterator<GDBVariable> it = fGDBChildVariables.iterator();
+		while (it.hasNext()) {
+			((GDBVariable)it.next()).dispose();
+		}
+		fGDBChildVariables.clear();
+		fGDBChildVariables = null;
+	}
+	
+	protected boolean isDisposed() {
+		return fIsDisposed;
+	}
+
+	protected void setDisposed(boolean isDisposed) {
+		fIsDisposed = isDisposed;
 	}
 	
 }

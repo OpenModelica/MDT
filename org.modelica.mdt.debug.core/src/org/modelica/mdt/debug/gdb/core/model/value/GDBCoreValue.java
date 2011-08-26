@@ -72,6 +72,9 @@ public class GDBCoreValue extends GDBValue {
 	 */
 	public boolean hasValueChanged() throws MIException {
 		// TODO Auto-generated method stub
+		if (isDisposed()) {
+			return false;
+		}
 		String oldValue = getValue();
 		String newValue;
 		if (getGDBVariable().getVoidPointer() != null) {
@@ -101,6 +104,9 @@ public class GDBCoreValue extends GDBValue {
 	@Override
 	public String getValueString() throws DebugException {
 		// TODO Auto-generated method stub
+		if (isDisposed()) {
+			return null;
+		}
 		if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.BOOLEAN)) {
 			String result = getValue().substring(0, getValue().indexOf(" "));
 			if (result.equals("1")) {

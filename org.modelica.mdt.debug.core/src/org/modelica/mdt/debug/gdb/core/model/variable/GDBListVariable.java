@@ -34,6 +34,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.model.value.EmptyValue;
 import org.modelica.mdt.debug.gdb.core.model.value.GDBListValue;
 
 /**
@@ -62,6 +63,9 @@ public class GDBListVariable extends GDBVariable {
 	@Override
 	public synchronized IValue getValue() throws DebugException {
 		// TODO Auto-generated method stub
+		if (isDisposed()) {
+			return new EmptyValue(this);
+		}
 		try {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
@@ -71,6 +75,7 @@ public class GDBListVariable extends GDBVariable {
 					getGDBValue().setRefreshChildren(true);
 				} else {
 					setValueChanged(false);
+					getGDBValue().setRefreshChildren(true);
 				}
 				setRefreshValue(false);
 			}

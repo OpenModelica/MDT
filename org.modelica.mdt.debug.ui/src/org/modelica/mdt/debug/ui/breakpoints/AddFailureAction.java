@@ -17,13 +17,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,9 +24,6 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.modelica.mdt.debug.core.IMDTBreakpoint;
-import org.modelica.mdt.debug.core.IMDTFailureBreakpoint;
-import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
@@ -65,9 +55,9 @@ public class AddFailureAction implements IViewActionDelegate, IWorkbenchWindowAc
 	 * @since 3.2
 	 */
 	private void createBreakpoint(final String filter) throws CoreException {
-		final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
+		/* final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
 		final Map map = new HashMap(10);
-		/* BreakpointUtils.addJavaBreakpointAttributes(map, type);
+		BreakpointUtils.addJavaBreakpointAttributes(map, type);
 	
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(MDTDebugCorePlugin.ID_MDT_DEBUG_MODEL);
 		boolean exists = false;
