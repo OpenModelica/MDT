@@ -59,6 +59,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.papyrus.core.listenerservice.IPapyrusListener;
 import org.eclipse.papyrus.editor.PapyrusMultiDiagramEditor;
 import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
@@ -364,18 +365,29 @@ private String project = null;
 	private void prepareValidationAndCodeGenerationChains(){
 		//UmlModel umlModel = UmlUtils.getUmlModel();
 		
-		umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-		//UMLModelName = null;
+//		umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+//		//UMLModelName = null;
+//		
+//		modelFileURI = umlModel.getResourceURI().toString();
+//		modelName = umlModel.getResourceURI().lastSegment();
+//		project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+//
+//		// parameter values for chains
+//		modelFilePath = modelFileURI.replace("platform:/resource/", "");
+//		outputFolderPath = project;
+//		logPath = project + "/errors.log";
 		
-		modelFileURI = umlModel.getResourceURI().toString();
+		UmlModel umlModel = UmlUtils.getUmlModel();
+		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
+
 		modelName = umlModel.getResourceURI().lastSegment();
-		project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
-
-		// parameter values for chains
-		modelFilePath = modelFileURI.replace("platform:/resource/", "");
-		outputFolderPath = project;
-		logPath = project + "/errors.log";
-
+//		project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+		project = umlModel.getResource().getURI().segment(1);
+		
+		String modelFilePath = modelFileURI.replace("platform:/resource/", "");
+		String outputFolderPath = project;
+		String logPath = project + "/errors.log";
+		
 		
 // ########### Code Generation
 //			URI chainCodeGenerationURI = URI.createPlatformPluginURI("/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain",true);
