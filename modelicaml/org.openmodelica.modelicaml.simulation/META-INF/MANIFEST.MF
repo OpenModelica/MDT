@@ -21,3 +21,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.papyrus.diagram.common.editparts,
  org.eclipse.uml2.uml
+Export-Package: org.openmodelica.modelicaml.simulation.handlers

@@ -120,7 +120,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.openmodelica.modelicaml.simulation.handlers.GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClassWithOMCSimCenterAction"
+            class="org.openmodelica.modelicaml.simulation.handlers.CGFromEntireModelAndSimThisClassWithOMCSimCenterAction"
             commandId="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMCSimCenter">
          <activeWhen>
             <with

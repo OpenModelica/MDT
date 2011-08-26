@@ -35,6 +35,7 @@
 package org.openmodelica.modelicaml.simulation.handlers;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -45,6 +46,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -59,16 +61,15 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.simulation.environment.wizard.newsimulationproject.NewSimulationProjectFromModellingEnvironmentWizard;
@@ -92,7 +93,7 @@ import fr.obeo.acceleo.gen.template.eval.LaunchManager;
  * 
  * @author rmwscham
  */
-public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClassWithOMCSimCenterAction extends AbstractHandler {
+public class CGFromEntireModelAndSimThisClassWithOMCSimCenterAction extends AbstractHandler {
 
 	// private ModelManager modelManager = null;
 	/** The project. */
@@ -123,8 +124,7 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils
-				.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}
@@ -138,105 +138,134 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 	 */
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 
-		Element umlElement = null;
+		EObject umlElement = null;
 		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				umlElement = (Element)eObject;
+//		if (input instanceof ModelElementItem) {
+//		EObject eObject = ((ModelElementItem)input).getEObject();
+//		if ( eObject instanceof Element ) {
+//			umlElement = (Element)eObject;
+//		}
+//	}
+//	else if (input instanceof IUMLEditPart) {
+//		umlElement = ((IUMLEditPart)input).getUMLElement();
+//	}
+		
+		umlElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+		
+		if (umlElement instanceof NamedElement) {
+		
+			UmlModel umlModel = UmlUtils.getUmlModel();
+			modelFileURI = umlModel.getResourceURI().toString();
+
+			modelName = umlModel.getResourceURI().lastSegment();
+			project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+			
+//			String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+			String projectName = umlModel.getResource().getURI().segment(1);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			
+			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+			
+			String modelElementQualifiedName = ((NamedElement)umlElement).getQualifiedName();
+			String temp_modelElementWoSpecChar = StringUtls.replaceSpecCharExceptThis(modelElementQualifiedName, "::");
+			final String modelElementDotPath = temp_modelElementWoSpecChar.replaceAll("::", ".");
+			final String packageMoFilePath = projectPath+"/code-gen/"+ StringUtls.replaceSpecChar( ((NamedElement)umlElement).getModel().getName()) + "/" +"package.mo";
+
+			URI chainURI = URI.createPlatformPluginURI("/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain",true);
+			ResourceSet rs = new ResourceSetImpl();
+			Resource r = (Resource) rs.createResource(chainURI);
+			try {
+				r.load(null);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		}
-		else if (input instanceof IUMLEditPart) {
-			umlElement = ((IUMLEditPart)input).getUMLElement();
-		}
-		
-		UmlModel umlModel = UmlUtils.getUmlModel();
-		modelFileURI = umlModel.getResourceURI().toString();
 
-		modelName = umlModel.getResourceURI().lastSegment();
-		project = umlModel.getResourceURI().path().replace(modelName, "")
-				.replace("/resource/", "");
+			myChain = (CChain) r.getContents().get(0);
 
-		
-//		String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
-		String projectName = umlModel.getResource().getURI().segment(1);
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IProject iProject = root.getProject(projectName);
-		
-		String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-		
-		String modelElementQualifiedName = ((NamedElement)umlElement).getQualifiedName();
-		String temp_modelElementWoSpecChar = StringUtls.replaceSpecCharExceptThis(modelElementQualifiedName, "::");
-		final String modelElementDotPath = temp_modelElementWoSpecChar.replaceAll("::", ".");
-		final String packageMoFilePath = projectPath+"/code-gen/"+ StringUtls.replaceSpecChar(umlElement.getModel().getName()) + "/" +"package.mo";
+			String modelFilePath = modelFileURI.replace("platform:/resource/", "");
+			String outputFolderPath = project;
+			String logPath = project + "/errors.log";
 
-		URI chainURI = URI.createPlatformPluginURI("/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain",true);
-		ResourceSet rs = new ResourceSetImpl();
-		Resource r = (Resource) rs.createResource(chainURI);
-		try {
-			r.load(null);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		myChain = (CChain) r.getContents().get(0);
-
-		String modelFilePath = modelFileURI.replace("platform:/resource/", "");
-		String outputFolderPath = project;
-		String logPath = project + "/errors.log";
-
-		// Don't create Parameter Files... simply set the correct path into them
-		EList<File> files = myChain.getParametersFiles();
-		for (File file : files) {
-			if (file instanceof CModel) {
-				file.setPath(modelFilePath);
-			} else if (file instanceof CFolder) {
-				file.setPath(outputFolderPath);
-			} else if (file instanceof CLog) {
-				file.setPath(logPath);
-			}
-		}
-
-		Job job = new Job("Modelica Simulation with OMCSim Center") {
-			protected IStatus run(IProgressMonitor monitor) {
-				Boolean RegenerateCodeBeforeEachSimulation = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "RegenerateCodeBeforeEachSimulation", false, null);
-				if (RegenerateCodeBeforeEachSimulation) {
-					runchain(monitor);
+			// Don't create Parameter Files... simply set the correct path into them
+			EList<File> files = myChain.getParametersFiles();
+			for (File file : files) {
+				if (file instanceof CModel) {
+					file.setPath(modelFilePath);
+				} else if (file instanceof CFolder) {
+					file.setPath(outputFolderPath);
+				} else if (file instanceof CLog) {
+					file.setPath(logPath);
 				}
-				return Status.OK_STATUS;
 			}
-		};
-		job.setUser(true);
-		job.schedule();
-	    
-	    
-	    NewSimulationProjectFromModellingEnvironmentWizard projectWizard = new NewSimulationProjectFromModellingEnvironmentWizard(packageMoFilePath, modelElementDotPath, job);
-		WizardDialog wizard = new WizardDialog(
-				this.shell, projectWizard
-				);
-		wizard.open();
-		
-		if (projectWizard.getCreateConfig().equals("interactive")) {
-			WizardDialog wizardinteractive = new WizardDialog(
-					this.shell,
-					new SessionConfiguration_InteractiveWizard());
-			wizardinteractive.open();
-		} else if (projectWizard.getCreateConfig().equals("noninteractive")) {
-			WizardDialog wizardnoninteractive = new WizardDialog(
-					this.shell,
-					new SessionConfiguration_NonInteractiveWizard());
-			wizardnoninteractive.open();
+
+			Job job = new Job("Modelica Simulation with OMCSim Center") {
+				protected IStatus run(IProgressMonitor monitor) {
+					Boolean RegenerateCodeBeforeEachSimulation = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "RegenerateCodeBeforeEachSimulation", false, null);
+					if (RegenerateCodeBeforeEachSimulation) {
+						runchain(monitor);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.setUser(true);
+			job.schedule();
+		    
+		    
+		    NewSimulationProjectFromModellingEnvironmentWizard projectWizard = new NewSimulationProjectFromModellingEnvironmentWizard(packageMoFilePath, modelElementDotPath, job);
+			WizardDialog wizard = new WizardDialog(
+					this.shell, projectWizard
+					);
+			wizard.open();
+			
+			if (projectWizard.getCreateConfig().equals("interactive")) {
+				WizardDialog wizardinteractive = new WizardDialog(
+						this.shell,
+						new SessionConfiguration_InteractiveWizard());
+				wizardinteractive.open();
+			} else if (projectWizard.getCreateConfig().equals("noninteractive")) {
+				WizardDialog wizardnoninteractive = new WizardDialog(
+						this.shell,
+						new SessionConfiguration_NonInteractiveWizard());
+				wizardnoninteractive.open();
+			}
+		    
+			CompoundCommand cc = new CompoundCommand("Modelica Code Generation");
+			return (cc.unwrap());			
 		}
-	    
-		CompoundCommand cc = new CompoundCommand("Modelica Code Generation");
-		return (cc.unwrap());
 		
+		return null;
 	}
 
+	
+	private List<Object> getCurrentSelections() {
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+		if(selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+			return structuredSelection.toList();
+		}
+	
+		return null;
+	}
+	
+	protected EObject adaptSelectedElement( Object selection) {
+		EObject eObject = null;
+		if(selection != null) {
+			if(selection instanceof IAdaptable) {
+				selection = ((IAdaptable)selection).getAdapter(EObject.class);
+			}
+			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
+			if(businessObject instanceof EObject) {
+				eObject = (EObject)businessObject;
+			}
+		}
+		return eObject;
+	}
+	
 	/**
 	 * Runchain.
 	 * 
