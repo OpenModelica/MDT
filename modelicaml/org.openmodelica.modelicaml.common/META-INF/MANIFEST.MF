@@ -23,7 +23,8 @@ Export-Package: org.openmodelica.modelicaml.common.constants,
  org.openmodelica.modelicaml.common.instantiation,
  org.openmodelica.modelicaml.common.services,
  org.openmodelica.modelicaml.common.utls,
- org.openmodelica.modelicaml.common.validation.services
+ org.openmodelica.modelicaml.common.validation.services,
+ org.openmodelica.modelicaml.common.valuebindings.helpers
 Import-Package: org.eclipse.emf.common.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.util,

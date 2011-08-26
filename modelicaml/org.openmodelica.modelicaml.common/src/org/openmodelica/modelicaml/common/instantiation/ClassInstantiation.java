@@ -35,7 +35,6 @@
 package org.openmodelica.modelicaml.common.instantiation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,9 +44,11 @@ import java.util.Set;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.papyrus.resource.NotFoundException;
+import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
-import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.Generalization;
@@ -57,9 +58,9 @@ import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
-import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
 
 public class ClassInstantiation {
 
@@ -121,11 +122,13 @@ public class ClassInstantiation {
 			}
 			
 			
-			// Get value bindings data 
-			collectValueClientsAndProvidersFromUmlModel(this.selectedClass.getModel());
 			
 			// build tree starting from the selected class node.
 			buildNextTreeLevel(this.selectedClass, null, treeRoot , "");
+
+			// Get value bindings data 
+			collectValueClientsAndProvidersFromUmlModel();
+
 			
 //			for (Object object : modifications.keySet() ) {
 //				System.err.println( object.toString() + " = " + modifications.get(object).toString() );
@@ -392,24 +395,25 @@ public class ClassInstantiation {
 				setModificationStoreLocation(child);
 
 				// set parent "has inputs, outputs" indicators to all ancestors
-				if (child.isInput()) { parent.setHasInputs(treeRoot); }
-				if (child.isOutput()) { parent.setHasOutputs(treeRoot); }
+//				if (child.isInput()) { parent.setHasInputs(treeRoot); }
+//				if (child.isOutput()) { parent.setHasOutputs(treeRoot); }
 
 				// set parent "has value clients or providers" indicators
 //				if (child.isValueClient()) { parent.setHasValueClients(treeRoot); }
 //				if (child.isValueProvider()) { parent.setHasValueProviders(treeRoot); }
-				if (this.referencedClients.contains(property)) {
-					child.setIsValueClient(true);
-					parent.setHasValueClients(treeRoot);
-				}
+				
+//				if (this.referencedClients.contains(property)) {
+//					child.setIsValueClient(true);
+//					parent.setHasValueClients(treeRoot);
+//				}
 				if (this.referencedRequiredClients.contains(property)) {
 					child.setValueClient_required(true);
 				}
 
-				if (this.referencedProviders.contains(property)) {
-					child.setIsValueProvider(true);
-					parent.setHasValueProviders(treeRoot);
-				}
+//				if (this.referencedProviders.contains(property)) {
+//					child.setIsValueProvider(true);
+//					parent.setHasValueProviders(treeRoot);
+//				}
 
 				// create predefined properties for Modelica real, string, integer and boolean.
 				createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath);
@@ -437,23 +441,23 @@ public class ClassInstantiation {
 				setModificationStoreLocation(newParent);
 				
 				// set has requirements indicator to all ancestors
-				if (newParent.isRequirementInstance()) { newParent.setHasRequirements(treeRoot); }
+//				if (newParent.isRequirementInstance()) { newParent.setHasRequirements(treeRoot); }
 				
 				// set parent "has value clients or providers" indicators
 //				if (newParent.isValueClient()) { newParent.setHasValueClients(treeRoot); }
 //				if (newParent.isValueProvider()) { newParent.setHasValueProviders(treeRoot); }
-				if (this.referencedClients.contains(property)) {
-					newParent.setIsValueClient(true);
-					newParent.setHasValueClients(treeRoot);
-				}
+//				if (this.referencedClients.contains(property)) {
+//					newParent.setIsValueClient(true);
+//					newParent.setHasValueClients(treeRoot);
+//				}
 				if (this.referencedRequiredClients.contains(property)) {
 					newParent.setValueClient_required(true);
 				}
 
-				if (this.referencedProviders.contains(property)) {
-					newParent.setIsValueProvider(true);
-					newParent.setHasValueProviders(treeRoot);
-				}
+//				if (this.referencedProviders.contains(property)) {
+//					newParent.setIsValueProvider(true);
+//					newParent.setHasValueProviders(treeRoot);
+//				}
 				
 				// make sure that the tree object gets its redeclared type.
 				newParent.setComponentType(pType); 
@@ -651,47 +655,97 @@ public class ClassInstantiation {
 	
 	
 	
-	private void collectValueClientsAndProvidersFromUmlModel(EObject umlRootElement){
-		Iterator<EObject> i = umlRootElement.eAllContents();
-		while (i.hasNext()) {
-			EObject object = i.next();
-			if (object instanceof NamedElement 
-					&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
-				
-				NamedElement mediator = (NamedElement)object;
-				EList<Dependency> depList = mediator.getClientDependencies();
-				for (Dependency dependency : depList) {
-					
-					// reference to a clients
-					Stereotype s_providesValueFor = dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
-					if (s_providesValueFor != null ) { 
-						EList<Element> targets = dependency.getTargets();
-						for (Element element : targets) {
-							if (element instanceof NamedElement) {
-								// add only mediators and referenced elements if they are used in the instantiation tree
-								referencedClients.add(element);
-								Object o = dependency.getValue(s_providesValueFor, Constants.propertyName_isRequired);
-								if (o instanceof Boolean) {
-									if ((Boolean)o == true) {
-//										System.err.println("required client: " + ((NamedElement)element).getQualifiedName());
-										referencedRequiredClients.add(element);
-									}
-								}
-							}
-						}
-					}
-					// reference to providers or other mediators
-					else if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null ) {
-						EList<Element> targets = dependency.getTargets();
-						for (Element element : targets) {
-							if (element instanceof NamedElement) {
-								referencedProviders.add(element);
-							}
-						}
-					}
-				}
+	// Value Clients or Providers handling ************************************************************************
+	
+	private void setValueClientOrProviderIndicator(TreeParent item){
+		TreeObject[] children = item.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject treeObject = children[i];
+			if (referencedClients.contains(treeObject.getUmlElement())) {
+				treeObject.setIsValueClient(true);
+			}
+			if (referencedRequiredClients.contains(treeObject.getUmlElement())) {
+				treeObject.setValueClient_required(true);
+			}
+
+			if (referencedProviders.contains(treeObject.getUmlElement())) {
+				treeObject.setIsValueProvider(true);
+			}
+			
+			if (treeObject instanceof TreeParent) {
+				setValueClientOrProviderIndicator((TreeParent) treeObject);
 			}
 		}
+
+	}
+	
+	private void collectValueClientsAndProvidersFromUmlModel(){
+		
+		UmlModel papyrusModel = UmlUtils.getUmlModel();
+
+		if (papyrusModel != null ) {
+			try {
+				Element valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
+				ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
+				dc.collectAll(valueMediatorsPackage, treeRoot);
+				referencedClients.addAll(dc.getReferencedClients());
+				referencedProviders.addAll(dc.getReferencedProviders());
+				referencedRequiredClients.addAll(dc.getReferencedRequiredClients());
+				
+				setValueClientOrProviderIndicator(treeRoot);
+				
+			} catch (NotFoundException e) {
+				e.printStackTrace();
+//				MessageDialog.openError(new Shell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
+//				System.err.println("Component Tree View: Cannot access the root model in Papyrus in order to collect value bindings data.");
+			}
+		}
+		else {
+//			System.err.println("Component Tree View: Cannot access the root model in Papyrus in order to collect value bindings data.");
+		}
+		
+		
+		
+//		Iterator<EObject> i = umlRootElement.eAllContents();
+//		while (i.hasNext()) {
+//			EObject object = i.next();
+//			if (object instanceof NamedElement 
+//					&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+//				
+//				NamedElement mediator = (NamedElement)object;
+//				EList<Dependency> depList = mediator.getClientDependencies();
+//				for (Dependency dependency : depList) {
+//					
+//					// reference to a clients
+//					Stereotype s_providesValueFor = dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
+//					if (s_providesValueFor != null ) { 
+//						EList<Element> targets = dependency.getTargets();
+//						for (Element element : targets) {
+//							if (element instanceof NamedElement) {
+//								// add only mediators and referenced elements if they are used in the instantiation tree
+//								referencedClients.add(element);
+//								Object o = dependency.getValue(s_providesValueFor, Constants.propertyName_isRequired);
+//								if (o instanceof Boolean) {
+//									if ((Boolean)o == true) {
+////										System.err.println("required client: " + ((NamedElement)element).getQualifiedName());
+//										referencedRequiredClients.add(element);
+//									}
+//								}
+//							}
+//						}
+//					}
+//					// reference to providers or other mediators
+//					else if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null ) {
+//						EList<Element> targets = dependency.getTargets();
+//						for (Element element : targets) {
+//							if (element instanceof NamedElement) {
+//								referencedProviders.add(element);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 
 }

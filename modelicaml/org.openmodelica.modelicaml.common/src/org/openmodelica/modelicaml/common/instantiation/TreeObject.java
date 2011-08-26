@@ -116,11 +116,11 @@ public class TreeObject implements IAdaptable {
 	/** The component type. */
 	private Type componentType = null;
 
-	public Boolean hasInputs = null;
-	public Boolean hasOutputs = null;
-	public Boolean hasRequirements = null;
-	public Boolean hasValueClients = null;
-	public Boolean hasValueProviders = null;
+//	public Boolean hasInputs = null;
+//	public Boolean hasOutputs = null;
+//	public Boolean hasRequirements = null;
+//	public Boolean hasValueClients = null;
+//	public Boolean hasValueProviders = null;
 	
 	private boolean isValueClient = false;
 	private boolean isValueClient_required = false;
@@ -468,66 +468,66 @@ public class TreeObject implements IAdaptable {
 	
 	
 	
-	public Boolean getHasInputs() {
-		return hasInputs;
-	}
-	public void setHasInputs(TreeParent root) {
-		this.hasInputs = true;
-//		System.err.println(this.getName() + " has inputs");
-		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasInputs == null) {
-			this.getParent().setHasInputs(root);
-		}
-	}
-	public Boolean getHasOutputs() {
-		return hasOutputs;
-	}
-	public void setHasOutputs(TreeParent root) {
-		this.hasOutputs = true;
-//		System.err.println(this.getName() + " has inputs");
-		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasOutputs == null) {
-			this.getParent().setHasInputs(root);
-		}
-	}
-	
-	public Boolean hasRequirements() {
-		if (hasRequirements == null) {
-			return false;
-		}
-		return hasRequirements;
-	}
-	public void setHasRequirements(TreeParent root) {
-		this.hasRequirements = true; // this attribute is only set to true, never to false. 
-//		System.err.println(this.getName() + " hasRequirements");
-		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasRequirements == null) { // it stops when this attribute is already set.
-			this.getParent().setHasRequirements(root);
-		}
-	}
-	
-	public void setHasValueClients(TreeParent root) {
-		this.hasValueClients = true; // this attribute is only set to true, never to false. 
-//		System.err.println(this.getName() + " hasValueClients -> " + this.hasValueClients);
-		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasValueClients == null) { // it stops when this attribute is already set.
-			this.getParent().setHasValueClients(root);
-		}
-	}
-
-	public Boolean hasValueClients() {
-		if (hasValueClients == null) { return false; }			
-		return hasValueClients;
-	}
-	
-	public void setHasValueProviders(TreeParent root) {
-		this.hasValueProviders = true; // this attribute is only set to true, never to false. 
-//		System.err.println(this.getName() + " hasValueProviders");
-		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasValueProviders == null) { // it stops when this attribute is already set.
-			this.getParent().setHasValueProviders(root);
-		}
-	}
-
-	public Boolean hasValueProviders() {
-		if (hasValueProviders == null) { return false; }			
-		return hasValueProviders;
-	}
+//	public Boolean getHasInputs() {
+//		return hasInputs;
+//	}
+//	public void setHasInputs(TreeParent root) {
+//		this.hasInputs = true;
+////		System.err.println(this.getName() + " has inputs");
+//		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasInputs == null) {
+//			this.getParent().setHasInputs(root);
+//		}
+//	}
+//	public Boolean getHasOutputs() {
+//		return hasOutputs;
+//	}
+//	public void setHasOutputs(TreeParent root) {
+//		this.hasOutputs = true;
+////		System.err.println(this.getName() + " has inputs");
+//		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasOutputs == null) {
+//			this.getParent().setHasInputs(root);
+//		}
+//	}
+//	
+//	public Boolean hasRequirements() {
+//		if (hasRequirements == null) {
+//			return false;
+//		}
+//		return hasRequirements;
+//	}
+//	public void setHasRequirements(TreeParent root) {
+//		this.hasRequirements = true; // this attribute is only set to true, never to false. 
+////		System.err.println(this.getName() + " hasRequirements");
+//		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasRequirements == null) { // it stops when this attribute is already set.
+//			this.getParent().setHasRequirements(root);
+//		}
+//	}
+//	
+//	public void setHasValueClients(TreeParent root) {
+//		this.hasValueClients = true; // this attribute is only set to true, never to false. 
+////		System.err.println(this.getName() + " hasValueClients -> " + this.hasValueClients);
+//		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasValueClients == null) { // it stops when this attribute is already set.
+//			this.getParent().setHasValueClients(root);
+//		}
+//	}
+//
+//	public Boolean hasValueClients() {
+//		if (hasValueClients == null) { return false; }			
+//		return hasValueClients;
+//	}
+//	
+//	public void setHasValueProviders(TreeParent root) {
+//		this.hasValueProviders = true; // this attribute is only set to true, never to false. 
+////		System.err.println(this.getName() + " hasValueProviders");
+//		if (this.getParent() != null && !this.getParent().equals(root) && this.getParent().hasValueProviders == null) { // it stops when this attribute is already set.
+//			this.getParent().setHasValueProviders(root);
+//		}
+//	}
+//
+//	public Boolean hasValueProviders() {
+//		if (hasValueProviders == null) { return false; }			
+//		return hasValueProviders;
+//	}
 
 	
 	
