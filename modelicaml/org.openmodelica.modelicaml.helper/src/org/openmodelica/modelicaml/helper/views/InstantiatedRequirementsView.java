@@ -271,7 +271,8 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 				reqClassInstantiations.put(children[i].getComponentType(), list);
 				
 			}
-			else if (children[i].hasRequirements()) {
+//			else if (children[i].hasRequirements()) {
+			else if (children[i] instanceof TreeParent) {
 				collectRequirements((TreeParent)children[i]); // recursive call				
 			} 
 		}

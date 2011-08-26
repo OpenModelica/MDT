@@ -53,9 +53,9 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
-import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataCollector;
 
 public class RequirementsInstantiator {
 	
