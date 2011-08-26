@@ -369,15 +369,20 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	
 	private String getValueClientOrProviderIndicatorString(TreeObject treeObject) {
 		String string = "";
-		if (treeObject.isValueClient()) {
+		if (treeObject.isValueClient_required()) {
+			string = string+ requiredClientIndicator+", ";
+		}
+		else if (treeObject.isValueClient()) {
 			string = string+ clientIndicator+", ";
 		}
+		
 		if (treeObject.isValueProvider()) {
 			string = string + providerIndicator+", ";
 		}
 		return string;
 	}
 	
+	private final static String requiredClientIndicator = "(req. client)";
 	private final static String clientIndicator = "(client)";
 	private final static String providerIndicator = "(provider)";
 	
@@ -477,7 +482,10 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		}
 		
 		// if it is a required client and there is no binding equation (modification) for it -> error
-		if (treeParent.isValueClient_required() && treeParent.getFinalModificationRightHand() == null) {
+		/*
+		 * TODO: If the actual client is a sub-component of the item then an analysis of the subcomponents is required...  
+		 */
+		if (treeParent.isLeaf() && treeParent.isValueClient_required() && treeParent.getFinalModificationRightHand() == null) {
 			list.add(treeParent);
 		}
 
@@ -511,24 +519,26 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		if (umlElement instanceof NamedElement) {
 			// markers
 			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-			String projectName = umlModel.getResource().getURI().segment(1);
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-			IProject iProject = root.getProject(projectName);
-			
-			IMarker[] markers = null;
-			try {
-				if (iProject != null) {
-					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-					for (IMarker marker : markers) {
-						Object sourceId = marker.getAttribute(IMarker.SOURCE_ID);
-							if (item.getDotPath().equals(sourceId)) {
-								return true;				
+			if (umlModel != null) {
+				String projectName = umlModel.getResource().getURI().segment(1);
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				IProject iProject = root.getProject(projectName);
+				
+				IMarker[] markers = null;
+				try {
+					if (iProject != null) {
+						markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+						for (IMarker marker : markers) {
+							Object sourceId = marker.getAttribute(IMarker.SOURCE_ID);
+								if (item.getDotPath().equals(sourceId)) {
+									return true;				
+							}
 						}
 					}
+				} catch (CoreException e) {
+					//e.printStackTrace();
 				}
-			} catch (CoreException e) {
-				//e.printStackTrace();
 			}
 		}
 		return false;

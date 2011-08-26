@@ -1,6 +1,5 @@
 package org.openmodelica.modelicaml.view.componentstree.validation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,28 +11,19 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.XMLResource;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Class;
-import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
-import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist2;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
@@ -59,9 +49,14 @@ public class ComponentModificationValidator {
 	private ExtendedUmlModel umlModel;
 	private IProject iProject;
 	
-	private String textToEdit;
+//	private String textToEdit;
+	
+//	private Element classToBeValidated = null;
 
 	public ComponentModificationValidator(TreeParent parent){
+		
+//		this.classToBeValidated = parent.getSelectedClass();
+		
 		// collect client, mediator and provider tree nodes
 		collectItems(parent);
 		
@@ -73,6 +68,8 @@ public class ComponentModificationValidator {
 		iProject = root.getProject(projectName);
 	}
 	
+	private String stringLog = "";
+	
 	public void validate(){
 
 		// delete all old markers
@@ -82,10 +79,6 @@ public class ComponentModificationValidator {
 			validateLeaves();
 		}
 		// TODO: validate the array size and declarations, conditinal expressions, etc?! 
-		
-		// TODO check with OMC
-		
-
 	}
 	
 	private void validateLeaves(){
@@ -210,6 +203,14 @@ public class ComponentModificationValidator {
 		} catch (CoreException e) {
 			//e.printStackTrace();
 		}
+	}
+
+	public void setStringLog(String stringLog) {
+		this.stringLog = stringLog;
+	}
+
+	public String getStringLog() {
+		return stringLog;
 	}
 	
 	

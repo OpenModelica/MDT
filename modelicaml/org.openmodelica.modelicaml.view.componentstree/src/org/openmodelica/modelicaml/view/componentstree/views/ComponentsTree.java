@@ -76,6 +76,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -110,10 +111,12 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.gen.modelica.cg.helpers.OMCClassValidator;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
 import org.openmodelica.modelicaml.helper.impl.TestVerdictElementsGenerator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
+import org.openmodelica.modelicaml.simulation.handlers.CGFromEntireModelAndSimThisClassWithOMCSimCenterAction;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
@@ -238,7 +241,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	private Action actionInstantiateTestScenarios;
 
+	private Action actionValidateComponentModifications;
+
+	private Action actionShowRequiredValueClients;
+
 	private Action actionValidate;
+
+	private Action actionSimulate;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
@@ -333,6 +342,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		manager.add(actionShowInputs);	
 		manager.add(actionShowOutputs);
 		manager.add(actionShowValueClients);
+		manager.add(actionShowRequiredValueClients);
 		manager.add(actionShowValueProviders);
 		manager.add(actionShowRequirements);
 		
@@ -570,7 +580,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
+		manager.add(new Separator());
 		manager.add(actionValidate);
+		manager.add(actionSimulate);
+		manager.add(new Separator());
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
 		
@@ -718,44 +731,86 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionReload = new Action("actionReload") {
 			public void run() {
 				showSelection(par, sel);
+				
 				// validate the component modifications
-				actionValidate.run();
+				actionValidateComponentModifications.run();
 			}
 		};
 		actionReload.setText("(Re)load and validate");
 		actionReload.setToolTipText("(Re)load and validate");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
+		actionReload.setEnabled(false);
 		
-		
-		actionValidate = new Action("actionValidate") { //obviously a check box style
+		actionValidateComponentModifications = new Action("actionValidateComponentModifications") { //obviously a check box style
 			public void run() {
 				
 				if (root != null) {
-					final ComponentModificationValidator validator = new ComponentModificationValidator(root);
 					
 					// UIJob is needed because composites are used for xtext editors. 
 					// TODO: refactor the editors glue code in order to don't use the any UI objects for the validation of action code. 
 					UIJob UIjob = new UIJob("Component Modifications Validation") {
 						public IStatus runInUIThread(IProgressMonitor monitor) {
+							
+							ComponentModificationValidator validator = new ComponentModificationValidator(root);
 							validator.validate();
+							
 							viewer.refresh();
+							
 							return Status.OK_STATUS;
 						}
 					};
-					
 					UIjob.setUser(true);
 					UIjob.schedule();
 				}
 				else {
-					MessageDialog.openError(new Shell(), "Component Validation", "Instantiate a class to be validated.");
+					MessageDialog.openError(new Shell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
 				}
 			}
 		};
-		actionValidate.setText("Validate Component Modifications");
-		actionValidate.setToolTipText("Validate Component Modifications");
+		actionValidateComponentModifications.setText("Validate Component Modifications");
+		actionValidateComponentModifications.setToolTipText("Validate Component Modifications");
+		actionValidateComponentModifications.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/validate.gif"));
+		actionValidateComponentModifications.setEnabled(false);
+		
+		actionValidate = new Action("actionValidate") { //obviously a check box style
+			public void run() {
+				if (root != null) {
+					actionValidateComponentModifications.run();
+					// Check with OMC
+					if (root.getSelectedClass() != null) {
+						OMCClassValidator omcValidator = new OMCClassValidator(root.getSelectedClass());
+						omcValidator.validate();
+					}
+				}
+				else {
+					MessageDialog.openError(new Shell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
+				}
+			}
+		};
+		actionValidate.setText("Validate");
+		actionValidate.setToolTipText("Validate");
 		actionValidate.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/validate.gif"));
-
-
+		actionValidate.setEnabled(false);
+		
+		
+		actionSimulate = new Action("actionSimulate") {
+			public void run() {
+				viewer.setSelection(new StructuredSelection(root));
+				CGFromEntireModelAndSimThisClassWithOMCSimCenterAction c = new CGFromEntireModelAndSimThisClassWithOMCSimCenterAction();
+				try {
+					c.execute(null);
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		actionSimulate.setText("Simulate with OMC");
+		actionSimulate.setToolTipText("Simulate with OMC");
+		actionSimulate.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/simulate.png"));
+		actionSimulate.setEnabled(false);
+		
+		
 		actionUpdateBindings = new Action("actionUpdateBindings") {
 			public void run() {
 				ISelection selection = viewer.getSelection();
@@ -940,6 +995,26 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowValueClients.setToolTipText("Show only Value Clients");
 //		actionShowValueClients.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
+		
+		actionShowRequiredValueClients = new Action("actionShowRequiredValueClients", 8) {
+			public void run() {
+				if (actionShowRequiredValueClients.isChecked()) {
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection)selection).getFirstElement();
+					
+					ViewerFilter[] filters = {requiredValueClientFilter};
+					viewer.setFilters(filters);
+					
+					// select in view
+					TreeUtls.selectInView(obj, root, viewer);					
+					viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
+				}
+			}
+		};
+		actionShowRequiredValueClients.setText("Show only required Value Clients");
+		actionShowRequiredValueClients.setToolTipText("Show only required Value Clients");
+		
+		
 		actionShowValueProviders = new Action("actionShowValueProviders", 8) {
 			public void run() {
 				if (actionShowValueProviders.isChecked()) {
@@ -1586,7 +1661,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionCollapseAll.setText("Collapse all ");
 		actionCollapseAll.setToolTipText("Collapse all");
 		actionCollapseAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
-
+		actionCollapseAll.setEnabled(false);
 		
 		actionShowAboutInfo = new Action("actionShowAboutInfo") { //obviously a check box style
 			public void run() {
@@ -1650,24 +1725,58 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			if (element instanceof TreeParent) {
 				TreeParent item = ((TreeParent)element); 
 
-				if (item.isRoot()) { // always show the root
-					return true;
-				}
-				if (item.getHasInputs() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
-					return false;
-				}
-				if (item.getHasInputs() != null && !item.getHasInputs() ) { // not a leaf but indicator is set
-					return false;
-				}
-				if ( item.isLeaf() && !item.isInput()) { // is leaf 
-					return false;
-				}
+//				if (item.isRoot()) { // always show the root
+//					return true;
+//				}
+//				if (item.getHasInputs() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
+//					return false;
+//				}
+//				if (item.getHasInputs() != null && !item.getHasInputs() ) { // not a leaf but indicator is set
+//					return false;
+//				}
+//				if ( item.isLeaf() && !item.isInput()) { // is leaf 
+//					return false;
+//				}
+				return hasInputs(item);
 			}
 			return true;
 		}
 	}
 	InputFilter inputFilter = new InputFilter();
 	
+	
+	private boolean hasInputs(TreeObject item){
+		if (item.isInput()) {
+			return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list= findNextInput((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashSet<TreeObject> findNextInput(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+
+		TreeObject[] children = item.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject child = children[i];
+			if (child.isInput()) {
+				list.add(child);
+				return list;
+			}
+			else if (child instanceof TreeParent) {
+				list.addAll(findNextInput( (TreeParent)child ));	
+			}
+		}
+		 return list;
+	}
+	
+	// Outputs ******************************************************************
 
 	class OutputFilter extends ViewerFilter {
 		@Override
@@ -1676,46 +1785,160 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			if (element instanceof TreeParent) {
 				TreeParent item = ((TreeParent)element); 
 
-				if (item.isRoot()) { // always show the root
-					return true;
-				}
-				if (item.getHasOutputs() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
-					return false;
-				}
-				if (item.getHasOutputs() != null && !item.getHasOutputs() ) { // not a leaf but indicator is set
-					return false;
-				}
-				if ( item.isLeaf() && !item.isOutput()) { // is leaf 
-					return false;
-				}
+//				if (item.isRoot()) { // always show the root
+//					return true;
+//				}
+//				if (item.getHasOutputs() == null && !item.isLeaf()){ // not a leaf and indicator is NOT set
+//					return false;
+//				}
+//				if (item.getHasOutputs() != null && !item.getHasOutputs() ) { // not a leaf but indicator is set
+//					return false;
+//				}
+//				if ( item.isLeaf() && !item.isOutput()) { // is leaf 
+//					return false;
+//				}
+				return hasOutputs(item);
 			}
 			return true;
 		}
 	}
 	OutputFilter outputFilter = new OutputFilter();
 	
+	private boolean hasOutputs(TreeObject item){
+		if (item.isOutput()) {
+			return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list= findNextOutput((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
+	private HashSet<TreeObject> findNextOutput(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+
+		TreeObject[] children = item.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject child = children[i];
+			if (child.isOutput()) {
+				list.add(child);
+				return list;
+			}
+			else if (child instanceof TreeParent) {
+				list.addAll(findNextOutput( (TreeParent)child ));	
+			}
+		}
+		 return list;
+	}
+	
+	
+	// Clients *****************************************************************
 	class ValueClientFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof TreeParent) {
 				TreeParent item = ((TreeParent)element); 
 
-				if (item.isRoot()) { // always show the root
-					return true;
-				}
-//				System.err.println("item.hasValueClients(): " + item + " -> " + item.hasValueClients());
-				if (item.hasValueClients()) {
-					return true;
-				}
-				if (item.isValueClient()) { 
-					return true;
-				}
+//				if (item.isRoot()) { // always show the root
+//					return true;
+//				}
+////				System.err.println("item.hasValueClients(): " + item + " -> " + item.hasValueClients());
+//				if (item.hasValueClients()) {
+//					return true;
+//				}
+//				if (item.isValueClient()) { 
+//					return true;
+//				}
+				
+				return hasClients(item);
 			}
 			return false;
 		}
 	}
 	ValueClientFilter valueClientFilter = new ValueClientFilter();
+	
+	private boolean hasClients(TreeObject item){
+		if (item.isValueClient()) {
+			return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list= findNextClient((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashSet<TreeObject> findNextClient(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+
+		TreeObject[] children = item.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject child = children[i];
+			if (child.isValueClient()) {
+				list.add(child);
+				return list;
+			}
+			else if (child instanceof TreeParent) {
+				list.addAll(findNextClient( (TreeParent)child ));	
+			}
+		}
+		 return list;
+	}
+	
+	
+	//Required Clients *****************************************************
+	
+	class RequiredValueClientFilter extends ViewerFilter {
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+				return hasRequiredClients(item);
+			}
+			return false;
+		}
+	}
+	RequiredValueClientFilter requiredValueClientFilter = new RequiredValueClientFilter();
+	
+	private boolean hasRequiredClients(TreeObject item){
+		if (item.isValueClient_required()) {
+			return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list= findNextRequiredClient((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashSet<TreeObject> findNextRequiredClient(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+
+		TreeObject[] children = item.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject child = children[i];
+			if (child.isValueClient_required()) {
+				list.add(child);
+				return list;
+			}
+			else if (child instanceof TreeParent) {
+				list.addAll(findNextRequiredClient( (TreeParent)child ));	
+			}
+		}
+		 return list;
+	}
+	
+	// Providers *****************************************************
 	
 	class ValueProviderFilter extends ViewerFilter {
 		@Override
@@ -1723,15 +1946,17 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			if (element instanceof TreeParent) {
 				TreeParent item = ((TreeParent)element); 
 
-				if (item.isRoot()) { // always show the root
-					return true;
-				}
-				if (item.hasValueProviders()) {
-					return true;
-				}
-				if (item.isValueProvider()) { 
-					return true;
-				}
+				return hasProviders(item);
+
+//				if (item.isRoot()) { // always show the root
+//					return true;
+//				}
+//				if (item.hasValueProviders()) {
+//					return true;
+//				}
+//				if (item.isValueProvider()) { 
+//					return true;
+//				}
 			}
 			return false;
 //			return true;
@@ -1739,6 +1964,39 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	}
 	ValueProviderFilter valueProviderFilter = new ValueProviderFilter();
 	
+	private boolean hasProviders(TreeObject item){
+		if (item.isValueProvider()) {
+			return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list= findNextProvider((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashSet<TreeObject> findNextProvider(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+
+		TreeObject[] children = item.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject child = children[i];
+			if (child.isValueProvider()) {
+				list.add(child);
+				return list;
+			}
+			else if (child instanceof TreeParent) {
+				list.addAll(findNextProvider( (TreeParent)child ));	
+			}
+		}
+		 return list;
+	}
+	
+	
+	// Requirements ***********************************************************************
 	
 	class RequirementInstanceFilter extends ViewerFilter {
 		@Override
@@ -1746,21 +2004,55 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			if (element instanceof TreeParent) {
 				TreeParent item = ((TreeParent)element); 
 
-				if (item.isRoot()) { // always show the root
-					return true;
-				}
-				if (item.hasRequirements()) { // Intermediate node with an indicator
-					return true;
-				}
-				if (item.isRequirementInstance()) { 
-					return true;
-				}
+//				if (item.isRoot()) { // always show the root
+//					return true;
+//				}
+//				if (item.hasRequirements()) { // Intermediate node with an indicator
+//					return true;
+//				}
+//				if (item.isRequirementInstance()) { 
+//					return true;
+//				}
+				
+				return hasRequirements(item);
 			}
 			return false;
 		}
 	}
 	RequirementInstanceFilter requirementInstanceFilter = new RequirementInstanceFilter();
 
+	private boolean hasRequirements(TreeObject item){
+		if (item.isRequirementInstance()) {
+			return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list= findNextRequirement((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashSet<TreeObject> findNextRequirement(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+
+		TreeObject[] children = item.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject child = children[i];
+			if (child.isRequirementInstance()) {
+				list.add(child);
+				return list;
+			}
+			else if (child instanceof TreeParent) {
+				list.addAll(findNextRequirement( (TreeParent)child ));	
+			}
+		}
+		 return list;
+	}
+	
+	// State machines *****************************************************************
 	class HideStateMachnineElementFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -1999,8 +2291,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		private void initialize() {
 			// add the selection listener
 			getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
-
+			
 			if (sel != null) {
+				// disable action by default until the selection is a class.
+				
 				if (sel instanceof IStructuredSelection) {
 //					Object first = ((IStructuredSelection) sel).getFirstElement();
 					EObject selectedElement = null;
@@ -2058,7 +2352,23 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					//else if (selectedElement instanceof Class ) {
 					if (selectedElement instanceof Class ) {
 						selectedClass = (Class) selectedElement;
+						
+						if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
+							actionSimulate.setEnabled(true);
+							actionValidate.setEnabled(true);
+							actionReload.setEnabled(true);
+							actionCollapseAll.setEnabled(true);
+							
+//							createTree(selectedClass); // build the entire tree
+						}
+						else {
+							actionSimulate.setEnabled(false);
+							actionValidate.setEnabled(false);
+							actionReload.setEnabled(false);
+							actionCollapseAll.setEnabled(false);
+						}
 					}
+
 					createTree(selectedClass); // build the entire tree
 				}
 			}
