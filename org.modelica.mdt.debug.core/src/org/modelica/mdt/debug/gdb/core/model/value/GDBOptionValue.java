@@ -58,7 +58,7 @@ public class GDBOptionValue extends GDBValue {
 	public GDBOptionValue(GDBVariable gdbVariable) throws MIException {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
-		setOptionValue(ValueHelper.getOptionValue(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setOptionValue(ValueHelper.isOptionNone(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
 		setValue(getOptionValue());
 	}
 	
@@ -136,7 +136,7 @@ public class GDBOptionValue extends GDBValue {
 			return false;
 		}
 		String oldValue = getValue();
-		setOptionValue(ValueHelper.getOptionValue(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setOptionValue(ValueHelper.isOptionNone(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
 		String newValue = getOptionValue();
 		if (oldValue.equals(newValue)) {
 			return false;
@@ -150,7 +150,11 @@ public class GDBOptionValue extends GDBValue {
 	 * @param optionValue the fOptionValue to set
 	 */
 	public void setOptionValue(String optionValue) {
-		this.fOptionValue = optionValue;
+		if (optionValue.equals("0")) {
+			this.fOptionValue = GDBHelper.SOME;
+		} else {
+			this.fOptionValue = GDBHelper.NONE;
+		}
 	}
 
 	/**

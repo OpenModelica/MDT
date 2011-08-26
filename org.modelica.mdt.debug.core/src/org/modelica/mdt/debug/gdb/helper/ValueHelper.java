@@ -205,20 +205,20 @@ public class ValueHelper {
 	}
 
 	/**
-	 * Creates and sends the "-data-evaluate-expression (char*)getOptionValue(void*)" command.
+	 * Creates and sends the "-data-evaluate-expression (int)isOptionNone(void*)" command.
 	 * @param variableName
 	 * @param gdbDebugTarget
 	 * @return
 	 * @throws MIException 
 	 */
-	public static String getOptionValue(String variableName,
+	public static String isOptionNone(String variableName,
 			GDBDebugTarget gdbDebugTarget) throws MIException {
 		// TODO Auto-generated method stub
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getOptionValueCmd = factory.createMIGetOptionValue(variableName);
+		MIDataEvaluateExpression getOptionValueCmd = factory.createMIIsOptionNone(variableName);
 		miSession.postCommand(getOptionValueCmd);
-		return parseResult(getOptionValueCmd.getMIDataEvaluateExpressionInfo().getExpression());
+		return getOptionValueCmd.getMIDataEvaluateExpressionInfo().getExpression();
 	}	
 	
 }

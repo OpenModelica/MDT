@@ -305,13 +305,13 @@ public class CommandFactory {
 	}
 	
 	/**
-	 * Creates the -data-evaluate-expression EXPR command to call the executable function getOptionValue
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function isOptionValue
 	 * @param variableName
 	 * @return
 	 */
-	public MIDataEvaluateExpression createMIGetOptionValue(String expression) {
+	public MIDataEvaluateExpression createMIIsOptionNone(String expression) {
 		// TODO Auto-generated method stub
-		return new MIDataEvaluateExpression("(char*)getOptionValue(" + expression + ")");
+		return new MIDataEvaluateExpression("(int)isOptionNone(" + expression + ")");
 	}
 
 	/**
