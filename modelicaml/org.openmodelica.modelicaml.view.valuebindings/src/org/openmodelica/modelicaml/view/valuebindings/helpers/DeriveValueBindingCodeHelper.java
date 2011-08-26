@@ -56,6 +56,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueMediatorDialog;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueProviderDialog;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;

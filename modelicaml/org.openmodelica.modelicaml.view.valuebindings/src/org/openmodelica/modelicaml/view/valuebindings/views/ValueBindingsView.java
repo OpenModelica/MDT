@@ -34,7 +34,6 @@
  */
 package org.openmodelica.modelicaml.view.valuebindings.views;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,14 +43,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.util.EMFUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -60,7 +53,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -90,13 +82,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -160,6 +150,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private Action actionShowUserNoteForReadOnlyNodes;
 
 	private Action actionValidate;
+
+	private Action actionShowRequiredClients;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
@@ -314,6 +306,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		manager.add(actionShowMediatorPerspective);
 		manager.add(actionShowClientPerspective);
 		manager.add(actionShowProviderPerspective);
+		manager.add(new Separator());
+		manager.add(actionShowRequiredClients);
 //		manager.add(new Separator());
 	}
 
@@ -456,11 +450,16 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					viewer.setFilters(filters);
 					
 					// select in view
-					TreeUtls.selectInView(obj, invisibleRoot, viewer);					
+					TreeUtls.selectInView(obj, invisibleRoot, viewer);
+					
+					actionShowRequiredClients.setEnabled(true);
+				}
+				else {
+					actionShowRequiredClients.setEnabled(false);
 				}
 			}
 		};
-		actionShowMediatorPerspective.setText("Show Mediator Perspective");
+		actionShowMediatorPerspective.setText("Mediator Perspective");
 		actionShowMediatorPerspective.setToolTipText("Show Mediator Perspective");
 		actionShowMediatorPerspective.setChecked(true);
 //		actionShowMediatorPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
@@ -472,6 +471,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection)selection).getFirstElement();
 					
+					viewer.removeFilter(requiredClientFilter);
+					actionShowRequiredClients.setChecked(false);
+					
 					ViewerFilter[] filters = {clientPerspectiveFilter};
 					viewer.setFilters(filters);
 
@@ -481,7 +483,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowClientPerspective.setText("Show Client Perspective (read-only)");
+		actionShowClientPerspective.setText("Client Perspective (read-only)");
 		actionShowClientPerspective.setToolTipText("Show Client Perspective (read-only)");
 //		actionShowClientPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
@@ -492,6 +494,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection)selection).getFirstElement();
 					
+					viewer.removeFilter(requiredClientFilter);
+					actionShowRequiredClients.setChecked(false);
+					
 					ViewerFilter[] filters = {providerPerspectiveFilter};
 					viewer.setFilters(filters);
 
@@ -501,10 +506,42 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowProviderPerspective.setText("Show Provider Perspective (read-only)");
+		actionShowProviderPerspective.setText("Provider Perspective (read-only)");
 		actionShowProviderPerspective.setToolTipText("Show Provider Perspective (read-only)");
 //		actionShowProviderPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
+		
+		
+		actionShowRequiredClients = new Action("actionShowRequiredClientPerspective", 2) { 
+			public void run() {
+				if (actionShowRequiredClients.isChecked()) {
+					Object[] expandedElements = viewer.getExpandedElements();
+					TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+					
+//					ViewerFilter[] filters = {requiredClientFilter};
+//					viewer.setFilters(filters);
+					viewer.addFilter(requiredClientFilter);
+					
+					viewer.setExpandedElements(expandedElements);
+					viewer.setExpandedTreePaths(expandedTreePaths);
+
+				}
+				else {
+					Object[] expandedElements = viewer.getExpandedElements();
+					TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+					
+					viewer.removeFilter(requiredClientFilter);
+//					ViewerFilter[] filters = {mediatorPerspectiveFilter};
+//					viewer.setFilters(filters);
+					
+					viewer.setExpandedElements(expandedElements);
+					viewer.setExpandedTreePaths(expandedTreePaths);
+				}
+			}
+		};
+		actionShowRequiredClients.setText("Show only required clients");
+		actionShowRequiredClients.setToolTipText("Show only required clients");
+//		actionShowRequiredClientPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
 			public void run() {
@@ -1057,6 +1094,50 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 	ClientPerspectiveFilter clientPerspectiveFilter = new ClientPerspectiveFilter();
 	
+	// Filter for "Show Value Client Perspective" 
+	class RequiredClientFilter extends ViewerFilter {
+			@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof TreeParent) {
+				TreeParent item = ((TreeParent)element); 
+				return hasRequiredClients(item);
+			}
+			return false;
+		}
+	}
+	RequiredClientFilter requiredClientFilter = new RequiredClientFilter();
+	
+	private boolean hasRequiredClients(TreeObject item){
+		if (item.isValueClient_required()) {
+			return true;
+		}
+		else if (item instanceof TreeParent) {
+			HashSet<TreeObject> list= findNextRequiredClient((TreeParent) item);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private HashSet<TreeObject> findNextRequiredClient(TreeParent item){
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		
+			TreeObject[] children = item.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				TreeObject child = children[i];
+				if (child.isValueClient_required()) {
+					list.add(child);
+					return list;
+				}
+				else if (child instanceof TreeParent) {
+					list.addAll(findNextRequiredClient( (TreeParent)child ));	
+				}
+			}
+		 return list;
+	}
+	
 	// Filter for "Show Value Provider Perspective" 
 	class ProviderPerspectiveFilter extends ViewerFilter {
 			@Override
@@ -1093,6 +1174,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				return false;
 		}
 	}
+	
 	ProviderPerspectiveFilter providerPerspectiveFilter = new ProviderPerspectiveFilter();
 	
 	

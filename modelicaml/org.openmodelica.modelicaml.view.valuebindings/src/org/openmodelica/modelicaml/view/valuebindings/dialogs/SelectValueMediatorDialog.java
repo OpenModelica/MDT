@@ -64,8 +64,8 @@ import org.eclipse.uml2.uml.TypedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
-import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataCollector;
 
 public class SelectValueMediatorDialog extends Dialog {
 

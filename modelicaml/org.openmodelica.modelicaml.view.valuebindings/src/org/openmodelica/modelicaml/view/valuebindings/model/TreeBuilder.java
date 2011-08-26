@@ -53,8 +53,8 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.view.valuebindings.helpers.MediatorsCollector;
-import org.openmodelica.modelicaml.view.valuebindings.helpers.ValueBindingsDataCollector;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.MediatorsCollector;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
 
 
 public class TreeBuilder {

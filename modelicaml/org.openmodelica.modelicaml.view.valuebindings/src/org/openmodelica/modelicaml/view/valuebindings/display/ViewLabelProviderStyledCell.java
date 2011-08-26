@@ -56,6 +56,7 @@ import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.ui.ISharedImages;
@@ -79,6 +80,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+	private final ImageDescriptor infoImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	
 	
 	@Override
@@ -205,6 +207,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 //				if (((TreeObject)obj).isValueProvider()) { 	whatString = "(p), ";}
 				
 				if (((TreeObject)obj).isValueClient()) { 	whatString = "client, ";}
+				if (((TreeObject)obj).isValueClient_required()) { 	whatString = "req. client, ";}
 				if (((TreeObject)obj).isValueMediator()) { 	whatString = "mediator, ";}
 				if (((TreeObject)obj).isValueProvider()) { 	whatString = "provider, ";}
 
@@ -315,41 +318,53 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		if ( obj instanceof TreeObject  ){
 			TreeObject treeObject = (TreeObject)obj; 
 			if ( treeObject instanceof TreeParent && treeObject.getUmlElement() instanceof Model) {
-				cell.setImage(decorateImage( treeObject , "/icons/Model.gif" ));
+				cell.setImage(decorateImage( treeObject , "/icons/Model.gif", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Model.gif"));
 			}
 			else if ( treeObject instanceof TreeParent && treeObject.getUmlElement() instanceof Package) {
-				cell.setImage(decorateImage( treeObject , "/icons/Package.gif" ));
+				cell.setImage(decorateImage( treeObject , "/icons/Package.gif", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/Package.gif"));
 			}
 			else if (treeObject.isValueMediatorContainer()) {
-				cell.setImage(decorateImage( treeObject , "/icons/valueMediatorsContainer.png" ));
+				cell.setImage(decorateImage( treeObject , "/icons/valueMediatorsContainer.png", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediatorsContainer.png"));
 			}
 			else if (treeObject.isValueMediator()) {
-				cell.setImage(decorateImage( treeObject , "/icons/valueMediator.png" ));
+				cell.setImage(decorateImage( treeObject , "/icons/valueMediator.png", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/valueMediator.png"));
 			}
-			
+			else if (treeObject.isValueClient() && treeObject.isValueClient_required()) {
+
+				cell.setImage(decorateImage( treeObject , "/icons/Property.gif", null));
+//				cell.setImage(decorateImage( treeObject , "", 
+////						ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/ovr16/pinned_ovr.gif")));
+//						ResourceManager.getPluginImage("org.eclipse.jdt.ui", "/icons/full/ovr16/focus_ovr.gif")));
+				
+//				cell.setImage(decorateImage( treeObject , "/icons/Property.gif", 
+//						overLayImage(SWTResourceManager.getImage(Activator.class, "/icons/Property.gif"), 
+//								ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/ovr16/pinned_ovr.gif")) ));
+//				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/variable.png"));
+//				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/Property.gif"));	
+			}
 			else if (treeObject.isValueClient() || treeObject.isValueProvider()) {
-				cell.setImage(decorateImage( treeObject , "/icons/Property.gif" ));
+				cell.setImage(decorateImage( treeObject , "/icons/Property.gif", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/variable.png"));
 //				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/Property.gif"));	
 			}
 			else if ( treeObject.isValueClientsNode() ) {
-				cell.setImage(decorateImage( treeObject , "/icons/addValueClient.png" ));
+				cell.setImage(decorateImage( treeObject , "/icons/addValueClient.png", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueClient.png"));
 			}
 			else if ( treeObject.isValueMediatorsNode() ) {
-				cell.setImage(decorateImage( treeObject , "/icons/valueMediator.png" ));
+				cell.setImage(decorateImage( treeObject , "/icons/valueMediator.png", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
 			else if ( treeObject.isValueProvidersNode() ) {
-				cell.setImage(decorateImage( treeObject , "/icons/addValueProviders.png" ));
+				cell.setImage(decorateImage( treeObject , "/icons/addValueProviders.png", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
 			else if ( treeObject.isInstantiatedClass()) {
-				cell.setImage(decorateImage( treeObject , "/icons/Class.gif" ));
+				cell.setImage(decorateImage( treeObject , "/icons/Class.gif", null ));
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
 			else {
@@ -670,17 +685,52 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	}
 	
 	
-	public Image decorateImage(Object element, String imagePath) {
+	// Image handling ********************************************************************
+	
+	class OverLayImageDescriptor extends ImageDescriptor{
+		private Image image;
+		public OverLayImageDescriptor(Image image){
+			this.image = image;
+		}
+		@Override
+		public ImageData getImageData() {
+			return image.getImageData();
+		}
+		
+	}
+	
+	public Image overLayImage(Image image, Image overLayImage) {
+		OverLayImageDescriptor imageDescriptor = new OverLayImageDescriptor(overLayImage);
+		return new DecorationOverlayIcon(image,  imageDescriptor, IDecoration.TOP_RIGHT).createImage();
+	}
+	
+	
+	public Image decorateImage(Object element, String imagePath, Image image) {
 
 		if (element instanceof TreeParent) {
+			Image imageToBeUsed = null;
+			if (image != null) {
+				imageToBeUsed = image;
+			}
+			else {
+				imageToBeUsed = SWTResourceManager.getImage(Activator.class, imagePath);	
+			}
+			
+			if ( ((TreeObject) element).isValueClient_required()) {
+				return new DecorationOverlayIcon(imageToBeUsed, 
+						infoImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+			}
 			if (hasErrorsInItemOperationCode((TreeObject) element)) {
-				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+				return new DecorationOverlayIcon(imageToBeUsed, 
+						errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
 			}
 			if (hasEmptyProvidersMediator((TreeParent)element)) {
-				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+				return new DecorationOverlayIcon(imageToBeUsed, 
+						errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
 			}
 			if (hasEmptyClientsMediator((TreeParent)element)) {
-				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
+				return new DecorationOverlayIcon(imageToBeUsed, 
+						warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
 			}
 		}
 		
