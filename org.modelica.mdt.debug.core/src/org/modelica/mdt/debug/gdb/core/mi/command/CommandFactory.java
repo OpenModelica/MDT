@@ -228,6 +228,15 @@ public class CommandFactory {
 	}
 	
 	/**
+	 * Creates the -stack-select-frame FRAMENUM command
+	 * @return MIStackSelectFrame
+	 * 
+	 */
+	public MIStackSelectFrame createMIStackSelectFrame(int frameNum) {
+		return new MIStackSelectFrame(frameNum);
+	}
+	
+	/**
 	 * Creates the -data-evaluate-expression EXPR command
 	 * @param expression
 	 * @return MIDataEvaluateExpression

@@ -36,6 +36,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.sound.midi.MidiSystem;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -56,6 +59,7 @@ import org.modelica.mdt.debug.gdb.core.mi.command.MIExecRun;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecStep;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackInfoDepth;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackListFrames;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIStackSelectFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIStackInfoDepthInfo;
@@ -118,9 +122,37 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException {
 		computeStackFrames();
+		setCurrentStackFrame();
 		return (IStackFrame[])fGDBStackFrames.toArray(new IStackFrame[fGDBStackFrames.size()]);
 	}
 	
+	/**
+	 * @param fGDBStackFrames2
+	 */
+	private void setCurrentStackFrame() {
+		// TODO Auto-generated method stub
+		if (fGDBStackFrames == null || fGDBStackFrames.isEmpty()) {
+			return;
+		}
+		
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(fGDBStackFrames.get(0).getIdentifier());
+		try {
+			miSession.postCommand(miStackSelectFrameCmd);
+			if (miStackSelectFrameCmd.getMIInfo() == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.setCurrentStackFrame.StackSelectFrame.NoAnswer"), null));
+			}
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * @param lowFrame
 	 * @param highFrame
