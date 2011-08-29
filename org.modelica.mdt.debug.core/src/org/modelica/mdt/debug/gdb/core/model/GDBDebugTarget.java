@@ -65,6 +65,7 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIFunctionFinishedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MISignalEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
@@ -543,7 +544,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @throws Object
 	 */
 	@Override
-	public void update(Observable arg, Object event) {
+	public synchronized void update(Observable arg, Object event) {
 		// TODO Auto-generated method stub
 		MIEvent miEvent = (MIEvent)event;
 		try {
@@ -554,11 +555,23 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					if (MDTDebugCorePlugin.DEBUG) System.out.println("MIGDBExitEvent caught in gdb debug target");
 				terminate();
 			}
+			// MIErrorEvent is raised when gdb return something starting with ^error
 			else if (miEvent instanceof MIErrorEvent) {
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIErrorEvent caught in gdb debug target");
 				try {
 					getMISession().getGDBInferior().getPipedErrorStream().write(((MIErrorEvent)miEvent).getMessage().getBytes());
 					getMISession().getGDBInferior().getPipedErrorStream().write(((MIErrorEvent)miEvent).getLogMessage().getBytes());
+					getMISession().getGDBInferior().getPipedErrorStream().flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				}
+			}
+			// MISignalEvent is raised when gdb return something starting with *stopped,reason="signal-received"
+			else if (miEvent instanceof MISignalEvent) {
+				if (MDTDebugCorePlugin.DEBUG) System.out.println("MISignalEvent caught in gdb debug target");
+				try {
+					getMISession().getGDBInferior().getPipedErrorStream().write(((MISignalEvent)miEvent).getName().getBytes());
+					getMISession().getGDBInferior().getPipedErrorStream().write(((MISignalEvent)miEvent).getMeaning().getBytes());
 					getMISession().getGDBInferior().getPipedErrorStream().flush();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

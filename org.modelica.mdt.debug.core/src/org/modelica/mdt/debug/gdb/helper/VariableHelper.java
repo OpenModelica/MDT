@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.modelica.mdt.debug.gdb.core.mi.output.MIArg;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.model.variable.GDBArrayVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBCoreVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBListVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBOptionVariable;
@@ -71,25 +72,30 @@ public class VariableHelper {
 			variablesList.add(new GDBCoreVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}
-		// create list variables
+		// create list variable
 		else if (referenceType.startsWith(GDBHelper.LIST)) {
 			variablesList.add(new GDBListVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}
-		// create record variables
+		// create record variable
 		else if (referenceType.startsWith(GDBHelper.RECORD)) {
-			referenceType = GDBHelper.getListType(referenceType);
+			//referenceType = GDBHelper.getListType(referenceType);
 			variablesList.add(new GDBRecordVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}
-		// create tuple variables
+		// create tuple variable
 		else if (referenceType.startsWith(GDBHelper.TUPLE)) {
 			variablesList.add(new GDBTupleVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}
-		// create option variables
+		// create option variable
 		else if (referenceType.startsWith(GDBHelper.OPTION)) {
 			variablesList.add(new GDBOptionVariable(gdbStackFrame, name, displayName, type,
+					referenceType, actualType, voidPointer));
+		}
+		// create array variable
+		else if (referenceType.startsWith(GDBHelper.ARRAY)) {
+			variablesList.add(new GDBArrayVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}
 	}

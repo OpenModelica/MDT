@@ -31,6 +31,9 @@
 package org.modelica.mdt.debug.gdb.core.mi;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,6 +42,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Observable;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.command.Command;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
@@ -88,13 +92,17 @@ public class MISession extends Observable {
 	Process fSessionProcess;
 	private boolean fTerminated;
 	boolean fUseInterpreterExecConsole;
+	// logging
+	private File fLogFile;
+	private BufferedWriter fLogFileWriter;
 	
 	/**
 	 * @param fPty 
 	 * @param fGDBProcess
 	 * @throws MIException 
+	 * @throws IOException 
 	 */
-	public MISession(Process gdbProcess, IMITTY pty) throws MIException {
+	public MISession(Process gdbProcess, IMITTY pty) throws MIException, IOException {
 		// TODO Auto-generated constructor stub
 		fGDBProcess = gdbProcess;
 		// get the gdb streams
@@ -116,6 +124,9 @@ public class MISession extends Observable {
 		fMICommandFactory = new CommandFactory();
 		// create the gdb inferior process which actually represents our debugged program
 		fGDBInferior = new GDBInferior(this, pty);
+		// logging
+		fLogFile = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString() + "/debuggerlog.txt");
+		fLogFileWriter = new BufferedWriter(new FileWriter(fLogFile));
 		
 		setup();
 		
@@ -144,6 +155,8 @@ public class MISession extends Observable {
 			if (fEventThread.isAlive()) {
 				fEventThread.interrupt();
 			}
+			// close the logging
+			fLogFileWriter.close();
 			// rethrow up the exception.
 			throw exc;
 		}
@@ -544,6 +557,13 @@ public class MISession extends Observable {
 				e.printStackTrace();
 			}
 		}
+		// close the logging
+		try {
+			fLogFileWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// Tell the observers that the session is terminated
 		notifyObservers(new MIGDBExitEvent(this, 0));
 		// Should not be necessary but just to be safe.
@@ -628,6 +648,13 @@ public class MISession extends Observable {
 	public boolean useExecConsole() {
 		// TODO Auto-generated method stub
 		return fUseInterpreterExecConsole;
+	}	
+
+	/**
+	 * @return the fLogFileWriter
+	 */
+	public BufferedWriter getLogFileWriter() {
+		return fLogFileWriter;
 	}
 
 }

@@ -55,6 +55,7 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIFunctionFinishedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIRunningEvent;
+import org.modelica.mdt.debug.gdb.core.mi.event.MISignalEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIAsyncRecord;
@@ -105,6 +106,9 @@ public class RxThread extends Thread {
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MI Rx Thread " + line);
 				setPrompt(line);
 				processMIOutput(line + "\n");
+				// logging
+				session.getLogFileWriter().write(line + "\n");
+				session.getLogFileWriter().flush();
 			}
 		} catch (IOException e) {
 			//e.printStackTrace();
@@ -468,6 +472,12 @@ public class RxThread extends Thread {
 				event = new MIFunctionFinishedEvent(session, exec);
 			} else if (rr != null) {
 				event = new MIFunctionFinishedEvent(session, rr);
+			}
+		} else if ("signal-received".equals(reason)) {
+			if (exec != null) {
+				event = new MISignalEvent(session, exec);
+			} else if (rr != null) {
+				event = new MISignalEvent(session, rr);
 			}
 		}
 		return event;

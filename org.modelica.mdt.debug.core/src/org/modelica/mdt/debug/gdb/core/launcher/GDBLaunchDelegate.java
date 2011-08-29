@@ -30,6 +30,8 @@
  */
 package org.modelica.mdt.debug.gdb.core.launcher;
 
+import java.io.IOException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -90,6 +92,9 @@ public class GDBLaunchDelegate extends LaunchConfigurationDelegate {
 				IDebugTarget target = new GDBDebugTarget(launch, process, gdbDebugger.getMISession());
 				launch.addDebugTarget(target);
 			} catch (MIException e) {
+				// TODO Auto-generated catch block
+				abort(e.getMessage(), e);
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				abort(e.getMessage(), e);
 			}

@@ -63,10 +63,11 @@ public class GDBDebugger {
 	 * @param debugTargetWorkDirectory
 	 * @param debugTargetGDBPath
 	 * @throws MIException 
+	 * @throws IOException 
 	 */
 	public GDBDebugger(String debugTargetProgram,
 			String debugTargetCommandLineArguments,
-			String debugTargetWorkDirectory, String debugTargetGDBPath) throws CoreException, MIException {
+			String debugTargetWorkDirectory, String debugTargetGDBPath) throws CoreException, MIException, IOException {
 		// TODO Auto-generated constructor stub
 		// start the GDB Process
 		startGDBProcess(debugTargetProgram, debugTargetCommandLineArguments,
@@ -77,9 +78,10 @@ public class GDBDebugger {
 
 	/**
 	 * @throws MIException 
+	 * @throws IOException 
 	 * 
 	 */
-	private void createMISession() throws MIException {
+	private void createMISession() throws MIException, IOException {
 		// TODO Auto-generated method stub
 		if (MDTDebugCorePlugin.DEBUG) System.out.println("Creating MI Session");
 		fMISession = new MISession(fGDBProcess, fPty);

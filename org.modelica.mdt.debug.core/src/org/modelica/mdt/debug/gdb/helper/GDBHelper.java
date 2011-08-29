@@ -56,6 +56,7 @@ public class GDBHelper {
 	public static String RECORD = "record";
 	public static String TUPLE = "tuple";
 	public static String OPTION = "Option";
+	public static String ARRAY = "Array";
 	
 	public static String NONE = "NONE()";
 	public static String SOME = "SOME()";
