@@ -32,6 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.core.model.MDTDebugTarget;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
+import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 
 /**
  * View of the MDT VM data stack 
@@ -169,6 +170,9 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 					else if (element.getDebugTarget() instanceof GDBDebugTarget)
 						fGDBTarget = (GDBDebugTarget) element.getDebugTarget();
 				}
+			}
+			if (adaptable instanceof GDBStackFrame) {
+				((GDBStackFrame)adaptable).setCurrentFrame();
 			}
 		}
 		if (fTarget != null) {

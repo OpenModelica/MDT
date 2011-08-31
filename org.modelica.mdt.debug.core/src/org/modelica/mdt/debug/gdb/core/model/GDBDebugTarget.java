@@ -70,6 +70,7 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
+import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread.ExecuteCommand;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
@@ -586,6 +587,10 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			else if (miEvent instanceof MISteppingRangeEvent) {
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MISteppingRangeEvent caught in gdb debug target");
 				if (skipSteppedInFrames(miEvent)) {
+					GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MISteppingRangeEvent)miEvent).getFrame());
+					if (gdbStackFrame != null) {
+						gdbStackFrame.setCurrentFrame();
+					}
 					((GDBThread)getThread()).setRefreshStackFrames(true);
 					((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
 				}
@@ -594,6 +599,10 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			else if (miEvent instanceof MIFunctionFinishedEvent) {
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MIFunctionFinishedEvent caught in gdb debug target");
 				if (skipSteppedInFrames(miEvent)) {
+					GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MIFunctionFinishedEvent)miEvent).getFrame());
+					if (gdbStackFrame != null) {
+						gdbStackFrame.setCurrentFrame();
+					}
 					((GDBThread)getThread()).setRefreshStackFrames(true);
 					((GDBThread)getThread()).suspended(DebugEvent.STEP_RETURN);
 				}

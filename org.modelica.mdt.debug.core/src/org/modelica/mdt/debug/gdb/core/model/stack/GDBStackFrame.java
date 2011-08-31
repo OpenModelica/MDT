@@ -49,6 +49,7 @@ import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackListVariables;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIStackSelectFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIArg;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIStackListVariablesInfo;
@@ -77,6 +78,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	private String fFileName;
 	private int fId;
 	private List<GDBVariable> fGDBVariables = null;
+	private Boolean fRefreshVariables = true;
 	/**
 	 * Need this flag to prevent evaluations on disposed frames. 
 	 */
@@ -118,42 +120,6 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 			int beginIndex = fileName[0].length() + 2;
 			fName = fFrame.getFunction().substring(beginIndex);
 		}
-		// get locals from GDB
-		MISession miSession = getGDBDebugTarget().getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIArg[] args = null;
-		MIStackListVariablesInfo stackListVariablesInfo = null;
-		MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", "1", "--frame", Integer.toString(getIdentifier()), "--simple-values"});
-		try {
-			miSession.postCommand(stackListVariablesCmd);
-			stackListVariablesInfo = stackListVariablesCmd.getMIStackListVariablesInfo();
-			if (stackListVariablesInfo == null) {
-				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-						MDTDebugCorePlugin.getResourceString("GDBThread.getStackFrames.StackListVariables.NoAnswer"), null));
-			}
-		} catch (MIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		args = stackListVariablesInfo.getLocals();
-		List<MIArg> variablesList = new ArrayList<MIArg>();
-		if (args != null) {
-			for (int i = 0; i < args.length; i++) {
-				if (args[i].getName().startsWith("_")) {
-					variablesList.add(args[i]);
-				}
-			}
-		}
-		if (fGDBVariables == null) {
-			fGDBVariables = new ArrayList<GDBVariable>();
-		}
-		// first remove the variables that are removed from this frame
-		VariableHelper.removeVariables(variablesList, fGDBVariables);
-		// compare and create IVariable
-		compareVariables(variablesList);
 	}
 
 	/**
@@ -217,8 +183,57 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		if (isDisposed()) {
 			return new IVariable[0];
 		}
+		computeVariables();
 		return (IVariable[])fGDBVariables.toArray(new IVariable[fGDBVariables.size()]);
 	}
+	/**
+	 * 
+	 */
+	private void computeVariables() {
+		// TODO Auto-generated method stub
+		if (fGDBVariables == null) {
+			fGDBVariables = new ArrayList<GDBVariable>();
+		}
+		if (isRefreshVariables()) {
+			/* get variables from GDB for this stack
+			 * since MDT is single threaded we always use thread=1
+			 */
+			MISession miSession = getGDBDebugTarget().getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIArg[] args = null;
+			MIStackListVariablesInfo stackListVariablesInfo = null;
+			MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", "1", "--frame", Integer.toString(getIdentifier()), "--simple-values"});
+			try {
+				miSession.postCommand(stackListVariablesCmd);
+				stackListVariablesInfo = stackListVariablesCmd.getMIStackListVariablesInfo();
+				if (stackListVariablesInfo == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBStackFrame.computeVariables.StackListVariables.NoAnswer"), null));
+				}
+			} catch (MIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			args = stackListVariablesInfo.getLocals();
+			List<MIArg> variablesList = new ArrayList<MIArg>();
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					if (args[i].getName().startsWith("_")) {
+						variablesList.add(args[i]);
+					}
+				}
+			}
+			// first remove the variables that are removed from this frame
+			VariableHelper.removeVariables(variablesList, fGDBVariables);
+			// compare and create IVariable
+			compareVariables(variablesList);
+			setRefreshVariables(false);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
@@ -424,6 +439,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		// TODO Auto-generated method stub
 		fFrame = miFrame;
 		initialize();
+		setRefreshVariables(true);
 	}
 
 	/**
@@ -450,5 +466,44 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 
 	private synchronized void setDisposed(boolean isDisposed) {
 		fIsDisposed = isDisposed;
+	}
+
+	/**
+	 * 
+	 * Makes this frame the current frame for GDB.
+	 * 
+	 */
+	public void setCurrentFrame() {
+		// TODO Auto-generated method stub
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(getIdentifier());
+		try {
+			miSession.postCommand(miStackSelectFrameCmd);
+			if (miStackSelectFrameCmd.getMIInfo() == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.setCurrentStackFrame.StackSelectFrame.NoAnswer"), null));
+			}
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param refreshVariables the fRefreshVariables to set
+	 */
+	public void setRefreshVariables(Boolean refreshVariables) {
+		this.fRefreshVariables = refreshVariables;
+	}
+
+	/**
+	 * @return the fRefreshVariables
+	 */
+	public Boolean isRefreshVariables() {
+		return fRefreshVariables;
 	}
 }
