@@ -64,7 +64,7 @@ public class TxThread extends Thread {
 				try {
 					cmd = txQueue.removeCommand();
 				} catch (InterruptedException e) {
-					//e.printStackTrace();
+					//MDTDebugCorePlugin.log(null, e);
 				}
 
 				if (cmd != null) {
@@ -100,7 +100,7 @@ public class TxThread extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(null, e);
 		}
 
 		// Clear the queue and notify any command waiting, we are going down.

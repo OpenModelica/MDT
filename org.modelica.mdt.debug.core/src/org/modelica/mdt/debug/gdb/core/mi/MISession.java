@@ -341,7 +341,7 @@ public class MISession extends Observable {
 				fMIOutLogPipe = new PipedOutputStream();
 				fMIInLogPipe = new PipedInputStream(fMIOutLogPipe);
 			} catch (IOException e) {
-				e.printStackTrace();
+				MDTDebugCorePlugin.log(null, e);
 			}
 		}
 		return fMIInLogPipe;
@@ -446,7 +446,7 @@ public class MISession extends Observable {
 						throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Target_not_responding"));
 					}
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					//MDTDebugCorePlugin.log(null, e);
 				}
 			}
 		}
@@ -461,7 +461,6 @@ public class MISession extends Observable {
 		if (isTerminated()) {
 			return;
 		}
-		fTerminated = true;
 		// Destroy any MI Inferior(Process) and streams.
 		fGDBInferior.destroy();
 		// {in,out}Channel is use as predicate/condition
@@ -480,6 +479,7 @@ public class MISession extends Observable {
 		} catch (MIException e) {
 			//ignore any exception at this point.
 		}
+		fTerminated = true;
 		// Make sure gdb is killed.
 		// FIX: the destroy() must be call before closing gdb streams
 		// on windows if the order is not follow the close() will hang.
@@ -491,14 +491,14 @@ public class MISession extends Observable {
 			if (inGDB != null)
 				inGDB.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Close the output GDB prompt
 		try {
 			if (outGDB != null)
 				outGDB.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Destroy the MI console stream.
 		try {
@@ -507,7 +507,7 @@ public class MISession extends Observable {
 				fMIOutConsolePipe.close();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Destroy the MI log stream.
 		try {
@@ -516,7 +516,7 @@ public class MISession extends Observable {
 				fMIOutLogPipe.close();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Kill the Transmission thread.
 		try {
@@ -525,7 +525,7 @@ public class MISession extends Observable {
 				fTxThread.join(fCommandTimeout);
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Kill the Receiving Thread.
 		try {
@@ -534,7 +534,7 @@ public class MISession extends Observable {
 				fRxThread.join(fCommandTimeout);
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Kill the Error Thread.
 		try {
@@ -543,7 +543,7 @@ public class MISession extends Observable {
 				fErrorThread.join(fCommandTimeout);
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Kill the event Thread ... if it is not us.
 		if (!fEventThread.equals(Thread.currentThread())) {			
@@ -554,7 +554,7 @@ public class MISession extends Observable {
 					fEventThread.join(fCommandTimeout);
 				}
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		// close the logging
@@ -562,7 +562,7 @@ public class MISession extends Observable {
 			fLogFileWriter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// Tell the observers that the session is terminated
 		notifyObservers(new MIGDBExitEvent(this, 0));

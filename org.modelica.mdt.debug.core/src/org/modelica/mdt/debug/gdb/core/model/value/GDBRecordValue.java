@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
@@ -93,7 +94,7 @@ public class GDBRecordValue extends GDBValue {
 				compareVariables(variablesList);
 			} catch (MIException e) {
 				// TODO: handle exception
-				e.printStackTrace();
+				MDTDebugCorePlugin.log(null, e);
 			}
 			setRefreshChildren(false);
 		}

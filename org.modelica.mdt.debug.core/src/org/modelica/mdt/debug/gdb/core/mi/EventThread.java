@@ -59,14 +59,14 @@ public class EventThread extends Thread {
 				event = (MIEvent) eventQueue.removeItem();
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MI Event Thread " + event.toString());
 			} catch (InterruptedException e) {
-				//e.printStackTrace();
+				//MDTDebugCorePlugin.log(null, e);
 			}
 			try {
 				if (event != null) {
 					session.notifyObservers(event);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				MDTDebugCorePlugin.log(null, e);
 			}
 		}
 	}

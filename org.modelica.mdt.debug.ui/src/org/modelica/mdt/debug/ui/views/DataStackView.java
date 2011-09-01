@@ -172,7 +172,12 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 				}
 			}
 			if (adaptable instanceof GDBStackFrame) {
-				((GDBStackFrame)adaptable).setCurrentFrame();
+				try {
+					((GDBStackFrame)adaptable).setCurrentFrame();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					MDTDebugCorePlugin.log(null, e);
+				}
 			}
 		}
 		if (fTarget != null) {

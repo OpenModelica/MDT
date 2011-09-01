@@ -111,7 +111,7 @@ public class RxThread extends Thread {
 				session.getLogFileWriter().flush();
 			}
 		} catch (IOException e) {
-			//e.printStackTrace();
+			//MDTDebugCorePlugin.log(null, e);
 		}
 		// This code should be executed when gdb been abruptly
 		// or unxepectedly killed.  This is detected by checking

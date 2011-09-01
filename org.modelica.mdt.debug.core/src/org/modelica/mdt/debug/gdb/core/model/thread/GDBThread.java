@@ -147,12 +147,9 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			// first remove the frames that are removed from the stacks list
 			removeStackFrames(stackListFramesInfo.getMIFrames());
 			compareStackFrames(stackListFramesInfo.getMIFrames());
-		} catch (MIException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 
@@ -276,13 +273,13 @@ public class GDBThread extends GDBDebugElement implements IThread {
 									MDTDebugCorePlugin.getResourceString("GDBThread.getStackInfoDepth.StackInfoDepth.NoAnswer"), null));
 						} catch (CoreException e1) {
 							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							MDTDebugCorePlugin.log(null, e);
 						}
 					}
 					fStackDepth = stackInfoDepthInfo.getDepth();
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					MDTDebugCorePlugin.log(null, e);
 				}
 			} catch (MIException e) {
 				// 1 is safe to return
@@ -338,7 +335,6 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public void suspendedBy(IBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
-		//suspended(DebugEvent.BREAKPOINT);
 	}
 	
 	/* (non-Javadoc)
@@ -372,25 +368,33 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			MIExecContinue execContinueCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecContinue();
 			execContinueCmd.setQuiet(true);
 			getGDBDebugTarget().getMISession().postCommand(execContinueCmd);
-			if (execContinueCmd.getMIInfo() == null)
-				System.out.println(MDTDebugCorePlugin.getResourceString("GDBThread.resume.ExecContinue.NoAnswer"));
-		} catch (MIException e) {
+			if (execContinueCmd.getMIInfo() == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.resume.ExecContinue.NoAnswer"), null));
+			}
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
-	/** 
+	/**
+	 * @throws CoreException  
 	 * 
 	 */
-	public void start() throws DebugException {
+	public void start() throws CoreException {
+		setRunning(true);
+		setSuspended(false);
+		setStepping(false);
 		try {
 			MIExecRun execRunCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecRun(new String[0]);
 			getGDBDebugTarget().getMISession().postCommand(execRunCmd);
-			if (execRunCmd.getMIInfo() == null)
-				System.out.println("Error in gdb run command in GDBThread.start");
+			if (execRunCmd.getMIInfo() == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBThread.start.ExecRun.NoAnswer"), null));
+			}
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(e.getMessage() + e.getLogMessage(), e);
 		}
 	}
 	/* (non-Javadoc)
@@ -452,11 +456,8 @@ public class GDBThread extends GDBDebugElement implements IThread {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 						MDTDebugCorePlugin.getResourceString("GDBThread.stepInto.ExecStep.NoAnswer"), null));
 			}
-		} catch (MIException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 	/* (non-Javadoc)
@@ -478,11 +479,8 @@ public class GDBThread extends GDBDebugElement implements IThread {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 						MDTDebugCorePlugin.getResourceString("GDBThread.stepOver.ExecNext.NoAnswer"), null));
 			}
-		} catch (MIException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 	/* (non-Javadoc)
@@ -498,16 +496,14 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		MIExecFinish execFinishCmd = factory.createMIExecFinish();
 		try {
 			getGDBDebugTarget().getMISession().postCommand(execFinishCmd);
+			setExecuteCommand(ExecuteCommand.EXECNEXT);
 			MIInfo info = execFinishCmd.getMIInfo();
 			if (info == null) {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 						MDTDebugCorePlugin.getResourceString("GDBThread.stepReturn.ExecFinish.NoAnswer"), null));
 			}
-		} catch (MIException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 	/* (non-Javadoc)

@@ -30,6 +30,7 @@
  */
 package org.modelica.mdt.debug.gdb.helper;
 
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
@@ -73,7 +74,7 @@ public class TypeHelper {
 			return getTypeOfAnyInfo.getExpression().substring(beginIndex + 1, endIndex);
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(null, e);
 		}
 		return GDBHelper.REPLACEABLE_TYPE_ANY;
 	}

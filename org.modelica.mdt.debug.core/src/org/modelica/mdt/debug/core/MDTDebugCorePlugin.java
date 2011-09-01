@@ -7,8 +7,13 @@ import java.util.*;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.modelica.mdt.debug.core.launcher.IMDTConstants;
+import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.osgi.framework.BundleContext;
 
 public class MDTDebugCorePlugin extends Plugin 
@@ -125,6 +130,30 @@ public class MDTDebugCorePlugin extends Plugin
 		} catch (IOException ioe) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Logs an exception with a new status containing the given message and exception.
+	 * 
+	 * @param message error message
+	 * @param e underlying exception
+	 */
+	public static void log(String message, Throwable e) {
+		log(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, IStatus.ERROR, message, e));
+	}
+	
+	/**
+	 * Shows an exception with a given status
+	 * 
+	 * @param status
+	 * @param gdbDebugTarget 
+	 */
+	public static void log(IStatus status) {
+		// just log the MIException and don't show it
+		if (!(status.getException() instanceof MIException)) {
+			StatusManager.getManager().handle(status, StatusManager.BLOCK);
+		}
+		StatusManager.getManager().handle(status, StatusManager.LOG);
 	}
 
 }

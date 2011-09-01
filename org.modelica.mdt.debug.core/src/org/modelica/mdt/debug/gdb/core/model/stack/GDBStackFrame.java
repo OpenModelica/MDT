@@ -30,11 +30,14 @@
  */
 package org.modelica.mdt.debug.gdb.core.model.stack;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -210,12 +213,9 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 							MDTDebugCorePlugin.getResourceString("GDBStackFrame.computeVariables.StackListVariables.NoAnswer"), null));
 				}
-			} catch (MIException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				MDTDebugCorePlugin.log(null, e);
 			}
 			args = stackListVariablesInfo.getLocals();
 			List<MIArg> variablesList = new ArrayList<MIArg>();
@@ -377,6 +377,18 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	public String getSourceName() {
 		return fFileName;
 	}
+	/**
+	 * Returns the name of the source file this stack frame is associated
+	 * with.
+	 * 
+	 * @return the name of the source file this stack frame is associated
+	 * with
+	 */
+	public String getFullSourceName() {
+		IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+		IPath filePath = new Path(getMIFrame().getFile());
+		return filePath.removeFirstSegments(workspacePath.segmentCount() + 2).toOSString();
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -471,25 +483,19 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	/**
 	 * 
 	 * Makes this frame the current frame for GDB.
+	 * @throws MIException 
+	 * @throws CoreException 
 	 * 
 	 */
-	public void setCurrentFrame() {
+	public void setCurrentFrame() throws MIException, CoreException {
 		// TODO Auto-generated method stub
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(getIdentifier());
-		try {
-			miSession.postCommand(miStackSelectFrameCmd);
-			if (miStackSelectFrameCmd.getMIInfo() == null) {
-				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-						MDTDebugCorePlugin.getResourceString("GDBThread.setCurrentStackFrame.StackSelectFrame.NoAnswer"), null));
-			}
-		} catch (MIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		miSession.postCommand(miStackSelectFrameCmd);
+		if (miStackSelectFrameCmd.getMIInfo() == null) {
+			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+					MDTDebugCorePlugin.getResourceString("GDBThread.setCurrentStackFrame.StackSelectFrame.NoAnswer"), null));
 		}
 	}
 

@@ -325,7 +325,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 */
 	public void suspend() throws DebugException {
 		getThread().suspend();
-		//((GDBThread)getThread()).suspend();
 	}
 	
 	/*
@@ -340,12 +339,9 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
 					mdtBreakpoint.insertBreakpoint(this);
 				}
-			} catch (CoreException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				MDTDebugCorePlugin.log(null, e);
 			}
 		}
 	}
@@ -362,12 +358,9 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			{
 			    MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
 				mdtBreakpoint.removeBreakpoint(this);
-			} catch (CoreException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				MDTDebugCorePlugin.log(null, e);
 			}
 		}
 	}
@@ -387,6 +380,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					breakpointRemoved(breakpoint, null);
 				}
 			} catch (CoreException e) {
+				MDTDebugCorePlugin.log(null, e);
 			}
 		}
 	}
@@ -440,13 +434,15 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	/**
 	 * Notification we have connected to the GDB Debugger and it has started.
 	 * Run the program.
+	 * @throws CoreException 
 	 */
-	private void started() {
+	private void started() throws CoreException {
 		fireCreationEvent();
 		installDeferredBreakpoints();
 		try {
 			((GDBThread)getThread()).start();
 		} catch (DebugException e) {
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 
@@ -467,18 +463,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @return the values on the data stack (top down)
 	 */
 	public IValue[] getDataStack() throws DebugException {
-		/*
-		String dataStack = "1|2|3";//sendRequest("data");
-		if (dataStack != null && dataStack.length() > 0) {
-			String[] values = dataStack.split("\\|");
-			IValue[] theValues = new IValue[values.length];
-			for (int i = 0; i < values.length; i++) {
-				String value = values[values.length - i - 1];
-				theValues[i] = new MDTStackValue(this, value, i);
-			}
-			return theValues;
-		}
-		*/
 		return new IValue[0];		
 	}
 		
@@ -565,6 +549,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					getMISession().getGDBInferior().getPipedErrorStream().flush();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					MDTDebugCorePlugin.log(null, e);
 				}
 			}
 			// MISignalEvent is raised when gdb return something starting with *stopped,reason="signal-received"
@@ -576,6 +561,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					getMISession().getGDBInferior().getPipedErrorStream().flush();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					MDTDebugCorePlugin.log(null, e);
 				}
 			}
 			else if (miEvent instanceof MIBreakpointHitEvent) {
@@ -607,12 +593,9 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					((GDBThread)getThread()).suspended(DebugEvent.STEP_RETURN);
 				}
 			}
-		} catch (DebugException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 
@@ -620,8 +603,9 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @param miEvent
 	 * @return 
 	 * @throws CoreException 
+	 * @throws MIException 
 	 */
-	private boolean skipSteppedInFrames(MIEvent miEvent) throws CoreException {
+	private boolean skipSteppedInFrames(MIEvent miEvent) throws CoreException, MIException {
 		// TODO Auto-generated method stub
 		MIStoppedEvent stoppedEvent = (MIStoppedEvent)miEvent;
 		MIFrame miFrame = stoppedEvent.getFrame();
@@ -634,18 +618,11 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			} else if (((GDBThread)getThread()).getExecuteCommand() == ExecuteCommand.EXECSTEP) {
 				execCmd = factory.createMIExecStep();
 			}
-			try {
-				fMISession.postCommand(execCmd);
-				MIInfo info = execCmd.getMIInfo();
-				if (info == null) {
-					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-							MDTDebugCorePlugin.getResourceString("GDBDebugTarget.skipSteppedInFrames.ExecStep.NoAnswer"), null));
-				}
-			} catch (MIException e) {
-				e.printStackTrace();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			fMISession.postCommand(execCmd);
+			MIInfo info = execCmd.getMIInfo();
+			if (info == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBDebugTarget.skipSteppedInFrames.ExecStep.NoAnswer"), null));
 			}
 			return false;
 		} else {
@@ -659,5 +636,5 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	public MISession getMISession() {
 		// TODO Auto-generated method stub
 		return fMISession;
-	}	
+	}
 }

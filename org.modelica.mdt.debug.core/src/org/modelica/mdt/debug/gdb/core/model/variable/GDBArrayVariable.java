@@ -32,6 +32,7 @@ package org.modelica.mdt.debug.gdb.core.model.variable;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.value.EmptyValue;
@@ -83,7 +84,7 @@ public class GDBArrayVariable extends GDBVariable {
 			}
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(null, e);
 		}
 		return getGDBValue();
 	}

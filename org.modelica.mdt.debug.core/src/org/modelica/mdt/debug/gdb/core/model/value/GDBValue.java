@@ -36,6 +36,7 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CLIPType;
@@ -177,7 +178,7 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 			setActualType(cliPTypeInfo.getType());
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 

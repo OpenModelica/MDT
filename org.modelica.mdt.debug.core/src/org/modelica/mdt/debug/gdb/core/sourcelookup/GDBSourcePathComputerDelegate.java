@@ -81,8 +81,7 @@ public class GDBSourcePathComputerDelegate implements ISourcePathComputerDelegat
 				if (container.getType() == IResource.PROJECT) {
 					sourceContainer = new ProjectSourceContainer((IProject) container, false);
 				} else if (container.getType() == IResource.FOLDER) {
-					sourceContainer = new FolderSourceContainer(container,
-							false);
+					sourceContainer = new FolderSourceContainer(container, false);
 				}
 			}
 			else
@@ -91,8 +90,7 @@ public class GDBSourcePathComputerDelegate implements ISourcePathComputerDelegat
 				if (container.getType() == IResource.PROJECT) {
 					sourceContainer = new ProjectSourceContainer((IProject) container, false);
 				} else if (container.getType() == IResource.FOLDER) {
-					sourceContainer = new FolderSourceContainer(container,
-							false);
+					sourceContainer = new FolderSourceContainer(container, false);
 				}				
 			}
 		}

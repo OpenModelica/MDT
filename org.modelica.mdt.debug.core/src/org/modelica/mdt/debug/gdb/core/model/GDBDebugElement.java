@@ -34,6 +34,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.DebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IStepFilters;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 
 /**
@@ -44,7 +45,7 @@ import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
  * Common functions of GDB debug model elements
  */
 
-public class GDBDebugElement extends DebugElement {
+public class GDBDebugElement extends DebugElement implements IStepFilters {
 
 	/**
 	 * Constructs a new debug element in the given target.
@@ -78,5 +79,33 @@ public class GDBDebugElement extends DebugElement {
      */
     protected IBreakpointManager getBreakpointManager() {
         return DebugPlugin.getDefault().getBreakpointManager();
-    }	
+    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStepFilters#supportsStepFilters()
+	 */
+	@Override
+	public boolean supportsStepFilters() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStepFilters#isStepFiltersEnabled()
+	 */
+	@Override
+	public boolean isStepFiltersEnabled() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStepFilters#setStepFiltersEnabled(boolean)
+	 */
+	@Override
+	public void setStepFiltersEnabled(boolean enabled) {
+		// TODO Auto-generated method stub
+		
+	}
+    
 }

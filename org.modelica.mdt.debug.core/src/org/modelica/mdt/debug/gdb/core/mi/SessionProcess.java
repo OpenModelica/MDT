@@ -124,7 +124,6 @@ public class SessionProcess extends Process {
 						// Do not wait around for the answer.
 						session.postCommand(cmd, -1);
 					} catch (MIException e) {
-						//e.printStackTrace();
 						throw new IOException(e.getMessage());
 					}
 				}
