@@ -244,6 +244,15 @@ public class CommandFactory {
 	public MIDataEvaluateExpression createMIDataEvaluateExpression(String expression) {
 		return new MIDataEvaluateExpression(expression);
 	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to call the executable function changeStdoutBuffer
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIChangeStdoutBuffer() {
+		return new MIDataEvaluateExpression("changeStdoutBuffer()");
+	}
 
 	/**
 	 * Creates the -data-evaluate-expression EXPR command to call the executable function anyString

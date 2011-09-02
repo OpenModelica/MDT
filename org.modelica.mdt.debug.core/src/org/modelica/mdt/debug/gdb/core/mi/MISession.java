@@ -40,10 +40,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.ArrayList;
 import java.util.Observable;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
+import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.command.Command;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIGDBExit;
@@ -55,6 +62,7 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIGDBShowInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIParser;
 import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
+import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 
 /**
  * @author Adeel Asghar
@@ -655,6 +663,33 @@ public class MISession extends Observable {
 	 */
 	public BufferedWriter getLogFileWriter() {
 		return fLogFileWriter;
+	}
+
+	/**
+	 * This is a windows specific method.
+	 * starts the BreakProcess program and raises the SIGTRAP to interrupt for the GDB.
+	 * @param gdbDebugTarget 
+	 * @return 
+	 * @throws CoreException 
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * 
+	 */
+	public int interruptInferior(GDBDebugTarget gdbDebugTarget) throws CoreException, IOException, InterruptedException {
+		// TODO Auto-generated method stub
+		ILaunchConfiguration configuration = gdbDebugTarget.getLaunch().getLaunchConfiguration();
+		String debugTargetProgram = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String)null);
+		IPath progPath = new Path(debugTargetProgram);
+		progPath = progPath.removeLastSegments(1);
+		
+		ArrayList<String> argList = new ArrayList<String>();
+		argList.add(progPath + "/BreakProcess.exe");
+		argList.add(Integer.toString(getGDBInferior().getInferiorPID()));
+
+		String[] args = (String[])argList.toArray(new String[argList.size()]);
+		if (MDTDebugCorePlugin.DEBUG) System.out.println("Trying to interrupt GDB with : " + argList);
+		Process breakProcess = DebugPlugin.exec(args, null);
+		return breakProcess.waitFor();
 	}
 
 }

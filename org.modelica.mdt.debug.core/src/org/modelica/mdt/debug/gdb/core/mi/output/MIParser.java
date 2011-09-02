@@ -227,6 +227,8 @@ public class MIParser {
 			return true;
 		} else if (buffer.toString().startsWith(MIAsyncRecord.THREAD_GROUP_EXITED)) {
 			return true;
+		} else if (buffer.toString().startsWith(MIAsyncRecord.THREAD_SELECTED)) {
+			return true;
 		} else {
 			return false;
 		}

@@ -60,6 +60,9 @@ public class GDBHelper {
 	
 	public static String NONE = "NONE()";
 	public static String SOME = "SOME()";
+	/* Signals */
+	public static String SIGTRAP = "SIGTRAP";
+	public static String SIGSEGV = "SIGSEGV";
 	
 	public static Boolean filterCFiles(GDBDebugTarget gdbDebugTarget, MIFrame miFrame) throws CoreException {
 		if (miFrame.getFile().isEmpty()) {

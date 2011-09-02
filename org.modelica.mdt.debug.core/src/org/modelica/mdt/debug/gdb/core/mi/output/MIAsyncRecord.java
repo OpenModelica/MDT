@@ -48,6 +48,7 @@ public abstract class MIAsyncRecord extends MIOOBRecord {
 	public final static String LIBRARY_LOADED ="library-loaded";
 	public final static String THREAD_EXITED ="thread-exited";
 	public final static String THREAD_GROUP_EXITED ="thread-group-exited";
+	public final static String THREAD_SELECTED ="thread-selected";
 	
 	final static MIResult[] nullResults = new MIResult[0];
 

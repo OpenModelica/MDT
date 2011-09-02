@@ -170,6 +170,7 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 		// TODO Auto-generated method stub
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
+		miSession.getRxThread().setEnableConsole(false);
 		CLIPType cliPTypeCmd = factory.createCLIPType(getGDBVariable().getOriginalName());
 		CLIPTypeInfo cliPTypeInfo;
 		try {
@@ -180,6 +181,7 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
 		}
+		miSession.getRxThread().setEnableConsole(true);
 	}
 
 	/**

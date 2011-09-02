@@ -56,7 +56,7 @@ public class CommandQueue extends Queue {
 				if (token == id) {
 					list.remove(cmd);
 					return cmd;
-				} 
+				}
 			}
 		}
 		return null;

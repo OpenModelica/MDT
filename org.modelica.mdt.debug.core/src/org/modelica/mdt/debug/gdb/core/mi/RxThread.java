@@ -105,10 +105,13 @@ public class RxThread extends Thread {
 				// TRACING: print the output.
 				if (MDTDebugCorePlugin.DEBUG) System.out.println("MI Rx Thread " + line);
 				setPrompt(line);
-				processMIOutput(line + "\n");
-				// logging
-				session.getLogFileWriter().write(line + "\n");
-				session.getLogFileWriter().flush();
+				List<String> outputs = filterMIOutput(line + "\n");
+				for (String output : outputs) {
+					processMIOutput(output + "\n");
+					// logging
+					session.getLogFileWriter().write(output + "\n");
+					session.getLogFileWriter().flush();
+				}
 			}
 		} catch (IOException e) {
 			//MDTDebugCorePlugin.log(null, e);
@@ -138,6 +141,35 @@ public class RxThread extends Thread {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param string
+	 */
+	private List<String> filterMIOutput(String buffer) {
+		// TODO Auto-generated method stub
+		if (buffer.toString().contains("*"+MIAsyncRecord.RUNNING+",")) {
+			return createMIOutputArray(buffer, "*"+MIAsyncRecord.RUNNING+",");
+		} else if (buffer.toString().contains("*"+MIAsyncRecord.STOPPED+",")) {
+			return createMIOutputArray(buffer, "*"+MIAsyncRecord.STOPPED+",");
+		} else {
+			List<String> outputs = new ArrayList<String>();
+			outputs.add(buffer);
+			return outputs;
+		}
+	}
+
+	/**
+	 * @param buffer
+	 * @param string
+	 * @return
+	 */
+	private List<String> createMIOutputArray(String buffer, String separator) {
+		// TODO Auto-generated method stub
+		List<String> outputs = new ArrayList<String>();
+		outputs.add(buffer.substring(0, buffer.indexOf(separator)));
+		outputs.add(buffer.substring(buffer.indexOf(separator)));
+		return outputs;
 	}
 
 	void setPrompt(String line) {
@@ -229,6 +261,8 @@ public class RxThread extends Thread {
 					if (session.getGDBInferior().isRunning()) {
 						session.getGDBInferior().setSuspended();
 						MIEvent event = new MIErrorEvent(session, rr, streamRecords);
+						if (cmd != null && cmd.isQuiet())
+							event.setPropagate(false); 
 						list.add(event);
 					}
 				} else if ("done".equals(state)) {

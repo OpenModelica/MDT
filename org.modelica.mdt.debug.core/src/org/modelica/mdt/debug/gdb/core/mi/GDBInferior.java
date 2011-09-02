@@ -342,6 +342,7 @@ public class GDBInferior extends Process {
 				// Try to discover the pid using GDB/CLI Command "info proc"
 				CommandFactory factory = session.getCommandFactory();
 				CLIInfoProc infoProcCmd = factory.createCLIInfoProc();
+				infoProcCmd.setQuiet(true);
 				try {
 					RxThread rxThread = session.getRxThread();
 					rxThread.setEnableConsole(false);
@@ -357,6 +358,7 @@ public class GDBInferior extends Process {
 				try {
 					if(pid <= 0){ 
 					CLIInfoProgram infoProgramCmd = factory.createCLIInfoProgram();
+					infoProgramCmd.setQuiet(true);
 					session.postCommand(infoProgramCmd);
 					CLIInfoProgramInfo info = infoProgramCmd.getMIInfoProgramInfo();
 					pid = info.getPID();

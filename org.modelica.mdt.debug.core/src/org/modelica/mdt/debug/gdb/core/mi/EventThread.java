@@ -63,7 +63,8 @@ public class EventThread extends Thread {
 			}
 			try {
 				if (event != null) {
-					session.notifyObservers(event);
+					if (event.propagate())
+						session.notifyObservers(event);
 				}
 			} catch (Exception e) {
 				MDTDebugCorePlugin.log(null, e);

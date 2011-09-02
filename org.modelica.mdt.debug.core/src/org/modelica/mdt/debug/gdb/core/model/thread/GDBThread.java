@@ -30,6 +30,7 @@
  */
 package org.modelica.mdt.debug.gdb.core.model.thread;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +40,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -50,6 +52,7 @@ import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecContinue;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecFinish;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecNext;
@@ -386,27 +389,52 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		setSuspended(false);
 		setStepping(false);
 		try {
-			MIExecRun execRunCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecRun(new String[0]);
-			getGDBDebugTarget().getMISession().postCommand(execRunCmd);
+			MISession miSession = getGDBDebugTarget().getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			// send -exec-run
+			MIExecRun execRunCmd = factory.createMIExecRun(new String[0]);
+			miSession.postCommand(execRunCmd);
 			if (execRunCmd.getMIInfo() == null) {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 						MDTDebugCorePlugin.getResourceString("GDBThread.start.ExecRun.NoAnswer"), null));
+			}
+			// if run is ok then change the stdout buffer policy, only for windows
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				MIDataEvaluateExpression changeStdoutBufferCmd = factory.createMIChangeStdoutBuffer();
+				miSession.postCommand(changeStdoutBufferCmd, -1);
+				// we don't care about the time and output of this command
 			}
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(e.getMessage() + e.getLogMessage(), e);
 		}
+		getGDBDebugTarget().getMISession().getGDBInferior().update();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
-		if (isSuspended()) {
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			return;
+		// on windows -exec-interrupt is not supported
+		System.out.println(Platform.getOS());
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			try {
+				int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
+				if (result != 0) {
+					MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
+							"Unable to interrupt the running program.", null)));
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
+			}
+			suspended(DebugEvent.CLIENT_REQUEST);
 		}
-		setStepping(true);
-		setRunning(false);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
