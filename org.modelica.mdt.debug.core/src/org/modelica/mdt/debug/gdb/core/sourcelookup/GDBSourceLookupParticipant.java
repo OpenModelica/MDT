@@ -47,7 +47,11 @@ public class GDBSourceLookupParticipant extends AbstractSourceLookupParticipant 
 	public String getSourceName(Object object) throws CoreException {
 		// TODO Auto-generated method stub
 		if (object instanceof GDBStackFrame) {
-			return ((GDBStackFrame) object).getFullSourceName();
+			//return ((GDBStackFrame) object).getFullSourceName();
+			/*
+			 * getFullSourceName() takes more time to find the file :(
+			 */
+			return ((GDBStackFrame) object).getSourceName();
 		}
 		return null;
 	}

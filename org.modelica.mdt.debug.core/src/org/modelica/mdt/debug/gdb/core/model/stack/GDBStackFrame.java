@@ -30,8 +30,9 @@
  */
 package org.modelica.mdt.debug.gdb.core.model.stack;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -130,10 +131,34 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 */
 	private void compareVariables(List<MIArg> variablesList) {
 		// TODO Auto-generated method stub
+		//Boolean created = false;
 		for (MIArg miArg : variablesList) {
 			GDBVariable gdbVariable = getGDBVariable(miArg.getName());
+			/* if the variable is a GDBAnyTypeVariable then
+			 * check if its type is changed or not. if type is changed create a new variable
+			 * and delete the old one.
+			 */
+//			if (gdbVariable instanceof GDBAnyTypeVariable) {
+//				String type = TypeHelper.getModelicaMetaType(miArg.getName(), getGDBDebugTarget());
+//				if (!gdbVariable.getReferenceTypeName().equals(type)) {
+//					fGDBVariables.remove(gdbVariable);
+//					gdbVariable.dispose();
+//					gdbVariable = null;
+//					/*
+//					 * Set the created flag.
+//					 * Used for highlighting the variable.
+//					 * We delete and create new Replaceable type any variables
+//					 * but we show user that we just changed the value.
+//					 */
+//					created = true;
+//				}
+//			}
 			if (gdbVariable == null) {
 				createVariable(miArg);
+//				if (created) {
+//					fGDBVariables.get(fGDBVariables.size() - 1).setValueChanged(true);
+//					created = false;
+//				}
 			} else {
 				gdbVariable.setRefreshValue(true);
 				if (gdbVariable.getGDBValue() != null) {
@@ -230,6 +255,14 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 			VariableHelper.removeVariables(variablesList, fGDBVariables);
 			// compare and create IVariable
 			compareVariables(variablesList);
+			// sort the variables
+			Collections.sort(fGDBVariables, new Comparator<GDBVariable>() {
+				@Override
+				public int compare(GDBVariable variable1, GDBVariable variable2) {
+					// TODO Auto-generated method stub
+					return variable1.getDisplayName().compareTo(variable2.getDisplayName());
+				}
+			});
 			setRefreshVariables(false);
 		}
 	}
@@ -512,4 +545,5 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	public Boolean isRefreshVariables() {
 		return fRefreshVariables;
 	}
+	
 }

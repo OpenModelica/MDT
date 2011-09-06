@@ -33,8 +33,6 @@ package org.modelica.mdt.debug.gdb.core.model.thread;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -100,7 +98,6 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * Table mapping stack frames to current variables
 	 */
 	private List<GDBStackFrame> fGDBStackFrames = null;
-	private int fStackDepth = 0;
 	private final static int MAX_STACK_DEPTH = 100;
 	private Boolean fRefreshStackFrames = true;
 	public enum ExecuteCommand {
@@ -108,6 +105,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		EXECSTEP;
 	}
 	private ExecuteCommand fExecuteCommand = ExecuteCommand.EXECSTEP;
+	private int fLastStackDepth = 0;
 	/**
 	 * Constructs a new thread for the given target
 	 * 
@@ -120,17 +118,19 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
-	public IStackFrame[] getStackFrames() throws DebugException {
+	public synchronized IStackFrame[] getStackFrames() throws DebugException {
 		computeStackFrames();
-		return (IStackFrame[])fGDBStackFrames.toArray(new IStackFrame[fGDBStackFrames.size()]);
+		IStackFrame[] s = (IStackFrame[])fGDBStackFrames.toArray(new IStackFrame[fGDBStackFrames.size()]);
+		return s;
 	}
 
 	/**
 	 * @param lowFrame
 	 * @param highFrame
+	 * @return 
 	 * @return
 	 */
-	private void getStackFrames(int lowFrame, int highFrame) {
+	private synchronized MIFrame[] getStackFrames(int lowFrame, int highFrame) {
 		// TODO Auto-generated method stub
 		// if fGDBStackFrames is null then initialize it
 		if (fGDBStackFrames == null) {
@@ -147,94 +147,215 @@ public class GDBThread extends GDBDebugElement implements IThread {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 						MDTDebugCorePlugin.getResourceString("GDBThread.getStackFrames.StackListFrames.NoAnswer"), null));
 			}
-			// first remove the frames that are removed from the stacks list
-			removeStackFrames(stackListFramesInfo.getMIFrames());
-			compareStackFrames(stackListFramesInfo.getMIFrames());
+			// filter c files
+			return removeCStackFrames(stackListFramesInfo.getMIFrames());
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
 		}
+		return null;
 	}
 
 	/**
-	 * @param miFrames
+	 * @param frames
+	 * @return
+	 * @throws CoreException 
 	 */
-	private void removeStackFrames(MIFrame[] miFrames) {
+	private MIFrame[] removeCStackFrames(MIFrame[] frames) throws CoreException {
 		// TODO Auto-generated method stub
-		Boolean isFound;
-		for(Iterator<GDBStackFrame> i = fGDBStackFrames.iterator(); i.hasNext();) {
-			isFound = false;
-			GDBStackFrame stackFrame = i.next();
-			for (MIFrame miFrame : miFrames) {
-				if (stackFrame.compareMIFrame(miFrame)) {
-					isFound = true;
-					break;
-				}
-			}
-			if (!isFound) {
-				i.remove();
-				stackFrame.dispose();
-				stackFrame = null;
+		int removeCounter = 0;
+		List<MIFrame> miFramesList = new ArrayList<MIFrame>(Arrays.asList(frames));
+		List<MIFrame> removedList = new ArrayList<MIFrame>();
+		
+		for (MIFrame miFrame : miFramesList) {
+			if (GDBHelper.filterCFiles(getGDBDebugTarget(), miFrame)) {
+				removedList.add(miFrame);
+				removeCounter++;
+			} else {
+				miFrame.setLevel(miFrame.getLevel() - removeCounter);
+				removeCounter = 0;
 			}
 		}
-	}
+		
+		miFramesList.removeAll(removedList);
+		return (MIFrame[])miFramesList.toArray(new MIFrame[miFramesList.size()]);
+	}	
 
 	/**
+	 * Computes this thread's current stack frames as a list, computing them if required.
 	 * 
 	 */
 	protected synchronized void computeStackFrames() {
 		// TODO Auto-generated method stub
 		if (isSuspended()) {
 			if (isRefreshStackFrames()) {
-				int depth = getStackInfoDepth();
-				if (depth >= getMaxStackDepth())
-					depth = getMaxStackDepth() - 1;
-				getStackFrames(0, depth - 1);
-				setRefreshStackFrames(false);
+				try {
+					// get the stack depth
+					int depth = getStackInfoDepth();
+					if (depth >= getMaxStackDepth())
+						depth = getMaxStackDepth() - 1;
+					// get the stack frames from GDB
+					MIFrame[] frames = getStackFrames(0, depth - 1);
+					// Safety precaution in case getting the stack frames failed to get us as many as it said
+					depth = frames.length;
+					
+					if (fGDBStackFrames.isEmpty()) {
+						if (frames.length > 0) {
+							addStackFrames(frames, 0, frames.length, false);
+						}
+					} else {
+						int diff = depth - getLastStackDepth();
+						int offset = (diff > 0) ? frames.length - diff : 0;
+						int length = (diff > 0) ? diff : -diff;
+						if (offset < 0 || !compareStackFrames(frames, fGDBStackFrames, offset, length)) {
+							// replace all frames
+							disposeStackFrames(0, fGDBStackFrames.size());
+							addStackFrames(frames, 0, frames.length, false);						
+						}
+						if (diff < 0) {
+							// stepping out of the last frame
+							disposeStackFrames(0, getLastStackDepth() - depth);
+							if (frames.length > 0) {
+								updateStackFrames(frames, 0, fGDBStackFrames, fGDBStackFrames.size());
+								if (fGDBStackFrames.size() < frames.length) {
+									addStackFrames(frames, fGDBStackFrames.size(),
+											frames.length - fGDBStackFrames.size(), true);
+								}
+							}
+						}
+						else if (diff > 0) {
+							// stepping into a new frame
+							disposeStackFrames(frames.length - depth + getLastStackDepth(),
+									depth - getLastStackDepth());
+							addStackFrames(frames, 0, depth - getLastStackDepth(), false);
+							updateStackFrames(frames, depth - getLastStackDepth(),
+									fGDBStackFrames, frames.length - depth + getLastStackDepth());
+						}
+						else { // diff == 0
+							if (depth != 0) {
+								// we are in the same frame
+								updateStackFrames(frames, 0, fGDBStackFrames, frames.length);
+							}
+						}
+					}
+					setLastStackDepth(depth);
+					setRefreshStackFrames(false);
+				} catch (Exception e) {
+					// TODO: handle exception
+					MDTDebugCorePlugin.log(null, e);
+				}
 			}
 		}
 	}	
 
 	/**
-	 * Compares the stack frames received from GDB with the existing stack frames
-	 * If the stack is already loaded we just update it.
-	 * Also filters out the .c file depending on the debug_c_files flag.
+	 * Replaces the MIFrame objects in the preserved frames list with the current MIFrame objects.
 	 * 
-	 * @param miFrames
+	 * @param newFrames
+	 * @param offset
+	 * @param oldFrames
+	 * @param length
+	 */
+	private void updateStackFrames(MIFrame[] newFrames, int offset, List<GDBStackFrame> oldFrames, int length) {
+		// TODO Auto-generated method stub
+		for( int i = 0; i < length; i++ ) {
+			GDBStackFrame frame = oldFrames.get(offset);
+			frame.updateMe(newFrames[offset]);
+			offset++;
+		}
+	}
+	
+	/**
+	 * Disposes stack frames, to be completely re-computed on the next suspend event.
+	 * This method should be called before this thread is resumed when stack
+	 * frames are not to be re-used on the next suspend.
+	 */
+	protected synchronized void disposeStackFrames() {
+		Iterator<GDBStackFrame> it = fGDBStackFrames.iterator();
+		while (it.hasNext()) {
+			GDBStackFrame obj = it.next();
+			obj.dispose();
+		}
+		fGDBStackFrames.clear();
+		setLastStackDepth(0);
+		setRefreshStackFrames(true);
+	}
+
+	/**
+	 * @param index
+	 * @param length
+	 */
+	private void disposeStackFrames(int index, int length) {
+		// TODO Auto-generated method stub
+		List<GDBStackFrame> removeList = new ArrayList<GDBStackFrame>(length);
+		Iterator<GDBStackFrame> it = fGDBStackFrames.iterator();
+		int counter = 0;
+		while(it.hasNext()) {
+			GDBStackFrame gdbStackFrame = it.next();
+			if (gdbStackFrame != null && counter >= index && counter < index + length) {
+				gdbStackFrame.dispose();
+				removeList.add(gdbStackFrame);
+			}
+			++counter;
+		}
+		fGDBStackFrames.removeAll(removeList);
+	}
+
+	/**
+	 * Compares the lists of the old and new frames.
+	 * 
+	 * @param newFrames
+	 * @param oldFrames
+	 * @param offset
+	 * @param length
+	 * @return
+	 */
+	private boolean compareStackFrames(MIFrame[] newFrames, List<GDBStackFrame> oldFrames, int offset,
+			int length) {
+		// TODO Auto-generated method stub
+		if (offset < 0) {
+			return false;
+		}
+		int index = offset;
+		Iterator<GDBStackFrame> it = oldFrames.iterator();
+		while(it.hasNext() && index < newFrames.length) {
+			GDBStackFrame frame = it.next();
+			if (!frame.compareMIFrame(newFrames[index++]))
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @return
+	 */
+	private int getLastStackDepth() {
+		// TODO Auto-generated method stub
+		return fLastStackDepth ;
+	}
+	
+	private void setLastStackDepth( int depth ) {
+		fLastStackDepth = depth;
+	}
+
+	/**
+	 * @param frames
+	 * @param i
+	 * @param length
+	 * @param b
 	 * @throws CoreException 
 	 */
-	private void compareStackFrames(MIFrame[] miFrames) throws CoreException {
+	private void addStackFrames(MIFrame[] newFrames, int startIndex, int length, boolean append) throws CoreException {
 		// TODO Auto-generated method stub
-		List<MIFrame> miFramesList = new ArrayList<MIFrame>(Arrays.asList(miFrames));
-		int i = -1;
-		while (i + 1 < miFramesList.size()) {
-			i++;
-			for (GDBStackFrame gdbStackFrame : fGDBStackFrames) {
-				if (gdbStackFrame.compareMIFrame(miFramesList.get(i))) {
-					gdbStackFrame.updateMe(miFramesList.get(i));
-					miFramesList.remove(i);
-					i = -1;		// restart the loop since the list is updated.
-					break;
-				}
+		if (newFrames.length >= startIndex + length) {
+			for(int i = 0; i < length; ++i) {
+				if (append)
+					fGDBStackFrames.add(new GDBStackFrame(this, newFrames[startIndex + i]));
+				else
+					fGDBStackFrames.add(i, new GDBStackFrame(this, newFrames[startIndex + i]));
 			}
 		}
-		
-		// create stack frames
-		for (i = 0 ; i < miFramesList.size() ; i++) {
-			if (!GDBHelper.filterCFiles(getGDBDebugTarget(), (miFramesList.get(i)))) {
-				fGDBStackFrames.add(new GDBStackFrame(this, miFramesList.get(i)));
-			}
-		}
-		// sort the stack frames
-		Collections.sort(fGDBStackFrames, new Comparator<GDBStackFrame>() {
-			@Override
-			public int compare(GDBStackFrame stackFrame1, GDBStackFrame stackFrame2) {
-				// TODO Auto-generated method stub
-				Integer id1 = new Integer(stackFrame1.getIdentifier());
-				Integer id2 = new Integer(stackFrame2.getIdentifier());
-				return id1.compareTo(id2);
-			}
-		});
 	}
 
 	/**
@@ -250,46 +371,45 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	private int getStackInfoDepth() {
 		// TODO Auto-generated method stub
-		if (fStackDepth == 0) { 
+		int stackDepth = 0;
+		try {
+			MISession miSession = getGDBDebugTarget().getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIStackInfoDepth stackInfoDepthCmd = factory.createMIStackInfoDepth();
+			MIStackInfoDepthInfo stackInfoDepthInfo;
+			miSession.postCommand(stackInfoDepthCmd);
 			try {
-				MISession miSession = getGDBDebugTarget().getMISession();
-				CommandFactory factory = miSession.getCommandFactory();
-				MIStackInfoDepth stackInfoDepthCmd = factory.createMIStackInfoDepth();
-				MIStackInfoDepthInfo stackInfoDepthInfo;
+				stackInfoDepthInfo = stackInfoDepthCmd.getMIStackInfoDepthInfo();
+				if (stackInfoDepthInfo == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBThread.getStackInfoDepth.StackInfoDepth.NoAnswer"), null));
+				}
+				stackDepth = stackInfoDepthInfo.getDepth();
+			} catch (MIException e) {
+				// First try fails, retry. gdb patches up the corrupt frame
+				// so retry should give us a frame count that is safe.
+				stackInfoDepthCmd = factory.createMIStackInfoDepth();
 				miSession.postCommand(stackInfoDepthCmd);
-				try {
-					stackInfoDepthInfo = stackInfoDepthCmd.getMIStackInfoDepthInfo();
-					if (stackInfoDepthInfo == null) {
+				stackInfoDepthInfo = stackInfoDepthCmd.getMIStackInfoDepthInfo();
+				if (stackInfoDepthInfo == null) {
+					try {
 						throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 								MDTDebugCorePlugin.getResourceString("GDBThread.getStackInfoDepth.StackInfoDepth.NoAnswer"), null));
+					} catch (CoreException e1) {
+						// TODO Auto-generated catch block
+						MDTDebugCorePlugin.log(null, e);
 					}
-					fStackDepth = stackInfoDepthInfo.getDepth();
-				} catch (MIException e) {
-					// First try fails, retry. gdb patches up the corrupt frame
-					// so retry should give us a frame count that is safe.
-					stackInfoDepthCmd = factory.createMIStackInfoDepth();
-					miSession.postCommand(stackInfoDepthCmd);
-					stackInfoDepthInfo = stackInfoDepthCmd.getMIStackInfoDepthInfo();
-					if (stackInfoDepthInfo == null) {
-						try {
-							throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-									MDTDebugCorePlugin.getResourceString("GDBThread.getStackInfoDepth.StackInfoDepth.NoAnswer"), null));
-						} catch (CoreException e1) {
-							// TODO Auto-generated catch block
-							MDTDebugCorePlugin.log(null, e);
-						}
-					}
-					fStackDepth = stackInfoDepthInfo.getDepth();
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					MDTDebugCorePlugin.log(null, e);
 				}
-			} catch (MIException e) {
-				// 1 is safe to return
-				return 1;
+				stackDepth = stackInfoDepthInfo.getDepth();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
 			}
+		} catch (MIException e) {
+			// 1 is safe to return
+			return 1;
 		}
-		return fStackDepth;
+		return stackDepth;
 	}
 
 	/* (non-Javadoc)
@@ -307,7 +427,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
-	public IStackFrame getTopStackFrame() throws DebugException {
+	public synchronized IStackFrame getTopStackFrame() throws DebugException {
 		computeStackFrames();
 		if (fGDBStackFrames.size() > 0) {
 			return fGDBStackFrames.get(0);
@@ -366,6 +486,8 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		setSuspended(false);
 		setStepping(false);
 		resumed(DebugEvent.CLIENT_REQUEST);
+		// clear the stack frames completely
+		disposeStackFrames();
 		// send gdb the -exec-continue commmand
 		try {
 			MIExecContinue execContinueCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecContinue();

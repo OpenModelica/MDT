@@ -109,6 +109,7 @@ public class ValueHelper {
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIDataEvaluateExpression dataEvaluateExpressionCmd = factory.createMIDataEvaluateExpression(variableName);
+		dataEvaluateExpressionCmd.setQuiet(true);
 		miSession.postCommand(dataEvaluateExpressionCmd);
 		MIDataEvaluateExpressionInfo dataEvaluateExpressionInfo = dataEvaluateExpressionCmd.getMIDataEvaluateExpressionInfo();
 		return dataEvaluateExpressionInfo.getExpression();

@@ -98,6 +98,11 @@ public class VariableHelper {
 			variablesList.add(new GDBArrayVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}
+		// create replaceable type any variable
+//		else if (referenceType.equals(GDBHelper.REPLACEABLE_TYPE_ANY)) {
+//			variablesList.add(new GDBAnyTypeVariable(gdbStackFrame, name, displayName, type,
+//					referenceType, actualType, voidPointer));
+//		}
 	}
 	
 	/**
