@@ -286,7 +286,8 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 			testScenarios.addAll(this.discardedTestScenarios);
 		}
 		
-		List<Element> packagesOfTheSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(getTestScenarioPackages(this.selectedTestScenarios));
+//		List<Element> packagesOfTheSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(getTestScenarioPackages(this.selectedTestScenarios));
+		List<Element> packagesOfTheSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(getTestScenarioPackages(testScenarios));
 		createPkgTreeItems(treeRoot, packagesOfTheSelectedTestScenariosSorted, !isDiscardedTree, isDiscardedTree);
 		
 		List<Element> testScenariosSorted = ModelicaMLServices.getSortedByName(testScenarios);

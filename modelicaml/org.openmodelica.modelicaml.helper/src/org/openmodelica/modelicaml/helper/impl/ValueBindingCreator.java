@@ -34,28 +34,25 @@
  */
 package org.openmodelica.modelicaml.helper.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.uml2.uml.Dependency;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
-import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Package;
-import org.eclipse.uml2.uml.Stereotype;
-import org.openmodelica.modelicaml.common.constants.Constants;
+import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
-import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 
-public class ValueBindingCreator {
+public class ValueBindingCreator implements IRunnableWithProgress {
 	
 	// all tree items for which the modification (binding) was updated
 	private List<TreeObject> updatedItems = new ArrayList<TreeObject>();
@@ -78,7 +75,7 @@ public class ValueBindingCreator {
 	
 	/*
 	 * All clients that have isRequired checked to indicate that they always need a bindings
-	 * even if the default value is set in its declarion.
+	 * even if the default value is set in its declaration.
 	 */
 	private HashSet<TreeObject> allRequiredClientsFound = new HashSet<TreeObject>();
 	
@@ -359,5 +356,32 @@ public class ValueBindingCreator {
 
 	public HashSet<TreeObject> getAllRequiredClientsFound() {
 		return allRequiredClientsFound;
+	}
+	
+	// The total sleep time
+	private static final int TOTAL_TIME = 100;
+	// The increment sleep time
+	private static final int INCREMENT = 10;
+	// process time´is unknown
+	private boolean indeterminate = true; 
+	
+	private String progressMonitorTitle = "Value Bindings Creation";
+	private String monitorText1 = "Collecting data ...";
+	private String monitorText2 = "Creating bindings ...";
+	
+	@Override
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		
+		monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
+	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
+	      Thread.sleep(INCREMENT);
+	      monitor.worked(INCREMENT);
+	      if (total == TOTAL_TIME / 4) monitor.subTask(monitorText1);
+	      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText2);
+	    }
+	    monitor.done();
+	    if (monitor.isCanceled()){
+	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
+	    }   
 	}
 }
