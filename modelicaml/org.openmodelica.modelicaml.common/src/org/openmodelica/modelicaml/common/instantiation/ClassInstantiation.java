@@ -654,7 +654,6 @@ public class ClassInstantiation {
 	}
 	
 	
-	
 	// Value Clients or Providers handling ************************************************************************
 	
 	private void setValueClientOrProviderIndicator(TreeParent item){
@@ -679,26 +678,39 @@ public class ClassInstantiation {
 
 	}
 	
+	private Element umlModel= null;
+	
+	public void setUmlModel(Element model) {
+		this.umlModel = model;
+	} 
+	
 	private void collectValueClientsAndProvidersFromUmlModel(){
 		
-		UmlModel papyrusModel = UmlUtils.getUmlModel();
-
-		if (papyrusModel != null ) {
+		UmlModel papyrusModel = null;
+		Element valueMediatorsPackage = null;
+		
+		if (this.umlModel != null ) {
+			valueMediatorsPackage = this.umlModel;
+		}
+		else {
+			papyrusModel = UmlUtils.getUmlModel();
 			try {
-				Element valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
-				ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
-				dc.collectAll(valueMediatorsPackage, treeRoot);
-				referencedClients.addAll(dc.getReferencedClients());
-				referencedProviders.addAll(dc.getReferencedProviders());
-				referencedRequiredClients.addAll(dc.getReferencedRequiredClients());
-				
-				setValueClientOrProviderIndicator(treeRoot);
-				
+				valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
 			} catch (NotFoundException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
-//				MessageDialog.openError(new Shell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
-//				System.err.println("Component Tree View: Cannot access the root model in Papyrus in order to collect value bindings data.");
 			}
+		}
+
+		if (valueMediatorsPackage != null ) {
+//			Element valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
+			ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
+			dc.collectAll(valueMediatorsPackage, treeRoot);
+			referencedClients.addAll(dc.getReferencedClients());
+			referencedProviders.addAll(dc.getReferencedProviders());
+			referencedRequiredClients.addAll(dc.getReferencedRequiredClients());
+			
+			setValueClientOrProviderIndicator(treeRoot);
 		}
 		else {
 //			System.err.println("Component Tree View: Cannot access the root model in Papyrus in order to collect value bindings data.");

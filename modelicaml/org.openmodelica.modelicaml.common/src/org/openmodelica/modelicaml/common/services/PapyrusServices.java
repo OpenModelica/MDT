@@ -1,6 +1,7 @@
 package org.openmodelica.modelicaml.common.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -10,6 +11,7 @@ import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 
 public class PapyrusServices {
 
@@ -29,4 +31,27 @@ public class PapyrusServices {
       	}
 	}
 	
+	
+	public static void locateInComponentsTreeView(Object object){
+		if (object instanceof String) {
+			
+//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.openmodelica.modelicaml.view.componentstree");
+			List<Object> elements = new ArrayList<Object>();
+			// find treeObject with the dotPath
+			
+			HashSet<Object> treeObjects =  TreeUtls.findTreeItems((String) object, TreeUtls.componentsTreeRoot, new HashSet<Object>());
+			elements.addAll(treeObjects);
+			
+			StructuredSelection selection = new StructuredSelection(elements);
+			TreeUtls.componentsTreeViewer.setSelection(selection); 
+			
+//			if (view instanceof ModelExplorerPageBookView) {
+//				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+//			}
+//			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+//			List<Object> items = new ArrayList<Object>();
+//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+//			modelExplorerView.setSelection(new StructuredSelection(items), true);
+      	}
+	}
 }

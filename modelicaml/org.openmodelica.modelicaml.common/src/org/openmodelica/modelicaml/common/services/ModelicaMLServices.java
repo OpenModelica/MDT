@@ -11,6 +11,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 
 public class ModelicaMLServices {
 
@@ -36,6 +37,21 @@ public class ModelicaMLServices {
 		return "";
 	}
 
+	
+	public static List<TreeObject> getSortedByDotPath(HashSet<TreeObject> set){
+		if (set == null) { return null; }
+
+		List<TreeObject> listSorted = new ArrayList<TreeObject>(set);
+		Comparator<TreeObject> c = new Comparator<TreeObject>() {
+			@Override
+			public int compare(TreeObject arg0, TreeObject arg1) {
+				return arg0.getDotPath().compareToIgnoreCase(arg1.getDotPath());
+			}
+		};
+		Collections.sort(listSorted, c);
+		
+		return listSorted;
+	}
 	
 	public static List<Element> getSortedByName(HashSet<Element> set){
 		if (set == null) { return null; }

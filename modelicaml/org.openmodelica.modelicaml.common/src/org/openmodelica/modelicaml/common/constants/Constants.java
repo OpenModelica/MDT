@@ -176,6 +176,16 @@ public class Constants {
 	public final static String MARKERTYPE_VALUEBINDINGS = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings";
 	public final static String MARKERTYPE_COMPONENT_MODIFICATION = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification";
 	
+	// test execution report
+	public final static String propertyName_requirementsTestVerdict = "_reqTestVerdict";
+	
+	// CG
+	public final static String folderName_code_gen = "code-gen";
+
+	// Test Execution
+	public final static String folderName_test_gen = "test-gen";
+	public final static String folderName_test_session = "test-session";
+
 	
 }
 

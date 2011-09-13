@@ -40,6 +40,7 @@ import java.util.Iterator;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Dependency;
@@ -63,6 +64,7 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 		// it is used by other plugins, e.g., value bindings in order to get the currently instantiated class.
 		// IMPORTANT: components tree plugin should not forget to reset it! 
 		public static TreeParent componentsTreeRoot = null;
+		public static Viewer componentsTreeViewer = null;
 		
 		
 		
