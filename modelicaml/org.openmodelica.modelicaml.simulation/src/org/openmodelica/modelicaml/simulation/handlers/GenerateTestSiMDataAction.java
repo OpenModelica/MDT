@@ -205,7 +205,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 				}
 			}
 		
-			Job job = new Job("Modelica Code and Test Simulation Models Data Generation") {
+			Job job = new Job("Test Simulation Models Data Generation") {
 				protected IStatus run(IProgressMonitor monitor) {
 					runchain(monitor);
 					return Status.OK_STATUS;
@@ -218,7 +218,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 
 		}
 		
-		CompoundCommand cc = new CompoundCommand("Modelica Code and Test Simulation Models Data Generation");
+		CompoundCommand cc = new CompoundCommand("Test Simulation Models Data Generation");
 		return (cc.unwrap());
 	}
 
