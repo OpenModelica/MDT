@@ -31,9 +31,9 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 </head>
 
 <body>
-
+	<a name="top"></a>
 	<!-- Title, Overview -->
-	<div id='title' style='margin:0;padding:0;position:relative; left:20px; top:22px; text-align:left;z-index:1;'>
+	<div id='title' style='margin:0;padding:0;position:relative; left:20px; top:0px; text-align:left;z-index:1;'>
 		<span style='font-size:18px; line-height:25px;'>Test Execution Report</span>
 		<br>
 		<span>Creation date: <%getTime()%></span>
@@ -58,15 +58,43 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 		<br>
 	</div>
 	
+	<%report_html_testModels_overview%>
+	
 	<%report_html_testModels%>
 	
 </body>
 </html>
 
+<%script type="uml.Model" name="report_html_testModels_overview"%>
+<!-- Overview -->
+<div style='margin-left:20px; margin-top:20px;'>
+<%for (getTestModels()){%>
+	<!-- Test passed/failed  -->
+	<span style='color:#000000;'>
+		<script type='text/javascript'>
+			writeTestPassedString(data['<%qualifiedName%>']['_reqTestVerdict.testPassed']['atLeastOneTimeTrue']);
+		</script>
+	</span>
+	
+	<!-- Test Model Name-->
+	<span style='color:#000000; margin-left:10px;'>
+		<script type='text/javascript'>writeLink('#<%qualifiedName%>', '<strong><%name%></strong>')</script>	
+	</span>
+	<script type='text/javascript'>
+		writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot');
+	</script>
+	<br>
+	<!--<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span><br>-->
+<%}%>
+</div>
+
+
+
 <%script type="uml.Model" name="report_html_testModels"%>
 <%for (getTestModels()){%>
 <br>
 <!-- Test Model '<%qualifiedName%>' START ***************************************************************** -->
+<a name="<%qualifiedName%>"></a> 
 <div style='position:relative;background-color:#F0F0F0; border:1px #D2B48C solid;left:20px;top:20px;width:95%;padding:5px;'>
 	<div style='margin-left:10px;>
 		<!-- test passed/failed  -->
@@ -122,8 +150,11 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 	<!-- ***************************************************************************************************  -->
 	<br>
 	<%getRequirementsHTML()%>
-	<br>
-
+	
+	<div style='margin-left:10px; margin-top:20px;'>
+		<a href="#top">... back to overview</a>
+	</div>
+	
 </div>
 <!-- Test Model '<%qualifiedName%>' END ***************************************************************** -->
 
