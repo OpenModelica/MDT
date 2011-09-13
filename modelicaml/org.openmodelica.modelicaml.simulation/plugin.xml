@@ -192,7 +192,7 @@
                class="org.openmodelica.modelicaml.simulation.testexecution.actions.UpdateTestExecutionReportDataAction"
                icon="icons/execute.png"
                id="org.openmodelica.modelicaml.simulation.testexecution.updatereport"
-               label="ModelicaML: Update Report"
+               label="ModelicaML: Update report"
                style="push">
          </action>
       </objectContribution>
