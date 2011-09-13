@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.view.componentstree.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +56,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -829,59 +831,74 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						boolean deleteOldBindings = confirmationDialog.deleteAllBindings();
 						
 						// update bindings
-						ValueBindingCreator vc = new ValueBindingCreator();
-						vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true, false);
-						
-						// get the updated items
-						List<TreeObject> updatedItems = vc.getUpdatedItems();
-						HashMap<TreeObject, String> updatedModifications = vc.getUpdatedItemsToNewModification();
-						
-						// get the deleted modifications items
-						List<TreeObject> deletedItemsModifications = vc.getDeletedItemsModification();
-						List<String> deletedModifications = vc.getDeletedModifications();
+//						ValueBindingCreator vc = new ValueBindingCreator();
+//						vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true, false);
 
-						String infoText = "The following updates were performed: \n";
-						String message = "";
-						String separator = "\n\n---------------------------------------------" + 
-											"------------------------------------------------" +
-											"--------------------- \n\n";
-						
-						// update the deleted modification items in viewer 
-						for (TreeObject deletedItemModificationItem : deletedItemsModifications) {
-							// update in viewer
-							updateItem(deletedItemModificationItem);
-						}
-						
-						viewer.refresh();
-						
-						// select the item again in view
-						TreeUtls.selectInView(obj, root, viewer);
-						viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
-						
-						// create message for deleted modifications
-						for (String string : deletedModifications) {
-							message = message + "DELETED: " + string + separator ;
-						}
-						
-						if (updatedItems.size() > 0) {
-							for (TreeObject updatedTreeObject : updatedItems) {
-								
+						try {
+							// update bindings
+							ValueBindingCreator vc = new ValueBindingCreator();
+							vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true, false);
+							
+							// get the updated items
+							List<TreeObject> updatedItems = vc.getUpdatedItems();
+							HashMap<TreeObject, String> updatedModifications = vc.getUpdatedItemsToNewModification();
+							
+							// get the deleted modifications items
+							List<TreeObject> deletedItemsModifications = vc.getDeletedItemsModification();
+							List<String> deletedModifications = vc.getDeletedModifications();
+
+							String infoText = "The following updates were performed: \n";
+							String message = "";
+							String separator = "\n\n---------------------------------------------" + 
+												"------------------------------------------------" +
+												"--------------------- \n\n";
+							
+							// update the deleted modification items in viewer 
+							for (TreeObject deletedItemModificationItem : deletedItemsModifications) {
 								// update in viewer
-								updateItem(updatedTreeObject);
-								
-								// create message for updated modifications
-								message = message + "UPDATED: " +  updatedTreeObject.getDotPath()+ " = " + updatedModifications.get(updatedTreeObject)
-										+ separator ;
+								updateItem(deletedItemModificationItem);
 							}
 							
-							// show results.
-							DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, message);
-							dialog.open();
+							viewer.refresh();
 							
-						} else {
-							showMessage("Result", "No updates were performed.");
+							// select the item again in view
+							TreeUtls.selectInView(obj, root, viewer);
+							viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+							
+							// create message for deleted modifications
+							for (String string : deletedModifications) {
+								message = message + "DELETED: " + string + separator ;
+							}
+							
+							if (updatedItems.size() > 0) {
+								for (TreeObject updatedTreeObject : updatedItems) {
+									
+									// update in viewer
+									updateItem(updatedTreeObject);
+									
+									// create message for updated modifications
+									message = message + "UPDATED: " +  updatedTreeObject.getDotPath()+ " = " + updatedModifications.get(updatedTreeObject)
+											+ separator ;
+								}
+								
+								// show results.
+								DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, message);
+								dialog.open();
+								
+							} else {
+								showMessage("Result", "No updates were performed.");
+							}
+							
+							new ProgressMonitorDialog(new Shell()).run(true, true, vc);
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+							MessageDialog.openError(new Shell(), "Value Bindigns Geneartion Process Error", 
+									"It was not possible to invoce the value bindings generation.");
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							MessageDialog.openError(new Shell(), "Value Bindigns Geneartion Process Abort", 
+									"The generation of value bindings was canceled.");
 						}
-						
 					}
 				}
 			}
@@ -2396,6 +2413,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				
 				// set the static variable to be used by other plugins. This is done in order to avoid cyclic plugin dependecies
 				org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = root;
+				org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeViewer = viewer;
 			}
 		}
 	}
