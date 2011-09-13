@@ -269,6 +269,15 @@
                      checkEnabled="true">
                </visibleWhen>
             </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.runtests"
+                  icon="resources/icons/icons16/execute.png"
+                  label="Run Tests"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
          </menu>
       </menuContribution>
    </extension>
