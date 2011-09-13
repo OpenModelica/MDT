@@ -16,7 +16,15 @@ Require-Bundle: org.eclipse.ui,
  org.openmodelica.simulation.core;bundle-version="0.7.0",
  org.openmodelica.simulation.environment;bundle-version="0.6.4",
  org.openmodelica.simulation.libs.jfreechart;bundle-version="1.0.13",
- org.openmodelica.simulation.libs.xom;bundle-version="1.2.6"
+ org.openmodelica.simulation.libs.xom;bundle-version="1.2.6",
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.core.databinding.observable,
+ org.eclipse.core.databinding.property,
+ org.eclipse.jface.databinding,
+ com.ibm.icu,
+ org.eclipse.emf.databinding,
+ org.eclipse.core.filesystem;bundle-version="1.3.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.papyrus.diagram.common.editparts,

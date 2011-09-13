@@ -89,6 +89,10 @@
             id="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMCSimCenter"
             name="Simulate with OMC Simulation Center">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.runtests"
+            name="Run Tests">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -146,6 +150,65 @@
             </with>
          </activeWhen>
       </handler>
+      <handler
+            class="org.openmodelica.modelicaml.simulation.handlers.GenerateTestSiMDataAction"
+            commandId="org.openmodelica.modelicaml.helper.commands.runtests">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.openmodelica.modelicaml.simulation.popup.testsessionxml.object"
+            nameFilter="*.xml"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="org.openmodelica.modelicaml.simulation.testexecution.actions.ExecuteTestsAction"
+               icon="icons/execute.png"
+               id="org.openmodelica.modelicaml.simulation.testexecution.execute"
+               label="ModelicaML: Execute Tests"
+               style="push">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.openmodelica.modelicaml.simulation.popup.testresultsxml.object"
+            nameFilter="*_res.xml"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction"
+               icon="icons/execute.png"
+               id="org.openmodelica.modelicaml.simulation.testexecution.plot"
+               label="ModelicaML: Plot Results"
+               style="push">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.openmodelica.modelicaml.simulation.popup.testsessionreportdata.object"
+            nameFilter="*.html"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="org.openmodelica.modelicaml.simulation.testexecution.actions.UpdateTestExecutionReportDataAction"
+               icon="icons/execute.png"
+               id="org.openmodelica.modelicaml.simulation.testexecution.updatereport"
+               label="ModelicaML: Update Report"
+               style="push">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.openmodelica.modelicaml.simulation.popup.testsessionreport.object"
+            nameFilter="*.html"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="org.openmodelica.modelicaml.simulation.testexecution.actions.OpenTestExecutionReportAction"
+               icon="icons/execute.png"
+               id="org.openmodelica.modelicaml.simulation.testexecution.openreport"
+               label="ModelicaML: Open report"
+               style="push">
+         </action>
+      </objectContribution>
    </extension>
 
 </plugin>

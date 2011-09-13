@@ -379,15 +379,23 @@ public class OMCProxy
 	{
 		/* Can't remember why this is needed. But it is. */
 		String args[] = {null};
+
+		/* set the CORBA read timeout to a larger value as we send huge 
+ammounts of data
+		 * from OMC to MDT
+		 */
+		System.setProperty("com.sun.CORBA.transport.ORBTCPReadTimeouts", "1:60000:300:1");
 		
 		ORB orb;
-		orb = ORB.init(args, null);
-		
+		orb = ORB.init(args, null);		
+
 		/* Convert string to object. */
-		org.omg.CORBA.Object obj = orb.string_to_object(stringifiedObjectReference);
-		logOMCStatus("Corba IOR:" + stringifiedObjectReference);
+		org.omg.CORBA.Object obj = 
+orb.string_to_object(stringifiedObjectReference);		
+
 		/* Convert object to OmcCommunication object. */
 		omcc = OmcCommunicationHelper.narrow(obj);
+
 	}
 	
 	/**
