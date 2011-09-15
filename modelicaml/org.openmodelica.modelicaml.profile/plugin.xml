@@ -217,6 +217,21 @@
                   </equals>
                </with>
             </visibleWhen>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.runtests"
+                  icon="resources/icons/icons16/execute.png"
+                  label="Run Tests"
+                  style="push"
+                  tooltip="Run Tests">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
          </toolbar>
       </menuContribution>
    </extension>
