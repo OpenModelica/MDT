@@ -36,53 +36,49 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
 
 /**
+ * -break-insert [ -t ] [ -h ] [ -f ] [ -d ] [ -a ]
+ * [ -c condition ] [ -i ignore-count ]
+ * [ -p thread ] [ location ]
+ * 
+ * If specified, location, can be one of:
+ * 
+ *  function
+ *  filename:linenum
+ *  filename:function
+ *  *address
+ *  
+ *  The possible optional parameters of this command are:
+ *  
+ *  `-t'
+ *  Insert a temporary breakpoint.
+ *  `-h'
+ *  Insert a hardware breakpoint.
+ *  `-c condition'
+ *  Make the breakpoint conditional on condition.
+ *  `-i ignore-count'
+ *  Initialize the ignore-count.
+ *  `-f'
+ *  If location cannot be parsed (for example if it refers to unknown files or functions), create a pending breakpoint. Without this flag, gdb will report an error, and won't create a breakpoint, if location cannot be parsed.
+ *  `-d'
+ *  Create a disabled breakpoint.
+ *  `-a'
+ *  Create a tracepoint. See Tracepoints. When this parameter is used together with `-h', a fast tracepoint is created.
+ *  
+ *  The result is in the form:
+ *  ^done,bkpt={number="number",type="type",disp="del"|"keep",
+ *  enabled="y"|"n",addr="hex",func="funcname",file="filename",
+ *  fullname="full_filename",line="lineno",[thread="threadno,]
+ *  times="times"}
+ *  
+ *  where number is the gdb number for this breakpoint, funcname is the name of the function where the breakpoint was inserted, filename is the name of the source file which contains this function, lineno is the source line number within that file and times the number of times that the breakpoint has been hit (always 0 for -break-insert but may be greater for -break-info or -break-list which use the same output). 
+ *    
  * @author Adeel Asghar
  *
- */
-/**
- *    -break-insert [ -t ] [ -h ] [ -r ]
- *       [ -c CONDITION ] [ -i IGNORE-COUNT ]
- *       [ -p THREAD ] [ LINE | ADDR ]
- * 
- * If specified, LINE, can be one of:
- * 
- *  * function
- *
- *  * filename:linenum
- *
- *  * filename:function
- *
- *  * *address
- * 
- *  The possible optional parameters of this command are:
- *
- * `-t'
- *     Insert a tempoary breakpoint.
- *
- * `-h'
- *     Insert a hardware breakpoint.
- *
- * `-c CONDITION'
- *     Make the breakpoint conditional on CONDITION.
- *
- * `-i IGNORE-COUNT'
- *     Initialize the IGNORE-COUNT.
- *
- * `-r'
- *
- *     Insert a regular breakpoint in all the functions whose names match
- *     the given regular expression.  Other flags are not applicable to
- *     regular expresson.
- *
- *  The result is in the form:
- *
- *     ^done,bkptno="NUMBER",func="FUNCNAME",
- *      file="FILENAME",line="LINENO"
- * 
  */
 public class MIBreakInsert extends MICommand {
 	public MIBreakInsert(String func) {
 		this(false, false, null, 0, func, 0);
+		setOptions(new String[]{"-f"});
 	}
 
 	public MIBreakInsert(boolean isTemporary, boolean isHardware,
