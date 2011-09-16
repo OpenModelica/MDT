@@ -61,6 +61,7 @@ public class GDBHelper {
 	public static String NONE = "NONE()";
 	public static String SOME = "SOME()";
 	/* Signals */
+	public static String SIGINT = "SIGINT";
 	public static String SIGTRAP = "SIGTRAP";
 	public static String SIGSEGV = "SIGSEGV";
 	

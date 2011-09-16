@@ -47,6 +47,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
@@ -94,7 +95,7 @@ public class MISession extends Observable {
 	// parser to parse GDB outputs
 	MIParser fMIParser;
 	
-	long fCommandTimeout = 5000;
+	long fCommandTimeout = 60000;	// one minute
 	// GDB inferior process i.e actual program we are debugging
 	GDBInferior fGDBInferior;
 	Process fSessionProcess;
@@ -664,6 +665,19 @@ public class MISession extends Observable {
 	public BufferedWriter getLogFileWriter() {
 		return fLogFileWriter;
 	}
+	
+	/**
+	 * @return the fLogFileWriter
+	 */
+	public void writeLog(String message) {
+		try {
+			fLogFileWriter.write(message + "\n");
+			fLogFileWriter.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * This is a windows specific method.
@@ -677,6 +691,42 @@ public class MISession extends Observable {
 	 */
 	public int interruptInferior(GDBDebugTarget gdbDebugTarget) throws CoreException, IOException, InterruptedException {
 		// TODO Auto-generated method stub
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			return interruptInferiorWindows(gdbDebugTarget);
+		} else {
+			return interruptInferiorLinux(gdbDebugTarget);
+		}
+	}
+
+	/**
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws CoreException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
+	 */
+	private int interruptInferiorLinux(GDBDebugTarget gdbDebugTarget) throws CoreException, InterruptedException, IOException {
+		// TODO Auto-generated method stub
+		ArrayList<String> argList = new ArrayList<String>();
+		argList.add("kill");
+		argList.add("-SIGINT");
+		argList.add(Integer.toString(getGDBInferior().getInferiorPID()));
+
+		String[] args = (String[])argList.toArray(new String[argList.size()]);
+		if (MDTDebugCorePlugin.DEBUG) getLogFileWriter().write("Trying to interrupt GDB with : " + argList);getLogFileWriter().flush();
+		Process breakProcess = DebugPlugin.exec(args, null);
+		return breakProcess.waitFor();
+	}
+
+	/**
+	 * @param gdbDebugTarget
+	 * @return
+	 * @throws CoreException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
+	 */
+	private int interruptInferiorWindows(GDBDebugTarget gdbDebugTarget) throws CoreException, InterruptedException, IOException {
+		// TODO Auto-generated method stub
 		ILaunchConfiguration configuration = gdbDebugTarget.getLaunch().getLaunchConfiguration();
 		String debugTargetProgram = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String)null);
 		IPath progPath = new Path(debugTargetProgram);
@@ -687,7 +737,7 @@ public class MISession extends Observable {
 		argList.add(Integer.toString(getGDBInferior().getInferiorPID()));
 
 		String[] args = (String[])argList.toArray(new String[argList.size()]);
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("Trying to interrupt GDB with : " + argList);
+		if (MDTDebugCorePlugin.DEBUG) getLogFileWriter().write("Trying to interrupt GDB with : " + argList);getLogFileWriter().flush();
 		Process breakProcess = DebugPlugin.exec(args, null);
 		return breakProcess.waitFor();
 	}

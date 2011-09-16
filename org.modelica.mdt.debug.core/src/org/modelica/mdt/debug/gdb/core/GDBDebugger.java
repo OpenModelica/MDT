@@ -83,9 +83,8 @@ public class GDBDebugger {
 	 */
 	private void createMISession() throws MIException, IOException {
 		// TODO Auto-generated method stub
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("Creating MI Session");
 		fMISession = new MISession(fGDBProcess, fPty);
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("Created MI Session");
+		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("Created MI Session");
 	}
 
 	/**
@@ -128,9 +127,7 @@ public class GDBDebugger {
 			for (String x : extraArgs) argList.add(x);
 		}
 		String[] args = (String[])argList.toArray(new String[argList.size()]);
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("Starting GDB with flags " + argList);
 		fGDBProcess = DebugPlugin.exec(args, new File(debugTargetWorkDirectory), null);
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("Started GDB successfully");
 	}
 
 	/**

@@ -198,11 +198,15 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		miSession.deleteObserver(this);
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakDelete breakDeleteCmd = factory.createMIBreakDelete(new int[]{getBreakPointNumber()});
-		miSession.postCommand(breakDeleteCmd);
-		if (breakDeleteCmd.getMIInfo() == null) {
-			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-				MDTDebugCorePlugin.getResourceString("MDTLineBreakpoint.removeBreakPoint.BreakDelete.NoAnswer"), null));
-		}
+		miSession.postCommand(breakDeleteCmd, -1);
+		/*
+		 * Adeel 2011-09-16 20:58
+		 * Not interested in this output. Don't wait for it.
+		 */
+//		if (breakDeleteCmd.getMIInfo() == null) {
+//			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+//				MDTDebugCorePlugin.getResourceString("MDTLineBreakpoint.removeBreakPoint.BreakDelete.NoAnswer"), null));
+//		}
 		fGDBTarget = null;
 	}
     
@@ -315,7 +319,6 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		// TODO Auto-generated method stub
 		String file = new File(event.getMIFrame().getFile()).getName();
 		int lineNumber = event.getMIFrame().getLine();
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("Breakpoint on " + file + " line: "+ lineNumber);
 		try {
 			if (getLineNumber() == lineNumber && getMarker().getResource().getName().compareTo(file) == 0)
 			{

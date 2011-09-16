@@ -57,7 +57,6 @@ public class Queue {
 
 			// extract the new first cmd
 			Object item = list.remove(0);
-			//if (GDBDebugCorePlugin.DEBUG) System.out.println("in Queue.removeItem() - removed: '" + item + "'");
 			return item;
 		}
 	}
@@ -65,7 +64,6 @@ public class Queue {
 	public void addItem(Object item) {
 		synchronized (list) {
 			list.add(item);
-			//if (GDBDebugCorePlugin.DEBUG) System.out.println("in Queue.addItem - added: '" + item + "'");
 			// After adding, notify any and all waiting
 			// threads that the list has changed.
 			list.notifyAll();

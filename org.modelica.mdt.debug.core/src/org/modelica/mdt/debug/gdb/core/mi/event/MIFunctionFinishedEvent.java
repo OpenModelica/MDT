@@ -40,9 +40,9 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MITuple;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIValue;
 
 /**
- * @author Adeel Asghar
- *
  * *stopped,reason="function-finished",thread-id="0",frame={addr="0x0804855a",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="17"},gdb-result-var="$1",return-value="10"
+ * 
+ * @author Adeel Asghar
  */
 public class MIFunctionFinishedEvent extends MIStoppedEvent {
 

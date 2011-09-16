@@ -39,7 +39,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.command.Command;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecContinue;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecFinish;
@@ -103,14 +102,12 @@ public class RxThread extends Thread {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
-				if (MDTDebugCorePlugin.DEBUG) System.out.println("MI Rx Thread " + line);
 				setPrompt(line);
 				List<String> outputs = filterMIOutput(line + "\n");
 				for (String output : outputs) {
 					processMIOutput(output + "\n");
 					// logging
-					session.getLogFileWriter().write(output + "\n");
-					session.getLogFileWriter().flush();
+					session.writeLog(output);
 				}
 			}
 		} catch (IOException e) {
@@ -462,13 +459,18 @@ public class RxThread extends Thread {
 		// We were stopped for some unknown reason, for example
 		// GDB for temporary breakpoints will not send the
 		// "reason" ??? still fire a stopped event.
-		if (list.isEmpty()) {
-			if (session.getGDBInferior().isRunning()) {
-				session.getGDBInferior().setSuspended();
-				MIEvent event = new MIStoppedEvent(session, rr);
-				session.fireEvent(event);
-			}
-		}
+		
+		/* Adeel 2011-09-16 20:32
+		 * this is not needed. It will just create extra Stopped events that are not needed.
+		 */
+		
+//		if (list.isEmpty()) {
+//			if (session.getGDBInferior().isRunning()) {
+//				session.getGDBInferior().setSuspended();
+//				MIEvent event = new MIStoppedEvent(session, rr);
+//				session.fireEvent(event);
+//			}
+//		}
 	}
 
 	MIEvent createEvent(String reason, MIExecAsyncOutput exec) {

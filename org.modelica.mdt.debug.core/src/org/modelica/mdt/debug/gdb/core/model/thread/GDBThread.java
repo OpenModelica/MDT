@@ -38,7 +38,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -520,12 +519,10 @@ public class GDBThread extends GDBDebugElement implements IThread {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 						MDTDebugCorePlugin.getResourceString("GDBThread.start.ExecRun.NoAnswer"), null));
 			}
-			// if run is ok then change the stdout buffer policy, only for windows
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				MIDataEvaluateExpression changeStdoutBufferCmd = factory.createMIChangeStdoutBuffer();
-				miSession.postCommand(changeStdoutBufferCmd, -1);
-				// we don't care about the time and output of this command
-			}
+			// if run is ok then change the stdout buffer policy
+			MIDataEvaluateExpression changeStdStreamBufferCmd = factory.createMIChangeStdStreamBuffer();
+			// we don't care about the time and output of this command
+			miSession.postCommand(changeStdStreamBufferCmd, -1);
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(e.getMessage() + e.getLogMessage(), e);
@@ -537,44 +534,41 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public void suspend() throws DebugException {
 		// on windows -exec-interrupt is not supported
-		System.out.println(Platform.getOS());
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			try {
-				int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
-				if (result != 0) {
-					MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
-							"Unable to interrupt the running program.", null)));
-				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
+		try {
+			int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
+			if (result != 0) {
+				MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
+						"Unable to interrupt the running program.", null)));
 			}
-			suspended(DebugEvent.CLIENT_REQUEST);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
 		}
+		suspended(DebugEvent.CLIENT_REQUEST);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
-		return isSuspended();
+		return isStepping();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
-		return isSuspended();
+		return isStepping();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
-		if (isSuspended()) {
+		if (isStepping()) {
 			return fGDBStackFrames.size() > 1;
 		} else {
 			return false;
@@ -686,7 +680,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	private void setStepping(boolean stepping) {
 		fStepping = stepping;
-	}
+	} 
 	
 	/**
 	 * Sets whether this thread is suspended
@@ -740,6 +734,18 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		setStepping(true);
 		setSuspended(true);
 		setRunning(false);
+		fireSuspendEvent(detail);
+	}
+	
+	/**
+	 * Notification the target has interrupted for the given reason
+	 * 
+	 * @param detail reason for the interrupt
+	 */
+	public void interrupted(int detail) {
+		setStepping(false);
+		setSuspended(true);
+		setRunning(true);
 		fireSuspendEvent(detail);
 	}
 	

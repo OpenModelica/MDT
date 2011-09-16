@@ -30,7 +30,6 @@
  */
 package org.modelica.mdt.debug.gdb.core.mi;
 
-import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.command.Command;
 
 /**
@@ -67,7 +66,6 @@ public class CommandQueue extends Queue {
 	}
 
 	public void addCommand(Command cmd) {
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("in CommandQueue.addCommand() - entering");
 		addItem(cmd);
 	}
 

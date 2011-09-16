@@ -60,7 +60,7 @@ import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MICommand;
-import org.modelica.mdt.debug.gdb.core.mi.command.MIExecContinue;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIExecFinish;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIErrorEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
@@ -557,9 +557,51 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			else if (miEvent instanceof MIFunctionFinishedEvent) {
 				handleFunctionFinisedEvent(miEvent);
 			}
+			// MIStoppedEvent
+			else if (miEvent instanceof MIStoppedEvent) {
+				handleStoppedEvent(miEvent);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
+		}
+	}
+	
+	/**
+	 * Handles the stopped event raised by GDB
+	 * @param miEvent
+	 * @throws MIException 
+	 * @throws CoreException 
+	 */
+	private void handleStoppedEvent(MIEvent miEvent) throws MIException, CoreException {
+		// TODO Auto-generated method stub
+		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIStoppedEvent caught in gdb debug target");
+		MIStoppedEvent stoppedEvent = (MIStoppedEvent)miEvent;
+		if (stoppedEvent.getFrame() == null)
+		{
+			((GDBThread)getThread()).setRefreshStackFrames(true);
+			((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
+			return;
+		}
+		
+		// tested on MAC OS X snow leopard
+		// if we stop at function longjmp then we perform -exec-finish
+		if (stoppedEvent.getFrame().getFunction().equals("longjmp")) {
+			CommandFactory factory = fMISession.getCommandFactory();
+			MIExecFinish execFinishCmd = factory.createMIExecFinish();
+			fMISession.postCommand(execFinishCmd);
+			MIInfo info = execFinishCmd.getMIInfo();
+			if (info == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						MDTDebugCorePlugin.getResourceString("GDBDebugTarget.handleStoppedEvent.ExecFinish.NoAnswer"), null));
+			}
+		}
+		// if we stop at function _longjmp then we perform -exec-next or -exec-step
+		else if (stoppedEvent.getFrame().getFunction().equals("_longjmp")) {
+			skipSteppedInFrames(miEvent);
+		}
+		else {
+			skipSteppedInFrames(miEvent);
 		}
 	}
 
@@ -571,7 +613,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 */
 	private void handleFunctionFinisedEvent(MIEvent miEvent) throws CoreException, MIException {
 		// TODO Auto-generated method stub
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("MIFunctionFinishedEvent caught in gdb debug target");
+		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIFunctionFinishedEvent caught in gdb debug target");
 		if (skipSteppedInFrames(miEvent)) {
 			GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MIFunctionFinishedEvent)miEvent).getFrame());
 			if (gdbStackFrame != null) {
@@ -587,10 +629,11 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @param miEvent
 	 * @throws MIException 
 	 * @throws CoreException 
+	 * @throws IOException 
 	 */
-	private void handleSteppingEvent(MIEvent miEvent) throws CoreException, MIException {
+	private void handleSteppingEvent(MIEvent miEvent) throws CoreException, MIException, IOException {
 		// TODO Auto-generated method stub
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("MISteppingRangeEvent caught in gdb debug target");
+		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MISteppingRangeEvent caught in gdb debug target");
 		if (skipSteppedInFrames(miEvent)) {
 			GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MISteppingRangeEvent)miEvent).getFrame());
 			if (gdbStackFrame != null) {
@@ -607,7 +650,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 */
 	private void handleBreakPointHitEvent(MIEvent miEvent) {
 		// TODO Auto-generated method stub
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("MIBreakpointHitEvent caught in gdb debug target");
+		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIBreakpointHitEvent caught in gdb debug target");
 		((GDBThread)getThread()).setRefreshStackFrames(true);
 		((GDBThread)getThread()).suspended(DebugEvent.BREAKPOINT);
 	}
@@ -620,26 +663,25 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 */
 	private void handleSignalEvent(MIEvent miEvent) throws MIException, CoreException {
 		// TODO Auto-generated method stub
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("MISignalEvent caught in gdb debug target");
+		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MISignalEvent caught in gdb debug target");
 		try {
 			MISession miSession = getMISession();
 			GDBInferior inferior = miSession.getGDBInferior();
 			MISignalEvent signalEvent = (MISignalEvent)miEvent;
 			
-			if (signalEvent.getName().equals(GDBHelper.SIGTRAP)) {
-				// we intentionally raise the SIGTRAP signal so send -exec-continue for it.
-				MIExecContinue execContinueCmd = miSession.getCommandFactory().createMIExecContinue();
-				execContinueCmd.setQuiet(true);
-				miSession.postCommand(execContinueCmd);
-				if (execContinueCmd.getMIInfo() == null) {
-					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-							MDTDebugCorePlugin.getResourceString("GDBDebugTarget.handleSignalEvent.ExecContinue.NoAnswer"), null));
+			if (signalEvent.getName().equals(GDBHelper.SIGTRAP) || signalEvent.getName().equals(GDBHelper.SIGINT)) {
+				GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame((signalEvent.getFrame()));
+				if (gdbStackFrame != null) {
+					gdbStackFrame.setCurrentFrame();
 				}
+				((GDBThread)getThread()).setRefreshStackFrames(true);
+				((GDBThread)getThread()).interrupted(DebugEvent.STEP_END);
 			} else if (signalEvent.getName().equals(GDBHelper.SIGSEGV)) {
-				inferior.getPipedErrorStream().write(signalEvent.getName().getBytes());
-				inferior.getPipedErrorStream().write(signalEvent.getName().getBytes());
+				inferior.getPipedErrorStream().write("Program recieved signal\n".getBytes());
+				inferior.getPipedErrorStream().write(signalEvent.toString().getBytes());
 				inferior.getPipedErrorStream().flush();
-				terminate();
+				// terminate the thread
+				((GDBThread)getThread()).terminated();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -653,7 +695,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 */
 	private void handleErrorEvent(MIEvent miEvent) {
 		// TODO Auto-generated method stub
-		if (MDTDebugCorePlugin.DEBUG) System.out.println("MIErrorEvent caught in gdb debug target");
+		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIErrorEvent caught in gdb debug target");
 		try {
 			MISession miSession = getMISession();
 			GDBInferior inferior = miSession.getGDBInferior();
@@ -676,9 +718,9 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	private void handleExitEvent(MIEvent miEvent) throws DebugException {
 		// TODO Auto-generated method stub
 		if (miEvent instanceof MIInferiorExitEvent) {
-			if (MDTDebugCorePlugin.DEBUG) System.out.println("MIInferiorExitEvent caught in gdb debug target");
+			if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIInferiorExitEvent caught in gdb debug target");
 		} else if (miEvent instanceof MIGDBExitEvent)
-			if (MDTDebugCorePlugin.DEBUG) System.out.println("MIGDBExitEvent caught in gdb debug target");
+			if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIGDBExitEvent caught in gdb debug target");
 		terminate();
 	}
 

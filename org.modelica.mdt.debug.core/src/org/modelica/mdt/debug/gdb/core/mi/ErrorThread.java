@@ -63,7 +63,7 @@ public class ErrorThread extends Thread {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				OutputStream console = session.getLogPipe();
-				if (MDTDebugCorePlugin.DEBUG) System.out.println("MI Error Thread " + line);
+				if (MDTDebugCorePlugin.DEBUG) session.writeLog("MI Error Thread " + line);
 				if (console != null) {
 					console.write((line + "\n").getBytes());
 					console.flush();

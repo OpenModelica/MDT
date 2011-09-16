@@ -250,8 +250,8 @@ public class CommandFactory {
 	 * @param expression
 	 * @return MIDataEvaluateExpression
 	 */
-	public MIDataEvaluateExpression createMIChangeStdoutBuffer() {
-		return new MIDataEvaluateExpression("changeStdoutBuffer()");
+	public MIDataEvaluateExpression createMIChangeStdStreamBuffer() {
+		return new MIDataEvaluateExpression("changeStdStreamBuffer()");
 	}
 
 	/**

@@ -70,7 +70,6 @@ public class TxThread extends Thread {
 				if (cmd != null) {
 					String str = cmd.toString();
 					// if string is empty consider as a noop
-					if (MDTDebugCorePlugin.DEBUG) System.out.println("MI Tx Thread " + str);
 					if (str.length() > 0) {
 						// Move to the RxQueue only if RxThread is alive.
 						Thread rx = session.getRxThread();
@@ -88,8 +87,7 @@ public class TxThread extends Thread {
 							out.write(str.getBytes());
 							out.flush();
 							// logging
-							session.getLogFileWriter().write(str);
-							session.getLogFileWriter().flush();
+							session.writeLog(str);
 						}
 					} else {
 						// String is empty consider as a noop
