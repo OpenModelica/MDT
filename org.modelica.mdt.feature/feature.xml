@@ -2,24 +2,31 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.7.8"
+      version="0.7.9"
       provider-name="Open Source Modelica Consortium (OpenModelica@ida.liu.se)">
 
-   <description url="http://www.ida.liu.se/~pelab/modelica/">
-      Contributes an environment for working with Modelica and MetaModelica projects.
-This software package is developed by Adrian Pop [adrpo@ida.liu.se] 
-at Programming Environments Laboratory (PELAB) at Linköping University (LiU). 
-Visit http://www.ida.liu.se/~pelab/modelica/ for more information about this 
-software and other related projects.
+   <description url="http://www.OpenModelica.org">
+      Contributes an environment for working with Modelica and MetaModelica
+projects.
+This software package is developed by 
+Adrian Pop [Adrian.Pop@liu.se],
+Adeel Asghar [Adeel.Asghar@liu.se],
+Elmir Jaguding, 
+Andreas Remar, 
+and plenty others at
+Open Source Modelica Consortium (OSMC),
+Programming Environments Laboratory (PELAB),
+Linköping University (LiU). 
+Visit http://www.openmodelica.org/ for more information about
+this software and other related projects.
    </description>
 
-   <copyright>
-      Copyright (c) 2005-2009, 
-      Adrian Pop [adrpo@ida.liu.se], Elmir Jaguding, Andreas Remar
-      Programming Environments Laboratory (PELAB),
-      Department of Computer and Information Science (IDA), 
-      Linköpings University (LiU). 
-      All rights reserved.
+   <copyright url="http://www.OpenModelica.org">
+      Copyright (c) 2005-2011, 
+Open Source Modelica Consortium (OSMC),
+Programming Environments Laboratory (PELAB),
+Department of Computer and Information Science (IDA), 
+Linköpings University (LiU).
    </copyright>
 
    <license url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html">

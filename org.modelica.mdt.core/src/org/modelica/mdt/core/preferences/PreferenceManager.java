@@ -81,7 +81,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String USE_STANDARD_OMC_PATH = "UseStandardOmcPath";
 	public static final String CUSTOM_OMC_PATH = "CustomOmcPath";	
 	public static final String START_OMC = "StartOMC";
-	public static final String OMC_IGNORED_DIRECTORIES = "OMCIgnoredDirectories";
+	public static final String OMC_IGNORED_DIRECTORIES_AND_FILES = "OMCIgnoredDirectoriesAndFiles";
 	public static final String OMC_COMMAND_LINE_PARAMETERS = "OMCCommandLineParameters";	
 	
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
@@ -127,10 +127,10 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		store.setDefault(START_OMC, true);
 		String ignored = "";
 		if (getOs() == osType.UNIX)
-			ignored = "omc_release:omc_debug:omc_frontend:omc_profiler:testsuite:bin:pde:modelica_parser:tools:mingw:template_precompile:susan_codegen:build:test_files:libraries:c_runtime:Examples:test_codegen:";
+			ignored = "omc_release:omc_debug:omc_frontend:omc_profiler:testsuite:bin:pde:modelica_parser:tools:mingw:template_precompile:susan_codegen:build:test_files:libraries:c_runtime:Examples:test_codegen:ModelicaBuiltin.mo:MetaModelicaBuiltin.mo:";
 		else
-			ignored = "omc_release;omc_debug;omc_frontend;omc_profiler;testsuite;bin;pde;modelica_parser;tools;mingw;template_precompile;susan_codegen;build;test_files;libraries;c_runtime;Examples;test_codegen;";
-		store.setDefault(OMC_IGNORED_DIRECTORIES, ignored);
+			ignored = "omc_release;omc_debug;omc_frontend;omc_profiler;testsuite;bin;pde;modelica_parser;tools;mingw;template_precompile;susan_codegen;build;test_files;libraries;c_runtime;Examples;test_codegen;ModelicaBuiltin.mo;MetaModelicaBuiltin.mo;";
+		store.setDefault(OMC_IGNORED_DIRECTORIES_AND_FILES, ignored);
 		
 		store.setDefault(OMC_COMMAND_LINE_PARAMETERS, "+g=MetaModelica");
 		
@@ -183,9 +183,9 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	/**
 	 * @return current setting for   
 	 */
-	public static String getOMCIgnoredDirectories()
+	public static String getOMCIgnoredDirectoriesAndFiles()
 	{
-		return getStore().getString(OMC_IGNORED_DIRECTORIES);
+		return getStore().getString(OMC_IGNORED_DIRECTORIES_AND_FILES);
 	}
 
 	/**
@@ -209,9 +209,9 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	/**
 	 * @return current setting for   
 	 */
-	public static String[] getOMCIgnoredDirectoryArray()
+	public static String[] getOMCIgnoredDirectoryAndFileArray()
 	{
-		String x = getStore().getString(OMC_IGNORED_DIRECTORIES);
+		String x = getStore().getString(OMC_IGNORED_DIRECTORIES_AND_FILES);
 		String splitAt = "";
 		if (getOs() == osType.UNIX)	splitAt = ":"; else splitAt = ";";
 		return x.split(splitAt);		
@@ -220,9 +220,9 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	/**
 	 * @return current setting for   
 	 */
-	public static boolean isIgnoredDirectory(String dir)	
+	public static boolean isIgnoredDirectoryOrFile(String dir)	
 	{
-		String[] x = getOMCIgnoredDirectoryArray();
+		String[] x = getOMCIgnoredDirectoryAndFileArray();
 		for (int i = 0; i < x.length; i++)
 		{
 			if (dir.equalsIgnoreCase(x[i]))
@@ -234,9 +234,9 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	/**
 	 * @return current setting for   
 	 */
-	public static boolean isInIgnoredDirectory(String file)	
+	public static boolean isInIgnoredDirectoryOrFile(String file)	
 	{
-		String[] x = getOMCIgnoredDirectoryArray();
+		String[] x = getOMCIgnoredDirectoryAndFileArray();
 		for (int i = 0; i < x.length; i++)
 		{
 			if (file.contains(x[i]))
@@ -244,5 +244,18 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		}
 		return false;
 	}		
-	
+
+	/**
+	 * @return current setting for   
+	 */
+	public static boolean isAnIgnoredDirectoryOrFile(String file)	
+	{
+		String[] x = getOMCIgnoredDirectoryAndFileArray();
+		for (int i = 0; i < x.length; i++)
+		{
+			if (file.endsWith(x[i]))
+				return true;
+		}
+		return false;
+	}	
 }

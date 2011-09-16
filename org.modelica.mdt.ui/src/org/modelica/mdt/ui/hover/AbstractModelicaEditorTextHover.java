@@ -255,6 +255,10 @@ public abstract class AbstractModelicaEditorTextHover implements IModelicaEditor
 				if (info.startsWith("\"")) info = info.substring(1);
 				if (info.endsWith("\"")) info = info.substring(0, info.length()-1);
 				info = info.trim();
+				
+				info = info.replace("\\\"", "\"");
+				info = info.replace("\\\\", "\\");
+				
 				if (!info.equals("")) return info + "\n";
 
 				IClassInfo classAttributes = CompilerProxy.getClassInfo(className);

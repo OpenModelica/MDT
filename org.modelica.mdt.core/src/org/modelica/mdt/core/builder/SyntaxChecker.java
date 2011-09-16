@@ -81,6 +81,7 @@ import org.modelica.mdt.core.compiler.ICompileError;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.core.preferences.PreferenceManager;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.FolderPackage;
@@ -527,18 +528,24 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			ErrorManager.logError(e);
 		}				
 		
-		/*
-		 * Try loading the file into OMC and get the results.
-		 */
-		IParseResults res = CompilerProxy.loadSourceFile(file);
+		IParseResults res = null;		
 		
-		if (res == null) return res;
-		/*
-		 * If there were any compile errors, report them as problems.
-		 */
-		for (ICompileError error : res.getCompileErrors())
+		// if is not on the ban list, load it!
+		if (!PreferenceManager.isAnIgnoredDirectoryOrFile(file.getFullPath().toString()))
 		{
-			reportProblem(file, error);
+			/*
+			 * Try loading the file into OMC and get the results.
+			 */
+			res = CompilerProxy.loadSourceFile(file);
+			
+			if (res == null) return res;
+			/*
+			 * If there were any compile errors, report them as problems.
+			 */
+			for (ICompileError error : res.getCompileErrors())
+			{
+				reportProblem(file, error);
+			}		
 		}
 		
 		/*

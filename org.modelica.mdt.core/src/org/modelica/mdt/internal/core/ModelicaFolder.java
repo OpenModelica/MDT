@@ -400,7 +400,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 			{
 				/* filter here! */
 				IModelicaFolder fe = (ModelicaFolder)element;
-				if (PreferenceManager.isIgnoredDirectory(fe.getElementName()))
+				if (PreferenceManager.isIgnoredDirectoryOrFile(fe.getElementName()))
 				{
 					/* nothing */
 				}
@@ -411,7 +411,7 @@ public class ModelicaFolder extends ModelicaParent implements IModelicaFolder
 				fileElement = (IModelicaSourceFile) element;				
 				for (IModelicaClass e : fileElement.getRootClasses())
 				{
-					if (PreferenceManager.isInIgnoredDirectory(e.getResource().getFullPath().toString()))
+					if (PreferenceManager.isInIgnoredDirectoryOrFile(e.getResource().getFullPath().toString()))
 					{
 						/* nothing */
 					}					
