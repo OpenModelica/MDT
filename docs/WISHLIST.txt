@@ -1,24 +1,15 @@
 
-Adrian wish-list:
-
-- Faster saving of files.
-- Outline
-
-
-Martin:
-- Should handle, if two packages have the same name,
-it should display an error. Adrian: easy, just check if the file is loaded.
+Modelica Development Tooling Wishlist
+-------------------------------------
+2011-04-14 [Adrian.Pop@ida.liu.se]
 
 
+- Faster loading/query/saving of files (use getComponents instead of getElementInfo)
+- Folding does not work sometimes correctly after saving
+- Better handling of Modelica files/packages/libraries (problems with deep hierarchy of files)
+- Loading duplicate class names from different files should report an error and not load the second file
+  easy, just check if the file is loaded (use parseFile to just get the file info without loading).
 
-
-From:	Peter Aronsson [peter.aronsson@mathcore.com]
-Sent:	den 10 mars 2011 08:31
-To:	Peter Fritzson
-Cc:	Daniel Hedberg; Adrian Pop
-Subject:	RE: Önskelista från MathCore
-
-Hej,
 
 Daniel har ett till önskemål som även jag skulle vilja se och som vi båda tycker är väldigt användbart för 
 kodning och framförallt läsning av kod i MDT. 
