@@ -256,13 +256,13 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 			// compare and create IVariable
 			compareVariables(variablesList);
 			// sort the variables
-			Collections.sort(fGDBVariables, new Comparator<GDBVariable>() {
-				@Override
-				public int compare(GDBVariable variable1, GDBVariable variable2) {
-					// TODO Auto-generated method stub
-					return variable1.getDisplayName().compareTo(variable2.getDisplayName());
-				}
-			});
+//			Collections.sort(fGDBVariables, new Comparator<GDBVariable>() {
+//				@Override
+//				public int compare(GDBVariable variable1, GDBVariable variable2) {
+//					// TODO Auto-generated method stub
+//					return variable1.getDisplayName().compareTo(variable2.getDisplayName());
+//				}
+//			});
 			setRefreshVariables(false);
 		}
 	}
