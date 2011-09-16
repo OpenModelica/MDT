@@ -2,8 +2,8 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.7.7"
-      provider-name="Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University">
+      version="0.7.8"
+      provider-name="Open Source Modelica Consortium (OpenModelica@ida.liu.se)">
 
    <description url="http://www.ida.liu.se/~pelab/modelica/">
       Contributes an environment for working with Modelica and MetaModelica projects.
@@ -24,8 +24,13 @@ software and other related projects.
 
    <license url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html">
       The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.
-Copyright (c) 2005-2009, 
-The MDT Team (Authors): Adrian Pop [adrpo@ida.liu.se], Elmir Jagudin, Andreas Remar, 
+Copyright (c) 2005-2011, 
+The MDT Team (Authors): 
+Adrian Pop [Adrian.Pop@liu.se],
+Adeel Asghar [Adeel.Asghar@liu.se] 
+Elmir Jagudin, 
+Andreas Remar, 
+Open Source Modelica Consortium,
 Programming Environments Laboratory (PELAB),
 Department of Computer and Information Science (IDA), 
 Linköping University (LiU).
@@ -88,6 +93,13 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
    <plugin
          id="org.modelica.mdt.debug.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.modelica.mdt.breakpoint"
          download-size="0"
          install-size="0"
          version="0.0.0"
