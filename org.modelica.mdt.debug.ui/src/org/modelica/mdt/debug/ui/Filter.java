@@ -15,7 +15,7 @@ package org.modelica.mdt.debug.ui;
  * Model object that represents a single entry in a filter table.
  */
 public class Filter {
-
+	
 	private String fName;
 	private boolean fChecked;
 

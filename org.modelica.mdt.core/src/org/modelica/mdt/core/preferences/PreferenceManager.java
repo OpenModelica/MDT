@@ -127,9 +127,9 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		store.setDefault(START_OMC, true);
 		String ignored = "";
 		if (getOs() == osType.UNIX)
-			ignored = "omc_release:omc_debug:omc_frontend:omc_profiler:testsuite:bin:pde:modelica_parser:tools:mingw:template_precompile:susan_codegen:build:test_files:libraries:c_runtime:Examples:test_codegen:ModelicaBuiltin.mo:MetaModelicaBuiltin.mo:";
+			ignored = "omc_release:omc_debug:omc_frontend:omc_profiler:testsuite:bin:pde:modelica_parser:tools:mingw:template_precompile:susan_codegen:build:test_files:libraries:c_runtime:Examples:test_codegen:";
 		else
-			ignored = "omc_release;omc_debug;omc_frontend;omc_profiler;testsuite;bin;pde;modelica_parser;tools;mingw;template_precompile;susan_codegen;build;test_files;libraries;c_runtime;Examples;test_codegen;ModelicaBuiltin.mo;MetaModelicaBuiltin.mo;";
+			ignored = "omc_release;omc_debug;omc_frontend;omc_profiler;testsuite;bin;pde;modelica_parser;tools;mingw;template_precompile;susan_codegen;build;test_files;libraries;c_runtime;Examples;test_codegen;";
 		store.setDefault(OMC_IGNORED_DIRECTORIES_AND_FILES, ignored);
 		
 		store.setDefault(OMC_COMMAND_LINE_PARAMETERS, "+g=MetaModelica");

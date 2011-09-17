@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Modelica Development Tooling
 Bundle-SymbolicName: org.modelica.mdt.core; singleton:=true
-Bundle-Version: 0.7.9
+Bundle-Version: 0.7.11
 Bundle-Localization: plugin
-Bundle-Vendor: Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University
+Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,

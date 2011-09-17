@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Modelica Development Tooling UI
 Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true
-Bundle-Version: 0.7.9
+Bundle-Version: 0.7.11
 Bundle-Activator: org.modelica.mdt.ui.UIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.modelica.mdt.core,
@@ -23,7 +23,7 @@ Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ltk.core.refactoring,
  org.modelica.mdt.breakpoint
 Eclipse-LazyStart: true
-Bundle-Vendor: Adrian Pop [adrpo@ida.liu.se] @ PELAB, Linkoping University
+Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
 Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modelica.mdt.ui,org.modelica.mdt.debug.ui",
  org.modelica.mdt.ui.actions,
  org.modelica.mdt.ui.assist,
