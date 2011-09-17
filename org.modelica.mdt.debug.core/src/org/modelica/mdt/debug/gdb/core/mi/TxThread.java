@@ -87,7 +87,7 @@ public class TxThread extends Thread {
 							out.write(str.getBytes());
 							out.flush();
 							// logging
-							session.writeLog(str);
+							session.writeLog("MI TxThread :: " + str);
 						}
 					} else {
 						// String is empty consider as a noop

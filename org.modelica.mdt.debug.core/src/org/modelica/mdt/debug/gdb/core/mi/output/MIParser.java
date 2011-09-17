@@ -130,7 +130,7 @@ public class MIParser {
 		MIResultRecord rr = null;
 		List<MIOOBRecord> oobs = new ArrayList<MIOOBRecord>(1);
 		int id = -1;
-
+		
 		StringTokenizer st = new StringTokenizer(buffer, "\n");
 		while (st.hasMoreTokens()) {
 			StringBuffer token = new StringBuffer(st.nextToken());
@@ -150,7 +150,7 @@ public class MIParser {
 				token.delete(0, i);
 			}
 
-			// ResultRecord ||| Out-Of-Band Records
+			// ResultRecord || Out-Of-Band Records
 			if (token.length() > 0) {
 				if (token.charAt(0) == '^') {
 					StringBuffer newToken = new StringBuffer(token.toString());
@@ -167,6 +167,21 @@ public class MIParser {
 					//break; // Do nothing.
 				} else {
 					MIOOBRecord band = processMIOOBRecord(token, id);
+					if (band != null) {
+						oobs.add(band);
+					}
+				}
+			} else {
+				/*
+				 * Adeel 2011-09-17 15:49
+				 * GDB should output any target result starting with @. but sometimes it does not.
+				 * So single character results/results starting with integers/integer values
+				 * are discarded in such cases by the MIParser.
+				 * We should parse the result again.
+				 */
+				StringTokenizer newTokenizer = new StringTokenizer(buffer, "\n");
+				if (newTokenizer.hasMoreTokens()) {
+					MIOOBRecord band = processMIOOBRecord(new StringBuffer(newTokenizer.nextToken()), id);
 					if (band != null) {
 						oobs.add(band);
 					}

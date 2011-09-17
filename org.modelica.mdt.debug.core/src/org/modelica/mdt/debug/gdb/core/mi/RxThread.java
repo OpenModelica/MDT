@@ -107,7 +107,7 @@ public class RxThread extends Thread {
 				for (String output : outputs) {
 					processMIOutput(output + "\n");
 					// logging
-					session.writeLog(output);
+					session.writeLog("MI RxThread :: " + output);
 				}
 			}
 		} catch (IOException e) {
@@ -299,7 +299,7 @@ public class RxThread extends Thread {
 					processMIOOBRecord(oobs[i], list);
 				}
 				// If not waiting for any command results, ensure the stream list doesn't
-				// get too large. See Bug 302927 for more
+				// get too large.
 				if (rxQueue.isEmpty() && fStreamRecords.size() > 20)
 					fStreamRecords.removeFirst();
 			}

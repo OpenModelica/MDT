@@ -57,7 +57,7 @@ public class EventThread extends Thread {
 			// removeItem() will block until an item is available.
 			try {
 				event = (MIEvent) eventQueue.removeItem();
-				if (MDTDebugCorePlugin.DEBUG) session.writeLog("MI Event Thread " + event.toString());
+				if (MDTDebugCorePlugin.DEBUG) session.writeLog("MI Event Thread :: " + event.toString());
 			} catch (InterruptedException e) {
 				//MDTDebugCorePlugin.log(null, e);
 			}
