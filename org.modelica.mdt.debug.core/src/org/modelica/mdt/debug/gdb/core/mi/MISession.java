@@ -64,6 +64,8 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIGDBShowInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIParser;
 import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
+import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 
 /**
  * Maintains all MI activities.
@@ -106,7 +108,7 @@ public class MISession extends Observable {
 	// parser to parse GDB outputs
 	MIParser fMIParser;
 	
-	long fCommandTimeout = 60000;	// one minute
+	long fCommandTimeout = 30000;	// 30 secs
 	// GDB inferior process i.e actual program we are debugging
 	GDBInferior fGDBInferior;
 	Process fSessionProcess;
@@ -192,15 +194,15 @@ public class MISession extends Observable {
 		// Disable a certain number of irritations from gdb.
 		// Like confirmation and screen size.
 		MIGDBSet confirm = getCommandFactory().createMIGDBSet(new String[]{"confirm", "off"});
-		postCommand(confirm);
+		postCommand(confirm, null);
 		confirm.getMIInfo();
 
 		MIGDBSet width = getCommandFactory().createMIGDBSet(new String[]{"width", "0"});
-		postCommand(width);
+		postCommand(width, null);
 		width.getMIInfo();
 
 		MIGDBSet height = getCommandFactory().createMIGDBSet(new String[]{"height", "0"});
-		postCommand(height);
+		postCommand(height, null);
 		height.getMIInfo();
 		
 		fUseInterpreterExecConsole = canUseInterpreterExecConsole();
@@ -220,7 +222,7 @@ public class MISession extends Observable {
 		// Try to discover if "-interpreter-exec" is supported.
 		try {
 			MIInterpreterExecConsole echo = getCommandFactory().createMIInterpreterExecConsole("echo");
-			postCommand(echo);
+			postCommand(echo, null);
 			echo.getMIInfo();
 			return true;
 		} catch (MIException e) {
@@ -237,7 +239,7 @@ public class MISession extends Observable {
 		// TODO Auto-generated method stub
 		// Get GDB's prompt
 		MIGDBShowPrompt prompt = getCommandFactory().createMIGDBShowPrompt();
-		postCommand(prompt);
+		postCommand(prompt, null);
 		MIGDBShowInfo infoPrompt = prompt.getMIGDBShowInfo();
 		String value = infoPrompt.getValue();
 		if (value != null && value.length() > 0) {
@@ -416,8 +418,8 @@ public class MISession extends Observable {
 	 * equivalent to:
 	 * postCommand(cmd, cmdTimeout) 
 	 */
-	public void postCommand(Command cmd) throws MIException {
-		postCommand(cmd, fCommandTimeout);
+	public void postCommand(Command cmd, GDBStackFrame gdbStackFrame) throws MIException {
+		postCommand(cmd, fCommandTimeout, gdbStackFrame);
 	}
 
 	/**
@@ -425,11 +427,19 @@ public class MISession extends Observable {
 	 * if timeout < 0 the wait will be skipped.
 	 * 
 	 */
-	public void postCommand(Command cmd, long timeout) throws MIException {
+	public void postCommand(Command cmd, long timeout, GDBStackFrame gdbStackFrame) throws MIException {
 
 		// Test if we are in a sane state.
 		if (!fTxThread.isAlive() || !fRxThread.isAlive()) {
 			throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Thread_Terminated"));
+		}
+		
+		if (gdbStackFrame != null) {
+			GDBThread gdbThread = (GDBThread) gdbStackFrame.getThread();
+			if (!gdbThread.getCurrentGDBStackFrame().equals(gdbStackFrame)) {
+				writeLog("not posting command");
+				return;
+			}	
 		}
 
 //		// Test if we are in the right state?
@@ -498,7 +508,7 @@ public class MISession extends Observable {
 		// send the exit(-gdb-exit).  But we only wait a maximum of 2 sec.
 		MIGDBExit gdbExitCmd = fMICommandFactory.createMIGDBExit();
 		try {
-			postCommand(gdbExitCmd, 2000);
+			postCommand(gdbExitCmd, 2000, null);
 		} catch (MIException e) {
 			//ignore any exception at this point.
 		}

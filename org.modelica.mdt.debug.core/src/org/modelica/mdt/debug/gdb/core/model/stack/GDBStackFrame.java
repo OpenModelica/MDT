@@ -171,7 +171,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 */
 	private void createVariable(MIArg miArg) {
 		// TODO Auto-generated method stub
-		String referenceType = TypeHelper.getModelicaType(miArg.getName(), miArg.getType(), getGDBDebugTarget());
+		String referenceType = TypeHelper.getModelicaType(miArg.getName(), miArg.getType(), this);
 		String displayName = miArg.getName();
 		/* since all the variables we are interested in starts with underscore 
 		 * so remove the underscore
@@ -206,7 +206,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getThread()).getCurrentGDBStackFrame().equals(this)) {
 			return new IVariable[0];
 		}
 		computeVariables();
@@ -230,7 +230,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 			MIStackListVariablesInfo stackListVariablesInfo = null;
 			MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", "1", "--frame", Integer.toString(getIdentifier()), "--simple-values"});
 			try {
-				miSession.postCommand(stackListVariablesCmd);
+				miSession.postCommand(stackListVariablesCmd, null);
 				stackListVariablesInfo = stackListVariablesCmd.getMIStackListVariablesInfo();
 				if (stackListVariablesInfo == null) {
 					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
@@ -510,26 +510,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	private synchronized void setDisposed(boolean isDisposed) {
 		fIsDisposed = isDisposed;
 	}
-
-	/**
-	 * 
-	 * Makes this frame the current frame for GDB.
-	 * @throws MIException 
-	 * @throws CoreException 
-	 * 
-	 */
-	public void setCurrentFrame() throws MIException, CoreException {
-		// TODO Auto-generated method stub
-		MISession miSession = getGDBDebugTarget().getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(getIdentifier());
-		miSession.postCommand(miStackSelectFrameCmd);
-		if (miStackSelectFrameCmd.getMIInfo() == null) {
-			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-					MDTDebugCorePlugin.getResourceString("GDBThread.setCurrentStackFrame.StackSelectFrame.NoAnswer"), null));
-		}
-	}
-
+	
 	/**
 	 * @param refreshVariables the fRefreshVariables to set
 	 */

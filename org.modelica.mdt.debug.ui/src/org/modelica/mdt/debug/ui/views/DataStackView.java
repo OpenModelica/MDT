@@ -33,6 +33,7 @@ import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.core.model.MDTDebugTarget;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 
 /**
  * View of the MDT VM data stack 
@@ -173,7 +174,9 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 			}
 			if (adaptable instanceof GDBStackFrame) {
 				try {
-					((GDBStackFrame)adaptable).setCurrentFrame();
+					GDBStackFrame gdbStackFrame = (GDBStackFrame)adaptable;
+					GDBThread gdbThread = (GDBThread)gdbStackFrame.getThread();
+					gdbThread.setCurrentGDBStackFrame(gdbStackFrame);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					MDTDebugCorePlugin.log(null, e);

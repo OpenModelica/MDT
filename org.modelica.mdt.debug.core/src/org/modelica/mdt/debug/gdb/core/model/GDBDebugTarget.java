@@ -589,7 +589,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		if (stoppedEvent.getFrame().getFunction().equals("longjmp")) {
 			CommandFactory factory = fMISession.getCommandFactory();
 			MIExecFinish execFinishCmd = factory.createMIExecFinish();
-			fMISession.postCommand(execFinishCmd);
+			fMISession.postCommand(execFinishCmd, null);
 			MIInfo info = execFinishCmd.getMIInfo();
 			if (info == null) {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
@@ -617,7 +617,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		if (skipSteppedInFrames(miEvent)) {
 			GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MIFunctionFinishedEvent)miEvent).getFrame());
 			if (gdbStackFrame != null) {
-				gdbStackFrame.setCurrentFrame();
+				((GDBThread)getThread()).setCurrentGDBStackFrame(gdbStackFrame);
 			}
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.STEP_RETURN);
@@ -637,7 +637,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		if (skipSteppedInFrames(miEvent)) {
 			GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MISteppingRangeEvent)miEvent).getFrame());
 			if (gdbStackFrame != null) {
-				gdbStackFrame.setCurrentFrame();
+				((GDBThread)getThread()).setCurrentGDBStackFrame(gdbStackFrame);
 			}
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
@@ -672,7 +672,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			if (signalEvent.getName().equals(GDBHelper.SIGTRAP) || signalEvent.getName().equals(GDBHelper.SIGINT)) {
 				GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame((signalEvent.getFrame()));
 				if (gdbStackFrame != null) {
-					gdbStackFrame.setCurrentFrame();
+					((GDBThread)getThread()).setCurrentGDBStackFrame(gdbStackFrame);
 				}
 				((GDBThread)getThread()).setRefreshStackFrames(true);
 				((GDBThread)getThread()).interrupted(DebugEvent.STEP_END);
@@ -743,7 +743,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			} else if (((GDBThread)getThread()).getExecuteCommand() == ExecuteCommand.EXECSTEP) {
 				execCmd = factory.createMIExecStep();
 			}
-			fMISession.postCommand(execCmd);
+			fMISession.postCommand(execCmd, null);
 			MIInfo info = execCmd.getMIInfo();
 			if (info == null) {
 				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,

@@ -31,7 +31,9 @@
 package org.modelica.mdt.debug.gdb.core.model.value;
 
 import org.eclipse.debug.core.DebugException;
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
@@ -54,14 +56,14 @@ public class GDBCoreValue extends GDBValue {
 		// TODO Auto-generated constructor stub
 		if (getGDBVariable().getVoidPointer() != null) {
 			setValue(ValueHelper.getAnyString(getGDBVariable().getVoidPointer(),
-					getGDBVariable().getReferenceTypeName(), getGDBDebugTarget()));
+					getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame()));
 		} else {
 			if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
 				setValue(ValueHelper.getAnyString(getGDBVariable().getOriginalName(),
-						getGDBVariable().getReferenceTypeName(), getGDBDebugTarget()));
+						getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame()));
 			} else {
 				setValue(ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(),
-						getGDBDebugTarget()));
+						getGDBVariable().getGDBStackFrame()));
 			}
 		}
 	}
@@ -72,21 +74,21 @@ public class GDBCoreValue extends GDBValue {
 	 */
 	public boolean hasValueChanged() throws MIException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return false;
 		}
 		String oldValue = getValue();
 		String newValue;
 		if (getGDBVariable().getVoidPointer() != null) {
 			newValue = ValueHelper.getAnyString(getGDBVariable().getVoidPointer(),
-					getGDBVariable().getReferenceTypeName(), getGDBDebugTarget());
+					getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame());
 		} else {
 			if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
 				newValue = ValueHelper.getAnyString(getGDBVariable().getOriginalName(),
-						getGDBVariable().getReferenceTypeName(), getGDBDebugTarget());
+						getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame());
 			} else {
 				newValue = ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(),
-						getGDBDebugTarget());
+						getGDBVariable().getGDBStackFrame());
 			}
 		}
 		
@@ -104,16 +106,21 @@ public class GDBCoreValue extends GDBValue {
 	@Override
 	public String getValueString() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return null;
 		}
 		if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.BOOLEAN)) {
-			String result = getValue().substring(0, getValue().indexOf(" "));
-			if (result.equals("1")) {
-				return "true";
-			} else if (result.equals("0")) {
-				return "false";
-			} else {
+			try {
+				String result = getValue().substring(0, getValue().indexOf(" "));
+				if (result.equals("1")) {
+					return "true";
+				} else if (result.equals("0")) {
+					return "false";
+				} else {
+					return getValue();
+				}
+			} catch (StringIndexOutOfBoundsException e) {
+				//MDTDebugCorePlugin.log(null, e);
 				return getValue();
 			}
 		} else {

@@ -37,6 +37,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
@@ -59,7 +60,7 @@ public class GDBOptionValue extends GDBValue {
 	public GDBOptionValue(GDBVariable gdbVariable) throws MIException {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
-		setOptionValue(ValueHelper.isOptionNone(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setOptionValue(ValueHelper.isOptionNone(getGDBVariable().getOriginalName(), getGDBVariable().getGDBStackFrame()));
 		setValue(getOptionValue());
 	}
 	
@@ -69,7 +70,7 @@ public class GDBOptionValue extends GDBValue {
 	@Override
 	public synchronized IVariable[] getVariables() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return new IVariable[0];
 		}
 		if (isRefreshChildren()) {
@@ -79,7 +80,7 @@ public class GDBOptionValue extends GDBValue {
 			List<Variable> variablesList = new ArrayList<Variable>();
 			try {
 				String voidPointer = ValueHelper.getArrayElement(getGDBVariable().getOriginalName(), 1, 
-						getGDBDebugTarget());
+						getGDBVariable().getGDBStackFrame());
 				String itemName = "[" + 1 + "]";
 				String displayName = itemName;
 				variablesList.add(new Variable(itemName, displayName, voidPointer));
@@ -102,7 +103,7 @@ public class GDBOptionValue extends GDBValue {
 	@Override
 	public boolean hasVariables() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return false;
 		}
 		if (getOptionValue().equals(GDBHelper.NONE)) {
@@ -120,7 +121,7 @@ public class GDBOptionValue extends GDBValue {
 	public void createVariable(Variable variable) {
 		// TODO Auto-generated method stub
 		// get the record element type
-		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBDebugTarget());
+		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBVariable().getGDBStackFrame());
 		// based on the modelica type create the specific variable.
 		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
 				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
@@ -133,11 +134,11 @@ public class GDBOptionValue extends GDBValue {
 	 */
 	public boolean hasValueChanged() throws MIException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return false;
 		}
 		String oldValue = getValue();
-		setOptionValue(ValueHelper.isOptionNone(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setOptionValue(ValueHelper.isOptionNone(getGDBVariable().getOriginalName(), getGDBVariable().getGDBStackFrame()));
 		String newValue = getOptionValue();
 		if (oldValue.equals(newValue)) {
 			return false;

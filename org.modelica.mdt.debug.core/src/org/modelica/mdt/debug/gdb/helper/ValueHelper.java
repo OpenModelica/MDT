@@ -30,12 +30,14 @@
  */
 package org.modelica.mdt.debug.gdb.helper;
 
+import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIDataEvaluateExpressionInfo;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
+import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 
 /**
  * @author Adeel Asghar
@@ -47,25 +49,29 @@ public class ValueHelper {
 	 * Creates and sends the "-data-evaluate-expression (char*)anyString(void*)" command.
 	 * @param variableName
 	 * @param referenceType 
-	 * @param gdbDebugTarget
-	 * @return
-	 * @throws MIException 
+	 * @param gdbStackFrame
+	 * @return 
 	 */
 	public static String getAnyString(String variableName,
-			String referenceType, GDBDebugTarget gdbDebugTarget) throws MIException {
+			String referenceType, GDBStackFrame gdbStackFrame) {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getTypeOfAnyCmd = factory.createMIAnyString(variableName);
-		miSession.postCommand(getTypeOfAnyCmd);
-		MIDataEvaluateExpressionInfo getTypeOfAnyInfo = getTypeOfAnyCmd.getMIDataEvaluateExpressionInfo();
-		if (referenceType.equals(GDBHelper.STRING)) {
-			return parseResultWithQuotes(getTypeOfAnyInfo.getExpression());
-		} else {
-			return parseResult(getTypeOfAnyInfo.getExpression());
-			
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression getAnyStringCmd = factory.createMIAnyString(variableName);
+			getAnyStringCmd.setQuiet(true);
+			miSession.postCommand(getAnyStringCmd, gdbStackFrame);
+			MIDataEvaluateExpressionInfo getTypeOfAnyInfo = getAnyStringCmd.getMIDataEvaluateExpressionInfo();
+			if (referenceType.equals(GDBHelper.STRING)) {
+				return parseResultWithQuotes(getTypeOfAnyInfo.getExpression());
+			} else {
+				return parseResult(getTypeOfAnyInfo.getExpression());
+			}
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
 		}
-		
+		return "";
 	}
 
 	/**
@@ -101,125 +107,175 @@ public class ValueHelper {
 	/**
 	 * Creates and sends the "-data-evaluate-expression expression" command.
 	 * @param variableName 
-	 * @param gdbDebugTarget
-	 * @return
-	 * @throws MIException 
+	 * @param gdbStackFrame
+	 * @return 
 	 */
-	public static String evaluateExpression(String variableName, GDBDebugTarget gdbDebugTarget) throws MIException {
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression dataEvaluateExpressionCmd = factory.createMIDataEvaluateExpression(variableName);
-		dataEvaluateExpressionCmd.setQuiet(true);
-		miSession.postCommand(dataEvaluateExpressionCmd);
-		MIDataEvaluateExpressionInfo dataEvaluateExpressionInfo = dataEvaluateExpressionCmd.getMIDataEvaluateExpressionInfo();
-		return dataEvaluateExpressionInfo.getExpression();
+	public static String evaluateExpression(String variableName, GDBStackFrame gdbStackFrame) {
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression dataEvaluateExpressionCmd = factory.createMIDataEvaluateExpression(variableName);
+			dataEvaluateExpressionCmd.setQuiet(true);
+			miSession.postCommand(dataEvaluateExpressionCmd, gdbStackFrame);
+			MIDataEvaluateExpressionInfo dataEvaluateExpressionInfo = dataEvaluateExpressionCmd.getMIDataEvaluateExpressionInfo();
+			return dataEvaluateExpressionInfo.getExpression();
+		} catch (MIException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		}
+		return "";
 	}
 	
 	/**
 	 * Creates and sends the "-data-evaluate-expression (int)listLength(void*)" command.
 	 * @param variableName 
-	 * @param gdbDebugTarget
-	 * @return
-	 * @throws MIException 
+	 * @param gdbStackFrame
+	 * @return 
 	 */
 	public static int getListLength(String variableName,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+			GDBStackFrame gdbStackFrame) {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getListLengthCmd = factory.createMIGetListLength(variableName);
-		miSession.postCommand(getListLengthCmd);
-		MIDataEvaluateExpressionInfo getListLengthInfo = getListLengthCmd.getMIDataEvaluateExpressionInfo();
-		return Integer.parseInt(getListLengthInfo.getExpression());
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression getListLengthCmd = factory.createMIGetListLength(variableName);
+			getListLengthCmd.setQuiet(true);
+			miSession.postCommand(getListLengthCmd, gdbStackFrame);
+			MIDataEvaluateExpressionInfo getListLengthInfo = getListLengthCmd.getMIDataEvaluateExpressionInfo();
+			return Integer.parseInt(getListLengthInfo.getExpression());
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		}
+		return 0;
 	}
 	
 	/**
 	 * Creates and sends the "-data-evaluate-expression listGet(void*,item)" command.
 	 * @param variableName
 	 * @param item
-	 * @param gdbDebugTarget
+	 * @param gdbStackFrame
 	 * @return
 	 * @throws MIException 
 	 */
 	public static String getListItem(String variableName, int item,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+			GDBStackFrame gdbStackFrame) {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getListItemCmd = factory.createMIGetListItem(variableName, item);
-		miSession.postCommand(getListItemCmd);
-		return getListItemCmd.getMIDataEvaluateExpressionInfo().getExpression();
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression getListItemCmd = factory.createMIGetListItem(variableName, item);
+			getListItemCmd.setQuiet(true);
+			miSession.postCommand(getListItemCmd, gdbStackFrame);
+			if (getListItemCmd.getMIInfo() == null) {
+				return "";
+			}
+			return getListItemCmd.getMIDataEvaluateExpressionInfo().getExpression();
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		}
+		return "";
 	}
 	
 	/**
 	 * Creates and sends the "-data-evaluate-expression (int)arrayLength(void*)" command.
 	 * @param variableName 
-	 * @param gdbDebugTarget
+	 * @param gdbStackFrame
 	 * @return
 	 * @throws MIException 
 	 */
 	public static int getArrayLength(String variableName,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+			GDBStackFrame gdbStackFrame) throws MIException {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getArrayLengthCmd = factory.createMIGetArrayLength(variableName);
-		miSession.postCommand(getArrayLengthCmd);
-		MIDataEvaluateExpressionInfo getArrayLengthInfo = getArrayLengthCmd.getMIDataEvaluateExpressionInfo();
-		return Integer.parseInt(getArrayLengthInfo.getExpression());
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression getArrayLengthCmd = factory.createMIGetArrayLength(variableName);
+			getArrayLengthCmd.setQuiet(true);
+			miSession.postCommand(getArrayLengthCmd, gdbStackFrame);
+			MIDataEvaluateExpressionInfo getArrayLengthInfo = getArrayLengthCmd.getMIDataEvaluateExpressionInfo();
+			return Integer.parseInt(getArrayLengthInfo.getExpression());
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		}
+		return 0;
 	}	
 
 	/**
 	 * Creates and sends the "-data-evaluate-expression arrayGet(void*,element)" command.
 	 * @param variableName
 	 * @param element
-	 * @param gdbDebugTarget
+	 * @param gdbStackFrame
 	 * @return
 	 * @throws MIException 
 	 */
 	public static String getArrayElement(String variableName, int element,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+			GDBStackFrame gdbStackFrame) throws MIException {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getArrayElementCmd = factory.createMIGetArrayElement(variableName, element);
-		miSession.postCommand(getArrayElementCmd);
-		return getArrayElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression getArrayElementCmd = factory.createMIGetArrayElement(variableName, element);
+			getArrayElementCmd.setQuiet(true);
+			miSession.postCommand(getArrayElementCmd, gdbStackFrame);
+			return getArrayElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		}
+		return "";
 	}
 
 	/**
 	 * Creates and sends the "-data-evaluate-expression (char*)getRecordElementName(void*,element)" command.
 	 * @param variableName
 	 * @param element
-	 * @param gdbDebugTarget
+	 * @param gdbStackFrame
 	 * @return
 	 * @throws MIException 
 	 */
 	public static String getRecordElementName(String variableName, int element,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+			GDBStackFrame gdbStackFrame) throws MIException {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getRecordElementNameCmd = factory.createMIGetRecordElementName(variableName, element);
-		miSession.postCommand(getRecordElementNameCmd);
-		return parseResult(getRecordElementNameCmd.getMIDataEvaluateExpressionInfo().getExpression());
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression getRecordElementNameCmd = factory.createMIGetRecordElementName(variableName, element);
+			getRecordElementNameCmd.setQuiet(true);
+			miSession.postCommand(getRecordElementNameCmd, gdbStackFrame);
+			return parseResult(getRecordElementNameCmd.getMIDataEvaluateExpressionInfo().getExpression());
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		}
+		return "";
 	}
 
 	/**
 	 * Creates and sends the "-data-evaluate-expression (int)isOptionNone(void*)" command.
 	 * @param variableName
-	 * @param gdbDebugTarget
+	 * @param gdbStackFrame
 	 * @return
 	 * @throws MIException 
 	 */
 	public static String isOptionNone(String variableName,
-			GDBDebugTarget gdbDebugTarget) throws MIException {
+			GDBStackFrame gdbStackFrame) throws MIException {
 		// TODO Auto-generated method stub
-		MISession miSession = gdbDebugTarget.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getOptionValueCmd = factory.createMIIsOptionNone(variableName);
-		miSession.postCommand(getOptionValueCmd);
-		return getOptionValueCmd.getMIDataEvaluateExpressionInfo().getExpression();
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression getOptionValueCmd = factory.createMIIsOptionNone(variableName);
+			getOptionValueCmd.setQuiet(true);
+			miSession.postCommand(getOptionValueCmd, gdbStackFrame);
+			return getOptionValueCmd.getMIDataEvaluateExpressionInfo().getExpression();
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		}
+		return "";
 	}	
 	
 }

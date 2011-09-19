@@ -162,7 +162,7 @@ public class GDBInferior extends Process {
 					CommandFactory factory = session.getCommandFactory();
 					MIGDBShowExitCode showExitCodeCmd = factory.createMIGDBShowExitCode();
 					try {
-						session.postCommand(showExitCodeCmd);
+						session.postCommand(showExitCodeCmd, null);
 						MIGDBShowExitCodeInfo info = showExitCodeCmd.getMIGDBShowExitCodeInfo();
 						exitCode = info.getCode();
 					} catch (MIException e) {
@@ -206,7 +206,7 @@ public class GDBInferior extends Process {
 				try {
 					CommandFactory factory = session.getCommandFactory();
 					CLIExecAbort execAbortCmd = factory.createCLIExecAbort();
-					session.postCommand(execAbortCmd, -1);
+					session.postCommand(execAbortCmd, -1, null);
 					// do not wait for the answer.
 					//abort.getMIInfo();
 					token = execAbortCmd.getToken();
@@ -229,7 +229,7 @@ public class GDBInferior extends Process {
 		MIExecInterrupt execInterruptCmd = factory.createMIExecInterrupt();
 		if (execInterruptCmd != null) {
 			try {
-				session.postCommand(execInterruptCmd);
+				session.postCommand(execInterruptCmd, null);
 				// call getMIInfo() even if we discard the value;
 				execInterruptCmd.getMIInfo();
 				// Allow MI command timeout for the interrupt to propagate.
@@ -401,7 +401,7 @@ public class GDBInferior extends Process {
 				try {
 					RxThread rxThread = session.getRxThread();
 					rxThread.setEnableConsole(false);
-					session.postCommand(infoProcCmd); 
+					session.postCommand(infoProcCmd, null); 
 					CLIInfoProcInfo infoProc = infoProcCmd.getMIInfoProcInfo();
 					pid = infoProc.getPID();
 				} catch (MIException e) {
@@ -414,7 +414,7 @@ public class GDBInferior extends Process {
 					if(pid <= 0){ 
 					CLIInfoProgram infoProgramCmd = factory.createCLIInfoProgram();
 					infoProgramCmd.setQuiet(true);
-					session.postCommand(infoProgramCmd);
+					session.postCommand(infoProgramCmd, null);
 					CLIInfoProgramInfo info = infoProgramCmd.getMIInfoProgramInfo();
 					pid = info.getPID();
 					}

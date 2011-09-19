@@ -125,7 +125,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
     	// insert the break point in gdb now.
     	String lineBreakpoint = getMarker().getResource().getName() + ":" + getLineNumber();
 	    MIBreakInsert breakInsertCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIBreakInsert(lineBreakpoint);
-	    getGDBDebugTarget().getMISession().postCommand(breakInsertCmd);
+	    getGDBDebugTarget().getMISession().postCommand(breakInsertCmd, null);
 	    MIBreakInsertInfo breakInsertinfo = breakInsertCmd.getMIBreakInsertInfo();
 		if (breakInsertinfo == null) {
 			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
@@ -198,7 +198,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		miSession.deleteObserver(this);
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakDelete breakDeleteCmd = factory.createMIBreakDelete(new int[]{getBreakPointNumber()});
-		miSession.postCommand(breakDeleteCmd, -1);
+		miSession.postCommand(breakDeleteCmd, -1, null);
 		/*
 		 * Adeel 2011-09-16 20:58
 		 * Not interested in this output. Don't wait for it.

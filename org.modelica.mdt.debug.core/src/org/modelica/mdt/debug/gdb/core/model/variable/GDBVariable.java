@@ -35,6 +35,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugElement;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.value.GDBValue;
 
 /**
@@ -142,7 +143,7 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @return the fType
 	 */
 	public String getType() {
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBStackFrame())) {
 			return null;
 		}
 		return fType;
@@ -273,7 +274,7 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	@Override
 	public synchronized boolean hasValueChanged() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBStackFrame())) {
 			return false;
 		}
 		return isValueChanged();

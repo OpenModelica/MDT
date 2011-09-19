@@ -37,6 +37,7 @@ import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIDataEvaluateExpressionInfo;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
+import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 
 /**
  * @author Adeel Asghar
@@ -44,9 +45,9 @@ import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
  */
 public class TypeHelper {
 	
-	public static String getModelicaType(String variableName, String variableType, GDBDebugTarget gdbDebugTarget) {
+	public static String getModelicaType(String variableName, String variableType, GDBStackFrame gdbStackFrame) {
 		if (variableType.equals(GDBHelper.MODELICA_METATYPE)) {
-			return getModelicaMetaType(variableName, gdbDebugTarget);
+			return getModelicaMetaType(variableName, gdbStackFrame);
 		} else if (variableType.equals(GDBHelper.MODELICA_BOOLEAN)) {
 			return GDBHelper.BOOLEAN;
 		} else if (variableType.equals(GDBHelper.MODELICA_INETGER)) {
@@ -57,13 +58,15 @@ public class TypeHelper {
 		return variableType;
 	}
 	
-	public static String getModelicaMetaType(String variableName, GDBDebugTarget gdbDebugTarget) {
+	public static String getModelicaMetaType(String variableName, GDBStackFrame gdbStackFrame) {
+		GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIDataEvaluateExpression getTypeOfAnyCmd = factory.createMIGetTypeOfAny(variableName);
+		getTypeOfAnyCmd.setQuiet(true);
 		MIDataEvaluateExpressionInfo getTypeOfAnyInfo;
 		try {
-			miSession.postCommand(getTypeOfAnyCmd);
+			miSession.postCommand(getTypeOfAnyCmd, gdbStackFrame);
 			getTypeOfAnyInfo = getTypeOfAnyCmd.getMIDataEvaluateExpressionInfo();
 			/* the response received from -data-evaluate-expression is like this
 			 * ^done,value="0x1b488af \"replaceable type Any\""
@@ -75,6 +78,8 @@ public class TypeHelper {
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			
 		}
 		return GDBHelper.REPLACEABLE_TYPE_ANY;
 	}

@@ -37,6 +37,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
@@ -58,7 +59,7 @@ public class GDBArrayValue extends GDBValue {
 	public GDBArrayValue(GDBVariable gdbVariable) throws MIException {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
-		setArrayLength(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setArrayLength(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBVariable().getGDBStackFrame()));
 		if (getArrayLength() > 1) {
 			setValue("<" + getArrayLength() + " items>");
 		} else {
@@ -72,7 +73,7 @@ public class GDBArrayValue extends GDBValue {
 	@Override
 	public synchronized IVariable[] getVariables() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return new IVariable[0];
 		}
 		if (isRefreshChildren()) {
@@ -83,7 +84,7 @@ public class GDBArrayValue extends GDBValue {
 			try {
 				for (int i = 1 ; i <= getArrayLength() ; i++) {
 					String voidPointer = ValueHelper.getArrayElement(getGDBVariable().getOriginalName(), i, 
-							getGDBDebugTarget());
+							getGDBVariable().getGDBStackFrame());
 					String itemName = "[" + i + "]";
 					String displayName = itemName;
 					variablesList.add(new Variable(itemName, displayName, voidPointer));
@@ -107,7 +108,7 @@ public class GDBArrayValue extends GDBValue {
 	@Override
 	public boolean hasVariables() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return false;
 		}
 		return getArrayLength() > 0;
@@ -129,11 +130,11 @@ public class GDBArrayValue extends GDBValue {
 	 */
 	public boolean hasValueChanged() throws MIException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return false;
 		}
 		String oldValue = getValue();
-		setArrayLength(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setArrayLength(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBVariable().getGDBStackFrame()));
 		String newValue;
 		if (getArrayLength() > 1) {
 			newValue = "<" + getArrayLength() + " items>";

@@ -35,6 +35,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.value.EmptyValue;
 import org.modelica.mdt.debug.gdb.core.model.value.GDBRecordValue;
 
@@ -66,7 +67,7 @@ public class GDBRecordVariable extends GDBVariable {
 	@Override
 	public synchronized IValue getValue() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBStackFrame())) {
 			return new EmptyValue(this);
 		}
 		try {

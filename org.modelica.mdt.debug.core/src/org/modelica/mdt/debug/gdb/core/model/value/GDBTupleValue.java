@@ -37,6 +37,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
@@ -60,7 +61,7 @@ public class GDBTupleValue extends GDBValue {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
 		setTupleElements(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(),
-				getGDBDebugTarget()));
+				getGDBVariable().getGDBStackFrame()));
 		if (getTupleElements() > 1) {
 			setValue("<" + getTupleElements() + " items>");
 		} else {
@@ -74,7 +75,7 @@ public class GDBTupleValue extends GDBValue {
 	@Override
 	public synchronized IVariable[] getVariables() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return new IVariable[0];
 		}
 		if (isRefreshChildren()) {
@@ -85,7 +86,7 @@ public class GDBTupleValue extends GDBValue {
 			try {
 				for (int i = 1 ; i <= getTupleElements() ; i++) {
 					String voidPointer = ValueHelper.getArrayElement(getGDBVariable().getOriginalName(), i, 
-							getGDBDebugTarget());
+							getGDBVariable().getGDBStackFrame());
 					String itemName = "[" + i + "]";
 					String displayName = itemName;
 					variablesList.add(new Variable(itemName, displayName, voidPointer));
@@ -109,7 +110,7 @@ public class GDBTupleValue extends GDBValue {
 	@Override
 	public boolean hasVariables() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return false;
 		}
 		return getTupleElements() > 0;
@@ -122,7 +123,7 @@ public class GDBTupleValue extends GDBValue {
 	public void createVariable(Variable variable) {
 		// TODO Auto-generated method stub
 		// get the record element type
-		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBDebugTarget());
+		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBVariable().getGDBStackFrame());
 		// based on the modelica type create the specific variable.
 		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
 				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
@@ -135,11 +136,11 @@ public class GDBTupleValue extends GDBValue {
 	 */
 	public boolean hasValueChanged() throws MIException {
 		// TODO Auto-generated method stub
-		if (isDisposed()) {
+		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
 			return false;
 		}
 		String oldValue = getValue();
-		setTupleElements(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBDebugTarget()));
+		setTupleElements(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBVariable().getGDBStackFrame()));
 		String newValue;
 		if (getTupleElements() > 1) {
 			newValue = "<" + getTupleElements() + " items>";

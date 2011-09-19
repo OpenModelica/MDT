@@ -69,6 +69,9 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 		// TODO Auto-generated constructor stub
 		super(gdbVariable.getGDBDebugTarget());
 		setGDBVariable(gdbVariable);
+		if (this instanceof EmptyValue) {
+			return;
+		}
 		if (getGDBVariable().getActualType() == null) {
 			retrieveActualType();
 		} else {
@@ -174,14 +177,16 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 		CLIPType cliPTypeCmd = factory.createCLIPType(getGDBVariable().getOriginalName());
 		CLIPTypeInfo cliPTypeInfo;
 		try {
-			miSession.postCommand(cliPTypeCmd);
+			cliPTypeCmd.setQuiet(true);
+			miSession.postCommand(cliPTypeCmd, getGDBVariable().getGDBStackFrame());
 			cliPTypeInfo = cliPTypeCmd.getMIPtypeInfo();
 			setActualType(cliPTypeInfo.getType());
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
+		} finally {
+			miSession.getRxThread().setEnableConsole(true);
 		}
-		miSession.getRxThread().setEnableConsole(true);
 	}
 
 	/**
