@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.7.12"
+      version="0.7.13"
       provider-name="Open Source Modelica Consortium (OpenModelica@ida.liu.se)">
 
    <description url="http://www.OpenModelica.org">
