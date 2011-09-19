@@ -50,6 +50,8 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIGDBShowExitCodeInfo;
 import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
 
 /**
+ * Represents the actual debugged process.
+ * 
  * @author Adeel Asghar
  *
  */
@@ -185,6 +187,10 @@ public class GDBInferior extends Process {
 		}
 	}
 
+	/**
+	 * Terminates the running inferior.
+	 * @throws MIException
+	 */
 	public void terminate() throws MIException {
 		// An inferior will be destroy():interrupt and kill if
 		//   the inferior was not disconnected yet (no need to try
@@ -212,6 +218,10 @@ public class GDBInferior extends Process {
 		}
 	}
 
+	/**
+	 * Interrupts the running inferior.
+	 * @throws MIException
+	 */
 	public void interrupt() throws MIException {
 		// Check if they can handle the interrupt
 		// Try the exec-interrupt; this will be for "gdb --async"
@@ -242,44 +252,78 @@ public class GDBInferior extends Process {
 		}
 	}
 
+	/**
+	 * Returns the SUSPENDED state
+	 * @return SUSPENDED state
+	 */
 	public boolean isSuspended() {
 		return state == SUSPENDED;
 	}
 
+	/**
+	 * Returns the RUNNING state
+	 * @return RUNNING state
+	 */
 	public boolean isRunning() {
 		return state == RUNNING;
 	}
 
+	/**
+	 * Returns the TERMINATED state
+	 * @return TERMINATED state
+	 */
 	public boolean isTerminated() {
 		return state == TERMINATED;
 	}
 
+	/**
+	 * Returns true is connected
+	 * @return connected
+	 */
 	public boolean isConnected() {
 		return connected;
 	}
 
+	/**
+	 * Sets connected true.
+	 */
 	public synchronized void setConnected() {
 		connected = true;
 	}
 
+	/**
+	 * Sets connected false.
+	 */
 	public synchronized void setDisconnected() {
 		connected = false;
 	}
 
+	/**
+	 * Sets the SUSPENDED state
+	 */
 	public synchronized void setSuspended() {
 		state = SUSPENDED;
 		notifyAll();
 	}
 
+	/**
+	 * Sets the RUNNING state
+	 */
 	public synchronized void setRunning() {
 		state = RUNNING;
 		notifyAll();
 	}
 
+	/**
+	 * Sets the TERMINATED state
+	 */
 	public synchronized void setTerminated() {
 		setTerminated(0, true);
 	}
 
+	/**
+	 * Sets the TERMINATED state
+	 */
 	synchronized void setTerminated(int token, boolean fireEvent) {
 		state = TERMINATED;
 		// Close the streams.
@@ -326,14 +370,25 @@ public class GDBInferior extends Process {
 		notifyAll();
 	}
 
+	/**
+	 * Returns the piped output stream
+	 * @return piped output stream
+	 */
 	public OutputStream getPipedOutputStream() {
 		return inPiped;
 	}
 
+	/**
+	 * Returns the piped error stream
+	 * @return piped error stream
+	 */
 	public OutputStream getPipedErrorStream() {
 		return errPiped;
 	}
 
+	/**
+	 * Requests the inferior process ID from GDB and stores it.
+	 */
 	public void update() {
 		if (getInferiorPID() == 0) {
 			int pid = 0;
@@ -375,16 +430,28 @@ public class GDBInferior extends Process {
 		}
 	}
 
+	/**
+	 * Resets the stored process ID.
+	 * @return process id
+	 */
 	public int resetInferiorPID() {
 		int pid = inferiorPID;
 		inferiorPID = 0;
 		return pid;
 	}
-	
+
+	/**
+	 * Sets the inferior process ID.
+	 * @param pid
+	 */
 	public void setInferiorPID(int pid) {
 		inferiorPID = pid;
 	}
 
+	/**
+	 * Returns the inferior process ID.
+	 * @return process ID
+	 */
 	public int getInferiorPID() {
 		return inferiorPID;
 	}

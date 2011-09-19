@@ -74,12 +74,11 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MITargetStreamOutput;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIValue;
 
 /**
+ * Receiving thread of GDB response output.
+ * Reads from the input stream of GDB and process the data.
+ * 
  * @author Adeel Asghar
  *
- */
-/**
- * Receiving thread of gdb response output.
- * Reads from the input stream of GDB and
  */
 public class RxThread extends Thread {
 	MISession session;
@@ -92,9 +91,9 @@ public class RxThread extends Thread {
 		session = s;
 	}
 	
-	/*
+	/**
 	 * Get the response, parse the output, dispatch for OOB
-	 * search for the corresponding token in rxQueue for the ResultRecord.
+	 * search for the corresponding token in queue for the ResultRecord.
 	 */
 	public void run() {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(session.getChannelInputStream()));
@@ -141,6 +140,8 @@ public class RxThread extends Thread {
 	}
 
 	/**
+	 * Due to buffered stdout of gcc/gdb. GDB output may be mixed with inferior output.
+	 * This method filters the GDB MI output and process it.
 	 * @param string
 	 */
 	private List<String> filterMIOutput(String buffer) {
@@ -157,6 +158,7 @@ public class RxThread extends Thread {
 	}
 
 	/**
+	 * Creates the MIOutput array for easy processing of output.
 	 * @param buffer
 	 * @param string
 	 * @return
@@ -310,6 +312,7 @@ public class RxThread extends Thread {
 	}
 
 	/**
+	 * Process the Out-of-Bound Records.
 	 * Dispatch a thread to deal with the listeners.
 	 */
 	void processMIOOBRecord(MIOOBRecord oob, List<MIEvent> list) {
@@ -321,6 +324,9 @@ public class RxThread extends Thread {
 		}
 	}
 
+	/**
+	 * Process the Out-of-Bound Records.
+	 */
 	void processMIOOBRecord(MIAsyncRecord async, List<MIEvent> list) {
 		if (async instanceof MIExecAsyncOutput) {
 			MIExecAsyncOutput exec = (MIExecAsyncOutput) async;
@@ -473,14 +479,33 @@ public class RxThread extends Thread {
 //		}
 	}
 
+	/**
+	 * @see createEvent(String reason, MIResultRecord rr, MIExecAsyncOutput exec)
+	 * @param reason
+	 * @param exec
+	 * @return
+	 */
 	MIEvent createEvent(String reason, MIExecAsyncOutput exec) {
 		return createEvent(reason, null, exec);
 	}
 
+	/**
+	 * @see createEvent(String reason, MIResultRecord rr, MIExecAsyncOutput exec)
+	 * @param reason
+	 * @param rr
+	 * @return
+	 */
 	MIEvent createEvent(String reason, MIResultRecord rr) {
 		return createEvent(reason, rr, null);
 	}
 
+	/**
+	 * Creates an MIEvent and raises it.
+	 * @param reason
+	 * @param rr
+	 * @param exec
+	 * @return
+	 */
 	MIEvent createEvent(String reason, MIResultRecord rr, MIExecAsyncOutput exec) {
 		MIEvent event = null;
 		// if inferior exited

@@ -33,11 +33,13 @@ package org.modelica.mdt.debug.gdb.core.mi;
 import org.modelica.mdt.debug.gdb.core.mi.command.Command;
 
 /**
+ * Maintains the MI commands.
+ * MI Receiving thread and transmission thread uses this class to manage the commands.
+ * @see RxThread
+ * @see TxThread
+ * 
  * @author Adeel Asghar
  *
- */
-/**
- * Simple thread-safe Queue implementation.
  */
 public class CommandQueue extends Queue {
 	
@@ -45,8 +47,12 @@ public class CommandQueue extends Queue {
 		super();
 	}
 
+	/**
+	 * Remove the indexed command.
+	 * @param id - the command index
+	 * @return the queued command
+	 */
 	public Command removeCommand(int id) {
-		//print("in removeCommand(" + id + ") - entering");
 		synchronized (list) {
 			int size = list.size();
 			for (int i = 0; i < size; i++) {
@@ -61,14 +67,27 @@ public class CommandQueue extends Queue {
 		return null;
 	}
 
+	/**
+	 * Remove the command.
+	 * @return the queued command
+	 * @throws InterruptedException
+	 */
 	public Command removeCommand() throws InterruptedException {
 		return (Command)removeItem();
 	}
 
+	/**
+	 * Add the command to queue
+	 * @param cmd
+	 */
 	public void addCommand(Command cmd) {
 		addItem(cmd);
 	}
 
+	/**
+	 * Clears the queue and return it.
+	 * @return the command queue
+	 */
 	public Command[] clearCommands() {
 		Object[] objs = clearItems();
 		Command[] cmds = new Command[objs.length];

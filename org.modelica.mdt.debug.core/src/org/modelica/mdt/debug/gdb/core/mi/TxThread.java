@@ -38,13 +38,11 @@ import org.modelica.mdt.debug.gdb.core.mi.command.Command;
 import org.modelica.mdt.debug.gdb.core.mi.command.RawCommand;
 
 /**
- * @author Adeel Asghar
- *
- */
-/**
  * This thread reads the commands from txQueue  
  * and writes them to the GDB output stream.
  * 
+ * @author Adeel Asghar
+ *
  */
 public class TxThread extends Thread {
 	MISession session;
@@ -53,6 +51,7 @@ public class TxThread extends Thread {
 		super("MI TX Thread");
 		session = s;
 	}
+	
 	public void run () {
 		try {
 			// signal by the session of time to die.

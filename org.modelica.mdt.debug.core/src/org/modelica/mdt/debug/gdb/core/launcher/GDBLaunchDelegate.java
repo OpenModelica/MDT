@@ -51,6 +51,8 @@ import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 
 /**
+ * Launches the debugger.
+ * 
  * @author Adeel Asghar
  *
  */
@@ -115,5 +117,10 @@ public class GDBLaunchDelegate extends LaunchConfigurationDelegate {
 		// TODO Auto-generated method stub
 		throw new CoreException(new Status(IStatus.ERROR,
 				IMDTConstants.ID_MDT_DEBUG_MODEL, 0, message, e));
+	}
+	
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		// do NOT build for lunch when debugging MetaModelica
+		return false;
 	}
 }

@@ -31,6 +31,8 @@
 package org.modelica.mdt.debug.gdb.core.mi;
 
 /**
+ * Handles all the MI Exceptions
+ * 
  * @author Adeel Asghar
  *
  */

@@ -39,12 +39,10 @@ import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 
 
 /**
- * @author Adeel Asghar
- *
- */
-/**
  * Receiving, and printing to the console, stderr output
  * 
+ * @author Adeel Asghar
+ *
  */
 public class ErrorThread extends Thread {
 	MISession session;
@@ -54,7 +52,7 @@ public class ErrorThread extends Thread {
 		session = s;
 	}
 	
-	/*
+	/**
 	 * Sit on the error stream output, and append to the GDB console
 	 */
 	public void run() {

@@ -66,6 +66,17 @@ import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 
 /**
+ * Maintains all MI activities.
+ * 
+ * <ul>
+ * <li>TxThread - MI Transmission Thread, sends the commands to GDB.</li>
+ * <li>RxThread - MI Receiving Thread, receives the commands from GDB.</li>
+ * <li>ErrorThread - MI Error Thread, receives the errors from GDB.</li>
+ * <li>EventThread - MI Event Thread, receives the events from GDB.</li>
+ * </ul>
+ * 
+ * Extends the Observable class. Sends the notifications to the observers if something happens in the threads.
+ * 
  * @author Adeel Asghar
  *
  */
@@ -172,6 +183,7 @@ public class MISession extends Observable {
 	}
 
 	/**
+	 * Initializes the GDB with some parameters.
 	 * @throws MIException 
 	 * 
 	 */
@@ -200,6 +212,7 @@ public class MISession extends Observable {
 	}	
 
 	/**
+	 * Check to see if GDB supports -interpreter-exec
 	 * @return
 	 */
 	private boolean canUseInterpreterExecConsole() {
@@ -234,6 +247,7 @@ public class MISession extends Observable {
 	}
 
 	/**
+	 * Setup everything queues, thread etc.
 	 * @throws MIException 
 	 * 
 	 */
@@ -660,6 +674,7 @@ public class MISession extends Observable {
 	}	
 
 	/**
+	 * Returns the log file buffered writer
 	 * @return the fLogFileWriter
 	 */
 	public BufferedWriter getLogFileWriter() {
@@ -667,6 +682,7 @@ public class MISession extends Observable {
 	}
 	
 	/**
+	 * Writes the message to the log file.
 	 * @return the fLogFileWriter
 	 */
 	public void writeLog(String message) {
@@ -680,8 +696,7 @@ public class MISession extends Observable {
 	}
 
 	/**
-	 * This is a windows specific method.
-	 * starts the BreakProcess program and raises the SIGTRAP to interrupt for the GDB.
+	 * Try to interrupt the inferior
 	 * @param gdbDebugTarget 
 	 * @return 
 	 * @throws CoreException 
@@ -699,6 +714,7 @@ public class MISession extends Observable {
 	}
 
 	/**
+	 * On Linux we try kill -SIGINT pid to interrupt the inferior.
 	 * @param gdbDebugTarget
 	 * @return
 	 * @throws CoreException 
@@ -719,6 +735,7 @@ public class MISession extends Observable {
 	}
 
 	/**
+	 * On Windows we use the BreakProcess program to raise the SIGTRAP signal.
 	 * @param gdbDebugTarget
 	 * @return
 	 * @throws CoreException 

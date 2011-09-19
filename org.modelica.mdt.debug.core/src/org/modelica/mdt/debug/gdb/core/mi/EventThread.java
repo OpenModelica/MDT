@@ -34,12 +34,11 @@ import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 
 /**
- * @author Adeel Asghar
- *
- */
-/**
  * Event Thread blocks on the event Queue, wakes up
  * when events are available and notify all the observers.
+ * 
+ * @author Adeel Asghar
+ *
  */
 public class EventThread extends Thread {
 	MISession session;
@@ -49,6 +48,9 @@ public class EventThread extends Thread {
 		session = s;
 	}
 
+	/**
+	 * Sit on the output stream, read the events and dispatch them to the observers.
+	 */
 	public void run() {
 		// Signal by the session of time to die.
 		while (session.getChannelOutputStream() != null) {

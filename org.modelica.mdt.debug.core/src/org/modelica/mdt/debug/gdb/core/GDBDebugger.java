@@ -46,8 +46,11 @@ import org.modelica.mdt.debug.gdb.core.mi.pty.MITTYAdapter;
 import org.modelica.mdt.debug.gdb.core.mi.pty.PTY;
 
 /**
+ * Starts the GDB with the given parameters.
+ * Creates the MISession object.
+ * 
  * @author Adeel Asghar
- *
+ * 
  */
 public class GDBDebugger {
 
@@ -77,6 +80,7 @@ public class GDBDebugger {
 	}
 
 	/**
+	 * Creates a new MISession object.
 	 * @throws MIException 
 	 * @throws IOException 
 	 * 
@@ -88,6 +92,7 @@ public class GDBDebugger {
 	}
 
 	/**
+	 * Start the GDB process.
 	 * @param debugTargetProgram
 	 * @param debugTargetCommandLineArguments
 	 * @param debugTargetWorkDirectory
@@ -131,6 +136,9 @@ public class GDBDebugger {
 	}
 
 	/**
+	 * Get the GDB path.
+	 * If user has used environment variables while giving the path.
+	 * It resolves the variables and return the full path.
 	 * @param debugTargetGDBPath
 	 * @return String GDB Path
 	 * @throws CoreException 
@@ -143,7 +151,8 @@ public class GDBDebugger {
 	}
 
 	/**
-	 * @return
+	 * Returns the MISession object
+	 * @return fMISession
 	 */
 	public MISession getMISession() {
 		// TODO Auto-generated method stub

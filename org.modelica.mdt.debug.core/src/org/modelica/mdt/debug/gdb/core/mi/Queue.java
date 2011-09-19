@@ -35,11 +35,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Simple thread-safe Queue implementation.
+ * 
  * @author Adeel Asghar
  *
- */
-/**
- * Simple thread-safe Queue implementation.
  */
 public class Queue {
 	
@@ -49,6 +48,9 @@ public class Queue {
 		list = Collections.synchronizedList(new LinkedList<Object>());
 	}
 	
+	/**
+	 * Removes the item from the list and return it. 
+	 */
 	public Object removeItem() throws InterruptedException {
 		synchronized (list) {
 			while (list.isEmpty()) {
@@ -61,6 +63,10 @@ public class Queue {
 		}
 	}
 
+	/**
+	 * Adds the item to the list and notify all waiting threads.
+	 * @param item
+	 */
 	public void addItem(Object item) {
 		synchronized (list) {
 			list.add(item);
@@ -70,6 +76,10 @@ public class Queue {
 		}
 	}
 
+	/**
+	 * Clear the items from the list and return the preserved list.
+	 * @return
+	 */
 	public Object[] clearItems() {
 		Object[] array;
 		synchronized (list) {
@@ -79,6 +89,10 @@ public class Queue {
 		return array;
 	}
 
+	/**
+	 * Checks if the list is empty
+	 * @return
+	 */
 	public boolean isEmpty() {
 		boolean empty;
 		synchronized (list) {
