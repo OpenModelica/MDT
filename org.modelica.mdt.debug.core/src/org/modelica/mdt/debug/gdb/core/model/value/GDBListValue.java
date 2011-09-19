@@ -35,7 +35,6 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
-import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
