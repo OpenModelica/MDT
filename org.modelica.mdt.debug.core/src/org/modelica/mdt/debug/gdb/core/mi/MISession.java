@@ -436,7 +436,7 @@ public class MISession extends Observable {
 		
 		if (gdbStackFrame != null) {
 			GDBThread gdbThread = (GDBThread) gdbStackFrame.getThread();
-			if (!gdbThread.getCurrentGDBStackFrame().equals(gdbStackFrame)) {
+			if (!gdbStackFrame.equals(gdbThread.getCurrentGDBStackFrame())) {
 				writeLog("not posting command");
 				return;
 			}	

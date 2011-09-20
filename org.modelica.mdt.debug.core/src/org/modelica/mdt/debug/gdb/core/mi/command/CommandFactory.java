@@ -198,7 +198,7 @@ public class CommandFactory {
 	}
 
 	/**
-	 * Creates the -stack-list-frame command with params
+	 * Creates the -stack-list-frames command with params
 	 * @param lowFrame
 	 * @param highFrame
 	 * @return MIStackListFrames

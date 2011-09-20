@@ -114,6 +114,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public GDBThread(GDBDebugTarget target) {
 		super(target);
+		fGDBStackFrames = new ArrayList<GDBStackFrame>();
 	}
 
 	/* (non-Javadoc)
@@ -132,10 +133,6 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	private synchronized MIFrame[] getStackFrames(int lowFrame, int highFrame) {
 		// TODO Auto-generated method stub
-		// if fGDBStackFrames is null then initialize it
-		if (fGDBStackFrames == null) {
-			fGDBStackFrames = new ArrayList<GDBStackFrame>();
-		}
 		try {
 			// get the list of frames from GDB
 			MISession miSession = getGDBDebugTarget().getMISession();
@@ -188,65 +185,76 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	protected synchronized void computeStackFrames() {
 		// TODO Auto-generated method stub
-		if (isSuspended()) {
-			if (isRefreshStackFrames()) {
-				try {
-					// get the stack depth
-					int depth = getStackInfoDepth();
-					if (depth >= getMaxStackDepth())
-						depth = getMaxStackDepth() - 1;
-					// get the stack frames from GDB
-					MIFrame[] frames = getStackFrames(0, depth - 1);
-					// Safety precaution in case getting the stack frames failed to get us as many as it said
-					depth = frames.length;
-					
-					if (fGDBStackFrames.isEmpty()) {
-						if (frames.length > 0) {
-							addStackFrames(frames, 0, frames.length, false);
-						}
-					} else {
-						int diff = depth - getLastStackDepth();
-						int offset = (diff > 0) ? frames.length - diff : 0;
-						int length = (diff > 0) ? diff : -diff;
-						if (offset < 0 || !compareStackFrames(frames, fGDBStackFrames, offset, length)) {
-							// replace all frames
-							disposeStackFrames(0, fGDBStackFrames.size());
-							addStackFrames(frames, 0, frames.length, false);						
-						}
-						if (diff < 0) {
-							// stepping out of the last frame
-							disposeStackFrames(0, getLastStackDepth() - depth);
+		synchronized (getGDBDebugTarget().getLock()) {
+			if (isSuspended()) {
+				if (isRefreshStackFrames()) {
+					try {
+						// get the stack depth
+						int depth = getStackInfoDepth();
+						if (depth >= getMaxStackDepth())
+							depth = getMaxStackDepth() - 1;
+						// get the stack frames from GDB
+						MIFrame[] frames = getStackFrames(0, depth - 1);
+						// Safety precaution in case getting the stack frames failed to get us as many as it said
+						depth = frames.length;
+						
+						if (fGDBStackFrames.isEmpty()) {
 							if (frames.length > 0) {
-								updateStackFrames(frames, 0, fGDBStackFrames, fGDBStackFrames.size());
-								if (fGDBStackFrames.size() < frames.length) {
-									addStackFrames(frames, fGDBStackFrames.size(),
-											frames.length - fGDBStackFrames.size(), true);
+								addStackFrames(frames, 0, frames.length, false);
+							}
+						} else {
+							int diff = depth - getLastStackDepth();
+							int offset = (diff > 0) ? frames.length - diff : 0;
+							int length = (diff > 0) ? diff : -diff;
+							if (offset < 0 || !compareStackFrames(frames, fGDBStackFrames, offset, length)) {
+								// replace all frames
+								disposeStackFrames(0, fGDBStackFrames.size());
+								addStackFrames(frames, 0, frames.length, false);						
+							}
+							if (diff < 0) {
+								// stepping out of the last frame
+	//							disposeStackFrames(0, getLastStackDepth() - depth);
+	//							if (frames.length > 0) {
+	//								updateStackFrames(frames, 0, fGDBStackFrames, fGDBStackFrames.size());
+	//								if (fGDBStackFrames.size() < frames.length) {
+	//									addStackFrames(frames, fGDBStackFrames.size(),
+	//											frames.length - fGDBStackFrames.size(), true);
+	//								}
+	//							}
+								// replace all frames
+								disposeStackFrames(0, fGDBStackFrames.size());
+								addStackFrames(frames, 0, frames.length, false);
+							}
+							else if (diff > 0) {
+								// stepping into a new frame
+//								disposeStackFrames(frames.length - depth + getLastStackDepth(),
+//										depth - getLastStackDepth());
+//								addStackFrames(frames, 0, depth - getLastStackDepth(), false);
+//								updateStackFrames(frames, depth - getLastStackDepth(),
+//										fGDBStackFrames, frames.length - depth + getLastStackDepth());
+								// replace all frames
+								disposeStackFrames(0, fGDBStackFrames.size());
+								addStackFrames(frames, 0, frames.length, false);
+							}
+							else { // diff == 0
+								if (depth != 0) {
+									// we are in the same frame
+									//updateStackFrames(frames, 0, fGDBStackFrames, frames.length);
+									// replace all frames
+									disposeStackFrames(0, fGDBStackFrames.size());
+									addStackFrames(frames, 0, frames.length, false);
 								}
 							}
 						}
-						else if (diff > 0) {
-							// stepping into a new frame
-							disposeStackFrames(frames.length - depth + getLastStackDepth(),
-									depth - getLastStackDepth());
-							addStackFrames(frames, 0, depth - getLastStackDepth(), false);
-							updateStackFrames(frames, depth - getLastStackDepth(),
-									fGDBStackFrames, frames.length - depth + getLastStackDepth());
+						if (fGDBStackFrames.size() > 0) {
+							setCurrentGDBStackFrame(fGDBStackFrames.get(0));
 						}
-						else { // diff == 0
-							if (depth != 0) {
-								// we are in the same frame
-								updateStackFrames(frames, 0, fGDBStackFrames, frames.length);
-							}
-						}
+						setLastStackDepth(depth);
+						setRefreshStackFrames(false);
+					} catch (Exception e) {
+						// TODO: handle exception
+						MDTDebugCorePlugin.log(null, e);
 					}
-					if (fGDBStackFrames.size() > 0) {
-						setCurrentGDBStackFrame(fGDBStackFrames.get(0));
-					}
-					setLastStackDepth(depth);
-					setRefreshStackFrames(false);
-				} catch (Exception e) {
-					// TODO: handle exception
-					MDTDebugCorePlugin.log(null, e);
 				}
 			}
 		}
@@ -485,24 +493,26 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-		setRunning(true);
-		setSuspended(false);
-		setStepping(false);
-		resumed(DebugEvent.CLIENT_REQUEST);
-		// clear the stack frames completely
-		disposeStackFrames();
-		// send gdb the -exec-continue commmand
-		try {
-			MIExecContinue execContinueCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecContinue();
-			execContinueCmd.setQuiet(true);
-			getGDBDebugTarget().getMISession().postCommand(execContinueCmd, null);
-			if (execContinueCmd.getMIInfo() == null) {
-				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-						MDTDebugCorePlugin.getResourceString("GDBThread.resume.ExecContinue.NoAnswer"), null));
+		synchronized (getGDBDebugTarget().getLock()) {
+			setRunning(true);
+			setSuspended(false);
+			setStepping(false);
+			resumed(DebugEvent.CLIENT_REQUEST);
+			// clear the stack frames completely
+			disposeStackFrames();
+			// send gdb the -exec-continue commmand
+			try {
+				MIExecContinue execContinueCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIExecContinue();
+				execContinueCmd.setQuiet(true);
+				getGDBDebugTarget().getMISession().postCommand(execContinueCmd, null);
+				if (execContinueCmd.getMIInfo() == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBThread.resume.ExecContinue.NoAnswer"), null));
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 	/**
@@ -510,51 +520,54 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * 
 	 */
 	public void start() throws CoreException {
-		setRunning(true);
-		setSuspended(false);
-		setStepping(false);
-		try {
-			MISession miSession = getGDBDebugTarget().getMISession();
-			CommandFactory factory = miSession.getCommandFactory();
-			// send -exec-run
-			MIExecRun execRunCmd = factory.createMIExecRun(new String[0]);
-			miSession.postCommand(execRunCmd, null);
-			if (execRunCmd.getMIInfo() == null) {
-				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-						MDTDebugCorePlugin.getResourceString("GDBThread.start.ExecRun.NoAnswer"), null));
+		synchronized (getGDBDebugTarget().getLock()) {
+			setRunning(true);
+			setSuspended(false);
+			setStepping(false);
+			try {
+				MISession miSession = getGDBDebugTarget().getMISession();
+				CommandFactory factory = miSession.getCommandFactory();
+				// send -exec-run
+				MIExecRun execRunCmd = factory.createMIExecRun(new String[0]);
+				miSession.postCommand(execRunCmd, null);
+				if (execRunCmd.getMIInfo() == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBThread.start.ExecRun.NoAnswer"), null));
+				}
+				// if run is ok then change the stdout buffer policy
+				MIDataEvaluateExpression changeStdStreamBufferCmd = factory.createMIChangeStdStreamBuffer();
+				// we don't care about the time and output of this command
+				miSession.postCommand(changeStdStreamBufferCmd, -1, null);
+			} catch (MIException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(e.getMessage() + e.getLogMessage(), e);
 			}
-			// if run is ok then change the stdout buffer policy
-			MIDataEvaluateExpression changeStdStreamBufferCmd = factory.createMIChangeStdStreamBuffer();
-			// we don't care about the time and output of this command
-			miSession.postCommand(changeStdStreamBufferCmd, -1, null);
-		} catch (MIException e) {
-			// TODO Auto-generated catch block
-			MDTDebugCorePlugin.log(e.getMessage() + e.getLogMessage(), e);
+			getGDBDebugTarget().getMISession().getGDBInferior().update();
 		}
-		getGDBDebugTarget().getMISession().getGDBInferior().update();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
-		// on windows -exec-interrupt is not supported
-		try {
-			int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
-			if (result != 0) {
-				MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
-						"Unable to interrupt the running program.", null)));
+		synchronized (getGDBDebugTarget().getLock()) {
+			try {
+				int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
+				if (result != 0) {
+					MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
+							"Unable to interrupt the running program.", null)));
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				MDTDebugCorePlugin.log(null, e);
 			}
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			MDTDebugCorePlugin.log(null, e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			MDTDebugCorePlugin.log(null, e);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			MDTDebugCorePlugin.log(null, e);
+			suspended(DebugEvent.CLIENT_REQUEST);
 		}
-		suspended(DebugEvent.CLIENT_REQUEST);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
@@ -588,70 +601,86 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
 	public void stepInto() throws DebugException {
-		setRunning(true);
-		setSuspended(false);
-		setStepping(false);
-		resumed(DebugEvent.STEP_INTO);
-		// send the -exec-step command
-		MISession miSession = getGDBDebugTarget().getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIExecStep execStepCommand = factory.createMIExecStep();
-		try {
-			miSession.postCommand(execStepCommand, null);
-			setExecuteCommand(ExecuteCommand.EXECSTEP);
-			MIInfo info = execStepCommand.getMIInfo();
-			if (info == null) {
-				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-						MDTDebugCorePlugin.getResourceString("GDBThread.stepInto.ExecStep.NoAnswer"), null));
+		synchronized (getGDBDebugTarget().getLock()) {
+			setRunning(true);
+			setSuspended(false);
+			setStepping(false);
+			resumed(DebugEvent.STEP_INTO);
+			/*
+			 * Adeel 2011-09-20 23:31 When we do step we put the current stack frame as null.
+			 * So other threads dont post commands to the inferior.
+			 */
+			fCurrentGDBStackFrame = null;
+			// send the -exec-step command
+			MISession miSession = getGDBDebugTarget().getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIExecStep execStepCommand = factory.createMIExecStep();
+			try {
+				miSession.postCommand(execStepCommand, null);
+				setExecuteCommand(ExecuteCommand.EXECSTEP);
+				MIInfo info = execStepCommand.getMIInfo();
+				if (info == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBThread.stepInto.ExecStep.NoAnswer"), null));
+				}
+			} catch (Exception e) {
+				MDTDebugCorePlugin.log(null, e);
 			}
-		} catch (Exception e) {
-			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
 	public void stepOver() throws DebugException {
-		setRunning(true);
-		setSuspended(false);
-		setStepping(false);
-		resumed(DebugEvent.STEP_OVER);
-		// send the -exec-next command
-		CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
-		MIExecNext execNextCmd = factory.createMIExecNext();
-		try {
-			getGDBDebugTarget().getMISession().postCommand(execNextCmd, null);
-			setExecuteCommand(ExecuteCommand.EXECNEXT);
-			MIInfo info = execNextCmd.getMIInfo();
-			if (info == null) {
-				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-						MDTDebugCorePlugin.getResourceString("GDBThread.stepOver.ExecNext.NoAnswer"), null));
+		synchronized (getGDBDebugTarget().getLock()) {
+			setRunning(true);
+			setSuspended(false);
+			setStepping(false);
+			resumed(DebugEvent.STEP_OVER);
+			/*
+			 * Adeel 2011-09-20 23:31 When we do step we put the current stack frame as null.
+			 * So other threads dont post commands to the inferior.
+			 */
+			fCurrentGDBStackFrame = null;
+			// send the -exec-next command
+			CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
+			MIExecNext execNextCmd = factory.createMIExecNext();
+			try {
+				getGDBDebugTarget().getMISession().postCommand(execNextCmd, null);
+				setExecuteCommand(ExecuteCommand.EXECNEXT);
+				MIInfo info = execNextCmd.getMIInfo();
+				if (info == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBThread.stepOver.ExecNext.NoAnswer"), null));
+				}
+			} catch (Exception e) {
+				MDTDebugCorePlugin.log(null, e);
 			}
-		} catch (Exception e) {
-			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
 	public void stepReturn() throws DebugException {
-		setRunning(true);
-		setSuspended(false);
-		setStepping(false);
-		resumed(DebugEvent.STEP_RETURN);
-		// send the -exec-finish command
-		CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
-		MIExecFinish execFinishCmd = factory.createMIExecFinish();
-		try {
-			getGDBDebugTarget().getMISession().postCommand(execFinishCmd, null);
-			setExecuteCommand(ExecuteCommand.EXECNEXT);
-			MIInfo info = execFinishCmd.getMIInfo();
-			if (info == null) {
-				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-						MDTDebugCorePlugin.getResourceString("GDBThread.stepReturn.ExecFinish.NoAnswer"), null));
+		synchronized (getGDBDebugTarget().getLock()) {
+			setRunning(true);
+			setSuspended(false);
+			setStepping(false);
+			resumed(DebugEvent.STEP_RETURN);
+			// send the -exec-finish command
+			CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
+			MIExecFinish execFinishCmd = factory.createMIExecFinish();
+			try {
+				getGDBDebugTarget().getMISession().postCommand(execFinishCmd, null);
+				setExecuteCommand(ExecuteCommand.EXECNEXT);
+				MIInfo info = execFinishCmd.getMIInfo();
+				if (info == null) {
+					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+							MDTDebugCorePlugin.getResourceString("GDBThread.stepReturn.ExecFinish.NoAnswer"), null));
+				}
+			} catch (Exception e) {
+				MDTDebugCorePlugin.log(null, e);
 			}
-		} catch (Exception e) {
-			MDTDebugCorePlugin.log(null, e);
 		}
 	}
 	/* (non-Javadoc)
@@ -670,11 +699,13 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		setTerminated(true);
-		setStepping(false);
-		setRunning(false);
-		// terminate the MI Session. It will exit the GDB as well.
-		getGDBDebugTarget().getMISession().getSessionProcess().destroy();
+		synchronized (getGDBDebugTarget().getLock()) {
+			setTerminated(true);
+			setStepping(false);
+			setRunning(false);
+			// terminate the MI Session. It will exit the GDB as well.
+			getGDBDebugTarget().getMISession().getSessionProcess().destroy();
+		}
 	}
 	
 	/**

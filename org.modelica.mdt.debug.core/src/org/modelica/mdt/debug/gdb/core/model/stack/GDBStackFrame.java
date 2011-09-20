@@ -204,11 +204,13 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		if (isDisposed() || !((GDBThread)getThread()).getCurrentGDBStackFrame().equals(this)) {
-			return new IVariable[0];
+		synchronized (getGDBDebugTarget().getLock()) {
+			if (isDisposed() || !(this.equals(((GDBThread)getThread()).getCurrentGDBStackFrame()))) {
+				return new IVariable[0];
+			}
+			computeVariables();
+			return (IVariable[])fGDBVariables.toArray(new IVariable[fGDBVariables.size()]);
 		}
-		computeVariables();
-		return (IVariable[])fGDBVariables.toArray(new IVariable[fGDBVariables.size()]);
 	}
 	/**
 	 * 

@@ -72,7 +72,6 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MISteppingRangeEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIStoppedEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
-import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread.ExecuteCommand;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
@@ -93,7 +92,8 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 
 	// terminated state
 	private boolean fTerminated = false;
-	private ArrayList<GDBThread> fThreads;	
+	private ArrayList<GDBThread> fThreads;
+	final private Object fLock = new Object();
 	/**
 	 * Constructs a new debug target in the given launch for the associated GDB
 	 * VM process.
@@ -615,10 +615,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		// TODO Auto-generated method stub
 		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIFunctionFinishedEvent caught in gdb debug target");
 		if (skipSteppedInFrames(miEvent)) {
-			GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MIFunctionFinishedEvent)miEvent).getFrame());
-			if (gdbStackFrame != null) {
-				((GDBThread)getThread()).setCurrentGDBStackFrame(gdbStackFrame);
-			}
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.STEP_RETURN);
 		}
@@ -635,10 +631,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		// TODO Auto-generated method stub
 		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MISteppingRangeEvent caught in gdb debug target");
 		if (skipSteppedInFrames(miEvent)) {
-			GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame(((MISteppingRangeEvent)miEvent).getFrame());
-			if (gdbStackFrame != null) {
-				((GDBThread)getThread()).setCurrentGDBStackFrame(gdbStackFrame);
-			}
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
 		}
@@ -670,10 +662,6 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			MISignalEvent signalEvent = (MISignalEvent)miEvent;
 			
 			if (signalEvent.getName().equals(GDBHelper.SIGTRAP) || signalEvent.getName().equals(GDBHelper.SIGINT)) {
-				GDBStackFrame gdbStackFrame = ((GDBThread)getThread()).getFrame((signalEvent.getFrame()));
-				if (gdbStackFrame != null) {
-					((GDBThread)getThread()).setCurrentGDBStackFrame(gdbStackFrame);
-				}
 				((GDBThread)getThread()).setRefreshStackFrames(true);
 				((GDBThread)getThread()).interrupted(DebugEvent.STEP_END);
 			} else if (signalEvent.getName().equals(GDBHelper.SIGSEGV)) {
@@ -743,6 +731,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			} else if (((GDBThread)getThread()).getExecuteCommand() == ExecuteCommand.EXECSTEP) {
 				execCmd = factory.createMIExecStep();
 			}
+			execCmd.setQuiet(true);
 			fMISession.postCommand(execCmd, null);
 			MIInfo info = execCmd.getMIInfo();
 			if (info == null) {
@@ -761,5 +750,12 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	public MISession getMISession() {
 		// TODO Auto-generated method stub
 		return fMISession;
+	}
+
+	/**
+	 * @return the fLock
+	 */
+	public Object getLock() {
+		return fLock;
 	}
 }

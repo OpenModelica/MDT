@@ -73,7 +73,7 @@ public class GDBCoreValue extends GDBValue {
 	 */
 	public boolean hasValueChanged() throws MIException {
 		// TODO Auto-generated method stub
-		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
+		if (isDisposed() || !getGDBVariable().getGDBStackFrame().equals(((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return false;
 		}
 		String oldValue = getValue();
@@ -105,7 +105,7 @@ public class GDBCoreValue extends GDBValue {
 	@Override
 	public String getValueString() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed() || !((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBVariable().getGDBStackFrame())) {
+		if (isDisposed() || !getGDBVariable().getGDBStackFrame().equals(((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return null;
 		}
 		if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.BOOLEAN)) {
