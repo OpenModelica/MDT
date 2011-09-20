@@ -65,7 +65,7 @@ public class GDBListVariable extends GDBVariable {
 	@Override
 	public synchronized IValue getValue() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed() || !((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBStackFrame())) {
+		if (isDisposed() || !getGDBStackFrame().equals(((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return new EmptyValue(this);
 		}
 		try {

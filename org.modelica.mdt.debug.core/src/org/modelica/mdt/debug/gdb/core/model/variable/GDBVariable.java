@@ -143,7 +143,7 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @return the fType
 	 */
 	public String getType() {
-		if (isDisposed() || !((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBStackFrame())) {
+		if (isDisposed() || !getGDBStackFrame().equals(((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return null;
 		}
 		return fType;
@@ -274,7 +274,7 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	@Override
 	public synchronized boolean hasValueChanged() throws DebugException {
 		// TODO Auto-generated method stub
-		if (isDisposed() || !((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame().equals(getGDBStackFrame())) {
+		if (isDisposed() || !getGDBStackFrame().equals(((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return false;
 		}
 		return isValueChanged();
