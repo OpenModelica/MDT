@@ -68,4 +68,13 @@ public class EmptyValue extends GDBValue {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#hasValueChanged()
+	 */
+	@Override
+	public boolean hasValueChanged() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

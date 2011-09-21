@@ -79,7 +79,7 @@ public class TypeHelper {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
 		} catch (Exception e) {
-			
+			// TODO: handle exception
 		}
 		return GDBHelper.REPLACEABLE_TYPE_ANY;
 	}

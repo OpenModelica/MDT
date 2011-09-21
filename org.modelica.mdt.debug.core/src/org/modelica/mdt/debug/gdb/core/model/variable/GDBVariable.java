@@ -37,6 +37,7 @@ import org.modelica.mdt.debug.gdb.core.model.GDBDebugElement;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.value.GDBValue;
+import org.modelica.mdt.debug.gdb.helper.TypeHelper;
 
 /**
  * @author Adeel Asghar
@@ -45,13 +46,14 @@ import org.modelica.mdt.debug.gdb.core.model.value.GDBValue;
 /**
  * A base class for all variables. 
  */
-public abstract class GDBVariable extends GDBDebugElement implements IVariable {
+public class GDBVariable extends GDBDebugElement implements IVariable {
 
 	private String fName;
 	private String fDisplayName;
 	private String fVoidPointer = null;
 	private String fType;
-	private String fReferenceTypeName;
+	private String fReferenceTypeName = "";
+	private String fOldReferenceTypeName = "";
 	private GDBStackFrame fGDBStackFrame;
 	private boolean fValueChanged = false;
 	private Boolean fRefreshValue = true;
@@ -143,9 +145,6 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	 * @return the fType
 	 */
 	public String getType() {
-		if (isDisposed() || !getGDBStackFrame().equals(((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
-			return null;
-		}
 		return fType;
 	}
 	
@@ -159,8 +158,36 @@ public abstract class GDBVariable extends GDBDebugElement implements IVariable {
 	/**
 	 * @return the fReferenceTypeName
 	 */
-	public String getReferenceTypeName() {
+	public String getNewReferenceTypeName() {
 		return fReferenceTypeName;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
+	 */
+	@Override
+	public String getReferenceTypeName() throws DebugException {
+		// TODO Auto-generated method stub
+		if (isDisposed() || !getGDBStackFrame().equals(((GDBThread)getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
+			return "";
+		}
+		
+		setOldReferenceTypeName(fReferenceTypeName);
+		return TypeHelper.getModelicaType(getOriginalName(), getType(), getGDBStackFrame());
+	}
+	
+	/**
+	 * @param oldReferenceTypeName the fOldReferenceTypeName to set
+	 */
+	public void setOldReferenceTypeName(String oldReferenceTypeName) {
+		this.fOldReferenceTypeName = oldReferenceTypeName;
+	}
+
+	/**
+	 * @return the fReferenceTypeName
+	 */
+	public String getOldReferenceTypeName() {
+		return fOldReferenceTypeName;
 	}
 	
 	/**

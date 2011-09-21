@@ -61,7 +61,7 @@ public class GDBRecordValue extends GDBValue {
 		super(gdbVariable);
 		// TODO Auto-generated constructor stub
 		setRecordElements(ValueHelper.getArrayLength(getGDBVariable().getOriginalName(), getGDBVariable().getGDBStackFrame()));
-		setValue(getGDBVariable().getReferenceTypeName());
+		setValue(getGDBVariable().getNewReferenceTypeName());
 	}
 	
 	/* (non-Javadoc)
@@ -115,6 +115,26 @@ public class GDBRecordValue extends GDBValue {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#hasValueChanged()
+	 */
+	@Override
+	public boolean hasValueChanged() {
+		// TODO Auto-generated method stub
+		if (isDisposed() || !getGDBVariable().getGDBStackFrame().equals(((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
+			return false;
+		}
+		String oldValue = getValue();
+		setValue(getGDBVariable().getNewReferenceTypeName());
+		String newValue = getValue();
+		
+		if (oldValue.equals(newValue)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#createVariable(org.modelica.mdt.debug.gdb.core.mi.output.MIArg)
 	 */
 	@Override
@@ -140,5 +160,6 @@ public class GDBRecordValue extends GDBValue {
 	 */
 	public int getRecordElements() {
 		return fRecordElements;
-	}	
+	}
+	
 }

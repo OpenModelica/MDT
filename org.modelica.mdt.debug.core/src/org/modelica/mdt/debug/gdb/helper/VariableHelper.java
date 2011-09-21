@@ -79,7 +79,6 @@ public class VariableHelper {
 		}
 		// create record variable
 		else if (referenceType.startsWith(GDBHelper.RECORD)) {
-			//referenceType = GDBHelper.getListType(referenceType);
 			variablesList.add(new GDBRecordVariable(gdbStackFrame, name, displayName, type,
 					referenceType, actualType, voidPointer));
 		}

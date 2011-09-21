@@ -74,7 +74,7 @@ public class GDBOptionVariable extends GDBVariable {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
 					setGDBValue(new GDBOptionValue(this));
-				} else if (((GDBOptionValue)getGDBValue()).hasValueChanged()) {
+				} else if (((GDBOptionValue)getGDBValue()).hasChanged()) {
 					setValueChanged(true);
 					getGDBValue().setRefreshChildren(true);
 				} else {

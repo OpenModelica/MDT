@@ -200,7 +200,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 						
 						if (fGDBStackFrames.isEmpty()) {
 							if (frames.length > 0) {
-								addStackFrames(frames, 0, frames.length, false);
+								addStackFrames(frames, 0, frames.length, false, depth);
 							}
 						} else {
 							int diff = depth - getLastStackDepth();
@@ -209,47 +209,38 @@ public class GDBThread extends GDBDebugElement implements IThread {
 							if (offset < 0 || !compareStackFrames(frames, fGDBStackFrames, offset, length)) {
 								// replace all frames
 								disposeStackFrames(0, fGDBStackFrames.size());
-								addStackFrames(frames, 0, frames.length, false);						
+								addStackFrames(frames, 0, frames.length, false, depth);						
 							}
 							if (diff < 0) {
 								// stepping out of the last frame
-	//							disposeStackFrames(0, getLastStackDepth() - depth);
-	//							if (frames.length > 0) {
-	//								updateStackFrames(frames, 0, fGDBStackFrames, fGDBStackFrames.size());
-	//								if (fGDBStackFrames.size() < frames.length) {
-	//									addStackFrames(frames, fGDBStackFrames.size(),
-	//											frames.length - fGDBStackFrames.size(), true);
-	//								}
-	//							}
-								// replace all frames
-								disposeStackFrames(0, fGDBStackFrames.size());
-								addStackFrames(frames, 0, frames.length, false);
+								disposeStackFrames(0, getLastStackDepth() - depth);
+								if (frames.length > 0) {
+									updateStackFrames(frames, 0, fGDBStackFrames, fGDBStackFrames.size(), depth);
+									if (fGDBStackFrames.size() < frames.length) {
+										addStackFrames(frames, fGDBStackFrames.size(),
+												frames.length - fGDBStackFrames.size(), true, depth);
+									}
+								}
 							}
 							else if (diff > 0) {
 								// stepping into a new frame
-//								disposeStackFrames(frames.length - depth + getLastStackDepth(),
-//										depth - getLastStackDepth());
-//								addStackFrames(frames, 0, depth - getLastStackDepth(), false);
-//								updateStackFrames(frames, depth - getLastStackDepth(),
-//										fGDBStackFrames, frames.length - depth + getLastStackDepth());
-								// replace all frames
-								disposeStackFrames(0, fGDBStackFrames.size());
-								addStackFrames(frames, 0, frames.length, false);
+								disposeStackFrames(frames.length - depth + getLastStackDepth(),
+										depth - getLastStackDepth());
+								addStackFrames(frames, 0, depth - getLastStackDepth(), false, depth);
+								updateStackFrames(frames, depth - getLastStackDepth(),
+										fGDBStackFrames, frames.length - depth + getLastStackDepth(), depth);
 							}
 							else { // diff == 0
 								if (depth != 0) {
 									// we are in the same frame
-									//updateStackFrames(frames, 0, fGDBStackFrames, frames.length);
-									// replace all frames
-									disposeStackFrames(0, fGDBStackFrames.size());
-									addStackFrames(frames, 0, frames.length, false);
+									updateStackFrames(frames, 0, fGDBStackFrames, frames.length, depth);
 								}
 							}
 						}
+						setLastStackDepth(depth);
 						if (fGDBStackFrames.size() > 0) {
 							setCurrentGDBStackFrame(fGDBStackFrames.get(0));
 						}
-						setLastStackDepth(depth);
 						setRefreshStackFrames(false);
 					} catch (Exception e) {
 						// TODO: handle exception
@@ -267,12 +258,13 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @param offset
 	 * @param oldFrames
 	 * @param length
+	 * @param depth 
 	 */
-	private void updateStackFrames(MIFrame[] newFrames, int offset, List<GDBStackFrame> oldFrames, int length) {
+	private void updateStackFrames(MIFrame[] newFrames, int offset, List<GDBStackFrame> oldFrames, int length, int depth) {
 		// TODO Auto-generated method stub
 		for( int i = 0; i < length; i++ ) {
 			GDBStackFrame frame = oldFrames.get(offset);
-			frame.updateMe(newFrames[offset]);
+			frame.updateMe(newFrames[offset], depth);
 			offset++;
 		}
 	}
@@ -354,17 +346,18 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @param frames
 	 * @param i
 	 * @param length
+	 * @param depth 
 	 * @param b
 	 * @throws CoreException 
 	 */
-	private void addStackFrames(MIFrame[] newFrames, int startIndex, int length, boolean append) throws CoreException {
+	private void addStackFrames(MIFrame[] newFrames, int startIndex, int length, boolean append, int depth) throws CoreException {
 		// TODO Auto-generated method stub
 		if (newFrames.length >= startIndex + length) {
 			for(int i = 0; i < length; ++i) {
 				if (append)
-					fGDBStackFrames.add(new GDBStackFrame(this, newFrames[startIndex + i]));
+					fGDBStackFrames.add(new GDBStackFrame(this, newFrames[startIndex + i], depth));
 				else
-					fGDBStackFrames.add(i, new GDBStackFrame(this, newFrames[startIndex + i]));
+					fGDBStackFrames.add(i, new GDBStackFrame(this, newFrames[startIndex + i], depth));
 			}
 		}
 	}
@@ -549,25 +542,23 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
-		synchronized (getGDBDebugTarget().getLock()) {
-			try {
-				int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
-				if (result != 0) {
-					MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
-							"Unable to interrupt the running program.", null)));
-				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
+		try {
+			int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
+			if (result != 0) {
+				MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
+						"Unable to interrupt the running program.", null)));
 			}
-			suspended(DebugEvent.CLIENT_REQUEST);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
 		}
+		suspended(DebugEvent.CLIENT_REQUEST);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
@@ -608,9 +599,9 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			resumed(DebugEvent.STEP_INTO);
 			/*
 			 * Adeel 2011-09-20 23:31 When we do step we put the current stack frame as null.
-			 * So other threads dont post commands to the inferior.
+			 * So other threads don't post commands to the inferior.
 			 */
-			fCurrentGDBStackFrame = null;
+			invalidateCurrentGDBStackFrame();
 			// send the -exec-step command
 			MISession miSession = getGDBDebugTarget().getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
@@ -639,9 +630,9 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			resumed(DebugEvent.STEP_OVER);
 			/*
 			 * Adeel 2011-09-20 23:31 When we do step we put the current stack frame as null.
-			 * So other threads dont post commands to the inferior.
+			 * So other threads don't post commands to the inferior.
 			 */
-			fCurrentGDBStackFrame = null;
+			invalidateCurrentGDBStackFrame();
 			// send the -exec-next command
 			CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
 			MIExecNext execNextCmd = factory.createMIExecNext();
@@ -658,6 +649,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
@@ -667,6 +659,11 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			setSuspended(false);
 			setStepping(false);
 			resumed(DebugEvent.STEP_RETURN);
+			/*
+			 * Adeel 2011-09-20 23:31 When we do step we put the current stack frame as null.
+			 * So other threads don't post commands to the inferior.
+			 */
+			invalidateCurrentGDBStackFrame();
 			// send the -exec-finish command
 			CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
 			MIExecFinish execFinishCmd = factory.createMIExecFinish();
@@ -699,13 +696,11 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		synchronized (getGDBDebugTarget().getLock()) {
-			setTerminated(true);
-			setStepping(false);
-			setRunning(false);
-			// terminate the MI Session. It will exit the GDB as well.
-			getGDBDebugTarget().getMISession().getSessionProcess().destroy();
-		}
+		setTerminated(true);
+		setStepping(false);
+		setRunning(false);
+		// terminate the MI Session. It will exit the GDB as well.
+		getGDBDebugTarget().getMISession().getSessionProcess().destroy();
 	}
 	
 	/**
@@ -874,9 +869,12 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public void setCurrentGDBStackFrame(GDBStackFrame gdbStackFrame) throws MIException, CoreException {
 		// TODO Auto-generated method stub
+		// Need the GDB/MI view of level which is the reverse, i.e. the highest level is 0
+		// See comment in GDBStackFrame constructor.
+		int miFrameLevel = getLastStackDepth() - gdbStackFrame.getIdentifier();
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(gdbStackFrame.getIdentifier());
+		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(miFrameLevel);
 		miSession.postCommand(miStackSelectFrameCmd, null);
 		if (miStackSelectFrameCmd.getMIInfo() == null) {
 			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
@@ -890,5 +888,15 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public GDBStackFrame getCurrentGDBStackFrame() {
 		return fCurrentGDBStackFrame;
+	}
+	
+	/**
+	 * Invalidates the current stack frame.
+	 * When we do step we put the current stack frame as null.
+	 * So other threads don't post commands to the inferior.
+	 */
+	private void invalidateCurrentGDBStackFrame() {
+		// TODO Auto-generated method stub
+		fCurrentGDBStackFrame = null;
 	}
 }

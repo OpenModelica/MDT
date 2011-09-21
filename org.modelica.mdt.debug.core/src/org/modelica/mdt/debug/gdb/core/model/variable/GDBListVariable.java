@@ -72,7 +72,7 @@ public class GDBListVariable extends GDBVariable {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
 					setGDBValue(new GDBListValue(this));
-				} else if (((GDBListValue)getGDBValue()).hasValueChanged()) {
+				} else if (((GDBListValue)getGDBValue()).hasChanged()) {
 					setValueChanged(true);
 					getGDBValue().setRefreshChildren(true);
 				} else {

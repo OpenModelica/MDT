@@ -74,7 +74,7 @@ public class GDBCoreVariable extends GDBVariable {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
 					setGDBValue(new GDBCoreValue(this));
-				} else if (((GDBCoreValue)getGDBValue()).hasValueChanged()) {
+				} else if (((GDBCoreValue)getGDBValue()).hasChanged()) {
 					setValueChanged(true);
 				} else {
 					setValueChanged(false);

@@ -77,6 +77,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	private int fEndChar = -1;	
 	private String fFileName;
 	private int fId;
+	private int fDepth;
 	private List<GDBVariable> fGDBVariables = null;
 	private Boolean fRefreshVariables = true;
 	/**
@@ -90,11 +91,13 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 * 
 	 * @param thread
 	 * @param frame stack frame id (0 is the bottom of the stack)
+	 * @param depth 
 	 */
-	public GDBStackFrame(GDBThread thread, MIFrame frame) {
+	public GDBStackFrame(GDBThread thread, MIFrame frame, int depth) {
 		super(thread.getGDBDebugTarget());
 		fGDBThread = thread;
 		fFrame = frame;
+		fDepth = depth;
 		initialize();
 	}
 	
@@ -104,7 +107,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 	 * @param data
 	 */
 	protected synchronized void initialize() {
-		fId = fFrame.getLevel();
+		fId = fDepth - fFrame.getLevel();
 		fFileName = (new Path(fFrame.getFile())).lastSegment();
 		fLineNumber = fFrame.getLine();
 		fStartChar = -1;
@@ -228,7 +231,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 			CommandFactory factory = miSession.getCommandFactory();
 			MIArg[] args = null;
 			MIStackListVariablesInfo stackListVariablesInfo = null;
-			MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", "1", "--frame", Integer.toString(getIdentifier()), "--simple-values"});
+			MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", "1", "--frame", Integer.toString(fDepth - getIdentifier()), "--simple-values"});
 			try {
 				miSession.postCommand(stackListVariablesCmd, null);
 				stackListVariablesInfo = stackListVariablesCmd.getMIStackListVariablesInfo();
@@ -477,10 +480,12 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 
 	/**
 	 * @param miFrame
+	 * @param depth 
 	 */
-	public void updateMe(MIFrame miFrame) {
+	public void updateMe(MIFrame miFrame, int depth) {
 		// TODO Auto-generated method stub
 		fFrame = miFrame;
+		fDepth = depth;
 		initialize();
 		setRefreshVariables(true);
 	}

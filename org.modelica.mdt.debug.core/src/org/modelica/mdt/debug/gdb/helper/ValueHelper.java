@@ -70,6 +70,8 @@ public class ValueHelper {
 			}
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return "";
 	}
@@ -123,6 +125,8 @@ public class ValueHelper {
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return "";
 	}
@@ -147,6 +151,8 @@ public class ValueHelper {
 			return Integer.parseInt(getListLengthInfo.getExpression());
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return 0;
 	}
@@ -169,12 +175,11 @@ public class ValueHelper {
 			MIDataEvaluateExpression getListItemCmd = factory.createMIGetListItem(variableName, item);
 			getListItemCmd.setQuiet(true);
 			miSession.postCommand(getListItemCmd, gdbStackFrame);
-			if (getListItemCmd.getMIInfo() == null) {
-				return "";
-			}
 			return getListItemCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return "";
 	}
@@ -187,7 +192,7 @@ public class ValueHelper {
 	 * @throws MIException 
 	 */
 	public static int getArrayLength(String variableName,
-			GDBStackFrame gdbStackFrame) throws MIException {
+			GDBStackFrame gdbStackFrame) {
 		// TODO Auto-generated method stub
 		try {
 			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
@@ -200,6 +205,8 @@ public class ValueHelper {
 			return Integer.parseInt(getArrayLengthInfo.getExpression());
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return 0;
 	}	
@@ -225,6 +232,8 @@ public class ValueHelper {
 			return getArrayElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return "";
 	}
@@ -250,6 +259,8 @@ public class ValueHelper {
 			return parseResult(getRecordElementNameCmd.getMIDataEvaluateExpressionInfo().getExpression());
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return "";
 	}
@@ -262,7 +273,7 @@ public class ValueHelper {
 	 * @throws MIException 
 	 */
 	public static String isOptionNone(String variableName,
-			GDBStackFrame gdbStackFrame) throws MIException {
+			GDBStackFrame gdbStackFrame) {
 		// TODO Auto-generated method stub
 		try {
 			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
@@ -274,6 +285,8 @@ public class ValueHelper {
 			return getOptionValueCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return "";
 	}	

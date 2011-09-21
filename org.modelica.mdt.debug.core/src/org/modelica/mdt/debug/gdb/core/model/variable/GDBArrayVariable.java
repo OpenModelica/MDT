@@ -74,7 +74,7 @@ public class GDBArrayVariable extends GDBVariable {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
 					setGDBValue(new GDBArrayValue(this));
-				} else if (((GDBArrayValue)getGDBValue()).hasValueChanged()) {
+				} else if (((GDBArrayValue)getGDBValue()).hasChanged()) {
 					setValueChanged(true);
 					getGDBValue().setRefreshChildren(true);
 				} else {

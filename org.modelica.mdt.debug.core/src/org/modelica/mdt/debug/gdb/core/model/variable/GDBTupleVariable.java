@@ -74,7 +74,7 @@ public class GDBTupleVariable extends GDBVariable {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
 					setGDBValue(new GDBTupleValue(this));
-				} else if (((GDBTupleValue)getGDBValue()).hasValueChanged()) {
+				} else if (((GDBTupleValue)getGDBValue()).hasChanged()) {
 					setValueChanged(true);
 					getGDBValue().setRefreshChildren(true);
 				} else {

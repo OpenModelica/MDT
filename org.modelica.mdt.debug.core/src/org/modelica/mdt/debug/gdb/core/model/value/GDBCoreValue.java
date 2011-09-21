@@ -55,11 +55,11 @@ public class GDBCoreValue extends GDBValue {
 		// TODO Auto-generated constructor stub
 		if (getGDBVariable().getVoidPointer() != null) {
 			setValue(ValueHelper.getAnyString(getGDBVariable().getVoidPointer(),
-					getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame()));
+					getGDBVariable().getNewReferenceTypeName(), getGDBVariable().getGDBStackFrame()));
 		} else {
-			if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
+			if (getGDBVariable().getNewReferenceTypeName().equals(GDBHelper.STRING)) {
 				setValue(ValueHelper.getAnyString(getGDBVariable().getOriginalName(),
-						getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame()));
+						getGDBVariable().getNewReferenceTypeName(), getGDBVariable().getGDBStackFrame()));
 			} else {
 				setValue(ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(),
 						getGDBVariable().getGDBStackFrame()));
@@ -67,11 +67,11 @@ public class GDBCoreValue extends GDBValue {
 		}
 	}
 	
-	/**
-	 * @return
-	 * @throws MIException 
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#hasValueChanged()
 	 */
-	public boolean hasValueChanged() throws MIException {
+	@Override
+	public boolean hasValueChanged() {
 		// TODO Auto-generated method stub
 		if (isDisposed() || !getGDBVariable().getGDBStackFrame().equals(((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return false;
@@ -80,11 +80,11 @@ public class GDBCoreValue extends GDBValue {
 		String newValue;
 		if (getGDBVariable().getVoidPointer() != null) {
 			newValue = ValueHelper.getAnyString(getGDBVariable().getVoidPointer(),
-					getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame());
+					getGDBVariable().getNewReferenceTypeName(), getGDBVariable().getGDBStackFrame());
 		} else {
-			if (getGDBVariable().getReferenceTypeName().equals(GDBHelper.STRING)) {
+			if (getGDBVariable().getNewReferenceTypeName().equals(GDBHelper.STRING)) {
 				newValue = ValueHelper.getAnyString(getGDBVariable().getOriginalName(),
-						getGDBVariable().getReferenceTypeName(), getGDBVariable().getGDBStackFrame());
+						getGDBVariable().getNewReferenceTypeName(), getGDBVariable().getGDBStackFrame());
 			} else {
 				newValue = ValueHelper.evaluateExpression(getGDBVariable().getOriginalName(),
 						getGDBVariable().getGDBStackFrame());

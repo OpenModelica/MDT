@@ -43,6 +43,7 @@ import org.modelica.mdt.debug.gdb.core.mi.command.CLIPType;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.output.CLIPTypeInfo;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugElement;
+import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 
@@ -77,7 +78,7 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 		} else {
 			setActualType(getGDBVariable().getActualType());
 		}
-	}	
+	}
 
 	/**
 	 * @param value the fValue to set
@@ -149,6 +150,54 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 	@Override
 	public boolean hasVariables() throws DebugException {
 		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean hasChanged() {
+		Boolean returnFlag = false;
+		
+		if (hasReferenceTypeChanged()) {
+			returnFlag = true;
+		}
+		if (hasActualTypeChanged()){
+			returnFlag = true;
+		}
+		if (hasValueChanged()) {
+			returnFlag = true;
+		}
+		return returnFlag;
+	}
+	
+	/**
+	 * Checks if whether a variable's value has changed or not.
+	 * @return true/false
+	 */
+	public abstract boolean hasValueChanged();
+	/**
+	 * Checks if whether a variable's reference type has changed or not.
+	 * @return true/false
+	 */
+	public boolean hasReferenceTypeChanged() {
+		if (isDisposed() || !getGDBVariable().getGDBStackFrame().equals(((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
+			return false;
+		}
+		
+		String oldReferenceType = getGDBVariable().getOldReferenceTypeName();
+		String newReferenceType = getGDBVariable().getNewReferenceTypeName();
+		
+		if (newReferenceType.equals(oldReferenceType)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	/**
+	 * Checks if whether a variable's actual type has changed or not.
+	 * It is very unlikely for the Actual type to change.
+	 * So no need to send an extra command on each step that is why this function always returns false.
+	 * @return true/false
+	 */
+	public boolean hasActualTypeChanged() {
 		return false;
 	}
 

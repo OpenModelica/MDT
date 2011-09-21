@@ -115,24 +115,10 @@ public class GDBOptionValue extends GDBValue {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#createVariable(org.modelica.mdt.debug.gdb.core.model.variable.Variable)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#hasValueChanged()
 	 */
 	@Override
-	public void createVariable(Variable variable) {
-		// TODO Auto-generated method stub
-		// get the record element type
-		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBVariable().getGDBStackFrame());
-		// based on the modelica type create the specific variable.
-		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
-				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
-				variable.getVoidPointer(), fGDBChildVariables);
-	}
-	
-	/**
-	 * @return
-	 * @throws MIException 
-	 */
-	public boolean hasValueChanged() throws MIException {
+	public boolean hasValueChanged() {
 		// TODO Auto-generated method stub
 		if (isDisposed() || !getGDBVariable().getGDBStackFrame().equals(((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return false;
@@ -146,6 +132,20 @@ public class GDBOptionValue extends GDBValue {
 			setValue(newValue);
 			return true;
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#createVariable(org.modelica.mdt.debug.gdb.core.model.variable.Variable)
+	 */
+	@Override
+	public void createVariable(Variable variable) {
+		// TODO Auto-generated method stub
+		// get the record element type
+		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBVariable().getGDBStackFrame());
+		// based on the modelica type create the specific variable.
+		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
+				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
+				variable.getVoidPointer(), fGDBChildVariables);
 	}
 
 	/**

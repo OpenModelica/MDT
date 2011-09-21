@@ -74,6 +74,9 @@ public class GDBRecordVariable extends GDBVariable {
 			if (isRefreshValue()) {
 				if (getGDBValue() == null) {
 					setGDBValue(new GDBRecordValue(this));
+				}  else if (((GDBRecordValue)getGDBValue()).hasChanged()) {
+					setValueChanged(true);
+					getGDBValue().setRefreshChildren(true);
 				} else {
 					setValueChanged(false);
 					getGDBValue().setRefreshChildren(true);

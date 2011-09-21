@@ -41,6 +41,7 @@ import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 import org.modelica.mdt.debug.gdb.core.model.variable.GDBVariable;
 import org.modelica.mdt.debug.gdb.core.model.variable.Variable;
 import org.modelica.mdt.debug.gdb.helper.GDBHelper;
+import org.modelica.mdt.debug.gdb.helper.TypeHelper;
 import org.modelica.mdt.debug.gdb.helper.ValueHelper;
 import org.modelica.mdt.debug.gdb.helper.VariableHelper;
 
@@ -113,22 +114,12 @@ public class GDBArrayValue extends GDBValue {
 		}
 		return getArrayLength() > 0;
 	}
-		
-	@Override
-	public void createVariable(Variable variable) {
-		// TODO Auto-generated method stub
-		String referenceType = GDBHelper.getListType(getGDBVariable().getReferenceTypeName());
-		// based on the modelica type create the specific variable.
-		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
-				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
-				variable.getVoidPointer(), fGDBChildVariables);
-	}
 	
-	/**
-	 * @return
-	 * @throws MIException 
+	/* (non-Javadoc)
+	 * @see org.modelica.mdt.debug.gdb.core.model.value.GDBValue#hasValueChanged()
 	 */
-	public boolean hasValueChanged() throws MIException {
+	@Override
+	public boolean hasValueChanged() {
 		// TODO Auto-generated method stub
 		if (isDisposed() || !getGDBVariable().getGDBStackFrame().equals(((GDBThread)getGDBVariable().getGDBStackFrame().getThread()).getCurrentGDBStackFrame())) {
 			return false;
@@ -147,6 +138,16 @@ public class GDBArrayValue extends GDBValue {
 			setValue(newValue);
 			return true;
 		}
+	}
+		
+	@Override
+	public void createVariable(Variable variable) {
+		// TODO Auto-generated method stub
+		String referenceType = TypeHelper.getModelicaType(variable.getVoidPointer(), GDBHelper.MODELICA_METATYPE, getGDBVariable().getGDBStackFrame());
+		// based on the modelica type create the specific variable.
+		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
+				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),
+				variable.getVoidPointer(), fGDBChildVariables);
 	}
 
 	/**
