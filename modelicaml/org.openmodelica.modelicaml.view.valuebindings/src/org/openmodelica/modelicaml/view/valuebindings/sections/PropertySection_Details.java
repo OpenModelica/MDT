@@ -182,8 +182,8 @@ public class PropertySection_Details extends AbstractPropertySection {
 		lblIsRequired = new Label(composite, SWT.NONE);
 		lblIsRequired.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblIsRequired.setBounds(10, 82, 49, 13);
-		lblIsRequired.setText("isRequired:");
-		String toolTipText_isRequired = "If the client is required then " +
+		lblIsRequired.setText("mandatory:");
+		String toolTipText_isRequired = "If the client is mandatory then " +
 										"\nthere must be a binding equation " +
 										"\nfor this components when it is instantiated.";
 		lblIsRequired.setToolTipText(toolTipText_isRequired);

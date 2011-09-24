@@ -43,6 +43,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -61,6 +62,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
@@ -556,17 +558,22 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		else if (item.isValueClient()) {
 			TreeObject mediator = TreeUtls.getNearestMediator(item);
 			if (mediator != null) {
-				umlElement = TreeUtls.getMediatorDependency((NamedElement)mediator.getUmlElement(), 
-						(NamedElement)item.getUmlElement(), 
-						Constants.stereotypeQName_ProvidesValueFor).get(0);
+				EList<Dependency> list = TreeUtls.getMediatorDependency((NamedElement)mediator.getUmlElement(), 
+										(NamedElement)item.getUmlElement(), Constants.stereotypeQName_ProvidesValueFor);
+				if (list!= null && list.size() > 0 ) {
+					umlElement = list.get(0);
+				}
 			}
 		}
 		else if (item.isValueProvider()) {
 			TreeObject mediator = TreeUtls.getNearestMediator(item);
 			if (mediator != null) {
-				umlElement = TreeUtls.getMediatorDependency((NamedElement)mediator.getUmlElement(), 
-						(NamedElement)item.getUmlElement(), 
-						Constants.stereotypeQName_ObtainsValueFrom).get(0);
+				EList<Dependency> list = TreeUtls.getMediatorDependency((NamedElement)mediator.getUmlElement(), 
+						(NamedElement)item.getUmlElement(), Constants.stereotypeQName_ObtainsValueFrom);
+				
+				if (list!= null && list.size() > 0 ) {
+					umlElement = list.get(0);
+				}
 			}
 		}
 		
