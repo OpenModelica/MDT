@@ -67,6 +67,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.profile.Activator;
 import org.openmodelica.modelicaml.profile.dialogs.OneOrTwoColumnWithTextAndOptionalComboDialog;
 import org.openmodelica.modelicaml.properties.ModelicaMLConstants;
@@ -205,14 +206,14 @@ private EObject selectedElement = null;
 			
 			Type booleanType = element.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaBoolean");
 			
-			Property violatedAttribute = element.getOwnedAttribute("violated", booleanType, true, UMLPackage.Literals.PROPERTY, true);
+			Property violatedAttribute = element.getOwnedAttribute(Constants.propertyName_violated, booleanType, true, UMLPackage.Literals.PROPERTY, true);
 			Stereotype violatedAttributeStereotype = violatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
 			if (violatedAttribute.getAppliedStereotype(violatedAttributeStereotype.getQualifiedName()) == null) {
 				violatedAttribute.applyStereotype(violatedAttributeStereotype);
 				violatedAttribute.setValue(violatedAttributeStereotype, "causality", "output");
 			}
 
-			Property evaluatedAttribute = element.getOwnedAttribute("evaluated", booleanType, true, UMLPackage.Literals.PROPERTY, true);
+			Property evaluatedAttribute = element.getOwnedAttribute(Constants.propertyName_evaluationStarted, booleanType, true, UMLPackage.Literals.PROPERTY, true);
 			Stereotype evaluatedAttributeStereotype = evaluatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
 			if (evaluatedAttribute.getAppliedStereotype(evaluatedAttributeStereotype.getQualifiedName()) == null) {
 				evaluatedAttribute.applyStereotype(evaluatedAttributeStereotype);

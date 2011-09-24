@@ -220,9 +220,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
                   icon="resources/icons/icons16/execute.png"
-                  label="Run Tests"
+                  label="Run Design Verification Tests"
                   style="push"
-                  tooltip="Run Tests">
+                  tooltip="Run Design Verification Tests">
                <visibleWhen>
                   <with
                         variable="activeEditorId">
@@ -273,22 +273,29 @@
                </with>
             </visibleWhen>
             <separator
-                  name="org.openmodelica.modelicaml.helper.separator1">
+                  name="org.openmodelica.modelicaml.helper.separator1"
+                  visible="true">
             </separator>
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
                   icon="resources/icons/icons16/generateSimMopdels.png"
-                  label="Generate Test Simulation Models"
-                  style="push">
+                  label="Generate Design Verification Test Models"
+                  style="push"
+                  tooltip="Generate Design Verification Test Models">
                <visibleWhen
                      checkEnabled="true">
                </visibleWhen>
             </command>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator2"
+                  visible="true">
+            </separator>
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
                   icon="resources/icons/icons16/execute.png"
-                  label="Run Tests"
-                  style="push">
+                  label="Run Design Verification Tests"
+                  style="push"
+                  tooltip="Run Design Verification Tests">
                <visibleWhen
                      checkEnabled="true">
                </visibleWhen>
