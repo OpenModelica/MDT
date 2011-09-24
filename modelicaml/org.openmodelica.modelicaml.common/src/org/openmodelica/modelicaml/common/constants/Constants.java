@@ -84,9 +84,10 @@ public class Constants {
 	public static final String stereotypeQName_ImportRelation		= "ModelicaML::ModelicaRelationsConstructs::Import";
 	
 	// stereotype properties 
-	
 	public static final String propertyName_id 					= "id";
 	public static final String propertyName_text	 			= "text";
+	public final static String propertyName_evaluationStarted 	= "evaluationStarted";
+	public final static String propertyName_violated 			= "violated";
 	
 	public static final String propertyName_modification 		= "modification";
 	public static final String propertyName_causality 			= "causality";
@@ -97,7 +98,6 @@ public class Constants {
 	// value bindings
 	public static final String propertyName_isRequired			= "isRequired";
 	
-
 	// primarily used by the value bindings plugin  
 	public static final String stereotypeQName_ValueMediatorsContainer 	= "ModelicaML::ValueBinding::ValueMediatorsContainer";
 	public static final String stereotypeQName_ValueMediator 			= "ModelicaML::ValueBinding::ValueMediator";

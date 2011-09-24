@@ -326,10 +326,10 @@ public class TestExecutionServices {
 		if (elt instanceof Class) {
 			for (TreeObject treeObject : requirements) {
 				js = js + "/* ~~~~~ Requirement qName: verdicts ~~~~~ */" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+".evaluated'] = new Array();" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+".evaluated']['atLeastOneTimeTrue'] = '###"+treeObject.getDotPath()+".evaluated[atLeastOneTimeTrue]###';" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+".violated'] = new Array();" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+".violated']['alwaysFalse'] = '###"+treeObject.getDotPath()+".violated[alwaysFalse]###';" + "\n" +
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"'] = new Array();" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"']['atLeastOneTimeTrue'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"[atLeastOneTimeTrue]###';" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"'] = new Array();" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"']['alwaysFalse'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"[alwaysFalse]###';" + "\n" +
 				"" ;
 				
 				js = js + "\n" + getRequiredClientsJS(treeObject, (Class) elt);
@@ -376,6 +376,23 @@ public class TestExecutionServices {
 				Stereotype s = type.getAppliedStereotype(Constants.stereotypeQName_Requirement);
 				if (s != null ) {
 					Object o = type.getValue(s, Constants.propertyName_id);
+					if (o != null) {
+						return o.toString();
+					}
+				}
+			}
+		}
+		return "Not defined.";
+	}
+	
+	public static String getVariability(TreeObject treeItem){
+		Element element = treeItem.getUmlElement();
+		if (element instanceof Property) {
+			Type type = ((Property)element).getType();
+			if (type != null) {
+				Stereotype s = type.getAppliedStereotype(Constants.stereotypeQName_Variable);
+				if (s != null ) {
+					Object o = type.getValue(s, Constants.propertyName_variability);
 					if (o != null) {
 						return o.toString();
 					}
@@ -475,8 +492,8 @@ public class TestExecutionServices {
 				"	<span style='color:#000000;'>" + "\n" + 
 				
 				"		<script type='text/javascript'>" + "\n" + 
-				"			writeRequirementPassedString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ ".evaluated']['atLeastOneTimeTrue']," + "\n" + 
-				"			data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ ".violated']['alwaysFalse']);" + "\n" + 
+				"			writeRequirementPassedString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluationStarted+"']['atLeastOneTimeTrue']," + "\n" + 
+				"			data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"']['alwaysFalse']);" + "\n" + 
 				"		</script>" + "\n" + 
 				
 				"	</span>" + "\n" + 
@@ -497,14 +514,14 @@ public class TestExecutionServices {
 				"			<td><i>verdict</i>" + "\n" +
 				
 				"				<script type='text/javascript'>" + "\n" + 
-				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ ".evaluated', '<strong>evaluated</strong>');" + "\n" + 
+				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluationStarted+"', '<strong>"+Constants.propertyName_evaluationStarted+"</strong>');" + "\n" + 
 				"				</script>" + "\n" +
 				
 				"				<td>&nbsp;:&nbsp;</td>" + "\n" + 
 				"				<td>" + "\n" + 
 				
 				"				<script type='text/javascript'>	" + "\n" + 
-				"					writeAtLeastOneTimeTrueString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ ".evaluated']['atLeastOneTimeTrue']);" + "\n" + 
+				"					writeAtLeastOneTimeTrueString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluationStarted+"']['atLeastOneTimeTrue']);" + "\n" + 
 				"				</script>" + "\n" +
 				
 				"			</td>" + "\n" + 
@@ -513,7 +530,7 @@ public class TestExecutionServices {
 				"		<td><i>verdict</i>" + "\n" + 
 				
 				"			<script type='text/javascript'>" + "\n" + 
-				"				writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ ".violated', '<strong>violated</strong>');" + "\n" + 
+				"				writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"', '<strong>"+Constants.propertyName_violated+"</strong>');" + "\n" + 
 				"			</script>" + "\n" + 
 				
 				"			</td>" + "\n" +  "\n" + 
@@ -521,7 +538,7 @@ public class TestExecutionServices {
 				"			<td>" + "\n" + 
 				
 				"				<script type='text/javascript'>" + "\n" + 
-				"					writeAlwaysFalseString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ ".violated']['alwaysFalse']);" + "\n" + 
+				"					writeAlwaysFalseString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"']['alwaysFalse']);" + "\n" + 
 				"				</script>" + "\n" + 
 				
 				"			</td>" + "\n" + 
@@ -560,6 +577,11 @@ public class TestExecutionServices {
 			"				<td valign='top'>Type</td>" + "\n" + 
 			"				<td valign='top'>&nbsp;:&nbsp;</td>" + "\n" + 
 			"				<td valign='top'>= "+getTreeItemTypeName(treeObject)+"</td>" + "\n" + 
+			"			</tr>" + "\n" +
+			"			<tr>" + "\n" + 
+			"				<td valign='top'>Variability</td>" + "\n" + 
+			"				<td valign='top'>&nbsp;:&nbsp;</td>" + "\n" + 
+			"				<td valign='top'>= "+getVariability(treeObject)+"</td>" + "\n" + 
 			"			</tr>" + "\n" +
 			"			<tr>" + "\n" + 
 			"				<td valign='top'>Binding code</td>" + "\n" + 
