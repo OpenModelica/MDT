@@ -55,6 +55,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
@@ -146,8 +147,8 @@ public class TestVerdictElementsGenerator {
 				if (UmlServices.hasStereotype(property, "RequirementInstance")) {
 					Type t = property.getType();
 					if (t instanceof Class) {
-						Property violated = ((Class)t).getOwnedAttribute("violated", null);
-						Property evaluated = ((Class)t).getOwnedAttribute("evaluated", null);
+						Property violated = ((Class)t).getOwnedAttribute(Constants.propertyName_violated, null);
+						Property evaluated = ((Class)t).getOwnedAttribute(Constants.propertyName_evaluationStarted, null);
 						if ( violated != null && evaluated != null) {
 							Type violatedType = violated.getType();
 							Type evaluatedType = evaluated.getType();
@@ -171,8 +172,8 @@ public class TestVerdictElementsGenerator {
 			}
 			for (Property property : reqInstances) {
 				//violatedExpression = violatedExpression + Utls.replaceSpecChar(property.getName()) + ".violated, ";
-				violatedExpression = violatedExpression + StringUtls.replaceSpecChar(property.getName()) + ".violated or ";
-				evaluatedExpression = evaluatedExpression + StringUtls.replaceSpecChar(property.getName()) + ".evaluated and ";
+				violatedExpression = violatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_violated+" or ";
+				evaluatedExpression = evaluatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_evaluationStarted+" and ";
 			}
 		}
 		
@@ -182,7 +183,7 @@ public class TestVerdictElementsGenerator {
 				invalidComponentNames = "\n                - " + invalidComponentNames + "'" + property.getName() + "'";
 			}
 			Shell shell = new Shell();
-			MessageDialog.openError(shell, "Error", "The following requirements do not have the mandotory attributes 'evaluated and 'violated' of type 'ModelicaBoolean'." +
+			MessageDialog.openError(shell, "Error", "The following requirements do not have the mandotory attributes '"+Constants.propertyName_evaluationStarted+"' and '"+Constants.propertyName_violated+"' of type 'ModelicaBoolean'." +
 				invalidComponentNames + 
 				"\n\nNo modification was made to the class '"+selectedClass.getName()+"'.");
 			return false;
