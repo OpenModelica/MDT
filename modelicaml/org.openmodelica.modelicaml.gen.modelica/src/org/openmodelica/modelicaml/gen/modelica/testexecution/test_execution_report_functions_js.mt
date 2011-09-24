@@ -19,7 +19,7 @@ function writeTestPassedString(value){
 		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
 	}
 	else {
-		document.write('<font color="#FF0000"><strong>Pass/Fail: Unknown</strong></font>');
+		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
 	}
 }
 
@@ -31,7 +31,7 @@ function writeRequirementPassedString(evaluted_atLeastOneTimeTrue, violated_alwa
 		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
 	}
 	else {
-		document.write('<font color="#FF0000"><strong>Pass/Fail: Unknown</strong></font>');
+		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
 	}
 }
 

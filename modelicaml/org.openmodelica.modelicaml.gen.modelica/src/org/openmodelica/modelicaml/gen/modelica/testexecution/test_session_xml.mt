@@ -12,7 +12,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 
 
 <%script type="uml.Model" name="test_session_xml" file="<%file_name_xml%>"%>
-<!-- File name: "<%getTestSessionFolderProjectPath()%>/test_session.xml" -->
+<%-- <!-- File name: "<%getTestSessionFolderProjectPath()%>/test_session.xml" --> --%>
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <TestSessionConfiguration>
     <project>
@@ -38,7 +38,9 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 		<solver><%getSolver()%></solver>
 		<outputFormat><%getOutputFormat()%></outputFormat> 
 	</simulationData>
+	<executionLog>
+		<OMCResponse></OMCResponse>
+	</executionLog>
 </testModel>
 <%}%>
 
-		
