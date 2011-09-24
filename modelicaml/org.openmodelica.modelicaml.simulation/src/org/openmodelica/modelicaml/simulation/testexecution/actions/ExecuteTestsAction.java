@@ -32,9 +32,11 @@ public class ExecuteTestsAction implements
 			// TODO: Start the execution as a job.
 			MessageDialog.openInformation(new Shell(), "Title", "Starting execution ... ");
 			
+			
 			// TODO: When finished -> run the update action 
 			// find the js-files path 
 //			UpdateTestExecutionReportDataAction updateAction = new UpdateTestExecutionReportDataAction();
+			//updateAction.setPath();
 //			// ...
 //			updateAction.run(null);
 			
