@@ -382,7 +382,7 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		return string;
 	}
 	
-	private final static String requiredClientIndicator = "(req. client)";
+	private final static String requiredClientIndicator = "(mand. client)";
 	private final static String clientIndicator = "(client)";
 	private final static String providerIndicator = "(provider)";
 	

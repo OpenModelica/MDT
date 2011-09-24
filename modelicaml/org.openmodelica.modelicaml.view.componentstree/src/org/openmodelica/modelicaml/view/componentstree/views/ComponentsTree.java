@@ -1028,8 +1028,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionShowRequiredValueClients.setText("Show only required Value Clients");
-		actionShowRequiredValueClients.setToolTipText("Show only required Value Clients");
+		actionShowRequiredValueClients.setText("Show only Mandatory Value Clients");
+		actionShowRequiredValueClients.setToolTipText("Show only Mandatory Value Clients");
 		
 		
 		actionShowValueProviders = new Action("actionShowValueProviders", 8) {
