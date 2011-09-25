@@ -4,20 +4,19 @@ import java.io.File;
 
 import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_reader;
 
+/**
+ * Class to evaluate results of a given property to a condition
+ * @author parham.vasaiely
+ *
+ */
 public class EvaluateResultXML {
-	
-//	- [atLeastOneTimeTrue], 
-//	- [atLeastOneTimeFalse], 
-//	- [alwaysTrue], 
-//	- [alwaysFalse], 
-//	- [changedItsValue]
 	
 	/**
 	 * Evaluate the values of a property to be at least one time true
 	 * @param propertyName name of the property to be evaluated
 	 * @param result xml file
 	 */
-	public static String checkAtLeastOneTimeTrue(String propertyName, File xml_file){
+	private static String checkAtLeastOneTimeTrue(String propertyName, File xml_file){
 		if(!xml_file.exists())
 			return "fileNotFound";
 		
@@ -39,7 +38,7 @@ public class EvaluateResultXML {
 	 * @param propertyName name of the property to be evaluated
 	 * @param result xml file
 	 */
-	public static String checkAtLeastOneTimeFalse(String propertyName, File xml_file){
+	private static String checkAtLeastOneTimeFalse(String propertyName, File xml_file){
 		if(!xml_file.exists())
 			return "fileNotFound";
 		
@@ -61,7 +60,7 @@ public class EvaluateResultXML {
 	 * @param propertyName name of the property to be evaluated
 	 * @param result xml file
 	 */
-	public static String checkAlwaysTrue(String propertyName, File xml_file){
+	private static String checkAlwaysTrue(String propertyName, File xml_file){
 		if(!xml_file.exists())
 			return "fileNotFound";
 		
@@ -83,7 +82,7 @@ public class EvaluateResultXML {
 	 * @param propertyName name of the property to be evaluated
 	 * @param result xml file
 	 */
-	public static String checkAlwaysFalse(String propertyName, File xml_file){
+	private static String checkAlwaysFalse(String propertyName, File xml_file){
 		if(!xml_file.exists())
 			return "fileNotFound";
 		
@@ -105,7 +104,7 @@ public class EvaluateResultXML {
 	 * @param propertyName name of the property to be evaluated
 	 * @param result xml file
 	 */
-	public static String checkChangedItsValue(String propertyName, File xml_file){
+	private static String checkChangedItsValue(String propertyName, File xml_file){
 		if(!xml_file.exists())
 			return "fileNotFound";
 		
@@ -127,6 +126,36 @@ public class EvaluateResultXML {
 			}
 		}
 			return "true";
+	}
+	
+	/**
+	 * Evaluates the results of a property using a given check mode
+	 * @param propertyName name of the property which is going to be evaluated
+	 * @param checkMode used to evaluate the results of a property, the following check modes are allowed: atLeastOneTimeTrue, atLeastOneTimeFalse, alwaysTrue, alwaysFalse, changedItsValue
+	 * @param result_xml_file absolut path to the results XML
+	 * @return result of the evaluation as a String, the result can be: true, false, resultsNotfound, fileNotFound, checkModeUnknow
+	 */
+	public static String evaluateProperty(String propertyName, String checkMode, String result_xml_file){
+		File xmlResultFile = new File(result_xml_file);
+		try{
+			if(!xmlResultFile.exists() || !xmlResultFile.canRead())
+				return "fileNotFound";
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		if(checkMode.equals("atLeastOneTimeTrue"))
+			return checkAtLeastOneTimeTrue(propertyName, xmlResultFile);		
+		if(checkMode.equals("atLeastOneTimeFalse"))
+			return checkAtLeastOneTimeFalse(propertyName, new File(result_xml_file));
+		if(checkMode.equals("alwaysTrue"))
+			return checkAlwaysTrue(propertyName, new File(result_xml_file));
+		if(checkMode.equals("alwaysFalse"))
+			return checkAlwaysFalse(propertyName, new File(result_xml_file));
+		if(checkMode.equals("changedItsValue"))
+			return checkChangedItsValue(propertyName, new File(result_xml_file));
+		else
+			return "checkModeUnknow";
 	}
 	
 	/**
