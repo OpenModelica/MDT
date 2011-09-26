@@ -46,27 +46,26 @@ var data = new Array();
 
 
 
-
 <%script type="uml.Model" name="report_js_testModels"%>
 <%for (getTestModels()){%>
 /* ~~~~~ Test Model <%qualifiedName%>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-/* ### START ### */
+/*START*/
 <%-- /* ### RESULTS_FILE_ABSOLUTE_PATH = <%getTestSessionFolderAbsolutePath()%>/<%getTestModelQName()%>_res.xml ### */ --%>
-/* ### RESULTS_FILE_RELATIVE_PATH = ../../<%getTestModelQName()%>_res.xml ### */
+/*RESULTS_FILE_RELATIVE_PATH = ../../<%getTestModelQName()%>_res.xml*/
 
 data['<%qualifiedName%>'] = new Array();
 
 /* ~~~~~ Test Model qName : verdicts ~~~~~ */
 data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.testPassed'] = new Array();
-data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.testPassed']['atLeastOneTimeTrue'] = '###_reqTestVerdict.testPassed[atLeastOneTimeTrue]###';
+data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.testPassed']['atLeastOneTimeTrue'] = '###_reqTestVerdict.testPassed:atLeastOneTimeTrue###';
 
 // test model verdicts
 data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.allRequirementsEvaluated'] = new Array();
-data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.allRequirementsEvaluated']['atLeastOneTimeTrue'] = '###_reqTestVerdict.allRequirementsEvaluated[atLeastOneTimeTrue]###';
+data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.allRequirementsEvaluated']['atLeastOneTimeTrue'] = '###_reqTestVerdict.allRequirementsEvaluated:atLeastOneTimeTrue###';
 
 data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.someRequirementsViolated'] = new Array();
-data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.someRequirementsViolated']['alwaysFalse'] = '###_reqTestVerdict.someRequirementsViolated[alwaysFalse]###';
+data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.someRequirementsViolated']['alwaysFalse'] = '###_reqTestVerdict.someRequirementsViolated:alwaysFalse:###';
 
 // update statistics
 if (data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.testPassed']['atLeastOneTimeTrue'] == "true"){
@@ -89,7 +88,7 @@ else if (data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.testPass
 
 		// requirements
 <%getRequirementsJS()%>
-/* ### END ### */
+/*END*/
 
 <%}%>
 
