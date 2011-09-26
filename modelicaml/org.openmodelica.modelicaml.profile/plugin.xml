@@ -220,7 +220,7 @@
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
                   icon="resources/icons/icons16/execute.png"
-                  label="Run Design Verification Tests"
+                  label="Run Design Verification Models"
                   style="push"
                   tooltip="Run Design Verification Tests">
                <visibleWhen>
@@ -279,9 +279,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
                   icon="resources/icons/icons16/generateSimMopdels.png"
-                  label="Generate Design Verification Test Models"
+                  label="Generate Design Verification Models"
                   style="push"
-                  tooltip="Generate Design Verification Test Models">
+                  tooltip="Generate Design Verification Models">
                <visibleWhen
                      checkEnabled="true">
                </visibleWhen>
@@ -293,9 +293,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
                   icon="resources/icons/icons16/execute.png"
-                  label="Run Design Verification Tests"
+                  label="Run Design Verification Models"
                   style="push"
-                  tooltip="Run Design Verification Tests">
+                  tooltip="Run Design Verification Models">
                <visibleWhen
                      checkEnabled="true">
                </visibleWhen>
