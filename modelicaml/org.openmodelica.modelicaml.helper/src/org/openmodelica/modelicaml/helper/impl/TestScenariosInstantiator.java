@@ -47,7 +47,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
-public class TestScenarioInstantiator {
+public class TestScenariosInstantiator {
 	
 	final static String propertyPrefix = Constants.testScenarioPropertyNamePrefix;
 //	private HashSet<Element> instantiatedElements = new HashSet<Element>();

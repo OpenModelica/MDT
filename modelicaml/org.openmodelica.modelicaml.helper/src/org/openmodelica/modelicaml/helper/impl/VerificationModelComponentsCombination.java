@@ -16,7 +16,7 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 
-public class TestSimulationModelCombination {
+public class VerificationModelComponentsCombination {
 	/* 
 	 * Package were to search for value mediators  
 	 */
@@ -105,7 +105,7 @@ public class TestSimulationModelCombination {
 	 */
 	private boolean isError = false;
 	
-	public TestSimulationModelCombination(Class systemModel, 
+	public VerificationModelComponentsCombination(Class systemModel, 
 			Class testScenario, 
 			HashSet<Class> requirements,
 			Package valueMediatorsPackage,

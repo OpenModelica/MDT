@@ -64,7 +64,7 @@ import org.openmodelica.modelicaml.common.services.UmlServices;
 /**
  * Implementation class for ClassAction action.
  */
-public class TestVerdictElementsGenerator {
+public class VerificationVerdictElementsGenerator {
 	
 	/** The shell. */
 	private static Shell shell = new Shell();
@@ -103,7 +103,7 @@ public class TestVerdictElementsGenerator {
 	 * @param selectedClass
 	 *            the selected class
 	 */
-	public TestVerdictElementsGenerator(final Class selectedClass) { 
+	public VerificationVerdictElementsGenerator(final Class selectedClass) { 
 		final Shell shell = new Shell();
 		Boolean go = MessageDialog.openQuestion(shell, "Please confirm ...", "This helper will create or update the following additional elements in the class '"+ selectedClass.getName()+"': " +
 					"\n     - a nested class '"+resultsClassName+"' containing additional variables and behavior"+ 
@@ -180,12 +180,15 @@ public class TestVerdictElementsGenerator {
 		if (invalidReqInstances.size() > 0 ) {
 			String invalidComponentNames = "";
 			for (Property property : invalidReqInstances) {
-				invalidComponentNames = "\n                - " + invalidComponentNames + "'" + property.getName() + "'";
+				invalidComponentNames = invalidComponentNames + "\n                - '" + property.getName() + "'";
 			}
 			Shell shell = new Shell();
-			MessageDialog.openError(shell, "Error", "The following requirements do not have the mandotory attributes '"+Constants.propertyName_evaluationStarted+"' and '"+Constants.propertyName_violated+"' of type 'ModelicaBoolean'." +
+			MessageDialog.openError(shell, "Error", 
+					"The following requirements do not have the manatory attributes '"
+					+Constants.propertyName_evaluationStarted+
+					"' and '"+Constants.propertyName_violated+"' of type 'ModelicaBoolean'." +
 				invalidComponentNames + 
-				"\n\nNo modification was made to the class '"+selectedClass.getName()+"'.");
+				"\n\nNo verification verdict was created in '"+selectedClass.getName()+"'.");
 			return false;
 		}
 		else if (reqInstances.size() > 0) {

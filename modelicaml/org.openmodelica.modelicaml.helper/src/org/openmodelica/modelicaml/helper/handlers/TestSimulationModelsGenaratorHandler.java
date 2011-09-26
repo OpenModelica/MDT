@@ -65,7 +65,7 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
-import org.openmodelica.modelicaml.helper.impl.TestSimulationModelsGenarator;
+import org.openmodelica.modelicaml.helper.impl.VerificationModelsGenerator;
 
 public class TestSimulationModelsGenaratorHandler extends AbstractHandler {
 
@@ -75,7 +75,7 @@ public class TestSimulationModelsGenaratorHandler extends AbstractHandler {
 	private Element requirementsPackage; 
 	private Element testScenariosPackage; 
 	private Element valueMediatorsPackage;
-	private TestSimulationModelsGenarator smg;
+	private VerificationModelsGenerator smg;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
@@ -134,7 +134,7 @@ public class TestSimulationModelsGenaratorHandler extends AbstractHandler {
 						ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 						TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 						
-						smg = new TestSimulationModelsGenarator(
+						smg = new VerificationModelsGenerator(
 								sourceModels, 
 								targetPackage,  
 								requirementsPackage, 

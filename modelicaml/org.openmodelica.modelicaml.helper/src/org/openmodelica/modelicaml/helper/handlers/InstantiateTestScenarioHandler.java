@@ -60,7 +60,7 @@ import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateTestScenarioDialog;
-import org.openmodelica.modelicaml.helper.impl.TestScenarioInstantiator;
+import org.openmodelica.modelicaml.helper.impl.TestScenariosInstantiator;
 import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
 
 // TODO: Auto-generated Javadoc
@@ -166,7 +166,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				TestScenarioInstantiator ri = new TestScenarioInstantiator ();
+				TestScenariosInstantiator ri = new TestScenariosInstantiator ();
 				instantiatedElements = ri.instantiateTestScenarios(containingClass, selectedTS);
 			}
 		};

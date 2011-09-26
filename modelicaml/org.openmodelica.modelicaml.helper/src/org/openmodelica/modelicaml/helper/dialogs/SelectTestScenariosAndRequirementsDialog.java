@@ -37,7 +37,7 @@ import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
-import org.openmodelica.modelicaml.helper.impl.TestSimulationModelCombination;
+import org.openmodelica.modelicaml.helper.impl.VerificationModelComponentsCombination;
 
 public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 
@@ -69,7 +69,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	 */
 	private List<TreeItem> treeItems = new ArrayList<TreeItem>();
 
-	private HashMap<Element, TestSimulationModelCombination> tsToTestSimulationModelCombination;
+	private HashMap<Element, VerificationModelComponentsCombination> tsToTestSimulationModelCombination;
 	
 	private static final int DECORATION_WARNING = 0 ;
 	private static final int DECORATION_ERROR = 1 ;
@@ -93,7 +93,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 			Element systemModel,
 			TestScenariosCollector tsc,
 			String collectionLog,
-			HashMap<Element, TestSimulationModelCombination> tsToTestSimulationModelCombination) {
+			HashMap<Element, VerificationModelComponentsCombination> tsToTestSimulationModelCombination) {
 		
 		super(parentShell);
 		
@@ -489,7 +489,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	
 	private String createDescription(Element testScenario){
 		String description = "";
-		TestSimulationModelCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
+		VerificationModelComponentsCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
 		if (tsmc != null) {
 			Element systemModel = tsmc.getSystemModel();
 			description = description +
@@ -511,7 +511,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 //		"\n------------------------------------------------------------------------------ \n";
 
 	
-	private String getAdditionalModelsString(HashSet<Element> set, TestSimulationModelCombination tsmc, Element model){
+	private String getAdditionalModelsString(HashSet<Element> set, VerificationModelComponentsCombination tsmc, Element model){
 		String string = "";
 		if (set != null && set.size() > 0) {
 			string = "\n    - models required in addition: \n";
@@ -522,7 +522,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		return string;
 	}
 	
-	private String getRequirementsString(String prefix, HashSet<Class> set, TestSimulationModelCombination tsmc){
+	private String getRequirementsString(String prefix, HashSet<Class> set, VerificationModelComponentsCombination tsmc){
 		String string  = "";
 		HashSet<Element> tempSet = new HashSet<Element>();
 		for (Element element : set) {
@@ -542,7 +542,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		return string;
 	}
 	
-	private String getAdditionalModelsStringParts(HashSet<Element> set, String prefix, TestSimulationModelCombination tsmc){
+	private String getAdditionalModelsStringParts(HashSet<Element> set, String prefix, VerificationModelComponentsCombination tsmc){
 		String string  = "";
 		List<Element> sortedList = ModelicaMLServices.getSortedByName(set);
 		for (Element element : sortedList) {
@@ -554,7 +554,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		return string;
 	}
 	
-	private String getAlwaysIncludeString(Element model, TestSimulationModelCombination tsmc){
+	private String getAlwaysIncludeString(Element model, VerificationModelComponentsCombination tsmc){
 		String string = "";
 		if (tsmc.getAlwaysInclude().contains(model)) {
 			return "(always) ";
@@ -563,7 +563,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 		return string;
 	}
 	
-	private String getUnsatisfiedClients(String prefix, Element element, TestSimulationModelCombination tsmc){
+	private String getUnsatisfiedClients(String prefix, Element element, VerificationModelComponentsCombination tsmc){
 		String string = "";
 		String unsatisfiedClientsString = tsmc.getClientsDotPathAsString(tsmc.getUnsatisfiedRequiredClients(element));
 		if (!unsatisfiedClientsString.trim().equals("")) {

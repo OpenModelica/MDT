@@ -53,7 +53,7 @@ import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
-import org.openmodelica.modelicaml.helper.impl.TestVerdictElementsGenerator;
+import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
 
 
 
@@ -78,8 +78,8 @@ public class TestVerdictElementsGeneratorHandler extends AbstractHandler {
 			
 			Shell shell = new Shell();
 			Boolean go = MessageDialog.openQuestion(shell, "Please confirm ...", "This helper will create or update the following elements in the class '"+ ((Class) selectedElement).getName()+"': " +
-						"\n     - a nested class '"+TestVerdictElementsGenerator.resultsClassName+"' containing additional variables and behavior"+ 
-						"\n     - a component '"+TestVerdictElementsGenerator.resultsPropertyName+"' of type '"+TestVerdictElementsGenerator.resultsClassName+"'");
+						"\n     - a nested class '"+VerificationVerdictElementsGenerator.resultsClassName+"' containing additional variables and behavior"+ 
+						"\n     - a component '"+VerificationVerdictElementsGenerator.resultsPropertyName+"' of type '"+VerificationVerdictElementsGenerator.resultsClassName+"'");
 			if (go) {
 				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 				editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
@@ -101,7 +101,7 @@ public class TestVerdictElementsGeneratorHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				TestVerdictElementsGenerator.createTestEvaluationElements(owningClass);
+				VerificationVerdictElementsGenerator.createTestEvaluationElements(owningClass);
 			}
 		};
 		cc.append(command);

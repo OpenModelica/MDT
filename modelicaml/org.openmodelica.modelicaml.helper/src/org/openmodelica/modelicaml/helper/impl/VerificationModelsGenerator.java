@@ -26,9 +26,9 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.dialogs.SelectTestScenariosAndRequirementsDialog;
 
-public class TestSimulationModelsGenarator implements IRunnableWithProgress {
+public class VerificationModelsGenerator implements IRunnableWithProgress {
 	
-	public TestSimulationModelsGenarator(
+	public VerificationModelsGenerator(
 			HashSet<Element> sourceModels,
 			Element targetPackage, 
 			Element requirementsPackage,
@@ -48,7 +48,7 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 	 * Possible combinations, each containing an initial set (1 system model, 1 test scenario  and n requirements) and 
 	 * all additional model that are required by any of the initial set models. 
 	 */
-	private HashMap<Element, TestSimulationModelCombination> tsToTestSimulationModelCombination = new HashMap<Element, TestSimulationModelCombination>();
+	private HashMap<Element, VerificationModelComponentsCombination> tsToTestSimulationModelCombination = new HashMap<Element, VerificationModelComponentsCombination>();
 	
 	// the selected model to generate the simulation models for
 	private HashSet<Element> sourceModels = null;
@@ -183,7 +183,7 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 							addToLog(message);
 						}
 						
-						TestSimulationModelCombination tsmc = new TestSimulationModelCombination(systemModel, 
+						VerificationModelComponentsCombination tsmc = new VerificationModelComponentsCombination(systemModel, 
 								testScenarioToBeUsed, 
 								requirementsToBeUsed,
 								(Package) valueBindingsPackage,
@@ -296,8 +296,8 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 				 * NOTE: only test scenarios from user selection are taken into account.
 				 * Any other combination that was prepared in advance is discarded.
 				 */
-				for (Element testScenario : userSelectedTestScenarios) {
-					
+				List<Element> userSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(userSelectedTestScenarios);
+				for (Element testScenario : userSelectedTestScenariosSorted) {
 					if (testScenario instanceof Classifier) {
 						
 						// create the test simulation model class
@@ -327,7 +327,7 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 
 						//************************************************************************************
 						// Get and adopt the data from the test scenario simulation model combination object
-						TestSimulationModelCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
+						VerificationModelComponentsCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
 						
 						//************************************************************************************
 						// Remove requirements that were unselected
@@ -461,7 +461,7 @@ public class TestSimulationModelsGenarator implements IRunnableWithProgress {
 						/*
 						 * Create test verdict code
 						 */
-						TestVerdictElementsGenerator.createTestEvaluationElements(simulationModel);
+						VerificationVerdictElementsGenerator.createTestEvaluationElements(simulationModel);
 					}
 				}
 			}
