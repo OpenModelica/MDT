@@ -222,7 +222,7 @@
                   icon="resources/icons/icons16/execute.png"
                   label="Run Design Verification Models"
                   style="push"
-                  tooltip="Run Design Verification Tests">
+                  tooltip="Run Design Verification Models">
                <visibleWhen>
                   <with
                         variable="activeEditorId">
