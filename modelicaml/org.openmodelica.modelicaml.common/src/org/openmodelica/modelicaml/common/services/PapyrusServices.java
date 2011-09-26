@@ -27,6 +27,11 @@ public class PapyrusServices {
 			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 			List<Object> items = new ArrayList<Object>();
 			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+			
+			// reset the selection so that the components tree can instantiate the selected class again
+			modelExplorerView.setSelection(new StructuredSelection(), true);
+			
+			// set new selection
 			modelExplorerView.setSelection(new StructuredSelection(items), true);
       	}
 	}

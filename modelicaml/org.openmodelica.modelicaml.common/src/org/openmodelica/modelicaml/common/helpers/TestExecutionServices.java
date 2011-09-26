@@ -327,9 +327,9 @@ public class TestExecutionServices {
 			for (TreeObject treeObject : requirements) {
 				js = js + "/* ~~~~~ Requirement qName: verdicts ~~~~~ */" + "\n" + 
 				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"'] = new Array();" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"']['atLeastOneTimeTrue'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"[atLeastOneTimeTrue]###';" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"']['atLeastOneTimeTrue'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+":atLeastOneTimeTrue###';" + "\n" + 
 				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"'] = new Array();" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"']['alwaysFalse'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"[alwaysFalse]###';" + "\n" +
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"']['alwaysFalse'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_violated+":alwaysFalse###';" + "\n" +
 				"" ;
 				
 				js = js + "\n" + getRequiredClientsJS(treeObject, (Class) elt);
@@ -354,15 +354,15 @@ public class TestExecutionServices {
 	private static String getRequiredClientsJS(TreeObject treeItem, Class testModel) {
 		String js = "";
 		List<TreeObject> requiredClients = getRequiredClientsTreeItems(treeItem, new HashSet<TreeObject>());
-		js = js  + "\n" + "/* ~~~~~ " + getTreeItemTypeQName(treeItem) + ": required clients START~~~~~ */" + "\n";
+		js = js  + "\n" + "/* ~~~~~ " + getTreeItemTypeQName(treeItem) + ": madantory clients START~~~~~ */" + "\n";
 		
 		/* ~~~~~ Model qName: required clients ~~~~~ */
 		for (TreeObject treeObject : requiredClients) {
 			js = js  + "data['" + testModel.getQualifiedName() + "']['"+treeObject.getDotPath()+"'] = new Array();" + "\n" + 
-			"data['" + testModel.getQualifiedName() + "']['"+treeObject.getDotPath()+"']['changedItsValue'] = '###"+treeObject.getDotPath()+"[changedItsValue]###';" + "\n" + 
+			"data['" + testModel.getQualifiedName() + "']['"+treeObject.getDotPath()+"']['changedItsValue'] = '###"+treeObject.getDotPath()+":changedItsValue###';" + "\n" + 
 			"";
 		}
-		js = js  + "\n" + "/* ~~~~~ " + getTreeItemTypeQName(treeItem) + ": required clients END~~~~~ */" + "\n" + "\n";
+		js = js  + "\n" + "/* ~~~~~ " + getTreeItemTypeQName(treeItem) + ": madantory clients END~~~~~ */" + "\n" + "\n";
 		return js;
 	}
 	
@@ -560,11 +560,11 @@ public class TestExecutionServices {
 	private static String getRequiredClientsHTML(TreeObject treeItem, Class testModel) {
 		String html = "";
 		List<TreeObject> requiredClients = getRequiredClientsTreeItems(treeItem, new HashSet<TreeObject>());
-		html = html  + "\n" + "<!-- Required clients START  -->" + "\n";
+		html = html  + "\n" + "<!-- madantory clients START  -->" + "\n";
 		
 		for (TreeObject treeObject : requiredClients) {
 			html = html + 
-			"	<div style='border: position:relative; margin-left:5px;'><i>required client</i>: " + "\n" + 
+			"	<div style='border: position:relative; margin-left:5px;'><i>madantory client</i>: " + "\n" + 
 			"		<strong><script type='text/javascript'>writeLink('locate:"+testModel.getQualifiedName()+"#"+treeObject.getDotPath()+"', '"+treeObject.getDotPath()+"');</script></strong>" + "\n" + 
 			"		" + "\n" + 
 			"		(<script type='text/javascript'>" + "\n" + 
@@ -602,7 +602,7 @@ public class TestExecutionServices {
 			"	<br />" + "\n";
 		}
 		
-		html = html + "<!-- Required clients  END -->" + "\n" + "\n";
+		html = html + "<!-- madantory clients  END -->" + "\n" + "\n";
 		return html;
 	}
 	
