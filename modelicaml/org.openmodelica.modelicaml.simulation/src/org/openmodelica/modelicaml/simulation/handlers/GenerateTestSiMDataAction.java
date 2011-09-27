@@ -65,6 +65,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.papyrus.core.services.ServiceException;
 import org.eclipse.papyrus.core.services.ServicesRegistry;
 import org.eclipse.papyrus.core.utils.ServiceUtils;
@@ -78,7 +79,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.helpers.TestExecutionServices;
+import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.ExecuteTestsAction;
 import org.openmodelica.modelicaml.simulation.testexecution.dialogs.SelectTestSimulationModelsToExecuteDialog;
@@ -146,18 +147,18 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		projectName = umlModel.getResource().getURI().segment(1);
 		
 		// Set a time stamp that is used for names
-		TestExecutionServices.setDate();
+		VerificationExecutionServices.setDate();
 		
 		// Set the folder paths 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject iProject = root.getProject(projectName);
 		projectAbsolutePath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-		testSessionFolderAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_test_gen+"/"+Constants.folderName_test_session+"_"+TestExecutionServices.getTimeStamp("");
+		testSessionFolderAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_verification_gen+"/"+Constants.folderName_verification_session+"_"+VerificationExecutionServices.getTimeStamp("");
 		
-		TestExecutionServices.setTestSessionFolderAbsolutePath(testSessionFolderAbsolutePath);
-		TestExecutionServices.setProjectFolderAbsolutePath(projectAbsolutePath);
-		TestExecutionServices.setProjectName(projectName);
+		VerificationExecutionServices.setTestSessionFolderAbsolutePath(testSessionFolderAbsolutePath);
+		VerificationExecutionServices.setProjectFolderAbsolutePath(projectAbsolutePath);
+		VerificationExecutionServices.setProjectName(projectName);
 		
 		// set the list of simulation models to be executed.
 		EObject rootModel = null;
@@ -172,71 +173,96 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			e.printStackTrace();
 		}
 		
-		if (rootModel != null && TestExecutionServices.testModels != null && TestExecutionServices.testModels.size() > 0) {
-			org.eclipse.emf.common.util.URI chainURI = org.eclipse.emf.common.util.URI.createPlatformPluginURI(
-					"/org.openmodelica.modelicaml.gen.modelica/bin/sim_test_models_data_generation.chain",
-					true);
+		if (rootModel != null && VerificationExecutionServices.testModels != null && VerificationExecutionServices.testModels.size() > 0) {
 			
-			ResourceSet rs = new ResourceSetImpl();
-			Resource r = (Resource) rs.createResource(chainURI);
+			org.eclipse.emf.common.util.URI chainURI = null;
 			
-			try {
-				r.load(null);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		
-			myChain = (CChain) r.getContents().get(0);
-		
-			String modelFilePath = modelFileURI.replace("platform:/resource/", "");
-			String outputFolderPath = projectName;
-			String logPath = projectName + "/errors.log";
-		
-			// Don't create Parameter Files... simply set the correct path into them
-			EList<File> files = myChain.getParametersFiles();
-			for (File file : files) {
-				if (file instanceof CModel) {
-					file.setPath(modelFilePath);
-				} else if (file instanceof CFolder) {
-					file.setPath(outputFolderPath);
-				} else if (file instanceof CLog) {
-					file.setPath(logPath);
+			boolean generateCode = MessageDialog.openQuestion(new Shell(), 
+					"Save Model and Generate Modelica Code?", 
+					"Save the ModelicaML model and generate Modelica code before starting the verification models execution?");
+			
+			if (generateCode) {
+				try {
+					// TODO: find the right Papyrus API to save the model in editor and not only the uml file! 
+					umlModel.saveModel();
+					chainURI = org.eclipse.emf.common.util.URI.createPlatformPluginURI(
+							"/org.openmodelica.modelicaml.gen.modelica/bin/verification_models_data_generation_with_cg.chain",
+							true);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-		
-			Job job = new Job("Test Simulation Models Data Generation") {
-				protected IStatus run(IProgressMonitor monitor) {
-					runchain(monitor);
-					return Status.OK_STATUS;
-				}
-			};
-			
-			job.addJobChangeListener(jobChangeAdapter);
-			job.setUser(true);
-			job.schedule();	// run the chain and models execution
+			else {
+				chainURI = org.eclipse.emf.common.util.URI.createPlatformPluginURI(
+				"/org.openmodelica.modelicaml.gen.modelica/bin/verification_models_data_generation.chain",
+				true);
+			}
 
+			if (chainURI != null) {
+				ResourceSet rs = new ResourceSetImpl();
+				Resource r = (Resource) rs.createResource(chainURI);
+				
+				try {
+					r.load(null);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+				myChain = (CChain) r.getContents().get(0);
+			
+				String modelFilePath = modelFileURI.replace("platform:/resource/", "");
+				String outputFolderPath = projectName;
+				String logPath = projectName + "/errors.log";
+			
+				// Don't create Parameter Files... simply set the correct path into them
+				EList<File> files = myChain.getParametersFiles();
+				for (File file : files) {
+					if (file instanceof CModel) {
+						file.setPath(modelFilePath);
+					} else if (file instanceof CFolder) {
+						file.setPath(outputFolderPath);
+					} else if (file instanceof CLog) {
+						file.setPath(logPath);
+					}
+				}
+			
+				Job job = new Job("Verification Models Data Generation") {
+					protected IStatus run(IProgressMonitor monitor) {
+						runchain(monitor);
+						return Status.OK_STATUS;
+					}
+				};
+				
+				job.addJobChangeListener(jobChangeAdapter);
+				job.setUser(true);
+				job.schedule();	// run the chain and models execution
+			}
+			else {
+				MessageDialog.openError(new Shell(), "Error", "Could not save the model and load the generation chain...");
+			}
 		}
 		
-		CompoundCommand cc = new CompoundCommand("Test Simulation Models Data Generation");
+		CompoundCommand cc = new CompoundCommand("Verification Models Data Generation");
 		return (cc.unwrap());
 	}
 
 	
 	public void setTestModels(Element rootModel){
 		ElementsCollector ec = new ElementsCollector();
-		ec.collectElementsFromModel(rootModel, Constants.stereotypeQName_Test);
+		ec.collectElementsFromModel(rootModel, Constants.stereotypeQName_VerificationModel);
 		
 		SelectTestSimulationModelsToExecuteDialog dialog = new SelectTestSimulationModelsToExecuteDialog(new Shell(), ec.getElements());
 		dialog.open();
 		
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
 			
-			TestExecutionServices.testModels.clear();
+			VerificationExecutionServices.testModels.clear();
 			
 			for (Element element : dialog.getUserSelectedTestSimulationModels()) {
 				if (element instanceof NamedElement) {
-					TestExecutionServices.testModels.add((NamedElement) element);
+					VerificationExecutionServices.testModels.add((NamedElement) element);
 				}
 			}
 		}
@@ -308,8 +334,8 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			// so that the user can open this dialog by selecting the report.html.
 			
 			IFileSystem fileSystem = EFS.getLocalFileSystem();
-			IFileStore codeGenDir = fileSystem.getStore(URI.create(TestExecutionServices.projectAbsolutePath + "/" + Constants.folderName_code_gen));
-			IFileStore testSessionCodeGenDir = fileSystem.getStore(URI.create(TestExecutionServices.testSessionFolderAbsolutePath + "/" + Constants.folderName_code_gen));
+			IFileStore codeGenDir = fileSystem.getStore(URI.create(VerificationExecutionServices.projectAbsolutePath + "/" + Constants.folderName_code_gen));
+			IFileStore testSessionCodeGenDir = fileSystem.getStore(URI.create(VerificationExecutionServices.testSessionFolderAbsolutePath + "/" + Constants.folderName_code_gen));
 			
 //			if (codeGenDir != null ) {
 //				System.err.println("code-gen directory at: " + codeGenDir);
