@@ -561,7 +561,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private boolean typeIsATestScenarioSimulation(Property property) {
 		Type type = property.getType();
 		
-		if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_TestScenario) != null) {
+		if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario) != null) {
 			return true;
 		}
 		return false;
