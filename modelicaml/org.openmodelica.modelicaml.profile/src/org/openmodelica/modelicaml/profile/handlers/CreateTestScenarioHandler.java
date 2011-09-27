@@ -116,7 +116,7 @@ private EObject selectedElement = null;
 	 */
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 //### START: adapt it for a new command handler
-		final String commandTitle = "Create New Calculation Model(s)";
+		final String commandTitle = "Create New Verification Scenario Model(s)";
 		CompoundCommand cc = new CompoundCommand(commandTitle);
 		
 		Command command = new RecordingCommand(editingDomain) {
@@ -140,7 +140,7 @@ private EObject selectedElement = null;
 					int numberOfItems = ModelicaMLConstants.numberOfItemsInCreateNewElementsDiologs;
 					
 					String lblText = "Name: ";
-					String defaultName = "TestScenario";
+					String defaultName = "VerificationScenario";
 					
 					EList<Element> existingElements = parentElement.getOwnedElements();
 					Integer postfix = 1;

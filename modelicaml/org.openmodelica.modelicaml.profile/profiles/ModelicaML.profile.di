@@ -20,10 +20,29 @@
     <availablePage>
       <emfPageIdentifier href="ModelicaML.profile.notation#_Sq6n8Kx7EeC2GJQ4iCzxPg"/>
     </availablePage>
+    <availablePage>
+      <emfPageIdentifier href="ModelicaML.profile.notation#__YCQAOjpEeCDZad2kIJ0mw"/>
+    </availablePage>
+    <availablePage>
+      <emfPageIdentifier href="ModelicaML.profile.notation#_7bgeIOjrEeCwFYHW_neVqA"/>
+    </availablePage>
   </pageList>
   <sashModel currentSelection="//@sashModel/@windows.0/@children.0">
     <windows>
-      <children xsi:type="di:TabFolder"/>
+      <children xsi:type="di:TabFolder">
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_hwBQEHfcEeC8VcOgJ0vxlw"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#__YCQAOjpEeCDZad2kIJ0mw"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_7bgeIOjrEeCwFYHW_neVqA"/>
+        </children>
+      </children>
     </windows>
   </sashModel>
 </di:SashWindowsMngr>

@@ -20,7 +20,7 @@
       <profile
             description="ModelicaML - A UML Profile for Modelica"
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="ModelicaML (1.2.0)"
+            name="ModelicaML (1.3.0)"
             path="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"
             provider="OpenModelica Project">
       </profile>
@@ -181,9 +181,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCode"
                   icon="resources/icons/icons16/launcher.gif"
-                  label="Generate Modelica code (from entire ModelicaML model)"
+                  label="Generate Modelica Code (from entire model)"
                   style="push"
-                  tooltip="Generate Modelica code (from entire ModelicaML model)">
+                  tooltip="Generate Modelica Code (from entire ModelicaML model)">
                <visibleWhen>
                   <with
                         variable="activeEditorId">
@@ -196,9 +196,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel"
                   icon="resources/icons/icons16/validate.gif"
-                  label="Validate ModelicaML model (entire model)"
+                  label="Validate (entire model)"
                   style="push"
-                  tooltip="Validate ModelicaML model (entire model)">
+                  tooltip="Validate ModelicaML Model (entire model)">
                <visibleWhen>
                   <with
                         variable="activeEditorId">
@@ -437,8 +437,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.commands.CreateTestScenarioCommand"
                   icon="resources/icons/icons16/calculationModel.gif"
-                  label="Test Scenario(s)"
-                  style="push">
+                  label="Verification Scenario(s)"
+                  style="push"
+                  tooltip="Verification Scenario(s)">
                <visibleWhen
                      checkEnabled="true">
                   <with
