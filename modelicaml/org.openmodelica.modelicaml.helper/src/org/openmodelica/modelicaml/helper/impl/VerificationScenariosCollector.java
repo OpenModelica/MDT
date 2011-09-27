@@ -17,7 +17,7 @@ import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
 
-public class TestScenariosCollector {
+public class VerificationScenariosCollector {
 	
 	// all test scenarios that are found in the top-level model
 	private HashSet<Element> allTS = new HashSet<Element>();
@@ -48,9 +48,9 @@ public class TestScenariosCollector {
 	
 	
 	// Constructors
-	public TestScenariosCollector(){}
+	public VerificationScenariosCollector(){}
 	
-	public TestScenariosCollector(Model model){
+	public VerificationScenariosCollector(Model model){
 		this.umlRoolModel = model;
 	}
 	
@@ -63,7 +63,7 @@ public class TestScenariosCollector {
 		if ( umlRoolModel != null ) {
 //			ElementsCollector ec = new ElementsCollector();
 //			ec.collectElementsFromModel(umlRoolModel, Constants.stereotypeQName_TestScenario);
-			TestScenariosDataCollector ec = new TestScenariosDataCollector(umlRoolModel);
+			VerificationScenariosDataCollector ec = new VerificationScenariosDataCollector(umlRoolModel);
 			
 //			this.allTS.addAll(ec.getElements());
 			this.allTS.addAll(ec.getAllTestScenarios());
@@ -88,7 +88,7 @@ public class TestScenariosCollector {
 		if ( rootPackage != null ) {
 //			ElementsCollector ec = new ElementsCollector();
 //			ec.collectElementsFromModel((EObject) rootPackage, Constants.stereotypeQName_TestScenario);
-			TestScenariosDataCollector ec = new TestScenariosDataCollector((EObject) rootPackage);
+			VerificationScenariosDataCollector ec = new VerificationScenariosDataCollector((EObject) rootPackage);
 
 //			this.allTS.addAll(ec.getElements());
 			this.allTS.addAll(ec.getAllTestScenarios());
@@ -160,7 +160,7 @@ public class TestScenariosCollector {
 		if (testCase instanceof NamedElement) {
 			
 			// collect from stereotype
-			Stereotype s_ts = ((NamedElement)testCase).getAppliedStereotype(Constants.stereotypeQName_TestScenario); 
+			Stereotype s_ts = ((NamedElement)testCase).getAppliedStereotype(Constants.stereotypeQName_VerificationScenario); 
 			HashSet<Element> itemsFoundThroughStereotypeProperty = new HashSet<Element>();
 			if ( s_ts != null ) {
 				// get the list of referenced requirements

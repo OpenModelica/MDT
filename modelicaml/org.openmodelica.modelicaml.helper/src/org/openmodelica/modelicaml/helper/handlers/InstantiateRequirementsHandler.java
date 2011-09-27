@@ -62,7 +62,7 @@ import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
 import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
-import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
+import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
 
 
 
@@ -89,7 +89,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 			if ( testCaseClass != null) {
 				HashSet<Class> itemsFound = new HashSet<Class>();
 				
-				TestScenariosCollector tsc = new TestScenariosCollector();
+				VerificationScenariosCollector tsc = new VerificationScenariosCollector();
 				for (Element element : tsc.collectRequirementsForTestCase(testCaseClass)) {
 					if (element instanceof Class) {
 						itemsFound.add((Class) element);

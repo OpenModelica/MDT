@@ -11,10 +11,10 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 
-public class TestScenariosDataCollector extends ElementsCollector {
+public class VerificationScenariosDataCollector extends ElementsCollector {
 
 	// stereotypes qualified names
-	private static final String testScenarioStereotypeQName = Constants.stereotypeQName_TestScenario;
+	private static final String testScenarioStereotypeQName = Constants.stereotypeQName_VerificationScenario;
 	private static final String requiresStereotypeQName = Constants.stereotypeQName_Requires;
 	private static final String requiredForStereotypeQName = Constants.stereotypeQName_RequiredFor;
 	
@@ -28,7 +28,7 @@ public class TestScenariosDataCollector extends ElementsCollector {
 	private HashMap<Element,HashSet<Element>> modelToItsRequiredModels = new HashMap<Element,HashSet<Element>>();
 
 
-	public TestScenariosDataCollector(EObject umlRootElement){
+	public VerificationScenariosDataCollector(EObject umlRootElement){
 		// collect elements
 		collectElementsFromModel(umlRootElement, null);
 		

@@ -62,7 +62,7 @@ import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenera
 /**
  * The Class InstantiateRequirementsHandler.
  */
-public class TestVerdictElementsGeneratorHandler extends AbstractHandler {
+public class VerificationVerdictElementsGeneratorHandler extends AbstractHandler {
 
 	/** The selected element. */
 	private EObject selectedElement = null;

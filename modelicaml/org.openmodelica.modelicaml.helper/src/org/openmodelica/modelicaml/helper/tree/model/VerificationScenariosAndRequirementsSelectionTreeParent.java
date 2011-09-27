@@ -36,22 +36,22 @@ package org.openmodelica.modelicaml.helper.tree.model;
 
 import java.util.ArrayList;
 
-public class TestScenariosAndRequirementsSelectionTreeParent extends TestScenariosAndRequirementsSelectionTreeObject {
+public class VerificationScenariosAndRequirementsSelectionTreeParent extends VerificationScenariosAndRequirementsSelectionTreeObject {
 	private ArrayList children;
-	public TestScenariosAndRequirementsSelectionTreeParent(String name) {
+	public VerificationScenariosAndRequirementsSelectionTreeParent(String name) {
 		super(name);
 		children = new ArrayList();
 	}
-	public void addChild(TestScenariosAndRequirementsSelectionTreeObject child) {
+	public void addChild(VerificationScenariosAndRequirementsSelectionTreeObject child) {
 		children.add(child);
 		child.setParent(this);
 	}
-	public void removeChild(TestScenariosAndRequirementsSelectionTreeObject child) {
+	public void removeChild(VerificationScenariosAndRequirementsSelectionTreeObject child) {
 		children.remove(child);
 		child.setParent(null);
 	}
-	public TestScenariosAndRequirementsSelectionTreeObject [] getChildren() {
-		return (TestScenariosAndRequirementsSelectionTreeObject [])children.toArray(new TestScenariosAndRequirementsSelectionTreeObject[children.size()]);
+	public VerificationScenariosAndRequirementsSelectionTreeObject [] getChildren() {
+		return (VerificationScenariosAndRequirementsSelectionTreeObject [])children.toArray(new VerificationScenariosAndRequirementsSelectionTreeObject[children.size()]);
 	}
 	public boolean hasChildren() {
 		return children.size()>0;

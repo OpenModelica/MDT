@@ -36,10 +36,10 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
+import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.helper.impl.VerificationModelComponentsCombination;
 
-public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
+public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaDialog {
 
 	// test scenarios that are appropriate for the system model
 	private HashSet<Element> selectedTestScenarios;
@@ -56,7 +56,7 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	private Element systemModel;
 	
 	// the entire test scenarios and requirements collection.
-	private TestScenariosCollector tsc;
+	private VerificationScenariosCollector tsc;
 	
 	// the result of the collection
 	private String collectionLog;
@@ -85,13 +85,13 @@ public class SelectTestScenariosAndRequirementsDialog extends TitleAreaDialog {
 	 * 
 	 * @param parentShell
 	 */
-	public SelectTestScenariosAndRequirementsDialog(Shell parentShell,
+	public SelectVerificationScenariosAndRequirementsDialog(Shell parentShell,
 			HashSet<Element> selectedTestScenarios,
 			HashSet<Element> discardedTestScenarios,
 			HashSet<Element> selectedRequirements,
 			HashSet<Element> discardedRequirements,
 			Element systemModel,
-			TestScenariosCollector tsc,
+			VerificationScenariosCollector tsc,
 			String collectionLog,
 			HashMap<Element, VerificationModelComponentsCombination> tsToTestSimulationModelCombination) {
 		

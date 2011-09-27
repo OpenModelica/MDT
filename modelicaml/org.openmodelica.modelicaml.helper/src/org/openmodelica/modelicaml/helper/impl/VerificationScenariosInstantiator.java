@@ -47,9 +47,9 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
-public class TestScenariosInstantiator {
+public class VerificationScenariosInstantiator {
 	
-	final static String propertyPrefix = Constants.testScenarioPropertyNamePrefix;
+	final static String propertyPrefix = Constants.verificationScenarioPropertyNamePrefix;
 //	private HashSet<Element> instantiatedElements = new HashSet<Element>();
 	
 	public EList<Property> instantiateTestScenarios(Class containingClass, HashSet<Element> testScenarioClasses){

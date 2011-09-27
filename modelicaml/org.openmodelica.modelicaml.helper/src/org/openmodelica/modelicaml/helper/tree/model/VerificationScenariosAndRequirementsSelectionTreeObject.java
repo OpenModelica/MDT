@@ -37,9 +37,9 @@ package org.openmodelica.modelicaml.helper.tree.model;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 
-public class TestScenariosAndRequirementsSelectionTreeObject  {
+public class VerificationScenariosAndRequirementsSelectionTreeObject  {
 	private String name;
-	private TestScenariosAndRequirementsSelectionTreeParent parent;
+	private VerificationScenariosAndRequirementsSelectionTreeParent parent;
 	private Element umlElement;
 	
 	private boolean isTestScenario = false;
@@ -48,7 +48,7 @@ public class TestScenariosAndRequirementsSelectionTreeObject  {
 	private boolean isReadOnly = false;
 	
 	
-	public TestScenariosAndRequirementsSelectionTreeObject(String name) {
+	public VerificationScenariosAndRequirementsSelectionTreeObject(String name) {
 		this.name = name;
 	}
 	
@@ -66,10 +66,10 @@ public class TestScenariosAndRequirementsSelectionTreeObject  {
 		this.name = name;
 	}
 	
-	public void setParent(TestScenariosAndRequirementsSelectionTreeParent parent) {
+	public void setParent(VerificationScenariosAndRequirementsSelectionTreeParent parent) {
 		this.parent = parent;
 	}
-	public TestScenariosAndRequirementsSelectionTreeParent getParent() {
+	public VerificationScenariosAndRequirementsSelectionTreeParent getParent() {
 		return parent;
 	}
 	public String toString() {

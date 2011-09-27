@@ -59,9 +59,9 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
-import org.openmodelica.modelicaml.helper.dialogs.InstantiateTestScenarioDialog;
-import org.openmodelica.modelicaml.helper.impl.TestScenariosInstantiator;
-import org.openmodelica.modelicaml.helper.impl.TestScenariosCollector;
+import org.openmodelica.modelicaml.helper.dialogs.InstantiateVerificationScenarioDialog;
+import org.openmodelica.modelicaml.helper.impl.VerificationScenariosInstantiator;
+import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -100,7 +100,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 		if ( containingClass != null ) {
 			
 			// collect test cases
-			TestScenariosCollector tsc = new TestScenariosCollector(containingClass.getModel());
+			VerificationScenariosCollector tsc = new VerificationScenariosCollector(containingClass.getModel());
 			tsc.setSelectedReq(selectedRequirements);
 			tsc.collectTestCasesFromModel(true);
 			
@@ -130,7 +130,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 					HashSet<Element> notCoveredRequirements = new HashSet<Element>();
 					notCoveredRequirements.addAll(allRequirements);
 					
-					InstantiateTestScenarioDialog dialog = new InstantiateTestScenarioDialog(
+					InstantiateVerificationScenarioDialog dialog = new InstantiateVerificationScenarioDialog(
 							new Shell(), 
 							containingClass, 
 							tsc.getAllTS(), 
@@ -166,7 +166,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				TestScenariosInstantiator ri = new TestScenariosInstantiator ();
+				VerificationScenariosInstantiator ri = new VerificationScenariosInstantiator ();
 				instantiatedElements = ri.instantiateTestScenarios(containingClass, selectedTS);
 			}
 		};

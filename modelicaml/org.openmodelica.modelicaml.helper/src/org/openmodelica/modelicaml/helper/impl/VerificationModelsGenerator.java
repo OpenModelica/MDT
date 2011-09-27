@@ -24,7 +24,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.helper.dialogs.SelectTestScenariosAndRequirementsDialog;
+import org.openmodelica.modelicaml.helper.dialogs.SelectVerificationScenariosAndRequirementsDialog;
 
 public class VerificationModelsGenerator implements IRunnableWithProgress {
 	
@@ -63,7 +63,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	// the package to containing the value mediators to be used
 	private Element valueBindingsPackage = null;
 	
-	private TestScenariosCollector tsc;
+	private VerificationScenariosCollector tsc;
 
 	// all requirements that were collected from the specified requirements package
 	private HashSet<Element> allRequirements = new HashSet<Element>();
@@ -151,7 +151,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				Class systemModel = (Class) sourceModel;
 				
 				// find all test scenarios
-				tsc = new TestScenariosCollector();
+				tsc = new VerificationScenariosCollector();
 				tsc.collectTestCasesFromPackage((Package) testScenariosPackage, true);
 				if (tsc.getAllTS().size() == 0) {
 					String message = "INFO: No test scenarios were found.";
@@ -258,7 +258,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		 * It should enable a selection of test scenarios and requirements to be finally instantiated. 
 		 */
 
-		SelectTestScenariosAndRequirementsDialog dialog = new SelectTestScenariosAndRequirementsDialog(
+		SelectVerificationScenariosAndRequirementsDialog dialog = new SelectVerificationScenariosAndRequirementsDialog(
 				new Shell(), 
 				testScenariosToBeInstantiated, 
 				testScenariosDiscarded, 
@@ -310,7 +310,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						 */
 						Stereotype s_model = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Model);
 						Stereotype s_simulation = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Simulation);
-						Stereotype s_test = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Test);
+						Stereotype s_test = simulationModel.getApplicableStereotype(Constants.stereotypeQName_VerificationModel);
 						if (s_model != null && s_simulation != null) {
 							simulationModel.applyStereotype(s_model);
 							simulationModel.applyStereotype(s_simulation);
@@ -370,7 +370,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						//************************************************************************************
 						// add test scenario property
 						Property p_testScenario = simulationModel.createOwnedAttribute(
-								Constants.testScenarioPropertyNamePrefix 
+								Constants.verificationScenarioPropertyNamePrefix 
 								+ StringUtls.replaceSpecChar(((NamedElement)testScenario).getName().toLowerCase()), 
 								(Type)testScenario);
 						Stereotype s_testScenario = p_testScenario.getApplicableStereotype(Constants.stereotypeQName_CalculatedProperty);
@@ -388,7 +388,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						 * one provider used in the combination.
 						 */
 						createAdditionalModels(simulationModel, tsmc.getAdditionalTestScenarioModels(true), 
-								Constants.testScenarioPropertyNamePrefix + Constants.additionalModelPrefix);
+								Constants.verificationScenarioPropertyNamePrefix + Constants.additionalModelPrefix);
 						
 						//************************************************************************************
 						// add requirements
@@ -483,7 +483,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				// apply stereotype
 				Stereotype s_additionalModel= null;
 				if (additionalModel.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null
-						|| additionalModel.getAppliedStereotype(Constants.stereotypeQName_TestScenario) != null) {
+						|| additionalModel.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario) != null) {
 					
 					s_additionalModel = p_additionalModel.getApplicableStereotype(Constants.stereotypeQName_CalculatedProperty);	
 				}
@@ -503,7 +503,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	}
 	
 	private void copySimulationSettings(Classifier testScenarioModel, Classifier simulationModel){
-		Stereotype sTestScenario = testScenarioModel.getAppliedStereotype(Constants.stereotypeQName_TestScenario);
+		Stereotype sTestScenario = testScenarioModel.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario);
 		Stereotype sSimulation = simulationModel.getAppliedStereotype(Constants.stereotypeQName_Simulation);
 		
 		if (sTestScenario != null && sSimulation != null) {

@@ -26,7 +26,7 @@
       -->
       <command
             id="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
-            name="Generate Simulation Models">
+            name="Generate Verification Models">
       </command>
    </extension>
    <extension
@@ -120,7 +120,7 @@
       </handler>
       -->
       <handler
-            class="org.openmodelica.modelicaml.helper.handlers.TestSimulationModelsGenaratorHandler"
+            class="org.openmodelica.modelicaml.helper.handlers.VerificationModelsGenaratorHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels">
          <activeWhen>
             <with

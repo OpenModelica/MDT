@@ -24,8 +24,8 @@ public class VerificationModelComponentsCombination {
 	
 	/* 
 	 * Selected system model to generate a simulation model.
-	 * The generated simulation model will include one test scenario, 
-	 * all requirements that can be verified using this test scenario,
+	 * The generated simulation model will include one verification scenario, 
+	 * all requirements that can be verified using this verification scenario,
 	 * all models that are required in addition. 
 	 */
 	private Element systemModel;
@@ -38,14 +38,14 @@ public class VerificationModelComponentsCombination {
 	private HashSet<Element> requiredModels_systemModel = new HashSet<Element>();
 
 	/* 
-	 * Test scenario that is used to stimulate the system model
+	 * verification scenario that is used to stimulate the system model
 	 */
 	private Element testScenario;
 
 
 
 	/*
-	 * All required models that are referenced (directly or indirectly) by the test scenario model 
+	 * All required models that are referenced (directly or indirectly) by the verification scenario model 
 	 */
 	private HashSet<Element> requiredModels_testScenario = new HashSet<Element>();
 	
@@ -88,15 +88,15 @@ public class VerificationModelComponentsCombination {
 	// Virtual instantiation root. Its direct children are the instantiation roots of all models provided and collected. 
 	private TreeParent virtualInstantiationTreeRoot;
 
-	// contains tree objects (instantiation roots of models) with all required clients that are NOT satisfied.
+	// contains tree objects (instantiation roots of models) with all mandatory clients that are NOT satisfied.
 	private HashMap<TreeParent, HashSet<TreeObject>> requiredClients_unsatisfied = new HashMap<TreeParent, HashSet<TreeObject>>();
 
 
 
 	/*
 	 *  Indicates if this combination is discarded.
-	 *  The combination should be discarded if not all required clients of the system model are satisfied
-	 *  or if none of the test scenario providers is used in the virtual instantiation.
+	 *  The combination should be discarded if not all mandatory clients of the system model are satisfied
+	 *  or if none of the verification scenario providers is used in the virtual instantiation.
 	 */
 	private boolean isDiscarded = false;
 
@@ -148,7 +148,7 @@ public class VerificationModelComponentsCombination {
 		allModels.addAll(allCollectedAdditionalModels);
 		instantiateAll(allModels);
 		
-		// validate this combination (checks only the system model and the test scenario)
+		// validate this combination (checks only the system model and the verification scenario)
 		validateCombination();
 		
 		// validate requirements 
@@ -296,9 +296,9 @@ public class VerificationModelComponentsCombination {
 
 				setDiscarded(true);
 				String message = "DISCARDED(02): The combination " +
-						"\n   - Test Scenario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
+						"\n   - Scenario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
 						"\n   - System Model: '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
-						"\nis discarded because the following required clients of the system model are not satisfied: " +
+						"\nis discarded because the following mandatory clients of the system model are not satisfied: " +
 						"\n" + getClientsDotPathAsString(requiredClients_unsatisfied.get(systemModelInstantiationTreeRoot));
 				addToLog(message);
 			}
@@ -308,13 +308,13 @@ public class VerificationModelComponentsCombination {
 				String message = "DISCARDED(03): The combination " +
 						"\n   - Test Scneario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
 						"\n   - System Model: '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
-						"\nis discarded because none of the test scenario providers is used to stimulated the model. ";
+						"\nis discarded because none of the scenario providers is used to stimulate the model. ";
 				addToLog(message);
 			}
 		}
 		else {
 
-			String message = "NOT VALID(04): The system model or the test scenario are not found.";
+			String message = "NOT VALID(04): The system model or the scenario are not found.";
 			addToLog(message);
 			
 			setDiscarded(true);
@@ -326,13 +326,13 @@ public class VerificationModelComponentsCombination {
 		for (Element requirement : requirements) {
 			TreeParent requirementInstantiationTreeRootItem = modelToItsInstantiation.get(requirement);
 			if (requirementInstantiationTreeRootItem != null) {
-				// this method validates and collects the unsatisfied required clients at the same time.
+				// this method validates and collects the unsatisfied mandatory clients at the same time.
 				areAllRequiredClientsSatisfied(virtualInstantiationTreeRoot, requirementInstantiationTreeRootItem);
 				
-				// add unsatisfied required clients to log
+				// add unsatisfied mandatory clients to log
 				if (getUnsatisfiedRequiredClients(requirement) != null) {
 					String message = "PROBLEM(05): Requirement " + ((NamedElement)requirement).getQualifiedName() + "'" +
-					"\n has the following required clients which are not satisfied: " +
+					"\n has the following mandatory clients which are not satisfied: " +
 					"\n" +getClientsDotPathAsString(getUnsatisfiedRequiredClients(requirement));
 					
 					addToLog(message);
@@ -388,7 +388,7 @@ public class VerificationModelComponentsCombination {
 			allRequiredClientsAreSatisfied = false;
 		}
 		
-		// Collect all required clients that are not satisfied.
+		// Collect all mandatory clients that are not satisfied.
 		HashSet<TreeObject> unsatisfiedRequiredClients = new HashSet<TreeObject>();
 		unsatisfiedRequiredClients.addAll(vbc.getAllRequiredClientsFound());
 		unsatisfiedRequiredClients.removeAll(vbc.getAllClientsWithPossibleBindingCodeDerivation());
@@ -583,7 +583,7 @@ public class VerificationModelComponentsCombination {
 		"---------------------------------------------------" +
 		"--------------------------------------------------- \n" +
 		"Log for the combination:" +
-			"\n   - Test Scenario '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
+			"\n   - Scenario '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
 			"\n   - System Model '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
 			"\n";
 	}

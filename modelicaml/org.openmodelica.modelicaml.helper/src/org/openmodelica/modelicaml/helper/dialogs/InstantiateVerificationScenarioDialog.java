@@ -34,7 +34,7 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 
 
-public class InstantiateTestScenarioDialog extends Dialog {
+public class InstantiateVerificationScenarioDialog extends Dialog {
 
 	// selected requirements
 	private HashSet<Element> reqList = new HashSet<Element>();
@@ -78,7 +78,7 @@ public class InstantiateTestScenarioDialog extends Dialog {
 	 * @param object 
 	 * @param selectedElement 
 	 */
-	public InstantiateTestScenarioDialog(Shell parentShell, 
+	public InstantiateVerificationScenarioDialog(Shell parentShell, 
 			Class containingClass, 
 			HashSet<Element> allTS, 
 			HashSet<Element> matchedTS,

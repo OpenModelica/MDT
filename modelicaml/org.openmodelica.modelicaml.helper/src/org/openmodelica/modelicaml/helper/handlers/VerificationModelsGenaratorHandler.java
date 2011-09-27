@@ -67,7 +67,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.helper.impl.VerificationModelsGenerator;
 
-public class TestSimulationModelsGenaratorHandler extends AbstractHandler {
+public class VerificationModelsGenaratorHandler extends AbstractHandler {
 
 	private EObject selectedElement = null;
 	private HashSet<Element> sourceModels; 
