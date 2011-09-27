@@ -22,7 +22,7 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
 
-public class TestExecutionServices {
+public class VerificationExecutionServices {
 	
 	private static Date date = null;
 	public static String testSessionFolderAbsolutePath = "";
@@ -34,7 +34,7 @@ public class TestExecutionServices {
 	public static void setDate() {
 		Calendar c1 = Calendar.getInstance(); // today
 		Date date = c1.getTime();
-		TestExecutionServices.date = date;
+		VerificationExecutionServices.date = date;
 	}
 	
 	public static String getTime(Element elt){
@@ -56,8 +56,13 @@ public class TestExecutionServices {
 	}
 	
 	public static String getTestSessionFolderProjectPath(Element umlElement){
-		return Constants.folderName_test_gen + "/"+Constants.folderName_test_session+"_"+getTimeStamp("");
+		return Constants.folderName_verification_gen + "/"+Constants.folderName_verification_session+"_"+getTimeStamp("");
 	}
+	
+	public static String getTestSessionFileName(Element umlElement){
+		return Constants.fileName_verification_session;
+	}
+	
 	
 	public static void setTestSessionFolderAbsolutePath(String path){
 		testSessionFolderAbsolutePath = path;
@@ -213,7 +218,7 @@ public class TestExecutionServices {
 	}
 	
 	public static String getReqTestVerdictPropertyName(Element elt){
-		return Constants.propertyName_requirementsTestVerdict;
+		return Constants.propertyName_requirementsVerificationVerdict;
 	}
 	
 	
@@ -427,8 +432,8 @@ public class TestExecutionServices {
 				Stereotype s = type.getAppliedStereotype(Constants.stereotypeQName_Requirement);
 				if (s != null ) { return "Requirement"; }
 				
-				s = type.getAppliedStereotype(Constants.stereotypeQName_TestScenario);
-				if (s != null ) { return "Test Scenario"; }
+				s = type.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario);
+				if (s != null ) { return "Scenario"; }
 				
 				s = type.getAppliedStereotype(Constants.stereotypeQName_CalculationModel);
 				if (s != null ) { return "Calculation Model"; }

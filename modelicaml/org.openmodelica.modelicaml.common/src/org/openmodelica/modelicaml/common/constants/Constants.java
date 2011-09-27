@@ -46,28 +46,33 @@ public class Constants {
 	public static final String stereotypeQName_Connector 		= "ModelicaML::ModelicaClassConstructs::Connector";
 	public static final String stereotypeQName_Record 			= "ModelicaML::ModelicaClassConstructs::Record";
 	
-	public static final String stereotypeQName_Type 			= "ModelicaML::ModelicaClassConstructs::Type";
+	public static final String stereotypeQName_Type 						= "ModelicaML::ModelicaClassConstructs::Type";
 	public static final String stereotypeQName_ModelicaEnumeration 			= "ModelicaML::ModelicaClassConstructs::ModelicaEnumeration";
 	
-	public static final String stereotypeQName_Function 		= "ModelicaML::ModelicaClassConstructs::Function";
+	public static final String stereotypeQName_Function 					= "ModelicaML::ModelicaClassConstructs::Function";
 
-	public static final String stereotypeQName_CalculationModel = "ModelicaML::ModelicaClassConstructs::CalculationModel";
+	public static final String stereotypeQName_CalculationModel 			= "ModelicaML::ModelicaClassConstructs::CalculationModel";
 	
-	public static final String stereotypeQName_ModelicaModelReference 	= "ModelicaML::ModelicaClassConstructs::ModelicaModelReference";
+	public static final String stereotypeQName_ModelicaModelReference 		= "ModelicaML::ModelReferences::ModelicaModelReference";
+	public static final String stereotypeQName_ModelicaModelProxy 			= "ModelicaML::ModelReferences::ModelicaModelProxy";
 
-	public static final String stereotypeQName_Requirement 		= "ModelicaML::ModelicaRequirementConstructs::Requirement";	
+	public static final String stereotypeQName_Requirement 					= "ModelicaML::ModelicaRequirementConstructs::Requirement";	
 
-	public static final String stereotypeQName_Simulation 		= "ModelicaML::ModelicaSimulationConstructs::Simulation";
+	public static final String stereotypeQName_Simulation 					= "ModelicaML::ModelicaSimulationConstructs::Simulation";
 	
-	public static final String stereotypeQName_TestScenario 	= "ModelicaML::TestDefinition::TestScenario";
-	public static final String stereotypeQName_Test 			= "ModelicaML::TestDefinition::Test";
-	public static final String propertyName_usedToVerify 		= "usedToVerify";
-
-	public static final String stereotypeQName_TestSuite 		= "ModelicaML::TestDefinition::TestSuite";
-	public static final String propertyName_includes 		= "includes";
-
+	public static final String stereotypeQName_VerificationScenario 		= "ModelicaML::Verification::VerificationScenario";
+	public static final String stereotypeQName_VerificationModel 			= "ModelicaML::Verification::VerificationModel";
+	public static final String propertyName_usedToVerify 					= "usedToVerify";
 	
+	// used for verification models generation
+	public static final String stereotypeQName_Requires 			= "ModelicaML::Verification::Requires";
+	public static final String stereotypeQName_RequiredFor 			= "ModelicaML::Verification::RequiredFor";
+	public static final String propertyName_always					= "always";
+	public static final String propertyName_onlyIncombinationWith	= "onlyInCombinationWith";
 	
+	// Code generation
+	public static final String stereotypeQName_CodeGenerationSpecification	= "ModelicaML::CodeGeneration::CodeGenerationSpecification";
+	public static final String propertyName_excludeFromCG 					= "excludeFromCG";
 	
 	// composite constructs
 	public static final String stereotypeQName_Variable 		= "ModelicaML::ModelicaCompositeConstructs::Variable";
@@ -76,7 +81,6 @@ public class Constants {
 	public static final String stereotypeQName_Component 		= "ModelicaML::ModelicaCompositeConstructs::Component";
 	public static final String stereotypeQName_ConnectionPort 	= "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
 	public static final String stereotypeQName_CalculatedProperty = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
-	
 
 	// relations
 	public static final String stereotypeQName_ExtendsRelation = "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
@@ -109,34 +113,24 @@ public class Constants {
 
 	public static final String stereotypeQName_ObtainsValueFrom 	= "ModelicaML::ValueBinding::ObtainsValueFrom";
 	public static final String stereotypeQName_ProvidesValueFor 	= "ModelicaML::ValueBinding::ProvidesValueFor";
-
 	
 	public static final String propertyName_operation 				= "operation";
 	public static final String propertyName_preferredProviders 		= "preferredProviders";
 	public static final String preferredProvidersAssignmentSeparator	= " --> ";
 	
-	
-	public static final String valueClientsNodeName 			= "Clients";
-	public static final String potentialCalueClientsNodeName 	= "Potential Clients";
-	public static final String valueMediatorsNodeName 		= "Mediators";
-	public static final String valueProvidersNodeName 		= "Providers";
-	public static final int MODE_ADD_CLIENT 				= 0;
-	public static final int MODE_ADD_MEDIATOR 				= 1;
-	public static final int MODE_ADD_PROVIDER 				= 2;
-	
-	
-	// primarily used by test models generation plugin
-	public static final String stereotypeQName_Requires 			= "ModelicaML::TestDefinition::Requires";
-	public static final String stereotypeQName_RequiredFor 			= "ModelicaML::TestDefinition::RequiredFor";
-	public static final String propertyName_always	= "always";
-	public static final String propertyName_onlyIncombinationWith	= "onlyInCombinationWith";
+	public static final String valueClientsNodeName 				= "Clients";
+	public static final String potentialCalueClientsNodeName 		= "Potential Clients";
+	public static final String valueMediatorsNodeName 				= "Mediators";
+	public static final String valueProvidersNodeName 				= "Providers";
+	public static final int MODE_ADD_CLIENT 						= 0;
+	public static final int MODE_ADD_MEDIATOR 						= 1;
+	public static final int MODE_ADD_PROVIDER 						= 2;
 	
 	// used by components tree plugin
 	public static final String inputsComponentName 			= "_inputs";
 	public static final String inputsClassName 				= "_Inputs";
 	public static final String outputsComponentName 		= "_outputs";
 	public static final String outputsClassName 			= "_Outputs";
-	
 	
 	// used by value binding provider xtext editor
 //	public static final String MACRO_ownPath 				= "ownPath"; // OBSOLETE
@@ -158,7 +152,6 @@ public class Constants {
 	public static final String MACRO_min 					= "min";
 	public static final String MACRO_max 					= "max";
 	
-	
 	public final static String propertyName_startTime = "startTime";
 	public final static String propertyName_stopTime = "stopTime";
 	public final static String propertyName_numberOfIntervals = "numberOfIntervals";
@@ -169,22 +162,23 @@ public class Constants {
 	public final static String simModelsNamePrefix = "SiM for: ";
 	public final static String systemModelPropertyNamePrefix = "sm_";
 	public final static String additionalModelPrefix = "add_";
-	public final static String testScenarioPropertyNamePrefix = "ts_";
+	public final static String verificationScenarioPropertyNamePrefix = "vs_";
 	public final static String reqirementPropertyNamePrefix = "req_";
-	
 	
 	public final static String MARKERTYPE_VALUEBINDINGS = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings";
 	public final static String MARKERTYPE_COMPONENT_MODIFICATION = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification";
 	
-	// test execution report
-	public final static String propertyName_requirementsTestVerdict = "_reqTestVerdict";
+	// verification execution report
+	public final static String propertyName_requirementsVerificationVerdict = "_reqVerificationVerdict";
 	
 	// CG
 	public final static String folderName_code_gen = "code-gen";
+	public final static String folderName_code_inc = "code-inc";
 
 	// Test Execution
-	public final static String folderName_test_gen = "test-gen";
-	public final static String folderName_test_session = "test-session";
+	public final static String folderName_verification_gen = "verification-gen";
+	public final static String folderName_verification_session = "verification-session";
+	public final static String fileName_verification_session = "verification-session";
 
 	
 }
