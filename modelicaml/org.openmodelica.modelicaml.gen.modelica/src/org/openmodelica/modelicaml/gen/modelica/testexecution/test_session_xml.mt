@@ -1,13 +1,13 @@
 <%
 metamodel http://www.eclipse.org/uml2/3.0.0/UML
-import org.openmodelica.modelicaml.common.helpers.TestExecutionServices
+import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices
 import org.openmodelica.modelicaml.common.services.StringUtls
 import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServices
 %>
 
 <%script type="uml.Model" name="file_name_xml"%>
 <%if (owner == null){%>
-<%getTestSessionFolderProjectPath()%>/test_session.xml
+<%getTestSessionFolderProjectPath()%>/<%getTestSessionFileName()%>.xml
 <%}%>
 
 
