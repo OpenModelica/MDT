@@ -173,7 +173,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			e.printStackTrace();
 		}
 		
-		if (rootModel != null && VerificationExecutionServices.testModels != null && VerificationExecutionServices.testModels.size() > 0) {
+		if (rootModel != null && VerificationExecutionServices.verificationModels != null && VerificationExecutionServices.verificationModels.size() > 0) {
 			
 			org.eclipse.emf.common.util.URI chainURI = null;
 			
@@ -258,11 +258,11 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
 			
-			VerificationExecutionServices.testModels.clear();
+			VerificationExecutionServices.verificationModels.clear();
 			
 			for (Element element : dialog.getUserSelectedTestSimulationModels()) {
 				if (element instanceof NamedElement) {
-					VerificationExecutionServices.testModels.add((NamedElement) element);
+					VerificationExecutionServices.verificationModels.add((NamedElement) element);
 				}
 			}
 		}
@@ -335,7 +335,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			
 			IFileSystem fileSystem = EFS.getLocalFileSystem();
 			IFileStore codeGenDir = fileSystem.getStore(URI.create(VerificationExecutionServices.projectAbsolutePath + "/" + Constants.folderName_code_gen));
-			IFileStore testSessionCodeGenDir = fileSystem.getStore(URI.create(VerificationExecutionServices.testSessionFolderAbsolutePath + "/" + Constants.folderName_code_gen));
+			IFileStore testSessionCodeGenDir = fileSystem.getStore(URI.create(VerificationExecutionServices.verificationSessionFolderAbsolutePath + "/" + Constants.folderName_code_gen));
 			
 //			if (codeGenDir != null ) {
 //				System.err.println("code-gen directory at: " + codeGenDir);
