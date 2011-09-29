@@ -158,8 +158,8 @@ public class Constants {
 	public final static String propertyName_tolerance = "tolerance";
 	
 	// simulation model generation
-	public final static String simModelsPackageNamePrefix = "GenSimModels for: ";
-	public final static String simModelsNamePrefix = "SiM for: ";
+	public final static String simModelsPackageNamePrefix = "GenVeMs for: ";
+	public final static String simModelsNamePrefix = "VeM for: ";
 	public final static String systemModelPropertyNamePrefix = "sm_";
 	public final static String additionalModelPrefix = "add_";
 	public final static String verificationScenarioPropertyNamePrefix = "vs_";
@@ -169,17 +169,37 @@ public class Constants {
 	public final static String MARKERTYPE_COMPONENT_MODIFICATION = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification";
 	
 	// verification execution report
+	public final static String className_requirementsVerificationVerdict 	= "_ReqVerificationVerdict";
 	public final static String propertyName_requirementsVerificationVerdict = "_reqVerificationVerdict";
+	public final static String propertyName_testPassed 						= "testPassed";
+	public final static String propertyName_allRequirementsEvaluated 		= "allRequirementsEvaluated";
+	public final static String propertyName_someRequirementsViolated 		= "someRequirementsViolated";
+	public final static String propertyName_requirementsViolationDetected 	= "requirementsViolationDetected";
 	
-	// CG
+
+	// verification execution report macro-keywords
+	public final static String MACRO_atLeastOneTimeTrue 					= "atLeastOneTimeTrue";
+	public final static String MACRO_atLeastOneTimeFalse 					= "atLeastOneTimeFalse";
+	public final static String MACRO_alwaysTrue 							= "alwaysTrue";
+	public final static String MACRO_alwaysFalse 							= "alwaysFalse";
+	public final static String MACRO_changedItsValue 						= "changedItsValue";
+	
+	
+	// code generation
 	public final static String folderName_code_gen = "code-gen";
 	public final static String folderName_code_inc = "code-inc";
 
 	// Test Execution
 	public final static String folderName_verification_gen = "verification-gen";
 	public final static String folderName_verification_session = "verification-session";
-	public final static String fileName_verification_session = "verification-session";
+	public final static String fileName_verification_session = "verification_session";
 
+	
+	// predefined type names
+	public final static String predefinedTypeName_boolean = "ModelicaBoolean";
+	public final static String predefinedTypeName_real = "ModelicaReal";
+	public final static String predefinedTypeName_integer = "ModelicaInteger";
+	public final static String predefinedTypeName_string = "ModelicaString";
 	
 }
 
