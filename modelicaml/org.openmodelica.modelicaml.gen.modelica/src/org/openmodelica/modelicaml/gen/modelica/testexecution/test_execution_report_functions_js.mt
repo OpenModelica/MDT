@@ -11,6 +11,19 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 <%}%>
 
 <%script type="uml.Model" name="report_js_functions" file="<%file_name_js_functions%>"%>
+function writeTestPassedString(allRequirementsEvaluated_atLeastOneTimeTrue, someRequirementsViolated_alwaysFalse){
+	if (allRequirementsEvaluated_atLeastOneTimeTrue == "true" && someRequirementsViolated_alwaysFalse == "true"){
+		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
+	}
+	else if (allRequirementsEvaluated_atLeastOneTimeTrue == "false" || someRequirementsViolated_alwaysFalse == "false"){
+		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+	}
+	else {
+		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
+	}
+}
+
+/*
 function writeTestPassedString(value){
 	if (value == "true"){
 		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
@@ -22,6 +35,7 @@ function writeTestPassedString(value){
 		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
 	}
 }
+*/
 
 function writeRequirementPassedString(evaluted_atLeastOneTimeTrue, violated_alwaysFalse){
 	if (evaluted_atLeastOneTimeTrue == "true" && violated_alwaysFalse == "true"){

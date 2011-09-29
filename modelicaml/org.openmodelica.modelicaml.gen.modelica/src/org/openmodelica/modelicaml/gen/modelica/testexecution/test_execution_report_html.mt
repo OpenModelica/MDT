@@ -34,24 +34,24 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 	<a name="top"></a>
 	<!-- Title, Overview -->
 	<div id='title' style='margin:0;padding:0;position:relative; left:20px; top:0px; text-align:left;z-index:1;'>
-		<span style='font-size:18px; line-height:25px;'>Test Execution Report</span>
+		<span style='font-size:18px; line-height:25px;'>Verification Session Report</span>
 		<br>
 		<span>Creation date: <%getTime()%></span>
 		<br><br>
 		
-		<span>Tests number 
+		<span>Verification models number 
 			(<strong><script type='text/javascript'>document.write(testsNumber)</script></strong>), 
 		</span> 
 		
-		<span style='color:#ff9900'>Tests executed 
+		<span style='color:#ff9900'>Verification models executed 
 			(<strong><script type='text/javascript'>document.write(testsExecutedNumber)</script></strong>), 
 		</span>
 		
-		<span style='color:#32CD32'>Tests passed 
+		<span style='color:#32CD32'>Verifications passed 
 			(<strong><script type='text/javascript'>document.write(testsPassedNumber)</script></strong>), 
 		</span>
 		
-		<span style='color:#FF0000'>Tests failed  
+		<span style='color:#FF0000'>Verifications failed  
 			(<strong><script type='text/javascript'>document.write(testsFailedNumber)</script></strong>)
 		</span> 
 		
@@ -72,7 +72,10 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 	<!-- Test passed/failed  -->
 	<span style='color:#000000;'>
 		<script type='text/javascript'>
-			writeTestPassedString(data['<%qualifiedName%>']['_reqTestVerdict.testPassed']['atLeastOneTimeTrue']);
+			writeTestPassedString(
+				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>'],
+				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse%>']
+				);
 		</script>
 	</span>
 	
@@ -100,8 +103,11 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 		<!-- test passed/failed  -->
 		<span style='color:#000000;'>
 			<script type='text/javascript'>
-				writeTestPassedString(data['<%qualifiedName%>']['_reqTestVerdict.testPassed']['atLeastOneTimeTrue']);
-			</script>
+			writeTestPassedString(
+				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>'],
+				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse%>']
+				);
+		</script>
 		</span>
 
 		<!-- Test Model Name-->
@@ -121,25 +127,25 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			<tr>
 				<td><i>verdict</i> 
 					<script type='text/javascript'>
-						writeLink('locate:<%qualifiedName%>#_reqTestVerdict.allRequirementsEvaluated', '<strong>allRequirementsEvaluated</strong>');
+						writeLink('locate:<%qualifiedName%>#<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>', '<strong><%getAllRequirementsEvaluatedPropertyName()%></strong>');
 					</script>
 				</td>
 				<td>&nbsp;:&nbsp;</td>
 				<td>
 					<script type='text/javascript'>
-						writeAtLeastOneTimeTrueString(data['<%qualifiedName%>']['_reqTestVerdict.allRequirementsEvaluated']['atLeastOneTimeTrue']);
+						writeAtLeastOneTimeTrueString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);
 					</script>
 				</td>
 			</tr>
 			<tr>
 				<td><i>verdict</i> 
 					<script type='text/javascript'>
-						writeLink('locate:<%qualifiedName%>#_reqTestVerdict.someRequirementsViolated', '<strong>someRequirementsViolated</strong>');
+						writeLink('locate:<%qualifiedName%>#<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>', '<strong><%getSomeRequirementsViolatedPropertyName()%></strong>');
 					</script>	
 				<td>&nbsp;:&nbsp;</td>
 				<td>
 					<script type='text/javascript'>
-						writeAlwaysFalseString(data['<%qualifiedName%>']['_reqTestVerdict.someRequirementsViolated']['alwaysFalse']);
+						writeAlwaysFalseString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse%>']);
 					</script>
 				</td>
 			</tr>
