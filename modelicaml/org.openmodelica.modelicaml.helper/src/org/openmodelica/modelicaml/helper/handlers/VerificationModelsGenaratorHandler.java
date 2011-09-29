@@ -117,15 +117,15 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 			
 			if (allPackagesAreSet) {
 				boolean go = MessageDialog.openQuestion(new Shell(), "Please confirm ...", "This helper will create a package " +
-						"that will contain miltiple simulation models each including one test scenario and all requirements "+ 
-						"that can be tested using this test scenario and the selected system model." +
-						"\n\nNote, only simulation models that have test scenarios and requirements with appropriate value bindings will be collected." +
+						"that will contain miltiple verification models each including one scenario and all requirements, "+ 
+						"that can be tested using this scenario, and the selected system model." +
+						"\n\nNote, only verificationi models that have scenarios and requirements with appropriate value bindings will be collected." +
 						"\n\n" +
 						
 						"   - Selected system model: '" + ((Class)selectedElement).getName() + "'\n" + 
-						"   - Package to store generated Sim. Models in: '" + ((NamedElement)targetPackage).getName() + "'\n" + 
+						"   - Package to store generated Ver. Models in: '" + ((NamedElement)targetPackage).getName() + "'\n" + 
 						"   - Package for Requirements search: '" + ((NamedElement)requirementsPackage).getName() + "'\n" +
-						"   - Package for Test Scnearios search: '" + ((NamedElement)testScenariosPackage).getName() + "'\n" +
+						"   - Package for Scenarios search: '" + ((NamedElement)testScenariosPackage).getName() + "'\n" +
 						"   - Package for Value Mediators search: '" + ((NamedElement)valueMediatorsPackage).getName() + "'\n"
 						);
 				
@@ -147,10 +147,10 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 						}
 						if (!smg.isTestSimulationModelGenerationCanceled()) {
 							// show log
-							String msg = "Generation of Test Simulation Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
-										 "Number of created simulation models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
+							String msg = "Generation of Verification Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
+										 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
 
-							DialogMessage dialog = new DialogMessage(new Shell(), "Test Simulation Models Generation Log", 
+							DialogMessage dialog = new DialogMessage(new Shell(), "Verification Models Generation Log", 
 									"Data collecation and models generation log entries:", msg + smg.getLog().trim());
 							dialog.open();
 						}
@@ -161,7 +161,7 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 				}
 			}
 			else {
-				MessageDialog.openError(new Shell(), "Packages Selection for Test Simulation Models Generation",
+				MessageDialog.openError(new Shell(), "Packages Selection for Verification Models Generation",
 						"Cannot access the root model in Papyrus. Please try it again.");
 			}
 		}

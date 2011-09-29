@@ -101,7 +101,7 @@ public class VerificationVerdictElementsGeneratorHandler extends AbstractHandler
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				VerificationVerdictElementsGenerator.createTestEvaluationElements(owningClass);
+				VerificationVerdictElementsGenerator.createVerificationVerdictElements(owningClass);
 			}
 		};
 		cc.append(command);

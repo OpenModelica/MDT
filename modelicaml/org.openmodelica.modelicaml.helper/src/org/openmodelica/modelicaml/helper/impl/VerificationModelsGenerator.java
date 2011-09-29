@@ -461,7 +461,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						/*
 						 * Create test verdict code
 						 */
-						VerificationVerdictElementsGenerator.createTestEvaluationElements(simulationModel);
+						VerificationVerdictElementsGenerator.createVerificationVerdictElements(simulationModel);
 					}
 				}
 			}
