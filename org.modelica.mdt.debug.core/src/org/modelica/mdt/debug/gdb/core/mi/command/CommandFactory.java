@@ -290,7 +290,7 @@ public class CommandFactory {
 	 * @return MIDataEvaluateExpression
 	 */
 	public MIDataEvaluateExpression createMIGetListItem(String expression, int index) {
-		return new MIDataEvaluateExpression("listGet(" + expression + ", " + index + ")");
+		return new MIDataEvaluateExpression("((long (*) (long)) listGet)(" + expression + ", " + index + ")");
 	}
 	
 	/* Record Manipulation Commands */
@@ -310,7 +310,7 @@ public class CommandFactory {
 	 * @return MIDataEvaluateExpression
 	 */
 	public MIDataEvaluateExpression createMIGetArrayElement(String expression, int index) {
-		return new MIDataEvaluateExpression("arrayGet(" + expression + ", " + index + ")");
+		return new MIDataEvaluateExpression("((long (*) (long)) arrayGet)(" + expression + ", " + index + ")");
 	}
 	
 	/**
