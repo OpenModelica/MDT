@@ -54,7 +54,7 @@ import org.modelica.mdt.core.ModelicaCore;
 
 /**
  * This class allows to create a sample projects that are
- * populated with various elements usefull in test cases.
+ * populated with various elements useful in test cases.
  * Use this projects when you need to make test on a generic modelica project 
  * or a simple project.
  * 
@@ -118,8 +118,8 @@ public class Area51Projects
 	private static IProject simple_project = null;
 	
 	/**
-	 * Create and populate the project. Only one instance is created, 
-	 * all calls after first one returns without doing anything. 
+	 * Create and populates the project. Only one instance is created, 
+	 * all calls after first one return without doing anything. 
 	 */
 	public static void createProjects()
 	{
@@ -156,7 +156,7 @@ public class Area51Projects
 	}
 	/**
 	 * create modelica project 
-	 * @throws CoreException if any error occures while creating the project
+	 * @throws CoreException if any error occurs while creating the project
 	 */
 	private static void createSimpleProject() throws CoreException
 	{
@@ -198,7 +198,7 @@ public class Area51Projects
 
 	/**
 	 * create modelica project 
-	 * @throws CoreException if any error occures while creating the project
+	 * @throws CoreException if any error occurs while creating the project
 	 */
 	private static void createModelicaProject() throws CoreException
 	{
