@@ -41,10 +41,10 @@
 
 package org.modelica.mdt.ui;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.modelica.mdt.core.IModelicaElement;
@@ -58,7 +58,7 @@ import org.modelica.mdt.ui.editor.SystemFileEditorInput;
 
 /**
  * Implement the factory that can recreate modelica elements from
- * mementos. Used to provide persistansy across platform sessions.
+ * mementos. Used to provide persistence across platform sessions.
  */
 public class ModelicaElementFactory implements IElementFactory
 {
