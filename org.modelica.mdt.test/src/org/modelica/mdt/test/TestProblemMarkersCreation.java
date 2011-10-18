@@ -155,8 +155,8 @@ public class TestProblemMarkersCreation extends TestCase
 	private static IFile unProblematicModel;
 	
 	/* 
-	 * flags that tell that a resouce change event have been
-	 * received for the resp. file and checks have been made on them 
+	 * flags that tell that a resource change event have been
+	 * received for the respective file and checks have been made on them 
 	 */
 	public boolean problematicModelChecked = false;
 	public boolean unProblematicModelChecked = false;
