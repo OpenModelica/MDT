@@ -136,7 +136,7 @@ public class MIParser {
 			StringBuffer token = new StringBuffer(st.nextToken());
 
 			// Fetch the Token/Id
-			if (token.length() > 0 && Character.isDigit(token.charAt(0))) {
+			if (token.length() > 0 && Character.isDigit(token.charAt(0)) && !isDouble(token.toString())) {
 				int i = 1;
 				while (i < token.length() && Character.isDigit(token.charAt(i))) {
 					i++;
@@ -192,6 +192,21 @@ public class MIParser {
 		mi.setMIOOBRecords(bands);
 		mi.setMIResultRecord(rr);
 		return mi;
+	}
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	private boolean isDouble(String str) {
+		// TODO Auto-generated method stub
+		try {
+			Double.parseDouble(str);
+			return true;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return false;
+		}
 	}
 
 	/**

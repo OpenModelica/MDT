@@ -542,8 +542,9 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
+		suspended(DebugEvent.CLIENT_REQUEST);
 		try {
-			int result = getGDBDebugTarget().getMISession().interruptInferior(getGDBDebugTarget());
+			int result = getGDBDebugTarget().getMISession().interruptInferior();
 			if (result != 0) {
 				MDTDebugCorePlugin.log(null, new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0, 
 						"Unable to interrupt the running program.", null)));
@@ -558,7 +559,6 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
 		}
-		suspended(DebugEvent.CLIENT_REQUEST);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()

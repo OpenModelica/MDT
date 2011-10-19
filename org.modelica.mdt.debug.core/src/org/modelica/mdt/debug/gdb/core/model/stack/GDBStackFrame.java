@@ -112,16 +112,18 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		fLineNumber = fFrame.getLine();
 		fStartChar = -1;
 		fEndChar = -1;
-		/* for .mo files we have function names concatenated with file name like _Main_main but other files are normal
-		 * so in order to get the function name for .mo file we need to do some manipulations
-		 */
-		
+		/* for .mo files we have function names concatenated with file name like _Main_main
+		 * but other files are normal so in order to get the function name for .mo file
+		 * we need to do some manipulations
+		 */		
 		if (GDBHelper.isCFile(fFrame.getFile())) {
 			fName = fFrame.getFunction();
 		} else {
-			String[] fileName = fFileName.split("\\.");
-			int beginIndex = fileName[0].length() + 2;
-			fName = fFrame.getFunction().substring(beginIndex);
+			fName = fFrame.getFunction().substring(1);
+			// if the names are converted to hex values
+			if (fName.startsWith("_omcQuot_")) {
+				fName = GDBHelper.omcHexToString(fName);
+			}
 		}
 	}
 
@@ -179,8 +181,8 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		 */
 		displayName = miArg.getName().substring(1, miArg.getName().length());
 		// based on the modelica type create the specific variable.
-		VariableHelper.createVariable(this, miArg.getName(), displayName, miArg.getType(),
-				referenceType, null, null, fGDBVariables);
+		VariableHelper.createVariable(this, miArg.getName(), displayName, miArg.getType(), referenceType,
+				null, null, fGDBVariables);
 	}
 
 	/**

@@ -69,33 +69,37 @@ public class GDBSourcePathComputerDelegate implements ISourcePathComputerDelegat
 		String path = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String) null);
 		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(path));
 		ISourceContainer sourceContainer = null;
-		if (path != null) {
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
-			if (resource == null) 
-			{
-				// try via the file!
-				resource = ResourcesPlugin.getWorkspace().getRoot().findMember(f.getProjectRelativePath());
-			}
-			if (resource != null) {
-				IContainer container = resource.getProject();
-				if (container.getType() == IResource.PROJECT) {
-					sourceContainer = new ProjectSourceContainer((IProject) container, false);
-				} else if (container.getType() == IResource.FOLDER) {
-					sourceContainer = new FolderSourceContainer(container, false);
+		try {
+			if (path != null) {
+				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
+				if (resource == null) 
+				{
+					// try via the file!
+					resource = ResourcesPlugin.getWorkspace().getRoot().findMember(f.getProjectRelativePath());
+				}
+				if (resource != null) {
+					IContainer container = resource.getProject();
+					if (container.getType() == IResource.PROJECT) {
+						sourceContainer = new ProjectSourceContainer((IProject) container, false);
+					} else if (container.getType() == IResource.FOLDER) {
+						sourceContainer = new FolderSourceContainer(container, false);
+					}
+				}
+				else if (f != null)
+				{
+					IContainer container = f.getProject();
+					if (container.getType() == IResource.PROJECT) {
+						sourceContainer = new ProjectSourceContainer((IProject) container, false);
+					} else if (container.getType() == IResource.FOLDER) {
+						sourceContainer = new FolderSourceContainer(container, false);
+					}
 				}
 			}
-			else
-			{
-				IContainer container = f.getProject();
-				if (container.getType() == IResource.PROJECT) {
-					sourceContainer = new ProjectSourceContainer((IProject) container, false);
-				} else if (container.getType() == IResource.FOLDER) {
-					sourceContainer = new FolderSourceContainer(container, false);
-				}				
+		} catch (Exception e) {}
+		finally {
+			if (sourceContainer == null) {
+				sourceContainer = new WorkspaceSourceContainer();
 			}
-		}
-		if (sourceContainer == null) {
-			sourceContainer = new WorkspaceSourceContainer();
 		}
 		return new ISourceContainer[] { sourceContainer };
 	}

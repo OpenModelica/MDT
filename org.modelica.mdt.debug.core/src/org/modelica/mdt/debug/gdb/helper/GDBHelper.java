@@ -30,6 +30,8 @@
  */
 package org.modelica.mdt.debug.gdb.helper;
 
+import java.io.UnsupportedEncodingException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
@@ -116,4 +118,25 @@ public class GDBHelper {
 		return listType.substring(beginIndex + 1, endIndex);
 	}
 	
+	/**
+	 * Converts OMC hex string to normal java string with utf-8 encoding
+	 * @param hexString
+	 * @return javaString
+	 */
+	public static String omcHexToString(String hexString) {
+		String hex = hexString.substring(9);					// since the hex value starts with _omcQuot_
+		
+		byte[] bytes = new byte[hex.length() / 2];
+		for (int i = 0; i < bytes.length; i++) {
+		   bytes[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
+		}
+
+		try {
+			return new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return hexString;
+	}
 }

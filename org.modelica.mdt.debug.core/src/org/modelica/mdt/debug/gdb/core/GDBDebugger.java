@@ -65,16 +65,17 @@ public class GDBDebugger {
 	 * @param debugTargetCommandLineArguments
 	 * @param debugTargetWorkDirectory
 	 * @param debugTargetGDBPath
+	 * @param environmentVars 
 	 * @throws MIException 
 	 * @throws IOException 
 	 */
 	public GDBDebugger(String debugTargetProgram,
 			String debugTargetCommandLineArguments,
-			String debugTargetWorkDirectory, String debugTargetGDBPath) throws CoreException, MIException, IOException {
+			String debugTargetWorkDirectory, String debugTargetGDBPath, String[] environmentVars) throws CoreException, MIException, IOException {
 		// TODO Auto-generated constructor stub
 		// start the GDB Process
-		startGDBProcess(debugTargetProgram, debugTargetCommandLineArguments,
-				debugTargetWorkDirectory, debugTargetGDBPath);
+		startGDBProcess(debugTargetProgram, debugTargetCommandLineArguments, debugTargetWorkDirectory,
+				debugTargetGDBPath, environmentVars);
 		// create the MI Session for communication with GDB
 		createMISession();
 	}
@@ -97,11 +98,11 @@ public class GDBDebugger {
 	 * @param debugTargetCommandLineArguments
 	 * @param debugTargetWorkDirectory
 	 * @param debugTargetGDBPath
+	 * @param environmentVars 
 	 * @throws CoreException 
 	 */
-	private void startGDBProcess(String debugTargetProgram,
-			String debugTargetCommandLineArguments,
-			String debugTargetWorkDirectory, String debugTargetGDBPath) throws CoreException {
+	private void startGDBProcess(String debugTargetProgram, String debugTargetCommandLineArguments,
+			String debugTargetWorkDirectory, String debugTargetGDBPath, String[] environmentVars) throws CoreException {
 		// TODO Auto-generated method stub
 		String gdb = getGDBPath(debugTargetGDBPath);
 		if (gdb == null || gdb.length() == 0) {
@@ -132,7 +133,7 @@ public class GDBDebugger {
 			for (String x : extraArgs) argList.add(x);
 		}
 		String[] args = (String[])argList.toArray(new String[argList.size()]);
-		fGDBProcess = DebugPlugin.exec(args, new File(debugTargetWorkDirectory), null);
+		fGDBProcess = DebugPlugin.exec(args, new File(debugTargetWorkDirectory), environmentVars);
 	}
 
 	/**

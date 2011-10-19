@@ -66,7 +66,11 @@ public class VariableHelper {
 			String displayName, String type, String referenceType, String actualType,
 			String voidPointer, List<GDBVariable> variablesList) {
 		// TODO Auto-generated method stub
-		// create core variables Real, String, Integere, Boolean
+		// create core variables Real, String, Integer, Boolean
+		// if the names are converted to hex values
+		if (displayName.startsWith("_omcQuot_")) {
+			displayName = GDBHelper.omcHexToString(displayName);
+		}
 		if (referenceType.equals(GDBHelper.STRING) || referenceType.equals(GDBHelper.REAL) ||
 			referenceType.equals(GDBHelper.BOOLEAN) || referenceType.equals(GDBHelper.INTEGER)) {
 			variablesList.add(new GDBCoreVariable(gdbStackFrame, name, displayName, type,

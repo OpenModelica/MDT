@@ -45,13 +45,9 @@ import java.util.Observable;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
-import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.command.Command;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIGDBExit;
@@ -63,7 +59,6 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIGDBShowInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIParser;
 import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
-import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 
@@ -707,31 +702,29 @@ public class MISession extends Observable {
 
 	/**
 	 * Try to interrupt the inferior
-	 * @param gdbDebugTarget 
 	 * @return 
 	 * @throws CoreException 
 	 * @throws IOException 
 	 * @throws InterruptedException 
 	 * 
 	 */
-	public int interruptInferior(GDBDebugTarget gdbDebugTarget) throws CoreException, IOException, InterruptedException {
+	public int interruptInferior() throws CoreException, IOException, InterruptedException {
 		// TODO Auto-generated method stub
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			return interruptInferiorWindows(gdbDebugTarget);
+			return interruptInferiorWindows();
 		} else {
-			return interruptInferiorLinux(gdbDebugTarget);
+			return interruptInferiorLinux();
 		}
 	}
 
 	/**
 	 * On Linux we try kill -SIGINT pid to interrupt the inferior.
-	 * @param gdbDebugTarget
 	 * @return
 	 * @throws CoreException 
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	private int interruptInferiorLinux(GDBDebugTarget gdbDebugTarget) throws CoreException, InterruptedException, IOException {
+	private int interruptInferiorLinux() throws CoreException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
 		ArrayList<String> argList = new ArrayList<String>();
 		argList.add("kill");
@@ -746,21 +739,16 @@ public class MISession extends Observable {
 
 	/**
 	 * On Windows we use the BreakProcess program to raise the SIGTRAP signal.
-	 * @param gdbDebugTarget
 	 * @return
 	 * @throws CoreException 
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	private int interruptInferiorWindows(GDBDebugTarget gdbDebugTarget) throws CoreException, InterruptedException, IOException {
+	private int interruptInferiorWindows() throws CoreException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		ILaunchConfiguration configuration = gdbDebugTarget.getLaunch().getLaunchConfiguration();
-		String debugTargetProgram = configuration.getAttribute(IMDTConstants.ATTR_MDT_PROGRAM, (String)null);
-		IPath progPath = new Path(debugTargetProgram);
-		progPath = progPath.removeLastSegments(1);
-		
+		String openModelicaHome = System.getenv("OPENMODELICAHOME");
 		ArrayList<String> argList = new ArrayList<String>();
-		argList.add(progPath + "/BreakProcess.exe");
+		argList.add(openModelicaHome + File.separator + "bin" + File.separator + "BreakProcess.exe");
 		argList.add(Integer.toString(getGDBInferior().getInferiorPID()));
 
 		String[] args = (String[])argList.toArray(new String[argList.size()]);

@@ -86,8 +86,9 @@ public class GDBLaunchDelegate extends LaunchConfigurationDelegate {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) 
 		{
 			try {
-				GDBDebugger gdbDebugger = new GDBDebugger(debugTargetProgram, debugTargetCommandLineArguments,
-						debugTargetWorkDirectory, debugTargetGDBPath);
+				GDBDebugger gdbDebugger = new GDBDebugger(debugTargetProgram,
+						debugTargetCommandLineArguments, debugTargetWorkDirectory, debugTargetGDBPath,
+						DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration));
 				//IProcess process = DebugPlugin.newProcess(launch, gdbDebugger.getMISession().getSessionProcess(), debugTargetProgram);
 				IProcess process = DebugPlugin.newProcess(launch, gdbDebugger.getMISession().getGDBInferior(), debugTargetProgram);
 				// create a debug target
