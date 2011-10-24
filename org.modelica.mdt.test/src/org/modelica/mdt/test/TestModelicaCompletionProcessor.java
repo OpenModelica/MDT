@@ -126,7 +126,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 			if (p != null) 
 			{
 				IEditorPart editorPart = 
-						p.openEditor(input, "org.modelica.mdt.editor", true);
+						p.openEditor(input, "org.modelica.mdt.ui.editor", true);
 	
 				return editorPart;
 			}
@@ -232,10 +232,10 @@ public class TestModelicaCompletionProcessor extends TestCase
 		boolean foundSpeedProp = false;
 		boolean foundSpringDamperProp = false;
 		
-		for (ICompletionProposal proposal : props)
-		{
-			if (proposal.getDisplayString().startsWith("Speed"))
-			{
+		for (ICompletionProposal proposal : props) {
+			String proposalDisplayString = proposal.getDisplayString(); System.out.println("proposalDisplayString: " + proposalDisplayString);
+			
+			if (proposalDisplayString.startsWith("Speed")) {
 				proposal.apply(doc);
 				result = doc.get(383, "Mechanics.Rotational.Speed".length());
 				assertEquals("unexpected result of applying proposal",
@@ -243,8 +243,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 				foundSpeedProp = true;
 				undoManager.undo();
 			}
-			else if (proposal.getDisplayString().startsWith("SpringDamper"))
-			{
+			else if (proposalDisplayString.startsWith("SpringDamper")) {
 				proposal.apply(doc);
 				result = doc.get(383, 
 						"Mechanics.Rotational.SpringDamper".length());
@@ -254,12 +253,10 @@ public class TestModelicaCompletionProcessor extends TestCase
 				undoManager.undo();
 			}
 		}
-		assertTrue("did not found proposal for the Mechanics.Rotational.Speed", 
-				foundSpeedProp);
-		assertTrue("did not found proposal for the Mechanics.Rotational.SpringDamper", 
-				foundSpringDamperProp);
-		
-		
+
+		assertTrue("did not found proposal for the Mechanics.Rotational.Speed", foundSpeedProp);
+		assertTrue("did not found proposal for the Mechanics.Rotational.SpringDamper", foundSpringDamperProp);
+
 		/* type 'Modelica.Math.' */
 		editor.doRevertToSaved();
 		doc.replace(383, 0, "Modelica.Math."); 
@@ -267,7 +264,6 @@ public class TestModelicaCompletionProcessor extends TestCase
 		/* get proposals at the end of 'Modelica.Math.' */
 		props = compProc.computeCompletionProposals(textViewer, 397);
 		checkProposalsOrder(props);
-		
 
 		/* 
 		 * we are expecting a proposal for among others Modelica.Math.asin,
@@ -278,11 +274,8 @@ public class TestModelicaCompletionProcessor extends TestCase
 		boolean foundModelicaMathExpProp = false;
 		boolean foundModelicaMathLogProp = false;
 		
-		for (ICompletionProposal proposal : props)
-		{
-			
-			if (proposal.getDisplayString().startsWith("asin"))
-			{
+		for (ICompletionProposal proposal : props) {
+			if (proposal.getDisplayString().startsWith("asin")) {
 				/* must be Modelica.Math.asin proposal */
 				proposal.apply(doc);
 				result = doc.get(383, "Modelica.Math.asin".length());
@@ -291,8 +284,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 				foundModelicaMathAsinProp = true;
 				undoManager.undo();
 			}
-			else if (proposal.getDisplayString().startsWith("cos"))
-			{
+			else if (proposal.getDisplayString().startsWith("cos")) {
 				/* must be Modelica.Math.cos proposal */
 				proposal.apply(doc);
 				result = doc.get(383, "Modelica.Math.cos".length());
@@ -301,8 +293,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 				foundModelicaMathCosProp = true;
 				undoManager.undo();
 			}
-			else if (proposal.getDisplayString().startsWith("exp"))
-			{
+			else if (proposal.getDisplayString().startsWith("exp")) {
 				/* must be Modelica.Math.exp proposal */
 				proposal.apply(doc);
 				result = doc.get(383, "Modelica.Math.exp".length());
@@ -311,8 +302,7 @@ public class TestModelicaCompletionProcessor extends TestCase
 				foundModelicaMathExpProp = true;
 				undoManager.undo();
 			}			
-			else if (proposal.getDisplayString().startsWith("log"))
-			{
+			else if (proposal.getDisplayString().startsWith("log")) {
 				/* must be Modelica.Math.log proposal */
 				proposal.apply(doc);
 				result = doc.get(383, "Modelica.Math.log".length());
@@ -323,14 +313,10 @@ public class TestModelicaCompletionProcessor extends TestCase
 			}			
 		}
 		
-		assertTrue("did not found proposal for the 'Modelica.Math.asin'", 
-				foundModelicaMathAsinProp);
-		assertTrue("did not found proposal for the 'Modelica.Math.cos'", 
-				foundModelicaMathCosProp);
-		assertTrue("did not found proposal for the 'Modelica.Math.exp'", 
-				foundModelicaMathExpProp);
-		assertTrue("did not found proposal for the 'Modelica.Math.log'", 
-				foundModelicaMathLogProp);
+		assertTrue("did not found proposal for the 'Modelica.Math.asin'", foundModelicaMathAsinProp);
+		assertTrue("did not found proposal for the 'Modelica.Math.cos'", foundModelicaMathCosProp);
+		assertTrue("did not found proposal for the 'Modelica.Math.exp'", foundModelicaMathExpProp);
+		assertTrue("did not found proposal for the 'Modelica.Math.log'", foundModelicaMathLogProp);
 		
 		/* 
 		 * test completion proposals in 'the middle of nowhere'
@@ -351,7 +337,6 @@ public class TestModelicaCompletionProcessor extends TestCase
 		
 		for (ICompletionProposal proposal : props)
 		{
-			
 			if (proposal.getDisplayString().startsWith("Blocks"))
 			{
 				proposal.apply(doc);

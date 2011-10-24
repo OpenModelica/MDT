@@ -314,7 +314,7 @@ public class TestModelicaRoot extends TestCase
 			project.create(null);
 			project.open(null);
 		}
-		
+		project = workspaceRoot.getProject(PROJECT_NAME_2);
 		/*
 		 * create a regular projects which remains closed
 		 */
@@ -329,8 +329,6 @@ public class TestModelicaRoot extends TestCase
 		
 		assertTrue(Collections.addAll(simpleProjects,
 				PROJECT_NAME_2, PROJECT_NAME_3));
-
-
 	}
 	
 	/**

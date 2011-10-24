@@ -41,6 +41,8 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElement;
@@ -76,8 +78,7 @@ public class TestTraversingPackages extends TestCase
 		
 	}
 	
-	public void testTraverse() throws CoreException, CompilerException
-	{
+	public void testTraverse() throws CoreException, CompilerException {
 		IModelicaClass root_package = null;
 		IModelicaClass childless_package = null;
 		IModelicaSourceFile root_package_model = null;
@@ -100,23 +101,19 @@ public class TestTraversingPackages extends TestCase
 		 * traverse children of project_root 
 		 */
 		String name;
-		for (Object elm : project_root.getChildren())
-		{
-			if (elm instanceof IFile)
-			{
+		Collection<? extends IModelicaElement> projectRootChildren = project_root.getChildren();
+		for (Object elm : projectRootChildren) {
+			if (elm instanceof IFile) {
 				name = ((IFile)elm).getName();
 			}
-			else
-			{
+			else {
 				name = ((IModelicaElement)elm).getElementName();
 			}
 
-			if (name.equals("root_package"))
-			{
+			if (name.equals("root_package")) {
 				root_package = (IModelicaClass)elm;
 			}
-			else if (name.equals("childless_package"))
-			{
+			else if (name.equals("childless_package")) {
 				childless_package = (IModelicaClass)elm;
 			}
 		}
