@@ -85,12 +85,11 @@ public class ModelicaRoot implements IModelicaRoot, IResourceChangeListener
 	/**
 	 * @see org.modelica.mdt.core.IModelicaRoot#getProjects()
 	 */
-	public IModelicaProject[] getProjects() 
-	{
-		IModelicaProject[] res = new IModelicaProject[projectsTable.values().size()];
-		projectsTable.values().toArray(res);
+	public IModelicaProject[] getProjects() {
+		Collection<IModelicaProject> projects = projectsTable.values();
+		IModelicaProject[] projectsArray = projects.toArray(new IModelicaProject[0]);
 
-		return res;	
+		return projectsArray;
 	}
 	
 	public IModelicaProject getProject(String name)
