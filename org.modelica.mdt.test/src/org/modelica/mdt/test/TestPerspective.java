@@ -41,116 +41,115 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
 
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.eclipse.ui.wizards.IWizardRegistry;
 
 import junit.framework.TestCase;
 
-public class TestPerspective extends TestCase 
-{
-	private Vector<String> wizardShortcuts = new Vector<String>(4);
-	private Vector<String> showViewShortcuts = new Vector<String>(2);
+public class TestPerspective extends TestCase { 
+	private Vector<String> wizardShortcuts = new Vector<String>();
+	private Vector<String> showViewShortcuts = new Vector<String>();
 	
 	@Override
-	protected void setUp() throws Exception 
-	{
+	protected void setUp() throws Exception {
 		/*
-		 * init vector with expected new wizards shortcuts in
-		 * modelica prespective
+		 * Initialize the vector with expected new wizard shortcuts in the Modelica perspective.
 		 */				
 		assertTrue(Collections.addAll(wizardShortcuts,
-				/* modelica wizards */
-				"org.modelica.mdt.NewClassWizard",
-				"org.modelica.mdt.NewPackageWizard",
-				/* generic wizards */
+				/* Modelica wizards. */
+				org.modelica.mdt.ui.constants.Constants.MDT_UI_WIZARD_NEW_CLASS,
+				org.modelica.mdt.ui.constants.Constants.MDT_UI_WIZARD_NEW_PACKAGE,
+				org.modelica.mdt.ui.constants.Constants.MDT_UI_WIZARD_NEW_PROJECT,
+				/* Generic wizards. */
 				"org.eclipse.ui.wizards.new.folder",
 				"org.eclipse.ui.wizards.new.file"));
-		
+
 		/*
-		 * init vector with expected new wizards shortcuts in
-		 * modelica prespective
+		 * Initialize the vector with expected new view shortcuts in the Modelica perspective.
 		 */				
 		assertTrue(Collections.addAll(showViewShortcuts,
-				/* modelica views */
-				"org.modelica.mdt.ProjectsView",
-				/* generic views */
+				/* Modelica views. */
+				org.modelica.mdt.ui.constants.Constants.MDT_UI_VIEW_PROJECTS,
+				org.modelica.mdt.ui.constants.Constants.MDT_UI_VIEW_CONSOLE,
+				/* Generic views. */
 				IPageLayout.ID_PROBLEM_VIEW));
 	}
-	
+
+
 	/**
-	 * perform tests on modelica perspective
+	 * perform tests on Modelica perspective
 	 * @throws WorkbenchException
 	 */
-	public void testModelicaPerspective() throws WorkbenchException
-	{
+	public void testModelicaPerspective() throws WorkbenchException {
 		IWorkbench workbench = PlatformUI.getWorkbench(); 
 		
 		/*
-		 * open modelica perspective
+		 * Open Modelica perspective.
 		 */
 		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow(); 
-		workbench.showPerspective("org.modelica.mdt.perspective", window); 
+		workbench.showPerspective(org.modelica.mdt.ui.constants.Constants.MDT_UI_PERSPECTIVE_MODELICA, window); 
 		
-		IWorkbenchPage page = window.getPages()[0];
+		IWorkbenchPage workbenchPage = window.getPages()[0];
 
 		/*
-		 * check that all 'new wizards' shortcuts are installed
+		 * Check that all 'new wizards' shortcuts are installed.
 		 */
-		Vector<String> presentWizShortcuts = new Vector<String>();
-		
-		for (String scut : page.getNewWizardShortcuts())
-		{
-			presentWizShortcuts.addElement(scut);
-		}
-		assertTrue(presentWizShortcuts.containsAll(wizardShortcuts));
-				
-		/*
-		 * check that all 'show view' shortcuts are installed
-		 */
-		Vector<String> presentShowViewShortcuts = new Vector<String>();		
-		for (String scut : page.getShowViewShortcuts())
-		{
-			presentShowViewShortcuts.addElement(scut);
-		}
-		assertTrue(presentShowViewShortcuts.containsAll(showViewShortcuts));
-		
-		/*
-		 * check that all views are present
-		 */
-		assertNotNull(page.findView("org.modelica.mdt.ProjectsView"));
-		assertNotNull(page.findView(IPageLayout.ID_PROBLEM_VIEW));
+		String[] actualWizShortcuts = workbenchPage.getNewWizardShortcuts();
 
+		assertTrue(Arrays.asList(actualWizShortcuts).containsAll(wizardShortcuts));		
+
+		/*
+		 * Check that all 'show view' shortcuts are installed.
+		 */
+		String[] actualShowViewShortcuts = workbenchPage.getShowViewShortcuts();
+
+		assertTrue(Arrays.asList(actualShowViewShortcuts).containsAll(showViewShortcuts));
+
+		/*
+		 * Check that all views are present.
+		 */
+		IViewPart projectsView = workbenchPage.findView(org.modelica.mdt.ui.constants.Constants.MDT_UI_VIEW_PROJECTS);
+		IViewPart problemView = workbenchPage.findView(IPageLayout.ID_PROBLEM_VIEW);
+		
+		assertNotNull(projectsView);
+		assertNotNull(problemView);
 	}
+
+
 	/**
-	 * perform tests on modelica new wizards catagory
+	 * Perform tests on Modelica new wizards category.
 	 * @throws WorkbenchException
 	 */
-	
-	public void testModelicaNewWizardsCatagory()
-	{
-		IWizardCategory category = 
-			PlatformUI.getWorkbench().getNewWizardRegistry().
-			  findCategory("org.modelica.mdt.ModelicaCategory");
+	public void testModelicaNewWizardsCatagory() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWizardRegistry wizardRegistry = workbench.getNewWizardRegistry();
+		
+		IWizardCategory category = wizardRegistry.findCategory(org.modelica.mdt.ui.constants.Constants.MDT_UI_MODELICA_CATEGORY);
 				
-		assertNotNull("Modelica New Wizards catagory not found",  category);
-		assertEquals("Modelica New Wizards catagory labeled unexpectedly",
-				"Modelica", category.getLabel());
+		assertNotNull("Modelica New Wizards category not found", category);
 		
-		assertNotNull("New Project Wizard not found", 
-				category.findWizard("org.modelica.mdt.NewProjectWizard"));
+		String actualCategoryLabel = category.getLabel();
 		
-		assertNotNull("New Class Wizard not found", 
-				category.findWizard("org.modelica.mdt.NewClassWizard"));
+		assertEquals("Modelica New Wizards category labeled unexpectedly", "Modelica", actualCategoryLabel);
+		
+		IWizardDescriptor wizDescNewProj = category.findWizard(org.modelica.mdt.ui.constants.Constants.MDT_UI_WIZARD_NEW_PROJECT);
+		
+		assertNotNull("New Project Wizard not found", wizDescNewProj);
 
+		IWizardDescriptor wizDescNewClass = category.findWizard(org.modelica.mdt.ui.constants.Constants.MDT_UI_WIZARD_NEW_CLASS);
+
+		assertNotNull("New Class Wizard not found", wizDescNewClass);
 	}
-
-
 }

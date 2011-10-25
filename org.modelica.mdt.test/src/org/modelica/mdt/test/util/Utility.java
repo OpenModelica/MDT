@@ -59,6 +59,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
@@ -345,5 +346,17 @@ public class Utility
 				"' found in folder '" + folder.getElementName() + "'");  
 		return null; /* this is not happening */
 
+	}
+	
+	public static void listAllProjects() {
+		IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
+		
+		IModelicaProject[] allProjects = modelicaRoot.getProjects();
+		
+		for (IModelicaProject modelicaProject : allProjects) {
+			String name = modelicaProject.getElementName();
+			
+			System.out.println(name);
+		}
 	}
 }

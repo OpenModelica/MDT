@@ -127,17 +127,12 @@ public class TestNewClassWizard extends TestCase
 				
 	}
 	
-	public void openWizardAndFetchWidgets()
-	{
+	public void openWizardAndFetchWidgets() {
 		/*
 		 * pop-up the wizard
 		 */
-		IWizard wizard = 
-			Utility.openWizard("org.modelica.mdt.NewClassWizard",
-					fileDestination);		
+		IWizard wizard = Utility.openWizard(org.modelica.mdt.ui.constants.Constants.MDT_UI_WIZARD_NEW_CLASS, fileDestination);		
 		assertFalse(wizard.canFinish());
-
-		
 		
 		/* fetch widgets */
 		className = 
