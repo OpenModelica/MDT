@@ -49,6 +49,9 @@ import java.util.concurrent.Semaphore;
 import junit.framework.Assert;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -347,7 +350,26 @@ public class Utility
 		return null; /* this is not happening */
 
 	}
-	
+
+
+	public static boolean isAutoBuilding() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		
+		boolean isAutoBuilding = workspace.isAutoBuilding();
+		
+		return isAutoBuilding;
+	}
+
+
+	public static void setAutobuilding(boolean autoBuilding) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		
+		IWorkspaceDescription workspaceDescription = workspace.getDescription();
+		
+		workspaceDescription.setAutoBuilding(autoBuilding);
+	}
+
+
 	public static void listAllProjects() {
 		IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
 		

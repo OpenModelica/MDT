@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -48,6 +49,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -64,32 +66,28 @@ import junit.framework.TestCase;
  * 
  * @author Elmir Jagudin
  */
-public class TestModelicaFolder extends TestCase 
-{
+public class TestModelicaFolder extends TestCase {
 	/*
 	 * the test subject
 	 * the root folder of Area51 modelica project
 	 */
-	private IModelicaFolder rootFolder;
-	
+	private IModelicaFolder projectRootFolder;
+
 	/* collection of expected children */
-	private Vector<String> expectedChildren = new Vector<String>(10);	
-	private Vector<String> expectedRootFolderChildren = new Vector<String>(1);
-	
+	private Vector<String> expectedChildren = new Vector<String>();	
+	private Vector<String> expectedRootFolderChildren = new Vector<String>();
+
 	/* expected modelica file names in package_look_alike folder */
-	private Vector<String> expectedPackageLookAlikeChildren 
-		= new Vector<String>(1);
-	
-	
+	private Vector<String> expectedPackageLookAlikeChildren = new Vector<String>();
+
+
 	@Override
-	protected void setUp() throws Exception
-	{
+	protected void setUp() throws Exception {
 		Area51Projects.createProjects();
-		
-		rootFolder = 
-			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME).
-				getRootFolder();
-		
+
+		IModelicaProject project = Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME); 
+		projectRootFolder = project.getRootFolder();
+
 		/*
 		 * setup expected collections
 		 */
@@ -97,29 +95,31 @@ public class TestModelicaFolder extends TestCase
 				".project", "empty_file", "README.txt", "empty_folder", 
 				"root_folder", "package_look_alike", "root_model.mo", 
 				"nested_models.mo", "root_package", "childless_package"));
-				
-		assertTrue(Collections.addAll(expectedRootFolderChildren,
-				"hej_hopp"));
 
-		assertTrue(Collections.addAll(expectedPackageLookAlikeChildren,
-				"package.mo"));
+		assertTrue(Collections.addAll(expectedRootFolderChildren, "hej_hopp"));
+
+		/* 
+		 * FIXME: We are currently not creating the empty file package.mo inside package_look_alike
+		 * because it makes OMC to freeze. When this problem has been fixed, we can run this test
+		 * again.
+		 */
+		//assertTrue(Collections.addAll(expectedPackageLookAlikeChildren, "package.mo"));
 	}
+
 
 	/**
 	 * test ModelicaFolder.hasChildren()
 	 */
-	public void testHasChildren()
-	{
-		try 
-		{
-			assertTrue(rootFolder.hasChildren());
+	public void testHasChildren() {
+		try {
+			boolean hasChildren = projectRootFolder.hasChildren();
+			assertTrue(hasChildren);
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			fail("exception thrown " + e.getMessage());
 		}
 	}
-		
+
 
 	/**
 	 * test ModelicaFolder.getChildren() method
@@ -127,82 +127,104 @@ public class TestModelicaFolder extends TestCase
 	 * 
 	 */
 	public void testGetChildren() 
-		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException, CompilerInstantiationException
-	{
+			throws ConnectException, UnexpectedReplyException, InvocationError, CoreException, CompilerInstantiationException {
 		IModelicaFolder root_folder = null;
 		IModelicaFolder empty_folder = null;
 		IModelicaFolder package_look_alike = null;
-		
-		
-		String name = "";
-		for (Object elm : rootFolder.getChildren())
-		{
-			
-			if (elm instanceof IFile)
-			{
+
+		Collection<? extends IModelicaElement> rootFolderChildren = projectRootFolder.getChildren();
+
+		for (IModelicaElement elm : rootFolderChildren) {
+			String name = null;
+
+			if (elm instanceof IFile) {
 				name = ((IFile)elm).getName();
 			}
-			else
-			{
-				name = ((IModelicaElement)elm).getElementName();
-			}
-			expectedChildren.remove(name);
-			
-			if (name.equals("root_folder"))
-			{
-				root_folder = (IModelicaFolder) elm;
-			}
-			else if (name.equals("empty_folder"))
-			{
-				empty_folder = (IModelicaFolder) elm;
-			}
-			else if (name.equals("package_look_alike"))
-			{
-				package_look_alike = (IModelicaFolder) elm;
+			else {
+				name = elm.getElementName();
 			}
 
-		}
-		assertTrue("could not find all expected children in the root folder",
-				expectedChildren.isEmpty());
-		
-		assertNotNull("root_folder element not found", root_folder);
-		assertNotNull("empty_folder element not found", empty_folder);
-		assertNotNull("package_look_alike element not found",
-				package_look_alike);
-		
-		for (Object elm : root_folder.getChildren())
-		{
-			if (elm instanceof IModelicaFile)
-			{
-				/* we only expect (looking for) files inside root_folder */
-				name = ((IModelicaFile)elm).getElementName();
-				expectedRootFolderChildren.remove(name);
+			boolean wasRemoved = expectedChildren.remove(name);
+
+			if (wasRemoved) {
+				System.out.println("Removed \"" + name + "\" from expectedChildren.");
+			}
+			else {
+				System.out.println("\"" + name + "\" was not present in expectedChildren.");
+			}
+
+			if (name.equals("root_folder")) {
+				root_folder = (IModelicaFolder)elm;
+			}
+			else if (name.equals("empty_folder")) {
+				empty_folder = (IModelicaFolder)elm;
+			}
+			else if (name.equals("package_look_alike")) {
+				package_look_alike = (IModelicaFolder)elm;
+			}
+			else {
+				System.out.println("\"" + name + "\" did not match \"root_folder\", \"empty_folder\", or \"package_look_alike\".");
 			}
 		}
-		assertTrue("could no find all expected files in root_folder",
-				expectedRootFolderChildren.isEmpty());
+
+		boolean expectedChildrenIsEmpty = expectedChildren.isEmpty();
+
+		assertTrue("could not find all expected children in the root folder", expectedChildrenIsEmpty);
+		assertNotNull("root_folder element not found", root_folder);
+		assertNotNull("empty_folder element not found", empty_folder);
+		assertNotNull("package_look_alike element not found", package_look_alike);
+
+		rootFolderChildren = root_folder.getChildren();
+
+		for (IModelicaElement elm : rootFolderChildren) {
+			if (elm instanceof IModelicaFile) {
+				/* we only expect (looking for) files inside root_folder */
+				String name = elm.getElementName();
+				boolean wasRemoved = expectedRootFolderChildren.remove(name);
+
+				if (wasRemoved) {
+					System.out.println("Removed \"" + name + "\" from expectedRootFolderChildren.");
+				}
+				else {
+					System.out.println("\"" + name + "\" was not present in expectedRootFolderChildren.");
+				}
+			}
+		}
+
+		boolean expectedRootFolderChildrenIsEmpty = expectedRootFolderChildren.isEmpty();
+
+		assertTrue("Could not find all expected files in root_folder.", expectedRootFolderChildrenIsEmpty);
 		
-		for (Object elm : package_look_alike.getChildren())
-		{
-			if (elm instanceof IModelicaSourceFile)
-			{
+		Collection<? extends IModelicaElement> packageLookAlikeChildren = package_look_alike.getChildren();
+
+		for (IModelicaElement elm : packageLookAlikeChildren) {
+			if (elm instanceof IModelicaSourceFile) {
 				/* 
 				 * we only expect (looking for) modelica files 
 				 * inside package_look_alike 
 				 */
-				name = ((IModelicaSourceFile)elm).getElementName();
-				expectedPackageLookAlikeChildren.remove(name);
+				String name = elm.getElementName();
+				boolean wasRemoved = expectedPackageLookAlikeChildren.remove(name);
+				
+				if (wasRemoved) {
+					System.out.println("Removed \"" + name + "\" from expectedPackageLookAlikeChildren.");
+				}
+				else {
+					System.out.println("\"" + name + "\" was not present in expectedPackageLookAlikeChildren.");
+				}
 			}
 		}
-		assertTrue("could no find all expected files in package_look_alike",
-				expectedPackageLookAlikeChildren.isEmpty());
 		
+		boolean expectedPackageLookAlikeChildrenIsEmpty = expectedPackageLookAlikeChildren.isEmpty();
+		
+		assertTrue("Could not find all expected files in package_look_alike", expectedPackageLookAlikeChildrenIsEmpty);
+
 		/*
 		 * test the empty_folder IS empty
 		 */
-		assertFalse("empty_folder not empty", empty_folder.hasChildren());
-		assertTrue("empty_folder returns children", 
-				empty_folder.getChildren().isEmpty());
+		boolean emptyFolderHasChildren = empty_folder.hasChildren();
+		assertFalse("empty_folder not empty", emptyFolderHasChildren);
+		boolean emptyFolderGetChildrenIsEmpty = empty_folder.getChildren().isEmpty();
+		assertTrue("empty_folder returns children", emptyFolderGetChildrenIsEmpty);
 	}
 }
