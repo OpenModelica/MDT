@@ -56,7 +56,7 @@ public interface ISourceRegion
 	/**
 	 * @author Adrian Pop
 	 * @param <code>ISourceRegion otherRegion</code>
-	 * @return <code>true</code> if this region contains the region gived as parameter
+	 * @return <code>true</code> if this region contains the region given as parameter
 	 * @since 0.6.8
 	 */	
 	public boolean contains(ISourceRegion otherRegion);
