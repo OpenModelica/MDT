@@ -44,6 +44,7 @@ package org.modelica.mdt.test.util;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.concurrent.Semaphore;
 
 import junit.framework.Assert;
@@ -51,6 +52,7 @@ import junit.framework.Assert;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -62,10 +64,14 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaElement;
+import org.modelica.mdt.core.IModelicaExtends;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -351,7 +357,6 @@ public class Utility
 
 	}
 
-
 	public static boolean isAutoBuilding() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
@@ -360,7 +365,6 @@ public class Utility
 		return isAutoBuilding;
 	}
 
-
 	public static void setAutobuilding(boolean autoBuilding) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
@@ -368,7 +372,6 @@ public class Utility
 		
 		workspaceDescription.setAutoBuilding(autoBuilding);
 	}
-
 
 	public static void listAllProjects() {
 		IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
@@ -379,6 +382,68 @@ public class Utility
 			String name = modelicaProject.getElementName();
 			
 			System.out.println(name);
+		}
+	}
+	
+	public static void goThroughStdlib(Collection<? extends IModelicaElement> aList) {
+		if (aList == null) {
+			IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
+			
+			IStandardLibrary stdlib = modelicaRoot.getStandardLibrary(null);
+			
+			try {
+				aList = stdlib.getPackages();
+			}
+			catch (ConnectException e) {
+				e.printStackTrace();
+			}
+			catch (CompilerInstantiationException e) {
+				e.printStackTrace();
+			}
+		}
+
+		for (IModelicaElement elem : aList) {
+			try {
+				if (elem instanceof IModelicaClass) {
+					IModelicaClass cls = (IModelicaClass)elem;
+					String name = cls.getFullName();
+					
+					System.out.println("Considering " + name);
+					
+					boolean isEncapsulated = cls.isEncapsulated();
+					
+					if (isEncapsulated) {
+						System.out.println(name + " is indeed encapsulated!");
+					}
+					else {
+						//System.out.println(pkg.getFullName() + " is not encapsulated.");
+					}
+					
+					Collection<? extends IModelicaElement> children = cls.getChildren();
+					
+					if (children != null) {
+						goThroughStdlib(children);
+					}
+					else {
+						System.err.println("Weird, getChildren() returned null...");
+					}
+				}
+			}
+			catch (ConnectException e) {
+				e.printStackTrace();
+			}
+			catch (CompilerInstantiationException e) {
+				e.printStackTrace();
+			}
+			catch (UnexpectedReplyException e) {
+				e.printStackTrace();
+			}
+			catch (InvocationError e) {
+				e.printStackTrace();
+			}
+			catch (CoreException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
