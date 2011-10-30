@@ -366,53 +366,53 @@ public class Area51Projects {
 				"end broken_hepp;\n";
 
 		/* Version of broken_nested_models.mo without syntax errors: */
-		/*
-		"model broken_nested_models\n" +
-						"    import Modelica;\n" +
-						"    record hepp end hepp;\n" +
-						"    class foo\n" +
-						"        class bar\n" +
-						"          Real a;\n" +
-						"          Real b;\n" +
-						"          Real c;\n" +
-						"        equation\n" +
-						"          a = 0;\n" +
-						"          b = c;\n" +
-						"          c = 0;\n" +
-						"        end bar;\n" +
-						"    algorithm\n" +
-						"      a := 0;\n" +
-						"      b := 3;\n" +
-						"      c := 2;\n" +
-						"    end foo;\n" +
-						"end broken_nested_models;\n" +
-						"\n" +
-						"model bruuken_muu\n" +
-						"Real a;\n" +
-						"equation\n" +
-						"    x = 10;\n" +
-						"end bruuken_muu;\n" +
-						"\n" +
-						"model foobared\n" +
-						"    import Modelica;\n" +
-						"end foobared;\n" +
-						"\n\n" +
-						"record broken_hej\n" +
-						"    package ine_paketen\n" +
-						"    end ine_paketen;\n" +
-						"    class hejhej\n" +
-						"        class foo\n" +
-						"        end foo;\n" +
-						"    end hejhej;\n" +
-						"end broken_hej;\n" +
-						"\n\n\n" +
-						"package broken_hepp\n" +
-						"    package hopp\n" +
-						"    end hopp;\n" +
-						"    class hehehe\n" +
-						"    end hehehe;\n" +
-						"end broken_hepp;\n";
-		 */
+        /*
+		contents = "model broken_nested_models\n" +
+				"    import Modelica;\n" +
+				"    record hepp end hepp;\n" +
+				"    class foo\n" +
+				"        class bar\n" +
+				"          Real a;\n" +
+				"          Real b;\n" +
+				"          Real c;\n" +
+				"        equation\n" +
+				"          a = 0;\n" +
+				"          b = c;\n" +
+				"          c = 0;\n" +
+				"        end bar;\n" +
+				"    algorithm\n" +
+				"      a := 0;\n" +
+				"      b := 3;\n" +
+				"      c := 2;\n" +
+				"    end foo;\n" +
+				"end broken_nested_models;\n" +
+				"\n" +
+				"model bruuken_muu\n" +
+				"Real a;\n" +
+				"equation\n" +
+				"    x = 10;\n" +
+				"end bruuken_muu;\n" +
+				"\n" +
+				"model foobared\n" +
+				"    import Modelica;\n" +
+				"end foobared;\n" +
+				"\n\n" +
+				"record broken_hej\n" +
+				"    package ine_paketen\n" +
+				"    end ine_paketen;\n" +
+				"    class hejhej\n" +
+				"        class foo\n" +
+				"        end foo;\n" +
+				"    end hejhej;\n" +
+				"end broken_hej;\n" +
+				"\n\n\n" +
+				"package broken_hepp\n" +
+				"    package hopp\n" +
+				"    end hopp;\n" +
+				"    class hehehe\n" +
+				"    end hehehe;\n" +
+				"end broken_hepp;\n";
+        */
 
 		file.create(Utility.getByteStream(contents), true, null);
 
