@@ -41,11 +41,21 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
@@ -59,26 +69,21 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
-import junit.framework.TestCase;
-
 /**
  * Test various methods in org.modelica.mdt.internal.core.ModelicaProject
  */
-public class TestModelicaProject extends TestCase 
-{
+public class TestModelicaProject {
 	/* the test subject, Area51 modelica project */
 	private IModelicaProject project;
 
 	/* the names of the expected root packages in the area51 modelica project */
-	private Vector<String> expectedRootPackages = new Vector<String>(6);
+	private Vector<String> expectedRootPackages = new Vector<String>();
 
-	@Override
-	protected void setUp() throws Exception
-	{
+	@Before
+	public void setUp() throws Exception {
 		Area51Projects.createProjects();
 
-		project = 
-				Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
+		project = Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
 
 		assertTrue(Collections.addAll(expectedRootPackages,
 				"file_package1",
@@ -98,308 +103,150 @@ public class TestModelicaProject extends TestCase
 	}
 
 	/**
-	 * test (I)ModelciaProject.getPackage() method
+	 * test (I)ModelciaProject.getClass() method
 	 */
+	@Test
 	public void testGetClass() 
-			throws ConnectException, CompilerInstantiationException, 
-			UnexpectedReplyException, InvocationError, CoreException
-			{
+			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, InvocationError, CoreException, Exception {
 		/*
 		 * check that find existing packages works
-		 */		
-		IModelicaClass pkg;
+		 */
+		testGetClass("folder_package", "folder_package", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("folder_package");
-		assertNotNull("class not found", pkg);		
-		assertEquals("folder_package", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());
+		testGetClass("file_package1", "file_package1", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("file_package1");
-		assertNotNull("class not found", pkg);		
-		assertEquals("file_package1", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());
+		testGetClass("file_package2", "file_package2", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("file_package2");
-		assertNotNull("class not found", pkg);		
-		assertEquals("file_package2", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());		
+		testGetClass("childless_package", "childless_package", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("childless_package");
-		assertNotNull("class not found", pkg);		
-		assertEquals("childless_package", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());		
+		testGetClass("root_package", "root_package", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("root_package");
-		assertNotNull("class not found", pkg);		
-		assertEquals("root_package", pkg.getFullName());		
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());				
+		testGetClass("root_package.sub_package", "root_package.sub_package", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("root_package.sub_package");
-		assertNotNull("class not found", pkg);
-		assertEquals("root_package.sub_package", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());				
+		testGetClass("root_package.sub_package.leaf_package", "root_package.sub_package.leaf_package", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("root_package.sub_package.leaf_package");
-		assertNotNull("class not found", pkg);
-		assertEquals("root_package.sub_package.leaf_package",
-				pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());				
+		testGetClass("root_package.root_package_model", "root_package.root_package_model", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("broken_nested_models");
-		assertNotNull("class not found", pkg);
-		assertEquals("broken_nested_models", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("components_bananza", "components_bananza", IModelicaClass.Restriction.MODEL);
 
-		//TODO this problem must be discussed with pelab-modelica first
-		// the root_package_model.mo is loaded before package.mo and omc
-		// does not handle that
-		//		pkg = project.getClass("root_package.root_package_model");
-		//		assertNotNull("class not found", pkg);
-		//		assertEquals("root_package.root_package_model",
-		//				pkg.getFullName());
-		//		assertEquals("wrong type of restriction",
-		//				IModelicaClass.Type.PACKAGE, pkg.getRestrictionType());				
+		testGetClass("components_bananza.a_package", "components_bananza.a_package", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("broken_nested_models.foo.bar");
-		assertNotNull("class not found", pkg);		
-		assertEquals("broken_nested_models.foo.bar", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("components_bananza.a_block", "components_bananza.a_block", IModelicaClass.Restriction.BLOCK);
 
-		pkg = project.getClass("bruuken_muu");
-		assertNotNull("class not found", pkg);		
-		assertEquals("bruuken_muu", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("components_bananza.a_class", "components_bananza.a_class", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("foobared");
-		assertNotNull("class not found", pkg);		
-		assertEquals("foobared", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("components_bananza.a_type", "components_bananza.a_type", IModelicaClass.Restriction.TYPE);	
 
-		pkg = project.getClass("components_bananza");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("components_bananza.a_connector", "components_bananza.a_connector", IModelicaClass.Restriction.CONNECTOR);
 
-		pkg = project.getClass("components_bananza.a_package");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_package", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());
+		testGetClass("components_bananza.a_function", "components_bananza.a_function", IModelicaClass.Restriction.FUNCTION);
 
-		pkg = project.getClass("components_bananza.a_block");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_block", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.BLOCK, pkg.getRestriction());
+		testGetClass("components_bananza.a_model", "components_bananza.a_model", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("components_bananza.a_class");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_class", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("components_bananza.a_record", "components_bananza.a_record", IModelicaClass.Restriction.RECORD);
 
-		pkg = project.getClass("components_bananza.a_type");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_type", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.TYPE, pkg.getRestriction());		
+		testGetClass("import_rich_model", "import_rich_model", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("components_bananza.a_connector");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_connector", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CONNECTOR, pkg.getRestriction());
+		testGetClass("import_rich_model.bar", "import_rich_model.bar", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("components_bananza.a_function");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_function", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.FUNCTION, pkg.getRestriction());
+		testGetClass("hepp", "hepp", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("components_bananza.a_model");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_model", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("hepp.hopp", "hepp.hopp", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("components_bananza.a_record");
-		assertNotNull("class not found", pkg);		
-		assertEquals("components_bananza.a_record", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.RECORD, pkg.getRestriction());
+		testGetClass("hepp.hehehe", "hepp.hehehe", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("broken_nested_models.hepp");
-		assertNotNull("class not found", pkg);		
-		assertEquals("broken_nested_models.hepp", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.RECORD, pkg.getRestriction());
+		testGetClass("nested_models.hepp", "nested_models.hepp", IModelicaClass.Restriction.RECORD);
 
-		pkg = project.getClass("import_rich_model");
-		assertNotNull("class not found", pkg);		
-		assertEquals("import_rich_model", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("broken_nested_models.foo", "broken_nested_models.foo", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("import_rich_model.bar");
-		assertNotNull("class not found", pkg);		
-		assertEquals("import_rich_model.bar", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("foo", "foo", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("hepp");
-		assertNotNull("class not found", pkg);
-		assertEquals("hepp", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());
+		testGetClass("hej.ine_paketen", "hej.ine_paketen", IModelicaClass.Restriction.PACKAGE);
 
-		pkg = project.getClass("hepp.hopp");
-		assertEquals("hepp.hopp", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());
+		testGetClass("hej.hejhej", "hej.hejhej", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("hepp.hehehe");
-		assertNotNull("class not found", pkg);
-		assertEquals("hepp.hehehe", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("muu", "muu", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("nested_models.hepp");
-		assertNotNull("class not found", pkg);
-		assertEquals("nested_models.hepp", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.RECORD, pkg.getRestriction());
+		testGetClass("nested_models", "nested_models", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("broken_nested_models.foo");
-		assertNotNull("class not found", pkg);		
-		assertEquals("broken_nested_models.foo", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("nested_models.foo", "nested_models.foo", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("foo");
-		assertNotNull("class not found", pkg);
-		assertEquals("foo", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("hej.hejhej.foo", "hej.hejhej.foo", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("hej.ine_paketen");
-		assertNotNull("class not found", pkg);
-		assertEquals("hej.ine_paketen", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.PACKAGE, pkg.getRestriction());
+		testGetClass("nested_models.foo.bar", "nested_models.foo.bar", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("hej.hejhej");
-		assertNotNull("class not found", pkg);
-		assertEquals("hej.hejhej", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("root_model", "root_model", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("muu");
-		assertNotNull("class not found", pkg);
-		assertEquals("muu", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("broken_nested_models", "broken_nested_models", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("nested_models");
-		assertNotNull("class not found", pkg);
-		assertEquals("nested_models", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("broken_nested_models.hepp", "broken_nested_models.hepp", IModelicaClass.Restriction.RECORD);
 
-		pkg = project.getClass("nested_models.foo");
-		assertNotNull("class not found", pkg);
-		assertEquals("nested_models.foo", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("broken_nested_models.foo.bar", "broken_nested_models.foo.bar", IModelicaClass.Restriction.CLASS);
 
-		pkg = project.getClass("hej.hejhej.foo");
-		assertNotNull("class not found", pkg);
-		assertEquals("hej.hejhej.foo", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
+		testGetClass("bruuken_muu", "bruuken_muu", IModelicaClass.Restriction.MODEL);
 
-		pkg = project.getClass("nested_models.foo.bar");
-		assertNotNull("class not found", pkg);
-		assertEquals("nested_models.foo.bar", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.CLASS, pkg.getRestriction());
-
-		pkg = project.getClass("root_model");
-		assertNotNull("class not found", pkg);
-		assertEquals("root_model", pkg.getFullName());
-		assertEquals("wrong type of restriction",
-				IModelicaClass.Restriction.MODEL, pkg.getRestriction());
+		testGetClass("foobared", "foobared", IModelicaClass.Restriction.MODEL);
 
 		/*
 		 * check that non-existent packages are not found
-		 * there is a slight posability that below tests break
+		 * there is a slight possibility that below tests break
 		 * if the packages it tries to not found are added to
 		 * the Area51 modelica project. even if the changes is one in
 		 * a million, still, beware !
 		 */
+		testGetClassNonExisting("non_existing_package");
 
-		pkg = project.getClass("non_existing_package");
-		assertNull("unexpectedly found a supposedly non-existent package", pkg);
+		testGetClassNonExisting("non_existing_package.hej");
 
-		pkg = project.getClass("non_existing_package.hej");
-		assertNull("unexpectedly found a supposedly non-existent package", pkg);
+		testGetClassNonExisting("non_existing_package.hej.hopp");
 
-		pkg = project.getClass("non_existing_package.hej.hopp");
-		assertNull("unexpectedly found a supposedly non-existent package", pkg);
+		testGetClassNonExisting("childless_package.a_child");
 
-		pkg = project.getClass("childless_package.a_child");
-		assertNull("unexpectedly found a supposedly non-existent package", pkg);
+		testGetClassNonExisting("");
 
-		pkg = project.getClass("");
-		assertNull("unexpectedly found a supposedly non-existent package", pkg);
-
-		pkg = project.getClass("root_package.sub_package.leaf_package.meep");
-		assertNull("unexpectedly found a supposedly non-existent package", pkg);
-
-			}
-
+		testGetClassNonExisting("root_package.sub_package.leaf_package.meep");
+	}
 
 	/**
-	 * test (I)ModelciaProject.getRootPackages() method
+	 * test (I)ModelciaProject.getRootClasses() method
 	 */
+	@Test
 	public void testGetRootClasses()
 			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, CoreException {
+		Collection<? extends IModelicaClass> rootClasses = project.getRootClasses();
 
-		for (IModelicaClass cls : project.getRootClasses())
-		{			
-			assertEquals("non root class found", "", cls.getPrefix());
-			expectedRootPackages.remove(cls.getElementName());
+		for (IModelicaClass cls : rootClasses) {
+			String classPrefix = cls.getPrefix();
+
+			assertEquals("non root class found", "", classPrefix);
+			String elementName = cls.getElementName();
+			boolean wasRemoved = expectedRootPackages.remove(elementName);
+
+			if (wasRemoved) {
+				System.out.println("Removed \"" + elementName + "\" from expectedRootPackages.");
+			}
+			else {
+				System.out.println("\"" + elementName + "\" was not present in expectedRootPackages.");
+			}
 		}
 
 		String errorMsg = "could not find following expeced root classes:";
-		for (String cls : expectedRootPackages)
-		{
+		for (String cls : expectedRootPackages) {
 			errorMsg += " " + cls;
 		}
-		assertTrue(errorMsg, expectedRootPackages.isEmpty());
 
+		boolean expectedRootPackagesIsEmpty = expectedRootPackages.isEmpty();
+
+		assertTrue(errorMsg, expectedRootPackagesIsEmpty);
 	}
 
 	/**
 	 * test (I)ModelciaProject.findElement() method
 	 */
+	@Test
 	public void testFindElement()
-			throws ConnectException, UnexpectedReplyException,
-			CompilerInstantiationException, InvocationError, CoreException
-			{
-		IModelicaElement element =
-				project.findElement(new Path("empty_folder"));
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException {
+		IModelicaElement element = project.findElement(new Path("empty_folder"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaFolder);
 
@@ -407,8 +254,7 @@ public class TestModelicaProject extends TestCase
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaFolder);
 
-		element = 
-				project.findElement(new Path("package_look_alike/package.mo"));
+		element = project.findElement(new Path("package_look_alike/package.mo"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaSourceFile);
 
@@ -416,36 +262,26 @@ public class TestModelicaProject extends TestCase
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaFolder);
 
-		element = 
-				project.findElement(new Path("packages_folder/folder_package"));
+		element = project.findElement(new Path("packages_folder/folder_package"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, 
-				((IModelicaClass)element).getRestriction());
+		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
 
-		element = 
-				project.findElement(new Path("packages_folder/folder_package/" +
-						"package.mo"));
+		element = project.findElement(new Path("packages_folder/folder_package/package.mo"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaSourceFile);
 
-		element = 
-				project.findElement(new Path("packages_folder/file_package.mo"));
+		element = project.findElement(new Path("packages_folder/file_package.mo"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaSourceFile);
 
 		/* file_package1 should not be found by this path */
-		element = 
-				project.findElement(new Path("packages_folder/file_package.mo/" +
-						"file_package1"));
+		element = project.findElement(new Path("packages_folder/file_package.mo/file_package1"));
 		assertNull(element);
 
 		/* file_package2 should not be found by this path */
-		element = 
-				project.findElement(new Path("packages_folder/file_package.mo/" +
-						"file_package2"));
+		element = project.findElement(new Path("packages_folder/file_package.mo/file_package2"));
 		assertNull(element);
-
 
 		element = project.findElement(new Path("root_folder"));
 		assertNotNull(element);
@@ -458,33 +294,27 @@ public class TestModelicaProject extends TestCase
 		element = project.findElement(new Path("childless_package"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, 
-				((IModelicaClass)element).getRestriction());
+		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
 
 		element = project.findElement(new Path("childless_package/package.mo"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaSourceFile);
 
-		element = project.findElement(new Path("root_package/"+ 
-				"root_package_folder"));
+		element = project.findElement(new Path("root_package/root_package_folder"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaFolder);
 
 		element = project.findElement(new Path("root_package/sub_package"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, 
-				((IModelicaClass)element).getRestriction());
+		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
 
-		element = project.findElement(new Path("root_package/sub_package/" +
-				"leaf_package"));
+		element = project.findElement(new Path("root_package/sub_package/leaf_package"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, 
-				((IModelicaClass)element).getRestriction());
+		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
 
-		element = project.findElement(new Path("root_package/sub_package/" +
-				"leaf_package/package.mo"));
+		element = project.findElement(new Path("root_package/sub_package/leaf_package/package.mo"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaSourceFile);
 
@@ -492,8 +322,7 @@ public class TestModelicaProject extends TestCase
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaSourceFile);
 
-		element = project.findElement(new Path("root_package/" +
-				"root_package_function.mo"));
+		element = project.findElement(new Path("root_package/root_package_function.mo"));
 		assertNotNull(element);
 		assertTrue(element instanceof IModelicaSourceFile);
 
@@ -523,20 +352,16 @@ public class TestModelicaProject extends TestCase
 		 * BEWARE, the test below can break if elements search for are added
 		 * to the area51 modelica project
 		 */
-
 		element = project.findElement(new Path("non_existing_file"));
 		assertNull(element);
 
-		element = project.findElement(new Path("non_existing_folder/" +
-				"package.mo"));		
+		element = project.findElement(new Path("non_existing_folder/package.mo"));		
 		assertNull(element);
 
-		element = project.findElement(new Path("non_existing_folder/" +
-				"non_existing_subfolder"));
+		element = project.findElement(new Path("non_existing_folder/non_existing_subfolder"));
 		assertNull(element);
 
-		element = project.findElement(new Path("non_existing_folder/" +
-				"non_existing_subfolder/package.mo"));
+		element = project.findElement(new Path("non_existing_folder/non_existing_subfolder/package.mo"));
 		assertNull(element);
 
 		element = project.findElement(new Path("a/lot/of/slashes/in/a/path/"));
@@ -547,8 +372,45 @@ public class TestModelicaProject extends TestCase
 		assertNull(element);
 
 		/* project name */
-		element = 
-				project.findElement(new Path(Area51Projects.MODELICA_PROJECT_NAME));
+		element = project.findElement(new Path(Area51Projects.MODELICA_PROJECT_NAME));
 		assertNull(element);
+	}
+
+	private void testGetClass(String className, String expectedFullName, IModelicaClass.Restriction expectedRestriction) throws Exception {
+		IModelicaClass pkg = project.getClass(className);
+
+		if (pkg == null) {
+			printAll(project.getRootClasses(), 0);
+		}
+
+		assertNotNull("project.getClass() returned null for \"" + className + "\"", pkg);
+
+		String actualFullName = pkg.getFullName();
+
+		assertEquals("Expected pkg.getFullName() to return \"" + expectedFullName + "\" for className \"" + className + "\", but got \"" + actualFullName + "\".", expectedFullName, actualFullName);
+
+		IModelicaClass.Restriction actualRestriction = pkg.getRestriction();
+
+		assertEquals("Expected restriction " + expectedRestriction + ", but got " + actualRestriction + ".", expectedRestriction, actualRestriction);
+	}
+
+	private void testGetClassNonExisting(String className) throws Exception {
+		IModelicaClass pkg = project.getClass(className);
+
+		assertNull("project.getClass() was called with \"" + className + "\", and was expected to return NULL, but didn't.", pkg);
+	}
+
+	private void printAll(Collection<? extends IModelicaElement> children, int indent) throws Exception {		
+		for (IModelicaElement elem : children) {
+			for (int i = 0; i < indent; i++) System.out.print("  ");
+			String elementName = elem.getElementName();
+			String type = elem.getClass().getSimpleName();
+
+			System.out.println("\"" + elementName + "\" of type \"" + type + "\"");
+
+			if (elem instanceof IModelicaClass) {
+				printAll(((IModelicaClass)elem).getChildren(), ++indent);
 			}
+		}
+	}
 }
