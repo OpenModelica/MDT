@@ -211,8 +211,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		throws CoreException, ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		return true;
-		//return !getChildren().isEmpty();
+		return !getChildren().isEmpty();
 	}
 
 
@@ -352,7 +351,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 			CompilerInstantiationException, CoreException
 	{
 		/*
-		 * do basicaly an optimized tree search for the innermost
+		 * do basically an optimized tree search for the innermost
 		 * class definition around queried position
 		 */
 
@@ -402,7 +401,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 			CompilerInstantiationException, CoreException
 	{
 		/*
-		 * do basicaly an optimized tree search for the innermost
+		 * do basically an optimized tree search for the innermost
 		 * class definition around queried position
 		 */
 
