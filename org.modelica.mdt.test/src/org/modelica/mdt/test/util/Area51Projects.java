@@ -48,7 +48,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -261,8 +260,8 @@ public class Area51Projects {
 		 * sometime cause the Modelica compiler to hang when the project is built,
 		 *  or even expanded, but I can't reproduce it reliably.
 		 */
-		//file = folder.getFile("package.mo");
-		//file.create(Utility.getByteStream(""), true, null);
+		//		file = folder.getFile("package.mo");
+		//		file.create(Utility.getByteStream(""), true, null);
 
 		/* empty_folder */
 		folder = modelica_project.getFolder("empty_folder");
@@ -321,34 +320,81 @@ public class Area51Projects {
 
 		/* broken_nested_models.mo */
 		file = modelica_project.getFile("broken_nested_models.mo");
-		contents = 
-				"model broken_nested_models\n" +
+		contents = "model broken_nested_models\n" +
+				"    import Modelica;\n" +
+				"    record hepp end hepp;\n" +
+				"    class foo\n" +
+				"        class bar\n"+
+				"          Real a;\n"+
+				"          b;\n"+
+				"        equation\n" +
+				"          a = ;\n"+
+				"          b = c;\n" +
+				"          c := 0;\n" +
+				"        end bar;\n" +
+				"    algorithm\n"+
+				"      a = 0;\n" +
+				"      b := 3\n" +
+				"      c = 2;\n" +
+				"    end foo;\n" +
+				"end nested_models;\n" +
+				"\n"+
+				"model bruuken_muu\n" +
+				"Real a;\n" +
+				"equation\n"+
+				"    x = 10;\n"+
+				"end bruuken_muu;\n"+
+				"\n"+
+				"model foobared\n"+
+				"    import Modelica;\n"+
+				"end foobared;\n" +
+				"\n\n" +
+				"record broken_hej\n" +
+				"    package ine_paketen\n" +
+				"    end ine_paketen;\n" +
+				"    class hejhej\n" +
+				"        class foo\n" +
+				"        end foo;\n" +
+				"    end hejhej;\n" +
+				"end broken_hej;\n" +
+				"\n\n\n" +
+				"package broken_hepp\n" +
+				"    package hopp\n" +
+				"    end hopp;\n" +
+				"    class hehehe\n" +
+				"    end hehehe;\n" +
+				"end broken_hepp;\n";
+
+		/* Version of broken_nested_models.mo without syntax errors: */
+		/*
+		"model broken_nested_models\n" +
 						"    import Modelica;\n" +
 						"    record hepp end hepp;\n" +
 						"    class foo\n" +
-						"        class bar\n"+
-						"          Real a;\n"+
-						"          b;\n"+
+						"        class bar\n" +
+						"          Real a;\n" +
+						"          Real b;\n" +
+						"          Real c;\n" +
 						"        equation\n" +
-						"          a = ;\n"+
+						"          a = 0;\n" +
 						"          b = c;\n" +
-						"          c := 0;\n" +
+						"          c = 0;\n" +
 						"        end bar;\n" +
-						"    algorithm\n"+
-						"      a = 0;\n" +
-						"      b := 3\n" +
-						"      c = 2;\n" +
+						"    algorithm\n" +
+						"      a := 0;\n" +
+						"      b := 3;\n" +
+						"      c := 2;\n" +
 						"    end foo;\n" +
-						"end nested_models;\n" +
-						"\n"+
+						"end broken_nested_models;\n" +
+						"\n" +
 						"model bruuken_muu\n" +
 						"Real a;\n" +
-						"equation\n"+
-						"    x = 10;\n"+
-						"end bruuken_muu;\n"+
-						"\n"+
-						"model foobared\n"+
-						"    import Modelica;\n"+
+						"equation\n" +
+						"    x = 10;\n" +
+						"end bruuken_muu;\n" +
+						"\n" +
+						"model foobared\n" +
+						"    import Modelica;\n" +
 						"end foobared;\n" +
 						"\n\n" +
 						"record broken_hej\n" +
@@ -366,6 +412,7 @@ public class Area51Projects {
 						"    class hehehe\n" +
 						"    end hehehe;\n" +
 						"end broken_hepp;\n";
+		 */
 
 		file.create(Utility.getByteStream(contents), true, null);
 
@@ -535,5 +582,5 @@ public class Area51Projects {
 						"\n" + 
 						"end childless_package;\n";
 		file.create(Utility.getByteStream(contents), true, null);
-	}	
+	}
 }
