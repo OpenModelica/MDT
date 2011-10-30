@@ -43,7 +43,7 @@
 
 /**
  * This file contains some code snippets that can 
- * are usefull to copy'n'paste while testing/debugging but
+ * are useful to copy'n'paste while testing/debugging but
  * don't quite fit into some proper class.
  */
 //public class CodeDepot {}
@@ -51,9 +51,9 @@
 /**
  * Show calling test methods
  * 
- * Prints to standard out all JUnit testmethods that are running
- * this code. Usefull to find out exactly which tests are invoking
- * some particular code. Just past it at the begining of whatever
+ * Prints to standard out all JUnit test methods that are running
+ * this code. Useful to find out exactly which tests are invoking
+ * some particular code. Just past it at the beginning of whatever
  * block you want to check-out. 
  */
 
@@ -81,7 +81,7 @@
  * This piece of code generates a random string in ISO-8859-1 encoding
  * based on a seed.
  * The length of the string is random up to maxLenght.
- * This function is determenistic, given the same seed and maxLength function 
+ * This function is deterministic, given the same seed and maxLength function 
  * always returns same string.
  */
 
@@ -112,7 +112,7 @@
  * 
  * @param width string will be formatted as lines of source code with provided 
  * maximal width
- * @return the provided string with all wierd characters escaped, a format
+ * @return the provided string with all weird characters escaped, a format
  * suitable to paste into java source code
  */
 //public String escape(String str, String linePrefix, int width)
@@ -174,7 +174,7 @@
 //	
 //	/*
 //	 * prepend "\\u" and zeros to make the hex number exactly 4 characters long
-//	 * and to create a leagal unicode escape secvence 
+//	 * and to create a legal unicode escape sequence 
 //	 */
 //	return "\\u" + "0000".substring(0, 4 - hex.length()) + hex; 
 //}
