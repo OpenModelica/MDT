@@ -643,7 +643,7 @@ public class TestInnerClass extends TestCase
 		/*
 		 * check correctness of isEncapsulated() in classes from standard library
 		 */
-		clazz = stdLib.getPackage("Modelica.Blocks.Examples.BusUsage");
+		clazz = stdLib.getPackage("Modelica.Blocks.Math.UnitConversions");
 		assertNotNull(clazz);
 		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
 		
@@ -651,11 +651,11 @@ public class TestInnerClass extends TestCase
 		assertNotNull(clazz);
 		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
 
-		clazz = stdLib.getPackage("Modelica.Mechanics.Rotational.Examples.Friction");
+		clazz = stdLib.getPackage("Modelica.Electrical.Analog.Examples.ChuaCircuit");
 		assertNotNull(clazz);
 		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
 
-		clazz = stdLib.getPackage("Modelica.Mechanics.Rotational.Examples.Friction");
+		clazz = stdLib.getPackage("Modelica.Mechanics.Translational.Components.MassWithStopAndFriction.PartialFrictionWithStop");
 		assertNotNull(clazz);
 		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
 		
@@ -671,7 +671,7 @@ public class TestInnerClass extends TestCase
 		clazz = proj.getClass("root_model");
 		assertNotNull(clazz);
 		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
-		
+
 		clazz = proj.getClass("file_package1");
 		assertNotNull(clazz);
 		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
@@ -683,20 +683,20 @@ public class TestInnerClass extends TestCase
 		clazz = proj.getClass("nested_models.foo.bar");
 		assertNotNull(clazz);
 		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
-		
+
 		/* test folder packages */
 		clazz = proj.getClass("root_package");
 		assertNotNull(clazz);
 		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
-		
+
 		clazz = proj.getClass("root_package.sub_package");
 		assertNotNull(clazz);
 		assertFalse("wrong encapsulated status", clazz.isEncapsulated());
-//TODO this is broken, fix it		
-//		clazz = proj.getClass("root_package.sub_package.leaf_package");
-//		assertNotNull(clazz);
-//		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
-		
+
+		clazz = proj.getClass("root_package.sub_package.leaf_package");
+		assertNotNull(clazz);
+		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
+
 		clazz = proj.getClass("childless_package");
 		assertNotNull(clazz);
 		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
