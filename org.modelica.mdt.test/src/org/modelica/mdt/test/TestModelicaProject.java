@@ -246,105 +246,56 @@ public class TestModelicaProject {
 	@Test
 	public void testFindElement()
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException {
-		IModelicaElement element = project.findElement(new Path("empty_folder"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFolder);
+		testFindElement("empty_folder", IModelicaFolder.class, null);
 
-		element = project.findElement(new Path("package_look_alike"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFolder);
+		testFindElement("package_look_alike", IModelicaFolder.class, null);
 
-		element = project.findElement(new Path("package_look_alike/package.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		/* 
+		 * FIXME: We are currently not creating the empty file package.mo inside package_look_alike
+		 * because it makes OMC to freeze. When this problem has been fixed, we can run this test
+		 * again.
+		 * However, even if OMC could cope with an empty file, would it be considered an IModeliaSourceFile, as
+		 * stated in the original version of this test, or simply an IModelicaFile?
+		 */
+		//testFindPath("package_look_alike/package.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("packages_folder"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFolder);
+		testFindElement("packages_folder", IModelicaFolder.class, null);
 
-		element = project.findElement(new Path("packages_folder/folder_package"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
+		testFindElement("packages_folder/folder_package", IModelicaClass.class, IModelicaClass.Restriction.PACKAGE);
 
-		element = project.findElement(new Path("packages_folder/folder_package/package.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("packages_folder/folder_package/package.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("packages_folder/file_package.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("packages_folder/file_package.mo", IModelicaSourceFile.class, null);
 
-		/* file_package1 should not be found by this path */
-		element = project.findElement(new Path("packages_folder/file_package.mo/file_package1"));
-		assertNull(element);
+		testFindElement("root_folder", IModelicaFolder.class, null);
 
-		/* file_package2 should not be found by this path */
-		element = project.findElement(new Path("packages_folder/file_package.mo/file_package2"));
-		assertNull(element);
+		testFindElement("root_folder/hej_hopp", IModelicaFile.class, null);
 
-		element = project.findElement(new Path("root_folder"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFolder);
+		testFindElement("childless_package", IModelicaClass.class, IModelicaClass.Restriction.PACKAGE);
 
-		element = project.findElement(new Path("root_folder/hej_hopp"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFile);
+		testFindElement("childless_package/package.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("childless_package"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
+		testFindElement("root_package/root_package_folder", IModelicaFolder.class, null);
 
-		element = project.findElement(new Path("childless_package/package.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("root_package/sub_package", IModelicaClass.class, IModelicaClass.Restriction.PACKAGE);
 
-		element = project.findElement(new Path("root_package/root_package_folder"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFolder);
+		testFindElement("root_package/sub_package/leaf_package", IModelicaClass.class, IModelicaClass.Restriction.PACKAGE);
 
-		element = project.findElement(new Path("root_package/sub_package"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
+		testFindElement("root_package/sub_package/leaf_package/package.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("root_package/sub_package/leaf_package"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaClass);
-		assertEquals(IModelicaClass.Restriction.PACKAGE, ((IModelicaClass)element).getRestriction());
+		testFindElement("root_package/package.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("root_package/sub_package/leaf_package/package.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("root_package/root_package_function.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("root_package/package.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("component_model.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("root_package/root_package_function.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("nested_models.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("component_model.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("root_model.mo", IModelicaSourceFile.class, null);
 
-		element = project.findElement(new Path("nested_models.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
+		testFindElement("empty_file", IModelicaFile.class, null);	
 
-		element = project.findElement(new Path("root_model.mo"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaSourceFile);
-
-		element = project.findElement(new Path("empty_file"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFile);		
-
-		element = project.findElement(new Path("README.txt"));
-		assertNotNull(element);
-		assertTrue(element instanceof IModelicaFile);
+		testFindElement("README.txt", IModelicaFile.class, null);
 
 		/*
 		 * check what happens when trying to find non-existing elements
@@ -352,28 +303,25 @@ public class TestModelicaProject {
 		 * BEWARE, the test below can break if elements search for are added
 		 * to the area51 modelica project
 		 */
-		element = project.findElement(new Path("non_existing_file"));
-		assertNull(element);
+		testFindElementNonExisting("packages_folder/file_package.mo/file_package1");
 
-		element = project.findElement(new Path("non_existing_folder/package.mo"));		
-		assertNull(element);
+		testFindElementNonExisting("packages_folder/file_package.mo/file_package2");
+		
+		testFindElementNonExisting("non_existing_file");
 
-		element = project.findElement(new Path("non_existing_folder/non_existing_subfolder"));
-		assertNull(element);
+		testFindElementNonExisting("non_existing_folder/package.mo");
 
-		element = project.findElement(new Path("non_existing_folder/non_existing_subfolder/package.mo"));
-		assertNull(element);
+		testFindElementNonExisting("non_existing_folder/non_existing_subfolder");
 
-		element = project.findElement(new Path("a/lot/of/slashes/in/a/path/"));
-		assertNull(element);
+		testFindElementNonExisting("non_existing_folder/non_existing_subfolder/package.mo");
+
+		testFindElementNonExisting("a/lot/of/slashes/in/a/path/");
 
 		/* empty string path */
-		element = project.findElement(new Path(""));
-		assertNull(element);
+		testFindElementNonExisting("");
 
 		/* project name */
-		element = project.findElement(new Path(Area51Projects.MODELICA_PROJECT_NAME));
-		assertNull(element);
+		testFindElementNonExisting(Area51Projects.MODELICA_PROJECT_NAME);
 	}
 
 	private void testGetClass(String className, String expectedFullName, IModelicaClass.Restriction expectedRestriction) throws Exception {
@@ -398,6 +346,35 @@ public class TestModelicaProject {
 		IModelicaClass pkg = project.getClass(className);
 
 		assertNull("project.getClass() was called with \"" + className + "\", and was expected to return NULL, but didn't.", pkg);
+	}
+	
+	private void testFindElement(String pathName, Class<?> expectedClass, IModelicaClass.Restriction expectedRestriction)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException {
+		Path path = new Path(pathName);
+		IModelicaElement element = project.findElement(path);
+		
+		assertNotNull(element);
+		
+		Class<?> actualClass = element.getClass();
+		String expectedClassName = expectedClass.getCanonicalName();
+		String actualClassName = actualClass.getCanonicalName();
+		String errorMsgClass = "Was expecting " + expectedClassName + ", but got " + actualClassName;
+		
+		assertTrue(errorMsgClass, expectedClass.isAssignableFrom(actualClass));
+		
+		if (expectedRestriction != null) {
+			assertTrue(element instanceof IModelicaClass);
+			IModelicaClass.Restriction actualRestriction = ((IModelicaClass)element).getRestriction();
+			
+			assertEquals("Expected restriction " + expectedRestriction + ", but got " + actualRestriction + ".", expectedRestriction, actualRestriction);
+		}
+	}
+	
+	private void testFindElementNonExisting(String pathName) 
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException {
+		Path path = new Path(pathName);
+		IModelicaElement element = project.findElement(path);
+		assertNull(element);
 	}
 
 	private void printAll(Collection<? extends IModelicaElement> children, int indent) throws Exception {		
