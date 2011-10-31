@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?metadataRepository version='1.1.0'?>
-<repository name='Update Site' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
+<repository name='Modelica Development Tooling (MDT) - OpenModelica' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1316435112998'/>
+    <property name='p2.timestamp' value='1320038227482'/>
   </properties>
   <references size='6'>
     <repository uri='http://www.modelica.org' url='http://www.modelica.org' type='0' options='0'/>
@@ -13,7 +13,7 @@
     <repository uri='http://www.ida.liu.se/~pelab/modelica/' url='http://www.ida.liu.se/~pelab/modelica/' type='0' options='0'/>
     <repository uri='http://www.ida.liu.se/~pelab/modelica/' url='http://www.ida.liu.se/~pelab/modelica/' type='1' options='0'/>
   </references>
-  <units size='149'>
+  <units size='158'>
     <unit id='org.modelica.mdt.feature.jar' version='0.6.5'>
       <update id='org.modelica.mdt.feature.jar' range='[0.0.0,0.6.5)' severity='0'/>
       <properties size='4'>
@@ -195,6 +195,54 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.modelica.mdt.debug.core' version='0.7.11'>
+      <update id='org.modelica.mdt.debug.core' range='[0.0.0,0.7.11)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='MDT Debug Core Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='19'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.core' version='0.7.11'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.debug.core' version='0.7.11'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.breakpoints' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.launcher' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.sourcelookup' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.launcher' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.command' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.event' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.output' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.pty' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model.stack' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model.thread' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.sourcelookup' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='6'>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.variables' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.11'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.modelica.mdt.debug.core; singleton:=true&#xA;Bundle-Version: 0.7.11
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.modelica.mdt.ui' version='0.7.11'>
       <update id='org.modelica.mdt.ui' range='[0.0.0,0.7.11)' severity='0'/>
       <properties size='3'>
@@ -248,54 +296,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true&#xA;Bundle-Version: 0.7.11
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.modelica.mdt.debug.core' version='0.7.11'>
-      <update id='org.modelica.mdt.debug.core' range='[0.0.0,0.7.11)' severity='0'/>
-      <properties size='3'>
-        <property name='org.eclipse.equinox.p2.name' value='MDT Debug Core Plugin'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
-        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
-      </properties>
-      <provides size='19'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.core' version='0.7.11'/>
-        <provided namespace='osgi.bundle' name='org.modelica.mdt.debug.core' version='0.7.11'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.breakpoints' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.launcher' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.sourcelookup' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.launcher' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.command' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.event' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.output' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.pty' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model.stack' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model.thread' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.sourcelookup' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='6'>
-        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.variables' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.11'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.modelica.mdt.debug.core; singleton:=true&#xA;Bundle-Version: 0.7.11
           </instruction>
         </instructions>
       </touchpointData>
@@ -586,6 +586,40 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.modelica.mdt.core' version='0.7.19'>
+      <update id='org.modelica.mdt.core' range='[0.0.0,0.7.19)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='7'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.core' version='0.7.19'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.core' version='0.7.19'/>
+        <provided namespace='java.package' name='org.modelica.mdt.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.core.compiler' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.core.preferences' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.internal.core' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='4'>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.core' version='0.7.19'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.modelica.mdt.core; singleton:=true&#xA;Bundle-Version: 0.7.19
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.modelica.mdt.ui' version='0.6.8'>
       <update id='org.modelica.mdt.ui' range='[0.0.0,0.6.8)' severity='0'/>
       <properties size='2'>
@@ -726,6 +760,21 @@
       <copyright>
         Copyright (c) 2005-2006, &#xA;      Adrian Pop [adrpo@ida.liu.se], Elmir Jaguding, Andreas Remar&#xA;      Programming Environments Laboratory (PELAB),&#xA;      Department of Computer and Information Science (IDA), &#xA;      Linköpings University (LiU). &#xA;      All rights reserved.
       </copyright>
+    </unit>
+    <unit id='modelica' version='1.0.0.07Q89cLpJvE'>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica and MetaModelica Tools'/>
+        <property name='org.eclipse.equinox.p2.description' value='Tools for Modelica and MetaModelica'/>
+        <property name='org.eclipse.equinox.p2.type.category' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='modelica' version='1.0.0.07Q89cLpJvE'/>
+      </provides>
+      <requires size='2'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.group' range='[0.7.19,0.7.19]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.group' range='[0.7.18,0.7.18]'/>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
     </unit>
     <unit id='org.modelica.mdt.core' version='0.6.6'>
       <update id='org.modelica.mdt.core' range='[0.0.0,0.6.6)' severity='0'/>
@@ -1264,6 +1313,52 @@
       </requires>
       <touchpoint id='null' version='0.0.0'/>
     </unit>
+    <unit id='org.modelica.mdt.debug.ui' version='0.7.19'>
+      <update id='org.modelica.mdt.debug.ui' range='[0.0.0,0.7.19)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='MDT Debug UI Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='9'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.ui' version='0.7.19'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.debug.ui' version='0.7.19'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.ui.breakpoints' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.ui.launcher' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.ui.presentation' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.ui.shortcuts' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.ui.views' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='14'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.breakpoint' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.ui' version='0.7.19'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.modelica.mdt.debug.ui; singleton:=true&#xA;Bundle-Version: 0.7.19
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.modelica.mdt.feature.group' version='0.4.0' singleton='false'>
       <update id='org.modelica.mdt.feature.group' range='[0.0.0,0.4.0)' severity='0'/>
       <properties size='5'>
@@ -1362,6 +1457,20 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='modelica' version='0.0.0.20101031232456'>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica and MetaModelica Tools'/>
+        <property name='org.eclipse.equinox.p2.description' value='Tools for Modelica and MetaModelica'/>
+        <property name='org.eclipse.equinox.p2.type.category' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='modelica' version='0.0.0.20101031232456'/>
+      </provides>
+      <requires size='1'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.group' range='[0.7.4,0.7.4]'/>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+    </unit>
     <unit id='modelica' version='1.0.0.07Q7mcLpJvE'>
       <properties size='3'>
         <property name='org.eclipse.equinox.p2.name' value='Modelica and MetaModelica Tools'/>
@@ -1374,20 +1483,6 @@
       <requires size='2'>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.group' range='[0.7.13,0.7.13]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.group' range='[0.7.12,0.7.12]'/>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
-    </unit>
-    <unit id='modelica' version='0.0.0.20101031232456'>
-      <properties size='3'>
-        <property name='org.eclipse.equinox.p2.name' value='Modelica and MetaModelica Tools'/>
-        <property name='org.eclipse.equinox.p2.description' value='Tools for Modelica and MetaModelica'/>
-        <property name='org.eclipse.equinox.p2.type.category' value='true'/>
-      </properties>
-      <provides size='1'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='modelica' version='0.0.0.20101031232456'/>
-      </provides>
-      <requires size='1'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.group' range='[0.7.4,0.7.4]'/>
       </requires>
       <touchpoint id='null' version='0.0.0'/>
     </unit>
@@ -2028,6 +2123,41 @@
         Copyright (c) 2005-2011, &#xA;Open Source Modelica Consortium (OSMC),&#xA;Programming Environments Laboratory (PELAB),&#xA;Department of Computer and Information Science (IDA), &#xA;Linköpings University (LiU).
       </copyright>
     </unit>
+    <unit id='org.modelica.mdt.debug.core' version='0.7.7'>
+      <update id='org.modelica.mdt.debug.core' range='[0.0.0,0.7.7)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='MDT Debug Core Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='8'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.core' version='0.7.7'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.debug.core' version='0.7.7'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.breakpoints' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.launcher' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.sourcelookup' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='4'>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.7'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.modelica.mdt.debug.core.MDTDebugCorePlugin&#xA;Require-Bundle: org.eclipse.debug.core,org.eclipse.core.resources,org.eclipse.core.runtime,org.modelica.mdt.core&#xA;Bundle-Name: MDT Debug Core Plugin&#xA;Bundle-Localization: plugin&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.modelica.mdt.debug.core; singleton:=true&#xA;Bundle-Version: 0.7.7&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.modelica.mdt.debug.core,org.modelica.mdt.debug.core.breakpoints,org.modelica.mdt.debug.core.launcher,org.modelica.mdt.debug.core.model,org.modelica.mdt.debug.core.sourcelookup
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.modelica.mdt.ui' version='0.7.7'>
       <update id='org.modelica.mdt.ui' range='[0.0.0,0.7.7)' severity='0'/>
       <properties size='3'>
@@ -2079,41 +2209,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-ManifestVersion: 2&#xA;Export-Package: org.modelica.mdt.ui;x-friends:=&quot;org.modelica.mdt.test,org.modelica.mdt.ui,org.modelica.mdt.debug.ui&quot;,org.modelica.mdt.ui.actions,org.modelica.mdt.ui.console,org.modelica.mdt.ui.editor;x-friends:=&quot;org.modelica.mdt.test,org.modelica.mdt.debug.ui&quot;,org.modelica.mdt.ui.filters,org.modelica.mdt.ui.hover,org.modelica.mdt.ui.preferences,org.modelica.mdt.ui.text,org.modelica.mdt.ui.util,org.modelica.mdt.ui.view,org.modelica.mdt.ui.wizards;x-friends:=&quot;org.modelica.mdt.test&quot;&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.modelica.mdt.core,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.ide,org.eclipse.ui.workbench.texteditor,org.eclipse.debug.core,org.eclipse.ui.console,org.eclipse.debug.ui,org.eclipse.ui.navigator,org.eclipse.ui.views,org.eclipse.core.variables;bundle-version=&quot;3.2.100&quot;,org.eclipse.core.expressions;bundle-version=&quot;3.4.0&quot;,org.eclipse.ltk.core.refactoring&#xA;Bundle-Activator: org.modelica.mdt.ui.UIPlugin&#xA;Bundle-Name: Modelica Development Tooling UI&#xA;Bundle-Version: 0.7.7&#xA;Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University&#xA;Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true&#xA;Import-Package: org.eclipse.ltk.core.refactoring.participants,org.eclipse.ltk.ui.refactoring&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.modelica.mdt.debug.core' version='0.7.7'>
-      <update id='org.modelica.mdt.debug.core' range='[0.0.0,0.7.7)' severity='0'/>
-      <properties size='3'>
-        <property name='org.eclipse.equinox.p2.name' value='MDT Debug Core Plugin'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
-        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
-      </properties>
-      <provides size='8'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.core' version='0.7.7'/>
-        <provided namespace='osgi.bundle' name='org.modelica.mdt.debug.core' version='0.7.7'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.breakpoints' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.launcher' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.debug.core.sourcelookup' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='4'>
-        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.7'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.modelica.mdt.debug.core.MDTDebugCorePlugin&#xA;Require-Bundle: org.eclipse.debug.core,org.eclipse.core.resources,org.eclipse.core.runtime,org.modelica.mdt.core&#xA;Bundle-Name: MDT Debug Core Plugin&#xA;Bundle-Localization: plugin&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.modelica.mdt.debug.core; singleton:=true&#xA;Bundle-Version: 0.7.7&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.modelica.mdt.debug.core,org.modelica.mdt.debug.core.breakpoints,org.modelica.mdt.debug.core.launcher,org.modelica.mdt.debug.core.model,org.modelica.mdt.debug.core.sourcelookup
           </instruction>
         </instructions>
       </touchpointData>
@@ -2414,6 +2509,39 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.modelica.mdt.omc' version='0.7.19'>
+      <update id='org.modelica.mdt.omc' range='[0.0.0,0.7.19)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling OMC proxy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.omc' version='0.7.19'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.omc' version='0.7.19'/>
+        <provided namespace='java.package' name='org.modelica.mdt.omc.internal' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='6'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.omc' version='0.7.19'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.modelica.mdt.omc; singleton:=true&#xA;Bundle-Version: 0.7.19
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.modelica.mdt.core' version='0.7.13'>
       <update id='org.modelica.mdt.core' range='[0.0.0,0.7.13)' severity='0'/>
       <properties size='3'>
@@ -2583,42 +2711,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.modelica.mdt.feature.jar' version='0.5.0'>
-      <update id='org.modelica.mdt.feature.jar' range='[0.0.0,0.5.0)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling'/>
-        <property name='org.eclipse.equinox.p2.description' value='Contributes an environment for working with modelica projects.&#xA;&#xA;This software package is developed at PELAB at the Linköpings&#xA;University. Visit http://www.ida.liu.se/~pelab/modelica/ for more &#xA;information about this software and other related projects.'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://www.ida.liu.se/~pelab/modelica/'/>
-        <property name='org.eclipse.equinox.p2.provider' value='PELAB'/>
-      </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.jar' version='0.5.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-        <provided namespace='org.eclipse.update.feature' name='org.modelica.mdt' version='0.5.0'/>
-      </provides>
-      <filter>
-        (org.eclipse.update.install.features=true)
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.5.0'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-      <licenses size='1'>
-        <license uri='http://www.opensource.org/licenses/bsd-license.php' url='http://www.opensource.org/licenses/bsd-license.php'>
-          Copyright (c) 2005, Linköpings universitet, Department of Computer&#xA;and Information Science, PELAB&#xA;&#xA;All rights reserved.&#xA;&#xA;(The new BSD license, &#xA;see also http://www.opensource.org/licenses/bsd-license.php)&#xA;&#xA;Redistribution and use in source and binary forms, with or without&#xA;modification, are permitted provided that the following conditions&#xA;are met:&#xA;&#xA; * Redistributions of source code must retain the above copyright&#xA;   notice, this list of conditions and the following disclaimer.&#xA;&#xA; * Redistributions in binary form must reproduce the above copyright&#xA;   notice, this list of conditions and the following disclaimer in&#xA;   the documentation and/or other materials provided with the&#xA;   distribution.&#xA;&#xA; * Neither the name of Linköpings universitet nor the names of its&#xA;   contributors may be used to endorse or promote products derived &#xA;   from this software without specific prior written permission.&#xA;&#xA;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS&#xA;&quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT &#xA;LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS &#xA;FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE &#xA;COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,&#xA;INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, &#xA;BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS &#xA;OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED &#xA;AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,&#xA;OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT &#xA;OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF &#xA;SUCH DAMAGE.
-        </license>
-      </licenses>
-      <copyright>
-        Copyright (c) 2005, Linköpings universitet, Department of Computer&#xA;and Information Science, PELAB&#xA;All rights reserved.
-      </copyright>
-    </unit>
     <unit id='org.modelica.mdt.breakpoint' version='0.7.13'>
       <update id='org.modelica.mdt.breakpoint' range='[0.0.0,0.7.13)' severity='0'/>
       <properties size='3'>
@@ -2657,6 +2749,42 @@
           </instruction>
         </instructions>
       </touchpointData>
+    </unit>
+    <unit id='org.modelica.mdt.feature.jar' version='0.5.0'>
+      <update id='org.modelica.mdt.feature.jar' range='[0.0.0,0.5.0)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling'/>
+        <property name='org.eclipse.equinox.p2.description' value='Contributes an environment for working with modelica projects.&#xA;&#xA;This software package is developed at PELAB at the Linköpings&#xA;University. Visit http://www.ida.liu.se/~pelab/modelica/ for more &#xA;information about this software and other related projects.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.ida.liu.se/~pelab/modelica/'/>
+        <property name='org.eclipse.equinox.p2.provider' value='PELAB'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.jar' version='0.5.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.modelica.mdt' version='0.5.0'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.5.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.opensource.org/licenses/bsd-license.php' url='http://www.opensource.org/licenses/bsd-license.php'>
+          Copyright (c) 2005, Linköpings universitet, Department of Computer&#xA;and Information Science, PELAB&#xA;&#xA;All rights reserved.&#xA;&#xA;(The new BSD license, &#xA;see also http://www.opensource.org/licenses/bsd-license.php)&#xA;&#xA;Redistribution and use in source and binary forms, with or without&#xA;modification, are permitted provided that the following conditions&#xA;are met:&#xA;&#xA; * Redistributions of source code must retain the above copyright&#xA;   notice, this list of conditions and the following disclaimer.&#xA;&#xA; * Redistributions in binary form must reproduce the above copyright&#xA;   notice, this list of conditions and the following disclaimer in&#xA;   the documentation and/or other materials provided with the&#xA;   distribution.&#xA;&#xA; * Neither the name of Linköpings universitet nor the names of its&#xA;   contributors may be used to endorse or promote products derived &#xA;   from this software without specific prior written permission.&#xA;&#xA;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS&#xA;&quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT &#xA;LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS &#xA;FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE &#xA;COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,&#xA;INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, &#xA;BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS &#xA;OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED &#xA;AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,&#xA;OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT &#xA;OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF &#xA;SUCH DAMAGE.
+        </license>
+      </licenses>
+      <copyright>
+        Copyright (c) 2005, Linköpings universitet, Department of Computer&#xA;and Information Science, PELAB&#xA;All rights reserved.
+      </copyright>
     </unit>
     <unit id='org.modelica.mdt.debug.core' version='0.6.8'>
       <update id='org.modelica.mdt.debug.core' range='[0.0.0,0.6.8)' severity='0'/>
@@ -3473,6 +3601,186 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.modelica.mdt.feature.jar' version='0.7.19'>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling'/>
+        <property name='org.eclipse.equinox.p2.description' value='Contributes an environment for working with Modelica and MetaModelica&#xA;projects.&#xA;This software package is developed by &#xA;Adrian Pop [Adrian.Pop@liu.se],&#xA;Adeel Asghar [Adeel.Asghar@liu.se],&#xA;Elmir Jaguding, &#xA;Andreas Remar, &#xA;and plenty others at&#xA;Open Source Modelica Consortium (OSMC),&#xA;Programming Environments Laboratory (PELAB),&#xA;Linköping University (LiU). &#xA;Visit http://www.openmodelica.org/ for more information about&#xA;this software and other related projects.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.OpenModelica.org'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Open Source Modelica Consortium (OpenModelica@ida.liu.se)'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.jar' version='0.7.19'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.modelica.mdt' version='0.7.19'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.19'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html' url='http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html'>
+          The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.&#xA;Copyright (c) 2005-2011, &#xA;The MDT Team (Authors): &#xA;Adrian Pop [Adrian.Pop@liu.se],&#xA;Adeel Asghar [Adeel.Asghar@liu.se] &#xA;Elmir Jagudin, &#xA;Andreas Remar, &#xA;Open Source Modelica Consortium,&#xA;Programming Environments Laboratory (PELAB),&#xA;Department of Computer and Information Science (IDA), &#xA;Linköping University (LiU).&#xA;All rights reserved.&#xA;&#xA;(The new BSD license, see also http://www.opensource.org/licenses/bsd-license.php)&#xA;&#xA;Redistribution and use in source and binary forms, with or without &#xA;modification, are permitted provided that the following conditions are met:&#xA;&#xA;* Redistributions of source code must retain the above copyright notice, &#xA;  this list of conditions and the following disclaimer. &#xA;  &#xA;* Redistributions in binary form must reproduce the above copyright notice, &#xA;  this list of conditions and the following disclaimer in the documentation &#xA;  and/or other materials provided with the distribution. &#xA;* Neither the name of the Authors and Linköping University nor the names of its &#xA;  contributors may be used to endorse or promote products derived from this &#xA;  software without specific prior written permission. &#xA;  &#xA;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND &#xA;ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED &#xA;WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. &#xA;IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, &#xA;INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, &#xA;BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, &#xA;DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF &#xA;LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE &#xA;OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED &#xA;OF THE POSSIBILITY OF SUCH DAMAGE.
+        </license>
+      </licenses>
+      <copyright uri='http://www.OpenModelica.org' url='http://www.OpenModelica.org'>
+        Copyright (c) 2005-2011, &#xA;Open Source Modelica Consortium (OSMC),&#xA;Programming Environments Laboratory (PELAB),&#xA;Department of Computer and Information Science (IDA), &#xA;Linköpings University (LiU).
+      </copyright>
+    </unit>
+    <unit id='org.modelica.mdt.breakpoint' version='0.7.19'>
+      <update id='org.modelica.mdt.breakpoint' range='[0.0.0,0.7.19)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Breakpoint'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adeel Asghar [adeel.asghar@liu.se] @ PELAB, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.breakpoint' version='0.7.19'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.breakpoint' version='0.7.19'/>
+        <provided namespace='java.package' name='org.modelica.mdt.breakpoint' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='12'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.breakpoint' version='0.7.19'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.modelica.mdt.breakpoint; singleton:=true&#xA;Bundle-Version: 0.7.19
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.modelica.mdt.debug.core' version='0.7.19'>
+      <update id='org.modelica.mdt.debug.core' range='[0.0.0,0.7.19)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='MDT Debug Core Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='19'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.core' version='0.7.19'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.debug.core' version='0.7.19'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.breakpoints' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.launcher' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.core.sourcelookup' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.launcher' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.command' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.event' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.output' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.mi.pty' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model.stack' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.model.thread' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.debug.gdb.core.sourcelookup' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='6'>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.variables' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.19'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.modelica.mdt.debug.core; singleton:=true&#xA;Bundle-Version: 0.7.19
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.modelica.mdt.ui' version='0.7.19'>
+      <update id='org.modelica.mdt.ui' range='[0.0.0,0.7.19)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling UI'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='16'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.ui' version='0.7.19'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.ui' version='0.7.19'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.assist' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.console' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.constants' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.editor' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.filters' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.hover' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.preferences' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.text' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.view' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.wizards' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='19'>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.navigator' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.variables' range='3.2.100'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.expressions' range='3.4.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ltk.core.refactoring' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.breakpoint' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.ltk.core.refactoring.participants' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.ltk.ui.refactoring' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.ui' version='0.7.19'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true&#xA;Bundle-Version: 0.7.19
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.modelica.mdt.feature.group' version='0.6.6' singleton='false'>
       <update id='org.modelica.mdt.feature.group' range='[0.0.0,0.6.6)' severity='0'/>
       <properties size='5'>
@@ -3886,6 +4194,41 @@
       </licenses>
       <copyright>
         Copyright (c) 2005, Linköpings universitet, Department of Computer&#xA;and Information Science, PELAB&#xA;All rights reserved.
+      </copyright>
+    </unit>
+    <unit id='org.modelica.mdt.feature.group' version='0.7.19' singleton='false'>
+      <update id='org.modelica.mdt.feature.group' range='[0.0.0,0.7.19)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling'/>
+        <property name='org.eclipse.equinox.p2.description' value='Contributes an environment for working with Modelica and MetaModelica&#xA;projects.&#xA;This software package is developed by &#xA;Adrian Pop [Adrian.Pop@liu.se],&#xA;Adeel Asghar [Adeel.Asghar@liu.se],&#xA;Elmir Jaguding, &#xA;Andreas Remar, &#xA;and plenty others at&#xA;Open Source Modelica Consortium (OSMC),&#xA;Programming Environments Laboratory (PELAB),&#xA;Linköping University (LiU). &#xA;Visit http://www.openmodelica.org/ for more information about&#xA;this software and other related projects.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.OpenModelica.org'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Open Source Modelica Consortium (OpenModelica@ida.liu.se)'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.group' version='0.7.19'/>
+      </provides>
+      <requires size='7'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.core' range='[0.7.19,0.7.19]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.ui' range='[0.7.19,0.7.19]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.omc' range='[0.7.19,0.7.19]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.core' range='[0.7.19,0.7.19]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.debug.ui' range='[0.7.19,0.7.19]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.breakpoint' range='[0.7.19,0.7.19]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.feature.jar' range='[0.7.19,0.7.19]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html' url='http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html'>
+          The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.&#xA;Copyright (c) 2005-2011, &#xA;The MDT Team (Authors): &#xA;Adrian Pop [Adrian.Pop@liu.se],&#xA;Adeel Asghar [Adeel.Asghar@liu.se] &#xA;Elmir Jagudin, &#xA;Andreas Remar, &#xA;Open Source Modelica Consortium,&#xA;Programming Environments Laboratory (PELAB),&#xA;Department of Computer and Information Science (IDA), &#xA;Linköping University (LiU).&#xA;All rights reserved.&#xA;&#xA;(The new BSD license, see also http://www.opensource.org/licenses/bsd-license.php)&#xA;&#xA;Redistribution and use in source and binary forms, with or without &#xA;modification, are permitted provided that the following conditions are met:&#xA;&#xA;* Redistributions of source code must retain the above copyright notice, &#xA;  this list of conditions and the following disclaimer. &#xA;  &#xA;* Redistributions in binary form must reproduce the above copyright notice, &#xA;  this list of conditions and the following disclaimer in the documentation &#xA;  and/or other materials provided with the distribution. &#xA;* Neither the name of the Authors and Linköping University nor the names of its &#xA;  contributors may be used to endorse or promote products derived from this &#xA;  software without specific prior written permission. &#xA;  &#xA;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND &#xA;ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED &#xA;WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. &#xA;IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, &#xA;INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, &#xA;BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, &#xA;DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF &#xA;LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE &#xA;OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED &#xA;OF THE POSSIBILITY OF SUCH DAMAGE.
+        </license>
+      </licenses>
+      <copyright uri='http://www.OpenModelica.org' url='http://www.OpenModelica.org'>
+        Copyright (c) 2005-2011, &#xA;Open Source Modelica Consortium (OSMC),&#xA;Programming Environments Laboratory (PELAB),&#xA;Department of Computer and Information Science (IDA), &#xA;Linköpings University (LiU).
       </copyright>
     </unit>
     <unit id='org.modelica.mdt.ui' version='0.6.4'>
@@ -4909,47 +5252,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.modelica.mdt.ui' version='0.6.1'>
-      <update id='org.modelica.mdt.ui' range='[0.0.0,0.6.1)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling UI'/>
-        <property name='org.eclipse.equinox.p2.provider' value='PELAB'/>
-      </properties>
-      <provides size='6'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.ui' version='0.6.1'/>
-        <provided namespace='osgi.bundle' name='org.modelica.mdt.ui' version='0.6.1'/>
-        <provided namespace='java.package' name='org.modelica.mdt.ui' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.ui.editor' version='0.0.0'/>
-        <provided namespace='java.package' name='org.modelica.mdt.ui.wizards' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='10'>
-        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.modelica.mdt.ui' version='0.6.1'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='2'>
-          <instruction key='manifest'>
-            Bundle-Vendor: PELAB&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.modelica.mdt.ui.UIPlugin&#xA;Require-Bundle: org.modelica.mdt.core,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.ide,org.eclipse.ui.workbench.texteditor,org.eclipse.debug.core,org.eclipse.ui.console&#xA;Bundle-Name: Modelica Development Tooling UI&#xA;Bundle-Localization: plugin&#xA;Eclipse-AutoStart: true&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true&#xA;Bundle-Version: 0.6.1&#xA;Export-Package: org.modelica.mdt.ui;x-friends:=&quot;org.modelica.mdt.test&quot;,org.modelica.mdt.ui.editor;x-friends:=&quot;org.modelica.mdt.test&quot;,org.modelica.mdt.ui.wizards;x-friends:=&quot;org.modelica.mdt.test&quot;
-          </instruction>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='org.modelica.mdt' version='0.4.0'>
       <update id='org.modelica.mdt' range='[0.0.0,0.4.0)' severity='0'/>
       <properties size='2'>
@@ -4988,6 +5290,47 @@
         <instructions size='2'>
           <instruction key='manifest'>
             Bundle-ManifestVersion: 2&#xA;Eclipse-AutoStart: true&#xA;Export-Package: org.modelica.mdt,org.modelica.mdt.core,org.modelica.mdt.editor,org.modelica.mdt.internal.core,org.modelica.mdt.internal.omcproxy,org.modelica.mdt.ui,org.modelica.mdt.ui.wizards&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.ui.ide,org.eclipse.core.resources,org.eclipse.core.runtime,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.jface.text,org.eclipse.ui.console,org.eclipse.debug.core,org.eclipse.pde.core&#xA;Bundle-Activator: org.modelica.mdt.MdtPlugin&#xA;Bundle-Name: Modelica Development Tooling&#xA;Bundle-Version: 0.4.0&#xA;Bundle-Vendor: PELAB&#xA;Bundle-SymbolicName: org.modelica.mdt; singleton:=true&#xA;Bundle-ClassPath: mdt.jar,bin/&#xA;Manifest-Version: 1.0
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.modelica.mdt.ui' version='0.6.1'>
+      <update id='org.modelica.mdt.ui' range='[0.0.0,0.6.1)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Modelica Development Tooling UI'/>
+        <property name='org.eclipse.equinox.p2.provider' value='PELAB'/>
+      </properties>
+      <provides size='6'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.modelica.mdt.ui' version='0.6.1'/>
+        <provided namespace='osgi.bundle' name='org.modelica.mdt.ui' version='0.6.1'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.editor' version='0.0.0'/>
+        <provided namespace='java.package' name='org.modelica.mdt.ui.wizards' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='10'>
+        <required namespace='osgi.bundle' name='org.modelica.mdt.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.modelica.mdt.ui' version='0.6.1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-Vendor: PELAB&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.modelica.mdt.ui.UIPlugin&#xA;Require-Bundle: org.modelica.mdt.core,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.ide,org.eclipse.ui.workbench.texteditor,org.eclipse.debug.core,org.eclipse.ui.console&#xA;Bundle-Name: Modelica Development Tooling UI&#xA;Bundle-Localization: plugin&#xA;Eclipse-AutoStart: true&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true&#xA;Bundle-Version: 0.6.1&#xA;Export-Package: org.modelica.mdt.ui;x-friends:=&quot;org.modelica.mdt.test&quot;,org.modelica.mdt.ui.editor;x-friends:=&quot;org.modelica.mdt.test&quot;,org.modelica.mdt.ui.wizards;x-friends:=&quot;org.modelica.mdt.test&quot;
           </instruction>
           <instruction key='zipped'>
             true

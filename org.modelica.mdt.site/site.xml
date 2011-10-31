@@ -1,101 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-  <description url="http://www.ida.liu.se/labs/pelab/modelica/OpenModelica/MDT">
-    Modelica Development Tooling
-  </description>
-  <feature url="features/org.modelica.mdt_0.6.0.jar" id="org.modelica.mdt" version="0.6.0">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.1.jar" id="org.modelica.mdt" version="0.6.1">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.2.jar" id="org.modelica.mdt" version="0.6.2">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.3.jar" id="org.modelica.mdt" version="0.6.3">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.4.jar" id="org.modelica.mdt" version="0.6.4">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.5.jar" id="org.modelica.mdt" version="0.6.5">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.6.jar" id="org.modelica.mdt" version="0.6.6">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.7.jar" id="org.modelica.mdt" version="0.6.7">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.8.jar" id="org.modelica.mdt" version="0.6.8">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.8.1.jar" id="org.modelica.mdt" version="0.6.8.1">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.6.9.jar" id="org.modelica.mdt" version="0.6.9">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.0.jar" id="org.modelica.mdt" version="0.7.0">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.1.jar" id="org.modelica.mdt" version="0.7.1">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.2.jar" id="org.modelica.mdt" version="0.7.2">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.3.jar" id="org.modelica.mdt" version="0.7.3">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.4.jar" id="org.modelica.mdt" version="0.7.4">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.5.jar" id="org.modelica.mdt" version="0.7.5">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.6.jar" id="org.modelica.mdt" version="0.7.6">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.7.jar" id="org.modelica.mdt" version="0.7.7">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.8.jar" id="org.modelica.mdt" version="0.7.8">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.9.jar" id="org.modelica.mdt" version="0.7.9">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.10.jar" id="org.modelica.mdt" version="0.7.10">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.11.jar" id="org.modelica.mdt" version="0.7.11">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.12.jar" id="org.modelica.mdt" version="0.7.12">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.13.jar" id="org.modelica.mdt" version="0.7.13">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.14.jar" id="org.modelica.mdt" version="0.7.14">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.15.jar" id="org.modelica.mdt" version="0.7.15">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.16.jar" id="org.modelica.mdt" version="0.7.16">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.17.jar" id="org.modelica.mdt" version="0.7.17">
-    <category name="modelica"/>
-  </feature>
-  <feature url="features/org.modelica.mdt_0.7.18.jar" id="org.modelica.mdt" version="0.7.18">
-    <category name="modelica"/>
-  </feature>
-  <category-def name="modelica" label="Modelica and MetaModelica Tools">
-    <description>
-      Tools for Modelica and MetaModelica
-    </description>
-  </category-def>
+   <description name="Modelica Development Tooling (MDT) - OpenModelica" url="http://www.ida.liu.se/labs/pelab/modelica/OpenModelica/MDT">
+      Modelica Development Tooling
+   </description>
+   <feature url="features/org.modelica.mdt_0.6.0.jar" id="org.modelica.mdt" version="0.6.0">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.1.jar" id="org.modelica.mdt" version="0.6.1">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.2.jar" id="org.modelica.mdt" version="0.6.2">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.3.jar" id="org.modelica.mdt" version="0.6.3">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.4.jar" id="org.modelica.mdt" version="0.6.4">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.5.jar" id="org.modelica.mdt" version="0.6.5">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.6.jar" id="org.modelica.mdt" version="0.6.6">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.7.jar" id="org.modelica.mdt" version="0.6.7">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.8.jar" id="org.modelica.mdt" version="0.6.8">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.8.1.jar" id="org.modelica.mdt" version="0.6.8.1">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.6.9.jar" id="org.modelica.mdt" version="0.6.9">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.0.jar" id="org.modelica.mdt" version="0.7.0">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.1.jar" id="org.modelica.mdt" version="0.7.1">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.2.jar" id="org.modelica.mdt" version="0.7.2">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.3.jar" id="org.modelica.mdt" version="0.7.3">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.4.jar" id="org.modelica.mdt" version="0.7.4">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.5.jar" id="org.modelica.mdt" version="0.7.5">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.6.jar" id="org.modelica.mdt" version="0.7.6">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.7.jar" id="org.modelica.mdt" version="0.7.7">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.8.jar" id="org.modelica.mdt" version="0.7.8">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.9.jar" id="org.modelica.mdt" version="0.7.9">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.10.jar" id="org.modelica.mdt" version="0.7.10">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.11.jar" id="org.modelica.mdt" version="0.7.11">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.12.jar" id="org.modelica.mdt" version="0.7.12">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.13.jar" id="org.modelica.mdt" version="0.7.13">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.14.jar" id="org.modelica.mdt" version="0.7.14">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.15.jar" id="org.modelica.mdt" version="0.7.15">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.16.jar" id="org.modelica.mdt" version="0.7.16">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.17.jar" id="org.modelica.mdt" version="0.7.17">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.18.jar" id="org.modelica.mdt" version="0.7.18">
+      <category name="modelica"/>
+   </feature>
+   <feature url="features/org.modelica.mdt_0.7.19.jar" id="org.modelica.mdt" version="0.7.19">
+      <category name="modelica"/>
+   </feature>
+   <category-def name="modelica" label="Modelica and MetaModelica Tools">
+      <description>
+         Tools for Modelica and MetaModelica
+      </description>
+   </category-def>
 </site>
