@@ -55,6 +55,7 @@ public class Constants {
 	
 	public static final String stereotypeQName_ModelicaModelReference 		= "ModelicaML::ModelReferences::ModelicaModelReference";
 	public static final String stereotypeQName_ModelicaModelProxy 			= "ModelicaML::ModelReferences::ModelicaModelProxy";
+	public static final String stereotypeQName_InstalledLibrary 			= "ModelicaML::ModelReferences::InstalledLibrary";
 
 	public static final String stereotypeQName_Requirement 					= "ModelicaML::ModelicaRequirementConstructs::Requirement";	
 
@@ -93,9 +94,24 @@ public class Constants {
 	public final static String propertyName_evaluationStarted 	= "evaluationStarted";
 	public final static String propertyName_violated 			= "violated";
 	
+	
+	public static final String propertyName_encapsulated 		= "encapsulated";
+	public static final String propertyName_expandable 		= "expandable";
+	
+	
+	public static final String propertyName_partial 		= "partial";
+	
 	public static final String propertyName_modification 		= "modification";
 	public static final String propertyName_causality 			= "causality";
+	public static final String propertyName_final	 			= "final";
+	public static final String propertyName_conditionalExpression  			= "conditionalExpression";
+	public static final String propertyName_flowFlag  			= "flowFlag";
+	public static final String propertyName_scope  				= "scope";
+	public static final String propertyName_arraySize 			= "arraySize";
+	public static final String propertyName_replaceable	 		= "replaceable";
 	public static final String propertyName_variability 		= "variability";
+	public static final String propertyName_declarationEquationOrAssignment 		= "declarationEquationOrAssignment";
+	
 	public static final String propertyName_input 				= "input";
 	public static final String propertyName_output 				= "output";
 	
@@ -167,6 +183,9 @@ public class Constants {
 	
 	public final static String MARKERTYPE_VALUEBINDINGS = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings";
 	public final static String MARKERTYPE_COMPONENT_MODIFICATION = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification";
+	public final static String MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES = "org.openmodelica.modelicaml.modelicamlMarker.modelicamlproxies";
+	public final static String MARKERTYPE_MODELICA_MODELS_LOADING = "org.openmodelica.modelicaml.modelicamlMarker.modelicaloading";
+	
 	
 	// verification execution report
 	public final static String className_requirementsVerificationVerdict 	= "_ReqVerificationVerdict";
@@ -187,8 +206,10 @@ public class Constants {
 	
 	// code generation
 	public final static String folderName_code_gen = "code-gen";
-	public final static String folderName_code_inc = "code-inc";
+	public final static String folderName_code_sync = "code-sync";
+	public final static String folderName_req_sync = "req-sync";
 
+	
 	// Test Execution
 	public final static String folderName_verification_gen = "verification-gen";
 	public final static String folderName_verification_session = "verification-session";
@@ -201,5 +222,23 @@ public class Constants {
 	public final static String predefinedTypeName_integer = "ModelicaInteger";
 	public final static String predefinedTypeName_string = "ModelicaString";
 	
+	// predefined type qualified names
+	public final static String predefinedTypesProfileQName = "ModelicaML::ModelicaPredefinedTypes";
+	public final static String predefinedEnumerationsProfileQName = "ModelicaML::ModelicaPredefinedEnumerations";
+
+	
+	public final static String predefinedTypeQName_boolean = "ModelicaML::ModelicaPredefinedTypes::ModelicaBoolean";
+	public final static String predefinedTypeQName_real = "ModelicaML::ModelicaPredefinedTypes::ModelicaReal";
+	public final static String predefinedTypeQName_integer = "ModelicaML::ModelicaPredefinedTypes::ModelicaInteger";
+	public final static String predefinedTypeQName_string = "ModelicaML::ModelicaPredefinedTypes::ModelicaString";
+
+	
+	
+	/** The Constant numberOfItemsInCreateNewElementsDiologs. */
+	public final static Integer numberOfItemsInCreateNewElementsDiologs = 5;
+	public final static String MODELICAML_PROFILE_URI = "pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"; //$NON-NLS-1$
+	
+	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.modelexplorer.modelexplorer";
+
 }
 

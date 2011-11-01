@@ -76,10 +76,12 @@ public class DialogMessage extends Dialog {
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
 
-        lblMessage = new Label(composite, SWT.NONE);
-		lblMessage.setBounds(10, 10, 380, 13);
+        if (this.infoText != null) {
+            lblMessage = new Label(composite, SWT.NONE);
+    		lblMessage.setBounds(10, 10, 380, 13);
 
-		lblMessage.setText(this.infoText);
+    		lblMessage.setText(this.infoText);
+		}
 
 		text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		text.setLayout(new GridLayout());

@@ -104,7 +104,7 @@ public class VerificationExecutionServices {
 		return Constants.folderName_code_gen;
 	}
 	public static String getCodeIncFolderName(Element elt){
-		return Constants.folderName_code_inc;
+		return Constants.folderName_code_sync;
 	}
 	
 	public static String getTopLevelModelicaFilePath(Element umlElement){

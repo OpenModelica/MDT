@@ -28,6 +28,24 @@ public class PapyrusServices {
 			List<Object> items = new ArrayList<Object>();
 			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
 			
+			// set new selection
+			modelExplorerView.setSelection(new StructuredSelection(items), true);
+      	}
+	}
+	
+	public static void locateWithReselection(Object object){
+		if (object instanceof EObject) {
+			
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+
+			ModelExplorerPageBookView modelExplorerPageBookView = null;
+			if (view instanceof ModelExplorerPageBookView) {
+				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+			}
+			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+			List<Object> items = new ArrayList<Object>();
+			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+			
 			// reset the selection so that the components tree can instantiate the selected class again
 			modelExplorerView.setSelection(new StructuredSelection(), true);
 			
