@@ -34,7 +34,8 @@ import  org.openmodelica.modelicaml.gen.modelica.cg.helpers.CGConfigurationManag
 <%script type="uml.Classifier" name="ownerIsAValidPackageFolder" post="trim()"%>
 <%if ( owner.eClass().name == "Model" || owner.eClass().name == "Package" ){%>true
 <%}else{%>
-	<%if ( owner.hasStereotype(getProperty("s_package")) || owner.hasStereotype(getProperty("s_operator")) ){%>
+	<%if ( (owner.hasStereotype(getProperty("s_package")) || owner.hasStereotype(getProperty("s_operator"))) 
+			&& !hasStereotype(getProperty("ModelicaModelProxy"))){%>
 		<%if (owner.owner.eClass().name == "Model" || owner.owner.eClass().name == "Package"){%>true
 		<%}else{%>
 			<%if ( owner.owner.hasStereotype(getProperty("s_package")) || owner.owner.hasStereotype(getProperty("s_operator")) ){%>true
@@ -51,4 +52,5 @@ import  org.openmodelica.modelicaml.gen.modelica.cg.helpers.CGConfigurationManag
 		&& isRedeclare == "false"
 		&& isReplaceable == "false"
 		&& isPartialDerivativeFunction == "false"
+		&& !hasStereotype(getProperty("ModelicaModelProxy"))
 		){%>true<%}else{%>false<%}%>

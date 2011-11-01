@@ -66,6 +66,12 @@
                id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification">
          </markerTypeReference>
          <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.modelicamlproxies">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.modelicaloading">
+         </markerTypeReference>
+         <markerTypeReference
                id="org.openmodelica.modelicaml.modelicamlMarker.actionCode">
          </markerTypeReference>
          <markerTypeReference

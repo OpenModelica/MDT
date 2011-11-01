@@ -34,8 +34,22 @@
  */
 package org.openmodelica.modelicaml.gen.modelica.validation.view;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportView;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -48,7 +62,67 @@ public class ModelicaMLValidationView extends MarkerSupportView {
 	 */
     public ModelicaMLValidationView() {
         super("org.openmodelica.modelicaml.markerContentGenerator");
+        
     }
+
+//	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
+//		// optimization: if the active editor has the same input as
+//		// the
+//		// selected marker then
+//		// RevealMarkerAction would have been run and we only need
+//		// to
+//		// activate the editor
+//		IEditorPart editor = page.getActiveEditor();
+//		if (editor != null) {
+//			IEditorInput input = editor.getEditorInput();
+//			IFile file = ResourceUtil.getFile(input);
+//			if (file != null) {
+//				if (marker.getResource().equals(file)
+//						&& OpenStrategy.activateOnOpen()) {
+//					page.activate(editor);
+//				}
+//			}
+//		}
+//
+//		if (marker != null && marker.getResource() instanceof IFile) {
+//			try {
+//				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+//			} catch (PartInitException e) {
+//
+//				// Check for a nested CoreException
+//				IStatus status = e.getStatus();
+//				if (status != null
+//						&& status.getException() instanceof CoreException) {
+//					status = ((CoreException) status.getException())
+//							.getStatus();
+//				}
+//
+//				if (status == null)
+//					StatusManager.getManager().handle(
+//							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
+//									e), StatusManager.SHOW);
+//
+//				else
+//					StatusManager.getManager().handle(status,
+//							StatusManager.SHOW);
+//
+//			}
+//		}
+//		else if (marker != null ) {
+//			try {
+//				String markerType = marker.getType();
+//				if (markerType.equals(Constants.MARKERTYPE_MODELICA_MODELS_LOADING) || markerType.equals(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES) ) {
+//					System.err.println("HOIER");
+//				}
+//			} catch (CoreException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//		}
+//	}
+    
+    
     
     /**
 	 * Gets the value.

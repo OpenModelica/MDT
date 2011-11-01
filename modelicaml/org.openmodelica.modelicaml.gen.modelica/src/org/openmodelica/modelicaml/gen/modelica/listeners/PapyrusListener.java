@@ -323,37 +323,40 @@ private String project = null;
 			
 			umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
 
-			//String projectName = umlModel.getResourceURI().segment(1);
-			String projectName = umlModel.getResource().getURI().segment(1);
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-			iProject = root.getProject(projectName);
-			
-//			System.err.println("n.isModified(): " + umlModelResource.isModified());
-//			System.err.println("Current model: " + UmlUtils.getUmlModel().getResourceURI());
-//			System.err.println("Modified model U " + r.getURI());
-
-			if (UmlUtils.getUmlModel().getResourceURI().equals( ((UMLResource) notification.getNotifier()).getURI() ) ) {
-
-				Boolean GenerateModelicaCodeInBackgroundAfterSave = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "GenerateModelicaCodeInBackgroundAfterSave", false, null);
+			if (umlModel != null) {
+				//String projectName = umlModel.getResourceURI().segment(1);
+				String projectName = umlModel.getResource().getURI().segment(1);
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				iProject = root.getProject(projectName);
 				
-				if ( GenerateModelicaCodeInBackgroundAfterSave ) {
+//				System.err.println("n.isModified(): " + umlModelResource.isModified());
+//				System.err.println("Current model: " + UmlUtils.getUmlModel().getResourceURI());
+//				System.err.println("Modified model U " + r.getURI());
+
+				if (UmlUtils.getUmlModel().getResourceURI().equals( ((UMLResource) notification.getNotifier()).getURI() ) ) {
+
+					Boolean GenerateModelicaCodeInBackgroundAfterSave = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "GenerateModelicaCodeInBackgroundAfterSave", false, null);
 					
-					// get the Papyrus model in order to make sure that the model is not being saved, hence is not dirty anymore.
-					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() != null) {
-						IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-						papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
+					if ( GenerateModelicaCodeInBackgroundAfterSave ) {
+						
+						// get the Papyrus model in order to make sure that the model is not being saved, hence is not dirty anymore.
+						if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() != null) {
+							IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+							papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
+						}
+						
+						prepareValidationAndCodeGenerationChains();
+						
+						if (job.getState() != Job.NONE ) {
+							job.cancel();
+						}
+						job.setPriority(Job.BUILD);
+						//job.setUser(true);
+						job.schedule(1000); // wait a second in order to let Papyrus time to save the model.
 					}
-					
-					prepareValidationAndCodeGenerationChains();
-					
-					if (job.getState() != Job.NONE ) {
-						job.cancel();
-					}
-					job.setPriority(Job.BUILD);
-					//job.setUser(true);
-					job.schedule(1000); // wait a second in order to let Papyrus time to save the model.
 				}
+				
 			}
 		}
 	}
