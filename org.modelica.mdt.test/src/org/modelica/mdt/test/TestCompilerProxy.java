@@ -41,14 +41,17 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
-import org.modelica.mdt.core.IModelicaClass.Restriction;
+import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -68,125 +71,85 @@ import static org.modelica.mdt.core.IModelicaClass.Restriction.PACKAGE;
 /**
  * test org.modelica.mdt.core.CompilerProxy class' code 
  */
-public class TestCompilerProxy extends TestCase
-{
+public class TestCompilerProxy extends TestCase {
 	/* a source code file use in some tests */
 	private IFile nested_models_mo;
 	private IFile broken_nested_models_mo;
-	private Vector<String> expectedClasses = new Vector<String>(5);
+	private Vector<String> expectedClasses = new Vector<String>();
 
-	
-	protected void setUp() 
-		throws ConnectException, CompilerInstantiationException, UnexpectedReplyException
-	{
+	protected void setUp()
+			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException {
 		Area51Projects.createProjects();
-		
-		/* 
+
+		/*
 		 * fetch reference to nested_models.mo file 
 		 * from Area51Projects modelica project 
 		 */
-		IProject proj = Utility.getProject(
-				Area51Projects.MODELICA_PROJECT_NAME).getWrappedProject();
-		
+		IModelicaProject mproj = Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
+		IProject proj = mproj.getWrappedProject();
+
 		nested_models_mo = proj.getFile("nested_models.mo");
 		broken_nested_models_mo = proj.getFile("broken_nested_models.mo");
-		
 
 		CompilerProxy.loadSourceFile(nested_models_mo);
 		CompilerProxy.loadSourceFile
-			(proj.getFolder("packages_folder").getFile("file_package.mo"));
-		
+		(proj.getFolder("packages_folder").getFile("file_package.mo"));
+
 		/*
 		 * setup expected collection
 		 */
 		assertTrue(Collections.addAll(expectedClasses, "broken_nested_models",
-					"bruuken_muu", "foobared", "broken_hej", "broken_hepp"));
-		
+				"bruuken_muu", "foobared", "broken_hej", "broken_hepp"));
 	}
-	
+
 	/**
 	 * test CompilerProxy.getRestriction() 
 	 * @throws CompilerInstantiationException 
 	 */
 	public void testGetRestriction() 
-		throws ConnectException, UnexpectedReplyException,
-			CompilerInstantiationException
-	{
-		/* 
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		/*
 		 * we need to load modelica package,
-		 * we can ass well do some checks		
+		 * we can as well do some checks		
 		 * on the returned names of the standard packages 
 		 */
-		Vector<String> v = new Vector<String>();
-		for (String clazz : CompilerProxy.getStandardLibrary())
-		{
-			v.add(clazz);
-		}
-		assertTrue(v.size() >= 1);
-		assertTrue(v.contains("Modelica"));
+		String[] stdlib = CompilerProxy.getStandardLibrary();
+		List<String> stdlibList = Arrays.asList(stdlib);
 		
-		if (CompilerProxy.getRestriction("Modelica") != Restriction.PACKAGE)
-		{
-			fail("Modelica class' restriction is wrong");
-		}
-		if (CompilerProxy.getRestriction("Modelica.Blocks.Examples.BusUsage") 
-				!= Restriction.MODEL)
-		{
-			fail("Modelica.Blocks.Examples.BusUsage class' " + 
-					"restriction is wrong");
-		}
-		if (CompilerProxy.getRestriction("Modelica.Math.log") 
-				!= Restriction.FUNCTION)
-		{
-			fail("Modelica.Math.log class' restriction is wrong");
-		}
-		if (CompilerProxy.getRestriction("Modelica.Icons.Record") 
-				!= Restriction.RECORD)
-		{
-			fail("Modelica.Icons.Record class' restriction is wrong");
-		}
-		if (CompilerProxy.getRestriction("Modelica.Electrical.Analog.Interfaces.Pin") 
-				!= Restriction.CONNECTOR)
-		{
-			fail("Modelica.Blocks.Interfaces.BooleanPort class' " + 
-					"restriction is wrong");
-		}
-		if (CompilerProxy.getRestriction("Modelica.Blocks.Continuous.Der") 
-				!= Restriction.BLOCK)
-		{
-			fail("Modelica.Blocks.Continuous.Der class' " + 
-					"restriction is wrong");
-		}
-		if (CompilerProxy.getRestriction("Modelica.SIunits.Lethargy") 
-				!= Restriction.TYPE)
-		{
-			fail("Modelica.SIunits.Lethargy class' restriction is wrong");
-		}
-		
-		CompilerProxy.loadSourceFile(nested_models_mo);
-		if (CompilerProxy.getRestriction("hepp.hehehe") 
-				!= Restriction.CLASS)
-		{
-			fail("hepp.hehehe class' restriction is wrong");
-		}
+		assertTrue(stdlib.length == stdlibList.size() && stdlib.length >= 1);
+		assertTrue(stdlibList.contains("Modelica"));
+
+		testGetRestriction("Modelica", IModelicaClass.Restriction.PACKAGE);
+
+		testGetRestriction("Modelica.Blocks.Examples.BusUsage", IModelicaClass.Restriction.MODEL);
+
+		testGetRestriction("Modelica.Math.log", IModelicaClass.Restriction.FUNCTION);
+
+		testGetRestriction("Modelica.Icons.Record", IModelicaClass.Restriction.RECORD);
+
+		testGetRestriction("Modelica.Electrical.Analog.Interfaces.Pin", IModelicaClass.Restriction.CONNECTOR);
+
+		testGetRestriction("Modelica.Blocks.Continuous.Der", IModelicaClass.Restriction.BLOCK);
+
+		testGetRestriction("Modelica.SIunits.Lethargy", IModelicaClass.Restriction.TYPE);
+
+		testGetRestriction("hepp.hehehe", IModelicaClass.Restriction.CLASS);
 	}
-	
+
 	/**
-	 * test CompilerProxy.getElementLocation()
+	 * test CompilerProxy.getClassLocation()
 	 */
 	public void testGetClassLocation()
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException
-	{
+			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException {
 		/*
-		 * we are basicaly only interested in getting the right definition region
+		 * we are basically only interested in getting the right definition region
 		 */
 		IDefinitionLocation loc = CompilerProxy.getClassLocation("nested_models");		
 		assertTrue(loc.getPath().endsWith("nested_models.mo"));
 		IRegion reg = loc.getRegion();
 		assertEquals(0, reg.getOffset());
 		assertEquals(146, reg.getLength());
-		
+
 		loc = CompilerProxy.getClassLocation("nested_models.hepp");
 		reg = loc.getRegion();
 		assertEquals(45, reg.getOffset());
@@ -196,17 +159,17 @@ public class TestCompilerProxy extends TestCase
 		reg = loc.getRegion();
 		assertEquals(71, reg.getOffset());
 		assertEquals(126-71+1, reg.getLength());
-		
+
 		loc = CompilerProxy.getClassLocation("nested_models.foo.bar");		
 		reg = loc.getRegion();
 		assertEquals(89, reg.getOffset());
 		assertEquals(114-89+1, reg.getLength());
-		
+
 		loc = CompilerProxy.getClassLocation("muu");		
 		reg = loc.getRegion();
 		assertEquals(147, reg.getOffset());
 		assertEquals(193-147+1, reg.getLength());
-		
+
 		loc = CompilerProxy.getClassLocation("foo");		
 		reg = loc.getRegion();
 		assertEquals(196, reg.getOffset());
@@ -246,28 +209,24 @@ public class TestCompilerProxy extends TestCase
 		reg = loc.getRegion();
 		assertEquals(422, reg.getOffset());
 		assertEquals(449-422+1, reg.getLength());
-
 	}
-	
+
 	/**
 	 * Test that both compile errors and contents are found in
 	 * a problematic file.
 	 *
 	 */
 	public void testErrorReporting() 
-		throws ConnectException, UnexpectedReplyException,
-			CompilerInstantiationException
-	{
-		IParseResults res = 
-			CompilerProxy.loadSourceFile(broken_nested_models_mo);
-		
-		for(String s : res.getClasses())
-		{
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IParseResults res = CompilerProxy.loadSourceFile(broken_nested_models_mo);
+
+		for(String s : res.getClasses()) {
 			expectedClasses.remove(s);
 		}
+
 		assertTrue("Could not find all expected classes in file",
 				expectedClasses.isEmpty());
-		
+
 		ICompileError[] errs = res.getCompileErrors();
 		assertEquals(7, errs[0].getStartLine()); 
 		assertEquals(9, errs[1].getStartLine()); 
@@ -275,27 +234,27 @@ public class TestCompilerProxy extends TestCase
 		assertEquals(14, errs[3].getStartLine()); 
 		assertEquals(16, errs[4].getStartLine()); 
 	}
-	
+
 	/**
 	 * test CompilerProxy.getClassInfo() 
+	 * @throws UnexpectedReplyException 
+	 * @throws ConnectException 
+	 * @throws CompilerInstantiationException 
 	 */
-	public void testClassInfo() throws Exception
-	{
-		IClassInfo ci;
-		IDefinitionLocation loc;
-				
+	public void testGetClassInfo() 
+			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
 		/*
 		 * run getClassInfo() on contents of nested_models.mo
 		 * and make sure the returned info checks out
 		 */
-		ci = CompilerProxy.getClassInfo("nested_models");
+		IClassInfo ci = CompilerProxy.getClassInfo("nested_models");
 		assertEquals("wrong type of restriction", MODEL, ci.getRestriction());
 		assertFalse("wrong encapsulated status", ci.getEncapsulated());
-		loc = ci.getDefinitionLocation();
+		IDefinitionLocation loc = ci.getDefinitionLocation();
 		assertTrue("fishy path", loc.getPath().endsWith("nested_models.mo"));
 		assertEquals("wring start offset", 0, loc.getRegion().getOffset());
 		assertEquals("wring start offset", 146, loc.getRegion().getLength());
-		
+
 		/*
 		 * run getClassInfo() on contents of packages_folder/file_package.mo
 		 * and make sure the returned info checks out
@@ -307,7 +266,7 @@ public class TestCompilerProxy extends TestCase
 		assertTrue("fishy path", loc.getPath().endsWith("file_package.mo"));
 		assertEquals("wring start offset", 0, loc.getRegion().getOffset());
 		assertEquals("wring start offset", 61, loc.getRegion().getLength());
-		
+
 		ci = CompilerProxy.getClassInfo("file_package2");
 		assertEquals("wrong type of restriction", PACKAGE, ci.getRestriction());
 		assertTrue("wrong encapsulated status", ci.getEncapsulated());
@@ -316,5 +275,13 @@ public class TestCompilerProxy extends TestCase
 		assertEquals("wring start offset", 63, loc.getRegion().getOffset());
 		assertEquals("wring start offset", 137-63, loc.getRegion().getLength());
 	}
-}
 
+	private void testGetRestriction(String className, IModelicaClass.Restriction expectedRestriction)
+			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException {
+		IModelicaClass.Restriction actualRestriction = CompilerProxy.getRestriction(className);
+		String restrictionFail = "For className \"" + className + "\", the expected restriction was \"" + expectedRestriction +
+				"\", but we got \"" + actualRestriction + "\".";
+
+		assertEquals(restrictionFail, expectedRestriction, actualRestriction);
+	}
+}
