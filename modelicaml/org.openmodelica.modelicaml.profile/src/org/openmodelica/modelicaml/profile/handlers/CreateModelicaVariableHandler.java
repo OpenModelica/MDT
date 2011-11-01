@@ -66,9 +66,9 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.profile.Activator;
 import org.openmodelica.modelicaml.profile.dialogs.OneOrTwoColumnWithTextAndOptionalComboDialog;
-import org.openmodelica.modelicaml.properties.ModelicaMLConstants;
 
 
 // TODO: Auto-generated Javadoc
@@ -135,7 +135,7 @@ private EObject selectedElement = null;
 						Element parentElement = (Element)selectedElement;
 						EClass metaClassForNewElements = UMLPackage.Literals.PROPERTY;
 
-						int numberOfItems = ModelicaMLConstants.numberOfItemsInCreateNewElementsDiologs;
+						int numberOfItems = Constants.numberOfItemsInCreateNewElementsDiologs;
 						
 						String lblText = "Name: ";
 						String defaultName = "variable";
@@ -248,15 +248,15 @@ private EObject selectedElement = null;
 	 * @return the type from dialog string
 	 */
 	private Type getTypeFromDialogString(String typeString, TypedElement p){
-		Type type = p.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaReal");
+		Type type = p.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_real);
 		if (typeString.equals("ModelicaInteger")) {
-			return type = p.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaInteger");
+			return type = p.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_integer);
 		}
 		if (typeString.equals("ModelicaBoolean")) {
-			return type = p.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaBoolean");
+			return type = p.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_boolean);
 		}
 		if (typeString.equals("ModelicaString")) {
-			return type = p.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaString");
+			return type = p.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_string);
 		}
 		return type;
 	}

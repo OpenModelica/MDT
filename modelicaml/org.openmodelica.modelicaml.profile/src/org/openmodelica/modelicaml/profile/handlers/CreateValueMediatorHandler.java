@@ -67,9 +67,8 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.UMLPackage;
-import org.openmodelica.modelicaml.profile.Activator;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.profile.dialogs.OneOrTwoColumnWithTextAndOptionalComboDialog;
-import org.openmodelica.modelicaml.properties.ModelicaMLConstants;
 
 
 // TODO: Auto-generated Javadoc
@@ -140,7 +139,7 @@ private EList<Element> createdElements = new BasicEList<Element>();
 						Element parentElement = (Element)selectedElement;
 						EClass metaClassForNewElements = UMLPackage.Literals.PROPERTY;
 
-						int numberOfItems = ModelicaMLConstants.numberOfItemsInCreateNewElementsDiologs;
+						int numberOfItems = Constants.numberOfItemsInCreateNewElementsDiologs;
 						
 						String lblText = "Name: ";
 						String defaultName = "valueMediator";

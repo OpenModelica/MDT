@@ -62,8 +62,8 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.profile.dialogs.OneOrTwoColumnWithTextAndOptionalComboDialog;
-import org.openmodelica.modelicaml.properties.ModelicaMLConstants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -122,7 +122,7 @@ private EObject selectedElement = null;
 						Element parentElement = (Element)selectedElement;
 						EClass metaClassForNewElements = UMLPackage.Literals.PACKAGE;
 
-						int numberOfItems = ModelicaMLConstants.numberOfItemsInCreateNewElementsDiologs;
+						int numberOfItems = Constants.numberOfItemsInCreateNewElementsDiologs;
 						
 						String lblText = "Name: ";
 						String defaultName = "Package";
