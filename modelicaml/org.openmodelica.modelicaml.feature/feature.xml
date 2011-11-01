@@ -2,7 +2,7 @@
 <feature
       id="org.openmodelica.modelicaml.feature"
       label="ModelicaML - Papyrus Customization, Modelica Code Generation, Simulation with OMC"
-      version="1.7.3.qualifier"
+      version="1.8.0.qualifier"
       provider-name="OpenModelica Project">
 
    <description url="http://www.openmodelica.org/modelicaml">
@@ -419,6 +419,13 @@ See the full OSMC Public License conditions for more details.
 
    <plugin
          id="org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.modelica.importer"
          download-size="0"
          install-size="0"
          version="0.0.0"
