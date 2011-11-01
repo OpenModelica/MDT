@@ -94,9 +94,9 @@ public class TestModelicaProject {
 				"foobared",
 				"components_bananza",
 				"nested_models",
-				"childless_package",				
+				"childless_package",
 				"import_rich_model",
-				"folder_package",				
+				"folder_package",
 				"hepp",
 				"muu",
 				"root_model"));
@@ -106,7 +106,7 @@ public class TestModelicaProject {
 	 * test (I)ModelciaProject.getClass() method
 	 */
 	@Test
-	public void testGetClass() 
+	public void testGetClass()
 			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, InvocationError, CoreException, Exception {
 		/*
 		 * check that find existing packages works
@@ -135,7 +135,7 @@ public class TestModelicaProject {
 
 		testGetClass("components_bananza.a_class", "components_bananza.a_class", IModelicaClass.Restriction.CLASS);
 
-		testGetClass("components_bananza.a_type", "components_bananza.a_type", IModelicaClass.Restriction.TYPE);	
+		testGetClass("components_bananza.a_type", "components_bananza.a_type", IModelicaClass.Restriction.TYPE);
 
 		testGetClass("components_bananza.a_connector", "components_bananza.a_connector", IModelicaClass.Restriction.CONNECTOR);
 
@@ -230,7 +230,7 @@ public class TestModelicaProject {
 			}
 		}
 
-		String errorMsg = "could not find following expeced root classes:";
+		String errorMsg = "Could not find following expected root classes:";
 		for (String cls : expectedRootPackages) {
 			errorMsg += " " + cls;
 		}
@@ -250,7 +250,7 @@ public class TestModelicaProject {
 
 		testFindElement("package_look_alike", IModelicaFolder.class, null);
 
-		/* 
+		/*
 		 * FIXME: We are currently not creating the empty file package.mo inside package_look_alike
 		 * because it makes OMC to freeze. When this problem has been fixed, we can run this test
 		 * again.
@@ -293,20 +293,20 @@ public class TestModelicaProject {
 
 		testFindElement("root_model.mo", IModelicaSourceFile.class, null);
 
-		testFindElement("empty_file", IModelicaFile.class, null);	
+		testFindElement("empty_file", IModelicaFile.class, null);
 
 		testFindElement("README.txt", IModelicaFile.class, null);
 
 		/*
 		 * check what happens when trying to find non-existing elements
-		 * 
+		 *
 		 * BEWARE, the test below can break if elements search for are added
 		 * to the area51 modelica project
 		 */
 		testFindElementNonExisting("packages_folder/file_package.mo/file_package1");
 
 		testFindElementNonExisting("packages_folder/file_package.mo/file_package2");
-		
+
 		testFindElementNonExisting("non_existing_file");
 
 		testFindElementNonExisting("non_existing_folder/package.mo");
@@ -324,60 +324,81 @@ public class TestModelicaProject {
 		testFindElementNonExisting(Area51Projects.MODELICA_PROJECT_NAME);
 	}
 
-	private void testGetClass(String className, String expectedFullName, IModelicaClass.Restriction expectedRestriction) throws Exception {
+	private void testGetClass(String className, String expectedFullName, IModelicaClass.Restriction expectedRestriction)
+			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, InvocationError, CoreException {
 		IModelicaClass pkg = project.getClass(className);
 
 		if (pkg == null) {
 			printAll(project.getRootClasses(), 0);
 		}
 
-		assertNotNull("project.getClass() returned null for \"" + className + "\"", pkg);
+		String getClassFail = "project.getClass() returned null for className \"" + className + "\".";
+
+		assertNotNull(getClassFail, pkg);
 
 		String actualFullName = pkg.getFullName();
+		String fullNameFail = "Expected pkg.getFullName() to return \"" + expectedFullName + "\" for className \"" + className +
+				"\", but got \"" + actualFullName + "\".";
 
-		assertEquals("Expected pkg.getFullName() to return \"" + expectedFullName + "\" for className \"" + className + "\", but got \"" + actualFullName + "\".", expectedFullName, actualFullName);
+		assertEquals(fullNameFail, expectedFullName, actualFullName);
 
 		IModelicaClass.Restriction actualRestriction = pkg.getRestriction();
+		String restrictionFail = "For className \"" + className + "\", the expected restriction was \"" + expectedRestriction +
+				"\", but we got \"" + actualRestriction + "\".";
 
-		assertEquals("Expected restriction " + expectedRestriction + ", but got " + actualRestriction + ".", expectedRestriction, actualRestriction);
+		assertEquals(restrictionFail, expectedRestriction, actualRestriction);
 	}
 
 	private void testGetClassNonExisting(String className) throws Exception {
 		IModelicaClass pkg = project.getClass(className);
+		String getClassNonExistingFail = "project.getClass() was called with className \"" + className +
+				"\", and was expected to return NULL, but didn't.";
 
-		assertNull("project.getClass() was called with \"" + className + "\", and was expected to return NULL, but didn't.", pkg);
+		assertNull(getClassNonExistingFail, pkg);
 	}
-	
+
 	private void testFindElement(String pathName, Class<?> expectedClass, IModelicaClass.Restriction expectedRestriction)
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException {
 		Path path = new Path(pathName);
 		IModelicaElement element = project.findElement(path);
-		
-		assertNotNull(element);
-		
+		String findElementFail = "project.findElement() returned null for pathName \"" + pathName + "\".";
+
+		assertNotNull(findElementFail, element);
+
 		Class<?> actualClass = element.getClass();
 		String expectedClassName = expectedClass.getCanonicalName();
 		String actualClassName = actualClass.getCanonicalName();
-		String errorMsgClass = "Was expecting " + expectedClassName + ", but got " + actualClassName;
-		
+		String errorMsgClass = "For pathName \"" + pathName + "\", we expected to find an element that is an instance of \"" +
+				expectedClassName + "\", but the returned class \"" + actualClassName + "\" is not an instance of that class.";
+
 		assertTrue(errorMsgClass, expectedClass.isAssignableFrom(actualClass));
-		
+
 		if (expectedRestriction != null) {
-			assertTrue(element instanceof IModelicaClass);
+			String typeFail = "Since a restriction \"" + expectedRestriction + "\" was specified for pathName \"" +
+					pathName + "\", it was expected to be an instance of IModelicaClass, but it was not.";
+
+			assertTrue(typeFail, element instanceof IModelicaClass);
+
 			IModelicaClass.Restriction actualRestriction = ((IModelicaClass)element).getRestriction();
-			
-			assertEquals("Expected restriction " + expectedRestriction + ", but got " + actualRestriction + ".", expectedRestriction, actualRestriction);
+			String restrictionFail = "For pathName \"" + pathName + "\", the expected restriction was \"" + expectedRestriction
+					+ "\", but we got \"" + actualRestriction + "\".";
+
+			assertEquals(restrictionFail, expectedRestriction, actualRestriction);
 		}
 	}
-	
-	private void testFindElementNonExisting(String pathName) 
+
+	private void testFindElementNonExisting(String pathName)
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException {
 		Path path = new Path(pathName);
 		IModelicaElement element = project.findElement(path);
-		assertNull(element);
+		String findElementNonExistingFail = "project.findElement() was called with pathName \"" + pathName +
+				"\", and was expected to return NULL, but didn't.";
+
+		assertNull(findElementNonExistingFail, element);
 	}
 
-	private void printAll(Collection<? extends IModelicaElement> children, int indent) throws Exception {		
+	private void printAll(Collection<? extends IModelicaElement> children, int indent)
+			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
 		for (IModelicaElement elem : children) {
 			for (int i = 0; i < indent; i++) System.out.print("  ");
 			String elementName = elem.getElementName();
