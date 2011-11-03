@@ -48,10 +48,10 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -65,11 +65,8 @@ import org.modelica.mdt.test.util.Utility;
 
 import junit.framework.TestCase;
 
-import static org.modelica.mdt.core.IModelicaClass.Restriction.MODEL;
-import static org.modelica.mdt.core.IModelicaClass.Restriction.PACKAGE;
-
 /**
- * test org.modelica.mdt.core.CompilerProxy class' code 
+ * test org.modelica.mdt.core.CompilerProxy class' code
  */
 public class TestCompilerProxy extends TestCase {
 	/* a source code file use in some tests */
@@ -82,8 +79,7 @@ public class TestCompilerProxy extends TestCase {
 		Area51Projects.createProjects();
 
 		/*
-		 * fetch reference to nested_models.mo file 
-		 * from Area51Projects modelica project 
+		 * fetch reference to nested_models.mo file from Area51Projects modelica project
 		 */
 		IModelicaProject mproj = Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
 		IProject proj = mproj.getWrappedProject();
@@ -109,13 +105,11 @@ public class TestCompilerProxy extends TestCase {
 	public void testGetRestriction() 
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
 		/*
-		 * we need to load modelica package,
-		 * we can as well do some checks		
-		 * on the returned names of the standard packages 
+		 * we need to load modelica package, we can as well do some checks on the returned names of the standard packages 
 		 */
 		String[] stdlib = CompilerProxy.getStandardLibrary();
 		List<String> stdlibList = Arrays.asList(stdlib);
-		
+
 		assertTrue(stdlib.length == stdlibList.size() && stdlib.length >= 1);
 		assertTrue(stdlibList.contains("Modelica"));
 
@@ -144,90 +138,62 @@ public class TestCompilerProxy extends TestCase {
 		/*
 		 * we are basically only interested in getting the right definition region
 		 */
-		IDefinitionLocation loc = CompilerProxy.getClassLocation("nested_models");		
-		assertTrue(loc.getPath().endsWith("nested_models.mo"));
-		IRegion reg = loc.getRegion();
-		assertEquals(0, reg.getOffset());
-		assertEquals(146, reg.getLength());
+		testGetClassLocation("nested_models", "nested_models.mo", 1, 1, 7, 18);
 
-		loc = CompilerProxy.getClassLocation("nested_models.hepp");
-		reg = loc.getRegion();
-		assertEquals(45, reg.getOffset());
-		assertEquals(21, reg.getLength());
+		testGetClassLocation("nested_models.hepp", null, 3, 5, 3, 25);
 
-		loc = CompilerProxy.getClassLocation("nested_models.foo");		
-		reg = loc.getRegion();
-		assertEquals(71, reg.getOffset());
-		assertEquals(126-71+1, reg.getLength());
+		testGetClassLocation("nested_models.foo", null, 4, 5, 6, 28);
 
-		loc = CompilerProxy.getClassLocation("nested_models.foo.bar");		
-		reg = loc.getRegion();
-		assertEquals(89, reg.getOffset());
-		assertEquals(114-89+1, reg.getLength());
+		testGetClassLocation("nested_models.foo.bar", null, 5, 9, 6, 16);
 
-		loc = CompilerProxy.getClassLocation("muu");		
-		reg = loc.getRegion();
-		assertEquals(147, reg.getOffset());
-		assertEquals(193-147+1, reg.getLength());
+		testGetClassLocation("muu", null, 8, 1, 12, 8);
 
-		loc = CompilerProxy.getClassLocation("foo");		
-		reg = loc.getRegion();
-		assertEquals(196, reg.getOffset());
-		assertEquals(234-196+1, reg.getLength());
+		testGetClassLocation("foo", null, 14, 1, 16, 8);
 
-		loc = CompilerProxy.getClassLocation("hej");		
-		reg = loc.getRegion();
-		assertEquals(238, reg.getOffset());
-		assertEquals(369-238+1, reg.getLength());
+		testGetClassLocation("hej", null, 19, 1, 26, 8);
 
-		loc = CompilerProxy.getClassLocation("hej.ine_paketen");		
-		reg = loc.getRegion();
-		assertEquals(253, reg.getOffset());
-		assertEquals(292-253+1, reg.getLength());
+		testGetClassLocation("hej.ine_paketen", null, 20, 5, 21, 20);
 
-		loc = CompilerProxy.getClassLocation("hej.hejhej");		
-		reg = loc.getRegion();
-		assertEquals(298, reg.getOffset());
-		assertEquals(360-298+1, reg.getLength());
+		testGetClassLocation("hej.hejhej", null, 22, 5, 25, 15);
 
-		loc = CompilerProxy.getClassLocation("hej.hejhej.foo");		
-		reg = loc.getRegion();
-		assertEquals(319, reg.getOffset());
-		assertEquals(344-319+1, reg.getLength());
+		testGetClassLocation("hej.hejhej.foo", null, 23, 9, 24, 16);
 
-		loc = CompilerProxy.getClassLocation("hepp");		
-		reg = loc.getRegion();
-		assertEquals(374, reg.getOffset());
-		assertEquals(459-374+1, reg.getLength());
+		testGetClassLocation("hepp", null, 30, 1, 35, 9);
 
-		loc = CompilerProxy.getClassLocation("hepp.hopp");		
-		reg = loc.getRegion();
-		assertEquals(391, reg.getOffset());
-		assertEquals(416-391+1, reg.getLength());
+		testGetClassLocation("hepp.hopp", null, 31, 5, 32, 13);
 
-		loc = CompilerProxy.getClassLocation("hepp.hehehe");		
-		reg = loc.getRegion();
-		assertEquals(422, reg.getOffset());
-		assertEquals(449-422+1, reg.getLength());
+		testGetClassLocation("hepp.hehehe", null, 33, 5, 34, 15);
 	}
 
 	/**
-	 * Test that both compile errors and contents are found in
-	 * a problematic file.
-	 *
+	 * Test that both compile errors and contents are found in a problematic file.
 	 */
 	public void testErrorReporting() 
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
-		IParseResults res = CompilerProxy.loadSourceFile(broken_nested_models_mo);
+		IParseResults parseResults = CompilerProxy.loadSourceFile(broken_nested_models_mo);
+		String[] classes = parseResults.getClasses();
 
-		for(String s : res.getClasses()) {
-			expectedClasses.remove(s);
+		for(String cls : classes) {
+			boolean wasRemoved = expectedClasses.remove(cls);
+
+			if (wasRemoved) {
+				System.out.println("Removed \"" + cls + "\" from expectedClasses.");
+			}
+			else {
+				System.out.println("\"" + cls + "\" was not present in expectedClasses.");
+			}
 		}
 
-		assertTrue("Could not find all expected classes in file",
-				expectedClasses.isEmpty());
+		boolean expectedClassesIsEmpty = expectedClasses.isEmpty();
 
-		ICompileError[] errs = res.getCompileErrors();
+		String errorMsg = "Could not find following expected classes:";
+		for (String cls : expectedClasses) {
+			errorMsg += " " + cls;
+		}
+
+		assertTrue(errorMsg, expectedClassesIsEmpty);
+
+		ICompileError[] errs = parseResults.getCompileErrors();
 		assertEquals(7, errs[0].getStartLine()); 
 		assertEquals(9, errs[1].getStartLine()); 
 		assertEquals(11, errs[2].getStartLine()); 
@@ -243,37 +209,11 @@ public class TestCompilerProxy extends TestCase {
 	 */
 	public void testGetClassInfo() 
 			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
-		/*
-		 * run getClassInfo() on contents of nested_models.mo
-		 * and make sure the returned info checks out
-		 */
-		IClassInfo ci = CompilerProxy.getClassInfo("nested_models");
-		assertEquals("wrong type of restriction", MODEL, ci.getRestriction());
-		assertFalse("wrong encapsulated status", ci.getEncapsulated());
-		IDefinitionLocation loc = ci.getDefinitionLocation();
-		assertTrue("fishy path", loc.getPath().endsWith("nested_models.mo"));
-		assertEquals("wring start offset", 0, loc.getRegion().getOffset());
-		assertEquals("wring start offset", 146, loc.getRegion().getLength());
+		testGetClassInfo("nested_models", IModelicaClass.Restriction.MODEL, false, "nested_models.mo", 1, 1, 7, 18);
 
-		/*
-		 * run getClassInfo() on contents of packages_folder/file_package.mo
-		 * and make sure the returned info checks out
-		 */
-		ci = CompilerProxy.getClassInfo("file_package1");
-		assertEquals("wrong type of restriction", PACKAGE, ci.getRestriction());
-		assertFalse("wrong encapsulated status", ci.getEncapsulated());
-		loc = ci.getDefinitionLocation();
-		assertTrue("fishy path", loc.getPath().endsWith("file_package.mo"));
-		assertEquals("wring start offset", 0, loc.getRegion().getOffset());
-		assertEquals("wring start offset", 61, loc.getRegion().getLength());
+		testGetClassInfo("file_package1", IModelicaClass.Restriction.PACKAGE, false, "file_package.mo", 1, 1, 3, 18);
 
-		ci = CompilerProxy.getClassInfo("file_package2");
-		assertEquals("wrong type of restriction", PACKAGE, ci.getRestriction());
-		assertTrue("wrong encapsulated status", ci.getEncapsulated());
-		loc = ci.getDefinitionLocation();
-		assertTrue("fishy path", loc.getPath().endsWith("file_package.mo"));
-		assertEquals("wring start offset", 63, loc.getRegion().getOffset());
-		assertEquals("wring start offset", 137-63, loc.getRegion().getLength());
+		testGetClassInfo("file_package2", IModelicaClass.Restriction.PACKAGE, true, "file_package.mo", 5, 1, 7, 18);
 	}
 
 	private void testGetRestriction(String className, IModelicaClass.Restriction expectedRestriction)
@@ -283,5 +223,59 @@ public class TestCompilerProxy extends TestCase {
 				"\", but we got \"" + actualRestriction + "\".";
 
 		assertEquals(restrictionFail, expectedRestriction, actualRestriction);
+	}
+
+	private void testGetClassLocation(String className, String pathEndsWith, int startLine, int startCol, int endLine, int endCol)
+			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
+		IClassInfo classInfo = CompilerProxy.getClassInfo(className);
+		IDefinitionLocation definitionLoc = classInfo.getDefinitionLocation();
+		ISourceRegion sourceRegion = definitionLoc.getSourceRegion();
+
+		int actualStartLine = sourceRegion.getStartLine();
+		int actualStartCol = sourceRegion.getStartColumn();
+		int actualEndLine = sourceRegion.getEndLine();
+		int actualEndCol = sourceRegion.getEndColumn();
+
+		if (pathEndsWith != null) {
+			String path = definitionLoc.getPath();
+			assertTrue("A call to path.endsWith() did not return the expected value.", path.endsWith(pathEndsWith));
+		}
+
+		assertEquals("Expected start line did not match actual start line.", startLine, actualStartLine);
+		assertEquals("Expected start column did not match actual start column.", startCol, actualStartCol);
+		assertEquals("Expected end line did not match actual end line.", endLine, actualEndLine);
+		assertEquals("Expected end column did not match actual end column.", endCol, actualEndCol);
+	}
+
+	private void testGetClassInfo(String className, IModelicaClass.Restriction restriction, boolean isEncapsulated,
+			String pathEndsWith, int startLine, int startCol, int endLine, int endCol)
+					throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
+		IClassInfo classInfo = CompilerProxy.getClassInfo(className);
+		IDefinitionLocation definitionLoc = classInfo.getDefinitionLocation();
+		ISourceRegion sourceRegion = definitionLoc.getSourceRegion();
+
+		IModelicaClass.Restriction actualRestriction = classInfo.getRestriction();
+		boolean actualIsEncapsulated = classInfo.getEncapsulated();
+		int actualStartLine = sourceRegion.getStartLine();
+		int actualStartCol = sourceRegion.getStartColumn();
+		int actualEndLine = sourceRegion.getEndLine();
+		int actualEndCol = sourceRegion.getEndColumn();
+
+		if (pathEndsWith != null) {
+			String path = definitionLoc.getPath();
+			assertTrue("A call to path.endsWith() did not return the expected value.", path.endsWith(pathEndsWith));
+		}
+
+		String restrictionFail = "For className \"" + className + "\", the expected restriction was \"" + restriction
+				+ "\", but we got \"" + actualRestriction + "\".";
+
+		assertEquals(restrictionFail, restriction, actualRestriction);
+
+		assertEquals("The expected and actual encapsulation status did not match.", isEncapsulated, actualIsEncapsulated);
+
+		assertEquals("Expected start line did not match actual start line.", startLine, actualStartLine);
+		assertEquals("Expected start column did not match actual start column.", startCol, actualStartCol);
+		assertEquals("Expected end line did not match actual end line.", endLine, actualEndLine);
+		assertEquals("Expected end column did not match actual end column.", endCol, actualEndCol);
 	}
 }
