@@ -51,8 +51,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
@@ -67,74 +65,71 @@ import org.modelica.mdt.internal.core.CorePlugin;
 
 /**
  * This class provides one to one mapping to IModelicaCompiler interface,
- * however it hides the details of lazy loading and instansiating of the
+ * however it hides the details of lazy loading and instantiating of the
  * compiler object via the extension points.
- * 
+ *
  * All access to the modelica compiler should be made through this class.
- * 
+ *
  */
 //TODO move this to org.modelica.mdt.internal.core package !
-public class CompilerProxy //implements IModelicaCompiler
-{
+public class CompilerProxy {
 	private static IModelicaCompiler compiler = null;
-	final static ILock lock = Platform.getJobManager().newLock();	
-	
-	public static IModelicaCompiler getCompiler() throws CompilerInstantiationException
-	{
-		if (compiler == null)
-		{
+	//final static ILock lock = Platform.getJobManager().newLock();	
+
+	public static IModelicaCompiler getCompiler() throws CompilerInstantiationException {
+		if (compiler == null) {
 			compiler = loadCompiler();
-			
-//			if (!getCompiler().isRunning())
-//			{
-//				// make an interactive job for running the compiler				
-//				Job compilerJob = new Job("Starting the OpenModelica Compiler")
-//				{
-//					public IStatus run(IProgressMonitor monitor)
-//					{
-//						try
-//						{
-//							lock.acquire(100);
-//
-//							monitor.beginTask("Trying sending 'getVersion()'", 10);
-//							while (!monitor.isCanceled())
-//							{
-//								Thread.sleep(100);
-//								// Access or modify data structure
-//								try
-//								{
-//									compiler.sendExpression("getVersion()", true);
-//									monitor.subTask("Sending 'getVersion()'"); monitor.worked(1);
-//								}
-//								catch(Exception e)
-//								{
-//									ErrorManager.logError(e);
-//								}
-//
-//								if (compiler.isRunning()) break;							
-//							}
-//						}
-//						catch(InterruptedException e)
-//						{
-//							ErrorManager.logError(e);
-//						} finally {
-//							lock.release();
-//						}													
-//						if (monitor.isCanceled()) 
-//							return Status.CANCEL_STATUS;
-//						monitor.done();
-//						return Status.OK_STATUS;
-//					}
-//				};
-//				compilerJob.setUser(true);
-//				compilerJob.setPriority(Job.INTERACTIVE);
-//				compilerJob.schedule();
-//			}	
+
+			//			if (!getCompiler().isRunning())
+			//			{
+			//				// make an interactive job for running the compiler				
+			//				Job compilerJob = new Job("Starting the OpenModelica Compiler")
+			//				{
+			//					public IStatus run(IProgressMonitor monitor)
+			//					{
+			//						try
+			//						{
+			//							lock.acquire(100);
+			//
+			//							monitor.beginTask("Trying sending 'getVersion()'", 10);
+			//							while (!monitor.isCanceled())
+			//							{
+			//								Thread.sleep(100);
+			//								// Access or modify data structure
+			//								try
+			//								{
+			//									compiler.sendExpression("getVersion()", true);
+			//									monitor.subTask("Sending 'getVersion()'"); monitor.worked(1);
+			//								}
+			//								catch(Exception e)
+			//								{
+			//									ErrorManager.logError(e);
+			//								}
+			//
+			//								if (compiler.isRunning()) break;							
+			//							}
+			//						}
+			//						catch(InterruptedException e)
+			//						{
+			//							ErrorManager.logError(e);
+			//						} finally {
+			//							lock.release();
+			//						}													
+			//						if (monitor.isCanceled()) 
+			//							return Status.CANCEL_STATUS;
+			//						monitor.done();
+			//						return Status.OK_STATUS;
+			//					}
+			//				};
+			//				compilerJob.setUser(true);
+			//				compilerJob.setPriority(Job.INTERACTIVE);
+			//				compilerJob.schedule();
+			//			}	
 		}
-		
+
 		return compiler;
 	}
-		
+
 	/**
 	 * Load the first best modelica compiler proxy contributed by 
 	 * some other plugin via the org.modelica.mdt.core.compiler extension point.
@@ -142,30 +137,26 @@ public class CompilerProxy //implements IModelicaCompiler
 	 * @return
 	 * @throws CompilerInstantiationException 
 	 */
-	private static IModelicaCompiler loadCompiler() throws CompilerInstantiationException
-	{		
-		if (!PreferenceManager.getStartOMC())
-		{
+	private static IModelicaCompiler loadCompiler() throws CompilerInstantiationException {		
+		if (!PreferenceManager.getStartOMC()) {
 			return new NoCompiler();
 		}
+
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CorePlugin.COMPILER_EXTENSION_ID);		
-		
+
 		IExtension[] extensions = extensionPoint.getExtensions();
-		
-		if (extensions.length == 0)
-		{
+
+		if (extensions.length == 0) {
 			throw new CompilerInstantiationException(ProblemType.NO_COMPILERS_FOUND);
 		}
-		else if (extensions.length > 1)
-		{
+		else if (extensions.length > 1) {
 			/*
 			 * compile a list of all plugins that define modelica compiler
 			 * extension point
 			 */
 			Vector<String> compilerPlugins = new Vector<String>();
-			
-			for (IExtension ext : extensions)
-			{
+
+			for (IExtension ext : extensions) {
 				compilerPlugins.add(ext.getNamespaceIdentifier());
 			}
 
@@ -173,91 +164,84 @@ public class CompilerProxy //implements IModelicaCompiler
 		}
 
 		/* here we know that extensions array is one element long */
-		
-		for (IConfigurationElement elm : extensions[0].getConfigurationElements())
-		{
-			try
-			{
+		IConfigurationElement[] configurationElements = extensions[0].getConfigurationElements();
+		for (IConfigurationElement elm : configurationElements) {
+			try {
 				Object obj = elm.createExecutableExtension("class");
-				if (obj instanceof IModelicaCompiler)
-				{
+				if (obj instanceof IModelicaCompiler) {
 					return (IModelicaCompiler)obj;
 				}
 			}
-			catch (CoreException e)
-			{
-				throw new CompilerInstantiationException(e, extensions[0].getNamespaceIdentifier());
+			catch (CoreException e) {
+				String namespaceIdentifier = extensions[0].getNamespaceIdentifier();
+				throw new CompilerInstantiationException(e, namespaceIdentifier);
 			}
 		}
-	
+
 		//TODO no class element found in the extension declaration 
 		return null;
 	}
-	
-	public synchronized static String getCompilerName() 
-		throws CompilerInstantiationException
-	{
-		return getCompiler().getCompilerName();
+
+	public synchronized static String getCompilerName() throws CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		String compilerName = compiler.getCompilerName();
+		return compilerName;
 	}
 
 	public synchronized static IParseResults loadSourceFile(IFile file) 
-		throws ConnectException, UnexpectedReplyException, 
-			CompilerInstantiationException
-	{
-		return getCompiler().loadSourceFile(file);
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		IParseResults parseResults = compiler.loadSourceFile(file);
+		return parseResults;
 	}
-	
+
 	public synchronized static List getClassNames(String className)
-		throws ConnectException, UnexpectedReplyException,
-			CompilerInstantiationException
-	{
-		return getCompiler().getClassNames(className);
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		List classNames = compiler.getClassNames(className);
+		return classNames;
 	}
-	
+
 	public synchronized static Collection<ElementInfo> getElements(String className)
-		throws ConnectException, InvocationError, UnexpectedReplyException, 
-			CompilerInstantiationException
-	{
-		return getCompiler().getElements(className);
+			throws ConnectException, InvocationError, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		Collection<ElementInfo> elements = compiler.getElements(className);
+		return elements;
 	}
 
 	public synchronized static IDefinitionLocation getClassLocation(String className)
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException 
-	{
-		return getCompiler().getClassLocation(className);
+			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		IDefinitionLocation definitionLocation = compiler.getClassLocation(className);
+		return definitionLocation;
 	}
-	
+
 	public synchronized static IModelicaClass.Restriction getRestriction(String className)
-		throws ConnectException, CompilerInstantiationException,
-			   UnexpectedReplyException
-	{
+			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException {
 		return getCompiler().getRestriction(className);
 	}
-	
+
 	/**
 	 * @return the top classes in the standard library
 	 */
-	public synchronized static String[] getStandardLibrary()
-		throws ConnectException, CompilerInstantiationException
-	{
-		return getCompiler().getStandardLibrary();
+	public synchronized static String[] getStandardLibrary() throws ConnectException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		String[] stdlib = compiler.getStandardLibrary();
+		return stdlib;
 	}
 
-	public synchronized static IClassInfo getClassInfo(String className) 
-		throws CompilerInstantiationException, ConnectException,
-			UnexpectedReplyException 
-	{
+	public synchronized static IClassInfo getClassInfo(String className)
+			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
 		return getCompiler().getClassInfo(className);
 	}
-	
+
 	public synchronized static ICompilerResult getClassString(String className) 
-		throws CompilerInstantiationException, ConnectException,
-			UnexpectedReplyException 
-	{
-		return getCompiler().getClassString(className);
+			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult classString = compiler.getClassString(className);
+		return classString;
 	}	
-	
+
 	/**
 	 * @author Adrian Pop
 	 * @param command
@@ -266,13 +250,13 @@ public class CompilerProxy //implements IModelicaCompiler
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */
-	public synchronized static ICompilerResult sendExpression(String command, boolean showInConsole) 
-	throws CompilerInstantiationException, ConnectException,
-	UnexpectedReplyException 
-	{
-		return getCompiler().sendExpression(command, showInConsole);
+	public synchronized static ICompilerResult sendExpression(String command, boolean showInConsole)
+			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.sendExpression(command, showInConsole);
+		return res;
 	}
-	
+
 	/**
 	 * @author Adrian Pop
 	 * @param command
@@ -282,10 +266,10 @@ public class CompilerProxy //implements IModelicaCompiler
 	 * @throws UnexpectedReplyException
 	 */
 	public synchronized static boolean isRunning() 
-	throws CompilerInstantiationException, ConnectException,
-	UnexpectedReplyException 	
-	{
-		return getCompiler().isRunning();
+			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
+		IModelicaCompiler compiler = getCompiler();
+		boolean isRunning = compiler.isRunning();
+		return isRunning;
 	}
 
 	/**
@@ -296,9 +280,8 @@ public class CompilerProxy //implements IModelicaCompiler
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */	
-	public static void setConsoleOutputStream(OutputStream outputStream) throws CompilerInstantiationException
-	{
-		getCompiler().setConsoleOutputStream(outputStream);
+	public static void setConsoleOutputStream(OutputStream outputStream) throws CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		compiler.setConsoleOutputStream(outputStream);
 	}
-	
 }
