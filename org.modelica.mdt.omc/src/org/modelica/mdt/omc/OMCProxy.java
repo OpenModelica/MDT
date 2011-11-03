@@ -961,6 +961,11 @@ public class OMCProxy implements IModelicaCompiler
 			startColumn = Integer.parseInt(tokens.elementAt(3).toString());
 			endLine = Integer.parseInt(tokens.elementAt(4).toString());
 			endColumn = Integer.parseInt(tokens.elementAt(5).toString());
+			
+			if (startColumn == 0) {
+				assert(startLine == 1);
+				startColumn = 1;
+			}
 		}
 		catch (NumberFormatException e)
 		{

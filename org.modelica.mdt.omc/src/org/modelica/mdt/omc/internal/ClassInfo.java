@@ -136,6 +136,11 @@ public class ClassInfo implements IClassInfo
 		int endLine =  Integer.parseInt(((Element)defLocList.elementAt(3)).toString());
 		int endColumn = Integer.parseInt(((Element)defLocList.elementAt(4)).toString());
 		
+		if (startColumn == 0) {
+			assert(startLine == 1);
+			startColumn = 1;
+		}
+		
 		defLocation = new DefinitionLocation(sourceFilePath, startLine, startColumn, endLine, endColumn);
 	}
 
