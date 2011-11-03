@@ -619,8 +619,7 @@ public class TestInnerClass extends TestCase
 				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
 				break;
 			case 8: // import root_package.root_package_model
-				// TODO this is broken, fix this
-//				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
+				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
 				break;
 			default:
 				fail("unexpectedly many imports found"); 
