@@ -610,7 +610,7 @@ public class TestInnerClass extends TestCase {
 		 * check correctness of isEncapsulated() on classes from area51 project
 		 */
 
-		/* test inner packager */
+		/* test inner packages */
 		clazz = proj.getClass("root_model");
 		assertNotNull(clazz);
 		assertTrue("wrong encapsulated status", clazz.isEncapsulated());
