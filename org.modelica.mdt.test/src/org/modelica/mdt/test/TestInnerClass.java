@@ -548,79 +548,33 @@ public class TestInnerClass extends TestCase {
 	 */
 	public void testImports()
 			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
-		int importCounter = 0;
 		Collection<IModelicaImport> imports = importRichModel.getImports();
 
-		for (IModelicaImport imp : imports) {
-			importCounter++;
+		/*
+		 * we are expecting 8 import statements in following order:
+		 * 1. qualified                 (import Modelica)
+		 * 2. qualified                 (import Modelica.Math.sin)
+		 * 3. unqualified               (import Modelica.*)
+		 * 4. renaming                  (import mm = Modelica.Math)
+		 * 5. local renaming            (import foo = hepp)
+		 * 6. local qualified           (import hepp.hopp)
+		 * 7. local unqualified         (import hepp.*)
+		 * 8. local single definition   (import root_package.root_package_model)
+		 */
 
-			/*
-			 * we are expecting 8 import statements in following order:
-			 * 1. qualified         (import Modelica)
-			 * 2. qualified         (import Modelica.Math.sin)
-			 * 3. unqualified       (import Modelica.*)
-			 * 4. renaming          (import mm = Modelica.Math)
-			 * 5. local renaming    (import foo = hepp)
-			 * 6. local qualified   (import hepp.hopp)
-			 * 7. local unqualified (import hepp.*)
-			 * 8. local single definition
-			 *                      (import root_package.root_package_model)
-			 */
-			switch (importCounter) {
-			case 1: {// import Modelica
-				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
-				IModelicaClass importedPackage = imp.getImportedPackage();
-				assertEquals("wrong imported package returned",
-						"Modelica",
-						importedPackage.getFullName());
-				break;
-			}
-			case 2: {// import Modelica.Math.sin
-				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
-				IModelicaClass importedPackage = imp.getImportedPackage();
-				assertEquals("wrong imported package returned",
-						"Modelica.Math.sin",
-						importedPackage.getFullName());
-				break;
-			}
-			case 3: {// import Modelica.*
-				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
-				IModelicaClass importedPackage = imp.getImportedPackage();
-				assertEquals("wrong imported package returned",
-						"Modelica",
-						importedPackage.getFullName());
-				break;
-			}
-			case 4: {// import mm = Modelica.Math
-				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
-				assertEquals("mm", imp.getAlias());
-				break;
-			}
-			case 5: {// import foo = hepp
-				assertEquals(IModelicaImport.Type.RENAMING, imp.getType());
-				assertEquals("foo", imp.getAlias());
-				break;
-			}
-			case 6: {// import hepp.hopp
-				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
-				break;
-			}
-			case 7: {// import hepp.*
-				assertEquals(IModelicaImport.Type.UNQUALIFIED, imp.getType());
-				break;
-			}
-			case 8: {// import root_package.root_package_model
-				assertEquals(IModelicaImport.Type.QUALIFIED, imp.getType());
-				break;
-			}
-			default: {
-				fail("unexpectedly many imports found");
-			}
-			}
-		}
+		int actualNumImports = imports.size();
+		int expectedNumImports = 8;
 
-		assertFalse("did not find all import statments",
-				importCounter < 4);
+		assertEquals("Unexpected number of imports", actualNumImports, expectedNumImports);
+
+		testImport(imports.toArray(new IModelicaImport[0])[0], IModelicaImport.Type.QUALIFIED, "Modelica", null);
+		testImport(imports.toArray(new IModelicaImport[0])[1], IModelicaImport.Type.QUALIFIED, "Modelica.Math.sin", null);
+		testImport(imports.toArray(new IModelicaImport[0])[2], IModelicaImport.Type.UNQUALIFIED, "Modelica", null);
+		testImport(imports.toArray(new IModelicaImport[0])[3], IModelicaImport.Type.RENAMING, "Modelica.Math", "mm");
+		testImport(imports.toArray(new IModelicaImport[0])[4], IModelicaImport.Type.RENAMING, "hepp", "foo");
+		testImport(imports.toArray(new IModelicaImport[0])[5], IModelicaImport.Type.QUALIFIED, "hepp.hopp", null);
+		testImport(imports.toArray(new IModelicaImport[0])[6], IModelicaImport.Type.UNQUALIFIED, "hepp", null);
+		testImport(imports.toArray(new IModelicaImport[0])[7], IModelicaImport.Type.QUALIFIED, "root_package.root_package_model", null);
 	}
 
 	public void testIsEncapsulated()
@@ -697,27 +651,42 @@ public class TestInnerClass extends TestCase {
 	 */
 	public void testLocationUpdates()
 			throws CoreException, ConnectException, CompilerInstantiationException, UnexpectedReplyException, InvocationError {
-		/* create initial class definitions */
+		/* Create initial class definitions. */
 		createClassDef();
 
-		/*
-		 * Check some initial locations.
-		 */
+		/* Check some initial locations. */
 		testLocation("EquationComponent", 6, 1, 13, 22);
-
-		/* checks on EquationComponent.R */
 		testLocation("EquationComponent.R", 7, 3, 9, 8);
 
-		/* modify class definitions */
+		/* Modify class definitions. */
 		modifyClassDef();
 
-		/*
-		 * check that locations where updated
-		 */
+		/* Check that locations where updated. */
 		testLocation("EquationComponent", 2, 1, 11, 22);
-
-		Utility.printFile(proj,  TestInnerClass.CHANGING_FILE);
+		Utility.printFile(proj, TestInnerClass.CHANGING_FILE);
 		testLocation("EquationComponent.R", 4, 3, 6, 8);
+	}
+
+	private void testImport(IModelicaImport modelicaImport, IModelicaImport.Type importType, String importedPackageName, String alias)
+			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, InvocationError, CoreException {
+		IModelicaImport.Type actualImportType = modelicaImport.getType();
+
+		assertEquals("IModelicaImport.Type mis-match.", importType, actualImportType);
+
+		IModelicaClass importedPackage = modelicaImport.getImportedPackage();
+
+		String errorMsg = "importedPackageName was set to \"" + importedPackageName +
+				"\" but modelicaImport.getImportedPackage() returned null.";
+
+		assertNotNull(errorMsg, importedPackage);
+
+		String actualImportedPackagename = importedPackage.getFullName();
+
+		assertEquals("The expected imported package name does not match the actual one.", importedPackageName, actualImportedPackagename);
+
+		String actualAlias = modelicaImport.getAlias();
+
+		assertEquals("The expected alias does not match the actual one.", alias, actualAlias);
 	}
 
 	private void testLocation(String className, int startLine, int startCol, int endLine, int endCol)

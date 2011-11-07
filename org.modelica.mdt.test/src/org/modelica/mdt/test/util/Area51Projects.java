@@ -457,11 +457,7 @@ public class Area51Projects {
 						"  import foo = hepp;\n" +
 						"  import hepp.hopp;\n" +
 						"  import hepp.*;\n" +
-						"  //import root_package.root_package_model;\n" +
-						// importing the root_package.root_package_model triggers a bug
-						// and causes a bunch of tests to fail
-						//TODO fix that bug and put back the import
-						//"  import root_package.root_package_model;\n" +
+						"  import root_package.root_package_model;\n" +
 						"\n" +
 						"  constant Real x;\n" +
 						"\n" +
@@ -556,7 +552,6 @@ public class Area51Projects {
 						"\n" + 
 						"end sub_package_model;\n";
 		file.create(Utility.getByteStream(contents), true, null);
-
 
 		/* root_package/sub_package/leaf_package */
 		folder = folder.getFolder("leaf_package");
