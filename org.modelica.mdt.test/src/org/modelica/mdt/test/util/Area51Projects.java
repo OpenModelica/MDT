@@ -42,6 +42,8 @@
 package org.modelica.mdt.test.util;
 
 
+import java.io.InputStream;
+
 import junit.framework.Assert;
 
 import org.eclipse.core.resources.IFile;
@@ -281,42 +283,8 @@ public class Area51Projects {
 
 		/* nested_models.mo */
 		file = modelica_project.getFile("nested_models.mo");
-		contents = 
-				"model nested_models\n" +
-						"    import Modelica;\n" +
-						"    record hepp end hepp;\n" +
-						"    class foo\n" +
-						"        class bar\n"+
-						"        end bar;" +
-						"    end foo;\n" +
-						"end nested_models;\n" +
-						"model muu\n" +
-						"Real a;\n" +
-						"equation\n"+
-						"    x = 10;\n"+
-						"end muu;\n"+
-						"\n"+
-						"model foo\n"+
-						"    import Modelica;\n"+
-						"end foo;\n" +
-						"\n\n" +
-						"record hej\n" +
-						"    package ine_paketen\n" +
-						"    end ine_paketen;\n" +
-						"    class hejhej\n" +
-						"        class foo\n" +
-						"        end foo;\n" +
-						"    end hejhej;\n" +
-						"end hej;\n" +
-						"\n\n\n" +
-						"package hepp\n" +
-						"    package hopp\n" +
-						"    end hopp;\n" +
-						"    class hehehe\n" +
-						"    end hehehe;\n" +
-						"end hepp;\n";
-
-		file.create(Utility.getByteStream(contents), true, null);
+		InputStream is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/nested_models.mo");
+		file.create(is, true, null);
 
 		/* broken_nested_models.mo */
 		file = modelica_project.getFile("broken_nested_models.mo");
