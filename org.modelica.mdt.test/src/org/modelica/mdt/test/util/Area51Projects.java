@@ -187,7 +187,6 @@ public class Area51Projects {
 		folder.create(false, true, null);
 	}
 
-
 	/**
 	 * create modelica project 
 	 * @throws CoreException if any error occurs while creating the project
@@ -391,45 +390,8 @@ public class Area51Projects {
 
 		/* import_rich_model.mo */
 		file = modelica_project.getFile("import_rich_model.mo");
-		contents = 
-				"model import_rich_model\n" +
-						"  // qualified imports\n" +
-						"  import Modelica;\n" +
-						"  // another qualified import\n" +
-						"  import Modelica.Math.sin;\n" +
-						"  // unqualified import\n" +
-						"  import Modelica.*;\n" +
-						"  // renaming import\n" +
-						"  import mm = Modelica.Math;\n" +
-						"\n" +
-						"  // import some local packages, defined in the same project\n" +
-						"  import foo = hepp;\n" +
-						"  import hepp.hopp;\n" +
-						"  import hepp.*;\n" +
-						"  import root_package.root_package_model;\n" +
-						"\n" +
-						"  constant Real x;\n" +
-						"\n" +
-						"  class bar\n" +
-						"    // do some imports that are local to the class bar\n" +
-						"    import Modelica.SIunits;\n" +
-						"    import Modelica.Blocks;\n" +
-						"    import cp = childless_package;\n" +
-						"    Real y;\n" +
-						"  equation\n" +
-						"\n" +
-						"  // its easier to write this comment then to fix the bug\n" +
-						"  end bar;\n" +
-						"  // an encapsulated class for testing lookup scope encapsulation\n"+
-						"  encapsulated class foo\n" +
-						"    Real foo_local_var;\n" +
-						"\n" +
-						"  end foo;\n" +
-						"\n" +
-						"end import_rich_model;\n" +
-						" // an area outside of any class definitions";
-
-		file.create(Utility.getByteStream(contents), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/import_rich_model.mo");
+		file.create(is, true, null);
 
 		/* README.txt */
 		file = modelica_project.getFile("README.txt");
