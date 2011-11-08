@@ -290,40 +290,8 @@ public class ModelicaCodeResolver
 			ErrorManager.showCompilerError(e);
 		}								
 		return null;		
-	}	
-	
-	/**
-	 * @author Adrian Pop
-	 * @param editor
-	 * @param offset
-	 * @return IModelicaClass
-	 * @deprecated
-	 * @see ModelicaCodeResolver#getClassAt(ModelicaEditor, ISourceRegion)
-	 */
-	public static IModelicaClass getClassAt(ModelicaEditor editor, int offset)
-	{
-		IEditorInput input = editor.getEditorInput();
-		if (input instanceof ModelicaElementEditorInput)
-		{
-			IModelicaSourceFile file = 
-				((ModelicaElementEditorInput)input).getSourceFile();		
-			try
-			{
-				IModelicaClass c = file.getClassAt(offset);
-				return c;
-			}
-			catch (CoreException e)
-			{
-				ErrorManager.showCoreError(e);
-			} 
-			catch (CompilerException e)
-			{
-				ErrorManager.showCompilerError(e);
-			}
-		}
-		return null;
 	}
-	
+
 	/**
 	 * @author Adrian Pop
 	 * @param ModelicaEditor editor
