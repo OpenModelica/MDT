@@ -60,18 +60,6 @@ public interface IModelicaSourceFile extends IModelicaFile, IParent
 			CompilerInstantiationException;
 
 	/**
-	 * Fetches the innermost class which is defined at some position
-	 * in this file.
-	 * @deprecated
-	 * @param position the position at which to look for class definitions
-	 * @return the class defined at requested position or null if position is
-	 * outside of any class definitions.
-	 */
-	IModelicaClass getClassAt(int position) 
-		throws ConnectException, UnexpectedReplyException, 
-			CompilerInstantiationException, InvocationError, CoreException;
-	
-	/**
 	 * Fetches the innermost class which is defined at some line/column
 	 * in this file.
 	 *  

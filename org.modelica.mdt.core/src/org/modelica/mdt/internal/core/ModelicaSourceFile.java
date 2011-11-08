@@ -44,7 +44,6 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IRegion;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -306,22 +305,6 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 	}
 
 	/**
-	 * @deprecated
-	 * @see IModelicaSourceFile#getClassAt(int position) 
-	 */
-	public IModelicaClass getClassAt(int position)
-	throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException
-	{
-		/* load children if needed */
-		if (children == null)
-		{
-			children = loadElements();
-		}
-		
-		return findClassDefAt(children.values(), position);
-	}
-	
-	/**
 	 * @see IModelicaSourceFile#getClassAt(ISourceRegion sourceRegion) 
 	 */
 	public IModelicaClass getClassAt(ISourceRegion sourceRegion)
@@ -335,56 +318,6 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		
 		return findClassDefAt(children.values(), sourceRegion);
 	}
-
-	/**
-	 * Checks if there is a class definition at specified position
-	 * among provided classes.
-	 * @deprecated
-	 * @param elements the elements among which look for class definitions
-	 * @param position the character at which look for the class definiton
-	 * @return the innermost class definition found or null if no class
-	 * definitions region overlaps position
-	 */
-	private IModelicaClass findClassDefAt(Collection<? extends IModelicaElement> elements, int position)
-	
-		throws ConnectException, UnexpectedReplyException, InvocationError, 
-			CompilerInstantiationException, CoreException
-	{
-		/*
-		 * do basically an optimized tree search for the innermost
-		 * class definition around queried position
-		 */
-
-		for (IModelicaElement el : elements)
-		{
-			/* skip non-class elements */
-			if (!(el instanceof IModelicaClass))
-			{
-				continue;
-			}
-
-			IModelicaClass clazz = (IModelicaClass)el;
-			IRegion reg = clazz.getLocation().getRegion();
-			int start = reg.getOffset();
-			int end = start + reg.getLength() - 1;
-			
-			if (position >= start && position <= end)
-			{
-				/* check if position is inside a subclass definition */
-				IModelicaClass subclazz = findClassDefAt(clazz.getChildren(), position);
-				
-				if (subclazz != null)
-				{
-					return subclazz;
-				}
-				return clazz;
-			}
-			
-		}
-		
-		return null; /* no definition found at position */
-	}
-
 
 	/**
 	 * Checks if there is a class definition at specified position
