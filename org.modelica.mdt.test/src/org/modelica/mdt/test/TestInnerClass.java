@@ -49,6 +49,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IDefinitionLocation;
@@ -211,247 +212,259 @@ public class TestInnerClass extends TestCase {
 				}
 			}
 		}
-
+		IRegion reg = null;
+		IWorkbenchAdapter wbAdapter = null;
 		/*
 		 * sanity checks on components_bananza.a_type
 		 */
-		assertNotNull("components_bananza.a_type not found", a_type);
-		assertEquals("wrong element name", "a_type", a_type.getElementName());
-		assertEquals("wrong element full name",
-				"components_bananza.a_type", a_type.getFullName());
-		assertTrue("fishy file path",
-				a_type.getFilePath().endsWith("component_model.mo"));
-		IRegion reg = a_type.getLocation().getRegion();
-		assertEquals("wrong start offset", 342, reg.getOffset());
-		assertEquals("wrong length", 364-342+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_type instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		IWorkbenchAdapter wbAdapter =
-				(IWorkbenchAdapter)a_type.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_type",
-				wbAdapter.getLabel(a_type));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_type));
+		IModelicaComponent.Visibility visibility = IModelicaComponent.Visibility.NONE;
+		testChild(a_type, "a_type", "components_bananza.a_type", "component_model.mo", visibility, 11, 5, 11, 27, "a_type");
+//		assertNotNull("components_bananza.a_type not found", a_type);
+//		assertEquals("wrong element name", "a_type", a_type.getElementName());
+//		assertEquals("wrong element full name",
+//				"components_bananza.a_type", a_type.getFullName());
+//		assertTrue("fishy file path",
+//				a_type.getFilePath().endsWith("component_model.mo"));
+//		IRegion reg = a_type.getLocation().getRegion();
+//		assertEquals("wrong start offset", 342, reg.getOffset());
+//		assertEquals("wrong length", 364-342+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_type instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		IWorkbenchAdapter wbAdapter =
+//				(IWorkbenchAdapter)a_type.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_type",
+//				wbAdapter.getLabel(a_type));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_type));
 
 		/*
 		 * sanity checks on components_bananza.a_package
 		 */
-		assertNotNull("components_bananza.a_package not found", a_package);
-		assertEquals("wrong element name", "a_package",
-				a_package.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_package",
-				a_package.getFullName());
-		assertTrue("fishy file path",
-				a_package.getFilePath().endsWith("component_model.mo"));
-		reg = a_package.getLocation().getRegion();
-		assertEquals("wrong start offset", 95, reg.getOffset());
-		assertEquals("wrong length", 126-95+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_package instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_package.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		wbAdapter.getLabel(a_package);
-		assertEquals("wrong label", "a_package",
-				wbAdapter.getLabel(a_package));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_package));
+		testChild(a_package, "a_package", "components_bananza.a_package", "component_model.mo", visibility, 4, 5, 4, 36, "a_package");
+//		assertNotNull("components_bananza.a_package not found", a_package);
+//		assertEquals("wrong element name", "a_package",
+//				a_package.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_package",
+//				a_package.getFullName());
+//		assertTrue("fishy file path",
+//				a_package.getFilePath().endsWith("component_model.mo"));
+//		reg = a_package.getLocation().getRegion();
+//		assertEquals("wrong start offset", 95, reg.getOffset());
+//		assertEquals("wrong length", 126-95+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_package instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_package.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		wbAdapter.getLabel(a_package);
+//		assertEquals("wrong label", "a_package",
+//				wbAdapter.getLabel(a_package));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_package));
 
 		/*
 		 * sanity checks on components_bananza.a_block
 		 */
-		assertNotNull("components_bananza.a_block not found", a_block);
-		assertEquals("wrong element name", "a_block",
-				a_block.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_block",
-				a_block.getFullName());
-		assertTrue("fishy file path",
-				a_block.getFilePath().endsWith("component_model.mo"));
-		reg = a_block.getLocation().getRegion();
-		assertEquals("wrong start offset", 271, reg.getOffset());
-		assertEquals("wrong length", 296-271+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_block instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_block.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_block",
-				wbAdapter.getLabel(a_block));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_block));
+		testChild(a_block, "a_block", "components_bananza.a_block", "component_model.mo", visibility, 9, 5, 9, 30, "a_block");
+//		assertNotNull("components_bananza.a_block not found", a_block);
+//		assertEquals("wrong element name", "a_block",
+//				a_block.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_block",
+//				a_block.getFullName());
+//		assertTrue("fishy file path",
+//				a_block.getFilePath().endsWith("component_model.mo"));
+//		reg = a_block.getLocation().getRegion();
+//		assertEquals("wrong start offset", 271, reg.getOffset());
+//		assertEquals("wrong length", 296-271+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_block instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_block.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_block",
+//				wbAdapter.getLabel(a_block));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_block));
 
 		/*
 		 * sanity checks on components_bananza.a_class
 		 */
-		assertNotNull("components_bananza.a_class not found", a_class);
-		assertEquals("wrong element name", "a_class", a_class.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_class",
-				a_class.getFullName());
-		assertTrue("fishy file path",
-				a_class.getFilePath().endsWith("component_model.mo"));
-		reg = a_class.getLocation().getRegion();
-		assertEquals("wrong start offset", 132, reg.getOffset());
-		assertEquals("wrong length", 157-132+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_class instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_class.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_class",
-				wbAdapter.getLabel(a_class));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_class));
+		testChild(a_class, "a_class", "components_bananza.a_class", "component_model.mo", visibility, 5, 5, 5, 30, "a_class");
+//		assertNotNull("components_bananza.a_class not found", a_class);
+//		assertEquals("wrong element name", "a_class", a_class.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_class",
+//				a_class.getFullName());
+//		assertTrue("fishy file path",
+//				a_class.getFilePath().endsWith("component_model.mo"));
+//		reg = a_class.getLocation().getRegion();
+//		assertEquals("wrong start offset", 132, reg.getOffset());
+//		assertEquals("wrong length", 157-132+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_class instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_class.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_class",
+//				wbAdapter.getLabel(a_class));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_class));
 
 		/*
 		 * sanity checks on components_bananza.a_connector
 		 */
-		assertNotNull("components_bananza.a_connector not found", a_connector);
-		assertEquals("wrong element name", "a_connector",
-				a_connector.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_connector",
-				a_connector.getFullName());
-		assertTrue("fishy file path",
-				a_connector.getFilePath().endsWith("component_model.mo"));
-		reg = a_connector.getLocation().getRegion();
-		assertEquals("wrong start offset", 194, reg.getOffset());
-		assertEquals("wrong length", 231-194+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_connector instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_connector.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_connector",
-				wbAdapter.getLabel(a_connector));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_connector));
+		testChild(a_connector, "a_connector", "components_bananza.a_connector", "component_model.mo", visibility, 7, 5, 7, 42, "a_connector");
+//		assertNotNull("components_bananza.a_connector not found", a_connector);
+//		assertEquals("wrong element name", "a_connector",
+//				a_connector.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_connector",
+//				a_connector.getFullName());
+//		assertTrue("fishy file path",
+//				a_connector.getFilePath().endsWith("component_model.mo"));
+//		reg = a_connector.getLocation().getRegion();
+//		assertEquals("wrong start offset", 194, reg.getOffset());
+//		assertEquals("wrong length", 231-194+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_connector instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_connector.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_connector",
+//				wbAdapter.getLabel(a_connector));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_connector));
 
 		/*
 		 * sanity checks on components_bananza.a_function
 		 */
-		assertNotNull("components_bananza.a_function not found", a_function);
-		assertEquals("wrong element name", "a_function",
-				a_function.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_function",
-				a_function.getFullName());
-		assertTrue("fishy file path",
-				a_function.getFilePath().endsWith("component_model.mo"));
-		reg = a_function.getLocation().getRegion();
-		assertEquals("wrong start offset", 302, reg.getOffset());
-		assertEquals("wrong length", 336-302+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_function instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_function.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_function",
-				wbAdapter.getLabel(a_function));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_function));
+		testChild(a_function, "a_function", "components_bananza.a_function", "component_model.mo", visibility, 10, 5, 10, 39, "a_function");
+//		assertNotNull("components_bananza.a_function not found", a_function);
+//		assertEquals("wrong element name", "a_function",
+//				a_function.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_function",
+//				a_function.getFullName());
+//		assertTrue("fishy file path",
+//				a_function.getFilePath().endsWith("component_model.mo"));
+//		reg = a_function.getLocation().getRegion();
+//		assertEquals("wrong start offset", 302, reg.getOffset());
+//		assertEquals("wrong length", 336-302+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_function instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_function.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_function",
+//				wbAdapter.getLabel(a_function));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_function));
 
 		/*
 		 * sanity checks on components_bananza.a_model
 		 */
-		assertNotNull("components_bananza.a_model not found", a_model);
-		assertEquals("wrong element name", "a_model", a_model.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_model",
-				a_model.getFullName());
-		assertTrue("fishy file path",
-				a_model.getFilePath().endsWith("component_model.mo"));
-		reg = a_model.getLocation().getRegion();
-		assertEquals("wrong start offset", 163, reg.getOffset());
-		assertEquals("wrong length", 188-163+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_model instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_model.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_model",
-				wbAdapter.getLabel(a_model));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_model));
+		testChild(a_model, "a_model", "components_bananza.a_model", "component_model.mo", visibility, 6, 5, 6, 30, "a_model");
+//		assertNotNull("components_bananza.a_model not found", a_model);
+//		assertEquals("wrong element name", "a_model", a_model.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_model",
+//				a_model.getFullName());
+//		assertTrue("fishy file path",
+//				a_model.getFilePath().endsWith("component_model.mo"));
+//		reg = a_model.getLocation().getRegion();
+//		assertEquals("wrong start offset", 163, reg.getOffset());
+//		assertEquals("wrong length", 188-163+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_model instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_model.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_model",
+//				wbAdapter.getLabel(a_model));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_model));
 
 		/*
 		 * sanity checks on components_bananza.a_record
 		 */
-		assertNotNull("components_bananza.a_record not found", a_record);
-		assertEquals("wrong element name", "a_record", a_record.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_record",
-				a_record.getFullName());
-		assertTrue("fishy file path",
-				a_record.getFilePath().endsWith("component_model.mo"));
-		reg = a_record.getLocation().getRegion();
-		assertEquals("wrong start offset", 237, reg.getOffset());
-		assertEquals("wrong length", 265-237+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_record instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_record.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_record",
-				wbAdapter.getLabel(a_record));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_record));
+		testChild(a_record, "a_record", "components_bananza.a_record", "component_model.mo", visibility, 8, 5, 8, 33, "a_record");
+//		assertNotNull("components_bananza.a_record not found", a_record);
+//		assertEquals("wrong element name", "a_record", a_record.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_record",
+//				a_record.getFullName());
+//		assertTrue("fishy file path",
+//				a_record.getFilePath().endsWith("component_model.mo"));
+//		reg = a_record.getLocation().getRegion();
+//		assertEquals("wrong start offset", 237, reg.getOffset());
+//		assertEquals("wrong length", 265-237+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_record instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_record.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_record",
+//				wbAdapter.getLabel(a_record));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_record));
 
 		/*
 		 * sanity checks on components_bananza.a_real
 		 */
-		assertNotNull("components_bananza.a_real not found", a_real);
-		assertEquals("wrong element name", "a_real", a_real.getElementName());
-		assertEquals("wrong element full name", "components_bananza.a_real",
-				a_real.getFullName());
-		assertEquals("wrong visibility", a_real.getVisibility(),
-				IModelicaComponent.Visibility.PUBLIC);
-
-		reg = a_real.getLocation().getRegion();
-		assertEquals("wrong start offset", 29, reg.getOffset());
-		assertEquals("wrong length", 58-29+1, reg.getLength());
-
-		/* check if element is adaptable */
-		assertTrue("element object must be adaptable",
-				(a_real instanceof IAdaptable));
-
-		/* check if we can convert element to workbench adapter */
-		wbAdapter =	(IWorkbenchAdapter)a_real.getAdapter(IWorkbenchAdapter.class);
-
-		assertNotNull("could not fetch workbench adapter", wbAdapter);
-		assertEquals("wrong label", "a_real",
-				wbAdapter.getLabel(a_real));
-		assertNotNull("no image provided",
-				wbAdapter.getImageDescriptor(a_real));
+		visibility = IModelicaComponent.Visibility.PUBLIC;
+		testChild(a_real, "a_real", "components_bananza.a_real", "component_model.mo", visibility, 2, 5, 2, 34, "a_real");
+//		assertNotNull("components_bananza.a_real not found", a_real);
+//		assertEquals("wrong element name", "a_real", a_real.getElementName());
+//		assertEquals("wrong element full name", "components_bananza.a_real",
+//				a_real.getFullName());
+//		assertEquals("wrong visibility", a_real.getVisibility(),
+//				IModelicaComponent.Visibility.PUBLIC);
+//
+//		reg = a_real.getLocation().getRegion();
+//		assertEquals("wrong start offset", 29, reg.getOffset());
+//		assertEquals("wrong length", 58-29+1, reg.getLength());
+//
+//		/* check if element is adaptable */
+//		assertTrue("element object must be adaptable",
+//				(a_real instanceof IAdaptable));
+//
+//		/* check if we can convert element to workbench adapter */
+//		wbAdapter =	(IWorkbenchAdapter)a_real.getAdapter(IWorkbenchAdapter.class);
+//
+//		assertNotNull("could not fetch workbench adapter", wbAdapter);
+//		assertEquals("wrong label", "a_real",
+//				wbAdapter.getLabel(a_real));
+//		assertNotNull("no image provided",
+//				wbAdapter.getImageDescriptor(a_real));
 
 		/*
 		 * sanity checks on components_bananza.a_undocumented_real
@@ -665,6 +678,50 @@ public class TestInnerClass extends TestCase {
 		testLocation("EquationComponent", 2, 1, 11, 22);
 		Utility.printFile(proj, TestInnerClass.CHANGING_FILE);
 		testLocation("EquationComponent.R", 4, 3, 6, 8);
+	}
+
+	private void testChild(IModelicaElement element, String elementName, String fullName, String pathEndsWith,
+			IModelicaComponent.Visibility visibility, int startLine, int startCol, int endLine, int endCol, String label)
+					throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
+		assertNotNull("The element with the expected full name \"" + fullName + "\" was not found.", element);
+		
+		String actualElementName = element.getElementName();
+		String actualFullName = element.getFullName();
+		
+		IModelicaComponent.Visibility actualVisibility = element.getVisibility();
+
+		String filePath = element.getFilePath();
+		boolean endsWith = filePath.endsWith(pathEndsWith);
+		String errorPathEndsWith = "getFilePath() returned a path \"" +
+				filePath + "\" that doesn't end with the expected \"" + pathEndsWith + "\".";
+
+		IDefinitionLocation definitionLocation = element.getLocation();
+		ISourceRegion sourceRegion = definitionLocation.getSourceRegion();
+
+		int actualStartLine = sourceRegion.getStartLine();
+		int actualStartCol = sourceRegion.getStartColumn();
+		int actualEndLine = sourceRegion.getEndLine();
+		int actualEndCol = sourceRegion.getEndColumn();
+
+		assertTrue("The IModelicaElement is not an instance of IAdaptable", element instanceof IAdaptable);
+
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter)element.getAdapter(IWorkbenchAdapter.class);
+
+		assertNotNull("getAdapter() returned null.", adapter);
+
+		String actualLabel = adapter.getLabel(element);
+		ImageDescriptor imageDescriptor = adapter.getImageDescriptor(element);
+
+		assertEquals("getElementName() did not return the expected value.", elementName, actualElementName);
+		assertEquals("getFullName() did not return the expected value.", fullName, actualFullName);
+		assertTrue(errorPathEndsWith, endsWith);
+		assertEquals("getVisibility() did not return the expected value.", visibility, actualVisibility);
+		assertEquals("Expected start line did not match actual start line.", startLine, actualStartLine);
+		assertEquals("Expected start column did not match actual start column.", startCol, actualStartCol);
+		assertEquals("Expected end line did not match actual end line.", endLine, actualEndLine);
+		assertEquals("Expected end column did not match actual end column.", endCol, actualEndCol);
+		assertEquals("getLabel() did not return the expected value.", label, actualLabel);
+		assertNotNull("getImageDescriptor() returned null.", imageDescriptor);
 	}
 
 	private void testImport(IModelicaImport modelicaImport, IModelicaImport.Type importType, String importedPackageName, String alias)
