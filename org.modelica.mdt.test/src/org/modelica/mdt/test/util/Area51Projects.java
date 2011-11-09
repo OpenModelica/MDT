@@ -41,7 +41,6 @@
 
 package org.modelica.mdt.test.util;
 
-
 import java.io.InputStream;
 
 import junit.framework.Assert;
@@ -147,7 +146,6 @@ public class Area51Projects {
 			}
 		}
 	}
-
 
 	/**
 	 * create modelica project 
@@ -261,8 +259,8 @@ public class Area51Projects {
 		 * sometime cause the Modelica compiler to hang when the project is built,
 		 *  or even expanded, but I can't reproduce it reliably.
 		 */
-		//		file = folder.getFile("package.mo");
-		//		file.create(Utility.getByteStream(""), true, null);
+		//file = folder.getFile("package.mo");
+		//file.create(Utility.getByteStream(""), true, null);
 
 		/* empty_folder */
 		folder = modelica_project.getFolder("empty_folder");
@@ -274,15 +272,12 @@ public class Area51Projects {
 
 		/* root_model.mo */
 		file = modelica_project.getFile("root_model.mo");
-		contents = 
-				"encapsulated model root_model\n" +
-						"    import Modelica;\n" +
-						"end root_model;";
-		file.create(Utility.getByteStream(contents), true, null);
+		InputStream is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_model.mo");
+		file.create(is, true, null);
 
 		/* nested_models.mo */
 		file = modelica_project.getFile("nested_models.mo");
-		InputStream is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/nested_models.mo");
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/nested_models.mo");
 		file.create(is, true, null);
 
 		/* broken_nested_models.mo */
