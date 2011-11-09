@@ -48,9 +48,6 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -79,8 +76,8 @@ public class TestModelicaProject {
 	/* the names of the expected root packages in the area51 modelica project */
 	private Vector<String> expectedRootPackages = new Vector<String>();
 
-	@Before
-	public void setUp() throws Exception {
+	@org.junit.Before
+	public void setUp() {
 		Area51Projects.createProjects();
 
 		project = Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
@@ -105,7 +102,7 @@ public class TestModelicaProject {
 	/**
 	 * test (I)ModelciaProject.getClass() method
 	 */
-	@Test
+	@org.junit.Test
 	public void testGetClass()
 			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, InvocationError, CoreException, Exception {
 		/*
@@ -210,7 +207,7 @@ public class TestModelicaProject {
 	/**
 	 * test (I)ModelciaProject.getRootClasses() method
 	 */
-	@Test
+	@org.junit.Test
 	public void testGetRootClasses()
 			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, CoreException {
 		Collection<? extends IModelicaClass> rootClasses = project.getRootClasses();
@@ -243,7 +240,7 @@ public class TestModelicaProject {
 	/**
 	 * test (I)ModelciaProject.findElement() method
 	 */
-	@Test
+	@org.junit.Test
 	public void testFindElement()
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException {
 		testFindElement("empty_folder", IModelicaFolder.class, null);
@@ -368,8 +365,8 @@ public class TestModelicaProject {
 		Class<?> actualClass = element.getClass();
 		String expectedClassName = expectedClass.getCanonicalName();
 		String actualClassName = actualClass.getCanonicalName();
-		String errorMsgClass = "For pathName \"" + pathName + "\", we expected to find an element that is an instance of \"" +
-				expectedClassName + "\", but the returned class \"" + actualClassName + "\" is not an instance of that class.";
+		String errorMsgClass = "For pathName \"" + pathName + "\", the actual class \"" + actualClassName +
+				"\" is not an instance of the expected class \"" + expectedClassName + "\"."; 
 
 		assertTrue(errorMsgClass, expectedClass.isAssignableFrom(actualClass));
 
