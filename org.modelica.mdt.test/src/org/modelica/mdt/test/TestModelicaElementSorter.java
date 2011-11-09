@@ -58,196 +58,195 @@ import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 //import org.modelica.mdt.ui.ModelicaElementSorter;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test the ModelicaElementSorter
  */
-public class TestModelicaElementSorter extends TestCase 
-{
+public class TestModelicaElementSorter {
 
 	/* the test subject */
 	//private ModelicaElementSorter sorter = new ModelicaElementSorter(ModelicaElementSorter.NAME);
 	
-	@Override
-	protected void setUp() throws Exception 
-	{
+	@org.junit.Before
+	public void setUp() throws Exception {
 		Area51Projects.createProjects();
 	}
-	
+
+	// We disable this test for now, because it wants to use functionality that has been removed from MDT.
+	//@org.junit.Test
 	public void testSorter()
-		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException, CompilerInstantiationException
-	{
-//		/*
-//		 * let the sorter sort children elements of Area51 modelica project
-//		 * and check the order 
-//		 */
-//		IModelicaProject proj = 
-//			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
-//		
-//		Object[] children = proj.getRootFolder().getChildren().toArray();
-//		
-//		/*
-//		 * we need to create a viewer and set a label provider,
-//		 * for the sorter. sorter uses label provider for sorting elements
-//		 * within catagory
-//		 */
-//		TreeViewer viewer = new TreeViewer(new Shell());
-//		viewer.setLabelProvider(new WorkbenchLabelProvider());
-//
-//		/*
-//		 * let the sorter do the sorting
-//		 */
-//		 
-//		sorter.sort(viewer, children);
-//		
-//		int i = 0;
-//		int order;
-//		String previous = null;
-//		String current;
-//		Object elm;
-//		
-//		/* check folders catagory */
-//		for (; i < children.length; i++)
-//		{
-//			elm = children[i];
-//			
-//			if (elm instanceof IModelicaFolder && 
-//					!(elm instanceof IModelicaClass))
-//			{
-//				current = ((IModelicaFolder)elm).getElementName();
-//				if (previous != null)
-//				{
-//					order = 
-//						String.CASE_INSENSITIVE_ORDER.compare(previous, 
-//								current);
-//					
-//					assertTrue("element are not in assending order",
-//							order <= 0 );
-//				}
-//				previous = current;
-//			}
-//			else 
-//			{
-//				/* next catagory begun */
-//				previous = null;
-//				break;
-//			}
-//		}
-//		
-//		/* check packages catagory */
-//		for (; i < children.length; i++)
-//		{
-//			elm = children[i];
-//			
-//			if (elm instanceof IModelicaClass)
-//			{
-//				current = ((IModelicaClass)elm).getElementName();
-//				if (previous != null)
-//				{
-//					order = 
-//						String.CASE_INSENSITIVE_ORDER.compare(previous, 
-//								current);
-//					
-//					assertTrue("element are not in assending order",
-//							order <= 0 );
-//				}
-//				previous = current;
-//			}
-//			else if (elm instanceof IModelicaFolder)
-//			{
-//				fail("modelica folder in the wrong place");
-//			}
-//
-//			else
-//			{
-//				/* next catagory begun */
-//				previous = null;
-//				break;
-//			}
-//		}
-//		
-//		/*
-//		 * we don't have a class category in this test case
-//		 */
-//		
-//		/* check modelica files catagory */
-//		for (; i < children.length; i++)
-//		{
-//			elm = children[i];
-//			
-//			if (elm instanceof IModelicaSourceFile)
-//			{
-//				current = ((IModelicaSourceFile)elm).getElementName();
-//				if (previous != null)
-//				{
-//					order = 
-//						String.CASE_INSENSITIVE_ORDER.compare(previous, 
-//								current);
-//					
-//					assertTrue("element are not in assending order",
-//							order <= 0 );
-//				}
-//				previous = current;
-//			}
-//			else if (elm instanceof IModelicaFolder)
-//			{
-//				fail("modelica folder/package in the wrong place");
-//			}
-//			else if (elm instanceof IModelicaClass)
-//			{
-//				fail("modelica class in the wrong place");
-//			}
-//			else
-//			{
-//				/* next catagory begun */
-//				previous = null;
-//				break;
-//			}
-//		}
-//		
-//		/* check plain files catagory */
-//		for (; i < children.length; i++)
-//		{
-//			elm = children[i];
-//			
-//			if (elm instanceof IFile)
-//			{
-//				current = ((IFile)elm).getName();
-//				if (previous != null)
-//				{
-//					order = 
-//						String.CASE_INSENSITIVE_ORDER.compare(previous, 
-//								current);
-//					
-//					assertTrue("element are not in assending order",
-//							order <= 0 );
-//				}
-//				previous = current;
-//			}
-//			else if (elm instanceof IModelicaFolder)
-//			{
-//				fail("modelica folder/package in the wrong place");
-//			}
-//			else if (elm instanceof IModelicaClass)
-//			{
-//				fail("modelica class in the wrong place");
-//			}
-//			else if (elm instanceof IModelicaSourceFile)
-//			{
-//				fail("modelica class in the wrong place");
-//			}
-//			else
-//			{
-//				/* next catagory begun */
-//				previous = null;
-//				break;
-//			}
-//		}
-//
-//		/*
-//		 * we don't have a system library catagory in this test case
-//		 */
+		throws ConnectException, UnexpectedReplyException, InvocationError, CoreException, CompilerInstantiationException {
+		/*
+		 * let the sorter sort children elements of Area51 modelica project
+		 * and check the order 
+		 */
+		IModelicaProject proj = 
+			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
+		
+		Object[] children = proj.getRootFolder().getChildren().toArray();
+		
+		/*
+		 * we need to create a viewer and set a label provider,
+		 * for the sorter. sorter uses label provider for sorting elements
+		 * within catagory
+		 */
+		TreeViewer viewer = new TreeViewer(new Shell());
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
+
+		/*
+		 * let the sorter do the sorting
+		 */
+		 
+		//sorter.sort(viewer, children);
+		
+		int i = 0;
+		int order;
+		String previous = null;
+		String current;
+		Object elm;
+		
+		/* check folders catagory */
+		for (; i < children.length; i++)
+		{
+			elm = children[i];
+			
+			if (elm instanceof IModelicaFolder && 
+					!(elm instanceof IModelicaClass))
+			{
+				current = ((IModelicaFolder)elm).getElementName();
+				if (previous != null)
+				{
+					order = 
+						String.CASE_INSENSITIVE_ORDER.compare(previous, 
+								current);
+					
+					assertTrue("element are not in assending order",
+							order <= 0 );
+				}
+				previous = current;
+			}
+			else 
+			{
+				/* next catagory begun */
+				previous = null;
+				break;
+			}
+		}
+		
+		/* check packages catagory */
+		for (; i < children.length; i++)
+		{
+			elm = children[i];
+			
+			if (elm instanceof IModelicaClass)
+			{
+				current = ((IModelicaClass)elm).getElementName();
+				if (previous != null)
+				{
+					order = 
+						String.CASE_INSENSITIVE_ORDER.compare(previous, 
+								current);
+					
+					assertTrue("element are not in assending order",
+							order <= 0 );
+				}
+				previous = current;
+			}
+			else if (elm instanceof IModelicaFolder)
+			{
+				fail("modelica folder in the wrong place");
+			}
+
+			else
+			{
+				/* next catagory begun */
+				previous = null;
+				break;
+			}
+		}
+		
+		/*
+		 * we don't have a class category in this test case
+		 */
+		
+		/* check modelica files catagory */
+		for (; i < children.length; i++)
+		{
+			elm = children[i];
+			
+			if (elm instanceof IModelicaSourceFile)
+			{
+				current = ((IModelicaSourceFile)elm).getElementName();
+				if (previous != null)
+				{
+					order = 
+						String.CASE_INSENSITIVE_ORDER.compare(previous, 
+								current);
+					
+					assertTrue("element are not in assending order",
+							order <= 0 );
+				}
+				previous = current;
+			}
+			else if (elm instanceof IModelicaFolder)
+			{
+				fail("modelica folder/package in the wrong place");
+			}
+			else if (elm instanceof IModelicaClass)
+			{
+				fail("modelica class in the wrong place");
+			}
+			else
+			{
+				/* next catagory begun */
+				previous = null;
+				break;
+			}
+		}
+		
+		/* check plain files catagory */
+		for (; i < children.length; i++)
+		{
+			elm = children[i];
+			
+			if (elm instanceof IFile)
+			{
+				current = ((IFile)elm).getName();
+				if (previous != null)
+				{
+					order = 
+						String.CASE_INSENSITIVE_ORDER.compare(previous, 
+								current);
+					
+					assertTrue("element are not in assending order",
+							order <= 0 );
+				}
+				previous = current;
+			}
+			else if (elm instanceof IModelicaFolder)
+			{
+				fail("modelica folder/package in the wrong place");
+			}
+			else if (elm instanceof IModelicaClass)
+			{
+				fail("modelica class in the wrong place");
+			}
+			else if (elm instanceof IModelicaSourceFile)
+			{
+				fail("modelica class in the wrong place");
+			}
+			else
+			{
+				/* next catagory begun */
+				previous = null;
+				break;
+			}
+		}
+
+		/*
+		 * we don't have a system library catagory in this test case
+		 */
 	}
 }
