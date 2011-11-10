@@ -283,14 +283,16 @@ public class TestInnerClass {
 
 		assertEquals("Unexpected number of imports", actualNumImports, expectedNumImports);
 
-		testImport(imports.toArray(new IModelicaImport[0])[0], IModelicaImport.Type.QUALIFIED, "Modelica", null);
-		testImport(imports.toArray(new IModelicaImport[0])[1], IModelicaImport.Type.QUALIFIED, "Modelica.Math.sin", null);
-		testImport(imports.toArray(new IModelicaImport[0])[2], IModelicaImport.Type.UNQUALIFIED, "Modelica", null);
-		testImport(imports.toArray(new IModelicaImport[0])[3], IModelicaImport.Type.RENAMING, "Modelica.Math", "mm");
-		testImport(imports.toArray(new IModelicaImport[0])[4], IModelicaImport.Type.RENAMING, "hepp", "foo");
-		testImport(imports.toArray(new IModelicaImport[0])[5], IModelicaImport.Type.QUALIFIED, "hepp.hopp", null);
-		testImport(imports.toArray(new IModelicaImport[0])[6], IModelicaImport.Type.UNQUALIFIED, "hepp", null);
-		testImport(imports.toArray(new IModelicaImport[0])[7], IModelicaImport.Type.QUALIFIED, "root_package.root_package_model", null);
+		IModelicaImport[] importsArray = imports.toArray(new IModelicaImport[0]);
+
+		testImport(importsArray[0], IModelicaImport.Type.QUALIFIED, "Modelica", null);
+		testImport(importsArray[1], IModelicaImport.Type.QUALIFIED, "Modelica.Math.sin", null);
+		testImport(importsArray[2], IModelicaImport.Type.UNQUALIFIED, "Modelica", null);
+		testImport(importsArray[3], IModelicaImport.Type.RENAMING, "Modelica.Math", "mm");
+		testImport(importsArray[4], IModelicaImport.Type.RENAMING, "hepp", "foo");
+		testImport(importsArray[5], IModelicaImport.Type.QUALIFIED, "hepp.hopp", null);
+		testImport(importsArray[6], IModelicaImport.Type.UNQUALIFIED, "hepp", null);
+		testImport(importsArray[7], IModelicaImport.Type.QUALIFIED, "root_package.root_package_model", null);
 	}
 
 	@org.junit.Test
