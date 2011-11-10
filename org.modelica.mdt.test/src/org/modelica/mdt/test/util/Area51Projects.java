@@ -254,13 +254,8 @@ public class Area51Projects {
 		folder.create(false, true, null);
 
 		/* package_look_alike/package.mo */
-		/*
-		 * FIXME: This empty file, package.mo, inside package_look_alike seems to
-		 * sometime cause the Modelica compiler to hang when the project is built,
-		 *  or even expanded, but I can't reproduce it reliably.
-		 */
-		//file = folder.getFile("package.mo");
-		//file.create(Utility.getByteStream(""), true, null);
+		file = folder.getFile("package.mo");
+		file.create(Utility.getByteStream(""), true, null);
 
 		/* empty_folder */
 		folder = modelica_project.getFolder("empty_folder");
