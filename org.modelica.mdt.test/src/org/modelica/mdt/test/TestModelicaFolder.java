@@ -63,7 +63,7 @@ import junit.framework.TestCase;
 
 /**
  * Test various methods in org.modelica.mdt.internal.core.ModelicaFolder
- * 
+ *
  * @author Elmir Jagudin
  */
 public class TestModelicaFolder extends TestCase {
@@ -79,7 +79,6 @@ public class TestModelicaFolder extends TestCase {
 
 	/* expected modelica file names in package_look_alike folder */
 	private Vector<String> expectedPackageLookAlikeChildren = new Vector<String>();
-
 
 	@Override
 	protected void setUp() throws Exception {
@@ -98,14 +97,8 @@ public class TestModelicaFolder extends TestCase {
 
 		assertTrue(Collections.addAll(expectedRootFolderChildren, "hej_hopp"));
 
-		/* 
-		 * FIXME: We are currently not creating the empty file package.mo inside package_look_alike
-		 * because it makes OMC to freeze. When this problem has been fixed, we can run this test
-		 * again.
-		 */
-		//assertTrue(Collections.addAll(expectedPackageLookAlikeChildren, "package.mo"));
+		assertTrue(Collections.addAll(expectedPackageLookAlikeChildren, "package.mo"));
 	}
-
 
 	/**
 	 * test ModelicaFolder.hasChildren()
@@ -119,7 +112,6 @@ public class TestModelicaFolder extends TestCase {
 			fail("exception thrown " + e.getMessage());
 		}
 	}
-
 
 	/**
 	 * test ModelicaFolder.getChildren() method
