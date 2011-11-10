@@ -247,14 +247,7 @@ public class TestModelicaProject {
 
 		testFindElement("package_look_alike", IModelicaFolder.class, null);
 
-		/*
-		 * FIXME: We are currently not creating the empty file package.mo inside package_look_alike
-		 * because it makes OMC to freeze. When this problem has been fixed, we can run this test
-		 * again.
-		 * However, even if OMC could cope with an empty file, would it be considered an IModeliaSourceFile, as
-		 * stated in the original version of this test, or simply an IModelicaFile?
-		 */
-		//testFindPath("package_look_alike/package.mo", IModelicaSourceFile.class, null);
+		testFindElement("package_look_alike/package.mo", IModelicaSourceFile.class, null);
 
 		testFindElement("packages_folder", IModelicaFolder.class, null);
 
