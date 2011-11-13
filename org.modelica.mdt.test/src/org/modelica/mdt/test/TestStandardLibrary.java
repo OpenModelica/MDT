@@ -41,14 +41,20 @@
 
 package org.modelica.mdt.test;
 
+import java.util.Collection;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaImport;
+import org.modelica.mdt.core.IModelicaImport.Type;
+import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -59,23 +65,20 @@ import org.modelica.mdt.internal.core.InnerClass;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Do some sanity checks regarding the standard library
  */
-public class TestStandardLibrary extends TestCase 
-{
-	/**
-	 * check that we can convert an IStandardLibrary object, return
-	 * by modelica root, to workbench object, etc via the IAdapter
-	 * mechanism.
-	 * 
-	 * This is used by the UI layer when displaying modelica standard library
-	 * in for example modelica projects view.
-	 */
-	public void testStandardLibraryAdapter() throws BundleException
-	{
+public class TestStandardLibrary {
+	private IStandardLibrary standardLibrary;
+	
+	@org.junit.Before
+	public void setUp() throws BundleException {
 		/*
 		 * the adapter factory that handles standard library object
 		 * is installed by the org.modelica.mdt.ui plugin,
@@ -84,9 +87,20 @@ public class TestStandardLibrary extends TestCase
 		Bundle bundle = Platform.getBundle("org.modelica.mdt.ui");		
 		bundle.start();
 		
-		IStandardLibrary standardLibrary = 
-			ModelicaCore.getModelicaRoot().getStandardLibrary(null);
+		IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
+		standardLibrary = modelicaRoot.getStandardLibrary(null);
+	}
 
+	/**
+	 * check that we can convert an IStandardLibrary object, return
+	 * by modelica root, to workbench object, etc via the IAdapter
+	 * mechanism.
+	 * 
+	 * This is used by the UI layer when displaying modelica standard library
+	 * in for example modelica projects view.
+	 */
+	@org.junit.Test
+	public void testStandardLibraryAdapter() {
 		/* check if standard library object is adaptable */
 		assertTrue("standard library object must be adaptable",
 				(standardLibrary instanceof IAdaptable));
@@ -96,161 +110,145 @@ public class TestStandardLibrary extends TestCase
 			(IWorkbenchAdapter)standardLibrary.getAdapter(IWorkbenchAdapter.class);
 
 		assertNotNull("could not fetch workbench adapter", wbAdapter);
+		
 		/* FIXME : wbAdapter.getLabel(standardLibrary) is returning something weird right now,
 		 * at least on Windows, let's disable this test until we can investigate. */
-		
-//		assertEquals("wrong label", "Standard Library",
-//				wbAdapter.getLabel(standardLibrary));
-		assertNotNull("no image provided", 
-				wbAdapter.getImageDescriptor(standardLibrary));
+		String label = wbAdapter.getLabel(standardLibrary);
+		assertEquals("wrong label", "Standard Library", label);
+		ImageDescriptor imageDescriptor = wbAdapter.getImageDescriptor(standardLibrary);
+		assertNotNull("no image provided", imageDescriptor);
 	}
 
 	/**
 	 * Do some integrity tests on classes/packages from the standard library.
 	 */
+	@org.junit.Test
 	public void testStandardLibraryElements()
-		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CompilerInstantiationException, CoreException
-	{
-						
-//		/* fetch teh Modelica package from the standard library */		
-		IStandardLibrary standardLibrary = 
-			ModelicaCore.getModelicaRoot().getStandardLibrary(null);
-		
+		throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
+		/* Fetch the Modelica package from the standard library. */
+		Collection<IModelicaClass> packages = standardLibrary.getPackages();
 		InnerClass modelica = null;
 		
-		for (IModelicaClass clazz : standardLibrary.getPackages())
-		{
-			if (clazz.getElementName().equals("Modelica"))
-			{
-				modelica = (InnerClass)clazz;
+		String desiredPackageName = "Modelica 3.2";
+		
+		for (IModelicaClass modelicaClass : packages) {
+			String elementName = modelicaClass.getElementName();
+			
+			if (elementName.equals(desiredPackageName)) {
+				modelica = (InnerClass)modelicaClass;
 				break;
 			}
 		}
+		assertNotNull("Could not find standard library package \"" + desiredPackageName + "\".", modelica);
 
-		assertNotNull("could not found standard library package 'Modelica'",
-				modelica);
-
-		
 		/*
 		 * do checks on Modelica package
 		 */
-		assertNull("standard library should be defined outside of workspace",
-				modelica.getResource());
-		assertFalse("empty path to the source file", 
-				modelica.getFilePath().equals(""));
+		IResource modelicaResource = modelica.getResource();
+		assertNull("Standard library should be defined outside of workspace.", modelicaResource);
+		String modelicaFilePath = modelica.getFilePath();
+		boolean modelicaFilePathEmpty = modelicaFilePath.equals("");
+		assertFalse("Empty path to the source file.", modelicaFilePathEmpty);
 //		IRegion reg = modelica.getLocation();
 //		assertTrue("negative element region can't be", reg.getOffset() >= 0);
 //		assertTrue("elements length must be positive", reg.getLength() > 0);
 
-
 		/*
 		 * do checks on Modelica.Blocks and Modelica.Constants packages
 		 */
-
 		InnerClass blocks = null;
 		InnerClass constants = null;
- 
-		for (IModelicaElement el : modelica.getChildren())
-		{
+		Collection<IModelicaElement> modelicaChildren = modelica.getChildren();
+		for (IModelicaElement el : modelicaChildren) {
 			String name = el.getElementName();
 			
-			if (name.equals("Blocks"))
-			{
+			if (name.equals("Blocks")) {
 				blocks = (InnerClass)el;
 			}
-			else if (name.equals("Constants"))
-			{
+			else if (name.equals("Constants")) {
 				constants = (InnerClass)el;
 			}
 		} 
 		
 		/* check Modelica.Blocks */
-		assertNotNull("could not find package Modelica.Blocks in standard" +
-				"library ", blocks);
-		assertNull("standard library should be defined outside of workspace",
-				blocks.getResource());
-		assertFalse("empty path to the source file", 
-				blocks.getFilePath().equals(""));
+		assertNotNull("Could not find package Modelica.Blocks in standard library.", blocks);
+		IResource blocksResource = blocks.getResource();
+		assertNull("Standard library should be defined outside of workspace.", blocksResource);
+		String blocksFilePath = blocks.getFilePath();
+		boolean blocksFilePathEmpty = blocksFilePath.equals("");
+		assertFalse("Empty path to the source file.", blocksFilePathEmpty);
 //		reg = blocks.getLocation();
 //		assertTrue("negative element region can't be", reg.getOffset() >= 0);
 //		assertTrue("elements length must be positive", reg.getLength() > 0);
 		
 		/* check Modelica.Blocks imports */
 		boolean foundSIimport = false;
-
-		for (IModelicaImport imp : blocks.getImports())
-		{
-			switch (imp.getType())
-			{
+		Collection<IModelicaImport> blocksImports = blocks.getImports();
+		for (IModelicaImport imp : blocksImports) {
+			Type type = imp.getType();
+			switch (type) {
 			case RENAMING:
-				if (imp.getAlias().equals("SI"))
-				{
+				String alias = imp.getAlias();
+				if (alias.equals("SI")) {
 					foundSIimport = true;
 				}
 				break;
 				/* ignore all other types of imports */
 			}
 		}
-		
-		assertTrue("could not find the representation of" +
-				" 'import SI = Modelica.SIunits;' statment", foundSIimport); 
+		assertTrue("Could not find the representation of 'import SI = Modelica.SIunits;' statement", foundSIimport); 
 		
 		/* check Modelica.Constants */
-		assertNotNull("could not find package Modelica.Constants in standard" +
-				"library ", constants);
-		assertNull("standard library should be defined outside of workspace",
-				constants.getResource());
-		assertFalse("empty path to the source file", 
-				constants.getFilePath().equals(""));
+		
+		assertNotNull("Could not find package Modelica.Constants in standard library.", constants);
+		IResource constantsResource = constants.getResource();
+		assertNull("Standard library should be defined outside of workspace.", constantsResource);
+		String constantsFilePath = constants.getFilePath();
+		boolean constantsFilePathEmpty = constantsFilePath.equals("");
+		assertFalse("Empty path to the source file", constantsFilePathEmpty);
 //		reg = constants.getLocation();
 //		assertTrue("negative element region can't be", reg.getOffset() >= 0);
 //		assertTrue("elements length must be positive", reg.getLength() > 0);
 
-		IModelicaComponent pi = null;
-		IModelicaComponent D2R = null;
-		
 		/*
 		 * do checks on Modelica.Constants components
 		 */
-		for (IModelicaElement el : constants.getChildren())
-		{
+		Collection<IModelicaElement> constantsChildren = constants.getChildren();
+		IModelicaComponent pi = null;
+		IModelicaComponent D2R = null;
+		for (IModelicaElement el : constantsChildren) {
 			String name = el.getElementName();
 			
-			if (name.equals("pi"))
-			{
+			if (name.equals("pi")) {
 				pi = (IModelicaComponent)el;
 			}
-			else if (name.equals("D2R"))
-			{
+			else if (name.equals("D2R")) {
 				D2R = (IModelicaComponent)el;
 			}
 		}
 
 		/* check Modelica.Constants.pi */
-		assertNotNull("could not find package Modelica.Constants.pi in standard" 
-				+ "library ", pi);
-		assertEquals("pi must have public visibility", 
-				IModelicaComponent.Visibility.PUBLIC,
-				pi.getVisibility());
-		assertNull("standard library should be defined outside of workspace",
-				pi.getResource());
-		assertFalse("empty path to the source file", 
-				pi.getFilePath().equals(""));
+		assertNotNull("Could not find package Modelica.Constants.pi in standard library.", pi);
+		IModelicaComponent.Visibility piVisibility = pi.getVisibility();
+		assertEquals("pi must have public visibility", IModelicaComponent.Visibility.PUBLIC, piVisibility);
+		IResource piResource = pi.getResource();
+		assertNull("Standard library should be defined outside of workspace.", piResource);
+		String piFilePath = pi.getFilePath();
+		boolean piFilePathEmpty = piFilePath.equals("");
+		assertFalse("Empty path to the source file.", piFilePathEmpty);
 //		reg = pi.getLocation();
 //		assertTrue("negative element region can't be", reg.getOffset() >= 0);
 //		assertTrue("elements length must be positive", reg.getLength() > 0);
 
 		/* check Modelica.Constants.D2R */
-		assertNotNull("could not find package Modelica.Constants.pi in standard" 
-				+ "library ", D2R);
-		assertEquals("pi must have public visibility", 
-				IModelicaComponent.Visibility.PUBLIC,
-				D2R.getVisibility());
-		assertNull("standard library should be defined outside of workspace",
-				D2R.getResource());
-		assertFalse("empty path to the source file", 
-				D2R.getFilePath().equals(""));
+		assertNotNull("Could not find package Modelica.Constants.pi in standard library.", D2R);
+		IModelicaComponent.Visibility d2rVisibility = D2R.getVisibility();
+		assertEquals("D2R must have public visibility", IModelicaComponent.Visibility.PUBLIC, d2rVisibility);
+		IResource d2rResource = D2R.getResource();
+		assertNull("Standard library should be defined outside of workspace.", d2rResource);
+		String d2rFilePath = D2R.getFilePath();
+		boolean d2rFilePathEmpty = d2rFilePath.equals("");
+		assertFalse("Empty path to the source file.", d2rFilePathEmpty);
 //		reg = pi.getLocation();
 //		assertTrue("negative element region can't be", reg.getOffset() >= 0);
 //		assertTrue("elements length must be positive", reg.getLength() > 0);
@@ -259,17 +257,16 @@ public class TestStandardLibrary extends TestCase
 		foundSIimport = false;
 		boolean foundNonSIimport = false;
 
-		for (IModelicaImport imp : constants.getImports())
-		{
-			switch (imp.getType())
-			{
+		Collection<IModelicaImport> constantsImports = constants.getImports();
+		for (IModelicaImport imp : constantsImports) {
+			Type type = imp.getType();
+			switch (type) {
 			case RENAMING:
-				if (imp.getAlias().equals("SI"))
-				{
+				String alias = imp.getAlias();
+				if (alias.equals("SI")) {
 					foundSIimport = true;
 				}
-				else if (imp.getAlias().equals("NonSI"))
-				{
+				else if (alias.equals("NonSI")) {
 					foundNonSIimport = true;
 				}
 				break;
@@ -277,10 +274,7 @@ public class TestStandardLibrary extends TestCase
 			}
 		}
 		
-		assertTrue("could not find the representation of" +
-				" 'import SI = Modelica.SIunits;' statment", foundSIimport); 
-		assertTrue("could not find the representation of" +
-				" import NonSI = Modelica.SIunits.Conversions.NonSIunits;' " +
-				"statment", foundNonSIimport); 
+		assertTrue("Could not find the representation of 'import SI = Modelica.SIunits;' statement", foundSIimport); 
+		assertTrue("Could not find the representation of 'import NonSI = Modelica.SIunits.Conversions.NonSIunits;' statement", foundNonSIimport); 
 	}
 }
