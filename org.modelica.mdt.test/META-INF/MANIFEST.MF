@@ -18,5 +18,5 @@ Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors
-Eclipse-AutoStart: false
+Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.console
