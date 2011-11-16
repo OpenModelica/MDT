@@ -14,5 +14,5 @@ Export-Package: org.modelica.mdt.core,
  org.modelica.mdt.core.preferences,
  org.modelica.mdt.internal.core
 Bundle-Activator: org.modelica.mdt.internal.core.CorePlugin
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
