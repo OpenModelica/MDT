@@ -3,7 +3,7 @@ package org.modelica.mdt.ui;
 
 import java.util.Collection;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
