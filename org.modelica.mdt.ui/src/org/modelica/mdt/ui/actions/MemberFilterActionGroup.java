@@ -36,6 +36,7 @@
 package org.modelica.mdt.ui.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.custom.BusyIndicator;
 
@@ -69,7 +70,6 @@ import org.modelica.mdt.ui.actions.MemberFilterAction;
  * 
  * @since 0.6.8
  */
-@SuppressWarnings("unchecked")
 public class MemberFilterActionGroup extends ActionGroup {
 
 	public static final int FILTER_PROTECTED= MemberFilter.FILTER_PROTECTED;
@@ -143,7 +143,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		fFilter= new MemberFilter();
 		
 		String title;
-		ArrayList actions= new ArrayList(4);
+		List<MemberFilterAction> actions= new ArrayList<MemberFilterAction>();
 		
 		// fields
 		int filterProperty= FILTER_COMPONENTS;
