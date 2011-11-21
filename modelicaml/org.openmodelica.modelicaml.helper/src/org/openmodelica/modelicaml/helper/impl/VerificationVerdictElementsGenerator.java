@@ -154,7 +154,7 @@ public class VerificationVerdictElementsGenerator {
 					Stereotype reqStereotype = t.getAppliedStereotype(Constants.stereotypeQName_Requirement);
 					if (reqStereotype != null) {
 						Property violated = ((Class)t).getOwnedAttribute(Constants.propertyName_violated, null);
-						Property evaluated = ((Class)t).getOwnedAttribute(Constants.propertyName_evaluationStarted, null);
+						Property evaluated = ((Class)t).getOwnedAttribute(Constants.propertyName_evaluated, null);
 						if ( violated != null && evaluated != null) {
 							Type violatedType = violated.getType();
 							Type evaluatedType = evaluated.getType();
@@ -179,7 +179,7 @@ public class VerificationVerdictElementsGenerator {
 			for (Property property : reqInstances) {
 				//violatedExpression = violatedExpression + Utls.replaceSpecChar(property.getName()) + ".violated, ";
 				violatedExpression = violatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_violated+" or ";
-				evaluatedExpression = evaluatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_evaluationStarted+" and ";
+				evaluatedExpression = evaluatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_evaluated+" and ";
 			}
 		}
 		
@@ -191,7 +191,7 @@ public class VerificationVerdictElementsGenerator {
 			Shell shell = new Shell();
 			MessageDialog.openError(shell, "Error", 
 					"The following requirements do not have the manatory attributes '"
-					+Constants.propertyName_evaluationStarted+
+					+Constants.propertyName_evaluated+
 					"' and '"+Constants.propertyName_violated+"' of type 'ModelicaBoolean'." +
 				invalidComponentNames + 
 				"\n\nNo verification verdict was created in '"+selectedClass.getName()+"'.");
