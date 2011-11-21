@@ -92,15 +92,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private String OMCWorkingDirectoryAbsoplutePath = null;
 	private OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 	
-	private EList<Element> proxies = new BasicEList<Element>();
+//	private EList<Element> proxies = new BasicEList<Element>();
+	private HashSet<Element> proxies = new HashSet<Element>();
+	
 	private HashSet<String> proxyQNames = new HashSet<String>();
 	private HashMap<String,Element> proxyQNameToElement = new HashMap<String, Element>();
 
 	private HashSet<String> modelsToBeExcluded = new HashSet<String>();
-	
-//	public static final String PROFILES_PATHMAP = "pathmap://PALETTE_PROFILE/"; //$NON-NLS-1$
-//	public static final String MODELICAML_PROFILE_URI = PROFILES_PATHMAP + "ModelicaML.profile.uml"; //$NON-NLS-1$
-//	private Profile modelicamlProfile;
 	
 	private boolean createOMCMarker = false;
 	private boolean validateProxies = false;
@@ -138,8 +136,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	public void validateProxies(IProject iProject){
 		if (isValidateProxies()) {
-			// (re)collect proxies 
-			collectModelicaModelProxies();
 			
 			// delete all old markers
 			deleteProxyValidationMarkers(iProject);
@@ -164,6 +160,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			}
 		}
 	}
+	
 	
 	public void clearAll(){
 		treeItems.clear();
@@ -193,6 +190,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	public void updateTreeItemProxies(TreeParent parent){
+		
 		TreeObject[] children = parent.getChildren();
 		
 		for (TreeObject treeObject : children) {
@@ -222,7 +220,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 		proxyQNames.clear();
 		proxyQNameToElement.clear();
 		
-		final UmlModel umlModel = UmlUtils.getUmlModel();
+//		final UmlModel umlModel = UmlUtils.getUmlModel();
+		final UmlModel umlModel = getModelicaMLModel();
 		
 		if (umlModel != null && umlModel.getResource() != null) {
 			try {
@@ -234,7 +233,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 				if (root instanceof NamedElement) {
 					ModelicaModelProxiesCollector pc = new ModelicaModelProxiesCollector();
 					pc.collectElementsFromModel(root, Constants.stereotypeQName_ModelicaModelProxy);
-					proxies = pc.getElements();
+//					proxies = pc.getElements();
+					proxies.addAll(pc.getElements());
 					
 					EList<Element> classAttributesProxies = new BasicEList<Element>();
 					EList<Element> functionParametersProxies = new BasicEList<Element>();
@@ -264,7 +264,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 							if (proxy instanceof Enumeration) {
 								EList<EnumerationLiteral> literals = ((Enumeration)proxy).getOwnedLiterals();
 								for (EnumerationLiteral literal : literals) {
-									// collect attributes
+									// collect literals
 									enumerationLiteralProxies.add(literal);
 									addProxyToMaps((NamedElement)literal);
 								}
@@ -296,6 +296,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		else {
+			System.err.println("Could not access the ModelicaML root element.");
 		}
 	}
 	
@@ -402,6 +405,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			item.setPartial(isPartial);
 			item.setEncapsulated(isEncapsulated);
 		}
+		
 		if (classInfo.equals("Error") ) {
 			// TODO: collect errors
 			String errorString = omcc.getErrorString();	
@@ -1094,7 +1098,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 
 	
-	public EList<Element> getProxies() {
+	public HashSet<Element> getProxies() {
 		return proxies;
 	}
 	

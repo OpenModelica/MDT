@@ -39,7 +39,6 @@ import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.ParameterDirectionKind;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Profile;
-import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
@@ -75,6 +74,9 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	private List<Element> updatedProperties = new ArrayList<Element>();
 	private List<Element> updatedGeneralizations = new ArrayList<Element>();
 
+	// log entries
+	private List<String> log = new ArrayList<String>();
+	
 	public ModelicaMLElementsCreator(){
 		setEditingDomain();
 		setModelicaMLRootElement();
@@ -100,14 +102,19 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		try {
 			ModelicaMLRoot = umlModel.lookupRoot();
 		} catch (NotFoundException e) {
-			System.err.println("Could not access the root elelement of the Papyrus model.");
+			addToLog("   ***  ERROR: Could not access the root elelement of the Papyrus model.");
 			e.printStackTrace();
 		}
 	}
 	
 	
 	public void createElements(Element parent, TreeParent treeParent, boolean update, boolean applyProxyStereotype){
+		// clear the log
+		this.log.clear();
+		
+		// first create classes, because they will type the properties
 		createClasses(parent, treeParent, update, applyProxyStereotype);
+		// create properties and extends relations
 		createPropertiesAndGeneralizations(treeParent, update, applyProxyStereotype);
 	}
 	
@@ -118,13 +125,14 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		 * that are not contained in the loaded Modelica models. 
 		 */
 		
-		CompoundCommand cc = new CompoundCommand("Delete ModelicaML Proxy or its elements");
+		CompoundCommand cc = new CompoundCommand("Delete ModelicaML Proxy");
 		Command command = new RecordingCommand(editingDomain) {
 			
 			@Override
 			protected void doExecute() {
+				
 				// (re)collect proxies 
-				treeBuilder.collectModelicaModelProxies();
+//				treeBuilder.collectModelicaModelProxies();
 				
 				HashSet<String> modelicaModelQNames = new HashSet<String>();
 				for (TreeObject treeObject : treeBuilder.getTreeItems()) {
@@ -133,12 +141,15 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				
 				for (Element element : treeBuilder.getProxies()) {
 					if (element instanceof NamedElement) {
-						String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
-						if (!modelicaModelQNames.contains(qName)) {
-							if (element instanceof NamedElement) {
+
+						// don't delete predefined types.
+						if (!(element instanceof PrimitiveType && isPredefinedModelicaType(element)) ) {
+							String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
+							if (!modelicaModelQNames.contains(qName)) {
 								deletedProxyQNames.add(((NamedElement)element).getQualifiedName());
+								addToLog("Deleting " + ((NamedElement)element).getQualifiedName());
+								element.destroy();
 							}
-							element.destroy();
 						}
 					}
 				}
@@ -149,6 +160,17 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		editingDomain.getCommandStack().execute(cc);
 	}
 	
+	
+	private boolean isPredefinedModelicaType(Element element) {
+		if (element instanceof NamedElement) {
+			NamedElement namedElement = (NamedElement)element;
+			if (namedElement.getName().equals(Constants.predefinedTypeName_real)) 		{ return true; }
+			if (namedElement.getName().equals(Constants.predefinedTypeName_integer)) 	{ return true; }
+			if (namedElement.getName().equals(Constants.predefinedTypeName_boolean)) 	{ return true; }
+			if (namedElement.getName().equals(Constants.predefinedTypeName_string)) 	{ return true; }
+		}
+		return false;
+	}
 	
 	
 	
@@ -167,7 +189,9 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					Element modelicaMLPropertyProxy = component.getModelicaMLProxy();
 					
 					if (modelicaMLPropertyProxy == null) { // if there is no proxy -> create one
-						System.out.println("Creating component: " + component.getQName());
+						
+						addToLog("Creating component: " + component.getQName());
+//						System.out.println("Creating component: " + component.getQName());
 						
 						// set the component type (uml class that was just created) 
 						Element type = treeBuilder.getTypeElement(component.getComponentTypeQame());
@@ -187,7 +211,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						if (update) {
 							if (modelicaMLPropertyProxy instanceof NamedElement) {
 								// indicate
-								System.out.println("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
+								addToLog("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
+//								System.out.println("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 							}
 							// update
 							updateProperty(owningClass, modelicaMLPropertyProxy, component, applyProxyStereotype);			
@@ -222,7 +247,6 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					// if there is no generalization pointing to the same target -> create a new one
 					if ( !exisitingTargets.contains(target) ) {
 						// create element
-//						System.out.println("Creating extends relation: " + treeParent.getQName() + " -> " + extendsRelation.getTargetQname());
 						modelicaMLGeneralizationProxy = createExtendsRelation(owningClass, extendsRelation, applyProxyStereotype);
 
 						// set proxy
@@ -237,8 +261,10 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						if (update) {
 							if ( modelicaMLGeneralizationProxy != null ) {
 								// indicate
-								System.out.println("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + 
+								addToLog("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + 
 										extendsRelation.getTargetQname());
+//								System.out.println("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + extendsRelation.getTargetQname());
+								
 								// update
 								updateGeneralization(modelicaMLGeneralizationProxy, extendsRelation, applyProxyStereotype);			
 							}
@@ -269,7 +295,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					if (modelicaMLProxy == null) {
 						// create element
 						if (parent instanceof NamedElement) {
-							System.out.println("Creating class: " + treeObject.getQName());
+//							System.out.println("Creating class: " + treeObject.getQName());
+							addToLog("Creating class: " + treeObject.getQName());
 							
 							modelicaMLProxy = createClass(parent, (ClassItem) treeObject, applyProxyStereotype);
 							createdClasses.add(modelicaMLProxy);
@@ -285,7 +312,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						if (update) {
 							if (modelicaMLProxy instanceof NamedElement) {
 								// indicate
-								System.out.println("Updating component: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
+//								System.out.println("Updating component: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
+								addToLog("Updating component: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
 							}
 							// update
 							updateClass(modelicaMLProxy, (ClassItem) treeObject, applyProxyStereotype);			
@@ -355,7 +383,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 //					Stereotype appliedStereotype = applyModelicaMLClassStereotype((Element)createdElement, (ClassItem) treeObject, applyProxyStereotype);
 				}			
 				else {
-					System.err.println("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
+					addToLog("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
+//					System.err.println("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
 //					MessageDialog.openError(new Shell(), "Error", "Could not apply ModelicaML stereotype '"+treeObject.getClassRestriction()+"'. Please make sure that the ModelicaML profile is applied.");
 				}
 			}
@@ -402,40 +431,22 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				Element target = treeBuilder.getTypeElement(extendsRelation.getTargetQname());
 				
 				if (target instanceof Classifier) {
-					System.out.println("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
+//					System.out.println("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
+					addToLog("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
+					
 					createdElement = ((Classifier)owningClass).createGeneralization((Classifier)target);
 					createdGeneralizations.add(createdElement);
 				}
 				else {
-					System.err.println("Could not create Generalization for " + extendsRelationTreeObject.getSourceQname());
+					addToLog("Could not create Generalization for " + extendsRelationTreeObject.getSourceQname());
+//					System.err.println("Could not create Generalization for " + extendsRelationTreeObject.getSourceQname());
 				}
 				
 				if (createdElement instanceof Generalization) {
-//					Stereotype extendsRelationStereotype = null;
-//					if (target instanceof PrimitiveType) {
-//						extendsRelationStereotype = createdElement.getApplicableStereotype(Constants.stereotypeQName_TypeRelation);
-//					}
-//					else {
-//						extendsRelationStereotype = createdElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation);
-//					}
-//					
-//					// apply stereotype
-//					createdElement.applyStereotype(extendsRelationStereotype);
-//					
-//					// add modifications
-//					if (extendsRelationStereotype != null && extendsRelation.getModifications() != null) {
-//						createdElement.setValue(extendsRelationStereotype, Constants.propertyName_modification, extendsRelation.getModifications());
-//					}
-//					
-//					// add array size 
-//					if (extendsRelationStereotype != null && 
-//							extendsRelationStereotype.getQualifiedName().equals(Constants.stereotypeQName_Type)
-//							&& extendsRelation.getArraySize() != null) {
-//						createdElement.setValue(extendsRelationStereotype, Constants.propertyName_arraySize, extendsRelation.getArraySize());
-//					}
 				}			
 				else {
-					System.err.println("Could not apply ModelicaML stereotype 'ExtendsRelation'. Please make sure that the ModelicaML profile is applied.");
+					addToLog("Could not apply ModelicaML stereotype 'ExtendsRelation'. Please make sure that the ModelicaML profile is applied.");
+//					System.err.println("Could not apply ModelicaML stereotype 'ExtendsRelation'. Please make sure that the ModelicaML profile is applied.");
 				}
 				
 			}
@@ -475,7 +486,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				
 				// alert that the type is missing
 				if (!(componentTreeObject.getComponentTypeProxy() instanceof Classifier)) {
-					System.err.println("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
+					addToLog("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
+//					System.err.println("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
 				}
 
 				if (componentTreeObject.isPort()) {
@@ -493,7 +505,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				
 				// alert that the element could not be created
 				if (!( createdElement instanceof Element )) {
-					System.err.println("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
+					addToLog("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
+//					System.err.println("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
 				}
 			}
 		};
@@ -652,7 +665,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					updatedClasses.add(classElement);
 				}
 				else {
-					System.err.println("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
+					addToLog("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
+//					System.err.println("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
 				}
 			}
 		};
@@ -707,7 +721,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					}
 				}
 				else {
-					System.err.println("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
+					addToLog("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
+//					System.err.println("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
 				}
 
 				// get or apply the appropriate stereotype 
@@ -867,7 +882,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			}
 		}
 		else { 
-			System.err.println("Not Stereotype found for '"+componentItem.getQName()+"'");
+			addToLog("Not Stereotype found for '"+componentItem.getQName()+"'");
+//			System.err.println("Not Stereotype found for '"+componentItem.getQName()+"'");
 		}
 	}
 	
@@ -966,7 +982,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		if (element != null) {
 			
 			if (componentTreeObject.getComponentTypeProxy() == null) {
-				System.err.println("No type is defined for '"+componentTreeObject.getQName()+"'.");
+				addToLog("No type is defined for '"+componentTreeObject.getQName()+"'.");
+//				System.err.println("No type is defined for '"+componentTreeObject.getQName()+"'.");
 			}
 			
 			// check if the right stereotype is already applied
@@ -982,14 +999,18 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					appliedStereotype = stereotype;
 				}
 				else {
-					System.err.println("Could not apply ModelicaML stereotype for " +
+					addToLog("Could not apply ModelicaML stereotype for " +
 							"component '"+componentTreeObject.getQName()+"'. " +
-									"Please make sure the the ModelicaML profile is applied.");
+					"Please make sure the the ModelicaML profile is applied.");
+					
+//					System.err.println("Could not apply ModelicaML stereotype for " +
+//							"component '"+componentTreeObject.getQName()+"'. " +
+//									"Please make sure the the ModelicaML profile is applied.");
 				}
 			}
 			
 			/*
-			 * Note: It is not necessary to apply mark components as proxies because they
+			 * Note: It is not necessary to mark components as proxies because they
 			 * are always contained by classes that have the proxy stereotype. 
 			 */
 			
@@ -1002,7 +1023,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 //			}
 		}
 		else {
-			System.err.println("The UML element is defined for '"+componentTreeObject.getQName()+"'");
+			addToLog("The UML element is defined for '"+componentTreeObject.getQName()+"'");
+//			System.err.println("The UML element is defined for '"+componentTreeObject.getQName()+"'");
 		}
 		
 		return appliedStereotype;
@@ -1036,10 +1058,14 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					appliedStereotype = stereotype;
 				}
 				else {
-					System.err.println("Could not apply ModelicaML stereotype '"
+					addToLog("Could not apply ModelicaML stereotype '"
 							+classItemObject.getClassRestriction()+"' " +
-									"to the class '"+classItemObject.getQName()+"'. " +
-											"Please make sure the the ModelicaML profile is applied.");
+							"to the class '"+classItemObject.getQName()+"'. " +
+									"Please make sure the the ModelicaML profile is applied.");
+//					System.err.println("Could not apply ModelicaML stereotype '"
+//							+classItemObject.getClassRestriction()+"' " +
+//									"to the class '"+classItemObject.getQName()+"'. " +
+//											"Please make sure the the ModelicaML profile is applied.");
 				}
 			}
 			
@@ -1052,8 +1078,10 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					}
 				}
 				else {
-					System.err.println("Could not apply ModelicaML stereotype 'Proxy' to class '"+classItemObject.getQName()
+					addToLog("Could not apply ModelicaML stereotype 'Proxy' to class '"+classItemObject.getQName()
 							+"'. Please make sure the the ModelicaML profile is applied.");
+//					System.err.println("Could not apply ModelicaML stereotype 'Proxy' to class '"+classItemObject.getQName()
+//							+"'. Please make sure the the ModelicaML profile is applied.");
 				}
 			}
 		}
@@ -1068,18 +1096,13 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		if (componentTreeObject.isFunctionArgument()) 	{ return Constants.stereotypeQName_FunctionArgument;}
 		// Note, an enumeration literal does not need a stereotype
 		if (!componentTreeObject.isEnumarationLiteral()) {
-			System.err.println("Could not find appropriate ModelicaML stereotype for the '"+componentTreeObject.getQName()+"'. Applying a default stereotype.");
+			addToLog("Could not find appropriate ModelicaML stereotype for the '"+componentTreeObject.getQName()+"'. Applying a default stereotype.");
+//			System.err.println("Could not find appropriate ModelicaML stereotype for the '"+componentTreeObject.getQName()+"'. Applying a default stereotype.");
 			return Constants.stereotypeQName_Variable;
 		}
 		return "";
 	}
-	
-//	private String getPropertyStereotypeQName(String componentDescription){
-//		if (componentDescription.equals(COMPONENT_DESCRIPTION_PORT)) 		{ return Constants.stereotypeQName_ConnectionPort;}
-//		if (componentDescription.equals(COMPONENT_DESCRIPTION_VARIABLE)) 	{ return Constants.stereotypeQName_Variable;}
-//		if (componentDescription.equals(COMPONENT_DESCRIPTION_COMPONENT)) 	{ return Constants.stereotypeQName_Component;}
-//		return "";
-//	}
+
 	
 	private String getClassRestrictionStereotypeQName(String restriction){
 		if (restriction.equals("class")) 	{ return Constants.stereotypeQName_ModelicaClass;}
@@ -1150,13 +1173,15 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 								((Model)newRoot).applyStereotype(stereotype);
 							}
 							else {
-								System.err.println("Could not apply the 'ModelicaModelProxy' stereotype. Please make sure that the ModelicaML profile is applied.");
+								addToLog("Could not apply the 'ModelicaModelProxy' stereotype. Please make sure that the ModelicaML profile is applied.");
+//								System.err.println("Could not apply the 'ModelicaModelProxy' stereotype. Please make sure that the ModelicaML profile is applied.");
 //								MessageDialog.openError(new Shell(), "Error", "Could not apply the <<ModelicaModelProxy>> stereotype. Please make sure that the ModelicaML profile is applied.");
 							}
 						}
 					}
 					else {
-						System.err.println("Could not apply ModelicaML profile.");
+						addToLog("Could not apply ModelicaML profile.");
+//						System.err.println("Could not apply ModelicaML profile.");
 					}
 				}
 			};
@@ -1168,7 +1193,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		}
 		else {
 //			MessageDialog.openError(new Shell(), "Error", "Cannot access the ModelicaML root element.");
-			System.err.println("Cannot access the ModelicaML root element.");
+			addToLog("Cannot access the ModelicaML root element.");
+//			System.err.println("Cannot access the ModelicaML root element.");
 
 		}
 		return createdElement;
@@ -1274,6 +1300,19 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 
 	public List<String> getDeletedProxyQNames() {
 		return deletedProxyQNames;
+	}
+
+	public void setLog(List<String> log) {
+		this.log = log;
+	}
+
+	public void addToLog(String msg) {
+		System.err.println(msg);
+		this.getLog().add(msg);
+	}
+	
+	public List<String> getLog() {
+		return log;
 	}
 
 }

@@ -1,10 +1,43 @@
 package org.openmodelica.modelicaml.modelica.importer.views;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.papyrus.core.services.ServiceException;
 import org.eclipse.papyrus.core.services.ServicesRegistry;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
@@ -16,42 +49,23 @@ import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.progress.UIJob;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.ui.*;
+import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.ViewPart;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.SWT;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
@@ -59,8 +73,6 @@ import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.dialogs.SynchronizeOptionsDialog;
 import org.openmodelica.modelicaml.modelica.importer.display.ViewLabelProviderStyledCell;
 import org.openmodelica.modelicaml.modelica.importer.helper.ModelicaMLElementsCreator;
-import org.openmodelica.modelicaml.modelica.importer.listeners.DragListener;
-import org.openmodelica.modelicaml.modelica.importer.listeners.DropListener;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
@@ -97,6 +109,12 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	private Action actionValidateProxies;
 
 	private boolean createProxiesAfterLoadingModelicaClasses = false;
+
+	private Action actionDecorateTreeItems;
+	
+	private ViewLabelProviderStyledCell labelProvider = new ViewLabelProviderStyledCell();
+
+	
 	
 	class ViewContentProvider implements IStructuredContentProvider, 
 										   ITreeContentProvider {
@@ -182,7 +200,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProviderStyledCell());
+
+		viewer.setLabelProvider(labelProvider);
 		
 //		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
@@ -245,6 +264,10 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		manager.add(actionGenerateOMCMarkers);
 //		manager.add(new Separator());
 		manager.add(actionValidateProxies);
+
+		manager.add(new Separator());
+		manager.add(actionDecorateTreeItems);
+		
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -386,8 +409,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		        						"'" + Constants.folderName_code_sync + "' folder. "
 		        						+ "\n\nShould it synchronize the ModelicaML proxies after loading? " +
 	        							"\nNote, the synchronization can launched manually at any time.";
+		        				
 		        				createProxiesAfterLoadingModelicaClasses = MessageDialog.openQuestion(new Shell(), title, msg);
-
 								
 								Job job = new Job("Loading Modelica Models using OMC..."){
 
@@ -559,32 +582,31 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		
 		actionRefresh = new Action() {
 			public void run() {
+				
 				treeBuilder.collectModelicaModelProxies();
 				treeBuilder.updateTreeItemProxies(treeRoot);
 				
-//				if (treeRoot.hasChildren()) {
-					// set up marker data
-					UmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-					if (umlModel != null) {
-						String projectName = umlModel.getResource().getURI().segment(1);
-						IWorkspace workspace = ResourcesPlugin.getWorkspace();
-						IWorkspaceRoot root = workspace.getRoot();
-						IProject iProject = root.getProject(projectName);
-						
-						/*
-						 * Note: There is an option to enable/disable this validation feature.
-						 * This may be needed for large models where the validation 
-						 * and the number of markers are too large ...
-						 */
-						treeBuilder.validateProxies(iProject);
-					}
-					else {
-						MessageDialog.openError(new Shell(), 
-								"ModelicaML Model Access Error", 
-							"Cannot acceess the ModelicaML model. " +
-							"Please make sure that the ModelicaML model is open in Papyrus editor.");
-					}
-//				}
+				// set up marker data
+				UmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+				if (umlModel != null) {
+					String projectName = umlModel.getResource().getURI().segment(1);
+					IWorkspace workspace = ResourcesPlugin.getWorkspace();
+					IWorkspaceRoot root = workspace.getRoot();
+					IProject iProject = root.getProject(projectName);
+					
+					/*
+					 * Note: There is an option to enable/disable this validation feature.
+					 * This may be needed for large models where the validation 
+					 * and the number of markers are too large ...
+					 */
+					treeBuilder.validateProxies(iProject);
+				}
+				else {
+					MessageDialog.openError(new Shell(), 
+						"ModelicaML Model Access Error", 
+						"Cannot acceess the ModelicaML model. " +
+						"Please make sure that the ModelicaML model is open in Papyrus editor.");
+				}
 				
 				viewer.refresh();
 			}
@@ -680,6 +702,12 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		        				message = message + "Number of updated extends relations: " + updateGeneralizationNumber + "\n";
 							}
 	        				
+	        				// add log
+	        				message = message + "\n\n********************   LOG ********************\n";
+	        				for (String logEntry : ec.getLog()) {
+	        					message = message + logEntry + "\n"; 
+	        				}
+	        				
 	        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Model Proxies Synchronization Report", null, message);
 	        				dialog.open();
 	        			}
@@ -692,12 +720,53 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	         };
 		
 		actionSynchronize = new Action() {
-			public void startJob(){
+			
+			public Job createSynchJob(final ServicesRegistry serviceRegistry, 
+					final TransactionalEditingDomain editingDomain, 
+					final UmlModel umlModel,
+					final EObject ModelicaMLRoot,
+					final boolean applyProxyStereotype,
+					final boolean update,
+					final boolean deleteNotUsedProxies
+					){
+						
+				Job job = new Job("Creating ModelicaML Proxies for Modelica Models ..."){
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						
+						ec = new ModelicaMLElementsCreator(serviceRegistry, 
+								editingDomain, 
+								umlModel, 
+								ModelicaMLRoot,
+								treeBuilder);
+						
+						TreeObject[] modelicaRoots = treeRoot.getChildren();
+						for (int i = 0; i < modelicaRoots.length; i++) {
+							
+							TreeObject treeObject = modelicaRoots[i];
+							
+							if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
+								EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
+								treeObject.setModelicaMLProxy((Element) modelicaRoot);
+								treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
+
+								ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
+								
+								if (deleteNotUsedProxies) {
+									ec.deleteNotUsedProxyElements();
+								}
+								
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				};
 				
+				return job;
 			}
 			
 			public void run() {
-//				showMessage("SynchronizeProxies");
 				
 				//********** with ProgressMonitor
 //				try {
@@ -841,43 +910,57 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						if (createProxiesAfterLoadingModelicaClasses) {
 							// no dialog. use default values
 
-//********************************* Encapsulate in a method
-							Job job = new Job("Creating ModelicaML Proxies for Modelica Models ..."){
-
-								final boolean applyProxyStereotype = true;
-								final boolean update = true;
-								final boolean deleteNotUsedProxies = false;
-
-								@Override
-								protected IStatus run(IProgressMonitor monitor) {
-									
-									ec = new ModelicaMLElementsCreator(serviceRegistry, 
-											editingDomain, 
-											umlModel, 
-											ModelicaMLRoot,
-											treeBuilder);
-									
-									TreeObject[] modelicaRoots = treeRoot.getChildren();
-									for (int i = 0; i < modelicaRoots.length; i++) {
-										
-										TreeObject treeObject = modelicaRoots[i];
-										
-										if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
-											EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
-											treeObject.setModelicaMLProxy((Element) modelicaRoot);
-											treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
-
-											ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
-											
-											if (deleteNotUsedProxies) {
-												ec.deleteNotUsedProxyElements();
-											}
-											
-										}
-									}
-									return Status.OK_STATUS;
-								}
-							};
+//********************************* TODO: Refactor this code. Encapsulate it in a method
+							
+							// default values
+							boolean applyProxyStereotype = true;
+							boolean update = true;
+							boolean deleteNotUsedProxies = false;
+							
+							Job job = createSynchJob(serviceRegistry, 
+									editingDomain, 
+									umlModel, 
+									ModelicaMLRoot, 
+									applyProxyStereotype, 
+									update, 
+									deleteNotUsedProxies);
+							
+//							Job job = new Job("Creating ModelicaML Proxies for Modelica Models ..."){
+//
+//								final boolean applyProxyStereotype = true;
+//								final boolean update = true;
+//								final boolean deleteNotUsedProxies = false;
+//
+//								@Override
+//								protected IStatus run(IProgressMonitor monitor) {
+//									
+//									ec = new ModelicaMLElementsCreator(serviceRegistry, 
+//											editingDomain, 
+//											umlModel, 
+//											ModelicaMLRoot,
+//											treeBuilder);
+//									
+//									TreeObject[] modelicaRoots = treeRoot.getChildren();
+//									for (int i = 0; i < modelicaRoots.length; i++) {
+//										
+//										TreeObject treeObject = modelicaRoots[i];
+//										
+//										if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
+//											EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
+//											treeObject.setModelicaMLProxy((Element) modelicaRoot);
+//											treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
+//
+//											ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
+//											
+//											if (deleteNotUsedProxies) {
+//												ec.deleteNotUsedProxyElements();
+//											}
+//											
+//										}
+//									}
+//									return Status.OK_STATUS;
+//								}
+//							};
 							job.addJobChangeListener(synchJobChangeAdapter);
 							job.setUser(true);
 							job.schedule();
@@ -897,39 +980,47 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								final boolean update = dialog.isUpdate();
 								final boolean deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
 								
-//********************************* Encapsulate in a method
-								Job job = new Job("Creating ModelicaML Proxies for Modelica Models ..."){
+//********************************* TODO: Refactor this code. Encapsulate it in a method
+								Job job = createSynchJob(serviceRegistry, 
+										editingDomain, 
+										umlModel, 
+										ModelicaMLRoot, 
+										applyProxyStereotype, 
+										update, 
+										deleteNotUsedProxies);
 
-									@Override
-									protected IStatus run(IProgressMonitor monitor) {
-										
-										ec = new ModelicaMLElementsCreator(serviceRegistry, 
-												editingDomain, 
-												umlModel, 
-												ModelicaMLRoot,
-												treeBuilder);
-										
-										TreeObject[] modelicaRoots = treeRoot.getChildren();
-										for (int i = 0; i < modelicaRoots.length; i++) {
-											
-											TreeObject treeObject = modelicaRoots[i];
-											
-											if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
-												EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
-												treeObject.setModelicaMLProxy((Element) modelicaRoot);
-												treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
-
-												ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
-												
-												if (deleteNotUsedProxies) {
-													ec.deleteNotUsedProxyElements();
-												}
-												
-											}
-										}
-										return Status.OK_STATUS;
-									}
-								};
+//								Job job = new Job("Creating ModelicaML Proxies for Modelica Models ..."){
+//
+//									@Override
+//									protected IStatus run(IProgressMonitor monitor) {
+//										
+//										ec = new ModelicaMLElementsCreator(serviceRegistry, 
+//												editingDomain, 
+//												umlModel, 
+//												ModelicaMLRoot,
+//												treeBuilder);
+//										
+//										TreeObject[] modelicaRoots = treeRoot.getChildren();
+//										for (int i = 0; i < modelicaRoots.length; i++) {
+//											
+//											TreeObject treeObject = modelicaRoots[i];
+//											
+//											if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
+//												EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
+//												treeObject.setModelicaMLProxy((Element) modelicaRoot);
+//												treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
+//
+//												ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
+//												
+//												if (deleteNotUsedProxies) {
+//													ec.deleteNotUsedProxyElements();
+//												}
+//												
+//											}
+//										}
+//										return Status.OK_STATUS;
+//									}
+//								};
 								job.addJobChangeListener(synchJobChangeAdapter);
 								job.setUser(true);
 								job.schedule();
@@ -980,7 +1071,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
 			public void run() {
-//				showMessage("The view will be reloaded");
 				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
@@ -992,7 +1082,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection)selection).getFirstElement();
 					if (obj instanceof TreeObject ) {
-//						Object object = ((TreeObject)obj).getAdapter(EObject.class);
 						Object object = ((TreeObject)obj).getModelicaMLProxy();
 						
 						if (object instanceof EObject) {
@@ -1032,12 +1121,12 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				}
 			}
 		};
-		actionGenerateOMCMarkers.setText("Generate OMC Error Markers");
-		
+		actionGenerateOMCMarkers.setText("Show OMC Errors");
+		actionGenerateOMCMarkers.setToolTipText("Show OMC Errors");
+		// set default 
 		actionGenerateOMCMarkers.setChecked(true);
 		treeBuilder.setCreateOMCMarker(actionGenerateOMCMarkers.isChecked());
 		
-		actionGenerateOMCMarkers.setToolTipText("Generate OMC Error Markers");
 
 		
 		
@@ -1052,13 +1141,35 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				}
 			}
 		};
-		actionValidateProxies.setText("Enable Proxies Validation");
-		
+		actionValidateProxies.setText("Mark Redundant Proxies");
+		actionValidateProxies.setToolTipText("Mark Redundant Proxies");
+		// set default 
 		actionValidateProxies.setChecked(true);
 		treeBuilder.setValidateProxies(actionValidateProxies.isChecked());
 		
-		actionValidateProxies.setToolTipText("Enable Proxies Validation");
+		
 
+		
+		
+		
+		actionDecorateTreeItems = new Action("actionDecorateTreeItems", 2) {
+			public void run() {
+				if (actionDecorateTreeItems.isChecked()) {
+					labelProvider.setDecorateItem(true);
+				}
+				else {
+					labelProvider.setDecorateItem(false);
+				}
+			}
+		};
+		actionDecorateTreeItems.setText("Decorate Items (disable it for large models)");
+		actionDecorateTreeItems.setToolTipText("Decorate Items (disable it for large models)");
+		// set default 
+		actionDecorateTreeItems.setChecked(true);
+		labelProvider.setDecorateItem(true);
+		
+		
+		
 		
 		
 		doubleClickAction = new Action() {

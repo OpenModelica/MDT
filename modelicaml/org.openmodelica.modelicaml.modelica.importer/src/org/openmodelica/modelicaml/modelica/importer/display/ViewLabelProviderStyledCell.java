@@ -72,12 +72,31 @@ import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 
 public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
+	private boolean decorateItem = false;
+	
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
 //	private final ImageDescriptor infoImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	
 	DecorationOverlayIcon overlayIcon = null;
 	Object overlayIconImage = null;
+	
+	// styler
+	Styler stylerRed = new Styler() {
+		@Override
+		public void applyStyles(TextStyle textStyle) {
+			textStyle.foreground = new Color(null, new RGB(234, 0, 0)); // darker RED
+		}
+	};
+	Styler stylerGrey = new Styler() {
+		@Override
+		public void applyStyles(TextStyle textStyle) {
+			textStyle.foreground = new Color(null, new RGB(112, 138, 144)); // Slate Gray
+		}
+	};
+	
+	// used to decorate the tree item string 
+	private StyledString styledString;
 	
 	@Override
 	public void dispose() {
@@ -90,32 +109,13 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	
 	@Override
 	public void update(ViewerCell cell) {
-		
+		String treeItemText = "";
 		Object obj = cell.getElement();
-		
-		// styler
-		Styler stylerRed = new Styler() {
-			@Override
-			public void applyStyles(TextStyle textStyle) {
-				textStyle.foreground = new Color(null, new RGB(234, 0, 0)); // darker RED
-			}
-		};
-		Styler stylerGrey = new Styler() {
-			@Override
-			public void applyStyles(TextStyle textStyle) {
-				textStyle.foreground = new Color(null, new RGB(112, 138, 144)); // Slate Gray
-			}
-		};
 		
 		TreeObject item = (TreeObject)obj;
 		
-		// set text default
-//		cell.setText(obj.toString()); 
-		cell.setText(item.getName());
-		
 		// name string 
 		String name = item.getName() + " ";
-
 		
 		// number of children string 
 		String numberOfChildren = "";
@@ -124,17 +124,20 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		}
 
 		//  construct the label
-		StyledString styledString = new StyledString();
+		styledString = new StyledString();
 		styledString.append(name);
-		
+		treeItemText = treeItemText + name;
+
 		// check if the type is resolved 
 		if (item instanceof ComponentItem) {
 			ComponentItem component = ((ComponentItem)item);
 			if (component.getComponentTypeProxy() == null) {
 				styledString.append(": " + component.getComponentTypeQame() + " ? type proxy not found", stylerRed);
+				treeItemText = treeItemText + ": " + component.getComponentTypeQame() + " ? type proxy not found";
 			}
 			else {
 				styledString.append(": " + component.getComponentTypeQame());
+				treeItemText = treeItemText + ": " + component.getComponentTypeQame();
 			}
 		}
 		// check if the extends relation has source and target proxy
@@ -143,22 +146,35 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			
 			if (target == null) {
 				styledString.append("? target proxy not found", stylerRed);
+				treeItemText = treeItemText + "? target proxy not found";
 			}
 		}
 		else{
 			styledString.append(numberOfChildren, stylerGrey);
+			treeItemText = treeItemText + numberOfChildren;
 		}
-
-		
 		
 		// set text and styles
-		cell.setText( styledString.toString() );
-		cell.setStyleRanges(styledString.getStyleRanges());
+		
+		/*
+		 * TODO: fix the issue below. 
+		 * For large models, e.g. Modelica Standard Library SWT gives up with "No more handles".
+		 * Workaround: the user can enable or disable the decorate items option. 
+		 * 	When disabled normal string is used.
+		 */
+		
+		if (decorateItem) {
+			cell.setText( styledString.toString() );
+			cell.setStyleRanges(styledString.getStyleRanges());
+		}
+		else {
+			cell.setText(treeItemText);
+		}
+		
 		
 		// set image
 		if ( obj instanceof TreeObject  ){
 			TreeObject treeObject = (TreeObject)obj; 
-			
 			
 			setImage(treeObject);
 			cell.setImage((Image) overlayIconImage);
@@ -259,12 +275,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 	}
 	
-//	private Image overLayImage(Image image, Image overLayImage) {
-//		OverLayImageDescriptor imageDescriptor = new OverLayImageDescriptor(overLayImage);
-//		return new DecorationOverlayIcon(image,  imageDescriptor, IDecoration.TOP_RIGHT).createImage();
-//	}
-	
-	
 	private void setImage(TreeObject treeObject){
 		
 		if ( treeObject.getName().equals(Constants.folderName_code_sync)) {
@@ -329,7 +339,8 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		}
 		else {
 //			cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/reload.png"));
-			overlayIconImage = decorateImage( treeObject , "/icons/reload.png", null );
+//			overlayIconImage = decorateImage( treeObject , "/icons/reload.png", null );
+			overlayIconImage = decorateImage( treeObject , "/icons/unknown.png", null );
 		}
 	}
 	
@@ -421,22 +432,30 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				imageToBeUsed = SWTResourceManager.getImage(Activator.class, imagePath);	
 			}
 			
-			// TODO: overlay icons break SWT when large models are imported (e.g. MSL)
-			// TODO: solve the problem with org.eclipse.swt.SWTError: No more handles ...
-			// maybe it is because of StyledText and not images ... 
-//			if ( imageToBeUsed != null) {
-//				// errors
-//				if (hasMarkersInItsComponents((TreeParent) element)) {
-//					overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
-//					return overlayIcon.createImage();
-//				}
-//				// synch status
-//				if (hasEmptyProxies((TreeParent) element)) {
-//					overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
-//					return overlayIcon.createImage();
-//				}
-//			}
+			if ( imageToBeUsed != null) {
+				
+				/*
+				 * TODO: overlay icons break SWT when large models are imported (e.g. MSL)
+				 * Solve the problem with org.eclipse.swt.SWTError: No more handles ...
+				 * maybe it is because of StyledText and not images ...
+				 * workaround for the time being: decorateItem option.
+				 */
+	
+				if (decorateItem) { // only if this decorate option is enabled
+					// errors
+					if (hasMarkersInItsComponents((TreeParent) element)) {
+						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
+						return overlayIcon.createImage();
+					}
+					// synch status
+					if (hasEmptyProxies((TreeParent) element)) {
+						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
+						return overlayIcon.createImage();
+					}
+				}
+			}
 		}
+		
 		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
 	
@@ -546,6 +565,15 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		}
 		return false;
 	}
-	
+
+
+	public void setDecorateItem(boolean decorateItem) {
+		this.decorateItem = decorateItem;
+	}
+
+
+	public boolean isDecorateItem() {
+		return decorateItem;
+	}
 	
 }
