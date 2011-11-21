@@ -91,7 +91,7 @@ public class Constants {
 	// stereotype properties 
 	public static final String propertyName_id 					= "id";
 	public static final String propertyName_text	 			= "text";
-	public final static String propertyName_evaluationStarted 	= "evaluationStarted";
+	public final static String propertyName_evaluated 			= "evaluated";
 	public final static String propertyName_violated 			= "violated";
 	
 	

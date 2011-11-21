@@ -518,7 +518,7 @@ public class VerificationExecutionServices {
 				"	<span style='color:#000000;'>" + "\n" + 
 				
 				"		<script type='text/javascript'>" + "\n" + 
-				"			writeRequirementPassedString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluationStarted+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']," + "\n" + 
+				"			writeRequirementPassedString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']," + "\n" + 
 				"			data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"']);" + "\n" + 
 				"		</script>" + "\n" + 
 				
@@ -540,14 +540,14 @@ public class VerificationExecutionServices {
 				"			<td><i>verdict</i>" + "\n" +
 				
 				"				<script type='text/javascript'>" + "\n" + 
-				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluationStarted+"', '<strong>"+Constants.propertyName_evaluationStarted+"</strong>');" + "\n" + 
+				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"', '<strong>"+Constants.propertyName_evaluated+"</strong>');" + "\n" + 
 				"				</script>" + "\n" +
 				
 				"				<td>&nbsp;:&nbsp;</td>" + "\n" + 
 				"				<td>" + "\n" + 
 				
 				"				<script type='text/javascript'>	" + "\n" + 
-				"					writeAtLeastOneTimeTrueString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluationStarted+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']);" + "\n" + 
+				"					writeAtLeastOneTimeTrueString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']);" + "\n" + 
 				"				</script>" + "\n" +
 				
 				"			</td>" + "\n" + 
@@ -638,8 +638,8 @@ public class VerificationExecutionServices {
 		if (elt instanceof Class) {
 			for (TreeObject treeObject : requirements) {
 				js = js + "/* ~~~~~ Requirement "+treeObject.getDotPath()+": verdicts ~~~~~ */" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"'] = new Array();" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+"']['"+Constants.MACRO_atLeastOneTimeTrue+"'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_evaluationStarted+":"+Constants.MACRO_atLeastOneTimeTrue+"###';" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+"'] = new Array();" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+":"+Constants.MACRO_atLeastOneTimeTrue+"###';" + "\n" + 
 				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"'] = new Array();" + "\n" + 
 				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_violated+":"+Constants.MACRO_alwaysFalse+"###';" + "\n" +
 				"" ;
