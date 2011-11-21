@@ -212,7 +212,7 @@ private EObject selectedElement = null;
 				violatedAttribute.setValue(violatedAttributeStereotype, "causality", "output");
 			}
 
-			Property evaluatedAttribute = element.getOwnedAttribute(Constants.propertyName_evaluationStarted, booleanType, true, UMLPackage.Literals.PROPERTY, true);
+			Property evaluatedAttribute = element.getOwnedAttribute(Constants.propertyName_evaluated, booleanType, true, UMLPackage.Literals.PROPERTY, true);
 			Stereotype evaluatedAttributeStereotype = evaluatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
 			if (evaluatedAttribute.getAppliedStereotype(evaluatedAttributeStereotype.getQualifiedName()) == null) {
 				evaluatedAttribute.applyStereotype(evaluatedAttributeStereotype);

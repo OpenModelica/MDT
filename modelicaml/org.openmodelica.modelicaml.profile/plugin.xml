@@ -14,6 +14,10 @@
       <mapping
             source="pathmap://PALETTE_PROFILE/"
             target="platform:/plugin/org.openmodelica.modelicaml.profile/profiles/"/>
+      <mapping
+            source="pathmap://PATH_LIBRARIES/"
+            target="platform:/plugin/org.openmodelica.modelicaml.profile/libraries/">
+      </mapping>
    </extension>
    <extension
          point="org.eclipse.papyrus.extensionpoints.uml2.UMLProfile">
@@ -24,6 +28,16 @@
             path="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"
             provider="OpenModelica Project">
       </profile>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.extensionpoints.uml2.UMLLibrary">
+      <library
+            description="Modelica Standard Library Proxies (only structure)"
+            iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
+            name="Modelica Standard Library 3.2 Proxies (only structure) "
+            path="pathmap://PATH_LIBRARIES/MSL/model.uml"
+            provider="OpenModelica Project">
+      </library>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
