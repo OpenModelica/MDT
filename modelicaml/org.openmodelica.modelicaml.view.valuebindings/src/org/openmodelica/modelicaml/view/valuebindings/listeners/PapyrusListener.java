@@ -64,19 +64,23 @@ public class PapyrusListener implements IPapyrusListener {
 				
 				// if it is a UML element that was deleted
 				if (notification.getOldValue() instanceof NamedElement) {
-					// get the value bindings view
-					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView");
-					ValueBindingsView myView = null;
 					
-					if (view instanceof ValueBindingsView) {
-					    myView = (ValueBindingsView)view;			
-					}
-					
-					if (myView != null) {
-						TreeUtls.removeTreeItem(((NamedElement)notification.getOldValue()), myView.getTreeRoot(), myView.getViewer());
-//						myView.removeTreeItem(((NamedElement)notification.getOldValue()));
-						myView.getViewer().refresh(); // refresh the entire viewer
-//						System.err.println("REMOVED: " + ((NamedElement)notification.getOldValue()).getName());
+					// if it is not a job that is deleting elements
+					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
+						// get the value bindings view
+						IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView");
+						ValueBindingsView myView = null;
+						
+						if (view instanceof ValueBindingsView) {
+						    myView = (ValueBindingsView)view;			
+						}
+						
+						if (myView != null) {
+							TreeUtls.removeTreeItem(((NamedElement)notification.getOldValue()), myView.getTreeRoot(), myView.getViewer());
+//							myView.removeTreeItem(((NamedElement)notification.getOldValue()));
+							myView.getViewer().refresh(); // refresh the entire viewer
+//							System.err.println("REMOVED: " + ((NamedElement)notification.getOldValue()).getName());
+						}
 					}
 				}
 			}
