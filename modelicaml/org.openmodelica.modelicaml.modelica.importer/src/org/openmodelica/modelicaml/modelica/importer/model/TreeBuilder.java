@@ -66,10 +66,12 @@ import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.papyrus.umlutils.PackageUtil;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.FunctionBehavior;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
@@ -152,8 +154,26 @@ public class TreeBuilder implements IRunnableWithProgress{
 					if ( topLevelModel != null  
 							&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
 						String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
+						
 						if (!modelicaModelQNames.contains(qName)) {
 							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
+						}
+						
+						if (element instanceof Classifier) {
+							Classifier classifier = (Classifier) element;
+							EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
+							for (Generalization generalization : classExtendsRelations) {
+								EList<Element> targets = generalization.getTargets();
+								if (targets != null && targets.size() > 0) {
+									// ok
+								}
+								else {
+//									createMarker(element, ((NamedElement)element).getQualifiedName(), 
+									createMarker(generalization, ((NamedElement)element).getQualifiedName(),
+											"error", 
+											"NOT VALID: no target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
+								}
+							}
 						}
 					}
 				}
@@ -386,19 +406,26 @@ public class TreeBuilder implements IRunnableWithProgress{
 			boolean isFinal = false;
 			boolean isEncapsulated = false;
 
-			List<String> items = getFirstTrueOrFalseBracesItem(classInfo);
-			if (items != null) {
+			// get the boolean items (i.e. true or false)
+			Pattern patternBooleanItems = Pattern.compile("(true|false)");
+			Matcher matcherBooleanItems = patternBooleanItems.matcher(classInfo);
+			List<String> booleanItems = new ArrayList<String>();
+			while (matcherBooleanItems.find()) {
+				booleanItems.add(matcherBooleanItems.group());
+			}
 			
-				if (items.get(0).trim().equals("true")) {
+			if (booleanItems.size() > 2) {
+				if (booleanItems.get(0).trim().equals("true")) {
 					isPartial = true;
 				}
-				if (items.get(1).trim().equals("true")) {
+				if (booleanItems.get(1).trim().equals("true")) {
 					isFinal = true;
 				}
-				if (items.get(2).trim().equals("true")) {
+				if (booleanItems.get(2).trim().equals("true")) {
 					isEncapsulated = true;
-				}				
+				}
 			}
+			
 			
 			// set the tree item data
 			item.setFinal(isFinal);
@@ -414,39 +441,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 			// generate markers
 			createOMCMarker(item, "error", msg);
 		}
-	}
-	
-	private List<String> getFirstTrueOrFalseBracesItem(String classInfo){
-		String classInfoString = classInfo.trim();
-		
-		// remove outer braces
-		String string = classInfoString.substring(1,classInfoString.length() - 1);
-		
-		List<String> itemsInBraces = new ArrayList<String>();
-		List<String> itemsFirstBraces = new ArrayList<String>();
-		
-//		Pattern pattern = Pattern.compile("\\{.*\\}");
-		Pattern pattern = Pattern.compile("\\{(true|false(,)?)*\\}");
-		
-		Matcher matcher = pattern.matcher(string);
-		while (matcher.find()) {
-			if (!matcher.group().trim().equals("")) {
-				itemsInBraces.add(matcher.group());
-			}
-		}
-		
-		if (itemsInBraces.size() > 0 ) {
-			String stringItemsFirstBraces = itemsInBraces.get(0);
-			String splitted[] = stringItemsFirstBraces.trim().split(",");
-			if (splitted.length == 3) {
-				for (int i = 0; i < splitted.length; i++) {
-					String item = splitted[i];
-					itemsFirstBraces.add(item);
-				}
-				return itemsFirstBraces;
-			}
-		}
-		return null;
 	}
 	
 	
@@ -724,17 +718,17 @@ public class TreeBuilder implements IRunnableWithProgress{
 					while (matcherVisibility.find()) {
 						visibility = matcherVisibility.group(0).replaceAll("\"", "");
 					}
-					Pattern patternVariability = Pattern.compile("\"(constant|discrete|parameter|unspecified)\"");
+					Pattern patternVariability = Pattern.compile("\"(constant|discrete|parameter)\"");
 					Matcher matcherVariability = patternVariability.matcher(entry2);
 					while (matcherVariability.find()) {
 						variability = matcherVariability.group(0).trim().replaceAll("\"", "");
 					}
-					Pattern patternInnerouter = Pattern.compile("\"(inner|outer|innerouter|none)\"");
+					Pattern patternInnerouter = Pattern.compile("\"(inner|outer|innerouter)\"");
 					Matcher matcherInnerouter = patternInnerouter.matcher(entry2);
 					while (matcherInnerouter.find()) {
 						innerouter = matcherInnerouter.group(0).trim().replaceAll("\"", "");
 					}
-					Pattern patternCausality = Pattern.compile("\"(input|output|unspecified)\"");
+					Pattern patternCausality = Pattern.compile("\"(input|output)\"");
 					Matcher matcherCausality = patternCausality.matcher(entry2);
 					while (matcherCausality.find()) {
 						causality = matcherCausality.group(0).trim().replaceAll("\"", "");;

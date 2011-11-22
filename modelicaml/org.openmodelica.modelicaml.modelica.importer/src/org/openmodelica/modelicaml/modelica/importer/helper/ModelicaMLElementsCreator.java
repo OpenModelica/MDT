@@ -142,13 +142,36 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				for (Element element : treeBuilder.getProxies()) {
 					if (element instanceof NamedElement) {
 
-						// don't delete predefined types.
+						// don't delete predefined types from the ModelicaML profile.
 						if (!(element instanceof PrimitiveType && isPredefinedModelicaType(element)) ) {
 							String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
 							if (!modelicaModelQNames.contains(qName)) {
 								deletedProxyQNames.add(((NamedElement)element).getQualifiedName());
 								addToLog("Deleting " + ((NamedElement)element).getQualifiedName());
 								element.destroy();
+							}
+							
+							/*
+							 * delete all class extends relations that do not have targets.
+							 */
+							HashSet<Element> invalidExtendsRelations = new HashSet<Element>();
+							if (element instanceof Classifier) {
+								Classifier classifier = (Classifier) element;
+								EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
+								for (Generalization generalization : classExtendsRelations) {
+									EList<Element> targets = generalization.getTargets();
+									if (targets != null && targets.size() > 0) {
+										// ok
+									}
+									else {
+										invalidExtendsRelations.add(generalization);
+									}
+								}
+							}
+							
+							for ( Element invalidGeneralization : invalidExtendsRelations ) {
+								addToLog("Deleting invalid extends relation in " + ((NamedElement)element).getQualifiedName());
+								invalidGeneralization.destroy();
 							}
 						}
 					}
@@ -312,8 +335,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						if (update) {
 							if (modelicaMLProxy instanceof NamedElement) {
 								// indicate
-//								System.out.println("Updating component: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
-								addToLog("Updating component: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
+//								System.out.println("Updating class: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
+								addToLog("Updating class: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
 							}
 							// update
 							updateClass(modelicaMLProxy, (ClassItem) treeObject, applyProxyStereotype);			
@@ -626,11 +649,13 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			
 			@Override
 			protected void doExecute() {
+				
 				// get or apply the appropriate stereotype 
 				Stereotype appropriateStereotype = null;
 				appropriateStereotype = applyModelicaMLClassStereotype(classElement, classItem, applyProxyStereotype);
 				
 				if (classElement instanceof Classifier && appropriateStereotype != null) {
+					
 					// set encapsulated
 					((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_encapsulated, classItem.isEncapsulated());
 					
@@ -648,6 +673,11 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					if (classItem.getClassRestriction().contains(Constants.propertyName_expandable)) {
 						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_expandable, true);
 					}
+					
+					// TODO: set comment
+					
+					// TODO: set annotation
+					
 					
 					// delete unappropriated stereotypes
 					// get all possible ModelicaML property stereotypes
@@ -866,14 +896,14 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					componentElement.setValue(componentStereotype, Constants.propertyName_variability, literal);
 				}
 			}
-			else if (!componentItem.isComponent() && componentItem.getInnerouter().equals("parameter")) {
+			else if (!componentItem.isComponent() && componentItem.getVariability().equals("parameter")) {
 				Object enumeration = componentElement.getModel().getAppliedProfile(Constants.predefinedEnumerationsProfileQName).getOwnedMember("ModelicaVariability", true, UMLPackage.Literals.ENUMERATION);
 				if (enumeration instanceof Enumeration) {
 					EnumerationLiteral literal = ((Enumeration)enumeration).getOwnedLiteral("parameter");
 					componentElement.setValue(componentStereotype, Constants.propertyName_variability, literal);
 				}
 			}
-			else if (!componentItem.isComponent() && componentItem.getInnerouter().equals("constant")) {
+			else if (!componentItem.isComponent() && componentItem.getVariability().equals("constant")) {
 				Object enumeration = componentElement.getModel().getAppliedProfile(Constants.predefinedEnumerationsProfileQName).getOwnedMember("ModelicaVariability", true, UMLPackage.Literals.ENUMERATION);
 				if (enumeration instanceof Enumeration) {
 					EnumerationLiteral literal = ((Enumeration)enumeration).getOwnedLiteral("constant");
@@ -1307,7 +1337,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	}
 
 	public void addToLog(String msg) {
-		System.err.println(msg);
+//		System.err.println(msg);
 		this.getLog().add(msg);
 	}
 	

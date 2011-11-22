@@ -68,6 +68,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.dialogs.SynchronizeOptionsDialog;
@@ -108,8 +109,13 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 
 	private Action actionValidateProxies;
 
+	// default values for options
 	private boolean createProxiesAfterLoadingModelicaClasses = false;
-
+	private boolean applyProxyStereotype = true;
+	private boolean update = true;
+	private boolean deleteNotUsedProxies = false;
+	
+	
 	private Action actionDecorateTreeItems;
 	
 	private ViewLabelProviderStyledCell labelProvider = new ViewLabelProviderStyledCell();
@@ -159,8 +165,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			
 			invisibleRoot = new TreeParent("");
 			invisibleRoot.addChild(root);
-			
-//			treeBuilder.buildTree(root);
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
 		}
 	}
@@ -331,6 +335,14 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        				actionRefresh.run();
 
 	        				if (createProxiesAfterLoadingModelicaClasses) {
+								/*
+								 * TODO: if the element that is being updated is selected in GUI (i.e. in Papyrus modeling tool)
+								 * then there will be a "SWT invalid thread exception because this job will modify it.
+								 * WORAROUND: before creating elements set Papyrus Model Explorer Selection to 
+								 * an element that will not be modified, e.g. the ModelicaML root. 
+								 */
+								PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+
 								// run the synch action after loading
 	        					actionSynchronize.run();
 							}
@@ -359,6 +371,19 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	         
 		actionReload = new Action() {
 			public void run() {
+				
+				if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
+					MessageDialog.openError(new Shell(), "Modelica Model Proxies Synchronization Error", 
+							"When synchronizing proxies the Papyrus Model Explorer View must be visible " +
+							"so that the viewer selection can be reset in order to avoid parallel access to " +
+							"proxies that are displayed in Papyrus Properties View and are modified by " +
+							"the synchronization job at the same time." +
+							"\n\n Please make the Papyrus Model Explorer View visible and do not " +
+							"select existing Modelica model proxies while the synchronization is running.");
+					
+					return;
+				}
+				
 //				showMessage("Reload executed");
 
 				
@@ -405,14 +430,33 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								
 		        				// Open a dialog to as for this option
 		        				String title = "Modelica Proxies Synchronization Option";
-		        				String msg = "This feature will now load the Modelica models from the " +
+		        				String msg = "This action will now load the Modelica models from the " +
 		        						"'" + Constants.folderName_code_sync + "' folder. "
 		        						+ "\n\nShould it synchronize the ModelicaML proxies after loading? " +
-	        							"\nNote, the synchronization can launched manually at any time.";
+	        							"\nNote, the synchronization can be launched manually at any time.";
 		        				
 		        				createProxiesAfterLoadingModelicaClasses = MessageDialog.openQuestion(new Shell(), title, msg);
 								
-								Job job = new Job("Loading Modelica Models using OMC..."){
+		        				// ask for synchronization options when elements should be created
+		        				if (createProxiesAfterLoadingModelicaClasses) {
+		        					SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+									dialog.open();
+									
+									int result = dialog.getReturnCode();
+									if (result == IDialogConstants.OK_ID) {
+										// set options
+										applyProxyStereotype = dialog.isApplyProxyStereotype();
+										update = dialog.isUpdate();
+										deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
+									}
+									else {
+										// the dialog was canceled -> no elements should be created.
+										createProxiesAfterLoadingModelicaClasses = false;
+									}
+								}
+		        				
+		        				
+								Job job = new Job("Loading Modelica Models from '"+Constants.folderName_code_sync+"' folder..."){
 
 									@Override
 									protected IStatus run(IProgressMonitor monitor) {
@@ -625,6 +669,13 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        				// refresh in order to reflect changes in the view
 	        				actionRefresh.run();
 	        				
+	        				// reset the option
+	        				createProxiesAfterLoadingModelicaClasses = false;
+	        				applyProxyStereotype = true;
+	        				update = true;
+	        				deleteNotUsedProxies = false;
+	        				
+	        				// create report string
 	        				String message = "";
 	        				
 	        				// LOADED
@@ -750,7 +801,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
 								treeObject.setModelicaMLProxy((Element) modelicaRoot);
 								treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
-
+								
 								ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
 								
 								if (deleteNotUsedProxies) {
@@ -851,11 +902,33 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //				}
 				
 				
+				if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
+					MessageDialog.openError(new Shell(), "Modelica Model Proxies Synchronization Error", 
+							"When synchronizing proxies the Papyrus Model Explorer View must be visible " +
+							"so that the viewer selection can be reset in order to avoid parallel access to " +
+							"proxies that are displayed in Papyrus Properties View and are modified by " +
+							"the synchronization job at the same time." +
+							
+							"\n\nPlease make the Papyrus Model Explorer View visible and do not " +
+							"select existing Modelica model proxies while the synchronization is running.");
+					
+					return;
+				}
+				
+				/*
+				 * TODO: if the element that is being updated is selected in GUI (i.e. in Papyrus modeling tool)
+				 * then there will be a "SWT invalid thread exception because this job will modify it.
+				 * WORAROUND: before creating elements set Papyrus Model Explorer Selection to 
+				 * an element that will not be modified, e.g. the ModelicaML root. 
+				 */
+				PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+				
 				// As a job
 				TreeObject[] children = treeRoot.getChildren();
+				HashSet<TreeObject> invalidFirstLevelClasses = new HashSet<TreeObject>();
+
 				for (int i = 0; i < children.length; i++) {
 					TreeObject treeObject = children[i];
-					HashSet<TreeObject> invalidFirstLevelClasses = new HashSet<TreeObject>();
 					
 					if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
 						// ok, do nothing
@@ -863,21 +936,21 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					else {
 						invalidFirstLevelClasses.add(treeObject);
 					}
-						
-					if (invalidFirstLevelClasses.size() > 0) {
-						String title = "ModelicaML Proxies Synchronization Error";
-						String message = "To use the ModelicaML Proxies Synchronization feature all first level Modelica classes" +
-								"must be packages. Moreover, these packages must not have extends relations or imports" +
-								" of other classes and not be encapsulated, partial, final or replaceable. " +
-								"The following first level classes cannot be synchronized: \n\n";
-						
-						String invalideClassesString = "";
-						for (TreeObject invalideClass : invalidFirstLevelClasses) {
-							invalideClassesString = invalideClassesString  + "             -" + invalideClass.getQName() + "\n";
-						}
-						message = message + invalideClassesString;
-						MessageDialog.openError(new Shell(), title, message);
+				}
+				
+				if (invalidFirstLevelClasses.size() > 0) {
+					String title = "ModelicaML Proxies Synchronization Error";
+					String message = "To use the ModelicaML Proxies Synchronization feature all first level Modelica classes " +
+							"must be packages. Moreover, these packages must not have extends relations " +
+							" to other packages and not be encapsulated, partial, final or replaceable. " +
+							"The following first level classes cannot be synchronized: \n\n";
+					
+					String invalideClassesString = "";
+					for (TreeObject invalideClass : invalidFirstLevelClasses) {
+						invalideClassesString = invalideClassesString  + "             -" + invalideClass.getQName() + "\n";
 					}
+					message = message + invalideClassesString;
+					MessageDialog.openError(new Shell(), title, message);
 				}
 				
 				// refresh in order to update the proxies (in case there were deleted in the mean time)
@@ -891,9 +964,30 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 						
 						if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+							
+						if (createProxiesAfterLoadingModelicaClasses) {
+							// no dialog. use default values
+							
+//							// default values
 //							boolean applyProxyStereotype = true;
 //							boolean update = true;
-//							final boolean deleteNotUsedProxies= false;
+//							boolean deleteNotUsedProxies = false;
+							
+							Job job = createSynchJob(serviceRegistry, 
+									editingDomain, 
+									umlModel, 
+									ModelicaMLRoot, 
+									applyProxyStereotype, 
+									update, 
+									deleteNotUsedProxies);
+
+							job.addJobChangeListener(synchJobChangeAdapter);
+							job.setUser(true);
+							job.schedule();
+							
+						}
+						else {
+							// ask user for options
 							
 							/*
 							 * Dialog for selecting the options: 
@@ -906,69 +1000,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							 * 		If proxies are referenced by other elements then the references should 
 							 * 		be redirected to new proxies before deleting the old proxies.
 							 */
-							
-						if (createProxiesAfterLoadingModelicaClasses) {
-							// no dialog. use default values
 
-//********************************* TODO: Refactor this code. Encapsulate it in a method
 							
-							// default values
-							boolean applyProxyStereotype = true;
-							boolean update = true;
-							boolean deleteNotUsedProxies = false;
-							
-							Job job = createSynchJob(serviceRegistry, 
-									editingDomain, 
-									umlModel, 
-									ModelicaMLRoot, 
-									applyProxyStereotype, 
-									update, 
-									deleteNotUsedProxies);
-							
-//							Job job = new Job("Creating ModelicaML Proxies for Modelica Models ..."){
-//
-//								final boolean applyProxyStereotype = true;
-//								final boolean update = true;
-//								final boolean deleteNotUsedProxies = false;
-//
-//								@Override
-//								protected IStatus run(IProgressMonitor monitor) {
-//									
-//									ec = new ModelicaMLElementsCreator(serviceRegistry, 
-//											editingDomain, 
-//											umlModel, 
-//											ModelicaMLRoot,
-//											treeBuilder);
-//									
-//									TreeObject[] modelicaRoots = treeRoot.getChildren();
-//									for (int i = 0; i < modelicaRoots.length; i++) {
-//										
-//										TreeObject treeObject = modelicaRoots[i];
-//										
-//										if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
-//											EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
-//											treeObject.setModelicaMLProxy((Element) modelicaRoot);
-//											treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
-//
-//											ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
-//											
-//											if (deleteNotUsedProxies) {
-//												ec.deleteNotUsedProxyElements();
-//											}
-//											
-//										}
-//									}
-//									return Status.OK_STATUS;
-//								}
-//							};
-							job.addJobChangeListener(synchJobChangeAdapter);
-							job.setUser(true);
-							job.schedule();
-//********************************* Encapsulate in a method
-							
-						}
-						else {
-							// ask user for options
 							SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
 							dialog.open();
 							
@@ -980,7 +1013,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								final boolean update = dialog.isUpdate();
 								final boolean deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
 								
-//********************************* TODO: Refactor this code. Encapsulate it in a method
 								Job job = createSynchJob(serviceRegistry, 
 										editingDomain, 
 										umlModel, 
@@ -989,48 +1021,12 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 										update, 
 										deleteNotUsedProxies);
 
-//								Job job = new Job("Creating ModelicaML Proxies for Modelica Models ..."){
-//
-//									@Override
-//									protected IStatus run(IProgressMonitor monitor) {
-//										
-//										ec = new ModelicaMLElementsCreator(serviceRegistry, 
-//												editingDomain, 
-//												umlModel, 
-//												ModelicaMLRoot,
-//												treeBuilder);
-//										
-//										TreeObject[] modelicaRoots = treeRoot.getChildren();
-//										for (int i = 0; i < modelicaRoots.length; i++) {
-//											
-//											TreeObject treeObject = modelicaRoots[i];
-//											
-//											if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
-//												EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
-//												treeObject.setModelicaMLProxy((Element) modelicaRoot);
-//												treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
-//
-//												ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
-//												
-//												if (deleteNotUsedProxies) {
-//													ec.deleteNotUsedProxyElements();
-//												}
-//												
-//											}
-//										}
-//										return Status.OK_STATUS;
-//									}
-//								};
 								job.addJobChangeListener(synchJobChangeAdapter);
 								job.setUser(true);
 								job.schedule();
-//********************************* Encapsulate in a method
 							}
-							
 						}
 							
-
-
 //							UIJob UIjob = new UIJob("Create ModelicaML Proxies ...") {
 //							
 //							public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -1088,6 +1084,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 							List<Object> items = new ArrayList<Object>();
 							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+							
+							modelExplorerView.getControl().setFocus();
 							modelExplorerView.setSelection(new StructuredSelection(items), true);
 						}
 					}

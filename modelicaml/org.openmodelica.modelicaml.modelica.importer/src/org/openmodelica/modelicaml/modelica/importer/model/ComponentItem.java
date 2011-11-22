@@ -29,6 +29,7 @@ public class ComponentItem extends TreeParent {
 	private String declaration = "";
 	private String conditionalExpression = "";
 	
+	private String annotation;
 	
 	public ComponentItem(String name) {
 		super(name);
@@ -289,6 +290,16 @@ public class ComponentItem extends TreeParent {
 			}
 		}
 		return false;
+	}
+
+
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
+
+
+	public String getAnnotation() {
+		return annotation;
 	}
 
 }

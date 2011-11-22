@@ -89,13 +89,13 @@ public class SynchronizeOptionsDialog extends Dialog {
 		lblImage.setImage(SWTResourceManager.getImage(SynchronizeOptionsDialog.class, "/org/eclipse/jface/dialogs/images/help.gif"));
 		
 		lblText = new Label(composite, SWT.NONE);
-		lblText.setText( "Please select ModelicaML proxies synchronization options." );
+		lblText.setText( "Select ModelicaML proxies synchronization options: " );
 		
-		// 3 raw
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
-
-		
+//		// 3 raw
+//		new Label(composite, SWT.NONE);
+//		new Label(composite, SWT.NONE);
+//
+//		
 		//***************** Buttons 
 		
 		// 4 raw
@@ -145,6 +145,14 @@ public class SynchronizeOptionsDialog extends Dialog {
 		btnDeleteNotUsedProxies.setText("Delete proxies that do not exist in the loaded Modelica models (NOT RECOMMENDED)");
 		btnDeleteNotUsedProxies.setToolTipText("If proxies are referenced by other elements then the references should " +
 				"be redirected to new proxies before deleting the old proxies.");
+		
+//		btnDeleteNotUsedProxies.setText("Delete proxies that do not exist in the loaded Modelica models (NOT RECOMMENDED)." +
+//				"\n\rNOTE: If existing proxies are referenced by other elements " +
+//				"\n\r(e.g. they are used as types or in value bindings) then the references should be" +
+//				"\n\rredirected to new proxies before deleting the old proxies.");
+//		btnDeleteNotUsedProxies.setToolTipText("If proxies are referenced by other elements then the references should " +
+//				"be redirected to new proxies before deleting the old proxies.");
+		
 		btnDeleteNotUsedProxies.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

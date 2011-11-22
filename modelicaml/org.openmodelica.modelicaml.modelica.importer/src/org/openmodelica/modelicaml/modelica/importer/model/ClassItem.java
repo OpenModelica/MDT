@@ -7,6 +7,8 @@ public class ClassItem extends TreeParent {
 	private boolean isEncapsulated = false;
 	private boolean isPartial = false;
 	private boolean isReplaceable = false;
+	private String comment;
+	private String annotation;
 	
 	// for connectors
 	private boolean isExpandable = false;
@@ -81,6 +83,26 @@ public class ClassItem extends TreeParent {
 			return true;
 		}
 		return false;
+	}
+
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+
+	public String getComment() {
+		return comment;
+	}
+
+
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
+
+
+	public String getAnnotation() {
+		return annotation;
 	}
 	
 }
