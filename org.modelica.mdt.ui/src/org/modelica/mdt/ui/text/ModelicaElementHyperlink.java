@@ -24,12 +24,10 @@
 
 package org.modelica.mdt.ui.text;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
-
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-
 
 /**
  * Modelica element hyperlink.

@@ -3,11 +3,12 @@
  *******************************************************************************/
 package org.modelica.mdt.ui.text;
 
-import org.eclipse.jface.text.Assert;
+import java.util.Stack;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import java.util.Stack;
 
 /**
  * Uses the {@link org.modelica.mdt.ui.text.ModelicaHeuristicScanner}to

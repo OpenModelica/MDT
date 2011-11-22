@@ -23,18 +23,15 @@
  *****************************************************************************/
 package org.modelica.mdt.ui.text;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
-
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.modelica.mdt.core.IModelicaElement;
-
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.modelica.mdt.ui.editor.ModelicaEditor;
 

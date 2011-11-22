@@ -5,14 +5,12 @@ package org.modelica.mdt.ui.text;
 
 import java.util.Arrays;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
-
-
 
 /**
  * Utility methods for heuristic based Modelica manipulations in an incomplete Modelica source file.
