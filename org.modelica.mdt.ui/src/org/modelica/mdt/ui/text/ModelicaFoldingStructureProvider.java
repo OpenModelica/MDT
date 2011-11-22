@@ -79,7 +79,7 @@ public class ModelicaFoldingStructureProvider {
 		private final boolean fAllowCollapsing;
 
 		private boolean fHasModelicaDocComment;
-		private LinkedHashMap fMap= new LinkedHashMap();
+		private Map<ModelicaProjectionAnnotation, Position> fMap= new LinkedHashMap<ModelicaProjectionAnnotation, Position>();
 
 		private FoldingStructureComputationContext(IDocument document, ProjectionAnnotationModel model, boolean allowCollapsing) {
 			Assert.isNotNull(document);
@@ -283,10 +283,10 @@ public class ModelicaFoldingStructureProvider {
 	 * Matches modelica elements contained in a certain set.
 	 */
 	private static final class ModelicaElementSetFilter implements Filter {
-		private final Set fSet;
+		private final Set<IModelicaElement> fSet;
 		private final boolean fMatchCollapsed;
 
-		private ModelicaElementSetFilter(Set set, boolean matchCollapsed) {
+		private ModelicaElementSetFilter(Set<IModelicaElement> set, boolean matchCollapsed) {
 			fSet= set;
 			fMatchCollapsed= matchCollapsed;
 		}
@@ -743,7 +743,7 @@ public class ModelicaFoldingStructureProvider {
 		List updates= new ArrayList();
 
 		computeFoldingStructure(ctx);
-		Map newStructure= ctx.fMap;
+		Map<ModelicaProjectionAnnotation, Position> newStructure= ctx.fMap;
 		Map oldStructure= computeCurrentStructure(ctx);
 
 		Iterator e= newStructure.keySet().iterator();
@@ -1232,7 +1232,7 @@ public class ModelicaFoldingStructureProvider {
 	 * @see org.modelica.mdt.ui.text.folding.IModelicaFoldingStructureProviderExtension#collapseElements(org.modelica.mdt.core.IModelicaElement[])
 	 */
 	public final void collapseElements(IModelicaElement[] elements) {
-		Set set= new HashSet(Arrays.asList(elements));
+		Set<IModelicaElement> set= new HashSet<IModelicaElement>(Arrays.asList(elements));
 		modifyFiltered(new ModelicaElementSetFilter(set, false), false);
 	}
 
@@ -1240,7 +1240,7 @@ public class ModelicaFoldingStructureProvider {
 	 * @see org.modelica.mdt.ui.text.folding.IModelicaFoldingStructureProviderExtension#expandElements(org.modelica.mdt.core.IModelicaElement[])
 	 */
 	public final void expandElements(IModelicaElement[] elements) {
-		Set set= new HashSet(Arrays.asList(elements));
+		Set<IModelicaElement> set= new HashSet<IModelicaElement>(Arrays.asList(elements));
 		modifyFiltered(new ModelicaElementSetFilter(set, true), true);
 	}
 
