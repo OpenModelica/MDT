@@ -57,75 +57,69 @@ import org.modelica.mdt.ui.ModelicaElementFactory;
 /**
  * @author Adrian Pop
  */
-public class SystemFileEditorInput implements 
-	IStorageEditorInput, IPersistableElement
-{
+public class SystemFileEditorInput implements IStorageEditorInput, IPersistableElement {
 
 	private LocalFileStorage fileStorage;
 	private IModelicaElement element;
 
-	public SystemFileEditorInput(String path, IModelicaElement modelicaElement)
-	{
+	public SystemFileEditorInput(String path, IModelicaElement modelicaElement) {
 		fileStorage = new LocalFileStorage(new File(path));
 		element = modelicaElement;
 	}
-	
-	public boolean equals(Object obj) 
-	{
-		if (this == obj)
-		{
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof SystemFileEditorInput))
-		{
+
+		if (!(obj instanceof SystemFileEditorInput)) {
 			return false;
 		}
-		
+
 		SystemFileEditorInput other = (SystemFileEditorInput) obj;
 		return fileStorage.equals(other.fileStorage);
 	}
 
-	public IModelicaElement getElement()
-	{
+	public IModelicaElement getElement() {
 		return element;
 	}
+
 	/**
 	 * @see IEditorInput#getName()
 	 */
-	public String getName() 
-	{
+	@Override
+	public String getName() {
 		return fileStorage.getName();
 	}
 
 	/**
 	 * @see IEditorInput#getFullPath()
 	 */
-	public String getFullPath() 
-	{		
+	public String getFullPath() {		
 		return fileStorage.getFullPath().toString();
 	}
 
 	/**
 	 * @see IEditorInput#getContentType()
 	 */
-	public String getContentType() 
-	{
+	public String getContentType() {
 		return fileStorage.getFullPath().getFileExtension();
 	}
 
 	/**
 	 * @see IEditorInput#getToolTipText()
 	 */
-	public String getToolTipText() 
-	{
+	@Override
+	public String getToolTipText() {
 		return fileStorage.getFullPath().toString();
 	}
 
 	/**
 	 * @see IEditorInput#getImageDescriptor()
 	 */
-	public ImageDescriptor getImageDescriptor() 
-	{
+	@Override
+	public ImageDescriptor getImageDescriptor() {
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		return registry.getImageDescriptor(fileStorage.getFullPath().getFileExtension());
 	}
@@ -133,43 +127,42 @@ public class SystemFileEditorInput implements
 	/**
 	 * @see IEditorInput#exists()
 	 */
-	public boolean exists() 
-	{
+	@Override
+	public boolean exists() {
 		return fileStorage.getFile().exists();
 	}
 
 	/**
 	 * @see IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter(Class adapter) 
-	{
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		return null;
 	}
 
 	/**
 	 * see IStorageEditorInput#getStorage()
 	 */
-	public IStorage getStorage() 
-	{
+	@Override
+	public IStorage getStorage() {
 	 	return fileStorage;
 	}
 
 	/**
 	 * @see IEditorInput#getPersistable()
 	 */
-	public IPersistableElement getPersistable() 
-	{
+	@Override
+	public IPersistableElement getPersistable() {
 		return this;
 	}
 
-	 
-	public String getFactoryId()
-	{
+	@Override
+	public String getFactoryId() {
 		return ModelicaElementFactory.FACTORY_ID;
 	}
 
-	public void saveState(IMemento memento)
-	{
+	@Override
+	public void saveState(IMemento memento) {
 		memento.putInteger(ModelicaElementFactory.STORED_CLASS_KEY, ModelicaElementFactory.SYSTEM_FILE_EDITOR_INPUT);
 		memento.putString(ModelicaElementFactory.FILE_PATH_KEY, getFullPath());
 	}
