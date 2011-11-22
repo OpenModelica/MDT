@@ -32,9 +32,9 @@
    <extension
          point="org.eclipse.papyrus.extensionpoints.uml2.UMLLibrary">
       <library
-            description="Modelica Standard Library Proxies (only structure)"
+            description="Modelica Standard Library 3.1 Proxies (only classes, component and inheritance) "
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="Modelica Standard Library 3.2 Proxies (only structure) "
+            name="Modelica Standard Library 3.1 Proxies (only classes, component and inheritance) "
             path="pathmap://PATH_LIBRARIES/MSL/model.uml"
             provider="OpenModelica Project">
       </library>
@@ -231,6 +231,9 @@
                   </equals>
                </with>
             </visibleWhen>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator1">
+            </separator>
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
                   icon="resources/icons/icons16/execute.png"
