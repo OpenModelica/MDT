@@ -98,18 +98,26 @@ public class OpenAction extends SelectionDispatchAction
 	}
 	
 	private boolean checkEnabled(IStructuredSelection selection) {
-		if (selection.isEmpty())
-			return false;
-		for (Iterator iter= selection.iterator(); iter.hasNext();) {
-			Object element= iter.next();
-			if (element instanceof IModelicaElement)
-				continue;
-			if (element instanceof IFile)
-				continue;
-			if (element instanceof IStorage)
-				continue;
+		if (selection.isEmpty()) {
 			return false;
 		}
+
+		@SuppressWarnings("rawtypes")
+		Iterator iter = selection.iterator();
+		while (iter.hasNext()) {
+			Object element = iter.next();
+			if (element instanceof IModelicaElement) {
+				continue;
+			}
+			if (element instanceof IFile) {
+				continue;
+			}
+			if (element instanceof IStorage) {
+				continue;
+			}
+			return false;
+		}
+		
 		return true;
 	}
 	
