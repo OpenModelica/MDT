@@ -191,7 +191,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		private void initialize() {
 			// add the selection listener
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
-
+			
 			invisibleRoot = new TreeParent("");
 			treeBuilder.buildTreeFromUmlModel(invisibleRoot);
 
