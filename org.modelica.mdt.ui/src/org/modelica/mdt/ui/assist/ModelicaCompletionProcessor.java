@@ -197,6 +197,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @param offset the offset into the document where we're editing
 	 * @return the proposed completions given the contents of the document
 	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset)
 	{
 		CompletionProposalsGenerator propGen = new CompletionProposalsGenerator(viewer, editor, offset);
@@ -213,6 +214,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @return the context information given the function name that has been
 	 *         typed
 	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset)
 	{
 		/* If the offset is 0, there is no prefix and there can be no
@@ -410,7 +412,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 		StringTokenizer st = new StringTokenizer(levelName, ".");
 		String token;
 		
-		IParent currLevel = (IParent)importedPackage;
+		IParent currLevel = importedPackage;
 		
 		/* skip first token */
 		if(st.hasMoreTokens())
@@ -511,6 +513,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @return the character that should start completion proposal. For MDT
 	 * this character is .
 	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters()
 	{
 		return new char[] {'.'};
@@ -520,16 +523,19 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 	 * @return the character that should start context information. For MDT
 	 * this character is )
 	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters()
 	{
 		return new char[] {'('};
 	}
 
+	@Override
 	public String getErrorMessage()
 	{
 		return null;
 	}
 
+	@Override
 	public IContextInformationValidator getContextInformationValidator()
 	{
 		if (fValidator == null)
