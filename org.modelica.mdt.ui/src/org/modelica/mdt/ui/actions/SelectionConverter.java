@@ -85,11 +85,14 @@ public class SelectionConverter {
 		if (!selection.isEmpty()) {
 			IModelicaElement[] result= new IModelicaElement[selection.size()];
 			int i= 0;
-			for (Iterator iter= selection.iterator(); iter.hasNext(); i++) {
+			@SuppressWarnings("rawtypes")
+			Iterator iter = selection.iterator();
+			while (iter.hasNext()) {
 				Object element= iter.next();
-				if (!(element instanceof IModelicaElement))
+				if (!(element instanceof IModelicaElement)) {
 					return EMPTY_RESULT;
-				result[i]= (IModelicaElement)element;
+				}
+				result[i++]= (IModelicaElement)element;
 			}
 			return result;
 		}
