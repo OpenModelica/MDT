@@ -24,12 +24,12 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -393,7 +393,7 @@ public class ModelicaSourceViewer extends ProjectionViewer implements IPropertyC
 		Assert.isNotNull(listener);
 
 		if (fTextPresentationListeners == null)
-			fTextPresentationListeners= new ArrayList();
+			fTextPresentationListeners= new ArrayList<ITextPresentationListener>();
 
 		fTextPresentationListeners.remove(listener);
 		fTextPresentationListeners.add(0, listener);
@@ -457,7 +457,7 @@ public class ModelicaSourceViewer extends ProjectionViewer implements IPropertyC
 		IRegion line= document.getLineInformationOfOffset(lineOffset);
 		ITypedRegion[] linePartitioning= TextUtilities.computePartitioning(document, IModelicaPartitions.MODELICA_PARTITIONING, lineOffset, line.getLength(), false);
 
-		List segmentation= new ArrayList();
+		List<ITypedRegion> segmentation= new ArrayList<ITypedRegion>();
 		for (int i= 0; i < linePartitioning.length; i++) {
 			if (IModelicaPartitions.MODELICA_STRING.equals(linePartitioning[i].getType()))
 				segmentation.add(linePartitioning[i]);
@@ -472,7 +472,7 @@ public class ModelicaSourceViewer extends ProjectionViewer implements IPropertyC
 
 		int j= 0;
 		for (int i= 0; i < size; i++) {
-			ITypedRegion segment= (ITypedRegion) segmentation.get(i);
+			ITypedRegion segment= segmentation.get(i);
 
 			if (i == 0)
 				segments[j++]= 0;
