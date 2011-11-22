@@ -93,6 +93,7 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 {
 	private IEditorPart editor;
 	
+	@SuppressWarnings("unused")
 	private static String functionProposal = "";
 		
 	public ModelicaCompletionProcessor(IEditorPart editor) 
@@ -139,14 +140,14 @@ public class ModelicaCompletionProcessor implements IContentAssistProcessor
 				c != '\n' && c != '\t' && c != ' ' && c != '(' && c != ';'
 				&& c != ')' && c != '=');
 
-			offset++; /* exclude the charachter we looked at lastly */
+			offset++; /* exclude the character we looked at lastly */
 			return doc.get(offset, (end - offset));
 		}
 		catch (BadLocationException e)
 		{
 			ErrorManager.logBug(UIPlugin.getSymbolicName(), "illegal position encountered while calculating prefix");
 		}
-		return ""; /* this will happend only if our code is broken somehow */
+		return ""; /* this will happen only if our code is broken somehow */
 	}
 
 //	/**
