@@ -15,6 +15,34 @@ import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 
 public class PapyrusServices {
 
+	public static CommonViewer getModelExplorerView(){
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+
+		ModelExplorerPageBookView modelExplorerPageBookView = null;
+		if (view instanceof ModelExplorerPageBookView) {
+			modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+		}
+		CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+
+		return modelExplorerView;
+	}
+	
+	
+	public static boolean isVisiblePapyrusModelExplorerView(){
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+
+		ModelExplorerPageBookView modelExplorerPageBookView = null;
+		if (view instanceof ModelExplorerPageBookView) {
+			modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+		}
+		CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+		if (modelExplorerView != null) {
+			return modelExplorerView.getControl().isVisible();
+		}
+		
+		return false;
+	}
+	
 	public static void locate(Object object){
 		if (object instanceof EObject) {
 			
@@ -28,9 +56,13 @@ public class PapyrusServices {
 			List<Object> items = new ArrayList<Object>();
 			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
 			
+			// set focus
+			modelExplorerView.getControl().setFocus();
+
 			// set new selection
 			modelExplorerView.setSelection(new StructuredSelection(items), true);
-      	}
+			
+     	}
 	}
 	
 	public static void locateWithReselection(Object object){
@@ -45,6 +77,9 @@ public class PapyrusServices {
 			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 			List<Object> items = new ArrayList<Object>();
 			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+
+			// set focus
+			modelExplorerView.getControl().setFocus();
 			
 			// reset the selection so that the components tree can instantiate the selected class again
 			modelExplorerView.setSelection(new StructuredSelection(), true);
