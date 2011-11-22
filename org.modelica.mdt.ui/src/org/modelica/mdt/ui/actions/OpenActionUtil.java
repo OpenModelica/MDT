@@ -25,20 +25,19 @@ import org.modelica.mdt.ui.ModelicaLookupException;
 import org.modelica.mdt.ui.editor.EditorUtility;
 import org.eclipse.jface.viewers.LabelProvider;
 
-@SuppressWarnings("unchecked")
 public class OpenActionUtil {
-	
+
 	private OpenActionUtil() {
 		// no instance.
 	}
-		
+
 	/**
 	 * Opens the editor on the given element and subsequently selects it.
 	 */
 	public static void open(Object element) throws ModelicaLookupException, PartInitException {
 		open(element, true);
 	}
-	
+
 	/**
 	 * Opens the editor on the given element and subsequently selects it.
 	 */
@@ -52,40 +51,26 @@ public class OpenActionUtil {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * Filters out source references from the given code resolve results.
-	 * A utility method that can be called by subclasses. 
-	 */
-	public static List filterResolveResults(IModelicaElement[] codeResolveResults) {
-		int nResults= codeResolveResults.length;
-		List refs= new ArrayList(nResults);
-		for (int i= 0; i < nResults; i++) {
-			if (codeResolveResults[i] instanceof IModelicaElement)
-				refs.add(codeResolveResults[i]);
-		}
-		return refs;
-	}
-						
+
 	/**
 	 * Shows a dialog for resolving an ambiguous java element.
 	 * Utility method that can be called by subclasses.
 	 */
 	public static IModelicaElement selectModelicaElement(IModelicaElement[] elements, Shell shell, String title, String message) {
-		
+
 		int nResults= elements.length;
-		
+
 		if (nResults == 0)
 			return null;
-		
+
 		if (nResults == 1)
 			return elements[0];
-								
+
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new LabelProvider());
 		dialog.setTitle(title);
 		dialog.setMessage(message);
 		dialog.setElements(elements);
-		
+
 		if (dialog.open() == Window.OK) {
 			Object[] selection= dialog.getResult();
 			if (selection != null && selection.length > 0) {
