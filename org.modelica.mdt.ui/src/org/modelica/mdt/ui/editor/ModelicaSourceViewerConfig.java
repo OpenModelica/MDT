@@ -23,8 +23,6 @@
 *******************************************************************************/
 package org.modelica.mdt.ui.editor;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.text.hyperlink.*;
 import org.eclipse.jface.text.information.IInformationProvider;
@@ -44,7 +42,6 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.swt.SWT;
@@ -64,14 +61,7 @@ import org.modelica.mdt.ui.text.ModelicaMultilineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaSinglelineCommentScanner;
 import org.modelica.mdt.ui.text.ModelicaStringScanner;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
-import org.eclipse.ui.texteditor.spelling.SpellingService;
-import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
-import org.eclipse.jface.text.reconciler.IReconciler;
-import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
-import org.eclipse.jface.text.reconciler.MonoReconciler;
 
 
 /**
@@ -90,8 +80,6 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		
 	private String fDocumentPartitioning;
 	
-	private static final IContentType MODELICA_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IDocument.DEFAULT_CONTENT_TYPE); 	
-
 	public ModelicaSourceViewerConfig(ITextEditor textEditor, String partitioning) 
 	{
 		this.textEditor = textEditor;
