@@ -2,7 +2,6 @@
 package org.modelica.mdt.ui.assist;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -18,8 +17,6 @@ import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.modelica.mdt.internal.core.ErrorManager;
-import org.modelica.mdt.ui.UIPlugin;
 
 
 
@@ -278,7 +275,7 @@ public class ModelicaParameterListValidator implements IContextInformationValida
 		if (code.lastIndexOf('(') != -1) 
 			pos = code.lastIndexOf('(')-1;
 		
-		List positions= new ArrayList();
+		List<Integer> positions= new ArrayList<Integer>();
 		if (code.lastIndexOf('(') != -1) 		
 			positions.add(new Integer(code.lastIndexOf('(')));
 		else
