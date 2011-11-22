@@ -46,7 +46,7 @@ public class OMCModelicaPatternMatchListener implements IPatternMatchListener
 		TextConsole console = (TextConsole)event.getSource();		
 		debug("Console:"+console.getName());
 		String line = "";
-		int offset = event.getOffset();
+		event.getOffset();
 		try
 		{
 			line = console.getDocument().get(
@@ -61,7 +61,6 @@ public class OMCModelicaPatternMatchListener implements IPatternMatchListener
 		while(line.charAt(0) == '\n' || line.charAt(0) == '\r')
 		{
 			line = line.substring(1);
-			offset++;
 		}
 		
 		try
