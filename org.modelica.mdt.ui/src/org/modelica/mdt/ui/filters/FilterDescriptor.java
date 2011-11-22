@@ -26,8 +26,7 @@ import org.modelica.mdt.ui.UIPlugin;
  * 
  * since 0.6.8
  */
-@SuppressWarnings("unchecked")
-public class FilterDescriptor implements Comparable, IPluginContribution {
+public class FilterDescriptor implements Comparable<FilterDescriptor>, IPluginContribution {
 
 	private static String PATTERN_FILTER_ID_PREFIX= "_patternFilterId_"; //$NON-NLS-1$
 
@@ -66,15 +65,15 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 	 */
 	public static FilterDescriptor[] getFilterDescriptors(String targetId) {
 		FilterDescriptor[] filterDescs= FilterDescriptor.getFilterDescriptors();
-		List result= new ArrayList(filterDescs.length);
-		for (int i= 0; i < filterDescs.length; i++) {
-			String tid= filterDescs[i].getTargetId();
-			if (WorkbenchActivityHelper.filterItem(filterDescs[i]))
+		List<FilterDescriptor> result= new ArrayList<FilterDescriptor>();
+		for (FilterDescriptor filterDesc : filterDescs) {
+			String tid= filterDesc.getTargetId();
+			if (WorkbenchActivityHelper.filterItem(filterDesc))
 				continue;
 			if (tid == null || tid.equals(targetId))
-				result.add(filterDescs[i]);
+				result.add(filterDesc);
 		}
-		return (FilterDescriptor[])result.toArray(new FilterDescriptor[result.size()]);
+		return result.toArray(new FilterDescriptor[0]);
 	}
 	
 	/**
@@ -206,11 +205,8 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 	/* 
 	 * Implements a method from IComparable 
 	 */ 
-	public int compareTo(Object o) {
-		if (o instanceof FilterDescriptor)
-			return Collator.getInstance().compare(getName(), ((FilterDescriptor)o).getName());
-		else
-			return Integer.MIN_VALUE;
+	public int compareTo(FilterDescriptor o) {
+		return Collator.getInstance().compare(getName(), ((FilterDescriptor)o).getName());
 	}
 
 	//---- initialization ---------------------------------------------------
@@ -219,16 +215,14 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 	 * Creates the filter descriptors.
 	 */
 	private static FilterDescriptor[] createFilterDescriptors(IConfigurationElement[] elements) {
-		List result= new ArrayList(5);
-		Set descIds= new HashSet(5);
-		for (int i= 0; i < elements.length; i++) {
-			final IConfigurationElement element= elements[i];
+		List<FilterDescriptor> result= new ArrayList<FilterDescriptor>();
+		Set<String> descIds= new HashSet<String>();
+		for (final IConfigurationElement element : elements) {
 			if (FILTER_TAG.equals(element.getName())) {
-
 				final FilterDescriptor[] desc= new FilterDescriptor[1];
 				SafeRunner.run(new SafeRunnable(FilterMessages.FilterDescriptor_filterDescriptionCreationError_message) { 
 					public void run() throws Exception {
-						desc[0]= new FilterDescriptor(element);
+						desc[0] = new FilterDescriptor(element);
 					}
 				});
 
@@ -238,7 +232,9 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 				}
 			}
 		}
-		return (FilterDescriptor[])result.toArray(new FilterDescriptor[result.size()]);
+
+		FilterDescriptor[] resultArray = result.toArray(new FilterDescriptor[0]);
+		return resultArray;
 	}
 	
 	public String getLocalId() {
