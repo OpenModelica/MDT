@@ -187,14 +187,13 @@ public class MarkProblemsVisitor implements IResourceVisitor
      * @param lineNumber
      * @throws CoreException
      */
-    @SuppressWarnings("unchecked")
     protected void setMarker(IFile in_file, String message, int lineNumber) throws CoreException 
     {
     	debug("MetaModelicaPaternMatchListener.setMarker:");
     	debug("File:" + in_file.getName());
     	debug("Line:" + lineNumber);
     	debug("Message:" + message);    	
-        Map attributes = new HashMap();
+        Map<String, Integer> attributes = new HashMap<String, Integer>();
         message = message.trim();        
         if (message.startsWith(":") || Character.isDigit(message.charAt(0)))
         {        	
