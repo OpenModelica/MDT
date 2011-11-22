@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.modelica.mdt.ui.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.window.Window;
