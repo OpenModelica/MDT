@@ -141,10 +141,10 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		if (model == null)
 			return null;
 
-		List exact= new ArrayList();
+		List<Annotation> exact= new ArrayList<Annotation>();
 		HashMap messagesAtPosition= new HashMap();
 
-		Iterator e= model.getAnnotationIterator();
+		Iterator<?> e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation annotation= (Annotation) e.next();
 			Position position= model.getPosition(annotation);
