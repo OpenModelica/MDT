@@ -58,9 +58,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.dialogs.SelectionStatusDialog;
 import org.modelica.mdt.debug.core.IMDTFailureBreakpoint;
 import org.modelica.mdt.debug.ui.Filter;
 import org.modelica.mdt.debug.ui.FilterLabelProvider;
@@ -74,6 +71,7 @@ public class ExceptionFilterEditor {
 	private IMDTFailureBreakpoint fBreakpoint;
 	private Button fAddFilterButton;
 	private Button fAddPackageButton;
+	@SuppressWarnings("unused")
 	private Button fAddTypeButton;
 	private Button fRemoveFilterButton;
 	private Text fEditorText;
@@ -169,28 +167,29 @@ public class ExceptionFilterEditor {
 	}
 
 	protected void doStore() {
-		Object[] filters = fFilterContentProvider.getElements(null);
-		List inclusionFilters = new ArrayList(filters.length);
-		List exclusionFilters = new ArrayList(filters.length);
-		for (int i = 0; i < filters.length; i++) {
-			Filter filter = (Filter) filters[i];
+		Filter[] filters = (Filter[])fFilterContentProvider.getElements(null);
+		List<String> inclusionFilters = new ArrayList<String>();
+		List<String> exclusionFilters = new ArrayList<String>();
+
+		for (Filter filter : filters) {	
 			String name = filter.getName();
 			if (name.equals(DEFAULT_PACKAGE)) {
 				name = ""; //$NON-NLS-1$
 			}
 			if (filter.isChecked()) {
 				inclusionFilters.add(name);
-			} else {
+			}
+			else {
 				exclusionFilters.add(name);
 			}
 		}
 		try {
 			fBreakpoint.setInclusionFilters((String[]) inclusionFilters.toArray(new String[inclusionFilters.size()]));
 			fBreakpoint.setExclusionFilters((String[]) exclusionFilters.toArray(new String[exclusionFilters.size()]));
-		} catch (CoreException ce) {
+		}
+		catch (CoreException ce) {
 			ErrorManager.logError(ce);
 		}
-
 	}
 
 	private void createFilterButtons(Composite container) {
@@ -403,11 +402,11 @@ public class ExceptionFilterEditor {
 
 	private void removeFilters() {
 		IStructuredSelection selection = (IStructuredSelection) fFilterViewer.getSelection();
-		fFilterContentProvider.removeFilters(selection.toArray());
+		fFilterContentProvider.removeFilters((Filter[])selection.toArray());
 	}
 
 	private void removeNewFilter() {
-		fFilterContentProvider.removeFilters(new Object[] { fNewFilter });
+		fFilterContentProvider.removeFilters(new Filter[] { fNewFilter });
 	}
 
 	private void addPackage() {
@@ -443,7 +442,7 @@ public class ExceptionFilterEditor {
 	protected class FilterContentProvider implements IStructuredContentProvider {
 
 		private CheckboxTableViewer fViewer;
-		private List fFilters;
+		private List<Filter> fFilters;
 
 		public FilterContentProvider(CheckboxTableViewer viewer) {
 			fViewer = viewer;
@@ -463,7 +462,7 @@ public class ExceptionFilterEditor {
 				eFilters = new String[] {
 				};
 			}
-			fFilters = new ArrayList();
+			fFilters = new ArrayList<Filter>();
 			populateFilters(iFilters, true);
 			populateFilters(eFilters, false);
 
@@ -489,9 +488,8 @@ public class ExceptionFilterEditor {
 			return filter;
 		}
 
-		public void removeFilters(Object[] filters) {
-			for (int i = 0; i < filters.length; i++) {
-				Filter filter = (Filter) filters[i];
+		public void removeFilters(Filter[] filters) {
+			for (Filter filter : filters) {
 				fFilters.remove(filter);
 			}
 			fViewer.remove(filters);
@@ -530,13 +528,12 @@ public class ExceptionFilterEditor {
 
 	/**
 	 */
-	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell) 
-	{
-		final List filterList = new ArrayList();
+	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell) {
+		final List<String> filterList = new ArrayList<String>();
 		final boolean[] monitorCanceled = new boolean[] {false};
 		IRunnableWithProgress r= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-					Set filterNameSet= new HashSet();
+					Set<String> filterNameSet= new HashSet<String>();
 					filterNameSet.add("*");					
 					monitor.worked(1);
 					monitor.done();
