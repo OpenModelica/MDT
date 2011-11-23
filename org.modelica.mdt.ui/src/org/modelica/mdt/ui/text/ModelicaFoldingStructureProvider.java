@@ -64,7 +64,6 @@ import org.modelica.mdt.ui.editor.ModelicaEditor;
  * @since 3.0 (internal)
  * @since 3.2 (API)
  */
-@SuppressWarnings("unchecked")
 public class ModelicaFoldingStructureProvider {
 	/**
 	 * A context that contains the information needed to compute the folding structure of an
@@ -227,6 +226,7 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * @see modelica.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return "ModelicaProjectionAnnotation:\n" + //$NON-NLS-1$
 					"\telement: \t"+ fModelicaElement.toString() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
@@ -256,6 +256,7 @@ public class ModelicaFoldingStructureProvider {
 	 * Matches comments.
 	 */
 	private static final class CommentFilter implements Filter {
+		@Override
 		public boolean match(ModelicaProjectionAnnotation annotation) {
 			if (annotation.isComment() && !annotation.isMarkedDeleted()) {
 				return true;
@@ -268,6 +269,7 @@ public class ModelicaFoldingStructureProvider {
 	 * Matches members.
 	 */
 	private static final class MemberFilter implements Filter {
+		@Override
 		public boolean match(ModelicaProjectionAnnotation annotation) {
 			if (!annotation.isComment() && !annotation.isMarkedDeleted()) {
 				IModelicaElement element= annotation.getElement();
@@ -291,6 +293,7 @@ public class ModelicaFoldingStructureProvider {
 			fMatchCollapsed= matchCollapsed;
 		}
 
+		@Override
 		public boolean match(ModelicaProjectionAnnotation annotation) {
 			boolean stateMatch= fMatchCollapsed == annotation.isCollapsed();
 			if (stateMatch && !annotation.isComment() && !annotation.isMarkedDeleted()) {
@@ -305,6 +308,7 @@ public class ModelicaFoldingStructureProvider {
 
 	private class ElementChangedListener implements IModelicaElementChangeListener
 	{
+		@Override
 		public void setViewer(Viewer v)
 		{
 			
@@ -312,6 +316,7 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * 
 		 */
+		@Override
 		public void elementsChanged(Collection<IModelicaElementChange> changes){
 			if (!(changes instanceof IModelicaSourceFile)) return; 
 				fUpdatingCount++;
@@ -336,6 +341,7 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeFoldingRegions(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
 			DocumentCharacterIterator sequence= new DocumentCharacterIterator(document, offset, offset + length);
 			int prefixEnd= 0;
@@ -422,6 +428,7 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) {
 //			return 0;
 			DocumentCharacterIterator sequence= new DocumentCharacterIterator(document, offset, offset + length);
@@ -452,8 +459,10 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeFoldingRegions(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
 			int nameStart= offset;
+			@SuppressWarnings("unused")
 			int nameEnd = offset+length;
 			try {
 				IDefinitionLocation nameRange= fElement.getLocation();
@@ -503,6 +512,7 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) throws BadLocationException {
 			int nameStart= offset;
 			try {
@@ -550,6 +560,7 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
 		 */
+		@Override
 		public void projectionEnabled() {
 			handleProjectionEnabled();
 		}
@@ -557,6 +568,7 @@ public class ModelicaFoldingStructureProvider {
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
 		 */
+		@Override
 		public void projectionDisabled() {
 			handleProjectionDisabled();
 		}
@@ -580,8 +592,8 @@ public class ModelicaFoldingStructureProvider {
 	private final Filter fMemberFilter = new MemberFilter();
 	/** Comment filter, matches comments. */
 	private final Filter fCommentFilter = new CommentFilter();
-	
-	
+
+	@SuppressWarnings("unused")
 	private volatile int fUpdatingCount= 0;
 
 	/**
@@ -735,45 +747,46 @@ public class ModelicaFoldingStructureProvider {
 	}
 
 	private void update(FoldingStructureComputationContext ctx) {
-		if (ctx == null)
+		if (ctx == null) {
 			return;
+		}
 
-		Map additions= new HashMap();
-		List deletions= new ArrayList();
-		List updates= new ArrayList();
+		Map<ModelicaProjectionAnnotation, Position> additions= new HashMap<ModelicaProjectionAnnotation, Position>();
+		List<ModelicaProjectionAnnotation> deletions= new ArrayList<ModelicaProjectionAnnotation>();
+		List<ModelicaProjectionAnnotation> updates= new ArrayList<ModelicaProjectionAnnotation>();
 
 		computeFoldingStructure(ctx);
 		Map<ModelicaProjectionAnnotation, Position> newStructure= ctx.fMap;
-		Map oldStructure= computeCurrentStructure(ctx);
+		Map<IModelicaElement, List<Tuple>> oldStructure= computeCurrentStructure(ctx);
 
-		Iterator e= newStructure.keySet().iterator();
-		while (e.hasNext()) 
-		{
-			ModelicaProjectionAnnotation newAnnotation= (ModelicaProjectionAnnotation) e.next();
-			Position newPosition = (Position) newStructure.get(newAnnotation);
+		for (Map.Entry<ModelicaProjectionAnnotation, Position> entry : newStructure.entrySet()) {
+			ModelicaProjectionAnnotation newAnnotation = entry.getKey();
+			Position newPosition = entry.getValue();
 
 			IModelicaElement element = newAnnotation.getElement();
-			List annotations = (List) oldStructure.get(element);
-			if (annotations == null) additions.put(newAnnotation, newPosition);
-			else 
-			{
-				Iterator x= annotations.iterator();
+			List<Tuple> annotations = oldStructure.get(element);
+			if (annotations == null) {
+				additions.put(newAnnotation, newPosition);
+			}
+			else {
+				Iterator<Tuple> x= annotations.iterator();
 				boolean matched= false;
-				while (x.hasNext()) 
-				{
-					Tuple tuple= (Tuple) x.next();
+				while (x.hasNext()) {
+					Tuple tuple= x.next();
 					ModelicaProjectionAnnotation existingAnnotation= tuple.annotation;
 					Position existingPosition= tuple.position;
-					if (newAnnotation.isComment() == existingAnnotation.isComment()) 
-					{
+					if (newAnnotation.isComment() == existingAnnotation.isComment()) {
 						boolean updateCollapsedState= ctx.allowCollapsing() && existingAnnotation.isCollapsed() != newAnnotation.isCollapsed();
-						if (existingPosition != null && (!newPosition.equals(existingPosition) || updateCollapsedState)) 
-						{
+						if (existingPosition != null && (!newPosition.equals(existingPosition) || updateCollapsedState)) {
 							existingPosition.setOffset(newPosition.getOffset());
 							existingPosition.setLength(newPosition.getLength());
 							if (updateCollapsedState)
-								if (newAnnotation.isCollapsed()) existingAnnotation.markCollapsed();
-								else existingAnnotation.markExpanded();
+								if (newAnnotation.isCollapsed()) {
+									existingAnnotation.markCollapsed();
+								}
+								else {
+									existingAnnotation.markExpanded();
+								}
 							updates.add(existingAnnotation);
 						}
 						matched= true;
@@ -781,23 +794,26 @@ public class ModelicaFoldingStructureProvider {
 						break;
 					}
 				}
-				if (!matched) additions.put(newAnnotation, newPosition);
-				if (annotations.isEmpty()) oldStructure.remove(element);
+				if (!matched) {
+					additions.put(newAnnotation, newPosition);
+				}
+				if (annotations.isEmpty()) {
+					oldStructure.remove(element);
+				}
 			}
 		}
 
-		e= oldStructure.values().iterator();
-		while (e.hasNext()) {
-			List list= (List) e.next();
-			int size= list.size();
-			for (int i= 0; i < size; i++)
-				deletions.add(((Tuple) list.get(i)).annotation);
+		for (List<Tuple> list : oldStructure.values()) {
+			for (Tuple tuple : list) {
+				ModelicaProjectionAnnotation annotation = tuple.annotation;
+				deletions.add(annotation);
+			}
 		}
 
 		match(deletions, additions, updates, ctx);
 
-		Annotation[] deletedArray= (Annotation[]) deletions.toArray(new Annotation[deletions.size()]);
-		Annotation[] changedArray= (Annotation[]) updates.toArray(new Annotation[updates.size()]);
+		Annotation[] deletedArray= deletions.toArray(new Annotation[0]);
+		Annotation[] changedArray= updates.toArray(new Annotation[0]);
 		ctx.getModel().modifyAnnotations(deletedArray, additions, changedArray);
     }
 	
@@ -923,12 +939,9 @@ public class ModelicaFoldingStructureProvider {
 						reference.getSourceRegion().getEndLine()-1) +
 						reference.getSourceRegion().getEndColumn();													
 
-				IRegion range= 	new Region(offsetStart, offsetEnd - offsetStart);
-				
-				if (range == null)
-					return new IRegion[0];
+				IRegion range = new Region(offsetStart, offsetEnd - offsetStart);
 
-				List regions= new ArrayList();
+				List<IRegion> regions= new ArrayList<IRegion>();
 				
 				regions.add(range); // add the element				
 				
@@ -941,7 +954,8 @@ public class ModelicaFoldingStructureProvider {
 				IRegion[] result= new IRegion[regions.size()];
 				regions.toArray(result);
 				return result;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 		}
 
 		return new IRegion[0];
@@ -973,7 +987,7 @@ public class ModelicaFoldingStructureProvider {
 
 	private IRegion computeModelicaDocComment(IRegion range, FoldingStructureComputationContext ctx)  
 	{
-		/* now add colapsed documentation! */
+		/* now add collapsed documentation! */
 		/* search for next word which should be an identifier */
 		try{
 			int offset = range.getOffset();
@@ -1095,19 +1109,21 @@ public class ModelicaFoldingStructureProvider {
 	 * result is that more annotations are changed and fewer get
 	 * deleted/re-added.
 	 */
-	private void match(List deletions, Map additions, List changes, FoldingStructureComputationContext ctx) {
+	private void match(List<ModelicaProjectionAnnotation> deletions, Map<ModelicaProjectionAnnotation, Position> additions,
+			List<ModelicaProjectionAnnotation> changes, FoldingStructureComputationContext ctx) {
 		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
 			return;
 
-		List newDeletions= new ArrayList();
-		List newChanges= new ArrayList();
+		List<ModelicaProjectionAnnotation> newDeletions= new ArrayList<ModelicaProjectionAnnotation>();
+		List<ModelicaProjectionAnnotation> newChanges= new ArrayList<ModelicaProjectionAnnotation>();
 
-		Iterator deletionIterator= deletions.iterator();
+		Iterator<ModelicaProjectionAnnotation> deletionIterator= deletions.iterator();
 		while (deletionIterator.hasNext()) {
-			ModelicaProjectionAnnotation deleted= (ModelicaProjectionAnnotation) deletionIterator.next();
+			ModelicaProjectionAnnotation deleted= deletionIterator.next();
 			Position deletedPosition= ctx.getModel().getPosition(deleted);
-			if (deletedPosition == null)
+			if (deletedPosition == null) {
 				continue;
+			}
 			
 			Tuple deletedTuple= new Tuple(deleted, deletedPosition);
 
@@ -1124,14 +1140,15 @@ public class ModelicaFoldingStructureProvider {
 				deletedPosition.setLength(match.position.getLength());
 				if (deletedPosition instanceof ModelicaElementPosition && element instanceof IModelicaElement) {
 					ModelicaElementPosition jep= (ModelicaElementPosition) deletedPosition;
-					jep.setMember((IModelicaElement) element);
+					jep.setMember(element);
 				}
 
 				deletionIterator.remove();
 				newChanges.add(deleted);
 
-				if (addToDeletions)
+				if (addToDeletions) {
 					newDeletions.add(match.annotation);
+				}
 			}
 		}
 
@@ -1162,12 +1179,12 @@ public class ModelicaFoldingStructureProvider {
 	 *        or <code>null</code>
 	 * @return a matching tuple or <code>null</code> for no match
 	 */
-	private Tuple findMatch(Tuple tuple, Collection annotations, Map positionMap, FoldingStructureComputationContext ctx) {
-		Iterator it= annotations.iterator();
+	private Tuple findMatch(Tuple tuple, Collection<ModelicaProjectionAnnotation> annotations, Map<ModelicaProjectionAnnotation, Position> positionMap, FoldingStructureComputationContext ctx) {
+		Iterator<ModelicaProjectionAnnotation> it= annotations.iterator();
 		while (it.hasNext()) {
-			ModelicaProjectionAnnotation annotation= (ModelicaProjectionAnnotation) it.next();
+			ModelicaProjectionAnnotation annotation= it.next();
 			if (tuple.annotation.isComment() == annotation.isComment()) {
-				Position position= positionMap == null ? ctx.getModel().getPosition(annotation) : (Position) positionMap.get(annotation);
+				Position position= positionMap == null ? ctx.getModel().getPosition(annotation) : positionMap.get(annotation);
 				if (position == null)
 					continue;
 
@@ -1181,32 +1198,32 @@ public class ModelicaFoldingStructureProvider {
 		return null;
 	}
 
-	private Map computeCurrentStructure(FoldingStructureComputationContext ctx) {
-		Map map= new HashMap();
+	private Map<IModelicaElement, List<Tuple>> computeCurrentStructure(FoldingStructureComputationContext ctx) {
+		Map<IModelicaElement, List<Tuple>> map= new HashMap<IModelicaElement, List<Tuple>>();
 		ProjectionAnnotationModel model= ctx.getModel();
-		Iterator e= model.getAnnotationIterator();
+		Iterator<?> e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Object annotation= e.next();
 			if (annotation instanceof ModelicaProjectionAnnotation) {
 				ModelicaProjectionAnnotation modelica= (ModelicaProjectionAnnotation) annotation;
 				Position position= model.getPosition(modelica);
 				Assert.isNotNull(position);
-				List list= (List) map.get(modelica.getElement());
+				List<Tuple> list = map.get(modelica.getElement());
 				if (list == null) {
-					list= new ArrayList(2);
+					list = new ArrayList<Tuple>(2);
 					map.put(modelica.getElement(), list);
 				}
 				list.add(new Tuple(modelica, position));
 			}
 		}
 
-		Comparator comparator= new Comparator() {
-			public int compare(Object o1, Object o2) {
-				return ((Tuple) o1).position.getOffset() - ((Tuple) o2).position.getOffset();
+		Comparator<Tuple> comparator= new Comparator<Tuple>() {
+			@Override
+			public int compare(Tuple o1, Tuple o2) {
+				return o1.position.getOffset() - o2.position.getOffset();
 			}
 		};
-		for (Iterator it= map.values().iterator(); it.hasNext();) {
-			List list= (List) it.next();
+		for (List<Tuple> list : map.values()) {
 			Collections.sort(list, comparator);
 		}
 		return map;
@@ -1259,24 +1276,26 @@ public class ModelicaFoldingStructureProvider {
 		if (model == null)
 			return;
 		
-		List modified= new ArrayList();
-		Iterator iter= model.getAnnotationIterator();
+		List<ModelicaProjectionAnnotation> modified= new ArrayList<ModelicaProjectionAnnotation>();
+		Iterator<?> iter= model.getAnnotationIterator();
 		while (iter.hasNext()) {
 			Object annotation= iter.next();
 			if (annotation instanceof ModelicaProjectionAnnotation) {
 				ModelicaProjectionAnnotation modelica= (ModelicaProjectionAnnotation) annotation;
 				
 				if (expand == modelica.isCollapsed() && filter.match(modelica)) {
-					if (expand)
+					if (expand) {
 						modelica.markExpanded();
-					else
+					}
+					else {
 						modelica.markCollapsed();
+					}
 					modified.add(modelica);
 				}
 
 			}
 		}
 		
-		model.modifyAnnotations(null, null, (Annotation[]) modified.toArray(new Annotation[modified.size()]));
+		model.modifyAnnotations(null, null, modified.toArray(new Annotation[0]));
 	}
 }
