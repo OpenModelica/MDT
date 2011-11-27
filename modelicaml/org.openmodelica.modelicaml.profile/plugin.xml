@@ -32,9 +32,9 @@
    <extension
          point="org.eclipse.papyrus.extensionpoints.uml2.UMLLibrary">
       <library
-            description="Modelica Standard Library 3.1 Proxies (only classes, component and inheritance) "
+            description="Modelica Standard Library 3.2 Proxies"
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="Modelica Standard Library 3.1 Proxies (only classes, component and inheritance) "
+            name="Modelica Standard Library 3.2 Proxies"
             path="pathmap://PATH_LIBRARIES/MSL/model.uml"
             provider="OpenModelica Project">
       </library>

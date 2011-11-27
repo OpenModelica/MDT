@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_xSlIgAFkEeG2p6siUWPkag" type="PapyrusUMLClassDiagram" name="ClassDiagram" measurementUnit="Pixel">
-  <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_c9rC8AMnEeGVD5N86YKH7g" source="Stereotype_Annotation">
-    <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9rC8QMnEeGVD5N86YKH7g" key="StereotypeWithQualifiedNameList" value=""/>
-    <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9rC8gMnEeGVD5N86YKH7g" key="StereotypeList" value="ModelicaML::ModelReferences::InstalledLibrary"/>
-    <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9rC8wMnEeGVD5N86YKH7g" key="Stereotype_Presentation_Kind" value="HorizontalStereo"/>
-    <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9rC9AMnEeGVD5N86YKH7g" key="PropStereoDisplay" value=""/>
-    <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9rC9QMnEeGVD5N86YKH7g" key="StereotypePropertyLocation" value="Compartment"/>
-  </eAnnotations>
-  <styles xmi:type="notation:DiagramStyle" xmi:id="_xSlIgQFkEeG2p6siUWPkag"/>
-  <element xmi:type="uml:Model" href="model.uml#_tuc6cAFkEeG2p6siUWPkag"/>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_eOuG0BZ9EeGdWqEPVAqBkw" type="PapyrusUMLClassDiagram" name="ClassDiagram" measurementUnit="Pixel">
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_eOuG0RZ9EeGdWqEPVAqBkw"/>
+  <element xmi:type="uml:Model" href="model.uml#_2MX_wBXuEeGdWqEPVAqBkw"/>
 </notation:Diagram>
