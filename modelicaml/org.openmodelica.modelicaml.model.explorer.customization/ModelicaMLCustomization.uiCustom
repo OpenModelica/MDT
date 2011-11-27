@@ -59,6 +59,9 @@
       <customizedFeatures customizedFeature="label">
         <defaultValue xsi:type="uicustom:StaticFeatureValue" value="nested classes"/>
       </customizedFeatures>
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
     </references>
     <references referenceName="generalization">
       <customizedFeatures customizedFeature="label">
