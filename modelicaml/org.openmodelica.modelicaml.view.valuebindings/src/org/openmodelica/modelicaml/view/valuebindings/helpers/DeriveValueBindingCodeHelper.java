@@ -673,19 +673,34 @@ public class DeriveValueBindingCodeHelper {
 				if (mediatorElement != null) {
 					mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(mediatorElement, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
 					//log selection
-					addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"'.");
+//					addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"'.");
+					if (mediatorOperation != null) {
+						addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"' " +
+								"\n with its mediator operation: " +
+								"\n   = " + mediatorOperation + "\n");
+					}
+					else {
+						addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"' " +
+								"\n which had no mediator operation.");
+					}
 				}
 			}
-			// TODO: is a preferred mediators feature sensible, similar to preferred providres? 
+			// TODO: is a preferred mediators feature sensible, similar to preferred providers? 
 			// The qualified name of the mediator UML property could be used for storing the user selections for clients.  
 		}
 		else if (mediators.size() == 1) { // ok, set the mediator element and its operation
 			Object[] m = mediators.toArray();
 			mediatorElement = (Element) m[0];
 			mediatorOperation = DeriveValueBindingCodeUtls.getOperationSpecification(mediatorElement, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
-			addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"' " +
-					"\n with its mediator operation: " +
-					"\n   = " + mediatorOperation + "\n");
+			if (mediatorOperation != null) {
+				addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"' " +
+						"\n with its mediator operation: " +
+						"\n   = " + mediatorOperation + "\n");
+			}
+			else {
+				addToLog("SELECTED: Value Mediator '"+ ((NamedElement)mediatorElement).getQualifiedName()+"' " +
+						"\n which had no mediator operation.");
+			}
 		}
 		else { //No mediators found -> report an error
 			String clientName = ((NamedElement)client).getQualifiedName();

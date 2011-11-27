@@ -209,7 +209,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 //				if (((TreeObject)obj).isValueProvider()) { 	whatString = "(p), ";}
 				
 				if (((TreeObject)obj).isValueClient()) { 	whatString = "client, ";}
-				if (((TreeObject)obj).isValueClient_required()) { 	whatString = "req. client, ";}
+				if (((TreeObject)obj).isValueClient_required()) { 	whatString = "mand. client, ";}
 				if (((TreeObject)obj).isValueMediator()) { 	whatString = "mediator, ";}
 				if (((TreeObject)obj).isValueProvider()) { 	whatString = "provider, ";}
 
@@ -385,6 +385,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	
 	// ################################################### VALIDATION
 	
+	
 	public boolean hasEmptyClientsMediator(TreeParent treeParent) {
 		if (treeParent.isReadOnly() ) { // read only nodes shall not be validated
 			return false;
@@ -398,19 +399,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		return false;
 	}
 	
-	public boolean hasEmptyProvidersMediator(TreeParent treeParent) {
-		if (treeParent.isReadOnly() ) { // read only nodes shall not be validated
-			return false;
-		}
 
-		HashSet<TreeObject> list = new HashSet<TreeObject>();
-		list.addAll(findNextEmptyProvidersMediator(treeParent));
-		if (list.size() > 0 ) {
-			return true;
-		}
-		return false;
-	}
-	
 	
 	private HashSet<TreeObject> findNextEmptyClientsMediator(TreeParent treeParent){
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
@@ -437,12 +426,62 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		return list;
 	}
 	
+	
+	
+	public boolean allClientsAreMandatory(TreeParent mediator) {
+		
+		HashSet<TreeObject> listOfMandatoryClients = new HashSet<TreeObject>();
+		int numberOfClients = 0;
+		if (mediator instanceof TreeParent) {
+			TreeObject[] chidren = ((TreeParent)mediator).getChildren();
+			for (int i = 0; i < chidren.length; i++) {
+				if (chidren[i].isValueClientsNode() ) {
+					
+					if (chidren[i] instanceof TreeParent) {
+
+						TreeObject[] clients = ((TreeParent)chidren[i]).getChildren();
+						numberOfClients = clients.length;
+						
+						for (int j = 0; j < clients.length; j++) {
+							TreeObject client = clients[j];
+							
+							if (client.isValueClient_required()) {
+								listOfMandatoryClients.add(client);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (listOfMandatoryClients.size() == numberOfClients ) {
+			return true;
+		}
+		return false;
+	}
+		
+	
+	
+	public boolean hasEmptyProvidersMediator(TreeParent treeParent) {
+		if (treeParent.isReadOnly() ) { // read only nodes shall not be validated
+			return false;
+		}
+
+		HashSet<TreeObject> list = new HashSet<TreeObject>();
+		list.addAll(findNextEmptyProvidersMediator(treeParent));
+		if (list.size() > 0 ) {
+			return true;
+		}
+		return false;
+	}
+	
 	// TODO: refactor this method!
 	private HashSet<TreeObject> findNextEmptyProvidersMediator(TreeParent treeParent){
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
 
 		if (treeParent.isValueMediator()) {
 			int numberOfProviders = getNumberOfProviders(treeParent);
+			
 			if (numberOfProviders == 0) {
 				String script = DeriveValueBindingCodeUtls.getOperationSpecification(treeParent.getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
 				// if it has a script that only uses constant values 
@@ -452,8 +491,11 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 					//System.err.println(treeParent + " is ok");
 				}
 				else {
-					// add to the list of mediators with no providers.
-					list.add(treeParent);
+					// if all clients are mandatory and no provider exists-> error
+					if (allClientsAreMandatory(treeParent)) {
+						// add to the list of mediators with no providers.
+						list.add(treeParent);
+					}
 				}
 				return list;
 			}
@@ -476,6 +518,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		TreeObject[] children = treeParent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].isValueMediator()) {
+				
 				int numberOfProviders = getNumberOfProviders(children[i]);
 				if (numberOfProviders == 0) {
 					String script = DeriveValueBindingCodeUtls.getOperationSpecification(children[i].getUmlElement(), Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
@@ -484,8 +527,11 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 						//System.err.println(treeParent + " is ok");
 					}
 					else {
-						// add to the list of mediators with no providers.
-						list.add(treeParent);
+						// if all clients are mandatory and no provider exists-> error
+						if (allClientsAreMandatory((TreeParent) children[i])) {
+							// add to the list of mediators with no providers.
+							list.add((TreeParent) children[i]);
+						}
 					}
 					return list;
 				}
@@ -500,7 +546,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 						// do nothing
 					}
 					else if ( script != null && !DeriveValueBindingCodeUtls.isValidMediatorSingleItemsScript(script) ) {
-						list.add(treeParent);					
+						list.add((TreeParent) children[i]);					
 					}
 				}
 			}
@@ -743,5 +789,11 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
+	
+//	private boolean allClientsAreRequired(TreeObject treeObject){
+//		if (treeObject.isValueMediator()) {
+//		}
+//		return false;
+//	}
 	
 }
