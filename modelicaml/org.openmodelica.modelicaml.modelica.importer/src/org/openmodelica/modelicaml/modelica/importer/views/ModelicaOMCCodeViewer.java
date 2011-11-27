@@ -805,7 +805,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
 								
 								if (deleteNotUsedProxies) {
-									ec.deleteNotUsedProxyElements();
+									ec.deleteInvalidProxyElements();
 								}
 								
 							}

@@ -276,7 +276,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	}
 	
 	private void setImage(TreeObject treeObject){
-		
+		//root node - the code-sync folder
 		if ( treeObject.getName().equals(Constants.folderName_code_sync)) {
 			overlayIconImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
@@ -512,20 +512,27 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			list.add(item);
 			return list;
 		}
+
+		//check if component has type that exists in the loaded models
+		// exclude the primitive (predefined) types from this check.
+		if (item instanceof ComponentItem) {
+			if (!((ComponentItem)item).isPrimitive() && ((ComponentItem)item).getComponentTypeTreeItem() == null) {
+				list.add(item);
+			}
+		}
 		
 		// check its children
 		if (item instanceof TreeParent) {
-			
-		}
-		TreeObject[] children = ((TreeParent) item).getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (hasMarkers(children[i])) {
-				list.add(children[i]);
-				return list;
-			}
-			// recursive call
-			else {
-				list.addAll(findSubComponentMarkers( (TreeParent)children[i] ));	
+			TreeObject[] children = ((TreeParent) item).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				if (hasMarkers(children[i])) {
+					list.add(children[i]);
+					return list;
+				}
+				// recursive call
+				else {
+					list.addAll(findSubComponentMarkers( (TreeParent)children[i] ));	
+				}
 			}
 		}
 		

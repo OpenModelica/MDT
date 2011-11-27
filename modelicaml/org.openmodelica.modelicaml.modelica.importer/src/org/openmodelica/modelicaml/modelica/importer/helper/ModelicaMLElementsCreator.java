@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -77,6 +78,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	// log entries
 	private List<String> log = new ArrayList<String>();
 	
+	
+	
 	public ModelicaMLElementsCreator(){
 		setEditingDomain();
 		setModelicaMLRootElement();
@@ -118,63 +121,84 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		createPropertiesAndGeneralizations(treeParent, update, applyProxyStereotype);
 	}
 	
-	
-	public void deleteNotUsedProxyElements(){
+	public void deleteInvalidProxyElements(){
 		/* 
 		 * Delete all proxies or their owned elements 
 		 * that are not contained in the loaded Modelica models. 
 		 */
 		
-		CompoundCommand cc = new CompoundCommand("Delete ModelicaML Proxy");
+		HashSet<String> modelicaModelQNames = new HashSet<String>();
+		for (TreeObject treeObject : treeBuilder.getTreeItems()) {
+			modelicaModelQNames.add(treeObject.getQName());
+		}
+		
+		HashSet<Element> proxies = treeBuilder.getProxies();
+		HashSet<Element> invalidProxies = new HashSet<Element>();
+		HashSet<Element> invalidExtendsRelations = new HashSet<Element>();
+		
+		// find invalid proxies
+		for (Element element : proxies) {
+			if (element instanceof NamedElement) {
+
+				/*
+				 *  IMPORTANT:  
+				 *  - don't delete predefined types from the ModelicaML profile.
+				 *  - do not delete elements which getModel() is (i.e. has Stereotype) "InstalledLibrary"
+				 */
+				if ( !(element instanceof PrimitiveType && isPredefinedModelicaType(element))  
+						&& !(element.getModel().getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) != null)
+						) {
+					
+					/*
+					 * Find class proxies or their properties that do not exist in the loaded Modelica models.
+					 */
+					String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
+					if ( !modelicaModelQNames.contains(qName) ) {
+						deletedProxyQNames.add(((NamedElement)element).getQualifiedName());
+						addToLog("Deleting " + ((NamedElement)element).getQualifiedName());
+						invalidProxies.add(element);
+					}
+					
+					/*
+					 * Find class extends relations (inheritance) that do not have targets.
+					 */
+					if (element instanceof Classifier) {
+						Classifier classifier = (Classifier) element;
+						EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
+						for (Generalization generalization : classExtendsRelations) {
+							EList<Element> targets = generalization.getTargets();
+							if (targets != null && targets.size() > 0) {
+								// ok
+							}
+							else {
+								addToLog("Deleting invalid extends relation in " + ((NamedElement)element).getQualifiedName());
+								invalidExtendsRelations.add(generalization);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		// Delete elements
+		deleteElements(invalidProxies);
+		deleteElements(invalidExtendsRelations);
+	}
+	
+	
+	public void deleteElements(final HashSet<Element> elements){
+		/* 
+		 * Delete elements form the given list  
+		 */
+		CompoundCommand cc = new CompoundCommand("Delete ModelicaML Proxy Element");
 		Command command = new RecordingCommand(editingDomain) {
 			
 			@Override
 			protected void doExecute() {
-				
-				// (re)collect proxies 
-//				treeBuilder.collectModelicaModelProxies();
-				
-				HashSet<String> modelicaModelQNames = new HashSet<String>();
-				for (TreeObject treeObject : treeBuilder.getTreeItems()) {
-					modelicaModelQNames.add(treeObject.getQName());
-				}
-				
-				for (Element element : treeBuilder.getProxies()) {
-					if (element instanceof NamedElement) {
-
-						// don't delete predefined types from the ModelicaML profile.
-						if (!(element instanceof PrimitiveType && isPredefinedModelicaType(element)) ) {
-							String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
-							if (!modelicaModelQNames.contains(qName)) {
-								deletedProxyQNames.add(((NamedElement)element).getQualifiedName());
-								addToLog("Deleting " + ((NamedElement)element).getQualifiedName());
-								element.destroy();
-							}
-							
-							/*
-							 * delete all class extends relations that do not have targets.
-							 */
-							HashSet<Element> invalidExtendsRelations = new HashSet<Element>();
-							if (element instanceof Classifier) {
-								Classifier classifier = (Classifier) element;
-								EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
-								for (Generalization generalization : classExtendsRelations) {
-									EList<Element> targets = generalization.getTargets();
-									if (targets != null && targets.size() > 0) {
-										// ok
-									}
-									else {
-										invalidExtendsRelations.add(generalization);
-									}
-								}
-							}
-							
-							for ( Element invalidGeneralization : invalidExtendsRelations ) {
-								addToLog("Deleting invalid extends relation in " + ((NamedElement)element).getQualifiedName());
-								invalidGeneralization.destroy();
-							}
-						}
-					}
+				Iterator<Element> i = elements.iterator();
+				while (i.hasNext()) {
+					Object object = (Object) i.next();
+					((Element)object).destroy();
 				}
 			}
 		};
@@ -577,7 +601,12 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				else {
 					appropriateStereotype = extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation);
 				}
-				if (!extendsRelationElement.isStereotypeApplied(appropriateStereotype)) {
+				
+				if (appropriateStereotype == null) {
+					addToLog("Could not find appropriate stereotype for " + extendsRelationElement);
+				}
+				
+				if (appropriateStereotype != null && !extendsRelationElement.isStereotypeApplied(appropriateStereotype)) {
 					extendsRelationElement.applyStereotype(appropriateStereotype);	
 				}
 				

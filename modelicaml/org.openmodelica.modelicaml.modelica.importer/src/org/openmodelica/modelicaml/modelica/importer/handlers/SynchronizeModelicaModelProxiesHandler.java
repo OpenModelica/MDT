@@ -54,15 +54,43 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 	private boolean update = true;
 	private boolean deleteNotUsedProxies = false;
 	
+	private UmlModel umlModel;
+	private EObject ModelicaMLRoot;
+	private ServicesRegistry serviceRegistry;
+	private TransactionalEditingDomain editingDomain;
+
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		treeRoot = new TreeParent(Constants.folderName_code_sync);
-		treeBuilder.setValidateProxies(true);
-		treeBuilder.setCreateOMCMarker(true);
+		umlModel = UmlUtils.getUmlModel();
 		
-		// load, synchronize and validate existing proxies.
-		actionLoad(); // load action automatically starts the synch job when finished.
+		try {
+			ModelicaMLRoot = umlModel.lookupRoot();
+			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+			
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+			treeRoot = new TreeParent(Constants.folderName_code_sync);
+			treeBuilder.setValidateProxies(true);
+			treeBuilder.setCreateOMCMarker(true);
+			
+			// load, synchronize and validate existing proxies.
+			actionLoad(); // load action automatically starts the synch job when finished.
+		}
+		else {
+			String title = "ModelicaML Proxies Synchronization Error";
+			String message = "Could access the ModelicaML model or it its editing domain.";
+			MessageDialog.openError(new Shell(), title, message);
+		}
 		
 		return null;
 	}
@@ -346,7 +374,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
 						
 						if (deleteNotUsedProxies) {
-							ec.deleteNotUsedProxyElements();
+							ec.deleteInvalidProxyElements();
 						}
 						
 					}
@@ -399,40 +427,27 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 				}
 			}
 			
+			if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+				Job job = createSynchJob(serviceRegistry, 
+						editingDomain, 
+						umlModel, 
+						ModelicaMLRoot, 
+						applyProxyStereotype, 
+						update, 
+						deleteNotUsedProxies);
 
-			final UmlModel umlModel = UmlUtils.getUmlModel();
-			try {
-				final EObject ModelicaMLRoot = umlModel.lookupRoot();
-				try {
-					final ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-					
-					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
-						Job job = createSynchJob(serviceRegistry, 
-								editingDomain, 
-								umlModel, 
-								ModelicaMLRoot, 
-								applyProxyStereotype, 
-								update, 
-								deleteNotUsedProxies);
-
-						job.addJobChangeListener(synchJobChangeAdapter);
-//						job.setUser(true);
-						job.schedule();
-					}
-					
-				} catch (ServiceException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				job.addJobChangeListener(synchJobChangeAdapter);
+//				job.setUser(true);
+				job.schedule();
+			}
+			else {
+				String title = "ModelicaML Proxies Synchronization Error";
+				String message = "Could access the ModelicaML model or its editing domain.";
+				MessageDialog.openError(new Shell(), title, message);
 			}
 		}
       
-	
-      
+	  
       
       private Job createValidateProxiesJob( final UmlModel umlModel ){
 			

@@ -155,10 +155,21 @@ public class TreeBuilder implements IRunnableWithProgress{
 							&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
 						String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
 						
+						// check the proxy exists
 						if (!modelicaModelQNames.contains(qName)) {
 							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
 						}
 						
+						// check if a property has type defined
+						if (element instanceof Property) {
+							if ( ((Property)element).getType() == null ) {
+								createMarker(element, 
+										((NamedElement)element).getQualifiedName(), 
+										"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
+							}
+						}
+						
+						// find extends relations without target
 						if (element instanceof Classifier) {
 							Classifier classifier = (Classifier) element;
 							EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
@@ -1172,7 +1183,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	
 	public IMarker createOMCMarker(TreeObject treeObject, String criticality, String msg){
-		if (isCreateOMCMarker()) {
+		if (isCreateOMCMarker() && !msg.trim().equals("") ) {
 			String markerType = Constants.MARKERTYPE_MODELICA_MODELS_LOADING;
 			
 			if ( ModelicaMLModel != null ) {
