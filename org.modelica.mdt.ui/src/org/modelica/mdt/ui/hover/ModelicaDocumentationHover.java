@@ -1,7 +1,6 @@
 
 package org.modelica.mdt.ui.hover;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.DefaultInformationControl;
