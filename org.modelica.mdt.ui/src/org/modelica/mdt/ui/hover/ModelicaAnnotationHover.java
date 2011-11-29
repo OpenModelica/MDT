@@ -25,7 +25,6 @@ import org.modelica.mdt.internal.core.ErrorManager;
  */
 
 public class ModelicaAnnotationHover extends DefaultAnnotationHover {
-
 	
 //	/*
 //	 * Formats a message as HTML text.
@@ -63,51 +62,46 @@ public class ModelicaAnnotationHover extends DefaultAnnotationHover {
 	 * @param lineNumber    Description of the Parameter
 	 * @return              The hoverInfo value
 	 */
-	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber)
-	{
+	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		/* if we have something, just return it */
 		String hoverInfo = super.getHoverInfo(sourceViewer, lineNumber);
-		if (hoverInfo != null) return hoverInfo;
-		
-		List markers = this.getModelicaAnnotationsForLine(sourceViewer, lineNumber);
-		if (markers != null)
-		{
-			if (markers.size() == 1)
-			{
-				IMarker marker = (IMarker) markers.get(0);
+
+		if (hoverInfo != null) {
+			return hoverInfo;
+		}
+
+		List<IMarker> markers = this.getModelicaAnnotationsForLine(sourceViewer, lineNumber);
+
+		if (markers != null) {
+			if (markers.size() == 1) {
+				IMarker marker = markers.get(0);
 				String message = marker.getAttribute(IMarker.MESSAGE, (String) null);
-				if (message != null && message.trim().length() > 0)
-				{
+				if (message != null && message.trim().length() > 0) {
 					return formatSingleMessage(message);
 				}
 			}
-			else
-			{
-				List messages = new ArrayList();
-				Iterator e = markers.iterator();
-				while (e.hasNext())
-				{
-					IMarker marker = (IMarker) e.next();
+			else {
+				List<String> messages = new ArrayList<String>();
+				
+				for (IMarker marker : markers) {
 					String message = marker.getAttribute(IMarker.MESSAGE, (String) null);
-					if (message != null && message.trim().length() > 0)
-					{
-						messages.add(message.trim());
+					String trimmedMessage = message.trim();
+					
+					if (message != null && trimmedMessage.length() > 0) {
+						messages.add(trimmedMessage);
 					}
 				}
-				if (messages.size() == 1)
-				{
-					return this.formatSingleMessage((String) messages.get(0));
+				if (messages.size() == 1) {
+					return this.formatSingleMessage(messages.get(0));
 				}
-
-				if (messages.size() > 1)
-				{
+				if (messages.size() > 1) {
 					return this.formatMultipleMessages(messages);
 				}
 			}
 		}
+
 		return null;
 	}
-
 
 	/**
 	 * Gets the ModelicaAnnotationsForLine attribute of the AnnotationHover object
@@ -116,38 +110,33 @@ public class ModelicaAnnotationHover extends DefaultAnnotationHover {
 	 * @param line    Description of the Parameter
 	 * @return        The jSPAnnotationsForLine value
 	 */
-	protected List getModelicaAnnotationsForLine(ISourceViewer viewer, int line)
-	{
+	protected List<IMarker> getModelicaAnnotationsForLine(ISourceViewer viewer, int line) {
 		IAnnotationModel model = viewer.getAnnotationModel();
 
-		if (model == null)
-		{
+		if (model == null) {
 			return null;
 		}
 
-		List markers = new ArrayList();
-		Iterator e = model.getAnnotationIterator();
-		while (e.hasNext())
-		{
+		List<IMarker> markers = new ArrayList<IMarker>();
+		Iterator<?> e = model.getAnnotationIterator();
+
+		while (e.hasNext()) {
 			Object o = e.next();
-			if (o instanceof MarkerAnnotation)
-			{
-				MarkerAnnotation a = (MarkerAnnotation) o;
-				try
-				{
+
+			if (o instanceof MarkerAnnotation) {
+				MarkerAnnotation a = (MarkerAnnotation)o;
+
+				try {
 					Integer ln = (Integer) a.getMarker().getAttribute(IMarker.LINE_NUMBER);
-					if (ln.intValue() == line + 1)
-					{
+					if (ln.intValue() == line + 1) {
 						markers.add(a.getMarker());
 					}
 				}
-				catch (CoreException ex)
-				{
+				catch (CoreException ex) {
 					ErrorManager.logError(ex);
 				}
 			}
 		}
 		return markers;
 	}
-
 }
