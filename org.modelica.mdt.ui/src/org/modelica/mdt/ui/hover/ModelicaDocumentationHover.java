@@ -51,8 +51,8 @@ public class ModelicaDocumentationHover extends AbstractModelicaEditorTextHover
 				 * @see org.modelica.mdt.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					int shellStyle= SWT.RESIZE | SWT.TOOL;
-					int style= SWT.V_SCROLL | SWT.H_SCROLL;
+//					int shellStyle= SWT.RESIZE | SWT.TOOL;
+//					int style= SWT.V_SCROLL | SWT.H_SCROLL;
 					return new DefaultInformationControl(parent, /* shellStyle, style, */ new HTMLTextPresenter(false));
 				}
 			};
