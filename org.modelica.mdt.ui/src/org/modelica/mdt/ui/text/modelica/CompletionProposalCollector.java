@@ -18,7 +18,6 @@ import java.util.Set;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -27,15 +26,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.StyledString;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.IContextInformation;
 
-import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.compiler.IProblem;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.Signature;
-import org.modelica.mdt.ui.ModelicaImages;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.assist.ModelicaCompletionProposal;
 
@@ -82,15 +78,17 @@ public class CompletionProposalCollector extends CompletionRequestor {
 
 	private final CompletionProposalLabelProvider fLabelProvider= new CompletionProposalLabelProvider();
 
-	private final List fModelicaProposals= new ArrayList();
-	private final List fKeywords= new ArrayList();
-	private final Set fSuggestedMethodNames= new HashSet();
+	private final List<IModelicaCompletionProposal> fModelicaProposals= new ArrayList<IModelicaCompletionProposal>();
+	private final List<IModelicaCompletionProposal> fKeywords= new ArrayList<IModelicaCompletionProposal>();
+	private final Set<String> fSuggestedMethodNames= new HashSet<String>();
 
 	private final IModelicaSourceFile fCompilationUnit;
+	@SuppressWarnings("unused")
 	private final IModelicaProject fModelicaProject;
 	private int fUserReplacementLength;
 
 	private CompletionContext fContext;
+	@SuppressWarnings("unused")
 	private IProblem fLastProblem;
 
 	/* performance instrumentation */
