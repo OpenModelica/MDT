@@ -227,7 +227,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 					return true;
 				messages.add(message);
 			} else {
-				ArrayList messages= new ArrayList();
+				List messages= new ArrayList();
 				messages.add(value);
 				messages.add(message);
 				messagesAtPosition.put(position, messages);
