@@ -42,6 +42,7 @@
 package org.modelica.mdt.test;
 
 import org.eclipse.core.runtime.CoreException;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
@@ -145,7 +146,8 @@ public class TestModelicaSourceFile extends TestCase {
 		assertEquals("Expected full name differs from actual full name for the given region.", fullName, actualFullName);
 		assertEquals("Expected class name differs from actual class name for the given region.", className, actualClassName);
 
-		ISourceRegion actualSourceRegion = modelicaClass.getLocation().getSourceRegion();
+		IDefinitionLocation location = modelicaClass.getLocation();
+		ISourceRegion actualSourceRegion = location.getSourceRegion();
 
 		int actualStartLine = actualSourceRegion.getStartLine();
 		int actualStartCol = actualSourceRegion.getStartColumn();
