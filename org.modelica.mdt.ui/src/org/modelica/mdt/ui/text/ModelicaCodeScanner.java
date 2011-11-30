@@ -138,9 +138,8 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 			"NONE"    /* SOME  is in MetaModelica */
 		};
 
-		public ModelicaTypeDetector() 
-		{
-		}
+//		public ModelicaTypeDetector() {
+//		}
 
 		public boolean isWordStart(char c) 
 		{
@@ -352,9 +351,8 @@ public class ModelicaCodeScanner extends RuleBasedScanner
 		      "cons", "fill" 
 		};
 
-		public ModelicaBuiltinRelationsDetector() 
-		{
-		}
+//		public ModelicaBuiltinRelationsDetector() {
+//		}
 				
 		static public Vector<String> getSortedKeywordsList()
 		{
