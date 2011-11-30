@@ -35,8 +35,8 @@ public class RenameFunctionInputPage extends UserInputWizardPage {
   
   private IDialogSettings dialogSettings;
   private Text txtNewName;
-  private Button cbUpdateBundle;
-  private Button cbAllProjects;
+//  private Button cbUpdateBundle;
+//  private Button cbAllProjects;
 
 
   public RenameFunctionInputPage( final RenameFunctionInfo info ) {
@@ -123,17 +123,17 @@ public class RenameFunctionInputPage extends UserInputWizardPage {
     initAllProjectsOption();
   }
 */
-  private Button createCheckbox( final Composite composite, 
-                                 final String text ) {
-    Button result = new Button( composite, SWT.CHECK );
-    result.setText( text );
-    
-    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
-    gridData.horizontalSpan = 2;
-    result.setLayoutData( gridData );
-    
-    return result;
-  }
+//  private Button createCheckbox( final Composite composite, 
+//                                 final String text ) {
+//    Button result = new Button( composite, SWT.CHECK );
+//    result.setText( text );
+//    
+//    GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
+//    gridData.horizontalSpan = 2;
+//    result.setLayoutData( gridData );
+//    
+//    return result;
+//  }
   
   
   // helping methods
@@ -155,15 +155,15 @@ public class RenameFunctionInputPage extends UserInputWizardPage {
     setPageComplete( txt.length() > 0 && !txt.equals( info.getOldName() ) );
   }
   
-  private void initUpdateBundleOption() {
-    boolean updateRefs = dialogSettings.getBoolean( DS_UPDATE_BUNDLE );
-    cbUpdateBundle.setSelection( updateRefs );
-    info.setUpdateBundle( updateRefs );
-  }
+//  private void initUpdateBundleOption() {
+//    boolean updateRefs = dialogSettings.getBoolean( DS_UPDATE_BUNDLE );
+//    cbUpdateBundle.setSelection( updateRefs );
+//    info.setUpdateBundle( updateRefs );
+//  }
   
-  private void initAllProjectsOption() {
-    boolean allProjects = dialogSettings.getBoolean( DS_ALL_PROJECTS );
-    cbAllProjects.setSelection( allProjects );
-    info.setAllProjects( allProjects );
-  }
+//  private void initAllProjectsOption() {
+//    boolean allProjects = dialogSettings.getBoolean( DS_ALL_PROJECTS );
+//    cbAllProjects.setSelection( allProjects );
+//    info.setAllProjects( allProjects );
+//  }
 }
