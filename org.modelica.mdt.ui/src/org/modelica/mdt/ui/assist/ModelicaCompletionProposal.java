@@ -558,11 +558,11 @@ public class ModelicaCompletionProposal extends CompletionProposal implements IM
 	}
 	
 	/** The reference position category name. */
-	private static final String CATEGORY= "reference_position"; //$NON-NLS-1$
+	//private static final String CATEGORY= "reference_position"; //$NON-NLS-1$
 	/** The position updater of the reference position. */
-	private final IPositionUpdater fPositionUpdater= new DefaultPositionUpdater(CATEGORY);
+	//private final IPositionUpdater fPositionUpdater= new DefaultPositionUpdater(CATEGORY);
 	/** The reference position. */
-	private final Position fPosition= new Position(0);
+	//private final Position fPosition= new Position(0);
 	
 	
 	/**
