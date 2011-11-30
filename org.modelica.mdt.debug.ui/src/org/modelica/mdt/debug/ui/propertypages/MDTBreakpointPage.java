@@ -19,13 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
@@ -51,7 +45,7 @@ public class MDTBreakpointPage extends PropertyPage {
 	protected Button fHitCountButton;
 	protected Text fHitCountText;
 	protected Combo fSuspendPolicy;
-	protected List fErrorMessages= new ArrayList();
+	protected List<String> fErrorMessages= new ArrayList<String>();
 		
 	/**
 	 * Constant for the empty string
@@ -66,7 +60,7 @@ public class MDTBreakpointPage extends PropertyPage {
 	public boolean performOk() {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IMDTBreakpoint breakpoint = getBreakpoint();
+				/*IMDTBreakpoint breakpoint = */getBreakpoint();
 				doStore();
 			}
 		};
@@ -151,7 +145,7 @@ public class MDTBreakpointPage extends PropertyPage {
             	getShell().addShellListener(new ShellListener() {
                     public void shellActivated(ShellEvent e) {
                         Shell shell = (Shell)e.getSource();
-                        shell.setText(MessageFormat.format(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())})); 
+                        shell.setText(MessageFormat.format(PropertyPageMessages.JavaBreakpointPage_10, new Object[]{getName(getBreakpoint())})); 
                         shell.removeShellListener(this);
                     }
                     public void shellClosed(ShellEvent e) {
