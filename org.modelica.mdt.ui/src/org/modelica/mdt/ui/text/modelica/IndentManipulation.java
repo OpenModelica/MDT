@@ -12,6 +12,7 @@ package org.modelica.mdt.ui.text.modelica;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -324,13 +325,14 @@ public final class IndentManipulation {
 			throw new IllegalArgumentException();
 		}
 
-		ArrayList result= new ArrayList();
+		List<ReplaceEdit> result= new ArrayList<ReplaceEdit>();
+		
 		try {
 			ILineTracker tracker= new DefaultLineTracker();
 			tracker.set(source);
 			int nLines= tracker.getNumberOfLines();
 			if (nLines == 1)
-				return (ReplaceEdit[])result.toArray(new ReplaceEdit[result.size()]);
+				return result.toArray(new ReplaceEdit[0]);
 			for (int i= 1; i < nLines; i++) {
 				IRegion region= tracker.getLineInformation(i);
 				int offset= region.getOffset();
@@ -346,7 +348,8 @@ public final class IndentManipulation {
 		} catch (BadLocationException cannotHappen) {
 			// can not happen
 		}
-		return (ReplaceEdit[])result.toArray(new ReplaceEdit[result.size()]);
+		
+		return result.toArray(new ReplaceEdit[0]);
 	}
 
 	/*
