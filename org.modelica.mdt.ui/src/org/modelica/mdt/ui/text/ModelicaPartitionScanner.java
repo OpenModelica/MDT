@@ -28,7 +28,6 @@ import org.modelica.mdt.ui.text.IModelicaPartitions;
  *  - Modelica strings
  *  - Modelica code
  */
-@SuppressWarnings("unchecked")
 public class ModelicaPartitionScanner extends RuleBasedPartitionScanner implements IModelicaPartitions {
 
 	/**
@@ -89,13 +88,11 @@ public class ModelicaPartitionScanner extends RuleBasedPartitionScanner implemen
 	 * Creates the partitioner and sets up the appropriate rules.
 	 */
 	public ModelicaPartitionScanner() {
-		super();
-
 		IToken modelicaString = new Token(MODELICA_STRING);		
 		IToken modelicaMultiLineComment= new Token(MODELICA_MULTI_LINE_COMMENT);
 		IToken modelicaSingleLineComment= new Token(MODELICA_SINGLE_LINE_COMMENT);		
 
-		List rules= new ArrayList();
+		List<IPredicateRule> rules= new ArrayList<IPredicateRule>();
 
 		// Add rule for single line comments.
 		rules.add(new EndOfLineRule("//", modelicaSingleLineComment)); 
@@ -109,8 +106,8 @@ public class ModelicaPartitionScanner extends RuleBasedPartitionScanner implemen
 		rules.add(wordRule);
 		rules.add(new MultiLineRule("/*", "*/", modelicaMultiLineComment, (char)0, true)); 
 		
-		IPredicateRule[] result= new IPredicateRule[rules.size()];
-		rules.toArray(result);
+		IPredicateRule[] result = rules.toArray(new IPredicateRule[0]);
+
 		setPredicateRules(result);
 	}
 }
