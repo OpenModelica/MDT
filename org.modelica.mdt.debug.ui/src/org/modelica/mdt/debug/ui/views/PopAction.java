@@ -29,7 +29,6 @@ import org.modelica.mdt.debug.ui.MDTDebugUIPlugin;
  * Pops a selected value off the data stack. The selection does <b>not</b> have to be
  * the top element on the stack.
  */
-@SuppressWarnings("unchecked")
 public class PopAction extends Action implements ISelectionChangedListener {
     
     private DataStackView fView;
@@ -66,7 +65,7 @@ public class PopAction extends Action implements ISelectionChangedListener {
         try {
             MDTDebugTarget target = getDebugTarget();
             IValue[] stack = target.getDataStack();
-	        List restore = new ArrayList();
+	        List<IValue> restore = new ArrayList<IValue>();
 	        for (int i = 0; i < stack.length; i++) {
 	            Object value = stack[i];
 	            if (popee.equals(value)) {
@@ -79,7 +78,7 @@ public class PopAction extends Action implements ISelectionChangedListener {
 	            }
 	        }
 	        while (!restore.isEmpty()) {
-	            IValue value = (IValue) restore.remove(restore.size() - 1);
+	            IValue value = restore.remove(restore.size() - 1);
 	            target.push(value.getValueString());
 	        }
         } catch (DebugException e) {
@@ -88,9 +87,9 @@ public class PopAction extends Action implements ISelectionChangedListener {
     }
     
     /**
-     * Returns the debug target assocaited with the data view.
+     * Returns the debug target associated with the data view.
      * 
-     * @return the debug target assocaited with the data view
+     * @return the debug target associated with the data view
      */
     protected MDTDebugTarget getDebugTarget() {
         TreeViewer viewer = (TreeViewer)fView.getViewer();
