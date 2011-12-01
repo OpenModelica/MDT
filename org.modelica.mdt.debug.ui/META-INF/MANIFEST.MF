@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: MDT Debug UI Plugin
 Bundle-SymbolicName: org.modelica.mdt.debug.ui; singleton:=true
 Bundle-Version: 0.7.19
-Bundle-Localization: plugin
 Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
 Bundle-Activator: org.modelica.mdt.debug.ui.MDTDebugUIPlugin
 Require-Bundle: org.eclipse.core.resources,
@@ -26,4 +25,5 @@ Export-Package: org.modelica.mdt.debug.ui,
  org.modelica.mdt.debug.ui.presentation,
  org.modelica.mdt.debug.ui.shortcuts,
  org.modelica.mdt.debug.ui.views
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
