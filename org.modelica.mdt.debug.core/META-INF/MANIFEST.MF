@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: MDT Debug Core Plugin
 Bundle-SymbolicName: org.modelica.mdt.debug.core; singleton:=true
 Bundle-Version: 0.7.19
-Bundle-Localization: plugin
 Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
 Bundle-Activator: org.modelica.mdt.debug.core.MDTDebugCorePlugin
 Require-Bundle: org.eclipse.debug.core,
@@ -28,4 +27,5 @@ Export-Package: org.modelica.mdt.debug.core,
  org.modelica.mdt.debug.gdb.core.model.stack,
  org.modelica.mdt.debug.gdb.core.model.thread,
  org.modelica.mdt.debug.gdb.core.sourcelookup
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
