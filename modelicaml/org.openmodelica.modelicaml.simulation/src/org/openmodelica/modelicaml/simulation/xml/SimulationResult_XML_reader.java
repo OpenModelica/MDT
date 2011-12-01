@@ -66,6 +66,7 @@ public class SimulationResult_XML_reader {
 			
 			String name = eResult.getAttributeValue("name");
 			if(name.equals(propertyName)){
+//				System.err.println("FOUND: " + name);
 				results.property = name;
 				int t = 0;
 				while (t < eResult.getChildElements("data").size()) {
@@ -75,6 +76,7 @@ public class SimulationResult_XML_reader {
 					results.values.put(time, value);
 					++t;
 				}
+				break;
 			}
 //			String qualifiedName = eTestModel.getChildElements("qualifiedName").get(0).getValue();
 //			

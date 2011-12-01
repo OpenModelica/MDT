@@ -21,9 +21,11 @@ public class EvaluateResultXML {
 			return "fileNotFound";
 		
 		
-		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", xml_file.getAbsoluteFile());
-
-		if(sr == null){
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
+//		System.out.println("#1-> " + sr.property);
+		
+		if(sr == null || sr.property.isEmpty()){
+//			System.out.println("#2-> " + propertyName + " resultsNotfound");
 			return "resultsNotfound";
 		}
 		
@@ -43,9 +45,9 @@ public class EvaluateResultXML {
 			return "fileNotFound";
 		
 		
-		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", xml_file.getAbsoluteFile());
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
-		if(sr == null){
+		if(sr == null || sr.property.isEmpty()){
 			return "resultsNotfound";
 		}
 		
@@ -65,9 +67,9 @@ public class EvaluateResultXML {
 			return "fileNotFound";
 		
 		
-		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", xml_file.getAbsoluteFile());
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
-		if(sr == null){
+		if(sr == null || sr.property.isEmpty()){
 			return "resultsNotfound";
 		}
 		
@@ -87,9 +89,9 @@ public class EvaluateResultXML {
 			return "fileNotFound";
 		
 		
-		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", xml_file.getAbsoluteFile());
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
-		if(sr == null){
+		if(sr == null || sr.property.isEmpty()){
 			return "resultsNotfound";
 		}
 		
@@ -109,9 +111,9 @@ public class EvaluateResultXML {
 			return "fileNotFound";
 		
 		
-		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", xml_file.getAbsoluteFile());
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
-		if(sr == null){
+		if(sr == null || sr.property.isEmpty()){
 			return "resultsNotfound";
 		}
 		
@@ -155,7 +157,7 @@ public class EvaluateResultXML {
 		if(checkMode.equals("changedItsValue"))
 			return checkChangedItsValue(propertyName, new File(result_xml_file));
 		else
-			return "checkModeUnknow";
+			return "checkModeUnknown";
 	}
 	
 	/**

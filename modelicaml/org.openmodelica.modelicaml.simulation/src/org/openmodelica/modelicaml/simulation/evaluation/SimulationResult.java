@@ -9,6 +9,7 @@ public class SimulationResult {
 	public Map<Double, Double> values;
 	
 	public SimulationResult(){
+		property = "";
 		this.values = new TreeMap<Double, Double>();
 	}
 	
