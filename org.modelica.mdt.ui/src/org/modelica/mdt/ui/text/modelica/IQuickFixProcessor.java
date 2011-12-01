@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.modelica.mdt.ui.text.modelica;
 
-import org.eclipse.core.runtime.CoreException;
 import org.modelica.mdt.core.IModelicaSourceFile;
 
 
