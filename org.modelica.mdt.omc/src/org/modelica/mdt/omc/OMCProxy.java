@@ -130,7 +130,7 @@ public class OMCProxy implements IModelicaCompiler
 	private ArrayList<String> standardLibraryPackages = null;
 
 	/* should we trace the calls to sendExpression? */
-	private  boolean traceOMCCalls  = false;
+	private  boolean traceOMCCalls  = true;
 	private  boolean traceOMCStatus = true;
 
 	private  boolean traceStatusPreferences = false;
