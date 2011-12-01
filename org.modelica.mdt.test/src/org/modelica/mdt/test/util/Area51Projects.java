@@ -226,16 +226,8 @@ public class Area51Projects {
 
 		/* packages_folder/file_package.mo */
 		file = folder.getFile("file_package.mo");
-		contents = 
-				"package file_package1\n" +
-						"    import Modelica;\n" +
-						"end file_package1;\n" +
-						"\n" +
-						"encapsulated package file_package2\n" +
-						"    import Modelica;\n" +
-						"end file_package2;";
-
-		file.create(Utility.getByteStream(contents), true, null);
+		InputStream is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/packages_folder/file_package.mo");
+		file.create(is, true, null);
 
 		/* packages_folder/folder_package */
 		folder = folder.getFolder("folder_package");
@@ -243,11 +235,8 @@ public class Area51Projects {
 
 		/* packages_folder/folder_package/package.mo */
 		file = folder.getFile("package.mo");
-		contents = 
-				"package folder_package\n" +
-						"    import Modelica;\n" +
-						"end folder_package;";
-		file.create(Utility.getByteStream(contents), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/packages_folder/folder_package/package.mo");
+		file.create(is, true, null);
 
 		/* package_look_alike */
 		folder = modelica_project.getFolder("package_look_alike");
@@ -255,7 +244,8 @@ public class Area51Projects {
 
 		/* package_look_alike/package.mo */
 		file = folder.getFile("package.mo");
-		file.create(Utility.getByteStream(""), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/package_look_alike/package.mo");
+		file.create(is, true, null);
 
 		/* empty_folder */
 		folder = modelica_project.getFolder("empty_folder");
@@ -263,11 +253,12 @@ public class Area51Projects {
 
 		/* empty_file */
 		file = modelica_project.getFile("empty_file");
-		file.create(Utility.getByteStream(""), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/empty_file");
+		file.create(is, true, null);
 
 		/* root_model.mo */
 		file = modelica_project.getFile("root_model.mo");
-		InputStream is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_model.mo");
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_model.mo");
 		file.create(is, true, null);
 
 		/* nested_models.mo */
@@ -417,14 +408,8 @@ public class Area51Projects {
 
 		/* a function inside the root_package */
 		file = folder.getFile("root_package_function.mo");
-		contents = 
-				"function root_package_function\n" +
-						"    input Real x;\n" +
-						"    output Real y;\n" +
-						"algorithm\n" +
-						"    y := 1 - x\n" +
-						"end root_package_function;\n";
-		file.create(Utility.getByteStream(contents), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_package/root_package_function.mo");		
+		file.create(is, true, null);
 
 		/* a (non-package) folder inside the root_package */
 		sub_folder = folder.getFolder("root_package_folder");
