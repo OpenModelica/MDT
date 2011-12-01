@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.modelica.mdt.ui.text.modelica;
 
-import org.eclipse.core.runtime.CoreException;
-
-
 /**
  * Interface to be implemented by contributors to the extension point
  * <code>org.eclipse.jdt.ui.quickAssistProcessors</code>.
