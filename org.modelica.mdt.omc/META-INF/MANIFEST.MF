@@ -4,7 +4,6 @@ Bundle-Name: Modelica Development Tooling OMC proxy
 Bundle-SymbolicName: org.modelica.mdt.omc; singleton:=true
 Bundle-Version: 0.7.19
 Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.modelica.mdt.core,
@@ -12,3 +11,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.eclipse.ui
 Export-Package: org.modelica.mdt.omc.internal;x-friends:="org.modelica.mdt.test"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
