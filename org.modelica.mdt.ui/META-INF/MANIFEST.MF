@@ -4,7 +4,6 @@ Bundle-Name: Modelica Development Tooling UI
 Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true
 Bundle-Version: 0.7.19
 Bundle-Activator: org.modelica.mdt.ui.UIPlugin
-Bundle-Localization: plugin
 Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -22,7 +21,7 @@ Require-Bundle: org.modelica.mdt.core,
  org.eclipse.core.expressions;bundle-version="3.4.0",
  org.eclipse.ltk.core.refactoring,
  org.modelica.mdt.breakpoint
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
 Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modelica.mdt.ui,org.modelica.mdt.debug.ui",
  org.modelica.mdt.ui.actions,
@@ -39,3 +38,4 @@ Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modeli
  org.modelica.mdt.ui.wizards;x-friends:="org.modelica.mdt.test"
 Import-Package: org.eclipse.ltk.core.refactoring.participants,
  org.eclipse.ltk.ui.refactoring
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
