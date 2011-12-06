@@ -24,6 +24,7 @@
  *****************************************************************************/
 package org.modelica.mdt.ui.view;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
@@ -89,9 +90,9 @@ import org.modelica.mdt.ui.ModelicaElementComparator;
 import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.ui.ModelicaElementChangeListener;
 
-public class ModelicaContentOutlinePage extends ContentOutlinePage
-{
+public class ModelicaContentOutlinePage extends ContentOutlinePage {
 	static Object[] NO_CHILDREN= new Object[0];
+	static IPreferenceStore prefStore = UIPlugin.getDefault().getPreferenceStore();
 
 	ModelicaEditor fEditor = null;	
 
@@ -109,7 +110,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	private ToggleLinkingAction fToggleLinkingAction;
 
 	private CompositeActionGroup fActionGroups;
-	
+
 	private IPreferenceStore fCorePreferenceStore = CorePlugin.getDefault().getPreferenceStore();
 
 	/**
@@ -167,32 +168,50 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			return result;
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
+			// TODO: Use a better name for this property and don't hard-code it here. Use modern-style enum.
+			String filterProtectedProperty = "MemberFilterActionGroup.org.modelica.mdt.ui.ModelicaContentOutlinePage.1";
+			boolean shouldFilterProtected = false;
+
+			if (prefStore.contains(filterProtectedProperty)) {
+				shouldFilterProtected = prefStore.getBoolean(filterProtectedProperty);
+			}
+			else {
+				// We are not storing a preference for this filter, so we disable it, i.e., no filtering.
+			}
+
+			Object[] result = NO_CHILDREN;
+
 			if (parent instanceof IParent) {
-				IParent c= (IParent) parent;
-				try 
-				{
-					Collection<? extends IModelicaElement> z = c.getChildren();
-					IModelicaElement[] arr = new IModelicaElement[z.size()];
-					int i = 0;
-					for (IModelicaElement el : z)
-					{
-						arr[i++] = el;
+				try {
+					Collection<? extends IModelicaElement> children = ((IParent)parent).getChildren();
+					List<IModelicaElement> filteredChildren = new ArrayList<IModelicaElement>();
+					for (IModelicaElement el : children) {
+						if (shouldFilterProtected && el.getVisibility() == IModelicaElement.Visibility.PROTECTED) {
+							// Filter out this protected item.
+						}
+						else {
+							filteredChildren.add(el);
+						}
 					}
-					return arr; //filter(arr);
+
+					result = filteredChildren.toArray();
 				} 
-				catch (Exception x) 
-				{
+				catch (Exception x) {
 					x.printStackTrace();
 				}
 			}
-			return NO_CHILDREN;
+
+			return result;
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			return getChildren(parent);
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof IModelicaElement) {
 				IModelicaElement e= (IModelicaElement) child;
@@ -201,6 +220,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof IParent) {
 				IParent c= (IParent) parent;
@@ -220,6 +240,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			return false;
 		}
 
+		@Override
 		public void dispose() 
 		{
 			if (fListener != null) {
@@ -230,6 +251,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		/*
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			boolean isMO= (newInput instanceof IModelicaFile);
 
@@ -295,6 +317,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		/*
 		 * @see TreeViewer#internalExpandToLevel
 		 */
+		@Override
 		protected void internalExpandToLevel(Widget node, int level) {
 			if (node instanceof Item) {
 				Item i= (Item) node;
@@ -347,6 +370,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		/*
 		 * @see org.eclipse.jface.viewers.AbstractTreeViewer#isExpandable(java.lang.Object)
 		 */
+		@Override
 		public boolean isExpandable(Object element) {
 			if (hasFilters()) {
 				return getFilteredChildren(element).length > 0;
@@ -415,6 +439,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			valueChanged(checked, false);			
 		}
 
+		@Override
 		public void run() {
 			valueChanged(isChecked(), true);
 		}
@@ -422,6 +447,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		private void valueChanged(final boolean on, boolean store) {
 			setChecked(on);
 			BusyIndicator.showWhile(fOutlineViewer.getControl().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					if (on)
 						fOutlineViewer.setComparator(fComparator);
@@ -429,9 +455,9 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 						fOutlineViewer.setComparator(fModelicaComparator);
 				}
 			});
-			
+
 			if (store) fCorePreferenceStore.setValue("ModeilcaEditor.Outline.LexicalSortingAction.isChecked", on); //$NON-NLS-1$
-			
+
 		}
 	}
 
@@ -460,6 +486,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		/**
 		 * Runs the action.
 		 */
+		@Override
 		public void run() 
 		{
 			fCorePreferenceStore.setValue("ModelicaEditor.SyncOutlineOnCursorMove", isChecked());			
@@ -497,6 +524,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		fContextMenuID= contextMenuID;
 		fEditor= editor;
 		fPropertyChangeListener= new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				doPropertyChange(event);
 			}
@@ -507,14 +535,15 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	private void doPropertyChange(PropertyChangeEvent event) {
 		if (fOutlineViewer != null) {
 			// TODO! FIXME! update only if is a sort action! if (event.getProperty() ) {
-				fOutlineViewer.refresh(false);
+			fOutlineViewer.refresh(false);
 			//}
 		}
 	}
-	
+
 	/* (non-Modelicadoc)
 	 * Method declared on Page
 	 */
+	@Override
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 	}
@@ -522,6 +551,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	/*
 	 * @see ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		if (fOutlineViewer != null)
 			fOutlineViewer.addSelectionChangedListener(listener);
@@ -532,6 +562,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	/*
 	 * @see ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		if (fOutlineViewer != null)
 			fOutlineViewer.removeSelectionChangedListener(listener);
@@ -542,6 +573,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	/*
 	 * @see ISelectionProvider#setSelection(ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		if (fOutlineViewer != null)
 			fOutlineViewer.setSelection(selection);
@@ -550,6 +582,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	/*
 	 * @see ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		if (fOutlineViewer == null)
 			return StructuredSelection.EMPTY;
@@ -595,6 +628,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	/*
 	 * @see IPage#createControl
 	 */
+	@Override
 	public void createControl(Composite parent) {
 
 		Tree tree= new Tree(parent, SWT.MULTI);
@@ -603,8 +637,8 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		fOutlineViewer.setContentProvider(new ChildrenProvider());
 		// use a non decorating label provider for outline!
 		// fOutlineViewer.setLabelProvider(new DecoratingLabelProvider(
-        //        new WorkbenchLabelProvider(), UIPlugin.getDefault().getWorkbench()
-        //        .getDecoratorManager().getLabelDecorator()));
+		//        new WorkbenchLabelProvider(), UIPlugin.getDefault().getWorkbench()
+		//        .getDecoratorManager().getLabelDecorator()));
 		fOutlineViewer.setLabelProvider(new WorkbenchLabelProvider());
 
 		Object[] listeners= fSelectionChangedListeners.getListeners();
@@ -622,6 +656,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		MenuManager manager= new MenuManager(fContextMenuID, fContextMenuID);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				contextMenuAboutToShow(m);
 			}
@@ -634,10 +669,10 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 
 		updateSelectionProvider(site);
 
-//		we must create the groups after we have set the selection provider to the site
+		//		we must create the groups after we have set the selection provider to the site
 		fActionGroups= new CompositeActionGroup(new ActionGroup[] {});
 
-//		register global actions
+		//		register global actions
 		IActionBars actionBars= site.getActionBars();
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.UNDO, fEditor.getAction(ITextEditorActionConstants.UNDO));
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.REDO, fEditor.getAction(ITextEditorActionConstants.REDO));
@@ -651,7 +686,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 
 		fActionGroups.fillActionBars(actionBars);
 
-//		Custom filter group
+		//		Custom filter group
 		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.modelica.mdt.ui.ModelicaContentOutlinePage", fOutlineViewer); //$NON-NLS-1$
 
 		registerToolbarActions(actionBars);
@@ -670,6 +705,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		site.setSelectionProvider(provider);
 	}
 
+	@Override
 	public void dispose() {
 
 		if (fEditor == null)
@@ -707,6 +743,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		super.dispose();
 	}
 
+	@Override
 	public Control getControl() {
 		if (fOutlineViewer != null)
 			return fOutlineViewer.getControl();
@@ -738,7 +775,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 
 	public IAction getAction(String actionID) {
 		Assert.isNotNull(actionID);
-		return (IAction) fActions.get(actionID);
+		return fActions.get(actionID);
 	}
 
 	/*
@@ -750,6 +787,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		}
 		if (key == IModelicaElement.class) {
 			return new IShowInTargetList() {
+				@Override
 				public String[] getShowInTargetIds() {
 					return new String[] { UIPlugin.ID_PROJECTSVIEW };
 				}
@@ -799,6 +837,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	/*
 	 * @see Page#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fOutlineViewer != null)
 			fOutlineViewer.getControl().setFocus();
@@ -816,8 +855,8 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 		{
 			if (element != null && element instanceof IModelicaClass)
 				if(((IModelicaClass)element).getRestriction() == IModelicaClass.Restriction.TYPE ||
-				   ((IModelicaClass)element).getRestriction() == IModelicaClass.Restriction.UNIONTYPE) 
-				       return true;
+				((IModelicaClass)element).getRestriction() == IModelicaClass.Restriction.UNIONTYPE) 
+					return true;
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -832,6 +871,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	 */
 	protected IShowInSource getShowInSource() {
 		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
 				return new ShowInContext(null, getSite().getSelectionProvider().getSelection());
 			}
@@ -845,6 +885,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 	 */
 	protected IShowInTarget getShowInTarget() {
 		return new IShowInTarget() {
+			@Override
 			public boolean show(ShowInContext context) {
 				ISelection sel= context.getSelection();
 				if (sel instanceof ITextSelection) {
@@ -863,8 +904,8 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			}
 		};
 	}
-	
-	
+
+
 	protected void handleOpen(OpenEvent event)
 	{
 		/*
@@ -886,6 +927,6 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage
 			ErrorManager.showCoreError(e);
 		}
 	}
-	
+
 
 }

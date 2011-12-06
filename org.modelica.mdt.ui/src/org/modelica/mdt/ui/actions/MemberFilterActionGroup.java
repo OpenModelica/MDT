@@ -75,25 +75,25 @@ public class MemberFilterActionGroup extends ActionGroup {
 	public static final int FILTER_PROTECTED= MemberFilter.FILTER_PROTECTED;
 	public static final int FILTER_PARAMETERS= MemberFilter.FILTER_PARAMETERS;
 	public static final int FILTER_COMPONENTS= MemberFilter.FILTER_COMPONENTS;
-	
+
 	/** @since 0.6.8 */
 	public static final int FILTER_TYPES= MemberFilter.FILTER_TYPES;
 	/** @since 0.6.8 */
 	public static final int ALL_FILTERS= FILTER_PROTECTED | FILTER_COMPONENTS | FILTER_PARAMETERS | FILTER_TYPES;
-	
+
 	private static final String TAG_HIDECOMPONENTS= "hidecomponents"; //$NON-NLS-1$
 	private static final String TAG_HIDEPARAMETERS= "hideparameters"; //$NON-NLS-1$
 	private static final String TAG_HIDEPRIVATE= "hideprotected"; //$NON-NLS-1$
 	private static final String TAG_HIDETYPES= "hidetypes"; //$NON-NLS-1$
-	
+
 	private MemberFilterAction[] fFilterActions;
 	private MemberFilter fFilter;
-	
+
 	private StructuredViewer fViewer;
 	private String fViewerId;
 	private boolean fInViewMenu;
-	
-	
+
+
 	/**
 	 * Creates a new <code>MemberFilterActionGroup</code>.
 	 * 
@@ -119,7 +119,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	public MemberFilterActionGroup(StructuredViewer viewer, String viewerId, boolean inViewMenu) {	
 		this(viewer, viewerId, inViewMenu, ALL_FILTERS);
 	}
-	
+
 	/**
 	 * Creates a new <code>MemberFilterActionGroup</code>.
 	 * 
@@ -135,86 +135,88 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 * @since 0.6.8
 	 */
 	public MemberFilterActionGroup(StructuredViewer viewer, String viewerId, boolean inViewMenu, int availableFilters) {	
-				
 		fViewer= viewer;
 		fViewerId= viewerId;
 		fInViewMenu= inViewMenu;
-		
+
 		fFilter= new MemberFilter();
-		
-		String title;
+
 		List<MemberFilterAction> actions= new ArrayList<MemberFilterAction>();
-		
+		IPreferenceStore store = UIPlugin.getDefault().getPreferenceStore();
+
 		// fields
 		int filterProperty= FILTER_COMPONENTS;
 		if (isSet(filterProperty, availableFilters)) {
-			boolean filterEnabled= false; //store.getBoolean(getPreferenceKey(filterProperty));
+			boolean filterEnabled = store.getBoolean(getPreferenceKey(filterProperty));
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= "Hide components"; 
+			String title = "Hide components"; 
 			MemberFilterAction hideComponents= new MemberFilterAction(this, title, filterProperty, filterEnabled);
 			hideComponents.setDescription("Hides components"); 
 			hideComponents.setToolTipText("Hide components"); 
 			hideComponents.setImageDescriptor(ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OUTLINE_HIDE_COMPONENTS));
 			actions.add(hideComponents);
 		}
-			
+
 		// static
 		filterProperty= FILTER_PARAMETERS;
 		if (isSet(filterProperty, availableFilters)) {
-			boolean filterEnabled= false; //store.getBoolean(getPreferenceKey(filterProperty));
+			boolean filterEnabled = store.getBoolean(getPreferenceKey(filterProperty));
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= "Hide parameters"; 
+			String title = "Hide parameters"; 
 			MemberFilterAction hideStatic= new MemberFilterAction(this, title, FILTER_PARAMETERS, filterEnabled);
 			hideStatic.setDescription("Hides the parameters"); 
 			hideStatic.setToolTipText("Hide parameters"); 
 			hideStatic.setImageDescriptor(ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OUTLINE_HIDE_PARAMETERS));
 			actions.add(hideStatic);
 		}
-		
+
 		// non-public
 		filterProperty= FILTER_PROTECTED;
 		if (isSet(filterProperty, availableFilters)) {
-			boolean filterEnabled= false; //store.getBoolean(getPreferenceKey(filterProperty));
+			boolean filterEnabled = store.getBoolean(getPreferenceKey(filterProperty)); 
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= "Hide protected"; 
+			String title = "Hide protected"; 
 			MemberFilterAction hideNonPublic= new MemberFilterAction(this, title, filterProperty, filterEnabled);
 			hideNonPublic.setDescription("Hide protected elements"); 
 			hideNonPublic.setToolTipText("Hide protected"); 
 			hideNonPublic.setImageDescriptor(ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OUTLINE_HIDE_PROTECTED));
 			actions.add(hideNonPublic);
 		}
-		
+
 		// local types
 		filterProperty= FILTER_TYPES;
 		if (isSet(filterProperty, availableFilters)) {
-			boolean filterEnabled= false; //store.getBoolean(getPreferenceKey(filterProperty));
+			boolean filterEnabled = store.getBoolean(getPreferenceKey(filterProperty));
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= "Hide types"; 
+			String title = "Hide types"; 
 			MemberFilterAction hideLocalTypes= new MemberFilterAction(this, title, filterProperty, filterEnabled);
 			hideLocalTypes.setDescription("Hide type definitions"); 
 			hideLocalTypes.setToolTipText("Hide types"); 
 			hideLocalTypes.setImageDescriptor(ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OUTLINE_HIDE_TYPES));
 			actions.add(hideLocalTypes);
 		}
-		
+
 		// order corresponds to order in toolbar
-		fFilterActions= (MemberFilterAction[]) actions.toArray(new MemberFilterAction[actions.size()]);
-		
+		fFilterActions= actions.toArray(new MemberFilterAction[actions.size()]);
+
 		fViewer.addFilter(fFilter);
 	}
-	
+
 	private String getPreferenceKey(int filterProperty) {
-		return "MemberFilterActionGroup." + fViewerId + '.' + String.valueOf(filterProperty); //$NON-NLS-1$
+		// TODO: Use modern-style enums for the properties.
+		String preferenceKey = "MemberFilterActionGroup." + fViewerId + '.' + String.valueOf(filterProperty);
+
+		return preferenceKey;
 	}
-	
+
 	/**
 	 * Sets the member filters.
 	 * 
@@ -233,7 +235,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		if (propertyKeys.length == 0)
 			return;
 		Assert.isTrue(propertyKeys.length == propertyValues.length);
-		
+
 		for (int i= 0; i < propertyKeys.length; i++) {
 			int filterProperty= propertyKeys[i];
 			boolean set= propertyValues[i];
@@ -259,6 +261,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		if (refresh) {
 			fViewer.getControl().setRedraw(false);
 			BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					fViewer.refresh();
 				}
@@ -266,7 +269,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 			fViewer.getControl().setRedraw(true);
 		}
 	}
-	
+
 	private boolean isSet(int flag, int set) {
 		return (flag & set) != 0;
 	}
@@ -281,7 +284,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	public boolean hasMemberFilter(int filterProperty) {
 		return fFilter.hasFilter(filterProperty);
 	}
-	
+
 	/**
 	 * Saves the state of the filter actions in a memento.
 	 * 
@@ -293,7 +296,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		memento.putString(TAG_HIDEPRIVATE, String.valueOf(hasMemberFilter(FILTER_PROTECTED)));
 		memento.putString(TAG_HIDETYPES, String.valueOf(hasMemberFilter(FILTER_TYPES)));
 	}
-	
+
 	/**
 	 * Restores the state of the filter actions from a memento.
 	 * <p>
@@ -303,22 +306,23 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 */	
 	public void restoreState(IMemento memento) {
 		setMemberFilters(
-			new int[] {FILTER_COMPONENTS, FILTER_PARAMETERS, FILTER_PROTECTED, FILTER_TYPES},
-			new boolean[] {
-				Boolean.valueOf(memento.getString(TAG_HIDECOMPONENTS)).booleanValue(),
-				Boolean.valueOf(memento.getString(TAG_HIDEPARAMETERS)).booleanValue(),
-				Boolean.valueOf(memento.getString(TAG_HIDEPRIVATE)).booleanValue(),
-				Boolean.valueOf(memento.getString(TAG_HIDETYPES)).booleanValue()
-			}, false);
+				new int[] {FILTER_COMPONENTS, FILTER_PARAMETERS, FILTER_PROTECTED, FILTER_TYPES},
+				new boolean[] {
+						Boolean.valueOf(memento.getString(TAG_HIDECOMPONENTS)).booleanValue(),
+						Boolean.valueOf(memento.getString(TAG_HIDEPARAMETERS)).booleanValue(),
+						Boolean.valueOf(memento.getString(TAG_HIDEPRIVATE)).booleanValue(),
+						Boolean.valueOf(memento.getString(TAG_HIDETYPES)).booleanValue()
+				}, false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		contributeToToolBar(actionBars.getToolBarManager());
 	}
-	
+
 	/**
 	 * Adds the filter actions to the given tool bar
 	 * 
@@ -331,7 +335,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 			tbm.add(fFilterActions[i]);
 		}
 	}
-	
+
 	/**
 	 * Adds the filter actions to the given menu manager.
 	 * 
@@ -352,10 +356,11 @@ public class MemberFilterActionGroup extends ActionGroup {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
