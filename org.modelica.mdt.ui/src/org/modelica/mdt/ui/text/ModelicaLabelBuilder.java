@@ -1,4 +1,3 @@
-
 package org.modelica.mdt.ui.text;
 
 import org.eclipse.core.runtime.CoreException;
@@ -12,8 +11,7 @@ import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
-public class ModelicaLabelBuilder
-{
+public class ModelicaLabelBuilder {
 
 	/**
 	 * Constructs a textual representation of a functions signature.
@@ -23,71 +21,11 @@ public class ModelicaLabelBuilder
 	 * @return the constructed <code>String</code>
 	 */
 	public static String constructSignature(IModelicaClass modelicaClass)
-		throws ConnectException, InvocationError, UnexpectedReplyException,
-			CompilerInstantiationException, CoreException
-	{		
-		
-//		IModelicaClass.Restriction restriction = modelicaClass.getRestriction();
-		
-		ISignature signature = modelicaClass.getSignature();
-		if(signature == null)
-		{
-			return modelicaClass.getElementName();
-		}
-		
-		/*
-		 * If a function has several return values it will look like this:
-		 * 
-		 *  foo(Real, Real) => (Real, Integer)
-		 *  
-		 * if a function only has one return value it will look like this:
-		 * 
-		 *  Real bar(Integer a)
-		 */
-		
-		String proposal;
-						
-		proposal = modelicaClass.getElementName();
-				
-		IParameter[] inputs = signature.getInputs();
-		if(inputs.length >= 1)
-		{
-			int i = 0;
-			proposal += "(";
-			for(;i < inputs.length - 1;i++)
-			{
-				proposal += inputs[i].getType() + " " + inputs[i].getName() + ", ";
-			}
-			proposal += inputs[i].getType(); proposal += " " + inputs[i].getName();
-			proposal += ")";
-		}
-		
-		IParameter[] outputs = signature.getOutputs();
-
-		if(outputs.length >= 2)
-		{
-			proposal += " => (";
-			
-			int i = 0;
-			for(;i < outputs.length - 1;i++)
-			{
-				proposal += outputs[i].getType() + ", ";
-			}
-			
-			proposal += outputs[i].getType() + ")";
-		}
-		else if(outputs.length == 1)
-		{
-			proposal += " => " + outputs[0].getType();
-		}
-		else
-		{
-			proposal += "";
-		}		
+		throws ConnectException, InvocationError, UnexpectedReplyException, CompilerInstantiationException, CoreException {
+		String proposal = modelicaClass.getElementName();
 
 		return proposal;
 	}
-
 	
 	/**
 	 * Constructs a textual representation of a functions signature.
@@ -97,11 +35,10 @@ public class ModelicaLabelBuilder
 	 * @return the constructed <code>String</code>
 	 */
 	public static String constructProposalSignature(IModelicaElement modelicaElement)
-		throws ConnectException, InvocationError, UnexpectedReplyException,
-			CompilerInstantiationException, CoreException
-	{		
-		if (!(modelicaElement instanceof IModelicaClass)) 
+		throws ConnectException, InvocationError, UnexpectedReplyException, CompilerInstantiationException, CoreException {
+		if (!(modelicaElement instanceof IModelicaClass)) {
 			return modelicaElement.getElementName();
+		}
 		
 		IModelicaClass modelicaClass = (IModelicaClass)modelicaElement;
 		
