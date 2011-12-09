@@ -35,6 +35,7 @@
 package org.openmodelica.modelicaml.view.componentstree.display;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IMarker;
@@ -62,6 +63,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Port;
@@ -286,7 +288,7 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 				if (treeObject.isInput()) {
 					tNameString = tNameString + "input ";
 					
-					if (declarationString.trim().equals("")) {
+					if (declarationString.trim().equals("") && !oneOfParentsIsPort(treeObject)) {
 						declarationString = " = ???";
 					}
 				}
@@ -455,7 +457,8 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		}
 		
 		// if property is input and has no declaration and no binding equation exists for it in its first level component modification
-		if (treeParent.isInput() && treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null) {
+		if (treeParent.isInput() && treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null
+				&& !oneOfParentsIsPort(treeParent)) {
 			
 			if (umlElement != null ) {
 				
@@ -500,6 +503,37 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	}
 	
 
+	private boolean oneOfParentsIsPort(TreeObject treeObject){
+		 ArrayList<TreeObject> parents = getAllParents(treeObject, new ArrayList<TreeObject>());
+		 for (TreeObject parent : parents) {
+			if (isPort(parent)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private ArrayList<TreeObject> getAllParents(TreeObject item, ArrayList<TreeObject> listOfSegments){
+		TreeObject parent = item.getParent();
+		if (parent != null && !parent.isRoot()) { // the root node represents the instantiated class. It should not appear in the path.  
+			listOfSegments.add(parent);
+			listOfSegments.addAll( getAllParents(parent, new ArrayList<TreeObject>()) );
+		}
+		return listOfSegments;
+	}
+	
+	private boolean isPort(TreeObject treeObject) {
+		Element type = treeObject.getComponentType();
+		if (type != null && type instanceof Classifier && type.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	
+	
 	public Image decorateImage(Object element, String imagePath) {
 		if (element instanceof TreeObject) {
 			if (hasErrors((TreeParent)element)) {
