@@ -46,7 +46,6 @@ package org.modelica.mdt.core;
  * 
  * @author Adrian Pop
  */
-public interface IModelicaComponent extends IModelicaElement
-{
-	
+public interface IModelicaComponent extends IModelicaElement {
+	public String getTypeName();
 }

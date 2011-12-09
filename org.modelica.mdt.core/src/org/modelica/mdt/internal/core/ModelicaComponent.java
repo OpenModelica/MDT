@@ -60,13 +60,12 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 /**
  * @author Homer Simpson
  */
-public class ModelicaComponent extends ModelicaElement implements IModelicaComponent
-{
+public class ModelicaComponent extends ModelicaElement implements IModelicaComponent {
 	private String name;
 	private Visibility visibility;
 	private IDefinitionLocation location;
 	private String typeName;
-	
+
 	/**
 	 * Create class component
 	 * 
@@ -75,8 +74,7 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	 * @param visibility whatever this component is public or protected
 	 * @param location location in the source code file
 	 */
-	public ModelicaComponent(IModelicaClass parent, String name, String typeName, Visibility visibility, IDefinitionLocation location)
-	{
+	public ModelicaComponent(IModelicaClass parent, String name, String typeName, Visibility visibility, IDefinitionLocation location) {
 		super(parent);
 		this.name = name;
 		this.visibility = visibility;
@@ -89,82 +87,75 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	 * 
 	 * @param IModelicaComponent
 	 */
-	public void setModelicaComponent(ModelicaComponent changedComponent)
-	{
+	public void setModelicaComponent(ModelicaComponent changedComponent) {
 		this.visibility = changedComponent.getVisibility();
 		this.typeName = changedComponent.getTypeName();
-		try
-		{
+
+		try {
 			this.location = changedComponent.getLocation();
 		}
-		catch(CoreException e)
-		{
+		catch(CoreException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public String getElementName()
-	{
+
+	@Override
+	public String getElementName() {
 		return name;
 	}
 
-	public Visibility getVisibility()
-	{
+	@Override
+	public Visibility getVisibility() {
 		return visibility;
 	}
-	
-	public IResource getResource()
-	{
+
+	@Override
+	public IResource getResource() {
 		return getParent().getResource();
 	}
-	
+
 	/**
 	 * @see org.modelica.mdt.core.IModelicaElement#getLocation()
 	 */
-	public IDefinitionLocation getLocation()
-		throws CoreException
-	{
+	@Override
+	public IDefinitionLocation getLocation() throws CoreException {
 		return location;
 	}
 
 	@Override
-	public String getFilePath() 
-		throws ConnectException, UnexpectedReplyException, InvocationError
-	{
+	public String getFilePath() throws ConnectException, UnexpectedReplyException, InvocationError {
 		return location.getPath();
 	}
 
-	public String getFullName() 
-	{
+	@Override
+	public String getFullName() {
 		return getParent().getFullName() + "." + name;
 	}
-	
-	
-	public String getTypeName()
-	{
+
+	@Override
+	public String getTypeName() {
 		return typeName;
 	}
-	
+
 	/**
 	 * All modelica elements that have a direct mapping between the IResource
-	 * (e.g. ModelicaFile -> IFile, FolderPackage -> IFolder) will recive a
+	 * (e.g. ModelicaFile -> IFile, FolderPackage -> IFolder) will receive a
 	 * call on this method when it have been detected that the underlying 
 	 * IResouce have been changed.
 	 * 
 	 *  @param delta The resource delta which is rooted at the IResource of
 	 *  this element 
 	 */
+	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException
-	{
+			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
 		/* return an MODIFIED by default */
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 		/* if only the markers have changed, don't bother! */
-		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0 &&
-			(delta.getFlags() & IResourceDelta.OPEN) == 0	
-		) return changes;	
-		
+		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0 &&	(delta.getFlags() & IResourceDelta.OPEN) == 0) {
+			return changes;	
+		}
+
 		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED, delta));
 		return changes;
 	}
@@ -180,14 +171,12 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	 * @return the changes to the element and it's children, or empty collection
 	 * if the element and it's children are not changed.
 	 */
+	@Override
 	public Collection<IModelicaElementChange> reload()
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException
-	{
+			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
 		/* return an MODIFIED by default */
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED, null));
 		return changes;
-	}	
-	
+	}
 }
