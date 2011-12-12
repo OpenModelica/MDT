@@ -34,11 +34,13 @@ public class PapyrusServices {
 		ModelExplorerPageBookView modelExplorerPageBookView = null;
 		if (view instanceof ModelExplorerPageBookView) {
 			modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+			
+			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+			if (modelExplorerView != null) {
+				return modelExplorerView.getControl().isVisible();
+			}
 		}
-		CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-		if (modelExplorerView != null) {
-			return modelExplorerView.getControl().isVisible();
-		}
+
 		
 		return false;
 	}
