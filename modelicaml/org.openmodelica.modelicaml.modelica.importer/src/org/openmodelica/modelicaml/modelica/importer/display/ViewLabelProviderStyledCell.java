@@ -546,29 +546,31 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 		// markers
 		ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-		String projectName = umlModel.getResource().getURI().segment(1);
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IProject iProject = root.getProject(projectName);
-		
-		IMarker[] markers = null;
-		try {
-			if (iProject != null) {
-				for (String markerType : markerTypes) {
-					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-					for (IMarker marker : markers) {
-						Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
-						if (qualifiedName != null) {
-							if ( qualifiedName.equals(item.getQName()) ) {
-								return true;				
+		if (umlModel != null && umlModel.getResource() != null) {
+			String projectName = umlModel.getResource().getURI().segment(1);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			
+			IMarker[] markers = null;
+			try {
+				if (iProject != null) {
+					for (String markerType : markerTypes) {
+						markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+						for (IMarker marker : markers) {
+							Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
+							if (qualifiedName != null) {
+								if ( qualifiedName.equals(item.getQName()) ) {
+									return true;				
+								}
 							}
 						}
 					}
 				}
-			}
 
-		} catch (CoreException e) {
-			//e.printStackTrace();
+			} catch (CoreException e) {
+				//e.printStackTrace();
+			}
 		}
 		return false;
 	}
