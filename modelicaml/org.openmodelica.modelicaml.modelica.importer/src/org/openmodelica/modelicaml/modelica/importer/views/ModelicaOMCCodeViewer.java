@@ -1,5 +1,6 @@
 package org.openmodelica.modelicaml.modelica.importer.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -120,6 +123,10 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	
 	private ViewLabelProviderStyledCell labelProvider = new ViewLabelProviderStyledCell();
 
+	private Action actionClear;
+
+	private Action actionExpandCollapse;
+
 	
 	
 	class ViewContentProvider implements IStructuredContentProvider, 
@@ -154,11 +161,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				return ((TreeParent)parent).hasChildren();
 			return false;
 		}
-/*
- * We will set up a dummy model to initialize tree heararchy.
- * In a real code, you will connect to a real model and
- * expose its hierarchy.
- */
+
 		private void initialize() {
 			TreeParent root = new TreeParent(Constants.folderName_code_sync);
 			treeRoot = root;
@@ -217,7 +220,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		hookDoubleClickAction();
 		contributeToActionBars();
 		
-		
+
 //		// get Papyrus Model Explorer
 //		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
 //
@@ -275,19 +278,32 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-//		manager.add(action1);
-//		manager.add(action2);
-//		manager.add(new Separator());
 		
 		ISelection selection = viewer.getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
+		
+		// if it is the root (folder) or a class -> add expand/collapse action
+		if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) )) {
+			if (!viewer.getExpandedState(obj)) {
+				actionExpandCollapse.setText("Expand");
+				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+			}
+			else {
+				actionExpandCollapse.setText("Collapse");
+				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
+			}
+			manager.add(actionExpandCollapse);
+			manager.add(new Separator());
+		}
+		
+		// add locate in Papyrus if a corresponding proxy exists
 		if (obj instanceof TreeObject ) {
 			TreeObject treeObject = (TreeObject)obj;
 			if (treeObject.getModelicaMLProxy() != null) {
 				manager.add(actionLocateInPapyrusModelExplorer);
+				manager.add(new Separator());
 			}
 		}
-		manager.add(new Separator());
 		
 		drillDownAdapter.addNavigationActions(manager);
 		// Other plug-ins can contribute there actions here
@@ -298,6 +314,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		manager.add(actionReload);
 		manager.add(actionSynchronize);
 		manager.add(actionRefresh);
+		manager.add(actionClear);
 
 		manager.add(new Separator());
 		manager.add(actionCollapseAll);
@@ -322,9 +339,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        				
 	        				if (treeRoot.hasChildren()) {
 	        					actionSynchronize.setEnabled(true);
+	        					actionRefresh.setEnabled(true);
 	        				}
 	        				else {
 	        					actionSynchronize.setEnabled(false);
+	        					actionRefresh.setEnabled(false);
 	        				}
 	        				
 	        				viewer.setInput(getViewSite());
@@ -338,7 +357,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								/*
 								 * TODO: if the element that is being updated is selected in GUI (i.e. in Papyrus modeling tool)
 								 * then there will be a "SWT invalid thread exception because this job will modify it.
-								 * WORAROUND: before creating elements set Papyrus Model Explorer Selection to 
+								 * WORKAROUND: before creating elements set Papyrus Model Explorer Selection to 
 								 * an element that will not be modified, e.g. the ModelicaML root. 
 								 */
 								PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
@@ -604,8 +623,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //				}
 			}
 		};
-		actionReload.setText("(Re)Load");
-		actionReload.setToolTipText("(Re)Load");
+		actionReload.setText("(Re)Load ALL Modelica Models for Synchronization");
+		actionReload.setToolTipText("(Re)Load ALL Modelica Models for Synchronization");
 //		actionReload.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEF_VIEW));
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
 		
@@ -655,9 +674,48 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				viewer.refresh();
 			}
 		};
-		actionRefresh.setText("Refresh");
-		actionRefresh.setToolTipText("Refresh");
+		actionRefresh.setText("Refresh and Validate");
+		actionRefresh.setToolTipText("Refresh and Validate");
 		actionRefresh.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
+		actionRefresh.setEnabled(false);
+		
+		actionClear = new Action() {
+			public void run() {
+				// remove tree items
+				TreeObject[] children = treeRoot.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					TreeObject treeObject = children[i];
+					treeRoot.removeChild(treeObject);
+				}
+				
+				// clear the tree builder
+				treeBuilder.unSetModelicaMLModel();
+				treeBuilder.unModelicaMLRoot();
+				treeBuilder.clearAll();
+
+				// clear the compiler
+				treeBuilder.getOmcc().clear();
+
+				// collapse the tree root and refresh
+				viewer.setExpandedState(treeRoot, false);
+				viewer.refresh();
+				
+				actionRefresh.setEnabled(false);
+				actionSynchronize.setEnabled(false);
+			}
+		};
+		actionClear.setText("Clear");
+		actionClear.setToolTipText("Clear");
+		actionClear.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
+		
+		actionExpandCollapse = new Action() {
+			public void run() {
+				doubleClickAction.run();
+			}
+		};
+		actionExpandCollapse.setText("Expand / Collapse");
+		actionExpandCollapse.setToolTipText("Expand / Collapse");
+		actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 		
 		
 		// Synch job listener
@@ -1109,6 +1167,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 
 		
 		
+		
 		actionGenerateOMCMarkers = new Action("actionGenerateOMCMarkers", 2) {
 			public void run() {
 				if (actionGenerateOMCMarkers.isChecked()) {
@@ -1170,15 +1229,169 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		
 		
 		
+		// Load job listener
+		final JobChangeAdapter collectProxiesJobChangeAdapter = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+	            if (event.getResult().isOK()) {
+	            	Display.getDefault().asyncExec(new Runnable() {
+	        			public void run() {
+	        				treeBuilder.updateTreeItemProxies(treeRoot);
+	        				viewer.refresh();
+	        			}
+	        		});
+	            }
+	            else {
+	            	System.err.println("Could not complete the loading of ModelicaML Proxies.");
+	            	}
+				}
+	         };
+		
+	         
+	         
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click detected on "+obj.toString());
+
+				/*
+				 * NOTE: The very first time the user double clicks on the root tree item: 
+				 * - configure the tree builder 
+				 * - clear compiler, load models
+				 * * TODO: check if it is safe to rely on the fact that the ModelicaML model is set or not set in the tree builder?!  
+				 */
+				if (treeBuilder.getModelicaMLModel() == null) {
+					
+					configureTreeBuilder();
+					Job collectProxiesJob = new Job("Collecting ModelicaML Proxies") {
+						
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							treeBuilder.collectModelicaModelProxies();
+							return Status.OK_STATUS;
+						}
+					};
+					collectProxiesJob.addJobChangeListener(collectProxiesJobChangeAdapter);
+//					collectProxiesJob.setUser(true);
+					collectProxiesJob.schedule();
+					
+					try {
+						new ProgressMonitorDialog(new Shell()).run(true, true,
+								new IRunnableWithProgress() {
+									@Override
+									public void run(final IProgressMonitor monitor)
+											throws InvocationTargetException,
+											InterruptedException {
+										
+										monitor.beginTask("Loading Modelica Models ...", IProgressMonitor.UNKNOWN);
+										treeBuilder.loadModels();
+										monitor.done();
+									}
+								});
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				
+				// expand or collapse node
+				if (!viewer.getExpandedState(obj) && obj instanceof TreeParent) {
+					TreeParent parent = (TreeParent) obj;
+					
+					// If there are no children yet -> create children
+					if (!parent.hasChildren()) {
+						
+						// create nested classes nodes
+						ArrayList<TreeObject> createdNestedClasses = treeBuilder.createClassNodes(parent, parent.getQName(), false);
+						for (TreeObject treeObject : createdNestedClasses) {
+							viewer.add(parent, treeObject);	
+						}
+						
+						if (parent instanceof ClassItem) {
+							// create components and extends relations nodes.
+							ArrayList<TreeObject> createdClassElements = treeBuilder.createComponentNodes(parent, false);
+							for (TreeObject treeObject : createdClassElements) {
+								viewer.add(parent, treeObject);	
+							}
+						}
+					}
+					
+					// update the parent to reflect the number of children
+					viewer.update(parent, null);
+					
+					// expand the parent
+					viewer.expandToLevel(parent, 1);
+					
+					viewer.refresh();
+				}
+				else { //Collapse this item
+					if (obj instanceof ClassItem) {
+						viewer.collapseToLevel(obj, 1);	
+					}
+				}
 			}
 		};
 	}
 
+	
+	private void configureTreeBuilder(){
+		// As a job
+		final UmlModel umlModel = UmlUtils.getUmlModel();
+		if (umlModel == null) {
+			MessageDialog.openError(new Shell(), 
+					"ModelicaML Model Editing Domain Access Error", 
+					"Cannot acceess the ModelicaML model or its editing domain. " +
+					"Please make sure that the ModelicaML model is open in the active editor.");
+		}
+		else {
+			try {
+				final EObject ModelicaMLRoot = umlModel.lookupRoot();
+				try {
+					final ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+					final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+					
+					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+						
+						// set the uml model to encapsulate the job required data
+						treeBuilder.setModelicaMLModel(umlModel);
+						treeBuilder.setModelicaMLRoot(ModelicaMLRoot);
+						
+						// delete OMC markers
+//						String projectName = umlModel.getResource().getURI().segment(1);
+//						IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//						IWorkspaceRoot root = workspace.getRoot();
+//						IProject iProject = root.getProject(projectName);
+//						treeBuilder.deleteOMCMarkers(iProject);
+        				
+					}
+					else {
+						MessageDialog.openError(new Shell(), "Loading error", 
+								"Could not access the Papyrus editing domain and the uml model.");
+					}
+					
+				} catch (ServiceException e) {
+					MessageDialog.openError(new Shell(), 
+							"ModelicaML Model Editing Domain Access Error", 
+						"Cannot acceess the ModelicaML model or its editing domain. " +
+						"Please make sure that the ModelicaML model is open in the active editor.");
+
+					e.printStackTrace();
+				}
+			} catch (NotFoundException e) {
+				MessageDialog.openError(new Shell(), 
+						"ModelicaML Model Access Error", 
+					"Cannot acceess the ModelicaML model. " +
+					"Please make sure that the ModelicaML model is open in the active editor.");
+				
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
 	
 	 private ISelectionListener selectionListener = new ISelectionListener() {
 		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
@@ -1248,12 +1461,13 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			}
 		});
 	}
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Modelica Models",
-			message);
-	}
+	
+//	private void showMessage(String message) {
+//		MessageDialog.openInformation(
+//			viewer.getControl().getShell(),
+//			"Modelica Models",
+//			message);
+//	}
 
 	/**
 	 * Passing the focus request to the viewer's control.

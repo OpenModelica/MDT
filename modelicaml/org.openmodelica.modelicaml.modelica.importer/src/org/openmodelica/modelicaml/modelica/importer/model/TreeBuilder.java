@@ -63,8 +63,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
-import org.eclipse.papyrus.umlutils.PackageUtil;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
@@ -74,10 +72,7 @@ import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Parameter;
-import org.eclipse.uml2.uml.PrimitiveType;
-import org.eclipse.uml2.uml.Profile;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
@@ -94,7 +89,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private String OMCWorkingDirectoryAbsoplutePath = null;
 	private OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 	
-//	private EList<Element> proxies = new BasicEList<Element>();
+
+
+	//	private EList<Element> proxies = new BasicEList<Element>();
 	private HashSet<Element> proxies = new HashSet<Element>();
 	
 	private HashSet<String> proxyQNames = new HashSet<String>();
@@ -122,7 +119,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		modelsToBeExcluded.add("Modelica.Fluid");
 		
 		// create class nodes
-		createClassNodes(treeRoot, "");
+		createClassNodes(treeRoot, "", true);
 		
 		// create component nodes
 		TreeObject[] children = treeRoot.getChildren();
@@ -130,10 +127,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 			TreeObject treeObject = children[i];
 			if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
 				// create components and extends relation nodes
-				createComponentNodes((TreeParent)treeObject);
+				createComponentNodes((TreeParent)treeObject, true);
 			}
 		}
-		
 	}
 	
 	public void validateProxies(IProject iProject){
@@ -334,8 +330,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	private void createClassNodes(TreeParent treeParent, String classQName){
-		
+	public ArrayList<TreeObject> createClassNodes(TreeParent treeParent, String classQName, boolean recursive){
+		ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
 		if (classQName != null) {
 			List<String> classes = getItems(omcc.getClassNames(classQName));
 			if (classes != null) {
@@ -365,14 +361,62 @@ public class TreeBuilder implements IRunnableWithProgress{
 							// set attributes
 							setClassProperties(item, qName);
 							
-							// recursive call
-							createClassNodes(item, qName);
+							// add to the return list
+							createdItems.add(item);
+							
+							if (recursive) {
+								// recursive call
+								createClassNodes(item, qName, recursive);
+							}
 						}
 					}
 				}
 			}
 		}
+		return createdItems;
 	}
+	
+	
+	//BACKUP
+//	public void createClassNodes(TreeParent treeParent, String classQName){
+//		
+//		if (classQName != null) {
+//			List<String> classes = getItems(omcc.getClassNames(classQName));
+//			if (classes != null) {
+//				for (String className : classes) {
+//					// exclude Modelica predefined functions defined in OMC
+//					if (!className.startsWith("'")) { 
+//						String qName = "";
+//						
+//						// set the qualified name
+//						if (classQName.equals("")) {
+//							qName = className;
+//						}
+//						else {
+//							qName = classQName + "." + className;
+//						}
+//
+//						if (!modelsToBeExcluded.contains(qName)) { // take into account that some models should not be loaded
+//							// create tree item
+//							ClassItem item = new ClassItem(className);
+//
+//							treeParent.addChild(item);
+//							treeItems.add(item);
+//							
+//							item.setQName(qName);
+//							item.setModelicaMLProxy(proxyQNameToElement.get(qName));
+//							
+//							// set attributes
+//							setClassProperties(item, qName);
+//							
+//							// recursive call
+//							createClassNodes(item, qName);
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 	
 	
 //	private void setClassRestriction(TreeObject item, String classQName){
@@ -455,7 +499,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	private void createComponentNodes(TreeParent treeParent){
+	
+	public ArrayList<TreeObject> createComponentNodes(TreeParent treeParent, boolean recursive){
+		ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
 		String classQName = treeParent.getQName();
 		
 		if (!classQName.equals("")) {
@@ -463,7 +509,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			// create extends relation nodes
 			List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
 			
-			// create components nodes
+			// create extends relations nodes
 			if (inheritedClasses.size() > 0) {
 				for (String inheritedClassQName : inheritedClasses) {
 					
@@ -490,6 +536,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 					item.setModifications(getExtendsModifications(item, classQName));
 					
 					// TODO: set arraySize
+					
+					// add to return list
+					createdItems.add(item);
 				}
 			}
 			
@@ -552,6 +601,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 					 * There is no OMC API function for getting the conditional expression. 
 					 */
 					
+					// add to return list
+					createdItems.add(item);
 				}
 			}
 			
@@ -560,16 +611,137 @@ public class TreeBuilder implements IRunnableWithProgress{
 			// TODO: // create equation and algorithm nodes
 			// TODO: // create connection nodes
 			
-			// recursive call
-			TreeObject[] children = treeParent.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				TreeObject treeObject = children[i];
-				if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
-					createComponentNodes((TreeParent)treeObject);
+			if (recursive) {
+				// recursive call
+				TreeObject[] children = treeParent.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					TreeObject treeObject = children[i];
+					if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
+						createComponentNodes((TreeParent)treeObject, recursive);
+					}
 				}
 			}
 		}
+		return createdItems;
 	}
+	
+	
+	//BACKUP
+//	private void createComponentNodes(TreeParent treeParent){
+//		String classQName = treeParent.getQName();
+//		
+//		if (!classQName.equals("")) {
+//			
+//			// create extends relation nodes
+//			List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
+//			
+//			// create components nodes
+//			if (inheritedClasses.size() > 0) {
+//				for (String inheritedClassQName : inheritedClasses) {
+//					
+//					// create tree item
+//					ExtendsRelationItem item = new ExtendsRelationItem(inheritedClassQName);
+//					
+//					treeParent.addChild(item);
+//					treeItems.add(item);
+//					
+//					// set attributes
+//					item.setSource(getTypeElement(classQName));
+//					item.setSourceQname(classQName);
+//					item.setTarget(getTypeElement(inheritedClassQName));
+////					System.err.println();
+////					System.err.println(inheritedClassQName);
+////					System.err.println("getTypeElement(inheritedClassQName): " + getTypeElement(inheritedClassQName));
+////					System.err.println(); 
+//					item.setTargetQname(inheritedClassQName);
+//					
+//					// Note, UML Generalization is not a NamedElement. 
+////					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
+//					
+//					// set modifications
+//					item.setModifications(getExtendsModifications(item, classQName));
+//					
+//					// TODO: set arraySize
+//				}
+//			}
+//			
+//			List<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName), proxyQNameToElement.get(classQName));
+//			
+//			// create components nodes
+//			if (components.size() > 0) {
+//				for (ModelicaComponentData component : components) {
+//					
+//					// set the qualified name
+//					String qName = "";
+//					if (classQName.equals("")) {
+//						qName = component.name;
+//					}
+//					else {
+//						qName = classQName + "." + component.name;
+//					}
+//					
+//					// create tree item
+////					TreeParent item = new TreeParent(component.name);
+//					ComponentItem item = new ComponentItem (component.name);
+//
+//					treeParent.addChild(item);
+//					treeItems.add(item);
+//					
+//					// set attributes
+//					item.setQName(qName);
+//
+//					// set the loaded component type 
+//					item.setComponentTypeQName(component.typeQName);
+//					item.setComponentTypeTreeItem(findTreeItem(component.typeQName));
+//
+//					// set component type proxy 
+//					item.setComponentTypeProxy(component.type);
+//					
+//					// set properties
+//					item.setFinal(component.isFinal);
+//					item.setComment(component.comment);
+//					item.setVisibility(component.visibility);
+//					item.setFinal(component.isFinal);
+//					item.setFlow(component.isFlow);
+//					item.setStream(component.isStream);
+//					item.setReplaceable(component.isReplaceable);
+//					item.setVariability(component.variability);
+//					item.setInnerouter(component.innerouter);
+//					item.setCausality(component.causality);
+//					item.setArraySize(component.arraySize);
+//					
+//					// set the ModelicaML proxy for this element
+//					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
+//					
+//					// set component modifications
+//					item.setModifications(getComponentModifications(item, classQName));
+//					
+//					// Set the declaration 
+//					item.setDeclaration(getComponentDeclarationEquation(item, classQName));
+//					
+//					// TODO: Set the conditional expression
+//					/*
+//					 * There is no OMC API function for getting the conditional expression. 
+//					 */
+//					
+//				}
+//			}
+//			
+//			// ONLY for a "full" import. This data is not needed for proxies.
+//			// TODO: // create import relation nodes
+//			// TODO: // create equation and algorithm nodes
+//			// TODO: // create connection nodes
+//			
+//			// recursive call
+//			TreeObject[] children = treeParent.getChildren();
+//			for (int i = 0; i < children.length; i++) {
+//				TreeObject treeObject = children[i];
+//				if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
+//					createComponentNodes((TreeParent)treeObject);
+//				}
+//			}
+//		}
+//	}
 	
 	private TreeObject findTreeItem(String qName){
 		TreeObject foundObject = null;
@@ -914,7 +1086,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	
 
-	private void loadModels(){
+	public void loadModels(){
 //		UmlModel umlModel = UmlUtils.getUmlModel();
 		UmlModel umlModel = ModelicaMLModel;
 
@@ -1054,7 +1226,15 @@ public class TreeBuilder implements IRunnableWithProgress{
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void unSetModelicaMLModel() {
+		ModelicaMLModel = null;
+	}
+	
+	public void unModelicaMLRoot() {
+		ModelicaMLRoot = null;
+	}
+	
 	public UmlModel getModelicaMLModel() {
 		return ModelicaMLModel;
 	}
@@ -1309,5 +1489,12 @@ public class TreeBuilder implements IRunnableWithProgress{
 //	public Profile getModelicamlProfile() {
 //		return modelicamlProfile;
 //	}
+	
+	
+	
+	
+	public OpenModelicaCompilerCommunication getOmcc() {
+		return omcc;
+	}
 }
 
