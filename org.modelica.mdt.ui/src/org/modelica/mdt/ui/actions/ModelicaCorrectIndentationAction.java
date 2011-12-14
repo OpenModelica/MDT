@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -54,6 +55,9 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 	 */
 	private final boolean fIsTabAction;
 
+	private DocumentCommand documentCommand = null;
+	private int indentLength = 0;
+
 	private static final String ACTIONS_RESOURCE_BUNDLE = "org.modelica.mdt.ui.editor.ModelicaActions";
 	private static ModelicaCorrectIndentationAction instance = new ModelicaCorrectIndentationAction();
 
@@ -69,6 +73,16 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 
 	public static ModelicaCorrectIndentationAction getInstance() {
 		return instance;
+	}
+
+	public static ModelicaCorrectIndentationAction getInstance(DocumentCommand documentCommand) {
+		instance.documentCommand = documentCommand;
+
+		return instance;
+	}
+
+	public static void resetDocumentCommand() {
+		instance.documentCommand = null;
 	}
 
 	/*
@@ -91,6 +105,7 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 			final int firstLine, nLines;
 
 			fCaretOffset = -1;
+			indentLength = 0;
 
 			try {
 				document.addPosition(end);
@@ -127,6 +142,10 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 							hasChanged |= indentLine(document, firstLine + i, offset, indenter, scanner);
 						}
 
+						if (nLines > 1 && hasChanged && documentCommand != null) {
+							ErrorManager.logWarning("Odd, documentCommand is not null for a change of more than one line (nLines = " + nLines + ").");
+						}
+
 						// update caret position: move to new position when indenting just one line
 						// keep selection when indenting multiple
 						int newOffset, newLength;
@@ -149,6 +168,25 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 						// but not when we had a singleline nontab invocation
 						if (newOffset != -1 && (hasChanged || newOffset != offset || newLength != length)) {
 							selectAndReveal(newOffset, newLength);
+						}
+						else if (hasChanged) {
+							if (nLines == 1) {
+								if (indentLength != 0) {
+									if (documentCommand != null) {
+										documentCommand.offset += indentLength;
+									}
+									else {
+										ErrorManager.logWarning("Indentation was invoked from the menu and a single line indent was generated, " +
+												"but I have no DocumentCommand object to update. Refactoring needed!");
+									}
+								}
+								else {
+									ErrorManager.logWarning("Odd, hasChanged is true and nLines is 1, but indentLength is 0.");
+								}
+							}
+							else {
+								ErrorManager.logWarning("Odd, hasChanged is true but nLines was not 1, it was " + nLines);
+							}
 						}
 
 						document.removePosition(end);
@@ -281,6 +319,7 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 		// only change the document if it is a real change
 		if (!indent.equals(currentIndent)) {
 			document.replace(offset, length, indent);
+			indentLength = indent.length();
 
 			return true;
 		}

@@ -281,13 +281,9 @@ class ModelicaAutoIndentStrategy implements IAutoEditStrategy {
 	}
 
 	private void smartIndentOnTab(IDocument document, DocumentCommand command) {
-		// see here what ident has the line before
-		// and apply the needed indenting.
-		//
-		// -- nothing for now
-		//
-		command.text = "";
-		ModelicaCorrectIndentationAction.getInstance().run();
+		command.text = ""; // Needed, or we will get extra whitespace insertions!
+		ModelicaCorrectIndentationAction.getInstance(command).run();
+		ModelicaCorrectIndentationAction.resetDocumentCommand();
 	}
 
 	private void smartIndentOnKeypress(IDocument document, DocumentCommand command) {
