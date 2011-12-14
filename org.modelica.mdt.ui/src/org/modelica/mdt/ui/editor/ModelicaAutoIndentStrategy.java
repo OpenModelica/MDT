@@ -41,8 +41,6 @@
 
 package org.modelica.mdt.ui.editor;
 
-import java.util.logging.ErrorManager;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IAutoEditStrategy;
