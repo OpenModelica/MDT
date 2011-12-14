@@ -1,5 +1,6 @@
 package org.openmodelica.modelicaml.modelica.importer.handlers;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -196,7 +197,12 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 									treeBuilder.deleteOMCMarkers(iProject);
 
 									// build tree
-									treeBuilder.buildTree(treeRoot);
+									// TODO: libraries to be excluded should be selected by the user
+									ArrayList<String> modelsToBeExcluded = new ArrayList<String>();
+//									modelsToBeExcluded.add("Modelica.UsersGuide");
+//									modelsToBeExcluded.add("Modelica.Fluid");
+
+									treeBuilder.buildTree(treeRoot, modelsToBeExcluded);
 									return Status.OK_STATUS;
 								}
 							};
@@ -371,7 +377,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						treeObject.setModelicaMLProxy((Element) modelicaRoot);
 						treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
 						
-						ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
+						ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype, true);
 						
 						if (deleteNotUsedProxies) {
 							ec.deleteInvalidProxyElements();

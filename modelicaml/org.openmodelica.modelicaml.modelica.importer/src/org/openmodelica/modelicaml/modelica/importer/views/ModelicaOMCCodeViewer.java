@@ -2,6 +2,7 @@ package org.openmodelica.modelicaml.modelica.importer.views;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -67,8 +68,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
@@ -78,6 +81,7 @@ import org.openmodelica.modelicaml.modelica.importer.dialogs.SynchronizeOptionsD
 import org.openmodelica.modelicaml.modelica.importer.display.ViewLabelProviderStyledCell;
 import org.openmodelica.modelicaml.modelica.importer.helper.ModelicaMLElementsCreator;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
+import org.openmodelica.modelicaml.modelica.importer.model.ComponentItem;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
@@ -126,6 +130,10 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	private Action actionClear;
 
 	private Action actionExpandCollapse;
+
+	private Action actionLoadSubTree;
+
+	private Action actionSynchronizeSubTree;
 
 	
 	
@@ -204,7 +212,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+//		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
 
@@ -278,21 +287,41 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		
+
 		ISelection selection = viewer.getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
+
+		String title = "Sub-Tree";
+		if (obj instanceof ClassItem) {
+			String restriction = ((ClassItem)obj).getClassRestriction();
+			String firstLetter = restriction.substring(0, 1);
+			title = firstLetter.toUpperCase() + restriction.substring(1,restriction.length()); 
+		}
+		else if (obj instanceof ComponentItem) {
+			title = "Component";
+		}
 		
-		// if it is the root (folder) or a class -> add expand/collapse action
-		if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) )) {
-			if (!viewer.getExpandedState(obj)) {
-				actionExpandCollapse.setText("Expand");
-				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+		// action for (re)loading sub-trees
+		if (obj instanceof ClassItem ) {
+			manager.add(actionLoadSubTree);
+			actionLoadSubTree.setText("(Re)Load This " + title);
+			manager.add(new Separator());
+			
+			// disable this action if the reload sub tree job is running 
+			if (reloadSubTreeJob.getState() == Job.RUNNING) {
+				actionLoadSubTree.setEnabled(false);
+				actionSynchronizeSubTree.setEnabled(false);
 			}
 			else {
-				actionExpandCollapse.setText("Collapse");
-				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
+				actionLoadSubTree.setEnabled(true);
+				actionSynchronizeSubTree.setEnabled(true);
 			}
-			manager.add(actionExpandCollapse);
+		}
+		
+		// if it is a class or component -> enable the synchronize item feature
+		if (obj instanceof ClassItem || obj instanceof ComponentItem) {
+			manager.add(actionSynchronizeSubTree);
+			actionSynchronizeSubTree.setText("Synchronize This " + title);
 			manager.add(new Separator());
 		}
 		
@@ -308,6 +337,29 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		drillDownAdapter.addNavigationActions(manager);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		
+		// if it is the root (folder) or a class -> add expand/collapse action
+		if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) )) {
+			if (!viewer.getExpandedState(obj)) {
+				actionExpandCollapse.setText("Expand");
+				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+				
+				// disable expand action when the reload sub tree job is running
+				if (reloadSubTreeJob.getState() == Job.RUNNING) {
+					actionExpandCollapse.setEnabled(false);
+				}
+				else {
+					actionExpandCollapse.setEnabled(true);
+				}
+			}
+			else {
+				actionExpandCollapse.setText("Collapse");
+				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
+				actionExpandCollapse.setEnabled(true);
+			}
+			manager.add(actionExpandCollapse);
+			manager.add(new Separator());
+		}
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -318,6 +370,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 
 		manager.add(new Separator());
 		manager.add(actionCollapseAll);
+
 		manager.add(actionLinkWithEditor);
 		manager.add(new Separator());
 		
@@ -394,7 +447,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
 					MessageDialog.openError(new Shell(), "Modelica Model Proxies Synchronization Error", 
 							"When synchronizing proxies the Papyrus Model Explorer View must be visible " +
-							"so that the viewer selection can be reset in order to avoid parallel access to " +
+							"so that the viewer selection can be reset in order to avoid cuncurrent access to " +
 							"proxies that are displayed in Papyrus Properties View and are modified by " +
 							"the synchronization job at the same time." +
 							"\n\n Please make the Papyrus Model Explorer View visible and do not " +
@@ -429,9 +482,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //				viewer.setExpandedElements(expandedElements);
 //				viewer.setExpandedTreePaths(expandedTreePaths);
 
+				configureTreeBuilder();
 				
 				// As a job
-				final UmlModel umlModel = UmlUtils.getUmlModel();
 				if (umlModel == null) {
 					MessageDialog.openError(new Shell(), 
 							"ModelicaML Model Editing Domain Access Error", 
@@ -439,94 +492,71 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							"Please make sure that the ModelicaML model is open in the active editor.");
 				}
 				else {
-					try {
-						final EObject ModelicaMLRoot = umlModel.lookupRoot();
-						try {
-							final ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-							final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+						
+						// Open a dialog to as for this option
+						String title = "Modelica Proxies Synchronization Option";
+						String msg = "This action will now load the Modelica models from the " +
+								"'" + Constants.folderName_code_sync + "' folder. "
+								+ "\n\nShould it synchronize the ModelicaML proxies after loading? " +
+								"\nNote, the synchronization can be launched manually at any time.";
+						
+						createProxiesAfterLoadingModelicaClasses = MessageDialog.openQuestion(new Shell(), title, msg);
+						
+						// ask for synchronization options when elements should be created
+						if (createProxiesAfterLoadingModelicaClasses) {
+							SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+							dialog.open();
 							
-							if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
-								
-		        				// Open a dialog to as for this option
-		        				String title = "Modelica Proxies Synchronization Option";
-		        				String msg = "This action will now load the Modelica models from the " +
-		        						"'" + Constants.folderName_code_sync + "' folder. "
-		        						+ "\n\nShould it synchronize the ModelicaML proxies after loading? " +
-	        							"\nNote, the synchronization can be launched manually at any time.";
-		        				
-		        				createProxiesAfterLoadingModelicaClasses = MessageDialog.openQuestion(new Shell(), title, msg);
-								
-		        				// ask for synchronization options when elements should be created
-		        				if (createProxiesAfterLoadingModelicaClasses) {
-		        					SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
-									dialog.open();
-									
-									int result = dialog.getReturnCode();
-									if (result == IDialogConstants.OK_ID) {
-										// set options
-										applyProxyStereotype = dialog.isApplyProxyStereotype();
-										update = dialog.isUpdate();
-										deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
-									}
-									else {
-										// the dialog was canceled -> no elements should be created.
-										createProxiesAfterLoadingModelicaClasses = false;
-									}
-								}
-		        				
-		        				
-								Job job = new Job("Loading Modelica Models from '"+Constants.folderName_code_sync+"' folder..."){
-
-									@Override
-									protected IStatus run(IProgressMonitor monitor) {
-										
-										TreeObject[] children = treeRoot.getChildren();
-										for (int i = 0; i < children.length; i++) {
-											treeRoot.removeChild(children[i]);
-										}
-										
-										// set the uml model to encapsulate the job required data
-										treeBuilder.setModelicaMLModel(umlModel);
-										treeBuilder.setModelicaMLRoot(ModelicaMLRoot);
-//										treeBuilder.setModelicamlProfile();
-										
-										// delete OMC markers
-										String projectName = umlModel.getResource().getURI().segment(1);
-										IWorkspace workspace = ResourcesPlugin.getWorkspace();
-										IWorkspaceRoot root = workspace.getRoot();
-										IProject iProject = root.getProject(projectName);
-
-										treeBuilder.deleteOMCMarkers(iProject);
-
-										// build tree
-										treeBuilder.buildTree(treeRoot);
-										return Status.OK_STATUS;
-									}
-								};
-								job.addJobChangeListener(loadJobChangeAdapter);
-								job.setUser(true);
-								job.schedule();
+							int result = dialog.getReturnCode();
+							if (result == IDialogConstants.OK_ID) {
+								// set options
+								applyProxyStereotype = dialog.isApplyProxyStereotype();
+								update = dialog.isUpdate();
+								deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
 							}
 							else {
-								MessageDialog.openError(new Shell(), "Loading error", 
-										"Could not access the Papyrus editing domain and the uml model.");
+								// the dialog was canceled -> no elements should be created.
+								createProxiesAfterLoadingModelicaClasses = false;
 							}
-							
-						} catch (ServiceException e) {
-							MessageDialog.openError(new Shell(), 
-									"ModelicaML Model Editing Domain Access Error", 
-								"Cannot acceess the ModelicaML model or its editing domain. " +
-								"Please make sure that the ModelicaML model is open in the active editor.");
-
-							e.printStackTrace();
 						}
-					} catch (NotFoundException e) {
-						MessageDialog.openError(new Shell(), 
-								"ModelicaML Model Access Error", 
-							"Cannot acceess the ModelicaML model. " +
-							"Please make sure that the ModelicaML model is open in the active editor.");
 						
-						e.printStackTrace();
+						
+						Job job = new Job("Loading Modelica Models from '"+Constants.folderName_code_sync+"' folder..."){
+
+							@Override
+							protected IStatus run(IProgressMonitor monitor) {
+								
+								TreeObject[] children = treeRoot.getChildren();
+								for (int i = 0; i < children.length; i++) {
+									treeRoot.removeChild(children[i]);
+								}
+								
+								// set the uml model to encapsulate the job required data
+								treeBuilder.setModelicaMLModel(umlModel);
+								treeBuilder.setModelicaMLRoot(ModelicaMLRoot);
+//										treeBuilder.setModelicamlProfile();
+								
+								// delete OMC markers
+								String projectName = umlModel.getResource().getURI().segment(1);
+								IWorkspace workspace = ResourcesPlugin.getWorkspace();
+								IWorkspaceRoot root = workspace.getRoot();
+								IProject iProject = root.getProject(projectName);
+
+								treeBuilder.deleteOMCMarkers(iProject);
+
+								// build tree
+								treeBuilder.buildTree(treeRoot, null);
+								return Status.OK_STATUS;
+							}
+						};
+						job.addJobChangeListener(loadJobChangeAdapter);
+						job.setUser(true);
+						job.schedule();
+					}
+					else {
+						MessageDialog.openError(new Shell(), "Loading error", 
+								"Could not access the Papyrus editing domain and the uml model.");
 					}
 				}
 				
@@ -623,8 +653,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //				}
 			}
 		};
-		actionReload.setText("(Re)Load ALL Modelica Models for Synchronization");
-		actionReload.setToolTipText("(Re)Load ALL Modelica Models for Synchronization");
+		actionReload.setText("(Re)Load All");
+		actionReload.setToolTipText("(Re)Load All");
 //		actionReload.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEF_VIEW));
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
 		
@@ -638,8 +668,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				}			
 			}
 		};
-		actionCollapseAll.setText("Collapse all");
-		actionCollapseAll.setToolTipText("Collapse all");
+		actionCollapseAll.setText("Collapse All");
+		actionCollapseAll.setToolTipText("Collapse All");
 		actionCollapseAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 
 		
@@ -674,13 +704,14 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				viewer.refresh();
 			}
 		};
-		actionRefresh.setText("Refresh and Validate");
-		actionRefresh.setToolTipText("Refresh and Validate");
+		actionRefresh.setText("Refresh and Validate ALL");
+		actionRefresh.setToolTipText("Refresh and Validate ALL");
 		actionRefresh.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
 		actionRefresh.setEnabled(false);
 		
 		actionClear = new Action() {
 			public void run() {
+				
 				// remove tree items
 				TreeObject[] children = treeRoot.getChildren();
 				for (int i = 0; i < children.length; i++) {
@@ -830,10 +861,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		
 		actionSynchronize = new Action() {
 			
-			public Job createSynchJob(final ServicesRegistry serviceRegistry, 
-					final TransactionalEditingDomain editingDomain, 
-					final UmlModel umlModel,
-					final EObject ModelicaMLRoot,
+			public Job createSynchJob(
+//					final ServicesRegistry serviceRegistry, 
+//					final TransactionalEditingDomain editingDomain, 
+//					final UmlModel umlModel,
+//					final EObject ModelicaMLRoot,
 					final boolean applyProxyStereotype,
 					final boolean update,
 					final boolean deleteNotUsedProxies
@@ -860,7 +892,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								treeObject.setModelicaMLProxy((Element) modelicaRoot);
 								treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
 								
-								ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype);
+								ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype, true);
 								
 								if (deleteNotUsedProxies) {
 									ec.deleteInvalidProxyElements();
@@ -1010,31 +1042,69 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					message = message + invalideClassesString;
 					MessageDialog.openError(new Shell(), title, message);
 				}
+
+				configureTreeBuilder();
 				
 				// refresh in order to update the proxies (in case there were deleted in the mean time)
 				actionRefresh.run();
 
-				final UmlModel umlModel = UmlUtils.getUmlModel();
-				try {
-					final EObject ModelicaMLRoot = umlModel.lookupRoot();
-					try {
-						final ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-						final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+				if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+										
+					if (createProxiesAfterLoadingModelicaClasses) {
+						// no dialog. use default values
 						
-						if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
-							
-						if (createProxiesAfterLoadingModelicaClasses) {
-							// no dialog. use default values
-							
 //							// default values
 //							boolean applyProxyStereotype = true;
 //							boolean update = true;
 //							boolean deleteNotUsedProxies = false;
+						
+						Job job = createSynchJob(
+//								serviceRegistry, 
+//								editingDomain, 
+//								umlModel, 
+//								ModelicaMLRoot, 
+								applyProxyStereotype, 
+								update, 
+								deleteNotUsedProxies);
+
+						job.addJobChangeListener(synchJobChangeAdapter);
+						job.setUser(true);
+						job.schedule();
+						
+					}
+					else {
+						// ask user for options
+						
+						/*
+						 * Dialog for selecting the options: 
+						 * 	- apply proxy stereotype
+						 * 		A proxy stereotype indicates that the a ModelicaML element is not complete. 
+						 *  	It is a proxy that reflects only information about a Modelica model that is needed to its usage.
+						 *  	No code is generated from a proxy.
+						 * 	- update existing proxies
+						 * 	- delete proxies that do not exist in the loaded Modelica models (NOT RECOMMENDED). 
+						 * 		If proxies are referenced by other elements then the references should 
+						 * 		be redirected to new proxies before deleting the old proxies.
+						 */
+
+						
+						SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+						dialog.open();
+						
+						int result = dialog.getReturnCode();
+						
+						if (result == IDialogConstants.OK_ID) {
 							
-							Job job = createSynchJob(serviceRegistry, 
-									editingDomain, 
-									umlModel, 
-									ModelicaMLRoot, 
+							// set options
+							final boolean applyProxyStereotype = dialog.isApplyProxyStereotype();
+							final boolean update = dialog.isUpdate();
+							final boolean deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
+							
+							Job job = createSynchJob(
+//									serviceRegistry, 
+//									editingDomain, 
+//									umlModel, 
+//									ModelicaMLRoot, 
 									applyProxyStereotype, 
 									update, 
 									deleteNotUsedProxies);
@@ -1042,49 +1112,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							job.addJobChangeListener(synchJobChangeAdapter);
 							job.setUser(true);
 							job.schedule();
-							
 						}
-						else {
-							// ask user for options
-							
-							/*
-							 * Dialog for selecting the options: 
-							 * 	- apply proxy stereotype
-							 * 		A proxy stereotype indicates that the a ModelicaML element is not complete. 
-							 *  	It is a proxy that reflects only information about a Modelica model that is needed to its usage.
-							 *  	No code is generated from a proxy.
-							 * 	- update existing proxies
-							 * 	- delete proxies that do not exist in the loaded Modelica models (NOT RECOMMENDED). 
-							 * 		If proxies are referenced by other elements then the references should 
-							 * 		be redirected to new proxies before deleting the old proxies.
-							 */
-
-							
-							SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
-							dialog.open();
-							
-							int result = dialog.getReturnCode();
-							
-							if (result == IDialogConstants.OK_ID) {
-								// set options
-								final boolean applyProxyStereotype = dialog.isApplyProxyStereotype();
-								final boolean update = dialog.isUpdate();
-								final boolean deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
-								
-								Job job = createSynchJob(serviceRegistry, 
-										editingDomain, 
-										umlModel, 
-										ModelicaMLRoot, 
-										applyProxyStereotype, 
-										update, 
-										deleteNotUsedProxies);
-
-								job.addJobChangeListener(synchJobChangeAdapter);
-								job.setUser(true);
-								job.schedule();
-							}
-						}
-							
+					}
+						
 //							UIJob UIjob = new UIJob("Create ModelicaML Proxies ...") {
 //							
 //							public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -1104,23 +1134,67 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //						};
 //						UIjob.setUser(true);
 //						UIjob.schedule();
-						}
-						
-					} catch (ServiceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
-				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		};
-		actionSynchronize.setText("Synchronize Proxies");
-		actionSynchronize.setToolTipText("Synchronize Proxies");
+		actionSynchronize.setText("Synchronize All");
+		actionSynchronize.setToolTipText("Synchronize All");
 //		actionSynchronize.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 		actionSynchronize.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
 		actionSynchronize.setEnabled(false);
+		
+		
+		actionLoadSubTree = new Action("actionLoadSubTree") {
+			public void run() {
+				ISelection selection = viewer.getSelection();
+				if(selection instanceof StructuredSelection){
+					
+					for (Object obj : ((StructuredSelection)selection).toList()){
+						if (obj instanceof ClassItem) {
+							loadSubTree((ClassItem)obj);
+						}
+					}
+				}
+			}
+		};
+		actionLoadSubTree.setText("(Re)Load Sub-Tree");
+		actionLoadSubTree.setToolTipText("(Re)Load Sub-Tree");
+		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
+		
+		actionSynchronizeSubTree = new Action("actionSynchronizeSubTree") {
+			public void run() {
+				ISelection selection = viewer.getSelection();
+				if(selection instanceof StructuredSelection){
+					for (Object obj : ((StructuredSelection)selection).toList()){
+						
+						if (obj instanceof TreeObject) {
+							
+//							SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+//							dialog.open();
+//							
+//							int result = dialog.getReturnCode();
+//							
+//							if (result == IDialogConstants.OK_ID) {
+//								
+//								// set synchronization options
+//								boolean applyProxyStereotype = dialog.isApplyProxyStereotype();
+//								boolean update = dialog.isUpdate();
+//								boolean deleteInconsistentProxies = dialog.isDeleteNotUsedProxies();
+//								
+//
+//
+//							}
+							
+//							synchronizeSubTree((TreeObject)obj, update, applyProxyStereotype, deleteInconsistentProxies);
+							synchronizeSubTree((TreeObject)obj);
+						}
+					}
+				}
+			}
+		};
+		actionSynchronizeSubTree.setText("Synchronize Sub-Tree");
+		actionSynchronizeSubTree.setToolTipText("Synchronize Sub-Tree");
+		actionSynchronizeSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
 		
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
@@ -1198,7 +1272,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				}
 			}
 		};
-		actionValidateProxies.setText("Mark Redundant Proxies");
+		actionValidateProxies.setText("Mark Inconsistent ModelicaML Proxies");
 		actionValidateProxies.setToolTipText("Mark Redundant Proxies");
 		// set default 
 		actionValidateProxies.setChecked(true);
@@ -1225,23 +1299,35 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionDecorateTreeItems.setChecked(true);
 		labelProvider.setDecorateItem(true);
 		
+				
 		
-		
-		
-		
-		// Load job listener
+		// Collect proxies job listener
 		final JobChangeAdapter collectProxiesJobChangeAdapter = new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 	            if (event.getResult().isOK()) {
 	            	Display.getDefault().asyncExec(new Runnable() {
 	        			public void run() {
+	        				
 	        				treeBuilder.updateTreeItemProxies(treeRoot);
 	        				viewer.refresh();
+	        				
+	        				/*
+	        				 * Enable the synchronization so that only the loaded set 
+	        				 * (models that were expanded once in tree) can be imported/synchronized
+	        				 * TODO: this should be replaced by an option for adding/synchronizing only selected tree items (i.e. adding all parents and recursively adding all children)
+	        				 */
+//	        				actionSynchronize.setEnabled(true);
+	        				
 	        			}
 	        		});
 	            }
 	            else {
-	            	System.err.println("Could not complete the loading of ModelicaML Proxies.");
+	            	Display.getDefault().asyncExec(new Runnable() {
+	        			public void run() {
+	        				
+	        				MessageDialog.openError(new Shell(), "ModelicaML <-> Modelica Models Synchronization Error", "Could not complete the loading of ModelicaML Proxies.");
+	        			}
+	        		});
 	            	}
 				}
 	         };
@@ -1253,83 +1339,122 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 
-				/*
-				 * NOTE: The very first time the user double clicks on the root tree item: 
-				 * - configure the tree builder 
-				 * - clear compiler, load models
-				 * * TODO: check if it is safe to rely on the fact that the ModelicaML model is set or not set in the tree builder?!  
-				 */
-				if (treeBuilder.getModelicaMLModel() == null) {
-					
-					configureTreeBuilder();
-					Job collectProxiesJob = new Job("Collecting ModelicaML Proxies") {
+				// don't expand if the reload sub-tree is running
+				if (!(reloadSubTreeJob.getState() == Job.RUNNING)) {
+
+					/*
+					 * NOTE: The very first time the user double clicks on the root tree item: 
+					 * - configure the tree builder 
+					 * - clear compiler, load models
+					 * * TODO: check if it is safe to rely on the fact that the ModelicaML model is set or not set in the tree builder?!  
+					 */
+					if (treeBuilder.getModelicaMLModel() == null) {
 						
-						@Override
-						protected IStatus run(IProgressMonitor monitor) {
-							treeBuilder.collectModelicaModelProxies();
-							return Status.OK_STATUS;
+						configureTreeBuilder();
+						
+						collectProxiesJob = new Job("Collecting ModelicaML Proxies") {
+							
+							@Override
+							protected IStatus run(IProgressMonitor monitor) {
+								treeBuilder.collectModelicaModelProxies();
+								return Status.OK_STATUS;
+							}
+						};
+						collectProxiesJob.addJobChangeListener(collectProxiesJobChangeAdapter);
+						collectProxiesJob.setUser(true);
+						collectProxiesJob.schedule();
+						
+						try {
+							new ProgressMonitorDialog(getSite().getShell()).run(true, true,
+									new IRunnableWithProgress() {
+										@Override
+										public void run(final IProgressMonitor monitor)
+												throws InvocationTargetException,
+												InterruptedException {
+											
+											monitor.beginTask("Loading Modelica Models ...", IProgressMonitor.UNKNOWN);
+											treeBuilder.loadModels();
+											monitor.done();
+										}
+									});
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-					};
-					collectProxiesJob.addJobChangeListener(collectProxiesJobChangeAdapter);
-//					collectProxiesJob.setUser(true);
-					collectProxiesJob.schedule();
-					
-					try {
-						new ProgressMonitorDialog(new Shell()).run(true, true,
-								new IRunnableWithProgress() {
-									@Override
-									public void run(final IProgressMonitor monitor)
-											throws InvocationTargetException,
-											InterruptedException {
-										
-										monitor.beginTask("Loading Modelica Models ...", IProgressMonitor.UNKNOWN);
-										treeBuilder.loadModels();
-										monitor.done();
-									}
-								});
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
-				}
-				
-				
-				// expand or collapse node
-				if (!viewer.getExpandedState(obj) && obj instanceof TreeParent) {
-					TreeParent parent = (TreeParent) obj;
 					
-					// If there are no children yet -> create children
-					if (!parent.hasChildren()) {
+					
+					// expand or collapse node
+					if (!viewer.getExpandedState(obj) && obj instanceof TreeParent) {
+						final TreeParent parent = (TreeParent) obj;
 						
-						// create nested classes nodes
-						ArrayList<TreeObject> createdNestedClasses = treeBuilder.createClassNodes(parent, parent.getQName(), false);
-						for (TreeObject treeObject : createdNestedClasses) {
-							viewer.add(parent, treeObject);	
-						}
-						
-						if (parent instanceof ClassItem) {
-							// create components and extends relations nodes.
-							ArrayList<TreeObject> createdClassElements = treeBuilder.createComponentNodes(parent, false);
-							for (TreeObject treeObject : createdClassElements) {
-								viewer.add(parent, treeObject);	
+						// If there are no children yet -> create children
+						if (!parent.hasChildren()) {
+							
+							if (parent instanceof ClassItem || parent.getName().equals(Constants.folderName_code_sync)) {
+
+								
+								Job expandJob = new Job("Expanding '"+parent.getQName()+" ' ...") {
+									
+									@Override
+									protected IStatus run(IProgressMonitor monitor) {
+
+										// create nested classes nodes
+//										ArrayList<TreeObject> createdNestedClasses = treeBuilder.createClassNodes(parent, parent.getQName(), false);
+										treeBuilder.createClassNodes(parent, parent.getQName(), false);
+									
+										// create components and extends relations nodes.
+//										ArrayList<TreeObject> createdClassElements = treeBuilder.createComponentNodes(parent, false);
+										treeBuilder.createComponentNodes(parent, false);
+
+										return Status.OK_STATUS;
+									}
+								};
+								
+								// Load sub tree job listener
+								final JobChangeAdapter expandSubTreeJobChangeAdapter = new JobChangeAdapter() {
+									public void done(IJobChangeEvent event) {
+							            if (event.getResult().isOK()) {
+							            	Display.getDefault().asyncExec(new Runnable() {
+							        			public void run() {
+							        				
+							        				// refresh and expand the parent
+							        				viewer.refresh(parent);
+							    					viewer.expandToLevel(parent, 1);
+							        			}
+							        		});
+							            }
+							            else {
+							            	System.err.println("Could not complete the expanding of tree item.");
+							            	}
+										}
+							         };
+								
+								expandJob.addJobChangeListener(expandSubTreeJobChangeAdapter);
+								expandJob.setUser(false);
+								expandJob.schedule();
 							}
 						}
+
+						// expand selected item
+						viewer.expandToLevel(parent, 1);
 					}
-					
-					// update the parent to reflect the number of children
-					viewer.update(parent, null);
-					
-					// expand the parent
-					viewer.expandToLevel(parent, 1);
-					
-					viewer.refresh();
+					else { //Collapse this item
+						if (obj instanceof ClassItem) {
+							viewer.collapseToLevel(obj, 1);	
+						}
+					}
 				}
-				else { //Collapse this item
-					if (obj instanceof ClassItem) {
-						viewer.collapseToLevel(obj, 1);	
+				else {
+					//Collapse this item if it is expanded
+					if (viewer.getExpandedState(obj) && obj instanceof ClassItem) {
+							viewer.collapseToLevel(obj, 1);	
+					}
+					else { // inform user to wait
+						MessageDialog.openInformation(getSite().getShell(), "Please Wait", "Please wait until the reload sub-tree job has finished.");
 					}
 				}
 			}
@@ -1337,9 +1462,294 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	}
 
 	
+	private Job collectProxiesJob = new Job("Empty") {
+		
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
+
+	
+	
+	private Job reloadSubTreeJob = new Job("Empty") {
+		
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
+	
+
+	private Job getSynchronizeSubTreeJob(final TreeObject treeObject, 
+			final boolean update, 
+			final boolean applyProxyStereotype,
+			final boolean deleteIncositentProxies
+//			final UmlModel umlModel,
+//			final EObject ModelicaMLRoot,
+//			final ServicesRegistry serviceRegistry,
+//			final TransactionalEditingDomain editingDomain
+			) {
+		
+		Job job = new Job("Synchronizing " + treeObject.getName() + " ...") {
+			
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				/*
+				 * - get all parents top-down
+				 * - create/update all parents and the selected item (NOT recursively!) 
+				 * - synchronize starting from the selected item 
+				 */
+				
+				ec = new ModelicaMLElementsCreator(
+						serviceRegistry, 
+						editingDomain, 
+						umlModel, 
+						ModelicaMLRoot,
+						treeBuilder);
+
+				Element UMLParent = null;
+
+				// create or update parents and the selected class
+				List<TreeObject> list = getTopDownPathItems(treeObject);
+				
+				for (TreeObject topDownParent : list) {
+					// only create classes
+					if (topDownParent instanceof ClassItem) {
+						
+						// if it is a root -> get or create the model root
+						if (topDownParent.getParent().getName().equals(Constants.folderName_code_sync)) {
+							UMLParent = (Element) ec.createProxyRoot(topDownParent.getName(), applyProxyStereotype);
+							topDownParent.setModelicaMLProxy(UMLParent);
+							treeBuilder.addProxyToMaps((NamedElement) UMLParent);
+						}
+						// if a proxy exists -> update it
+						else if (topDownParent.getModelicaMLProxy() != null) {
+							ec.updateClass(topDownParent.getModelicaMLProxy(), (ClassItem) topDownParent, applyProxyStereotype);
+							UMLParent = topDownParent.getModelicaMLProxy();
+							topDownParent.setModelicaMLProxy(UMLParent);
+							treeBuilder.addProxyToMaps((NamedElement) UMLParent);
+						}
+						else { // create a new proxy
+							UMLParent = (Element) ec.createClass(UMLParent, (ClassItem) topDownParent, applyProxyStereotype);
+							topDownParent.setModelicaMLProxy(UMLParent);
+							treeBuilder.addProxyToMaps((NamedElement) UMLParent);
+
+							// update
+							ec.updateClass(UMLParent, (ClassItem) topDownParent, applyProxyStereotype);
+						}
+					}
+				}
+				
+				// if the selected element is a class -> synch class recursively
+				if (treeObject instanceof ClassItem) {
+					ec.createElements(UMLParent, (TreeParent) treeObject, update, applyProxyStereotype, true);
+					if (deleteIncositentProxies) {
+						ec.deleteInvalidProxyElements();
+					}
+				}
+				else if (treeObject instanceof ComponentItem) {
+					Element existingProperty = ((Classifier)UMLParent).getOwnedMember(treeObject.getName());
+					if (existingProperty instanceof Property) {
+						ec.updateProperty(UMLParent, existingProperty, (ComponentItem) treeObject, applyProxyStereotype);
+					}
+					else {
+						NamedElement property = (NamedElement) ec.createProperty(UMLParent, (ComponentItem) treeObject, applyProxyStereotype);
+						treeObject.setModelicaMLProxy(property);
+						treeBuilder.addProxyToMaps(property);
+						ec.updateProperty(UMLParent, property, (ComponentItem) treeObject, applyProxyStereotype);
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		return job;
+	}
+
+	
+	private void synchronizeSubTree(TreeObject treeObject 
+//			boolean update, 
+//			boolean applyProxyStereotype,
+//			boolean deleteInconsistentProxies
+			) {
+		
+		if ( collectProxiesJob.getState() == Job.RUNNING ) {
+			MessageDialog.openInformation(getSite().getShell(), "Please Wait", 
+					"Please wait until the ModelicaML proxies are collected.");
+			return;
+		}
+		
+		SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+		dialog.open();
+		
+		int result = dialog.getReturnCode();
+
+		// set synchronization options
+		boolean applyProxyStereotype = dialog.isApplyProxyStereotype();
+		boolean update = dialog.isUpdate();
+		boolean deleteInconsistentProxies = dialog.isDeleteNotUsedProxies();
+
+		if (! (result == IDialogConstants.OK_ID)) {
+			return;
+		}
+		
+		if (umlModel != null) {
+			if (ModelicaMLRoot != null && serviceRegistry != null && editingDomain != null) {
+				
+				// Sync sub tree job listener
+				final JobChangeAdapter syncSubTreeJobChangeAdapter = new JobChangeAdapter() {
+					public void done(IJobChangeEvent event) {
+			            if (event.getResult().isOK()) {
+			            	Display.getDefault().asyncExec(new Runnable() {
+			        			public void run() {
+			        				viewer.refresh(); 				
+			        			}
+			        		});
+			            }
+			            else {
+			            	System.err.println("Could not complete the loading of sub-tree.");
+			            	}
+						}
+			         };
+			        
+			    // sync sub tree job
+				final Job syncSubTreeJob = getSynchronizeSubTreeJob(treeObject, update, applyProxyStereotype, deleteInconsistentProxies);
+				syncSubTreeJob.addJobChangeListener(syncSubTreeJobChangeAdapter);
+				
+				// first reload the sub tree to make sure that the tree is complete
+				if (treeObject instanceof ClassItem) {
+					
+					configureTreeBuilder();
+					
+					reloadSubTreeJob = getReloadSubTreeJob((TreeParent) treeObject);
+					
+					// Load sub tree job listener
+					final JobChangeAdapter loadSubTreeJobChangeAdapter = new JobChangeAdapter() {
+						public void done(IJobChangeEvent event) {
+				            if (event.getResult().isOK()) {
+				            	Display.getDefault().asyncExec(new Runnable() {
+				        			public void run() {
+				        				syncSubTreeJob.setUser(true);
+				        				syncSubTreeJob.schedule();				
+				        			}
+				        		});
+				            }
+				            else {
+				            	System.err.println("Could not complete the loading of sub-tree.");
+				            	}
+							}
+				         };
+					
+					reloadSubTreeJob.addJobChangeListener(loadSubTreeJobChangeAdapter);
+					reloadSubTreeJob.setUser(true);
+					
+					if (!(reloadSubTreeJob.getState() == Job.RUNNING)) {
+						reloadSubTreeJob.schedule();
+					}
+				}
+				else {
+					// if the selected item is a component -> launch the sync. sub tree job
+					syncSubTreeJob.setUser(true);
+					syncSubTreeJob.schedule();
+				}	
+			}
+			else {
+				MessageDialog.openError(getSite().getShell(), "Synchronization Error", 
+						"Cannot access the editing domain of the active ModelicaML model. " +
+						"Please make sure that the ModelicaML model is open in the active editor and try it again.");
+			}
+		}
+		else {
+			MessageDialog.openError(getSite().getShell(), "Synchronization Error", 
+					"Cannot access the ModelicaML model. " +
+					"Please make sure that the ModelicaML model is open in the active editor.");
+		}
+	}
+	
+
+	private Job getReloadSubTreeJob(final TreeParent parent){
+		Job job = new Job("Loading '"+parent.getQName()+" ' ...") {
+			
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				// remove children
+				TreeObject[] children = parent.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					TreeObject treeObject = children[i];
+					parent.removeChild(treeObject);
+//					treeBuilder.removeItem(treeObject);
+				}
+				
+				//reload models in order reflect changes
+				treeBuilder.loadModels();
+				
+				// add parent components
+//				ArrayList<TreeObject> parentComponents = treeBuilder.createComponentNodes(parent, false);
+				treeBuilder.createComponentNodes(parent, false);
+				
+				// add nested classes (recursively) their components (not recursively because once createClassNodes was called with recursive=true it will give all nested classes)
+				ArrayList<TreeObject> classes = treeBuilder.createClassNodes(parent, parent.getQName(), true);
+				for (TreeObject addedClass : classes) {
+//					ArrayList<TreeObject> components = treeBuilder.createComponentNodes((TreeParent) addedClass, false);
+					treeBuilder.createComponentNodes((TreeParent) addedClass, false);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		
+		return job;
+	}
+	
+	private void loadSubTree(final TreeParent parent){
+		
+		if (parent instanceof ClassItem) {
+			
+			configureTreeBuilder();
+			
+			reloadSubTreeJob = getReloadSubTreeJob(parent);
+			
+			// Load sub tree job listener
+			final JobChangeAdapter loadSubTreeJobChangeAdapter = new JobChangeAdapter() {
+				public void done(IJobChangeEvent event) {
+		            if (event.getResult().isOK()) {
+		            	Display.getDefault().asyncExec(new Runnable() {
+		        			public void run() {
+		        				viewer.refresh(parent);
+		    					viewer.expandToLevel(parent, 1);
+		        			}
+		        		});
+		            }
+		            else {
+		            	System.err.println("Could not complete the loading of sub-tree.");
+		            	}
+					}
+		         };
+			
+			reloadSubTreeJob.addJobChangeListener(loadSubTreeJobChangeAdapter);
+			reloadSubTreeJob.setUser(true);
+			
+			if (!(reloadSubTreeJob.getState() == Job.RUNNING)) {
+				reloadSubTreeJob.schedule();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	private UmlModel umlModel;
+	private EObject ModelicaMLRoot;
+	private ServicesRegistry serviceRegistry;
+	private TransactionalEditingDomain editingDomain;
+	
 	private void configureTreeBuilder(){
+		
 		// As a job
-		final UmlModel umlModel = UmlUtils.getUmlModel();
+		umlModel = UmlUtils.getUmlModel();
 		if (umlModel == null) {
 			MessageDialog.openError(new Shell(), 
 					"ModelicaML Model Editing Domain Access Error", 
@@ -1348,10 +1758,10 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		}
 		else {
 			try {
-				final EObject ModelicaMLRoot = umlModel.lookupRoot();
+				ModelicaMLRoot = umlModel.lookupRoot();
 				try {
-					final ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+					serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+					editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					
 					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						
@@ -1411,6 +1821,30 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	};
 	
 	
+	
+	private List<TreeObject> getTopDownPathItems(TreeObject startItem){
+		List<TreeObject> listOfSegments = new ArrayList<TreeObject>();
+		listOfSegments.add(startItem);
+		listOfSegments.addAll(getPathFromItem(startItem, new ArrayList<TreeObject>()) );
+		
+		// reverse the path to get the top-down path
+		Collections.reverse(listOfSegments);
+
+		return listOfSegments;
+	}
+	
+	private ArrayList<TreeObject> getPathFromItem(TreeObject item, ArrayList<TreeObject> listOfSegments){
+		TreeObject parent = item.getParent();
+		if (parent != null && !parent.getName().equals(Constants.folderName_code_sync)) { // the root node represents the folder. It should not appear in the path.  
+			listOfSegments.add(parent);
+			listOfSegments.addAll( getPathFromItem(parent, new ArrayList<TreeObject>()) );
+		}
+		return listOfSegments;
+	}
+	
+	
+	
+	
 	private HashSet<Object> findTreeItem(EObject selectedElement){
 		HashSet<Object> items = new HashSet<Object>();
 		
@@ -1462,12 +1896,12 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		});
 	}
 	
-//	private void showMessage(String message) {
-//		MessageDialog.openInformation(
-//			viewer.getControl().getShell(),
-//			"Modelica Models",
-//			message);
-//	}
+	private void showMessage(String message) {
+		MessageDialog.openInformation(
+			viewer.getControl().getShell(),
+			"Modelica Models",
+			message);
+	}
 
 	/**
 	 * Passing the focus request to the viewer's control.

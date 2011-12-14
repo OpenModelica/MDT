@@ -98,14 +98,14 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	// used to decorate the tree item string 
 	private StyledString styledString;
 	
-	@Override
-	public void dispose() {
-		if (overlayIcon != null && overlayIconImage != null) {
-			overlayIcon.destroyResource(overlayIconImage);
-		}
-		super.dispose();
-	}
-	
+//	@Override
+//	public void dispose() {
+//		if (overlayIcon != null && overlayIconImage != null) {
+//			overlayIcon.destroyResource(overlayIconImage);
+//		}
+//		super.dispose();
+//	}
+//	
 	
 	@Override
 	public void update(ViewerCell cell) {
@@ -513,13 +513,13 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			return list;
 		}
 
-		//check if component has type that exists in the loaded models
-		// exclude the primitive (predefined) types from this check.
-		if (item instanceof ComponentItem) {
-			if (!((ComponentItem)item).isPrimitive() && ((ComponentItem)item).getComponentTypeTreeItem() == null) {
-				list.add(item);
-			}
-		}
+//		//check if component has type that exists in the loaded models
+//		// exclude the primitive (predefined) types from this check.
+//		if (item instanceof ComponentItem) {
+//			if (!((ComponentItem)item).isPrimitive() && ((ComponentItem)item).getComponentTypeTreeItem() == null) {
+//				list.add(item);
+//			}
+//		}
 		
 		// check its children
 		if (item instanceof TreeParent) {

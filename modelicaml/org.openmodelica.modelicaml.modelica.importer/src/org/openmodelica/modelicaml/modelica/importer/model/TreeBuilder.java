@@ -103,7 +103,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private boolean validateProxies = false;
 	
 	
-	public void buildTree(TreeParent treeRoot){
+	public void buildTree(TreeParent treeRoot, ArrayList<String> excludeModels){
 		
 		OMCWorkingDirectoryAbsoplutePath = omcc.cd();
 		
@@ -114,9 +114,10 @@ public class TreeBuilder implements IRunnableWithProgress{
 		// look for model proxies in the current ModelicaML model.
 		collectModelicaModelProxies();
 		
-		// exclude these libs
-		modelsToBeExcluded.add("Modelica.UsersGuide");
-		modelsToBeExcluded.add("Modelica.Fluid");
+		// models/libraries to be excluded
+		if (excludeModels != null) {
+			modelsToBeExcluded.addAll(excludeModels);
+		}
 		
 		// create class nodes
 		createClassNodes(treeRoot, "", true);
@@ -178,7 +179,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 //									createMarker(element, ((NamedElement)element).getQualifiedName(), 
 									createMarker(generalization, ((NamedElement)element).getQualifiedName(),
 											"error", 
-											"NOT VALID: no target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
+											"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
 								}
 							}
 						}
@@ -195,6 +196,15 @@ public class TreeBuilder implements IRunnableWithProgress{
 		proxies.clear();
 		proxyQNames.clear();
 		proxyQNameToElement.clear();
+	}
+	
+	public void removeItem(TreeObject item){
+		treeItems.remove(item);
+		if (item.getModelicaMLProxy() != null) {
+			proxies.remove(item.getModelicaMLProxy());
+			proxyQNames.remove(item.getQName());
+			proxyQNameToElement.remove(item.getQName());
+		}
 	}
 	
 	
@@ -267,7 +277,12 @@ public class TreeBuilder implements IRunnableWithProgress{
 					EList<Element> functionParametersProxies = new BasicEList<Element>();
 					EList<Element> enumerationLiteralProxies = new BasicEList<Element>();
 					
-					for (Element proxy : proxies) {
+					// in order to avoid concurrent modifications
+					HashSet<Element> proxiesCopy = new HashSet<Element>();
+					proxiesCopy.addAll(proxies);
+					
+//					for (Element proxy : proxies) {
+					for (Element proxy : proxiesCopy) {
 						if (proxy instanceof NamedElement) {
 							addProxyToMaps((NamedElement)proxy);
 							
@@ -366,7 +381,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 							
 							if (recursive) {
 								// recursive call
-								createClassNodes(item, qName, recursive);
+								createdItems.addAll(createClassNodes(item, qName, recursive));
 							}
 						}
 					}
@@ -617,7 +632,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 				for (int i = 0; i < children.length; i++) {
 					TreeObject treeObject = children[i];
 					if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
-						createComponentNodes((TreeParent)treeObject, recursive);
+						
+						createdItems.addAll(createComponentNodes((TreeParent)treeObject, recursive));
+						
 					}
 				}
 			}
@@ -745,7 +762,12 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	private TreeObject findTreeItem(String qName){
 		TreeObject foundObject = null;
-		for (TreeObject treeObject : treeItems) {
+		
+		// to avoid concurrent modifications
+		ArrayList<TreeObject> items = new ArrayList<TreeObject>();
+		items.addAll(treeItems);
+		
+		for (TreeObject treeObject : items) {
 			if (treeObject.getQName().equals(qName)) {
 				foundObject = treeObject;
 			}

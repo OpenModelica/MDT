@@ -111,14 +111,14 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	}
 	
 	
-	public void createElements(Element parent, TreeParent treeParent, boolean update, boolean applyProxyStereotype){
+	public void createElements(Element parent, TreeParent treeParent, boolean update, boolean applyProxyStereotype, boolean recursive){
 		// clear the log
 		this.log.clear();
 		
 		// first create classes, because they will type the properties
-		createClasses(parent, treeParent, update, applyProxyStereotype);
+		createClasses(parent, treeParent, update, applyProxyStereotype, recursive);
 		// create properties and extends relations
-		createPropertiesAndGeneralizations(treeParent, update, applyProxyStereotype);
+		createPropertiesAndGeneralizations(treeParent, update, applyProxyStereotype, recursive);
 	}
 	
 	public void deleteInvalidProxyElements(){
@@ -221,7 +221,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	
 	
 	
-	public void createPropertiesAndGeneralizations(TreeParent treeParent, boolean update, boolean applyProxyStereotype){
+	public void createPropertiesAndGeneralizations(TreeParent treeParent, boolean update, boolean applyProxyStereotype, boolean recursive){
 
 		Element owningClass = treeParent.getModelicaMLProxy();
 		
@@ -230,6 +230,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			
 			for (int i = 0; i < children.length; i++) {
 				TreeObject treeObject = children[i];
+				
+				// create a component
 				if (treeObject instanceof ComponentItem && owningClass instanceof Classifier) {
 					
 					ComponentItem component = ((ComponentItem)treeObject);
@@ -320,15 +322,17 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				}
 				
 				// recursive  call
-				if (treeObject instanceof ClassItem) {
-					createPropertiesAndGeneralizations((TreeParent) treeObject, update, applyProxyStereotype);
+				if (recursive) {
+					if (treeObject instanceof ClassItem) {
+						createPropertiesAndGeneralizations((TreeParent) treeObject, update, applyProxyStereotype, recursive);
+					}
 				}
 			}
 		}
 	}
 	
 	
-	public void createClasses(Element parent, TreeParent treeParent, boolean update, boolean applyProxyStereotype){
+	public void createClasses(Element parent, TreeParent treeParent, boolean update, boolean applyProxyStereotype, boolean recursive){
 
 		if (parent != null && treeParent.hasChildren()) {
 			TreeObject[] children = treeParent.getChildren();
@@ -368,15 +372,17 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					}
 					
 					// recursive  call
-					if (modelicaMLProxy instanceof NamedElement) {
-						createClasses(modelicaMLProxy, (TreeParent) treeObject, update, applyProxyStereotype);
+					if (recursive) {
+						if (modelicaMLProxy instanceof NamedElement) {
+							createClasses(modelicaMLProxy, (TreeParent) treeObject, update, applyProxyStereotype, recursive);
+						}
 					}
 				}
 			}
 		}
 	}
 	
-	private Element createClass(
+	public Element createClass(
 			final Element parent, 
 			final ClassItem classItem, 
 			final boolean applyProxyStereotype){
@@ -512,7 +518,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		return null;
 	}
 	
-	private Element createProperty(final Element owningClass, final ComponentItem componentTreeObject, final boolean applyProxyStereotype){
+	public Element createProperty(final Element owningClass, final ComponentItem componentTreeObject, final boolean applyProxyStereotype){
 		
 		CompoundCommand cc = new CompoundCommand("Create a ModelicaML Property Proxy");
 		Command command = new RecordingCommand(editingDomain) {
@@ -657,7 +663,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	}
 	
 	
-	private Element updateClass(
+	public Element updateClass(
 			final Element classElement, 
 			final ClassItem classItem, 
 			final boolean applyProxyStereotype){
@@ -745,7 +751,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	
 	
 	
-	private Element updateProperty(
+	public Element updateProperty(
 			final Element owningClass, 
 			final Element property, 
 			final ComponentItem componentTreeObject, 
