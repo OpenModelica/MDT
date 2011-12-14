@@ -45,7 +45,7 @@ public class DeriveValueBindingCodeUtls {
 //			if ( scriptCode.matches("(.+)getBinding\\((\\s+)?\\)(.+)?") && !hasMediatorBindingScriptFunctions(scriptCode)) {
 //				return true;
 //			}
-			if ( scriptCode.contains("getBinding(")) {
+			if ( scriptCode.contains(Constants.MACRO_getBinding + "(")) {
 				return true;
 			}
 		}
