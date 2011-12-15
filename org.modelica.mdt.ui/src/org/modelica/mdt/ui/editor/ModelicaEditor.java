@@ -46,7 +46,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -58,11 +57,13 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension4;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
@@ -72,10 +73,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
@@ -91,32 +94,19 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.modelica.mdt.ui.actions.FoldingActionGroup;
-import org.modelica.mdt.ui.actions.IModelicaEditorActionDefinitionIds;
-import org.modelica.mdt.ui.actions.OpenAction;
-import org.modelica.mdt.ui.hover.ModelicaSourceHover;
-import org.modelica.mdt.ui.hover.SourceViewerInformationControl;
 import org.eclipse.ui.editors.text.DefaultEncodingSupport;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
-import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.Viewer;
-
-import org.modelica.mdt.ui.PreferenceConstants;
-import org.modelica.mdt.ui.UIPlugin;
 import org.modelica.mdt.breakpoint.MDTBreakpointAdapter;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaFile;
@@ -124,8 +114,16 @@ import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.DefinitionSourceRegion;
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.ui.PreferenceConstants;
+import org.modelica.mdt.ui.UIPlugin;
+import org.modelica.mdt.ui.actions.FoldingActionGroup;
+import org.modelica.mdt.ui.actions.IModelicaEditorActionDefinitionIds;
+import org.modelica.mdt.ui.actions.OpenAction;
+import org.modelica.mdt.ui.hover.ModelicaSourceHover;
+import org.modelica.mdt.ui.hover.SourceViewerInformationControl;
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 import org.modelica.mdt.ui.text.ModelicaCodeResolver;
+import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
 import org.modelica.mdt.ui.text.ModelicaFoldingStructureProvider;
 import org.modelica.mdt.ui.text.ModelicaPairMatcher;
 import org.modelica.mdt.ui.view.ModelicaContentOutlinePage;
@@ -174,6 +172,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	
 
 	/* deals with opening the second file in the editor and notifying the outline page*/
+	@Override
 	public void propertyChanged(Object obj, int prop)
 	{
 		if (prop == IEditorPart.PROP_INPUT)
@@ -208,6 +207,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		super.rulerContextMenuAboutToShow(menu);
 		IMenuManager foldingMenu= new MenuManager("Folding", "projection"); //$NON-NLS-1$
@@ -230,6 +230,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	}
 	
 	
+	@Override
 	protected void initializeEditor() 
 	{
 		super.initializeEditor();
@@ -245,6 +246,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		setSourceViewerConfiguration(new ModelicaSourceViewerConfig(this, IModelicaPartitions.MODELICA_PARTITIONING));
 	}	
 	
+	@Override
 	public IDocumentProvider getDocumentProvider()
 	{
 		if (fDocumentProvider == null)
@@ -252,6 +254,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		return fDocumentProvider;
 	}
 	
+	@Override
 	protected void createActions() 
 	{
 		super.createActions();
@@ -342,6 +345,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
 		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell shell) {
 				return new SourceViewerInformationControl(shell, SWT.TOOL | SWT.NO_TRIM | getOrientation(), SWT.NONE);
 			}
@@ -351,7 +355,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 
 		fProjectionModelUpdater= new ModelicaFoldingStructureProvider();
 		if (fProjectionModelUpdater != null)
-			fProjectionModelUpdater.install(this, (ProjectionViewer)projectionViewer);
+			fProjectionModelUpdater.install(this, projectionViewer);
 
 		// ensure source fViewer decoration support has been created and configured
 		SourceViewerDecorationSupport svds = getSourceViewerDecorationSupport(viewer);
@@ -365,6 +369,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		return getSourceViewer();
 	}
 	
+	@Override
 	public void dispose()
 	{
 		super.dispose();
@@ -536,6 +541,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 //	}
 	
 		
+	@Override
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) 
 	{	
 		//System.out.println("CharPairMatcher set in configureSourceViewerDecorationSupport");
@@ -549,7 +555,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) 
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) 
 	{
 		try
 		{
@@ -658,6 +664,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
 			ModelicaEditor.this.selectionChanged();
@@ -679,6 +686,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	 * Updates the selection in the editor's widget with the selection of the outline page.
 	 */
 	class OutlineSelectionChangedListener  extends AbstractSelectionChangedListener {
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			doSelectionChanged(event);
 		}
@@ -696,7 +704,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		IModelicaElement reference= null;
 
 		ISelection selection= event.getSelection();
-		Iterator iter= ((IStructuredSelection) selection).iterator();
+		Iterator<?> iter= ((IStructuredSelection) selection).iterator();
 		while (iter.hasNext()) {
 			Object o= iter.next();
 			if (o instanceof IModelicaElement) {
@@ -761,7 +769,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		if (i != null && i instanceof ModelicaElementEditorInput) 
 		{
 			IModelicaElement me = ((ModelicaElementEditorInput)i).getSourceFile();
-			if (me != null) return (IModelicaElement)me;
+			if (me != null) return me;
 		}
 		return EditorUtility.getEditorInputModelicaElement(this);
 	}
@@ -937,6 +945,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	/*
 	 * @see AbstractTextEditor#adjustHighlightRange(int, int)
 	 */
+	@Override
 	protected void adjustHighlightRange(int offset, int length) {
 
 		try 
@@ -1019,12 +1028,14 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		/*
 		 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
 		 */
+		@Override
 		public IRegion getSubject(ITextViewer textViewer, int invocationOffset) {
 			return fHoverRegion;
 		}
 		/*
 		 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 		 */
+		@Override
 		public String getInformation(ITextViewer textViewer, IRegion subject) {
 			return fHoverInfo.toString();
 		}
@@ -1032,12 +1043,14 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 		 * @since 3.2
 		 */
+		@Override
 		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 			return fHoverInfo;
 		}
 		/*
 		 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
 		 */
+		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
 			return fControlCreator;
 		}
@@ -1072,6 +1085,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 
 			ISourceViewer sourceViewer= getSourceViewer();
@@ -1172,6 +1186,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
 	 */
+	@Override
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { "org.modelica.mdt.ui.modelicaEditorScope" });  //$NON-NLS-1$
 	}
@@ -1186,6 +1201,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handleCursorPositionChanged()
 	 * @since 3.3
 	 */
+	@Override
 	protected void handleCursorPositionChanged() {
 		super.handleCursorPositionChanged();
 		fCachedSelectedRange= getViewer().getSelectedRange();
@@ -1272,6 +1288,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 			if (ModelicaEditor.this.equals(partRef.getPart(false))) {
 				cancel();
@@ -1282,17 +1299,24 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 			if (ModelicaEditor.this.equals(partRef.getPart(false))) {
 				cancel();
 			}
 		}
 
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {}
 	}
 	
@@ -1316,6 +1340,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		fProjectionModelUpdater.collapseComments();
 	}
 	
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 
 		String property= event.getProperty();
@@ -1383,6 +1408,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
 	 */
+	@Override
 	protected void performRevert() {
 		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
 		projectionViewer.setRedraw(false);
@@ -1408,6 +1434,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 		}
 	}
 
+	@Override
 	protected void installEncodingSupport() {
 		fEncodingSupport= new DefaultEncodingSupport();
 		fEncodingSupport.initialize(this);
@@ -1416,6 +1443,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	/*
 	 * @see StatusTextEditor#getStatusHeader(IStatus)
 	 */
+	@Override
 	protected String getStatusHeader(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusHeader(status);
@@ -1428,6 +1456,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	/*
 	 * @see StatusTextEditor#getStatusBanner(IStatus)
 	 */
+	@Override
 	protected String getStatusBanner(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusBanner(status);
@@ -1440,6 +1469,7 @@ public class ModelicaEditor extends TextEditor implements /* IModelicaElementCha
 	/*
 	 * @see StatusTextEditor#getStatusMessage(IStatus)
 	 */
+	@Override
 	protected String getStatusMessage(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusMessage(status);
