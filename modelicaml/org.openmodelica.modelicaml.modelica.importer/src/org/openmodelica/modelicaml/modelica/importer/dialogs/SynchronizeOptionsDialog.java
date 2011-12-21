@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 
 public class SynchronizeOptionsDialog extends Dialog {
@@ -58,8 +57,12 @@ public class SynchronizeOptionsDialog extends Dialog {
 	private Label lblText;
 	
 	boolean applyProxyStereotype = true;
+
+
+
 	boolean update = true;
-	boolean deleteNotUsedProxies= false;
+	boolean deleteNotUsedProxies = false;
+	boolean fullImport = false;
 	
 	public SynchronizeOptionsDialog( Shell parent ) {
 		super(parent);
@@ -98,40 +101,59 @@ public class SynchronizeOptionsDialog extends Dialog {
 //		
 		//***************** Buttons 
 		
-		// 4 raw
-		new Label(composite, SWT.NONE);
-		
-		final Button btnApplyProxyStereotype = new Button(composite, SWT.CHECK);
-		btnApplyProxyStereotype.setSelection(true);
-		btnApplyProxyStereotype.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setApplyProxyStereotype(btnApplyProxyStereotype.getSelection());
-			}
-		});
-		btnApplyProxyStereotype.setText( "Apply proxy stereotype to ModelicaML proxy elements (recommended)." );
-		btnApplyProxyStereotype.setToolTipText("A proxy stereotype indicates that the a ModelicaML element is not complete. " +
-				"A proxy repersents a Modelica model and reflects only information required for the usage of the represented Modelica model." +
-				"No code is generated from a proxy.");
+//		// 4 raw
+//		new Label(composite, SWT.NONE);
+//		
+//		final Button btnApplyProxyStereotype = new Button(composite, SWT.CHECK);
+//		btnApplyProxyStereotype.setSelection(true);
+//		btnApplyProxyStereotype.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				setApplyProxyStereotype(btnApplyProxyStereotype.getSelection());
+//			}
+//		});
+//		btnApplyProxyStereotype.setText( "Apply proxy stereotype to ModelicaML proxy elements (recommended)." );
+//		btnApplyProxyStereotype.setToolTipText("A proxy stereotype indicates that the a ModelicaML element is not complete. " +
+//				"A proxy repersents a Modelica model and reflects only information required for the usage of the represented Modelica model." +
+//				"No code is generated from a proxy.");
+//		
+//		
+//		// 5 raw
+//		new Label(composite, SWT.NONE);
+//
+//		final Button btnUpdate = new Button(composite, SWT.CHECK);
+//		
+//		btnUpdate.setSelection(true); 	// preselect this option.
+//		setUpdate(true);
+//		
+//		btnUpdate.setText("Update existing proxy elements (recommended).");
+//		btnUpdate.setToolTipText("All data of the exising proxies will be updated.");
+//		btnUpdate.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				setUpdate(btnUpdate.getSelection());
+//			}
+//		});
+
 		
 		
 		// 5 raw
 		new Label(composite, SWT.NONE);
 
-		final Button btnUpdate = new Button(composite, SWT.CHECK);
+		final Button btnFullImport = new Button(composite, SWT.CHECK);
 		
-		btnUpdate.setSelection(true); 	// preselect this option.
-		setUpdate(true);
+		btnFullImport.setSelection(false); 	// preselect this option.
+		setFullImport(false);
 		
-		btnUpdate.setText("Update existing proxy elements (recommended).");
-		btnUpdate.setToolTipText("All data of the exising proxies will be updated.");
-		btnUpdate.addSelectionListener(new SelectionAdapter() {
+		btnFullImport.setText("Import all model data (including behavior, imports, comments and annotations)");
+		btnFullImport.setToolTipText("Import all model data (including behavior, imports, comments and annotations)");
+		btnFullImport.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				setUpdate(btnUpdate.getSelection());
+				setFullImport(btnFullImport.getSelection());
 			}
 		});
-
+		
 		
 		// 6 raw
 		new Label(composite, SWT.NONE);
@@ -192,6 +214,14 @@ public class SynchronizeOptionsDialog extends Dialog {
 
 	public void setDeleteNotUsedProxies(boolean deleteNotUsedProxies) {
 		this.deleteNotUsedProxies = deleteNotUsedProxies;
+	}
+	
+	public boolean isFullImport() {
+		return fullImport;
+	}
+
+	public void setFullImport(boolean fullImport) {
+		this.fullImport = fullImport;
 	}
 	
 }

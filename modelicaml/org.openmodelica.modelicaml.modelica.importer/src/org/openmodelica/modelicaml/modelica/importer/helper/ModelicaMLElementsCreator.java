@@ -25,9 +25,12 @@ import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.umlutils.OpaqueBehaviorUtil;
 import org.eclipse.papyrus.umlutils.PackageUtil;
+import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
+import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.EnumerationLiteral;
@@ -35,6 +38,7 @@ import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.ParameterDirectionKind;
@@ -121,14 +125,15 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		createPropertiesAndGeneralizations(treeParent, update, applyProxyStereotype, recursive);
 	}
 	
-	public void deleteInvalidProxyElements(){
+	public void deleteInvalidProxyElements(String namespace){
 		/* 
 		 * Delete all proxies or their owned elements 
 		 * that are not contained in the loaded Modelica models. 
 		 */
 		
 		HashSet<String> modelicaModelQNames = new HashSet<String>();
-		for (TreeObject treeObject : treeBuilder.getTreeItems()) {
+		EList<TreeObject> treeItems = treeBuilder.getTreeItems(); 
+		for (TreeObject treeObject : treeItems) {
 			modelicaModelQNames.add(treeObject.getQName());
 		}
 		
@@ -138,7 +143,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		
 		// find invalid proxies
 		for (Element element : proxies) {
-			if (element instanceof NamedElement) {
+			
+			if (element instanceof NamedElement && ((NamedElement)element).getQualifiedName().startsWith(namespace) ) {
 
 				/*
 				 *  IMPORTANT:  
@@ -408,12 +414,13 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					if (classItem.getClassRestriction().equals("function")) {
 						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.FUNCTION_BEHAVIOR);
 					}
+					else if (classItem.isEnumeration()) {
+						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.ENUMERATION);
+					}
 					else if (classItem.getClassRestriction().equals("type")) {
 						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.PRIMITIVE_TYPE);
 					}
-					else if (classItem.getClassRestriction().equals("enumeration")) {
-						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.ENUMERATION);
-					}
+
 					else {
 						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.CLASS);
 					}
@@ -617,13 +624,14 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				}
 				
 				if (appropriateStereotype != null) {
+					
 					// set modifications
 					if (extendsRelationItem.getModifications() != null) {
 						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, extendsRelationItem.getModifications());
 					}
 					
 					// set array size 
-					if (appropriateStereotype.getQualifiedName().equals(Constants.stereotypeQName_Type)
+					if (appropriateStereotype.getQualifiedName().equals(Constants.stereotypeQName_TypeRelation)
 							&& extendsRelationItem.getArraySize() != null) {
 						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, extendsRelationItem.getArraySize());
 					}
@@ -709,10 +717,11 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_expandable, true);
 					}
 					
-					// TODO: set comment
+					// set comment and annotations
+					updateCommentsAndAnnotation(classElement, classItem);
 					
-					// TODO: set annotation
-					
+					// set behaviors
+					updateBehaviors(classElement, classItem);
 					
 					// delete unappropriated stereotypes
 					// get all possible ModelicaML property stereotypes
@@ -748,6 +757,127 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		}
 		return null;
 	}
+	
+	
+	private void updateCommentsAndAnnotation(Element element, TreeObject treeObject){
+		if (treeObject instanceof ClassItem && element instanceof Classifier) {
+			Classifier clazz = (Classifier)element;
+			
+			// delete existing comments and annotation (note, that ModeicaML annotation is a sub-type of comment)
+			EList<Comment> existingComments = clazz.getOwnedComments();
+			deleteElements(new HashSet<Element>(existingComments));
+			
+			// Create new comments
+			String comment = ((ClassItem)treeObject).getComment();
+			if ( comment != null && !comment.replaceAll("\"", "").trim().equals("")) {
+				Comment newComment = ((Classifier)element).createOwnedComment();
+				newComment.setBody(comment);
+			}
+			
+			// Create annotations
+			List<String> annotations = ((ClassItem)treeObject).getAnnotations();
+			if (annotations!= null && annotations.size() > 0 ) {
+				for (String string : annotations) {
+					Comment annotation = ((Classifier)element).createOwnedComment();
+					Stereotype stereotype = annotation.getApplicableStereotype(Constants.stereotypeQName_Annotation);
+					if (stereotype != null) {
+						annotation.applyStereotype(stereotype);
+						annotation.setValue(stereotype, Constants.propertyName_fullAnnotationString, (Object) string);
+					}
+					annotation.setBody(string);
+				}
+			}
+		}
+		
+		// TODO: for the components
+	}
+	
+	
+	
+	
+	private void updateBehaviors(Element element, TreeObject treeObject){
+		if (treeObject instanceof ClassItem && element instanceof Classifier) {
+			Classifier clazz = (Classifier)element;
+			
+			// delete existing opaqueBehaviors
+			EList<Element> existingElements = clazz.getOwnedElements();
+			EList<Behavior> existingBehaviors = new BasicEList<Behavior>();
+
+			for (Element existingElement : existingElements) {
+				if (existingElement instanceof OpaqueBehavior) {
+					existingBehaviors.add((Behavior) existingElement);
+				}
+			}
+			
+			deleteElements(new HashSet<Element>(existingBehaviors));
+			
+			// Create initialAlgorithms
+			List<String> initialAlgorithms = ((ClassItem)treeObject).getInitialAlgorithms();
+			if (initialAlgorithms!= null && initialAlgorithms.size() > 0 ) {
+				int i = 0;
+				for (String string : initialAlgorithms) {
+					i ++;
+					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Algorithm);
+					if (stereotype != null) {
+						behavior.applyStereotype(stereotype);
+						behavior.setValue(stereotype, Constants.propertyName_initial, true);
+					}
+					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+				}
+			}
+			
+			// Create initialEquations
+			List<String> initialEquations = ((ClassItem)treeObject).getInitialEquations();
+			if (initialEquations != null && initialEquations.size() > 0 ) {
+				int i = 0;
+				for (String string : initialEquations) {
+					i ++;
+					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Equations);
+					if (stereotype != null) {
+						behavior.applyStereotype(stereotype);
+						behavior.setValue(stereotype, Constants.propertyName_initial, true);
+					}
+					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+				}
+			}
+			
+			
+			
+			// Create algorithms
+			List<String> algorithms = ((ClassItem)treeObject).getAlgorithms();
+			if (algorithms!= null && algorithms.size() > 0 ) {
+				int i = 0;
+				for (String string : algorithms) {
+					i ++;
+					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Algorithm);
+					if (stereotype != null) {
+						behavior.applyStereotype(stereotype);
+					}
+					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+				}
+			}
+			
+			// Create equations
+			List<String> equations = ((ClassItem)treeObject).getEquations();
+			if (equations != null && equations.size() > 0 ) {
+				int i = 0;
+				for (String string : equations) {
+					i ++;
+					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Equations);
+					if (stereotype != null) {
+						behavior.applyStereotype(stereotype);
+					}
+					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+				}
+			}
+			
+		}
+	}
+	
 	
 	
 	

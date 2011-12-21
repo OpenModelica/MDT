@@ -34,11 +34,11 @@
  */
 package org.openmodelica.modelicaml.modelica.importer.model;
 
-//import java.net.URI;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,21 +77,19 @@ import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.modelica.importer.helper.ModelicaModelProxiesCollector;
+import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 
 public class TreeBuilder implements IRunnableWithProgress{
 
 	private EList<TreeObject> treeItems = new BasicEList<TreeObject>(); // created tree clients
 
-	// model that is currently open in Papyrus
+	// Model that is currently open in Papyrus
 	private UmlModel ModelicaMLModel = null;
 	private EObject ModelicaMLRoot = null;
 
 	private String OMCWorkingDirectoryAbsoplutePath = null;
 	private OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 	
-
-
-	//	private EList<Element> proxies = new BasicEList<Element>();
 	private HashSet<Element> proxies = new HashSet<Element>();
 	
 	private HashSet<String> proxyQNames = new HashSet<String>();
@@ -101,8 +99,25 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	private boolean createOMCMarker = false;
 	private boolean validateProxies = false;
+	private boolean fullImport = false; // indicates of annotations, equations and imports should be included in synchronization
 	
-	
+	class ModelicaComponentData {
+		private String typeQName;
+		private Element type;
+		private String name;
+		private String comment; 
+		private String visibility;
+		private boolean isFinal;
+		private boolean isFlow;
+		private boolean isStream;
+		private boolean isReplaceable;
+		private String variability;
+		private String innerouter;
+		private String causality;
+		private EList<String> arraySize;
+		
+	}
+
 	public void buildTree(TreeParent treeRoot, ArrayList<String> excludeModels){
 		
 		OMCWorkingDirectoryAbsoplutePath = omcc.cd();
@@ -133,60 +148,190 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 	}
 	
+	
 	public void validateProxies(IProject iProject){
 		if (isValidateProxies()) {
 			
-			// delete all old markers
+			// Delete all old markers
 			deleteProxyValidationMarkers(iProject);
 			
+			// Get proxies
+			HashSet<Element> collectedProxies = new HashSet<Element>();
+			collectedProxies.addAll(proxies);
+			
+			// Get Modelica model names
 			HashSet<String> modelicaModelQNames = new HashSet<String>();
 			for (TreeObject treeObject : treeItems) {
 				modelicaModelQNames.add(treeObject.getQName());
 			}
 			
-			for (Element element : proxies) {
-				if (element instanceof NamedElement) {
-					Model topLevelModel = element.getModel();
-					// don't check installed library elements 
-					if ( topLevelModel != null  
-							&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
-						String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
-						
-						// check the proxy exists
-						if (!modelicaModelQNames.contains(qName)) {
-							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
+			// validate
+			validateProxies(collectedProxies, modelicaModelQNames);
+			
+//			for (Element element : proxies) {
+//				if (element instanceof NamedElement) {
+//					Model topLevelModel = element.getModel();
+//					// don't check installed library elements 
+//					if ( topLevelModel != null  
+//							&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
+//						String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
+//						
+//						// check the proxy exists
+//						if (!modelicaModelQNames.contains(qName)) {
+//							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
+//						}
+//						
+//						// check if a property has type defined
+//						if (element instanceof Property) {
+//							if ( ((Property)element).getType() == null ) {
+//								createMarker(element, 
+//										((NamedElement)element).getQualifiedName(), 
+//										"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
+//							}
+//						}
+//						
+//						// find extends relations without target
+//						if (element instanceof Classifier) {
+//							Classifier classifier = (Classifier) element;
+//							EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
+//							for (Generalization generalization : classExtendsRelations) {
+//								EList<Element> targets = generalization.getTargets();
+//								if (targets != null && targets.size() > 0) {
+//									// ok
+//								}
+//								else {
+////									createMarker(element, ((NamedElement)element).getQualifiedName(), 
+//									createMarker(generalization, ((NamedElement)element).getQualifiedName(),
+//											"error", 
+//											"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+		}
+	}
+	
+	
+	private void validateProxies(HashSet<Element> proxies,  HashSet<String> modelicaModelQNames){
+		for (Element element : proxies) {
+			if (element instanceof NamedElement) {
+				Model topLevelModel = element.getModel();
+				// don't check installed library elements 
+				if ( topLevelModel != null  
+						&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
+					String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
+					
+					// check the proxy exists
+					if (!modelicaModelQNames.contains(qName)) {
+						createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
+					}
+					
+					// check if a property has type defined
+					if (element instanceof Property) {
+						if ( ((Property)element).getType() == null ) {
+							createMarker(element, 
+									((NamedElement)element).getQualifiedName(), 
+									"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
 						}
-						
-						// check if a property has type defined
-						if (element instanceof Property) {
-							if ( ((Property)element).getType() == null ) {
-								createMarker(element, 
-										((NamedElement)element).getQualifiedName(), 
-										"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
+					}
+					
+					// find extends relations without target
+					if (element instanceof Classifier) {
+						Classifier classifier = (Classifier) element;
+						EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
+						for (Generalization generalization : classExtendsRelations) {
+							
+							EList<Element> targets = generalization.getTargets();
+							
+							if (targets != null && targets.size() > 0) {
+								// ok
 							}
-						}
-						
-						// find extends relations without target
-						if (element instanceof Classifier) {
-							Classifier classifier = (Classifier) element;
-							EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
-							for (Generalization generalization : classExtendsRelations) {
-								EList<Element> targets = generalization.getTargets();
-								if (targets != null && targets.size() > 0) {
-									// ok
-								}
-								else {
+							else {
 //									createMarker(element, ((NamedElement)element).getQualifiedName(), 
-									createMarker(generalization, ((NamedElement)element).getQualifiedName(),
-											"error", 
-											"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
-								}
+								createMarker(generalization, ((NamedElement)element).getQualifiedName(),
+										"error", 
+										"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	public void validateProxies(IProject iProject, TreeParent treeItem){
+			
+		// delete all old markers
+		if (treeItem.getModelicaMLProxy() instanceof NamedElement) {
+			deleteProxyValidationMarkers(iProject, ((NamedElement)treeItem.getModelicaMLProxy()).getQualifiedName());
+		}
+		// ´Collect proxies 
+		HashSet<Element> proxies = new HashSet<Element>();
+		Iterator<EObject> i = treeItem.getModelicaMLProxy().eAllContents();
+		while (i.hasNext()) {
+			EObject object = i.next() ;
+			
+			// collect all imported elements 
+			if ((object instanceof Class && ((Class)object).getAppliedStereotype(Constants.stereotypeQName_ModelicaModelProxy) != null) || object instanceof Property) {
+				proxies.add((Element) object);
+			}
+		}
+		
+		// Get Modelica model names
+		HashSet<String> modelicaModelQNames = new HashSet<String>();
+		for (TreeObject treeObject : getAllTreeItems(treeItem)) {
+			modelicaModelQNames.add(treeObject.getQName());
+		}
+
+		// validate
+		validateProxies(proxies, modelicaModelQNames);
+		
+//		for (Element element : proxies) {
+//			if (element instanceof NamedElement) {
+//				Model topLevelModel = element.getModel();
+//				// don't check installed library elements 
+//				if ( topLevelModel != null  
+//						&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
+//					String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
+//					
+//					// check the proxy exists
+//					if (!modelicaModelQNames.contains(qName)) {
+//						createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
+//					}
+//					
+//					// check if a property has type defined
+//					if (element instanceof Property) {
+//						if ( ((Property)element).getType() == null ) {
+//							createMarker(element, 
+//									((NamedElement)element).getQualifiedName(), 
+//									"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
+//						}
+//					}
+//					
+//					// find extends relations without target
+//					if (element instanceof Classifier) {
+//						Classifier classifier = (Classifier) element;
+//						EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
+//						for (Generalization generalization : classExtendsRelations) {
+//							
+//							EList<Element> targets = generalization.getTargets();
+//							
+//							if (targets != null && targets.size() > 0) {
+//								// ok
+//							}
+//							else {
+////									createMarker(element, ((NamedElement)element).getQualifiedName(), 
+//								createMarker(generalization, ((NamedElement)element).getQualifiedName(),
+//										"error", 
+//										"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	
@@ -206,7 +351,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 			proxyQNameToElement.remove(item.getQName());
 		}
 	}
-	
 	
 	public void addProxyToMaps(NamedElement proxy){
 		if ( proxy instanceof Element) {
@@ -257,7 +401,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 		proxyQNames.clear();
 		proxyQNameToElement.clear();
 		
-//		final UmlModel umlModel = UmlUtils.getUmlModel();
 		final UmlModel umlModel = getModelicaMLModel();
 		
 		if (umlModel != null && umlModel.getResource() != null) {
@@ -376,6 +519,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 							// set attributes
 							setClassProperties(item, qName);
 							
+							if (isFullImport()) {
+								// set annotations
+								setClassAnnotation(item, qName);
+								
+								// set behaviors (i.e. (initial) algorithms/equations )
+								setClassBehavior(item, qName);
+							}
+							
 							// add to the return list
 							createdItems.add(item);
 							
@@ -392,57 +543,178 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	//BACKUP
-//	public void createClassNodes(TreeParent treeParent, String classQName){
-//		
-//		if (classQName != null) {
-//			List<String> classes = getItems(omcc.getClassNames(classQName));
-//			if (classes != null) {
-//				for (String className : classes) {
-//					// exclude Modelica predefined functions defined in OMC
-//					if (!className.startsWith("'")) { 
-//						String qName = "";
-//						
-//						// set the qualified name
-//						if (classQName.equals("")) {
-//							qName = className;
-//						}
-//						else {
-//							qName = classQName + "." + className;
-//						}
-//
-//						if (!modelsToBeExcluded.contains(qName)) { // take into account that some models should not be loaded
-//							// create tree item
-//							ClassItem item = new ClassItem(className);
-//
-//							treeParent.addChild(item);
-//							treeItems.add(item);
-//							
-//							item.setQName(qName);
-//							item.setModelicaMLProxy(proxyQNameToElement.get(qName));
-//							
-//							// set attributes
-//							setClassProperties(item, qName);
-//							
-//							// recursive call
-//							createClassNodes(item, qName);
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
+	public ArrayList<TreeObject> createComponentNodes(TreeParent treeParent, boolean recursive){
+			ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
+			String classQName = treeParent.getQName();
+			
+			if (!classQName.equals("")) {
+				
+				// create extends relation nodes
+				List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
+				
+				// create extends relations nodes
+				if (inheritedClasses.size() > 0) {
+					for (String inheritedClassQName : inheritedClasses) {
+						
+						// create tree item
+						ExtendsRelationItem item = new ExtendsRelationItem(inheritedClassQName);
+						
+						treeParent.addChild(item);
+						treeItems.add(item);
+						
+						// set attributes
+						item.setSource(getTypeElement(classQName));
+						item.setSourceQname(classQName);
+						item.setTarget(getTypeElement(inheritedClassQName));
+	//					System.err.println();
+	//					System.err.println(inheritedClassQName);
+	//					System.err.println("getTypeElement(inheritedClassQName): " + getTypeElement(inheritedClassQName));
+	//					System.err.println(); 
+						item.setTargetQname(inheritedClassQName);
+						
+						// Note, UML Generalization is not a NamedElement. 
+	//					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
+						
+						// set modifications
+						item.setModifications(getExtendsModifications(item, classQName));
+						
+						// Set arraySize
+						item.setArraySize( ((ClassItem)treeParent).getArraySize() );
+						
+						// add to return list
+						createdItems.add(item);
+					}
+				}
+				
+				List<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName), proxyQNameToElement.get(classQName));
+				
+				// create components nodes
+				if (components.size() > 0) {
+					for (ModelicaComponentData component : components) {
+						
+						// set the qualified name
+						String qName = "";
+						if (classQName.equals("")) {
+							qName = component.name;
+						}
+						else {
+							qName = classQName + "." + component.name;
+						}
+						
+						// create tree item
+	//					TreeParent item = new TreeParent(component.name);
+						ComponentItem item = new ComponentItem (component.name);
+	
+						treeParent.addChild(item);
+						treeItems.add(item);
+						
+						// set attributes
+						item.setQName(qName);
+	
+						// set the loaded component type 
+						item.setComponentTypeQName(component.typeQName);
+						item.setComponentTypeTreeItem(findTreeItem(component.typeQName));
+	
+						// set component type proxy 
+						item.setComponentTypeProxy(component.type);
+						
+						// set properties
+						item.setFinal(component.isFinal);
+						item.setComment(component.comment);
+						item.setVisibility(component.visibility);
+						item.setFinal(component.isFinal);
+						item.setFlow(component.isFlow);
+						item.setStream(component.isStream);
+						item.setReplaceable(component.isReplaceable);
+						item.setVariability(component.variability);
+						item.setInnerouter(component.innerouter);
+						item.setCausality(component.causality);
+						item.setArraySize(component.arraySize);
+						
+						// set the ModelicaML proxy for this element
+						item.setModelicaMLProxy(proxyQNameToElement.get(qName));
+						
+						// set component modifications
+						item.setModifications(getComponentModifications(item, classQName));
+						
+						// Set the declaration 
+						item.setDeclaration(getComponentDeclarationEquation(item, classQName));
+						
+						// TODO: Set the conditional expression
+						/*
+						 * There is no OMC API function for getting the conditional expression. 
+						 */
+						
+						// add to return list
+						createdItems.add(item);
+					}
+				}
+				
+				// ONLY for a "full" import. This data is not needed for proxies.
+				// TODO: // create import relation nodes
+				// TODO: // create equation and algorithm nodes
+				// TODO: // create connection nodes
+				
+				if (recursive) {
+					// recursive call
+					TreeObject[] children = treeParent.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						TreeObject treeObject = children[i];
+						if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
+							
+							createdItems.addAll(createComponentNodes((TreeParent)treeObject, recursive));
+							
+						}
+					}
+				}
+			}
+			return createdItems;
+		}
+
+	
+	private boolean isBehavioralClass(ClassItem item){
+		if (item.getClassRestriction().equals("class")) { return true; }
+		if (item.getClassRestriction().equals("model")) { return true; }
+		if (item.getClassRestriction().equals("block")) { return true; }
+		if (item.getClassRestriction().contains("function")) { return true; }
+		return false;
+	}
+	
+	private void setClassBehavior(ClassItem item, String classQName){
+		if (isBehavioralClass(item)) {
+			List<String> intialAlgorithms = omcc.getInitialAlgorithms(classQName);
+			if (intialAlgorithms.size() > 0 ) {
+				item.setInitialAlgorithms(intialAlgorithms);
+			}
+			
+			List<String> algorithms = omcc.getAlgorithms(classQName);
+			if (algorithms.size() > 0 ) {
+				item.setAlgorithms(algorithms);
+			}
+			
+			List<String> intialEquations = omcc.getInitialEquations(classQName);
+			if (intialEquations.size() > 0 ) {
+				item.setInitialEquations(intialEquations);
+			}
+			
+			List<String> equations = omcc.getEquations(classQName);
+			if (equations.size() > 0 ) {
+				item.setEquations(equations);
+			}
+		}
+	}
 	
 	
-//	private void setClassRestriction(TreeObject item, String classQName){
-//		String classInfo = omcc.getClassRestriction(classQName);
-//		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.contains("false")) {
-//			item.setClassRestriction(classInfo.replaceAll("\"", "").trim());
-//		}
-//	}
+	private void setClassAnnotation(ClassItem item, String classQName){
+		List<String> annotations = omcc.getAnnotations(classQName);
+		if (annotations.size() > 0 ) {
+			item.setAnnotations(annotations);
+		}
+	}
 	
 	
 	private void setClassProperties(ClassItem item, String classQName){
+		
 		/*
 		 * 	>> getClassInformation(ModelicaMLModel.Modelica.Fluid.Utilities)
 			<< {"package",
@@ -458,20 +730,50 @@ public class TreeBuilder implements IRunnableWithProgress{
 		 *		-> filename,
 		 *		-> {partial,final,encapsulated}
 		 * 		? {"writable",3,1,8,14},
-		 * 		? {}
+		 * 		-> array size
 		 */
-		
 		
 		String classInfo = omcc.getClassInformation(classQName);
 		
 		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
 
 			// set class restriction
-			String[] splitted = classInfo.split(",");
-			if (splitted.length > 0) {
-				item.setClassRestriction(splitted[0].replaceAll("\\{", "").replace("\"", ""));
+			String classRestriction = StringHandler.unparseStrings(classInfo).get(0);
+			item.setClassRestriction(classRestriction);
+			
+			// set is enum
+			String isEnumerationReply = omcc.isEnumeration(classQName);
+			if (isEnumerationReply.trim().contains("true")) {
+				item.setIsEnumeration(true);
+			}
+			
+			// set is replaceable if there is parent that is a Modelica class
+			TreeParent parent = item.getParent();
+			if (parent instanceof ClassItem) {
+				String isReplaceableReply = omcc.isReplaceable(parent.getQName(), classQName);
+				if (isReplaceableReply.trim().contains("true")) {
+					item.setIsReplaceable(true);
+				}
 			}
 
+			
+			// set class array size
+			String arraySizeString = StringHandler.removeFirstLastCurlBrackets(StringHandler.unparseArrays(classInfo).get(2));
+			EList<String> arraySize = new BasicEList<String>();
+			String[] splited = arraySizeString.split(",");
+			for (int i = 0; i < splited.length; i++) {
+				String string = splited[i];
+				arraySize.add(string);
+			}
+			if (arraySize.size() > 0 ) {
+				item.setArraySize(arraySize);	
+			}
+			
+			// set comment
+			String comment = StringHandler.unparseStrings(classInfo).get(1);
+			item.setComment(comment);
+			
+			// set partial, final and encapsulated
 			boolean isPartial = false;
 			boolean isFinal = false;
 			boolean isEncapsulated = false;
@@ -496,7 +798,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 				}
 			}
 			
-			
 			// set the tree item data
 			item.setFinal(isFinal);
 			item.setPartial(isPartial);
@@ -514,268 +815,267 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	
-	public ArrayList<TreeObject> createComponentNodes(TreeParent treeParent, boolean recursive){
-		ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
-		String classQName = treeParent.getQName();
-		
-		if (!classQName.equals("")) {
-			
-			// create extends relation nodes
-			List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
-			
-			// create extends relations nodes
-			if (inheritedClasses.size() > 0) {
-				for (String inheritedClassQName : inheritedClasses) {
-					
-					// create tree item
-					ExtendsRelationItem item = new ExtendsRelationItem(inheritedClassQName);
-					
-					treeParent.addChild(item);
-					treeItems.add(item);
-					
-					// set attributes
-					item.setSource(getTypeElement(classQName));
-					item.setSourceQname(classQName);
-					item.setTarget(getTypeElement(inheritedClassQName));
-//					System.err.println();
-//					System.err.println(inheritedClassQName);
-//					System.err.println("getTypeElement(inheritedClassQName): " + getTypeElement(inheritedClassQName));
-//					System.err.println(); 
-					item.setTargetQname(inheritedClassQName);
-					
-					// Note, UML Generalization is not a NamedElement. 
-//					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
-					
-					// set modifications
-					item.setModifications(getExtendsModifications(item, classQName));
-					
-					// TODO: set arraySize
-					
-					// add to return list
-					createdItems.add(item);
-				}
-			}
-			
-			List<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName), proxyQNameToElement.get(classQName));
-			
-			// create components nodes
-			if (components.size() > 0) {
-				for (ModelicaComponentData component : components) {
-					
-					// set the qualified name
-					String qName = "";
-					if (classQName.equals("")) {
-						qName = component.name;
-					}
-					else {
-						qName = classQName + "." + component.name;
-					}
-					
-					// create tree item
-//					TreeParent item = new TreeParent(component.name);
-					ComponentItem item = new ComponentItem (component.name);
-
-					treeParent.addChild(item);
-					treeItems.add(item);
-					
-					// set attributes
-					item.setQName(qName);
-
-					// set the loaded component type 
-					item.setComponentTypeQName(component.typeQName);
-					item.setComponentTypeTreeItem(findTreeItem(component.typeQName));
-
-					// set component type proxy 
-					item.setComponentTypeProxy(component.type);
-					
-					// set properties
-					item.setFinal(component.isFinal);
-					item.setComment(component.comment);
-					item.setVisibility(component.visibility);
-					item.setFinal(component.isFinal);
-					item.setFlow(component.isFlow);
-					item.setStream(component.isStream);
-					item.setReplaceable(component.isReplaceable);
-					item.setVariability(component.variability);
-					item.setInnerouter(component.innerouter);
-					item.setCausality(component.causality);
-					item.setArraySize(component.arraySize);
-					
-					// set the ModelicaML proxy for this element
-					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
-					
-					// set component modifications
-					item.setModifications(getComponentModifications(item, classQName));
-					
-					// Set the declaration 
-					item.setDeclaration(getComponentDeclarationEquation(item, classQName));
-					
-					// TODO: Set the conditional expression
-					/*
-					 * There is no OMC API function for getting the conditional expression. 
-					 */
-					
-					// add to return list
-					createdItems.add(item);
-				}
-			}
-			
-			// ONLY for a "full" import. This data is not needed for proxies.
-			// TODO: // create import relation nodes
-			// TODO: // create equation and algorithm nodes
-			// TODO: // create connection nodes
-			
-			if (recursive) {
-				// recursive call
-				TreeObject[] children = treeParent.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					TreeObject treeObject = children[i];
-					if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
-						
-						createdItems.addAll(createComponentNodes((TreeParent)treeObject, recursive));
-						
-					}
-				}
-			}
-		}
-		return createdItems;
-	}
-	
-	
-	//BACKUP
-//	private void createComponentNodes(TreeParent treeParent){
-//		String classQName = treeParent.getQName();
+	// BACKUP
+//	private void setClassProperties(ClassItem item, String classQName){
+//		/*
+//		 * 	>> getClassInformation(ModelicaMLModel.Modelica.Fluid.Utilities)
+//			<< {"package",
+//			"",
+//			"D:/__PROJECTS/2008_PhD/tools/eclipse_3_6_modeling/runtime-New_configuration/modelicaml.example.potableWaterSystem_v26_TEST/code-sync/ModelicaMLModel/../ModelicaMLModel/Modelica/Fluid/Utilities/package.mo",
+//			{false,false,false},
+//			{"writable",3,1,8,14},
+//			{}}
+//		 *	
+//		 *	Explanation: 
+//		 *		-> Restriction, 
+//		 *		-> comment,
+//		 *		-> filename,
+//		 *		-> {partial,final,encapsulated}
+//		 * 		? {"writable",3,1,8,14},
+//		 * 		? {}
+//		 */
 //		
-//		if (!classQName.equals("")) {
+//		
+//		String classInfo = omcc.getClassInformation(classQName);
+//		
+//		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
+//
+//			// set class restriction
+//			String[] splitted = classInfo.split(",");
+//			if (splitted.length > 0) {
+//				item.setClassRestriction(splitted[0].replaceAll("\\{", "").replace("\"", ""));
+//			}
+//
+//			boolean isPartial = false;
+//			boolean isFinal = false;
+//			boolean isEncapsulated = false;
+//
+//			// get the boolean items (i.e. true or false)
+//			Pattern patternBooleanItems = Pattern.compile("(true|false)");
+//			Matcher matcherBooleanItems = patternBooleanItems.matcher(classInfo);
+//			List<String> booleanItems = new ArrayList<String>();
+//			while (matcherBooleanItems.find()) {
+//				booleanItems.add(matcherBooleanItems.group());
+//			}
 //			
-//			// create extends relation nodes
-//			List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
-//			
-//			// create components nodes
-//			if (inheritedClasses.size() > 0) {
-//				for (String inheritedClassQName : inheritedClasses) {
-//					
-//					// create tree item
-//					ExtendsRelationItem item = new ExtendsRelationItem(inheritedClassQName);
-//					
-//					treeParent.addChild(item);
-//					treeItems.add(item);
-//					
-//					// set attributes
-//					item.setSource(getTypeElement(classQName));
-//					item.setSourceQname(classQName);
-//					item.setTarget(getTypeElement(inheritedClassQName));
-////					System.err.println();
-////					System.err.println(inheritedClassQName);
-////					System.err.println("getTypeElement(inheritedClassQName): " + getTypeElement(inheritedClassQName));
-////					System.err.println(); 
-//					item.setTargetQname(inheritedClassQName);
-//					
-//					// Note, UML Generalization is not a NamedElement. 
-////					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
-//					
-//					// set modifications
-//					item.setModifications(getExtendsModifications(item, classQName));
-//					
-//					// TODO: set arraySize
+//			if (booleanItems.size() > 2) {
+//				if (booleanItems.get(0).trim().equals("true")) {
+//					isPartial = true;
+//				}
+//				if (booleanItems.get(1).trim().equals("true")) {
+//					isFinal = true;
+//				}
+//				if (booleanItems.get(2).trim().equals("true")) {
+//					isEncapsulated = true;
 //				}
 //			}
 //			
-//			List<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName), proxyQNameToElement.get(classQName));
 //			
-//			// create components nodes
-//			if (components.size() > 0) {
-//				for (ModelicaComponentData component : components) {
-//					
-//					// set the qualified name
-//					String qName = "";
-//					if (classQName.equals("")) {
-//						qName = component.name;
-//					}
-//					else {
-//						qName = classQName + "." + component.name;
-//					}
-//					
-//					// create tree item
-////					TreeParent item = new TreeParent(component.name);
-//					ComponentItem item = new ComponentItem (component.name);
-//
-//					treeParent.addChild(item);
-//					treeItems.add(item);
-//					
-//					// set attributes
-//					item.setQName(qName);
-//
-//					// set the loaded component type 
-//					item.setComponentTypeQName(component.typeQName);
-//					item.setComponentTypeTreeItem(findTreeItem(component.typeQName));
-//
-//					// set component type proxy 
-//					item.setComponentTypeProxy(component.type);
-//					
-//					// set properties
-//					item.setFinal(component.isFinal);
-//					item.setComment(component.comment);
-//					item.setVisibility(component.visibility);
-//					item.setFinal(component.isFinal);
-//					item.setFlow(component.isFlow);
-//					item.setStream(component.isStream);
-//					item.setReplaceable(component.isReplaceable);
-//					item.setVariability(component.variability);
-//					item.setInnerouter(component.innerouter);
-//					item.setCausality(component.causality);
-//					item.setArraySize(component.arraySize);
-//					
-//					// set the ModelicaML proxy for this element
-//					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
-//					
-//					// set component modifications
-//					item.setModifications(getComponentModifications(item, classQName));
-//					
-//					// Set the declaration 
-//					item.setDeclaration(getComponentDeclarationEquation(item, classQName));
-//					
-//					// TODO: Set the conditional expression
-//					/*
-//					 * There is no OMC API function for getting the conditional expression. 
-//					 */
-//					
-//				}
-//			}
+//			// set the tree item data
+//			item.setFinal(isFinal);
+//			item.setPartial(isPartial);
+//			item.setEncapsulated(isEncapsulated);
+//		}
+//		
+//		if (classInfo.equals("Error") ) {
+//			// TODO: collect errors
+//			String errorString = omcc.getErrorString();	
+//			String msg = extractErrorMessage(errorString);
 //			
-//			// ONLY for a "full" import. This data is not needed for proxies.
-//			// TODO: // create import relation nodes
-//			// TODO: // create equation and algorithm nodes
-//			// TODO: // create connection nodes
-//			
-//			// recursive call
-//			TreeObject[] children = treeParent.getChildren();
-//			for (int i = 0; i < children.length; i++) {
-//				TreeObject treeObject = children[i];
-//				if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
-//					createComponentNodes((TreeParent)treeObject);
-//				}
-//			}
+//			// generate markers
+//			createOMCMarker(item, "error", msg);
 //		}
 //	}
 	
-	private TreeObject findTreeItem(String qName){
-		TreeObject foundObject = null;
 		
-		// to avoid concurrent modifications
-		ArrayList<TreeObject> items = new ArrayList<TreeObject>();
-		items.addAll(treeItems);
-		
-		for (TreeObject treeObject : items) {
-			if (treeObject.getQName().equals(qName)) {
-				foundObject = treeObject;
+	private List<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
+			
+			/*
+			 * 	>> getComponents(Modelica.StateGraph.Examples.Utilities.CompositeStep2)
+				<< {{Modelica.StateGraph.Transition,
+				transition,
+				"", 
+				"public", 
+				false, 
+				false, 
+				false, 
+				false, 
+				"unspecified", 
+				"none", 
+				"unspecified",
+				{}}
+			 * 
+			 	-	item[0] = type qualified name
+				-	item[1] = component name
+				-	item[2] = comment
+				-	item[3] = visibility (public/protected)
+				-	item[4] = Final (true/false)
+				-	item[5] = Flow (true/false)
+				-	item[6] = Stream (true/false)
+				-	item[7] = Replaceable (true/false)
+				-	item[8] = variability (constant/discrete/parameter/unspecified)
+				-	item[9] = inner/outer/innerouter/none
+				-	item[10] = causality (input/output/unspecified)
+				-	item[11] = bit unsure about this value but perhaps its length of array 
+			 */
+			
+			List<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
+			String checkString = string.replaceAll("\"", "").replaceAll("\\{", "").replaceAll("\\}", "").trim();
+			
+			if (!checkString.equals("Error") && !checkString.equals("false") && !checkString.equals("")) {
+				
+				String string2 = string.trim();
+				// remove outter braces from the entire OMC CORBA reply
+				if (string.trim().length() > 4 
+						&& string.trim().substring(string.trim().length()-3, string.trim().length()).equals("}}}")) {
+					string2 = string.trim().substring(1, string.trim().length()-1);
+				}
+				
+				// get entries
+				String[] entries = string2.split("},");
+				if (entries.length > 0) {
+					for (int i = 0; i < entries.length; i++) {
+						String entry = entries[i].replaceFirst("\\{", "");
+						
+						String entry2 = entry.trim();
+						// remove outter braces from the individual component items
+						if (entry.trim().length() > 2 && entry.trim().substring(entry.trim().length()-1, entry.trim().length()).equals(",")) {
+							entry2 = entry.trim().substring(1, entry.trim().length()-1);
+						}
+						
+						// default values
+						String comment = ""; 
+						String visibility = "public";
+						String variability = "unspecified";
+						String innerouter = "none";
+						String causality = "unspecified";
+						
+						Pattern patternComment = Pattern.compile("\".*\",");
+						Matcher matcherComment = patternComment.matcher(entry2);
+						while ( matcherComment.find() ) {
+							comment = matcherComment.group(0);
+						}
+						Pattern patternVisibility = Pattern.compile("\"(public|protected)\"");
+						Matcher matcherVisibility = patternVisibility.matcher(entry2);
+						while (matcherVisibility.find()) {
+							visibility = matcherVisibility.group(0).replaceAll("\"", "");
+						}
+						Pattern patternVariability = Pattern.compile("\"(constant|discrete|parameter)\"");
+						Matcher matcherVariability = patternVariability.matcher(entry2);
+						while (matcherVariability.find()) {
+							variability = matcherVariability.group(0).trim().replaceAll("\"", "");
+						}
+						Pattern patternInnerouter = Pattern.compile("\"(inner|outer|innerouter)\"");
+						Matcher matcherInnerouter = patternInnerouter.matcher(entry2);
+						while (matcherInnerouter.find()) {
+							innerouter = matcherInnerouter.group(0).trim().replaceAll("\"", "");
+						}
+						Pattern patternCausality = Pattern.compile("\"(input|output)\"");
+						Matcher matcherCausality = patternCausality.matcher(entry2);
+						while (matcherCausality.find()) {
+							causality = matcherCausality.group(0).trim().replaceAll("\"", "");;
+						}
+						
+						// get the boolean items (i.e. true or false)
+						Pattern patternBooleanItems = Pattern.compile("(true|false)");
+						Matcher matcherBooleanItems = patternBooleanItems.matcher(entry2);
+						List<String> booleanItems = new ArrayList<String>();
+						while (matcherBooleanItems.find()) {
+							booleanItems.add(matcherBooleanItems.group());
+						}
+						// default values
+						boolean isFinal = false;
+						boolean isFlow = false;
+						boolean isStream = false;
+						boolean isReplaceable= false;
+						
+						if (booleanItems.size() > 3) {
+							if (booleanItems.get(0).trim().equals("true")) {
+								isFinal = true;
+							}
+							if (booleanItems.get(1).trim().equals("true")) {
+								isFlow = true;
+							}
+							if (booleanItems.get(2).trim().equals("true")) {
+								isStream = true;
+							}
+							if (booleanItems.get(3).trim().equals("true")) {
+								isReplaceable = true;
+							}
+						}
+						
+						// get string items within {}
+						Pattern patternBracesItems = Pattern.compile("\\{.*\\}");
+						Matcher matcherBracesItems = patternBracesItems.matcher(entry2);
+						List<String> bracesItems = new ArrayList<String>();
+						while (matcherBracesItems.find()) {
+							bracesItems.add(matcherBracesItems.group(0).replaceAll("\\{", "").replaceAll("\\}", ""));
+						}
+						// default values
+						String arraySizeString = "";
+						EList<String> arraySize = new BasicEList<String>();
+						if (bracesItems.size() > 0 ) {
+							arraySizeString = bracesItems.get(0);
+						}
+						String[] splittedArraySizeString = arraySizeString.trim().split(",");
+						if (splittedArraySizeString.length > 0) {
+							for (int j = 0; j < splittedArraySizeString.length; j++) {
+								String arraySizeItem = splittedArraySizeString[j];
+								if (!arraySizeItem.trim().equals("")) {
+									arraySize.add(arraySizeItem);
+								}
+							}
+						}
+						
+						/*
+						 * Note: the following split code works only for the first 2 items because the 3rd (Modelica comment) 
+						 * can also contain "," so that split(",") will not work for the rest.
+						 */
+						
+						// set data
+						String[] items = entry2.split(",");
+						if (items.length > 2 ) {
+							ModelicaComponentData data = new ModelicaComponentData();
+	
+							data.typeQName = items[0].trim();
+	//						data.type = getTypeElement(data.typeQName, owningClass);
+							data.type = getTypeElement(data.typeQName);
+							data.name = items[1].trim();
+							
+							data.comment = comment;
+							data.visibility = visibility;
+							data.isFinal = isFinal;
+							data.isFlow = isFlow;
+							data.isStream = isStream;
+							data.isReplaceable = isReplaceable;
+							data.variability = variability;
+							data.innerouter = innerouter;
+							data.causality = causality;
+							data.arraySize = arraySize;
+							
+							list.add(data);
+							
+	//						System.err.println("typeQName: " + data.typeQName);
+	//						System.err.println("name: " + data.name);
+	//						System.err.println("comment: " + data.comment);
+	//						System.err.println("visibility: " + data.visibility);
+	//						System.err.println("isFinal: " + data.isFinal);
+	//						System.err.println("arraySize: " + data.arraySize);
+						}
+					}
+				}
 			}
+			if (checkString.equals("Error")) {
+				// TODO: collect errors
+				String errorString = omcc.getErrorString();	
+				String msg = extractErrorMessage(errorString);
+	
+				// generate markers
+				createOMCMarker(classItem, "error", msg);
+			}
+			return list;
 		}
-		return foundObject;
-	}
-	
-	
+
 	private String getComponentDeclarationEquation(ComponentItem component, String classQName){
 		String declaration = null;
 		if (!classQName.equals("")) {
@@ -834,212 +1134,67 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	class ModelicaComponentData {
-		private String typeQName;
-		private Element type;
-		private String name;
-		private String comment; 
-		private String visibility;
-		private boolean isFinal;
-		private boolean isFlow;
-		private boolean isStream;
-		private boolean isReplaceable;
-		private String variability;
-		private String innerouter;
-		private String causality;
-		private EList<String> arraySize;
+	private HashSet<TreeObject> getAllTreeItems(TreeParent treeParent){
 		
-	}
-	
-	private List<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
+		HashSet<TreeObject> allTreeItems = new HashSet<TreeObject>();
+		allTreeItems.add(treeParent);
 		
-		/*
-		 * 	>> getComponents(Modelica.StateGraph.Examples.Utilities.CompositeStep2)
-			<< {{Modelica.StateGraph.Transition,
-			transition,
-			"", 
-			"public", 
-			false, 
-			false, 
-			false, 
-			false, 
-			"unspecified", 
-			"none", 
-			"unspecified",
-			{}}
-		 * 
-		 	-	item[0] = type qualified name
-			-	item[1] = component name
-			-	item[2] = comment
-			-	item[3] = visibility (public/protected)
-			-	item[4] = Final (true/false)
-			-	item[5] = Flow (true/false)
-			-	item[6] = Stream (true/false)
-			-	item[7] = Replaceable (true/false)
-			-	item[8] = variability (constant/discrete/parameter/unspecified)
-			-	item[9] = inner/outer/innerouter/none
-			-	item[10] = causality (input/output/unspecified)
-			-	item[11] = bit unsure about this value but perhaps its length of array 
-		 */
-		
-		List<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
-		String checkString = string.replaceAll("\"", "").replaceAll("\\{", "").replaceAll("\\}", "").trim();
-		
-		if (!checkString.equals("Error") && !checkString.equals("false") && !checkString.equals("")) {
-			
-			String string2 = string.trim();
-			// remove outter braces from the entire OMC CORBA reply
-			if (string.trim().length() > 4 
-					&& string.trim().substring(string.trim().length()-3, string.trim().length()).equals("}}}")) {
-				string2 = string.trim().substring(1, string.trim().length()-1);
+		TreeObject[] children = treeParent.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			allTreeItems.add(children[i]);
+			if (children[i] instanceof TreeParent) {
+				allTreeItems.addAll(getAllTreeItems((TreeParent)children[i]));
 			}
-			
-			// get entries
-			String[] entries = string2.split("},");
-			if (entries.length > 0) {
-				for (int i = 0; i < entries.length; i++) {
-					String entry = entries[i].replaceFirst("\\{", "");
-					
-					String entry2 = entry.trim();
-					// remove outter braces from the individual component items
-					if (entry.trim().length() > 2 && entry.trim().substring(entry.trim().length()-1, entry.trim().length()).equals(",")) {
-						entry2 = entry.trim().substring(1, entry.trim().length()-1);
-					}
-					
-					// default values
-					String comment = ""; 
-					String visibility = "public";
-					String variability = "unspecified";
-					String innerouter = "none";
-					String causality = "unspecified";
-					
-					Pattern patternComment = Pattern.compile("\".*\",");
-					Matcher matcherComment = patternComment.matcher(entry2);
-					while ( matcherComment.find() ) {
-						comment = matcherComment.group(0);
-					}
-					Pattern patternVisibility = Pattern.compile("\"(public|protected)\"");
-					Matcher matcherVisibility = patternVisibility.matcher(entry2);
-					while (matcherVisibility.find()) {
-						visibility = matcherVisibility.group(0).replaceAll("\"", "");
-					}
-					Pattern patternVariability = Pattern.compile("\"(constant|discrete|parameter)\"");
-					Matcher matcherVariability = patternVariability.matcher(entry2);
-					while (matcherVariability.find()) {
-						variability = matcherVariability.group(0).trim().replaceAll("\"", "");
-					}
-					Pattern patternInnerouter = Pattern.compile("\"(inner|outer|innerouter)\"");
-					Matcher matcherInnerouter = patternInnerouter.matcher(entry2);
-					while (matcherInnerouter.find()) {
-						innerouter = matcherInnerouter.group(0).trim().replaceAll("\"", "");
-					}
-					Pattern patternCausality = Pattern.compile("\"(input|output)\"");
-					Matcher matcherCausality = patternCausality.matcher(entry2);
-					while (matcherCausality.find()) {
-						causality = matcherCausality.group(0).trim().replaceAll("\"", "");;
-					}
-					
-					// get the boolean items (i.e. true or false)
-					Pattern patternBooleanItems = Pattern.compile("(true|false)");
-					Matcher matcherBooleanItems = patternBooleanItems.matcher(entry2);
-					List<String> booleanItems = new ArrayList<String>();
-					while (matcherBooleanItems.find()) {
-						booleanItems.add(matcherBooleanItems.group());
-					}
-					// default values
-					boolean isFinal = false;
-					boolean isFlow = false;
-					boolean isStream = false;
-					boolean isReplaceable= false;
-					
-					if (booleanItems.size() > 3) {
-						if (booleanItems.get(0).trim().equals("true")) {
-							isFinal = true;
-						}
-						if (booleanItems.get(1).trim().equals("true")) {
-							isFlow = true;
-						}
-						if (booleanItems.get(2).trim().equals("true")) {
-							isStream = true;
-						}
-						if (booleanItems.get(3).trim().equals("true")) {
-							isReplaceable = true;
-						}
-					}
-					
-					// get string items within {}
-					Pattern patternBracesItems = Pattern.compile("\\{.*\\}");
-					Matcher matcherBracesItems = patternBracesItems.matcher(entry2);
-					List<String> bracesItems = new ArrayList<String>();
-					while (matcherBracesItems.find()) {
-						bracesItems.add(matcherBracesItems.group(0).replaceAll("\\{", "").replaceAll("\\}", ""));
-					}
-					// default values
-					String arraySizeString = "";
-					EList<String> arraySize = new BasicEList<String>();
-					if (bracesItems.size() > 0 ) {
-						arraySizeString = bracesItems.get(0);
-					}
-					String[] splittedArraySizeString = arraySizeString.trim().split(",");
-					if (splittedArraySizeString.length > 0) {
-						for (int j = 0; j < splittedArraySizeString.length; j++) {
-							String arraySizeItem = splittedArraySizeString[j];
-							if (!arraySizeItem.trim().equals("")) {
-								arraySize.add(arraySizeItem);
-							}
-						}
-					}
-					
-					/*
-					 * Note: the following split code works only for the first 2 items because the 3rd (Modelica comment) 
-					 * can also contain "," so that split(",") will not work for the rest.
-					 */
-					
-					// set data
-					String[] items = entry2.split(",");
-					if (items.length > 2 ) {
-						ModelicaComponentData data = new ModelicaComponentData();
+		}
+		
+		return allTreeItems;
+	}
 
-						data.typeQName = items[0].trim();
-//						data.type = getTypeElement(data.typeQName, owningClass);
-						data.type = getTypeElement(data.typeQName);
-						data.name = items[1].trim();
-						
-						data.comment = comment;
-						data.visibility = visibility;
-						data.isFinal = isFinal;
-						data.isFlow = isFlow;
-						data.isStream = isStream;
-						data.isReplaceable = isReplaceable;
-						data.variability = variability;
-						data.innerouter = innerouter;
-						data.causality = causality;
-						data.arraySize = arraySize;
-						
-						list.add(data);
-						
-//						System.err.println("typeQName: " + data.typeQName);
-//						System.err.println("name: " + data.name);
-//						System.err.println("comment: " + data.comment);
-//						System.err.println("visibility: " + data.visibility);
-//						System.err.println("isFinal: " + data.isFinal);
-//						System.err.println("arraySize: " + data.arraySize);
+
+	private TreeObject findTreeItem(String qName){
+		TreeObject foundObject = null;
+		
+		// to avoid concurrent modifications
+		ArrayList<TreeObject> items = new ArrayList<TreeObject>();
+		items.addAll(treeItems);
+		
+		for (TreeObject treeObject : items) {
+			if (treeObject.getQName().equals(qName)) {
+				foundObject = treeObject;
+			}
+		}
+		return foundObject;
+	}
+
+
+	private List<String> getItems(String string){
+		List<String> items = new ArrayList<String>();
+		
+		if (!string.trim().equals("Error") && !string.trim().equals("false")) {
+			String[] splitted = string.trim().substring(1, string.length() - 2).split(",");
+			if (splitted.length > 0 ) {
+				for (int i = 0; i < splitted.length; i++) {
+					String item = splitted[i].trim();
+					if (!item.equals("")) {
+						items.add(item);
 					}
 				}
 			}
 		}
-		if (checkString.equals("Error")) {
+		if (string.trim().equals("Error")){
 			// TODO: collect errors
 			String errorString = omcc.getErrorString();	
-			String msg = extractErrorMessage(errorString);
-
-			// generate markers
-			createOMCMarker(classItem, "error", msg);
 		}
-		return list;
+		
+		if (items.size() > 0 ) {
+			return items;	
+		}
+		else {
+			return null;
+		}
 	}
-	
-	
+
+
 	public Element getTypeElement(String typeQName){
 		Element  type = proxyQNameToElement.get(typeQName);
 		// if the type is not a predefined type
@@ -1079,35 +1234,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	private List<String> getItems(String string){
-		List<String> items = new ArrayList<String>();
-		
-		if (!string.trim().equals("Error") && !string.trim().equals("false")) {
-			String[] splitted = string.trim().substring(1, string.length() - 2).split(",");
-			if (splitted.length > 0 ) {
-				for (int i = 0; i < splitted.length; i++) {
-					String item = splitted[i].trim();
-					if (!item.equals("")) {
-						items.add(item);
-					}
-				}
-			}
-		}
-		if (string.trim().equals("Error")){
-			// TODO: collect errors
-			String errorString = omcc.getErrorString();	
-		}
-		
-		if (items.size() > 0 ) {
-			return items;	
-		}
-		else {
-			return null;
-		}
-	}
-	
-	
-
 	public void loadModels(){
 //		UmlModel umlModel = UmlUtils.getUmlModel();
 		UmlModel umlModel = ModelicaMLModel;
@@ -1187,56 +1313,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 		
 	}
-	
-//	public EObject getUmlModel() {
-//		return umlModel;
-//	}
-//
-//	public void setUmlModel(EObject umlRootElement) {
-//		if (umlRootElement == null) {
-//			UmlModel papyrusModel = UmlUtils.getUmlModel();
-//			if (papyrusModel != null ) {
-//				try {
-//					setUmlModel(papyrusModel.lookupRoot());
-////					System.err.println(model);
-//				} catch (NotFoundException e) {
-//					// TODO Auto-generated catch block
-////					e.printStackTrace();
-//				}
-//			}
-//		}
-//		else {
-//			this.umlModel = umlRootElement;
-//		}
-//	}
-
-//	
-//	private void addToProxiesMap(HashMap map, String key, Element value){
-//		Object list = map.get(key);
-//		if (list instanceof HashSet) {
-//			((HashSet<Element>)list).add(value);
-//			map.put(key, list);
-//		}
-//		else{
-//			HashSet<Element> newList = new HashSet<Element>();
-//			newList.add(value);
-//			map.put(key, newList);
-//		}
-//	}
-	
-//	private void addToMapList(HashMap map, Element key, Element value){
-//		Object list = map.get(key);
-//		if (list instanceof HashSet) {
-//			((HashSet<Element>)list).add(value);
-//			map.put(key, list);
-//		}
-//		else{
-//			HashSet<Element> newList = new HashSet<Element>();
-//			newList.add(value);
-//			map.put(key, newList);
-//		}
-//	}
-
 
 	public void setModelicaMLModel(UmlModel modelicaMLModel) {
 		ModelicaMLModel = modelicaMLModel;
@@ -1318,6 +1394,11 @@ public class TreeBuilder implements IRunnableWithProgress{
 		return modelsToBeExcluded;
 	}
 
+	public OpenModelicaCompilerCommunication getOmcc() {
+		return omcc;
+	}
+
+
 	public void setCreateOMCMarker(boolean createOMCMarker) {
 		this.createOMCMarker = createOMCMarker;
 	}
@@ -1334,7 +1415,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 		this.validateProxies = validateProxies;
 	}
 	
-// Marker *****************************************
+	
+	
+	
+	
+	
+	
+	// Marker *****************************************
 	
 	private String markerType = Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES;
 	
@@ -1424,6 +1511,27 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 
 
+	public void deleteProxyValidationMarkers(IProject iProject, String namespace) {
+		IMarker[] markers = null;
+		try {
+			if (iProject != null) {
+				List<String> markerTypes = new ArrayList<String>();
+				markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
+				
+				for (String markerType : markerTypes) {
+					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+					for (IMarker marker : markers) {
+						if ( namespace!= null && !namespace.trim().equals("") && marker.getAttribute(IMarker.LOCATION, "").startsWith(namespace) ) {
+							marker.delete();
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+			//e.printStackTrace();
+		}
+	}
+	
 	public void deleteProxyValidationMarkers(IProject iProject) {
 		IMarker[] markers = null;
 		try {
@@ -1501,22 +1609,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 
 
+	public void setFullImport(boolean fullImport) {
+		this.fullImport = fullImport;
+	}
 
-//	public void setModelicamlProfile() {
-////		UmlModel umlModel = UmlUtils.getUmlModel();
-//		Profile modelicamlProfile = (Profile)PackageUtil.loadPackage(URI.createURI(MODELICAML_PROFILE_URI), ModelicaMLModel.getResource().getResourceSet());
-//		this.modelicamlProfile = modelicamlProfile;
-//	}
-//
-//	public Profile getModelicamlProfile() {
-//		return modelicamlProfile;
-//	}
-	
-	
-	
-	
-	public OpenModelicaCompilerCommunication getOmcc() {
-		return omcc;
+
+	public boolean isFullImport() {
+		return fullImport;
 	}
 }
 

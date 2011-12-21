@@ -1,33 +1,17 @@
 package org.openmodelica.modelicaml.modelica.importer.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 import org.openmodelica.modelicaml.modelica.importer.omc.corba.OMCProxy;
 
 
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class OpenModelicaCompilerCommunication.
- *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
- * 
- * Direct communication with the OM Compiler using a Java and CORBA implementation of the OM developers
- */
 public class OpenModelicaCompilerCommunication {
 
-	/** The omc. */
 	private OMCProxy omc;
-	
-	/** The history. */
 	private ArrayList<String> history;
 	
-	
-	/**
-	 * Instantiates a new open modelica compiler communication.
-	 */
 	public OpenModelicaCompilerCommunication(){
 		super();
 		this.omc = new OMCProxy();
@@ -335,6 +319,8 @@ public class OpenModelicaCompilerCommunication {
 		return executeCommand("getDocumentationAnnotation(" + className + ")");
 	}
 	
+	
+	
 //	getTempDirectoryPath()
 //	getModelicaPath()
 //	getVersion()
@@ -367,9 +353,9 @@ public class OpenModelicaCompilerCommunication {
 	}
 	
 	public Integer getInheritanceCount(String className){
-		String reply = executeCommand("getInheritanceCount(" + className + ")").trim();
+		String reply = executeCommand("getInheritanceCount(" + className + ")");
 		if (reply != null) {
-			Integer count = Integer.valueOf(reply);
+			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;
 			}
@@ -394,7 +380,254 @@ public class OpenModelicaCompilerCommunication {
 		return inheritedClasses;
 	}
 	
-	 
+	
+	
+	/*
+	 * 	-	getNthComponentCondition(M1, 1) 	// returns the condition as a string e.g “if a”
+		-	isEnumeration(M1)                 // retuns true/false
+		-	getEnumerationLiterals(M1)        // returns enumerations literals as a list of strings e.g {"one","two","three"}
+		
+		-	getClassComment(M1)               // returns the class comment as a string e.g “a class comment”
+		-	getComponentComment(M1, C1)       // returns the component comment as a string e.g “a component comment”. M1 is the class name and C1 is the component name.
+		
+		-	isReplaceable(M1, “C1”)           // returns true/false. M1 is the class name and C1 is the nested class name. This API only check the replaceable attribute of nested classes.
+		-	getAnnotationCount(M1)            // returns the annotation count e.g 2
+		-	getNthAnnotationString(M1, 1)     // returns the Nth annotation as a string.
+		-	getImportCount(M1)                // returns the import count e.g 2
+		-	getNthImport(M1, 1)               // returns the Nth import as a list of strings e.g {"Modelica.Electrical.Analog","B","named"} => {"PATH","ALIAS/ID","KIND"}. KIND can have four possible values (named, qualified,                                                                                                                                                           unqualified and multiple.
+		-	getInitialAlgorithmCount(M1)      // returns the intial algorithm count e.g 2
+		-	getNthInitialAlgorithm(M1, 1)     // returns the Nth intial algorithm as a string.
+		-	getAlgorithmCount(M1)             // returns the algorithm count e.g 2
+		-	getNthAlgorithm(M1, 1)            // returns the Nth algorithm as a string.
+		-	getInitialEquationCount(M1)       // returns the intial equation count e.g 2
+		-	getNthInitialEquation(M1, 1)      // returns the Nth initial equation as a string.
+		-	getEquationCount(M1)              // returns the equation count e.g 2
+		-	getNthEquation(M1, 1)             // returns the Nth equation as a string.
+	 */
+	
+	
+	public String getNthComponentCondition(String componentName, int number){
+		return executeCommand("getNthComponentCondition(" + componentName + ", " + number+ ")");
+	}
+	
+	public String isEnumeration(String className){
+		return executeCommand("isEnumeration(" + className + ")");
+	}
+	
+	public String getEnumerationLiterals(String className){
+		return executeCommand("getEnumerationLiterals(" + className + ")");
+	}
+	
+	public String isReplaceable(String className, String nestedClassName){
+		return executeCommand("isReplaceable(" + className +", " + nestedClassName + ")");
+	}
+	
+//	public String getAnnotationCount(String className){
+//		return executeCommand("getAnnotationCount(" + className + ")");
+//	}
+	
+	public Integer getAnnotationCount(String className){
+		String reply = executeCommand("getAnnotationCount(" + className + ")");
+		if (reply != null ) {
+			Integer count = Integer.valueOf(reply.trim());
+			if ( count != null ) {
+				return count;
+			}
+		}
+		else {
+			System.err.println("Could not complete the operation getAnnotationCount("+className+")");
+		}
+		return 0;
+	}
+	
+	public List<String> getAnnotations(String className){
+		int count = getAnnotationCount(className);
+		List<String> annotations = new ArrayList<String>();
+		if (count > 0 ) {
+			for (int i = 1; i <= count; i++) {
+				String reply = getNthAnnotationString(className, String.valueOf(i)).trim();
+				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
+					String stringInBrackets = StringHandler.removeFirstLastDoubleQuotes(reply.trim().replaceFirst("annotation", "").trim());
+					String annotationString = StringHandler.removeFirstLastBrackets(stringInBrackets.substring(0, stringInBrackets.length() - 1));
+					annotations.add(annotationString);
+				}
+			}
+		}
+		return annotations;
+	}
+	
+	public String getNthAnnotationString(String elementName, String number){
+		return executeCommand("getNthAnnotationString(" + elementName + ", " + number+ ")");
+	}
+	
+	
+	
+	
+	public String getImportCount(String className){
+		return executeCommand("getImportCount(" + className + ")");
+	}
+	
+	public String getNthImport(String className, int number){
+		return executeCommand("getNthImport(" + className + ", " + number+ ")");
+	}
+	
+	
+	
+	
+//	public String getInitialAlgorithmCount(String className){
+//		return executeCommand("getInitialAlgorithmCount(" + className + ")");
+//	}
+	public Integer getInitialAlgorithmCount(String className){
+		String reply = executeCommand("getInitialAlgorithmCount(" + className + ")");
+		if (reply != null && !reply.trim().equals("")) {
+			Integer count = Integer.valueOf(reply.trim());
+			if ( count != null ) {
+				return count;
+			}
+		}
+		else {
+			System.err.println("Could not complete the operation getInitialAlgorithmCount("+className+")");
+		}
+		return 0;
+	}
+
+	public String getNthInitialAlgorithm(String className, String number){
+		return executeCommand("getNthInitialAlgorithm(" + className + ", " + number+ ")");
+	}
+	
+	public List<String> getInitialAlgorithms(String className){
+		int count = getInitialAlgorithmCount(className);
+		List<String> initialAlgorithms = new ArrayList<String>();
+		if (count > 0 ) {
+			for (int i = 1; i <= count; i++) {
+				String reply = getNthInitialAlgorithm(className, String.valueOf(i)).trim();
+				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
+					initialAlgorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+				}
+			}
+		}
+		return initialAlgorithms;
+	}
+	
+		
+//	public String getAlgorithmCount(String className){
+//		return executeCommand("getAlgorithmCount(" + className + ")");
+//	}
+	
+	public Integer getAlgorithmCount(String className){
+		String reply = executeCommand("getAlgorithmCount(" + className + ")");
+		if (reply != null && !reply.trim().equals("")) {
+			Integer count = Integer.valueOf(reply.trim());
+			if ( count != null ) {
+				return count;
+			}
+		}
+		else {
+			System.err.println("Could not complete the operation getAlgorithmCount("+className+")");
+		}
+		return 0;
+	}
+
+	public String getNthAlgorithm(String className, String number){
+		return executeCommand("getNthAlgorithm(" + className + ", " + number+ ")");
+	}
+	
+	public List<String> getAlgorithms(String className){
+		int count = getAlgorithmCount(className);
+		List<String> algorithms = new ArrayList<String>();
+		if (count > 0 ) {
+			for (int i = 1; i <= count; i++) {
+				String reply = getNthAlgorithm(className, String.valueOf(i)).trim();
+				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
+					algorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+				}
+			}
+		}
+		return algorithms;
+	}
+	
+	
+
+	
+//	public String getInitialEquationCount(String className){
+//		return executeCommand("getInitialEquationCount(" + className + ")");
+//	}
+	
+	
+	public Integer getInitialEquationCount(String className){
+		String reply = executeCommand("getInitialEquationCount(" + className + ")");
+		if (reply != null && !reply.trim().equals("")) {
+			Integer count = Integer.valueOf(reply.trim());
+			if ( count != null ) {
+				return count;
+			}
+		}
+		else {
+			System.err.println("Could not complete the operation getInitialEquationCount("+className+")");
+		}
+		return 0;
+	}
+
+	public String getNthInitialEquation(String className, String number){
+		return executeCommand("getNthInitialEquation(" + className + ", " + number+ ")");
+	}
+	
+	public List<String> getInitialEquations(String className){
+		int count = getInitialEquationCount(className);
+		List<String> initialEquations = new ArrayList<String>();
+		if (count > 0 ) {
+			for (int i = 1; i <= count; i++) {
+				String reply = getNthInitialEquation(className, String.valueOf(i)).trim();
+				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
+					initialEquations.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+				}
+			}
+		}
+		return initialEquations;
+	}
+	
+
+		
+//	public String getEquationCount(String className){
+//		return executeCommand("getEquationCount(" + className + ")");
+//	}
+	
+	public Integer getEquationCount(String className){
+		String reply = executeCommand("getEquationCount(" + className + ")");
+		if (reply != null && !reply.trim().equals("")) {
+			Integer count = Integer.valueOf(reply.trim());
+			if ( count != null ) {
+				return count;
+			}
+		}
+		else {
+			System.err.println("Could not complete the operation getEquationCount("+className+")");
+		}
+		return 0;
+	}
+
+	public String getNthEquation(String className, String number){
+		return executeCommand("getNthEquation(" + className + ", " + number+ ")");
+	}
+	
+	public List<String> getEquations(String className){
+		int count = getEquationCount(className);
+		List<String> equations = new ArrayList<String>();
+		if (count > 0 ) {
+			for (int i = 1; i <= count; i++) {
+				String reply = getNthEquation(className, String.valueOf(i)).trim();
+				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
+					equations.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+				}
+			}
+		}
+		return equations;
+	}
+	
+
+	
+	
+	
 	/**
 	 * Gets the command history.
 	 *

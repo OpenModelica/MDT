@@ -61,6 +61,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
@@ -71,11 +72,14 @@ import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 
 
 public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
-
+	
+	private String projectName = "";
+	
 	private boolean decorateItem = false;
 	
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+	private final ImageDescriptor syncIncomingImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/overlay-synch-incoming.gif");
 //	private final ImageDescriptor infoImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	
 	DecorationOverlayIcon overlayIcon = null;
@@ -122,7 +126,8 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		if (obj instanceof TreeParent) {
 			numberOfChildren = "(" + ((TreeParent)obj).getChildren().length + ")";
 		}
-
+		
+		
 		//  construct the label
 		styledString = new StyledString();
 		styledString.append(name);
@@ -140,6 +145,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				treeItemText = treeItemText + ": " + component.getComponentTypeQame();
 			}
 		}
+		
 		// check if the extends relation has source and target proxy
 		else if (item instanceof ExtendsRelationItem) {
 			Element target  = ((ExtendsRelationItem)item).getTarget();
@@ -152,6 +158,13 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		else{
 			styledString.append(numberOfChildren, stylerGrey);
 			treeItemText = treeItemText + numberOfChildren;
+			
+			// for the root (folder) add the project name
+			if (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) ) {
+				styledString.append(" - " + getProjectName(), stylerGrey);
+				treeItemText = treeItemText + " - " + getProjectName();
+			}
+			
 		}
 		
 		// set text and styles
@@ -170,6 +183,10 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		else {
 			cell.setText(treeItemText);
 		}
+		
+		
+		
+		
 		
 		
 		// set image
@@ -276,9 +293,13 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	}
 	
 	private void setImage(TreeObject treeObject){
+		
 		//root node - the code-sync folder
 		if ( treeObject.getName().equals(Constants.folderName_code_sync)) {
-			overlayIconImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+//			overlayIconImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+			overlayIconImage = ResourceManager.decorateImage(
+					PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER), 
+					ResourceManager.getImage(Activator.class, "/icons/sync_ovr.gif"));
 		}
 		
 		// components
@@ -448,8 +469,14 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 						return overlayIcon.createImage();
 					}
 					// synch status
-					if (hasEmptyProxies((TreeParent) element)) {
+					if ( !(element instanceof ExtendsRelationItem) && ((TreeParent)element).getModelicaMLProxy() == null ) {
+//						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
+						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, syncIncomingImageDescriptor, IDecoration.BOTTOM_RIGHT);
+						return overlayIcon.createImage();
+					}
+					else if (hasEmptyProxies((TreeParent) element)) {
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
+//						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, syncIncomingImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						return overlayIcon.createImage();
 					}
 				}
@@ -583,6 +610,14 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
 	public boolean isDecorateItem() {
 		return decorateItem;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public String getProjectName() {
+		return projectName;
 	}
 	
 }

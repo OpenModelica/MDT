@@ -4,33 +4,67 @@ import java.util.ArrayList;
 
 public class StringHandler {
 
-	/**
-	 * @param args
-	 */
+
 	public static void main(String[] args) {
-		String value = "{{\"Real\",\"r\",\"This is a comment. Text text \", \"text\", text text ...\", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}}";
+//		getComponentsExample();
+		getClassInformationExample();
+		
+	}
+
+	private static void getComponentsExample(){
+		// reply from getComponents 
+//		String value = "{{\"Real\",\"r\",\"This is a comment. Text text \", \"text\", text text ...\", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}}";
 //		String value = "{{\"Real\",\"r\",\"This is a comment. \", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}}";
-//		String value = "{" +
-//				"{\"Real\",\"r\",\"This is a comment. \", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}," +
-//				"{\"Real\",\"r2\",\"This is a comment. \", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}," +
-//				"{\"Real\",\"r3\",\"This is a comment. \", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}" +
-//				"}";
+		String value = "{" +
+				"{\"Real\",\"r\",\"This is a comment. \", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}," +
+				"{\"Real\",\"r2\",\"This is a comment. \", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}," +
+				"{\"Real\",\"r3\",\"This is a comment. \", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}" +
+				"}";
 		
 		System.err.println(value);
-		
 		System.err.println("unparseArrays: " + unparseArrays(value));
-		
 		for (String string : unparseArrays(value)) {
 			System.err.println("unparseStrings:" + unparseStrings(string));
 		}
+		
 	}
-
 	
+	private static void getClassInformationExample(){
+		// reply from getClassInformation
+		String value = "{\"type\",\"This is the comment\",\"<interactive>\",{false,false,false},{\"writable\",2,17,2,43},{3}}";
+		System.err.println(value);
+		System.err.println("unparseArrays: " + unparseArrays(value));
+		System.err.println("unparseStrings:" + unparseStrings(value));
+		
+		System.err.println("class restriction: " + unparseStrings(value).get(0));
+		System.err.println("class comment: " + unparseStrings(value).get(1));
+		System.err.println("class arraySize: " + removeFirstLastCurlBrackets(unparseArrays(value).get(2)));
+		
+		
+	}
 	
 	
 	public static String removeFirstLastCurlBrackets(String value){
 		 value = value.trim();
 		    if (value.length() > 1 && value.charAt(0) == '{' && value.charAt(value.length() - 1) == '}')
+		    {
+		        value = value.substring(1, (value.length() - 1));
+		    }
+		    return value;
+	}
+	
+	public static String removeFirstLastBrackets(String value){
+		 value = value.trim();
+		    if (value.length() > 1 && value.charAt(0) == '(' && value.charAt(value.length() - 1) == ')')
+		    {
+		        value = value.substring(1, (value.length() - 1));
+		    }
+		    return value;
+	}
+	
+	public static String removeFirstLastDoubleQuotes(String value){
+		 value = value.trim();
+		    if (value.length() > 1 && value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"')
 		    {
 		        value = value.substring(1, (value.length() - 1));
 		    }

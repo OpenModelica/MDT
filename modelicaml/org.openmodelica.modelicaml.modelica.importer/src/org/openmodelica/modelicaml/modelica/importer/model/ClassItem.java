@@ -1,5 +1,9 @@
 package org.openmodelica.modelicaml.modelica.importer.model;
 
+import java.util.List;
+
+import org.eclipse.emf.common.util.EList;
+
 
 public class ClassItem extends TreeParent {
 
@@ -7,8 +11,19 @@ public class ClassItem extends TreeParent {
 	private boolean isEncapsulated = false;
 	private boolean isPartial = false;
 	private boolean isReplaceable = false;
+	private boolean isEnumeration = false;
+	
 	private String comment;
-	private String annotation;
+	private List<String> annotations;
+	
+	private List<String> initialAlgorithms;
+	private List<String> initialEquations;
+	private List<String> algorithms;
+	private List<String> equations;
+
+	
+	// array size for primitive types extension
+	private EList<String> arraySize;
 	
 	// for connectors
 	private boolean isExpandable = false;
@@ -18,7 +33,6 @@ public class ClassItem extends TreeParent {
 	public ClassItem(String name) {
 		super(name);
 	}
-	
 	
 	// Getter and Setter
 	public boolean isFinal() {
@@ -53,14 +67,13 @@ public class ClassItem extends TreeParent {
 		this.classRestriction = classRestriction;
 	}
 
-	public void setReplaceable(boolean isReplaceable) {
+	public void setIsReplaceable(boolean isReplaceable) {
 		this.isReplaceable = isReplaceable;
 	}
 
 	public boolean isReplaceable() {
 		return isReplaceable;
 	}
-
 
 
 	// only for connectors
@@ -71,12 +84,12 @@ public class ClassItem extends TreeParent {
 		return isExpandable;
 	}
 	
-	public boolean isEnumeration(){
-		if (this.getClassRestriction().equals("enumeration")) {
-			return true;
-		}
-		return false;
-	}
+//	public boolean isEnumeration(){
+//		if (this.getClassRestriction().equals("enumeration")) {
+//			return true;
+//		}
+//		return false;
+//	}
 
 	public boolean isType(){
 		if (this.getClassRestriction().equals("type")) {
@@ -84,7 +97,6 @@ public class ClassItem extends TreeParent {
 		}
 		return false;
 	}
-
 
 	public void setComment(String comment) {
 		this.comment = comment;
@@ -95,14 +107,62 @@ public class ClassItem extends TreeParent {
 		return comment;
 	}
 
-
-	public void setAnnotation(String annotation) {
-		this.annotation = annotation;
+	
+	public void setArraySize(EList<String> arraySize) {
+		this.arraySize = arraySize;
 	}
 
 
-	public String getAnnotation() {
-		return annotation;
+	public EList<String> getArraySize() {
+		return arraySize;
+	}
+
+	public void setAnnotations(List<String> annotations) {
+		this.annotations = annotations;
+	}
+
+	public List<String> getAnnotations() {
+		return annotations;
+	}
+	
+	public List<String> getInitialAlgorithms() {
+		return initialAlgorithms;
+	}
+
+	public void setInitialAlgorithms(List<String> initialAlgorithms) {
+		this.initialAlgorithms = initialAlgorithms;
+	}
+
+	public List<String> getInitialEquations() {
+		return initialEquations;
+	}
+
+	public void setInitialEquations(List<String> initialEquations) {
+		this.initialEquations = initialEquations;
+	}
+
+	public List<String> getAlgorithms() {
+		return algorithms;
+	}
+
+	public void setAlgorithms(List<String> algorithms) {
+		this.algorithms = algorithms;
+	}
+
+	public List<String> getEquations() {
+		return equations;
+	}
+
+	public void setEquations(List<String> equations) {
+		this.equations = equations;
+	}
+
+	public void setIsEnumeration(boolean isEnumeration) {
+		this.isEnumeration = isEnumeration;
+	}
+
+	public boolean isEnumeration() {
+		return isEnumeration;
 	}
 	
 }

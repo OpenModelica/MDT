@@ -54,6 +54,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 	private boolean applyProxyStereotype = true;
 	private boolean update = true;
 	private boolean deleteNotUsedProxies = false;
+	private boolean fullImport = false;
 	
 	private UmlModel umlModel;
 	private EObject ModelicaMLRoot;
@@ -172,6 +173,9 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 							applyProxyStereotype = dialog.isApplyProxyStereotype();
 							update = dialog.isUpdate();
 							deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
+							
+							fullImport = dialog.isFullImport();
+							treeBuilder.setFullImport(fullImport);
 							
 							Job job = new Job("Loading Modelica Models from '"+Constants.folderName_code_sync+"' folder..."){
 
@@ -380,7 +384,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype, true);
 						
 						if (deleteNotUsedProxies) {
-							ec.deleteInvalidProxyElements();
+							ec.deleteInvalidProxyElements("");
 						}
 						
 					}

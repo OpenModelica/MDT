@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.action.Action;
@@ -42,6 +43,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.papyrus.core.listenerservice.IPapyrusListener;
 import org.eclipse.papyrus.core.services.ServiceException;
 import org.eclipse.papyrus.core.services.ServicesRegistry;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
@@ -93,49 +95,86 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	 */
 	public static final String ID = "org.openmodelica.modelicaml.modelica.importer.views.ModelicaOMCCodeViewer";
 
+	// Viewer 
 	private TreeViewer viewer;
+	private ViewLabelProviderStyledCell labelProvider = new ViewLabelProviderStyledCell();
 	private DrillDownAdapter drillDownAdapter;
+	
+	// ModelicaML Model 
+	private UmlModel umlModel;
+	private EObject ModelicaMLRoot;
+
+	// Model editing domain  
+	private ServicesRegistry serviceRegistry;
+	private TransactionalEditingDomain editingDomain;
+	
+	// Tree handling 
+	private TreeBuilder treeBuilder = new TreeBuilder();
+	private ModelicaMLElementsCreator ec;
+	private TreeParent treeRoot = null;
+
+	// Actions
 	private Action actionReload;
 	private Action actionSynchronize;
 	private Action doubleClickAction;
-	
-	private TreeBuilder treeBuilder = new TreeBuilder();
-	private ModelicaMLElementsCreator ec;
-	
-	private TreeParent treeRoot = null;
-
 	private Action actionRefresh;
-
 	private Action actionCollapseAll;
-
 	private Action actionLocateInPapyrusModelExplorer;
-
 	private Action actionLinkWithEditor;
-
 	private Action actionGenerateOMCMarkers;
-
 	private Action actionValidateProxies;
+	private Action actionClear;
+	private Action actionExpandCollapse;
+	private Action actionLoadSubTree;
+	private Action actionSynchronizeSubTree;
+	private Action actionDecorateTreeItems;
 
-	// default values for options
+	// Default values for sync. options
 	private boolean createProxiesAfterLoadingModelicaClasses = false;
 	private boolean applyProxyStereotype = true;
 	private boolean update = true;
 	private boolean deleteNotUsedProxies = false;
+	private boolean fullImport = false;
 	
-	
-	private Action actionDecorateTreeItems;
-	
-	private ViewLabelProviderStyledCell labelProvider = new ViewLabelProviderStyledCell();
+	// Listeners
+	private ISelectionListener selectionListener = new ISelectionListener() {
+		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
+			 if (actionLinkWithEditor.isChecked() && sourcepart != ModelicaOMCCodeViewer.this && selection instanceof IStructuredSelection) {
+	        	EObject selectedElement = null;
+	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+				}
+				if ( selectedElement != null ) {
+					HashSet<Object> objects = findTreeItem(selectedElement);
+					List<Object> newSelectionItems = new ArrayList<Object>();
+					newSelectionItems.addAll(objects);
+					viewer.setSelection(new StructuredSelection(newSelectionItems), true);
+				}
+	        }
+	    }
+	};
 
-	private Action actionClear;
 
-	private Action actionExpandCollapse;
+	// Jobs
+	private Job collectProxiesJob = new Job("Empty") {
+		
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
 
-	private Action actionLoadSubTree;
+	private Job reloadSubTreeJob = new Job("Empty") {
+		
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
 
-	private Action actionSynchronizeSubTree;
 
-	
 	
 	class ViewContentProvider implements IStructuredContentProvider, 
 										   ITreeContentProvider {
@@ -201,6 +240,47 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	class NameSorter extends ViewerSorter {
 	}
 
+	
+	
+	/* TODO
+	 *  This class is not initialized by Papyrus extension...
+	 *  remove proxies from tree builder when they are deleted in Papyrus 
+	 */
+	public class PapyrusListener implements IPapyrusListener {
+
+		@Override
+		public void notifyChanged(Notification notification) {
+			
+			if ( notification.getEventType() == Notification.REMOVE && notification.getNewValue() == null ) {
+//				System.err.println("Event type: " + notification.getEventType());
+////			System.err.println("Notifier: " + ((NamedElement)notification.getNotifier()).getName() );
+//				System.err.println("Notifier: " + notification.getNotifier() );
+//				System.err.println("OldValue: " + notification.getOldValue());
+//				System.err.println("NewValue: " + notification.getNewValue());
+				
+				Object oldObj = notification.getOldValue();
+
+				// if it is a UML element that was deleted
+				if (oldObj instanceof Element) {
+					Element oldElt = (Element) oldObj;
+					
+					if (oldElt.getAppliedStereotype(Constants.stereotypeQName_ModelicaModelProxy) != null) {
+						// remove from tree builder
+						System.err.println("Remove: " + oldElt);
+					}
+					
+					if (oldElt instanceof Property && oldElt.getOwner().getAppliedStereotype(Constants.stereotypeQName_ModelicaModelProxy) != null) {
+						// remove from tree builder
+						System.err.println("Remove: " + oldElt);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+	
 	/**
 	 * The constructor.
 	 */
@@ -216,7 +296,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
-
 		viewer.setLabelProvider(labelProvider);
 		
 //		viewer.setSorter(new NameSorter());
@@ -278,7 +357,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(actionGenerateOMCMarkers);
-//		manager.add(new Separator());
 		manager.add(actionValidateProxies);
 
 		manager.add(new Separator());
@@ -307,7 +385,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			actionLoadSubTree.setText("(Re)Load This " + title);
 			manager.add(new Separator());
 			
-			// disable this action if the reload sub tree job is running 
+			// Disable this action if the reload sub tree job is running 
 			if (reloadSubTreeJob.getState() == Job.RUNNING) {
 				actionLoadSubTree.setEnabled(false);
 				actionSynchronizeSubTree.setEnabled(false);
@@ -318,14 +396,14 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			}
 		}
 		
-		// if it is a class or component -> enable the synchronize item feature
+		// If it is a class or component -> enable the "synchronize sub-tree" action
 		if (obj instanceof ClassItem || obj instanceof ComponentItem) {
 			manager.add(actionSynchronizeSubTree);
 			actionSynchronizeSubTree.setText("Synchronize This " + title);
 			manager.add(new Separator());
 		}
 		
-		// add locate in Papyrus if a corresponding proxy exists
+		// Add locate in Papyrus action if a corresponding proxy exists
 		if (obj instanceof TreeObject ) {
 			TreeObject treeObject = (TreeObject)obj;
 			if (treeObject.getModelicaMLProxy() != null) {
@@ -338,13 +416,13 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
-		// if it is the root (folder) or a class -> add expand/collapse action
+		// If it is the root (folder) or a class -> add expand/collapse action
 		if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) )) {
 			if (!viewer.getExpandedState(obj)) {
 				actionExpandCollapse.setText("Expand");
 				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 				
-				// disable expand action when the reload sub tree job is running
+				// Disable expand action when the reload sub tree job is running
 				if (reloadSubTreeJob.getState() == Job.RUNNING) {
 					actionExpandCollapse.setEnabled(false);
 				}
@@ -440,6 +518,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	            	}
 				}
 	         };
+	        
 	         
 		actionReload = new Action() {
 			public void run() {
@@ -456,32 +535,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					return;
 				}
 				
-//				showMessage("Reload executed");
-
-				
-				//********************************** simple
-//				Object[] expandedElements = viewer.getExpandedElements();
-//				TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
-//				
-//				TreeObject[] children = treeRoot.getChildren();
-//				for (int i = 0; i < children.length; i++) {
-//					treeRoot.removeChild(children[i]);
-//				}
-//				
-//				treeBuilder.buildTree(treeRoot);
-//				
-//				if (treeRoot.hasChildren()) {
-//					actionSynchronize.setEnabled(true);
-//				}
-//				else {
-//					actionSynchronize.setEnabled(false);
-//				}
-//
-//				viewer.setInput(getViewSite());
-//				
-//				viewer.setExpandedElements(expandedElements);
-//				viewer.setExpandedTreePaths(expandedTreePaths);
-
+				// Set all project- and model-related data
 				configureTreeBuilder();
 				
 				// As a job
@@ -514,6 +568,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								applyProxyStereotype = dialog.isApplyProxyStereotype();
 								update = dialog.isUpdate();
 								deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
+
+								fullImport = dialog.isFullImport();
+								treeBuilder.setFullImport(fullImport);
 							}
 							else {
 								// the dialog was canceled -> no elements should be created.
@@ -727,6 +784,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				// clear the compiler
 				treeBuilder.getOmcc().clear();
 
+				// Set project- and model-related data in case the active Papyrus model changed
+				setTreeRootProjectName();
+				
 				// collapse the tree root and refresh
 				viewer.setExpandedState(treeRoot, false);
 				viewer.refresh();
@@ -862,10 +922,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionSynchronize = new Action() {
 			
 			public Job createSynchJob(
-//					final ServicesRegistry serviceRegistry, 
-//					final TransactionalEditingDomain editingDomain, 
-//					final UmlModel umlModel,
-//					final EObject ModelicaMLRoot,
 					final boolean applyProxyStereotype,
 					final boolean update,
 					final boolean deleteNotUsedProxies
@@ -895,7 +951,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								ec.createElements((Element)modelicaRoot, (TreeParent)treeObject, update, applyProxyStereotype, true);
 								
 								if (deleteNotUsedProxies) {
-									ec.deleteInvalidProxyElements();
+									ec.deleteInvalidProxyElements("");
 								}
 								
 							}
@@ -1043,6 +1099,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					MessageDialog.openError(new Shell(), title, message);
 				}
 
+				// Set all project- and model-related data
 				configureTreeBuilder();
 				
 				// refresh in order to update the proxies (in case there were deleted in the mean time)
@@ -1100,14 +1157,10 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							final boolean update = dialog.isUpdate();
 							final boolean deleteNotUsedProxies = dialog.isDeleteNotUsedProxies();
 							
-							Job job = createSynchJob(
-//									serviceRegistry, 
-//									editingDomain, 
-//									umlModel, 
-//									ModelicaMLRoot, 
-									applyProxyStereotype, 
-									update, 
-									deleteNotUsedProxies);
+							final boolean fullImport = dialog.isFullImport();
+							treeBuilder.setFullImport(fullImport);
+							
+							Job job = createSynchJob(applyProxyStereotype, update, deleteNotUsedProxies);
 
 							job.addJobChangeListener(synchJobChangeAdapter);
 							job.setUser(true);
@@ -1168,24 +1221,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					for (Object obj : ((StructuredSelection)selection).toList()){
 						
 						if (obj instanceof TreeObject) {
-							
-//							SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
-//							dialog.open();
-//							
-//							int result = dialog.getReturnCode();
-//							
-//							if (result == IDialogConstants.OK_ID) {
-//								
-//								// set synchronization options
-//								boolean applyProxyStereotype = dialog.isApplyProxyStereotype();
-//								boolean update = dialog.isUpdate();
-//								boolean deleteInconsistentProxies = dialog.isDeleteNotUsedProxies();
-//								
-//
-//
-//							}
-							
-//							synchronizeSubTree((TreeObject)obj, update, applyProxyStereotype, deleteInconsistentProxies);
 							synchronizeSubTree((TreeObject)obj);
 						}
 					}
@@ -1224,7 +1259,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				}
 			}
 		};
-//		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus Model Explorer");
 		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus");
 		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Papyrus Model Explorer");
 		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
@@ -1310,14 +1344,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        				
 	        				treeBuilder.updateTreeItemProxies(treeRoot);
 	        				viewer.refresh();
-	        				
-	        				/*
-	        				 * Enable the synchronization so that only the loaded set 
-	        				 * (models that were expanded once in tree) can be imported/synchronized
-	        				 * TODO: this should be replaced by an option for adding/synchronizing only selected tree items (i.e. adding all parents and recursively adding all children)
-	        				 */
-//	        				actionSynchronize.setEnabled(true);
-	        				
 	        			}
 	        		});
 	            }
@@ -1350,6 +1376,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					 */
 					if (treeBuilder.getModelicaMLModel() == null) {
 						
+						// Set all project- and model-related data
 						configureTreeBuilder();
 						
 						collectProxiesJob = new Job("Collecting ModelicaML Proxies") {
@@ -1424,6 +1451,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							        				// refresh and expand the parent
 							        				viewer.refresh(parent);
 							    					viewer.expandToLevel(parent, 1);
+							    					
+							    					if (!treeRoot.hasChildren()) {
+														MessageDialog.openInformation(getSite().getShell(), "Loading of Modelica Models", 
+																"No Modelica models were found in " + getProjectName() + "/" + Constants.folderName_code_sync + "/");
+													}
 							        			}
 							        		});
 							            }
@@ -1443,14 +1475,14 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						viewer.expandToLevel(parent, 1);
 					}
 					else { //Collapse this item
-						if (obj instanceof ClassItem) {
+						if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync)) ) {
 							viewer.collapseToLevel(obj, 1);	
 						}
 					}
 				}
 				else {
 					//Collapse this item if it is expanded
-					if (viewer.getExpandedState(obj) && obj instanceof ClassItem) {
+					if (viewer.getExpandedState(obj) && obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync))) {
 							viewer.collapseToLevel(obj, 1);	
 					}
 					else { // inform user to wait
@@ -1462,41 +1494,26 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	}
 
 	
-	private Job collectProxiesJob = new Job("Empty") {
-		
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	};
+	private void hookDoubleClickAction() {
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
+			}
+		});
+	}
 
 	
-	
-	private Job reloadSubTreeJob = new Job("Empty") {
-		
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	};
-	
-
 	private Job getSynchronizeSubTreeJob(final TreeObject treeObject, 
 			final boolean update, 
 			final boolean applyProxyStereotype,
 			final boolean deleteIncositentProxies
-//			final UmlModel umlModel,
-//			final EObject ModelicaMLRoot,
-//			final ServicesRegistry serviceRegistry,
-//			final TransactionalEditingDomain editingDomain
 			) {
 		
 		Job job = new Job("Synchronizing " + treeObject.getName() + " ...") {
 			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				
 				/*
 				 * - get all parents top-down
 				 * - create/update all parents and the selected item (NOT recursively!) 
@@ -1522,6 +1539,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						// if it is a root -> get or create the model root
 						if (topDownParent.getParent().getName().equals(Constants.folderName_code_sync)) {
 							UMLParent = (Element) ec.createProxyRoot(topDownParent.getName(), applyProxyStereotype);
+
 							topDownParent.setModelicaMLProxy(UMLParent);
 							treeBuilder.addProxyToMaps((NamedElement) UMLParent);
 						}
@@ -1529,39 +1547,52 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						else if (topDownParent.getModelicaMLProxy() != null) {
 							ec.updateClass(topDownParent.getModelicaMLProxy(), (ClassItem) topDownParent, applyProxyStereotype);
 							UMLParent = topDownParent.getModelicaMLProxy();
+
 							topDownParent.setModelicaMLProxy(UMLParent);
 							treeBuilder.addProxyToMaps((NamedElement) UMLParent);
 						}
 						else { // create a new proxy
 							UMLParent = (Element) ec.createClass(UMLParent, (ClassItem) topDownParent, applyProxyStereotype);
+							ec.updateClass(UMLParent, (ClassItem) topDownParent, applyProxyStereotype);
+
 							topDownParent.setModelicaMLProxy(UMLParent);
 							treeBuilder.addProxyToMaps((NamedElement) UMLParent);
-
-							// update
-							ec.updateClass(UMLParent, (ClassItem) topDownParent, applyProxyStereotype);
 						}
 					}
 				}
 				
-				// if the selected element is a class -> synch class recursively
+				// If the selected element is a class -> sync. class recursively
 				if (treeObject instanceof ClassItem) {
 					ec.createElements(UMLParent, (TreeParent) treeObject, update, applyProxyStereotype, true);
-					if (deleteIncositentProxies) {
-						ec.deleteInvalidProxyElements();
-					}
 				}
+				
+				// If the selected item is a component -> sync. only this component
 				else if (treeObject instanceof ComponentItem) {
 					Element existingProperty = ((Classifier)UMLParent).getOwnedMember(treeObject.getName());
 					if (existingProperty instanceof Property) {
+						
 						ec.updateProperty(UMLParent, existingProperty, (ComponentItem) treeObject, applyProxyStereotype);
+						treeObject.setModelicaMLProxy(existingProperty);
+						treeBuilder.addProxyToMaps((Property) existingProperty);
 					}
 					else {
 						NamedElement property = (NamedElement) ec.createProperty(UMLParent, (ComponentItem) treeObject, applyProxyStereotype);
+
+						ec.updateProperty(UMLParent, property, (ComponentItem) treeObject, applyProxyStereotype);
 						treeObject.setModelicaMLProxy(property);
 						treeBuilder.addProxyToMaps(property);
-						ec.updateProperty(UMLParent, property, (ComponentItem) treeObject, applyProxyStereotype);
 					}
 				}
+				
+				/*
+				 * Delete all proxies that are not used, i.e. which are not present in the loaded Modelica models.
+				 * Delete markers
+				 */
+				if (deleteIncositentProxies) {
+					ec.deleteInvalidProxyElements(treeObject.getQName());
+					treeBuilder.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
+				}
+				
 				return Status.OK_STATUS;
 			}
 		};
@@ -1569,6 +1600,51 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	}
 
 	
+	private Job getReloadSubTreeJob(final TreeParent parent){
+		
+			Job job = new Job("Loading '"+parent.getQName()+" ' ...") {
+				
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+	
+					// remove children
+					TreeObject[] children = parent.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						TreeObject treeObject = children[i];
+						parent.removeChild(treeObject);
+					}
+					
+					//reload models in order reflect changes
+					treeBuilder.loadModels();
+					
+					// add parent components
+					treeBuilder.createComponentNodes(parent, false);
+					
+					// add nested classes (recursively) their components (not recursively because once createClassNodes was called with recursive=true it will give all nested classes)
+					ArrayList<TreeObject> classes = treeBuilder.createClassNodes(parent, parent.getQName(), true);
+					
+					// For each nested class create its components
+					for (TreeObject addedClass : classes) {
+						treeBuilder.createComponentNodes((TreeParent) addedClass, false);
+					}
+					
+					// validate the subtree
+					IProject project = getProject();
+					if (project != null && parent.getModelicaMLProxy() != null) {
+						treeBuilder.validateProxies(project, parent);
+//						System.err.println("Validating sub-tree starting with " + parent.getName());
+					}
+					else{
+//						System.err.println("Could not validate the sub-tree starting with " + parent.getName());
+					}
+					
+					return Status.OK_STATUS;
+				}
+			};
+			
+			return job;
+		}
+
 	private void synchronizeSubTree(TreeObject treeObject 
 //			boolean update, 
 //			boolean applyProxyStereotype,
@@ -1590,6 +1666,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		boolean applyProxyStereotype = dialog.isApplyProxyStereotype();
 		boolean update = dialog.isUpdate();
 		boolean deleteInconsistentProxies = dialog.isDeleteNotUsedProxies();
+		
+		boolean fullImport = dialog.isFullImport();
+		treeBuilder.setFullImport(fullImport);
 
 		if (! (result == IDialogConstants.OK_ID)) {
 			return;
@@ -1621,6 +1700,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				// first reload the sub tree to make sure that the tree is complete
 				if (treeObject instanceof ClassItem) {
 					
+					// Set all project- and model-related data
 					configureTreeBuilder();
 					
 					reloadSubTreeJob = getReloadSubTreeJob((TreeParent) treeObject);
@@ -1669,44 +1749,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	}
 	
 
-	private Job getReloadSubTreeJob(final TreeParent parent){
-		Job job = new Job("Loading '"+parent.getQName()+" ' ...") {
-			
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-
-				// remove children
-				TreeObject[] children = parent.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					TreeObject treeObject = children[i];
-					parent.removeChild(treeObject);
-//					treeBuilder.removeItem(treeObject);
-				}
-				
-				//reload models in order reflect changes
-				treeBuilder.loadModels();
-				
-				// add parent components
-//				ArrayList<TreeObject> parentComponents = treeBuilder.createComponentNodes(parent, false);
-				treeBuilder.createComponentNodes(parent, false);
-				
-				// add nested classes (recursively) their components (not recursively because once createClassNodes was called with recursive=true it will give all nested classes)
-				ArrayList<TreeObject> classes = treeBuilder.createClassNodes(parent, parent.getQName(), true);
-				for (TreeObject addedClass : classes) {
-//					ArrayList<TreeObject> components = treeBuilder.createComponentNodes((TreeParent) addedClass, false);
-					treeBuilder.createComponentNodes((TreeParent) addedClass, false);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		
-		return job;
-	}
-	
 	private void loadSubTree(final TreeParent parent){
 		
 		if (parent instanceof ClassItem) {
 			
+			// Set all project- and model-related data
 			configureTreeBuilder();
 			
 			reloadSubTreeJob = getReloadSubTreeJob(parent);
@@ -1739,14 +1786,19 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	
 	
 	
-	
-	
-	private UmlModel umlModel;
-	private EObject ModelicaMLRoot;
-	private ServicesRegistry serviceRegistry;
-	private TransactionalEditingDomain editingDomain;
+	private void setTreeRootProjectName(){
+		umlModel = UmlUtils.getUmlModel();
+		labelProvider.setProjectName(" - ?");
+		if (umlModel != null) {
+			String projectName = umlModel.getResource().getURI().segment(1);
+			labelProvider.setProjectName(projectName);
+		}
+	}
 	
 	private void configureTreeBuilder(){
+		
+		// TODO: this should be set via user dialog
+//		treeBuilder.setFullImport(true);
 		
 		// As a job
 		umlModel = UmlUtils.getUmlModel();
@@ -1757,6 +1809,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					"Please make sure that the ModelicaML model is open in the active editor.");
 		}
 		else {
+			String projectName = umlModel.getResource().getURI().segment(1);
+			labelProvider.setProjectName(projectName);
+
 			try {
 				ModelicaMLRoot = umlModel.lookupRoot();
 				try {
@@ -1769,8 +1824,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						treeBuilder.setModelicaMLModel(umlModel);
 						treeBuilder.setModelicaMLRoot(ModelicaMLRoot);
 						
-						// delete OMC markers
-//						String projectName = umlModel.getResource().getURI().segment(1);
 //						IWorkspace workspace = ResourcesPlugin.getWorkspace();
 //						IWorkspaceRoot root = workspace.getRoot();
 //						IProject iProject = root.getProject(projectName);
@@ -1803,26 +1856,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	
 	
 	
-	 private ISelectionListener selectionListener = new ISelectionListener() {
-		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-			 if (actionLinkWithEditor.isChecked() && sourcepart != ModelicaOMCCodeViewer.this && selection instanceof IStructuredSelection) {
-	        	EObject selectedElement = null;
-	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
-					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
-				}
-				if ( selectedElement != null ) {
-					HashSet<Object> objects = findTreeItem(selectedElement);
-					List<Object> newSelectionItems = new ArrayList<Object>();
-					newSelectionItems.addAll(objects);
-					viewer.setSelection(new StructuredSelection(newSelectionItems), true);
-				}
-	        }
-	    }
-	};
-	
-	
-	
-	private List<TreeObject> getTopDownPathItems(TreeObject startItem){
+	 private List<TreeObject> getTopDownPathItems(TreeObject startItem){
 		List<TreeObject> listOfSegments = new ArrayList<TreeObject>();
 		listOfSegments.add(startItem);
 		listOfSegments.addAll(getPathFromItem(startItem, new ArrayList<TreeObject>()) );
@@ -1844,7 +1878,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	
 	
 	
-	
 	private HashSet<Object> findTreeItem(EObject selectedElement){
 		HashSet<Object> items = new HashSet<Object>();
 		
@@ -1857,6 +1890,31 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		return items;
 	}
 	
+	private IProject getProject(){
+		if (umlModel != null && umlModel.getResource() != null) {
+			String projectName = umlModel.getResource().getURI().segment(1);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			return iProject;
+		}
+		return null;
+	}
+	
+	private String getProjectName(){
+		if (umlModel != null && umlModel.getResource() != null) {
+			String projectName = umlModel.getResource().getURI().segment(1);
+			return projectName;
+		}
+		return "? Unknown project";
+	}
+	
+	
+	private void showMessage(String message) {
+		MessageDialog.openInformation(
+			viewer.getControl().getShell(), "Modelica Models Synchronization", message);
+	}
+
 	@SuppressWarnings("unchecked")
 	private List<Object> getCurrentSelections() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
@@ -1866,8 +1924,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		}
 		return null;
 	}
-	
-	
+
 	protected EObject adaptSelectedElement( Object selection) {
 		EObject eObject = null;
 		if(selection != null) {
@@ -1885,22 +1942,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			}
 		}
 		return eObject;
-	}
-	
-	
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
-	}
-	
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Modelica Models",
-			message);
 	}
 
 	/**
