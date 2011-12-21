@@ -36,6 +36,8 @@ package org.openmodelica.modelicaml.common.constants;
 
 public class Constants {
 	
+	public static final String actionLanguage 	= "Modelica";
+	
 	// class constructs
 	public static final String stereotypeQName_ModelicaPackage 	= "ModelicaML::ModelicaClassConstructs::ModelicaPackage";
 	public static final String stereotypeQName_Operator 		= "ModelicaML::ModelicaClassConstructs::Operator";
@@ -45,6 +47,15 @@ public class Constants {
 	public static final String stereotypeQName_Block 			= "ModelicaML::ModelicaClassConstructs::Block";
 	public static final String stereotypeQName_Connector 		= "ModelicaML::ModelicaClassConstructs::Connector";
 	public static final String stereotypeQName_Record 			= "ModelicaML::ModelicaClassConstructs::Record";
+	
+	public static final String stereotypeQName_Algorithm 		= "ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)";
+	public static final String stereotypeQName_Equations		= "ModelicaML::ModelicaBehaviorConstructs::Equations(Code)";
+	public static final String propertyName_initial				= "initial";
+
+	
+	public static final String stereotypeQName_Annotation 			= "ModelicaML::ModelicaAnnotationConstructs::Annotation";
+	public static final String propertyName_fullAnnotationString	= "fullAnnotationString";
+
 	
 	public static final String stereotypeQName_Type 						= "ModelicaML::ModelicaClassConstructs::Type";
 	public static final String stereotypeQName_ModelicaEnumeration 			= "ModelicaML::ModelicaClassConstructs::ModelicaEnumeration";
