@@ -95,9 +95,12 @@ public class Constants {
 	public static final String stereotypeQName_CalculatedProperty = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
 
 	// relations
-	public static final String stereotypeQName_ExtendsRelation = "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
+	public static final String stereotypeQName_ExtendsRelation 	= "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
 	public static final String stereotypeQName_TypeRelation 	= "ModelicaML::ModelicaRelationsConstructs::TypeRelation";
-	public static final String stereotypeQName_ImportRelation		= "ModelicaML::ModelicaRelationsConstructs::Import";
+	public static final String stereotypeQName_ImportRelation	= "ModelicaML::ModelicaRelationsConstructs::Import";
+
+	public static final String propertyName_alias				= "alias";
+	
 	
 	// stereotype properties 
 	public static final String propertyName_id 					= "id";
