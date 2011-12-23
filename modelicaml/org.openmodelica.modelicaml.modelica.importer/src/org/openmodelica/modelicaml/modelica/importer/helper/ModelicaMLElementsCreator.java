@@ -31,6 +31,7 @@ import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.EnumerationLiteral;
@@ -54,6 +55,7 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
 import org.openmodelica.modelicaml.modelica.importer.model.ComponentItem;
 import org.openmodelica.modelicaml.modelica.importer.model.ExtendsRelationItem;
+import org.openmodelica.modelicaml.modelica.importer.model.ImportRelationItem;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
@@ -122,7 +124,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		// first create classes, because they will type the properties
 		createClasses(parent, treeParent, update, applyProxyStereotype, recursive);
 		// create properties and extends relations
-		createPropertiesAndGeneralizations(treeParent, update, applyProxyStereotype, recursive);
+		createClassElements(treeParent, update, applyProxyStereotype, recursive);
 	}
 	
 	public void deleteInvalidProxyElements(String namespace){
@@ -226,12 +228,103 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	}
 	
 	
-	
-	public void createPropertiesAndGeneralizations(TreeParent treeParent, boolean update, boolean applyProxyStereotype, boolean recursive){
+	public void createImportRelation(Class owningClass, TreeParent treeItem){
+		
+		// delete all existing import dependencies
+		EList<Dependency> depList = owningClass.getClientDependencies();
+		HashSet<Element> depToBeDeleted = new HashSet<Element>();
+		for (Dependency dependency : depList) {
+			if (dependency.getAppliedStereotype(Constants.stereotypeQName_ImportRelation) != null) {
+				depToBeDeleted.add(dependency);
+			}
+		}
+		
+		deleteElements(depToBeDeleted);
+		
+		// Create new import dependencies
+		List<ImportRelationItem> importRelations = new ArrayList<ImportRelationItem>();
+		TreeObject[] children = treeItem.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			TreeObject treeObject = children[i];
+			if (treeObject instanceof ImportRelationItem) {
+				importRelations.add((ImportRelationItem) treeObject);
+			}
+			
+		}
 
+		for (ImportRelationItem importRelation : importRelations) {
+			Element target = treeBuilder.getTypeElement(importRelation.getTargetQname());
+			if (target != null) {
+				Element createdElement = createDependency(owningClass, (NamedElement) target, Constants.stereotypeQName_ImportRelation, importRelation);
+				// TODO: add to created Imports? 
+			}
+		}
+		
+	}
+	
+	
+	public Element createDependency(final Class sourceClass, final NamedElement targetClass, final String StereotypeQname, final TreeObject treeObject){
+		
+		CompoundCommand cc = new CompoundCommand("Create a ModelicaML Class Dependency");
+		Command command = new RecordingCommand(editingDomain) {
+			
+			Element createdElement = null;
+			
+			@Override
+			public Collection<?> getResult() {
+				List<Element> collection = new ArrayList<Element>();
+				if (createdElement != null) {
+					collection.add(createdElement);
+				}
+				return collection;
+			};
+			
+			@Override
+			protected void doExecute() {
+				createdElement = sourceClass.createDependency(targetClass);
+				
+				Stereotype s = createdElement.getApplicableStereotype(StereotypeQname);
+				if (s != null) {
+					createdElement.applyStereotype(s);
+					if (treeObject instanceof ImportRelationItem) {
+						ImportRelationItem importRelationItem = (ImportRelationItem) treeObject;
+						((Dependency)createdElement).setName(importRelationItem.getSourceQname() + " imports " + importRelationItem.getTargetQname());
+						createdElement.setValue(s, Constants.propertyName_alias, importRelationItem.getAlias());
+					}
+				}
+				else {
+					addToLog("Could not apply the import stereotype to the element '" + treeObject.getQName() + "'");
+				}
+				
+			}
+		};
+		
+		cc.append(command);
+		// Execute command
+		editingDomain.getCommandStack().execute(cc);
+
+		Collection<?> result = command.getResult();
+		for (Object object : result) {
+			if (object instanceof Element) {
+				return (Element)object;
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	public void createClassElements(TreeParent treeParent, boolean update, boolean applyProxyStereotype, boolean recursive){
+		
 		Element owningClass = treeParent.getModelicaMLProxy();
 		
 		if (treeParent instanceof ClassItem && treeParent.hasChildren()) {
+			
+			// create an import relation
+			if (owningClass instanceof Class) {
+				createImportRelation((Class) owningClass, treeParent);
+			}
+			
 			TreeObject[] children = treeParent.getChildren();
 			
 			for (int i = 0; i < children.length; i++) {
@@ -270,6 +363,11 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 //								System.out.println("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 							}
 							// update
+							
+							// set the component type (uml class that was just created) 
+							Element type = treeBuilder.getTypeElement(component.getComponentTypeQame());
+							component.setComponentTypeProxy(type);
+							
 							updateProperty(owningClass, modelicaMLPropertyProxy, component, applyProxyStereotype);			
 						}
 					}
@@ -327,10 +425,10 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					}
 				}
 				
-				// recursive  call
+				// recursive  call to create elements of the nested  classes
 				if (recursive) {
 					if (treeObject instanceof ClassItem) {
-						createPropertiesAndGeneralizations((TreeParent) treeObject, update, applyProxyStereotype, recursive);
+						createClassElements((TreeParent) treeObject, update, applyProxyStereotype, recursive);
 					}
 				}
 			}
@@ -717,15 +815,16 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_expandable, true);
 					}
 					
-					// set comment and annotations
+					// sync. comment and annotations
 					updateCommentsAndAnnotation(classElement, classItem);
 					
-					// set behaviors
+					// sync. behaviors
 					updateBehaviors(classElement, classItem);
 					
 					// delete unappropriated stereotypes
 					// get all possible ModelicaML property stereotypes
 					HashSet<Stereotype> possibleStereotype = getClassApplicableStereotypes(classElement);
+					
 					// unapply all stereotypes from the list (see above) except the appropriate one!
 					for (Stereotype stereotype : possibleStereotype) {
 						if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
@@ -794,8 +893,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	
 	
 	
-	
 	private void updateBehaviors(Element element, TreeObject treeObject){
+		
 		if (treeObject instanceof ClassItem && element instanceof Classifier) {
 			Classifier clazz = (Classifier)element;
 			
@@ -817,13 +916,24 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				int i = 0;
 				for (String string : initialAlgorithms) {
 					i ++;
-					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
-					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Algorithm);
-					if (stereotype != null) {
-						behavior.applyStereotype(stereotype);
-						behavior.setValue(stereotype, Constants.propertyName_initial, true);
+					
+					/*
+					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
+					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
+					 */
+					if (element instanceof FunctionBehavior ) {
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
 					}
-					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					else {
+						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+						Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Algorithm);
+						if (stereotype != null) {
+							behavior.applyStereotype(stereotype);
+							behavior.setValue(stereotype, Constants.propertyName_initial, true);
+						}
+						
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					}
 				}
 			}
 			
@@ -833,17 +943,25 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				int i = 0;
 				for (String string : initialEquations) {
 					i ++;
-					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
-					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Equations);
-					if (stereotype != null) {
-						behavior.applyStereotype(stereotype);
-						behavior.setValue(stereotype, Constants.propertyName_initial, true);
+					
+					/*
+					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
+					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
+					 */
+					if (element instanceof FunctionBehavior ) {
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
 					}
-					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					else {
+						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+						Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Equations);
+						if (stereotype != null) {
+							behavior.applyStereotype(stereotype);
+							behavior.setValue(stereotype, Constants.propertyName_initial, true);
+						}
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					}
 				}
 			}
-			
-			
 			
 			// Create algorithms
 			List<String> algorithms = ((ClassItem)treeObject).getAlgorithms();
@@ -851,12 +969,22 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				int i = 0;
 				for (String string : algorithms) {
 					i ++;
-					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
-					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Algorithm);
-					if (stereotype != null) {
-						behavior.applyStereotype(stereotype);
+					
+					/*
+					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
+					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
+					 */
+					if (element instanceof FunctionBehavior ) {
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
 					}
-					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					else {
+						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+						Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Algorithm);
+						if (stereotype != null) {
+							behavior.applyStereotype(stereotype);
+						}
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					}
 				}
 			}
 			
@@ -866,18 +994,27 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				int i = 0;
 				for (String string : equations) {
 					i ++;
-					OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
-					Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Equations);
-					if (stereotype != null) {
-						behavior.applyStereotype(stereotype);
+					
+					/*
+					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
+					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
+					 */
+					if (element instanceof FunctionBehavior ) {
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
 					}
-					OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					else {
+						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
+						Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Equations);
+						if (stereotype != null) {
+							behavior.applyStereotype(stereotype);
+						}
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+					}
 				}
 			}
 			
 		}
 	}
-	
 	
 	
 	

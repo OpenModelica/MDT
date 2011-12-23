@@ -143,195 +143,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 			TreeObject treeObject = children[i];
 			if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
 				// create components and extends relation nodes
-				createComponentNodes((TreeParent)treeObject, true);
+				createClassElementNodes((TreeParent)treeObject, true);
 			}
 		}
-	}
-	
-	
-	public void validateProxies(IProject iProject){
-		if (isValidateProxies()) {
-			
-			// Delete all old markers
-			deleteProxyValidationMarkers(iProject);
-			
-			// Get proxies
-			HashSet<Element> collectedProxies = new HashSet<Element>();
-			collectedProxies.addAll(proxies);
-			
-			// Get Modelica model names
-			HashSet<String> modelicaModelQNames = new HashSet<String>();
-			for (TreeObject treeObject : treeItems) {
-				modelicaModelQNames.add(treeObject.getQName());
-			}
-			
-			// validate
-			validateProxies(collectedProxies, modelicaModelQNames);
-			
-//			for (Element element : proxies) {
-//				if (element instanceof NamedElement) {
-//					Model topLevelModel = element.getModel();
-//					// don't check installed library elements 
-//					if ( topLevelModel != null  
-//							&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
-//						String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
-//						
-//						// check the proxy exists
-//						if (!modelicaModelQNames.contains(qName)) {
-//							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
-//						}
-//						
-//						// check if a property has type defined
-//						if (element instanceof Property) {
-//							if ( ((Property)element).getType() == null ) {
-//								createMarker(element, 
-//										((NamedElement)element).getQualifiedName(), 
-//										"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
-//							}
-//						}
-//						
-//						// find extends relations without target
-//						if (element instanceof Classifier) {
-//							Classifier classifier = (Classifier) element;
-//							EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
-//							for (Generalization generalization : classExtendsRelations) {
-//								EList<Element> targets = generalization.getTargets();
-//								if (targets != null && targets.size() > 0) {
-//									// ok
-//								}
-//								else {
-////									createMarker(element, ((NamedElement)element).getQualifiedName(), 
-//									createMarker(generalization, ((NamedElement)element).getQualifiedName(),
-//											"error", 
-//											"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-		}
-	}
-	
-	
-	private void validateProxies(HashSet<Element> proxies,  HashSet<String> modelicaModelQNames){
-		for (Element element : proxies) {
-			if (element instanceof NamedElement) {
-				Model topLevelModel = element.getModel();
-				// don't check installed library elements 
-				if ( topLevelModel != null  
-						&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
-					String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
-					
-					// check the proxy exists
-					if (!modelicaModelQNames.contains(qName)) {
-						createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
-					}
-					
-					// check if a property has type defined
-					if (element instanceof Property) {
-						if ( ((Property)element).getType() == null ) {
-							createMarker(element, 
-									((NamedElement)element).getQualifiedName(), 
-									"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
-						}
-					}
-					
-					// find extends relations without target
-					if (element instanceof Classifier) {
-						Classifier classifier = (Classifier) element;
-						EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
-						for (Generalization generalization : classExtendsRelations) {
-							
-							EList<Element> targets = generalization.getTargets();
-							
-							if (targets != null && targets.size() > 0) {
-								// ok
-							}
-							else {
-//									createMarker(element, ((NamedElement)element).getQualifiedName(), 
-								createMarker(generalization, ((NamedElement)element).getQualifiedName(),
-										"error", 
-										"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	public void validateProxies(IProject iProject, TreeParent treeItem){
-			
-		// delete all old markers
-		if (treeItem.getModelicaMLProxy() instanceof NamedElement) {
-			deleteProxyValidationMarkers(iProject, ((NamedElement)treeItem.getModelicaMLProxy()).getQualifiedName());
-		}
-		// ´Collect proxies 
-		HashSet<Element> proxies = new HashSet<Element>();
-		Iterator<EObject> i = treeItem.getModelicaMLProxy().eAllContents();
-		while (i.hasNext()) {
-			EObject object = i.next() ;
-			
-			// collect all imported elements 
-			if ((object instanceof Class && ((Class)object).getAppliedStereotype(Constants.stereotypeQName_ModelicaModelProxy) != null) || object instanceof Property) {
-				proxies.add((Element) object);
-			}
-		}
-		
-		// Get Modelica model names
-		HashSet<String> modelicaModelQNames = new HashSet<String>();
-		for (TreeObject treeObject : getAllTreeItems(treeItem)) {
-			modelicaModelQNames.add(treeObject.getQName());
-		}
-
-		// validate
-		validateProxies(proxies, modelicaModelQNames);
-		
-//		for (Element element : proxies) {
-//			if (element instanceof NamedElement) {
-//				Model topLevelModel = element.getModel();
-//				// don't check installed library elements 
-//				if ( topLevelModel != null  
-//						&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
-//					String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
-//					
-//					// check the proxy exists
-//					if (!modelicaModelQNames.contains(qName)) {
-//						createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
-//					}
-//					
-//					// check if a property has type defined
-//					if (element instanceof Property) {
-//						if ( ((Property)element).getType() == null ) {
-//							createMarker(element, 
-//									((NamedElement)element).getQualifiedName(), 
-//									"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
-//						}
-//					}
-//					
-//					// find extends relations without target
-//					if (element instanceof Classifier) {
-//						Classifier classifier = (Classifier) element;
-//						EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
-//						for (Generalization generalization : classExtendsRelations) {
-//							
-//							EList<Element> targets = generalization.getTargets();
-//							
-//							if (targets != null && targets.size() > 0) {
-//								// ok
-//							}
-//							else {
-////									createMarker(element, ((NamedElement)element).getQualifiedName(), 
-//								createMarker(generalization, ((NamedElement)element).getQualifiedName(),
-//										"error", 
-//										"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
 	}
 	
 	
@@ -365,8 +179,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 			String name = StringUtls.replaceSpecChar(((NamedElement)proxy).getName().replaceFirst("Modelica", ""));
 			proxyQNames.add(name);
 			proxyQNameToElement.put(name, proxy);
-//			System.err.println("");
-//			System.err.println("Added: " + name);
 		}
 	}
 	
@@ -388,102 +200,15 @@ public class TreeBuilder implements IRunnableWithProgress{
 				((ExtendsRelationItem)treeObject).setSource(proxyQNameToElement.get(((ExtendsRelationItem)treeObject).getSourceQname()));
 				((ExtendsRelationItem)treeObject).setTarget(proxyQNameToElement.get(((ExtendsRelationItem)treeObject).getTargetQname()));
 			}
+			// import relation 
+			else if (treeObject instanceof ImportRelationItem) {
+				((ImportRelationItem)treeObject).setSource(proxyQNameToElement.get(((ImportRelationItem)treeObject).getSourceQname()));
+				((ImportRelationItem)treeObject).setTarget(proxyQNameToElement.get(((ImportRelationItem)treeObject).getTargetQname()));
+			}
+			
 			if (treeObject instanceof TreeParent) {
 				updateTreeItemProxies((TreeParent) treeObject);
 			}
-		}
-	}
-	
-	
-	public void collectModelicaModelProxies(){
-		
-		proxies.clear();
-		proxyQNames.clear();
-		proxyQNameToElement.clear();
-		
-		final UmlModel umlModel = getModelicaMLModel();
-		
-		if (umlModel != null && umlModel.getResource() != null) {
-			try {
-				EObject root = umlModel.lookupRoot();
-				
-				setModelicaMLModel(umlModel);
-				setModelicaMLRoot(root);
-				
-				if (root instanceof NamedElement) {
-					ModelicaModelProxiesCollector pc = new ModelicaModelProxiesCollector();
-					pc.collectElementsFromModel(root, Constants.stereotypeQName_ModelicaModelProxy);
-//					proxies = pc.getElements();
-					proxies.addAll(pc.getElements());
-					
-					EList<Element> classAttributesProxies = new BasicEList<Element>();
-					EList<Element> functionParametersProxies = new BasicEList<Element>();
-					EList<Element> enumerationLiteralProxies = new BasicEList<Element>();
-					
-					// in order to avoid concurrent modifications
-					HashSet<Element> proxiesCopy = new HashSet<Element>();
-					proxiesCopy.addAll(proxies);
-					
-//					for (Element proxy : proxies) {
-					for (Element proxy : proxiesCopy) {
-						if (proxy instanceof NamedElement) {
-							addProxyToMaps((NamedElement)proxy);
-							
-							// add all class properties
-							if (proxy instanceof Class) {
-								EList<Property> properties = ((Class)proxy).getOwnedAttributes();
-								for (Property property : properties) {
-									// collect attributes
-									classAttributesProxies.add(property);
-									addProxyToMaps((NamedElement)property);
-								}
-							}
-							if (proxy instanceof FunctionBehavior) {
-								EList<Parameter> parameters = ((FunctionBehavior)proxy).getOwnedParameters();
-								for (Parameter parameter : parameters) {
-									// collect attributes
-									functionParametersProxies.add(parameter);
-									addProxyToMaps((NamedElement)parameter);
-								}
-							}
-							if (proxy instanceof Enumeration) {
-								EList<EnumerationLiteral> literals = ((Enumeration)proxy).getOwnedLiterals();
-								for (EnumerationLiteral literal : literals) {
-									// collect literals
-									enumerationLiteralProxies.add(literal);
-									addProxyToMaps((NamedElement)literal);
-								}
-							}
-						}
-					}
-					
-					// add class components to proxies list
-					proxies.addAll(classAttributesProxies);
-					proxies.addAll(functionParametersProxies);
-					proxies.addAll(enumerationLiteralProxies);
-					
-					// Add Modelica predefined types
-					if (root instanceof Model) {
-						proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_real));
-						addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_real));
-						
-						proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_integer));
-						addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_integer));
-						
-						proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_boolean));
-						addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_boolean));
-						
-						proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_string));
-						addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_string));
-					}
-				}
-			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else {
-			System.err.println("Could not access the ModelicaML root element.");
 		}
 	}
 	
@@ -516,16 +241,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 							item.setQName(qName);
 							item.setModelicaMLProxy(proxyQNameToElement.get(qName));
 							
-							// set attributes
-							setClassProperties(item, qName);
-							
-							if (isFullImport()) {
-								// set annotations
-								setClassAnnotation(item, qName);
-								
-								// set behaviors (i.e. (initial) algorithms/equations )
-								setClassBehavior(item, qName);
-							}
+							// update class node
+							updateClassNode(item);
 							
 							// add to the return list
 							createdItems.add(item);
@@ -543,16 +260,41 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	public ArrayList<TreeObject> createComponentNodes(TreeParent treeParent, boolean recursive){
-			ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
-			String classQName = treeParent.getQName();
+	public void updateClassNode(ClassItem item){
+		
+		// set attributes
+		setClassProperties(item, item.getQName());
+		
+		if (isFullImport()) {
+			// set annotations
+			setClassAnnotation(item, item.getQName());
 			
-			if (!classQName.equals("")) {
+			// set behaviors (i.e. (initial) algorithms/equations )
+			setClassBehavior(item, item.getQName());
+			
+		}
+	}
+	
+	
+	
+	public ArrayList<TreeObject> createClassElementNodes(TreeParent treeParent, boolean recursive){
+
+		ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
+		String classQName = treeParent.getQName();
+		
+		if (!classQName.equals("")) {
+
+			if (treeParent instanceof ClassItem && ((ClassItem)treeParent).isEnumeration() ) {
+				createdItems.addAll(createEnumerationLiteralNodes(treeParent));
+			}
+			else {
+				// Create Import relations nodes
+				createdItems.addAll(createImportRelationNodes(treeParent, classQName));
 				
-				// create extends relation nodes
+				// Create extends relation nodes
 				List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
 				
-				// create extends relations nodes
+				// Create extends relations nodes
 				if (inheritedClasses.size() > 0) {
 					for (String inheritedClassQName : inheritedClasses) {
 						
@@ -566,14 +308,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 						item.setSource(getTypeElement(classQName));
 						item.setSourceQname(classQName);
 						item.setTarget(getTypeElement(inheritedClassQName));
-	//					System.err.println();
-	//					System.err.println(inheritedClassQName);
-	//					System.err.println("getTypeElement(inheritedClassQName): " + getTypeElement(inheritedClassQName));
-	//					System.err.println(); 
+//						System.err.println();
+//						System.err.println(inheritedClassQName);
+//						System.err.println("getTypeElement(inheritedClassQName): " + getTypeElement(inheritedClassQName));
+//						System.err.println(); 
 						item.setTargetQname(inheritedClassQName);
 						
 						// Note, UML Generalization is not a NamedElement. 
-	//					item.setModelicaMLProxy(proxyQNameToElement.get(qName));
+//						item.setModelicaMLProxy(proxyQNameToElement.get(qName));
 						
 						// set modifications
 						item.setModifications(getExtendsModifications(item, classQName));
@@ -602,19 +344,18 @@ public class TreeBuilder implements IRunnableWithProgress{
 						}
 						
 						// create tree item
-	//					TreeParent item = new TreeParent(component.name);
 						ComponentItem item = new ComponentItem (component.name);
-	
+
 						treeParent.addChild(item);
 						treeItems.add(item);
 						
 						// set attributes
 						item.setQName(qName);
-	
+
 						// set the loaded component type 
 						item.setComponentTypeQName(component.typeQName);
 						item.setComponentTypeTreeItem(findTreeItem(component.typeQName));
-	
+
 						// set component type proxy 
 						item.setComponentTypeProxy(component.type);
 						
@@ -649,28 +390,115 @@ public class TreeBuilder implements IRunnableWithProgress{
 						createdItems.add(item);
 					}
 				}
-				
-				// ONLY for a "full" import. This data is not needed for proxies.
-				// TODO: // create import relation nodes
-				// TODO: // create equation and algorithm nodes
-				// TODO: // create connection nodes
-				
-				if (recursive) {
-					// recursive call
-					TreeObject[] children = treeParent.getChildren();
-					for (int i = 0; i < children.length; i++) {
-						TreeObject treeObject = children[i];
-						if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
-							
-							createdItems.addAll(createComponentNodes((TreeParent)treeObject, recursive));
-							
-						}
+			}
+			
+			// ONLY for a "full" import. This data is not needed for proxies.
+			// TODO: // create connection nodes
+			
+			if (recursive) {
+				// recursive call
+				TreeObject[] children = treeParent.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					TreeObject treeObject = children[i];
+					if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
+						
+						createdItems.addAll(createClassElementNodes((TreeParent)treeObject, recursive));
+						
 					}
 				}
 			}
-			return createdItems;
+		}
+		return createdItems;
+	}
+
+	
+	private List<TreeObject> createImportRelationNodes(TreeParent classItem, String classQName){
+
+		List<TreeObject> createdItems = new ArrayList<TreeObject>();
+		
+		int n = omcc.getImportCount(classQName);
+		if (n > 0) {
+			for (int i = 0; i <= n; i++) {
+				String reply = omcc.getNthImport(classQName, i);
+				if (!reply.trim().equals("") && !reply.equals("Error") && !reply.equals("error") && !reply.equals("false")) {
+					ArrayList<String> items = StringHandler.unparseStrings(reply.trim());
+					if (items.size() > 2) {
+						String importedElementName = items.get(0);
+						String alias = items.get(1);
+						String kind = items.get(2);
+						
+						// create tree item
+						ImportRelationItem item = new ImportRelationItem(importedElementName);
+						
+						classItem.addChild(item);
+						treeItems.add(item);
+						
+						// set attributes
+						item.setSource(getTypeElement(classQName));
+						item.setSourceQname(classQName);
+						
+						Element targetElement = getTypeElement(importedElementName);
+//						if (targetElement == null) {
+//							// get the qualified name
+//							if (classItem.getParent() != null ) {
+//								String nameSpace = classItem.getParent().getQName();	
+//								targetElement = getTypeElement(nameSpace + "."+ importedElementName);
+//							}
+//						}
+						
+						item.setTarget(targetElement);
+						item.setTargetQname(importedElementName);
+						
+						item.setAlias(alias);
+						item.setKind(kind);
+						
+						// Note, UML Dependencies cannot have ModelicaML proxies because they may not have names to be used for the identification.
+//						item.setModelicaMLProxy(proxyQNameToElement.get(importedElementName));
+						
+						// add to return list
+						createdItems.add(item);
+					}
+				}
+			}
+		}
+		return createdItems;
+	}
+	
+	
+	private List<TreeObject> createEnumerationLiteralNodes(TreeParent classItem){
+		List<TreeObject> createdItems = new ArrayList<TreeObject>();
+		String reply = omcc.getEnumerationLiterals(classItem.getQName());
+		if (!reply.trim().equals("") && !reply.equals("Error") && !reply.equals("error") && !reply.equals("false")) {
+			ArrayList<String> items = StringHandler.unparseStrings(reply.trim());
+			if (items.size() > 0) {
+				for (int i = 0; i < items.size(); i++) {
+					String literalName = items.get(i);
+					ComponentItem literatItem = new ComponentItem(literalName);
+					
+					classItem.addChild(literatItem);
+					treeItems.add(literatItem);
+					
+					// set the qualified name
+					String qName = "";
+					if (classItem.getName().equals("")) {
+						qName = literatItem.getName();
+					}
+					else {
+						qName = classItem.getName() + "." + literatItem.getName();
+					}
+					
+					literatItem.setModelicaMLProxy(proxyQNameToElement.get(qName));
+					
+					// add to return list
+					createdItems.add(literatItem);
+				}
+			}
 		}
 
+		
+		return createdItems;
+	}
+	
 	
 	private boolean isBehavioralClass(ClassItem item){
 		if (item.getClassRestriction().equals("class")) { return true; }
@@ -1313,6 +1141,199 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 		
 	}
+
+	public void validateProxies(IProject iProject){
+		if (isValidateProxies()) {
+			
+			// Delete all old markers
+			deleteProxyValidationMarkers(iProject);
+			
+			// Get proxies
+			HashSet<Element> collectedProxies = new HashSet<Element>();
+			collectedProxies.addAll(proxies);
+			
+			// Get Modelica model names
+			HashSet<String> modelicaModelQNames = new HashSet<String>();
+			for (TreeObject treeObject : treeItems) {
+				modelicaModelQNames.add(treeObject.getQName());
+			}
+			
+			// validate
+			validateProxies(collectedProxies, modelicaModelQNames);
+	
+		}
+	}
+
+
+	private void validateProxies(HashSet<Element> proxies,  HashSet<String> modelicaModelQNames){
+			for (Element element : proxies) {
+				if (element instanceof NamedElement) {
+					Model topLevelModel = element.getModel();
+					// don't check installed library elements 
+					if ( topLevelModel != null  
+							&& topLevelModel.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) == null) {
+						String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
+						
+						// check the proxy exists
+						if (!modelicaModelQNames.contains(qName)) {
+							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
+						}
+						
+						// check if a property has type defined
+						if (element instanceof Property) {
+							if ( ((Property)element).getType() == null ) {
+								createMarker(element, 
+										((NamedElement)element).getQualifiedName(), 
+										"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
+							}
+						}
+						
+						// find extends relations without target
+						if (element instanceof Classifier) {
+							Classifier classifier = (Classifier) element;
+							EList<Generalization> classExtendsRelations = classifier.getGeneralizations();
+							for (Generalization generalization : classExtendsRelations) {
+								
+								EList<Element> targets = generalization.getTargets();
+								
+								if (targets != null && targets.size() > 0) {
+									// ok
+								}
+								else {
+	//									createMarker(element, ((NamedElement)element).getQualifiedName(), 
+									createMarker(generalization, ((NamedElement)element).getQualifiedName(),
+											"error", 
+											"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+	public void validateProxies(IProject iProject, TreeParent treeItem){
+			
+		// delete all old markers
+		if (treeItem.getModelicaMLProxy() instanceof NamedElement) {
+			deleteProxyValidationMarkers(iProject, ((NamedElement)treeItem.getModelicaMLProxy()).getQualifiedName());
+		}
+		// ´Collect proxies 
+		HashSet<Element> proxies = new HashSet<Element>();
+		Iterator<EObject> i = treeItem.getModelicaMLProxy().eAllContents();
+		while (i.hasNext()) {
+			EObject object = i.next() ;
+			
+			// collect all imported elements 
+			if ((object instanceof Class && ((Class)object).getAppliedStereotype(Constants.stereotypeQName_ModelicaModelProxy) != null) || object instanceof Property) {
+				proxies.add((Element) object);
+			}
+		}
+		
+		// Get Modelica model names
+		HashSet<String> modelicaModelQNames = new HashSet<String>();
+		for (TreeObject treeObject : getAllTreeItems(treeItem)) {
+			modelicaModelQNames.add(treeObject.getQName());
+		}
+	
+		// validate
+		validateProxies(proxies, modelicaModelQNames);
+	}
+
+
+	public void collectModelicaModelProxies(){
+			
+			proxies.clear();
+			proxyQNames.clear();
+			proxyQNameToElement.clear();
+			
+			final UmlModel umlModel = getModelicaMLModel();
+			
+			if (umlModel != null && umlModel.getResource() != null) {
+				try {
+					EObject root = umlModel.lookupRoot();
+					
+					setModelicaMLModel(umlModel);
+					setModelicaMLRoot(root);
+					
+					if (root instanceof NamedElement) {
+						ModelicaModelProxiesCollector pc = new ModelicaModelProxiesCollector();
+						pc.collectElementsFromModel(root, Constants.stereotypeQName_ModelicaModelProxy);
+	//					proxies = pc.getElements();
+						proxies.addAll(pc.getElements());
+						
+						EList<Element> classAttributesProxies = new BasicEList<Element>();
+						EList<Element> functionParametersProxies = new BasicEList<Element>();
+						EList<Element> enumerationLiteralProxies = new BasicEList<Element>();
+						
+						// in order to avoid concurrent modifications
+						HashSet<Element> proxiesCopy = new HashSet<Element>();
+						proxiesCopy.addAll(proxies);
+						
+	//					for (Element proxy : proxies) {
+						for (Element proxy : proxiesCopy) {
+							if (proxy instanceof NamedElement) {
+								addProxyToMaps((NamedElement)proxy);
+								
+								// add all class properties
+								if (proxy instanceof Class) {
+									EList<Property> properties = ((Class)proxy).getOwnedAttributes();
+									for (Property property : properties) {
+										// collect attributes
+										classAttributesProxies.add(property);
+										addProxyToMaps((NamedElement)property);
+									}
+								}
+								if (proxy instanceof FunctionBehavior) {
+									EList<Parameter> parameters = ((FunctionBehavior)proxy).getOwnedParameters();
+									for (Parameter parameter : parameters) {
+										// collect attributes
+										functionParametersProxies.add(parameter);
+										addProxyToMaps((NamedElement)parameter);
+									}
+								}
+								if (proxy instanceof Enumeration) {
+									EList<EnumerationLiteral> literals = ((Enumeration)proxy).getOwnedLiterals();
+									for (EnumerationLiteral literal : literals) {
+										// collect literals
+										enumerationLiteralProxies.add(literal);
+										addProxyToMaps((NamedElement)literal);
+									}
+								}
+							}
+						}
+						
+						// add class components to proxies list
+						proxies.addAll(classAttributesProxies);
+						proxies.addAll(functionParametersProxies);
+						proxies.addAll(enumerationLiteralProxies);
+						
+						// Add Modelica predefined types
+						if (root instanceof Model) {
+							proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_real));
+							addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_real));
+							
+							proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_integer));
+							addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_integer));
+							
+							proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_boolean));
+							addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_boolean));
+							
+							proxies.add(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_string));
+							addPredefinedTypeProxy(((Model)root).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_string));
+						}
+					}
+				} catch (NotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else {
+				System.err.println("Could not access the ModelicaML root element.");
+			}
+		}
+
 
 	public void setModelicaMLModel(UmlModel modelicaMLModel) {
 		ModelicaMLModel = modelicaMLModel;

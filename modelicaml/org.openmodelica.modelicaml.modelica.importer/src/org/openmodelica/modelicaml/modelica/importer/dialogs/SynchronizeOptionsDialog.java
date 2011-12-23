@@ -62,7 +62,7 @@ public class SynchronizeOptionsDialog extends Dialog {
 
 	boolean update = true;
 	boolean deleteNotUsedProxies = false;
-	boolean fullImport = false;
+	boolean fullImport = true;
 	
 	public SynchronizeOptionsDialog( Shell parent ) {
 		super(parent);
@@ -142,8 +142,8 @@ public class SynchronizeOptionsDialog extends Dialog {
 
 		final Button btnFullImport = new Button(composite, SWT.CHECK);
 		
-		btnFullImport.setSelection(false); 	// preselect this option.
-		setFullImport(false);
+		btnFullImport.setSelection(true); 	// preselect this option.
+		setFullImport(true);
 		
 		btnFullImport.setText("Import all model data (including behavior, imports, comments and annotations)");
 		btnFullImport.setToolTipText("Import all model data (including behavior, imports, comments and annotations)");

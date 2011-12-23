@@ -67,6 +67,7 @@ import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
 import org.openmodelica.modelicaml.modelica.importer.model.ComponentItem;
 import org.openmodelica.modelicaml.modelica.importer.model.ExtendsRelationItem;
+import org.openmodelica.modelicaml.modelica.importer.model.ImportRelationItem;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 
@@ -134,7 +135,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		treeItemText = treeItemText + name;
 
 		// check if the type is resolved 
-		if (item instanceof ComponentItem) {
+		if (item instanceof ComponentItem && !((ComponentItem)item).isEnumarationLiteral() ) {
 			ComponentItem component = ((ComponentItem)item);
 			if (component.getComponentTypeProxy() == null) {
 				styledString.append(": " + component.getComponentTypeQame() + " ? type proxy not found", stylerRed);
@@ -326,8 +327,15 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isFunctionArgument()) {
 			overlayIconImage = decorateImage( treeObject , "/icons/Parameter.gif", null );
 		}
+		else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isEnumarationLiteral()) {
+			overlayIconImage = decorateImage( treeObject , "/icons/EnumerationLiteral.gif", null );
+		}
+
 		
-		//classes 
+		//classes
+		else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).isEnumeration()) {
+			overlayIconImage = decorateImage( treeObject , "/icons/Package.gif", ResourceManager.getPluginImage("org.eclipse.uml2.uml.edit", "/icons/full/obj16/Enumeration.gif") );
+		}
 		else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
 			overlayIconImage = decorateImage( treeObject , "/icons/Package.gif", null );
 		}
@@ -356,12 +364,17 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			overlayIconImage = decorateImage( treeObject , "/icons/operator.gif", null );
 		}
 		else if ( treeObject instanceof ExtendsRelationItem ) {
-			overlayIconImage = decorateImage( treeObject , "/icons/Generalization.gif", null );
+//			overlayIconImage = decorateImage( treeObject , "/icons/Generalization.gif", null );
+			overlayIconImage = ResourceManager.getPluginImage("org.eclipse.uml2.uml.edit", "/icons/full/obj16/Generalization.gif");
+		}
+		else if ( treeObject instanceof ImportRelationItem ) {
+//			overlayIconImage = decorateImage( treeObject , "/icons/Dependency.gif", null );
+			overlayIconImage = ResourceManager.getPluginImage("org.eclipse.uml2.uml.edit", "/icons/full/obj16/ElementImport.gif");
 		}
 		else {
 //			cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/reload.png"));
 //			overlayIconImage = decorateImage( treeObject , "/icons/reload.png", null );
-			overlayIconImage = decorateImage( treeObject , "/icons/unknown.png", null );
+			overlayIconImage = decorateImage( treeObject , "/icons/unknown_obj.gif", null );
 		}
 	}
 	
@@ -468,13 +481,16 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						return overlayIcon.createImage();
 					}
-					// synch status
-					if ( !(element instanceof ExtendsRelationItem) && ((TreeParent)element).getModelicaMLProxy() == null ) {
+					
+					// sync status
+					if ( (element instanceof ClassItem || element instanceof ComponentItem) 
+							&& ((TreeParent)element).getModelicaMLProxy() == null ) {
 //						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, syncIncomingImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						return overlayIcon.createImage();
 					}
-					else if (hasEmptyProxies((TreeParent) element)) {
+					else if ((element instanceof ClassItem || isTreeRoot((TreeParent) element)) 
+							&& hasEmptyProxies((TreeParent) element)) {
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
 //						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, syncIncomingImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						return overlayIcon.createImage();
@@ -483,9 +499,23 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			}
 		}
 		
+		if (image != null) {
+			return image;
+		}
+		
 		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
 	
+	
+	private boolean isTreeRoot(TreeParent treeParent){
+		if (treeParent.getParent() == null) {
+			return true;
+		}
+		if (treeParent.getName().equals(Constants.folderName_code_sync)) {
+			return true;
+		}
+		return false;
+	}
 	
 	private boolean hasEmptyProxies(TreeParent treeParent) {
 		if (findNextEmptyProxy(treeParent).size() > 0 ) {
@@ -511,7 +541,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		// check its children
 		TreeObject[] children = treeParent.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			if (!(children[i] instanceof ExtendsRelationItem) && children[i].getModelicaMLProxy() == null) {
+			if (!(children[i] instanceof ExtendsRelationItem || children[i] instanceof ImportRelationItem ) && children[i].getModelicaMLProxy() == null) {
 				list.add(treeParent);
 				return list;
 			}

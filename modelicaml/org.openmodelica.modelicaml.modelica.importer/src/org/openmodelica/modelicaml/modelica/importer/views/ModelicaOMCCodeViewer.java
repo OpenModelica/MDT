@@ -115,18 +115,24 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 
 	// Actions
 	private Action actionReload;
+	private Action actionLoadSubTree;
+
 	private Action actionSynchronize;
+	private Action actionSynchronizeSubTree;
+
 	private Action doubleClickAction;
-	private Action actionRefresh;
+	private Action actionRefreshAndValidate;
+
+	private Action actionClear;
+	
 	private Action actionCollapseAll;
+	private Action actionExpandCollapse;
+	
 	private Action actionLocateInPapyrusModelExplorer;
 	private Action actionLinkWithEditor;
+	
 	private Action actionGenerateOMCMarkers;
 	private Action actionValidateProxies;
-	private Action actionClear;
-	private Action actionExpandCollapse;
-	private Action actionLoadSubTree;
-	private Action actionSynchronizeSubTree;
 	private Action actionDecorateTreeItems;
 
 	// Default values for sync. options
@@ -420,8 +426,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) )) {
 			if (!viewer.getExpandedState(obj)) {
 				actionExpandCollapse.setText("Expand");
-				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
-				
+//				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+				actionExpandCollapse.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/expand.gif"));
 				// Disable expand action when the reload sub tree job is running
 				if (reloadSubTreeJob.getState() == Job.RUNNING) {
 					actionExpandCollapse.setEnabled(false);
@@ -432,7 +438,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			}
 			else {
 				actionExpandCollapse.setText("Collapse");
-				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
+//				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
+				actionExpandCollapse.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/collapse.gif"));
+
 				actionExpandCollapse.setEnabled(true);
 			}
 			manager.add(actionExpandCollapse);
@@ -441,19 +449,21 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(actionReload);
-		manager.add(actionSynchronize);
-		manager.add(actionRefresh);
-		manager.add(actionClear);
 
-		manager.add(new Separator());
 		manager.add(actionCollapseAll);
 
 		manager.add(actionLinkWithEditor);
 		manager.add(new Separator());
-		
+
+		manager.add(actionReload);
+		manager.add(actionSynchronize);
+		manager.add(actionRefreshAndValidate);
+		manager.add(actionClear);
+
 		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
+		
+//		manager.add(new Separator());
+//		drillDownAdapter.addNavigationActions(manager);
 	}
 
 	private void makeActions() {
@@ -470,11 +480,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        				
 	        				if (treeRoot.hasChildren()) {
 	        					actionSynchronize.setEnabled(true);
-	        					actionRefresh.setEnabled(true);
+	        					actionRefreshAndValidate.setEnabled(true);
 	        				}
 	        				else {
 	        					actionSynchronize.setEnabled(false);
-	        					actionRefresh.setEnabled(false);
+	        					actionRefreshAndValidate.setEnabled(false);
 	        				}
 	        				
 	        				viewer.setInput(getViewSite());
@@ -482,10 +492,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        				viewer.setExpandedElements(expandedElements);
 	        				viewer.setExpandedTreePaths(expandedTreePaths);
 	        				
-	        				actionRefresh.run();
+	        				actionRefreshAndValidate.run();
 
 	        				if (createProxiesAfterLoadingModelicaClasses) {
-								/*
+								
+	        					/*
 								 * TODO: if the element that is being updated is selected in GUI (i.e. in Papyrus modeling tool)
 								 * then there will be a "SWT invalid thread exception because this job will modify it.
 								 * WORKAROUND: before creating elements set Papyrus Model Explorer Selection to 
@@ -507,7 +518,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		        				message = message + "Number of loaded components: " + loadedComponentsNumber + "\n";
 		        				message = message + "Number of loaded extends relations: " + loadedExtendsRelationsNumber + "\n";
 		        				
-		        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Model Loading Report", null, message);
+		        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Loading Report", null, message);
 		        				dialog.open();
 	        				}
 	        			}
@@ -524,7 +535,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			public void run() {
 				
 				if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
-					MessageDialog.openError(new Shell(), "Modelica Model Proxies Synchronization Error", 
+					MessageDialog.openError(getSite().getShell(), "Modelica Model Proxies Synchronization Error", 
 							"When synchronizing proxies the Papyrus Model Explorer View must be visible " +
 							"so that the viewer selection can be reset in order to avoid cuncurrent access to " +
 							"proxies that are displayed in Papyrus Properties View and are modified by " +
@@ -540,7 +551,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				
 				// As a job
 				if (umlModel == null) {
-					MessageDialog.openError(new Shell(), 
+					MessageDialog.openError(getSite().getShell(), 
 							"ModelicaML Model Editing Domain Access Error", 
 							"Cannot acceess the ModelicaML model or its editing domain. " +
 							"Please make sure that the ModelicaML model is open in the active editor.");
@@ -555,11 +566,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								+ "\n\nShould it synchronize the ModelicaML proxies after loading? " +
 								"\nNote, the synchronization can be launched manually at any time.";
 						
-						createProxiesAfterLoadingModelicaClasses = MessageDialog.openQuestion(new Shell(), title, msg);
+						createProxiesAfterLoadingModelicaClasses = MessageDialog.openQuestion(getSite().getShell(), title, msg);
 						
 						// ask for synchronization options when elements should be created
 						if (createProxiesAfterLoadingModelicaClasses) {
-							SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+							SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(getSite().getShell());
 							dialog.open();
 							
 							int result = dialog.getReturnCode();
@@ -612,7 +623,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						job.schedule();
 					}
 					else {
-						MessageDialog.openError(new Shell(), "Loading error", 
+						MessageDialog.openError(getSite().getShell(), "Loading error", 
 								"Could not access the Papyrus editing domain and the uml model.");
 					}
 				}
@@ -713,7 +724,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionReload.setText("(Re)Load All");
 		actionReload.setToolTipText("(Re)Load All");
 //		actionReload.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEF_VIEW));
-		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
+//		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
+//		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_obj.gif"));
+		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_resource_wiz.gif"));
 		
 		
 		actionCollapseAll = new Action("actionCollapseAll") { //obviously a check box style
@@ -730,7 +743,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionCollapseAll.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 
 		
-		actionRefresh = new Action() {
+		actionRefreshAndValidate = new Action() {
 			public void run() {
 				
 				treeBuilder.collectModelicaModelProxies();
@@ -752,7 +765,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					treeBuilder.validateProxies(iProject);
 				}
 				else {
-					MessageDialog.openError(new Shell(), 
+					MessageDialog.openError(getSite().getShell(), 
 						"ModelicaML Model Access Error", 
 						"Cannot acceess the ModelicaML model. " +
 						"Please make sure that the ModelicaML model is open in Papyrus editor.");
@@ -761,10 +774,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				viewer.refresh();
 			}
 		};
-		actionRefresh.setText("Refresh and Validate ALL");
-		actionRefresh.setToolTipText("Refresh and Validate ALL");
-		actionRefresh.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
-		actionRefresh.setEnabled(false);
+		actionRefreshAndValidate.setText("Validate All");
+		actionRefreshAndValidate.setToolTipText("Validate All");
+//		actionRefresh.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
+		actionRefreshAndValidate.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/validate_co.gif"));
+		actionRefreshAndValidate.setEnabled(false);
 		
 		actionClear = new Action() {
 			public void run() {
@@ -791,7 +805,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				viewer.setExpandedState(treeRoot, false);
 				viewer.refresh();
 				
-				actionRefresh.setEnabled(false);
+				actionRefreshAndValidate.setEnabled(false);
 				actionSynchronize.setEnabled(false);
 			}
 		};
@@ -816,7 +830,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	            	Display.getDefault().asyncExec(new Runnable() {
 	        			public void run() {
 	        				// refresh in order to reflect changes in the view
-	        				actionRefresh.run();
+	        				actionRefreshAndValidate.run();
 	        				
 	        				// reset the option
 	        				createProxiesAfterLoadingModelicaClasses = false;
@@ -908,7 +922,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        					message = message + logEntry + "\n"; 
 	        				}
 	        				
-	        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Model Proxies Synchronization Report", null, message);
+	        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Proxies Synchronization Report", null, message);
 	        				dialog.open();
 	        			}
 	        		});
@@ -1049,7 +1063,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				
 				
 				if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
-					MessageDialog.openError(new Shell(), "Modelica Model Proxies Synchronization Error", 
+					MessageDialog.openError(getSite().getShell(), "Modelica Model Proxies Synchronization Error", 
 							"When synchronizing proxies the Papyrus Model Explorer View must be visible " +
 							"so that the viewer selection can be reset in order to avoid parallel access to " +
 							"proxies that are displayed in Papyrus Properties View and are modified by " +
@@ -1096,14 +1110,14 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						invalideClassesString = invalideClassesString  + "             -" + invalideClass.getQName() + "\n";
 					}
 					message = message + invalideClassesString;
-					MessageDialog.openError(new Shell(), title, message);
+					MessageDialog.openError(getSite().getShell(), title, message);
 				}
 
 				// Set all project- and model-related data
 				configureTreeBuilder();
 				
 				// refresh in order to update the proxies (in case there were deleted in the mean time)
-				actionRefresh.run();
+				actionRefreshAndValidate.run();
 
 				if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 										
@@ -1145,7 +1159,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						 */
 
 						
-						SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+						SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(getSite().getShell());
 						dialog.open();
 						
 						int result = dialog.getReturnCode();
@@ -1193,7 +1207,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionSynchronize.setText("Synchronize All");
 		actionSynchronize.setToolTipText("Synchronize All");
 //		actionSynchronize.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
-		actionSynchronize.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
+//		actionSynchronize.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
+		actionSynchronize.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/copy_edit.gif"));
 		actionSynchronize.setEnabled(false);
 		
 		
@@ -1212,14 +1227,17 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		};
 		actionLoadSubTree.setText("(Re)Load Sub-Tree");
 		actionLoadSubTree.setToolTipText("(Re)Load Sub-Tree");
-		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
+//		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
+//		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_obj.gif"));
+		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_resource_wiz.gif"));
+		
+		
 		
 		actionSynchronizeSubTree = new Action("actionSynchronizeSubTree") {
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				if(selection instanceof StructuredSelection){
 					for (Object obj : ((StructuredSelection)selection).toList()){
-						
 						if (obj instanceof TreeObject) {
 							synchronizeSubTree((TreeObject)obj);
 						}
@@ -1229,7 +1247,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		};
 		actionSynchronizeSubTree.setText("Synchronize Sub-Tree");
 		actionSynchronizeSubTree.setToolTipText("Synchronize Sub-Tree");
-		actionSynchronizeSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
+//		actionSynchronizeSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
+		actionSynchronizeSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/copy_edit.gif"));
+		
 		
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
@@ -1351,7 +1371,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	            	Display.getDefault().asyncExec(new Runnable() {
 	        			public void run() {
 	        				
-	        				MessageDialog.openError(new Shell(), "ModelicaML <-> Modelica Models Synchronization Error", "Could not complete the loading of ModelicaML Proxies.");
+	        				MessageDialog.openError(getSite().getShell(), "ModelicaML <-> Modelica Models Synchronization Error", "Could not complete the loading of ModelicaML Proxies.");
 	        			}
 	        		});
 	            	}
@@ -1413,6 +1433,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						}
 					}
 					
+					// Set all project- and model-related data
+					configureTreeBuilder();
 					
 					// expand or collapse node
 					if (!viewer.getExpandedState(obj) && obj instanceof TreeParent) {
@@ -1435,7 +1457,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 									
 										// create components and extends relations nodes.
 //										ArrayList<TreeObject> createdClassElements = treeBuilder.createComponentNodes(parent, false);
-										treeBuilder.createComponentNodes(parent, false);
+										treeBuilder.createClassElementNodes(parent, false);
 
 										return Status.OK_STATUS;
 									}
@@ -1589,9 +1611,24 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				 * Delete markers
 				 */
 				if (deleteIncositentProxies) {
+					
 					ec.deleteInvalidProxyElements(treeObject.getQName());
+					
 					treeBuilder.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
 				}
+				
+				/*
+				 * Validate the sub-tree proxies after sync. 
+				 */
+				IProject project = getProject();
+				if (project != null && treeObject.getModelicaMLProxy() != null) {
+					treeBuilder.validateProxies(project, (TreeParent)treeObject);
+//					System.err.println("Validating sub-tree starting with " + parent.getName());
+				}
+				else {
+					MessageDialog.openError(getSite().getShell(), "Modelica Models Sync. Error", "Could not validate the sub-tree starting with '" + treeObject.getName() + "'" );
+				}
+				
 				
 				return Status.OK_STATUS;
 			}
@@ -1617,15 +1654,20 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					//reload models in order reflect changes
 					treeBuilder.loadModels();
 					
+					// update class node
+					if (parent instanceof ClassItem) {
+						treeBuilder.updateClassNode((ClassItem) parent);						
+					}
+					
 					// add parent components
-					treeBuilder.createComponentNodes(parent, false);
+					treeBuilder.createClassElementNodes(parent, false);
 					
 					// add nested classes (recursively) their components (not recursively because once createClassNodes was called with recursive=true it will give all nested classes)
 					ArrayList<TreeObject> classes = treeBuilder.createClassNodes(parent, parent.getQName(), true);
 					
 					// For each nested class create its components
 					for (TreeObject addedClass : classes) {
-						treeBuilder.createComponentNodes((TreeParent) addedClass, false);
+						treeBuilder.createClassElementNodes((TreeParent) addedClass, false);
 					}
 					
 					// validate the subtree
@@ -1657,7 +1699,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			return;
 		}
 		
-		SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+		SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(getSite().getShell());
 		dialog.open();
 		
 		int result = dialog.getReturnCode();
@@ -1674,6 +1716,15 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			return;
 		}
 		
+		/*
+		 * TODO: if the element that is being updated is selected in GUI (i.e. in Papyrus modeling tool)
+		 * then there will be a "SWT invalid thread exception because this job will modify it.
+		 * WORKAROUND: before creating elements set Papyrus Model Explorer Selection to 
+		 * an element that will not be modified, e.g. the ModelicaML root. 
+		 */
+		PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+		
+		// start sync
 		if (umlModel != null) {
 			if (ModelicaMLRoot != null && serviceRegistry != null && editingDomain != null) {
 				
@@ -1803,7 +1854,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		// As a job
 		umlModel = UmlUtils.getUmlModel();
 		if (umlModel == null) {
-			MessageDialog.openError(new Shell(), 
+			MessageDialog.openError(getSite().getShell(), 
 					"ModelicaML Model Editing Domain Access Error", 
 					"Cannot acceess the ModelicaML model or its editing domain. " +
 					"Please make sure that the ModelicaML model is open in the active editor.");
@@ -1831,12 +1882,12 @@ public class ModelicaOMCCodeViewer extends ViewPart {
         				
 					}
 					else {
-						MessageDialog.openError(new Shell(), "Loading error", 
+						MessageDialog.openError(getSite().getShell(), "Loading error", 
 								"Could not access the Papyrus editing domain and the uml model.");
 					}
 					
 				} catch (ServiceException e) {
-					MessageDialog.openError(new Shell(), 
+					MessageDialog.openError(getSite().getShell(), 
 							"ModelicaML Model Editing Domain Access Error", 
 						"Cannot acceess the ModelicaML model or its editing domain. " +
 						"Please make sure that the ModelicaML model is open in the active editor.");
@@ -1844,7 +1895,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					e.printStackTrace();
 				}
 			} catch (NotFoundException e) {
-				MessageDialog.openError(new Shell(), 
+				MessageDialog.openError(getSite().getShell(), 
 						"ModelicaML Model Access Error", 
 					"Cannot acceess the ModelicaML model. " +
 					"Please make sure that the ModelicaML model is open in the active editor.");

@@ -2,6 +2,8 @@ package org.openmodelica.modelicaml.modelica.importer.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 import org.openmodelica.modelicaml.modelica.importer.omc.corba.OMCProxy;
@@ -463,8 +465,18 @@ public class OpenModelicaCompilerCommunication {
 	
 	
 	
-	public String getImportCount(String className){
-		return executeCommand("getImportCount(" + className + ")");
+	public int getImportCount(String className){
+		String reply = executeCommand("getImportCount(" + className + ")");
+		if (reply != null && !reply.trim().equals("")) {
+			Integer count = Integer.valueOf(reply.trim());
+			if ( count != null ) {
+				return count;
+			}
+		}
+		else {
+			System.err.println("Could not complete the operation getImportCount("+className+")");
+		}
+		return 0;
 	}
 	
 	public String getNthImport(String className, int number){
@@ -502,7 +514,9 @@ public class OpenModelicaCompilerCommunication {
 			for (int i = 1; i <= count; i++) {
 				String reply = getNthInitialAlgorithm(className, String.valueOf(i)).trim();
 				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
-					initialAlgorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+//					initialAlgorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+					String string = StringHandler.removeFirstLastDoubleQuotes(reply.trim());
+					initialAlgorithms.add(replaceSpecChars(string));
 				}
 			}
 		}
@@ -539,7 +553,9 @@ public class OpenModelicaCompilerCommunication {
 			for (int i = 1; i <= count; i++) {
 				String reply = getNthAlgorithm(className, String.valueOf(i)).trim();
 				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
-					algorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+//					algorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+					String string = StringHandler.removeFirstLastDoubleQuotes(reply.trim());
+					algorithms.add(replaceSpecChars(string));
 				}
 			}
 		}
@@ -579,7 +595,10 @@ public class OpenModelicaCompilerCommunication {
 			for (int i = 1; i <= count; i++) {
 				String reply = getNthInitialEquation(className, String.valueOf(i)).trim();
 				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
-					initialEquations.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+//					initialEquations.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+					String string = StringHandler.removeFirstLastDoubleQuotes(reply.trim());
+					initialEquations.add(replaceSpecChars(string));
+
 				}
 			}
 		}
@@ -617,14 +636,19 @@ public class OpenModelicaCompilerCommunication {
 			for (int i = 1; i <= count; i++) {
 				String reply = getNthEquation(className, String.valueOf(i)).trim();
 				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
-					equations.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
+					String string = StringHandler.removeFirstLastDoubleQuotes(reply.trim());
+					equations.add(replaceSpecChars(string));
 				}
 			}
 		}
 		return equations;
 	}
 	
-
+	
+	private String replaceSpecChars(String string){
+		String newString = string.replaceAll("\\\\" + "\"", "\"");
+		return newString;
+	}
 	
 	
 	

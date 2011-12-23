@@ -285,7 +285,7 @@ public class ComponentItem extends TreeParent {
 	public boolean isEnumarationLiteral(){
 		TreeObject parent = this.getParent();
 		if (parent instanceof ClassItem) {
-			if (((ClassItem) parent).getClassRestriction().equals("enumeration")) {
+			if (((ClassItem) parent).isEnumeration()) {
 				return true;
 			}
 		}

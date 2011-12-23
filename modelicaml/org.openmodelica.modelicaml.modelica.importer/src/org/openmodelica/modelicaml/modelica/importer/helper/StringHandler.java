@@ -199,10 +199,10 @@ public class StringHandler {
 	              i++;
 	            continue;
 	        }
-	        while (value.charAt(i) != '"' && value.charAt(i) != '\0') {
-	            i++;
-//	            fprintf(stderr, "error? malformed string-list. skipping: %c\n", value[i].toAscii());
-	        }
+//	        while (value.charAt(i) != '"' && value.charAt(i) != '\0') {
+//	            i++;
+////	            fprintf(stderr, "error? malformed string-list. skipping: %c\n", value[i].toAscii());
+//	        }
 	    }
 	    return lst; // ERROR?
 	}
