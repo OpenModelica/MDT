@@ -259,6 +259,7 @@
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
          <menu
                icon="resources/icons/plugin_go.png"
+               id="modelicaml.helpers"
                label="ModelicaML: Helper">
             <!--
             <command
