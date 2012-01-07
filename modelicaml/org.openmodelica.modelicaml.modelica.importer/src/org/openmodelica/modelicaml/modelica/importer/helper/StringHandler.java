@@ -6,8 +6,8 @@ public class StringHandler {
 
 
 	public static void main(String[] args) {
-//		getComponentsExample();
-		getClassInformationExample();
+		getComponentsExample();
+//		getClassInformationExample();
 		
 	}
 

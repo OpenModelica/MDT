@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.Command;
@@ -31,6 +33,9 @@ import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
+import org.eclipse.uml2.uml.ConnectableElement;
+import org.eclipse.uml2.uml.Connector;
+import org.eclipse.uml2.uml.ConnectorEnd;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
@@ -43,8 +48,10 @@ import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.ParameterDirectionKind;
+import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Profile;
+import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
@@ -432,6 +439,9 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					}
 				}
 			}
+			
+			// After the class components are created -> create class behavior and resolve connect equations
+			createBehaviors(owningClass, treeParent);
 		}
 	}
 	
@@ -818,8 +828,9 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					// sync. comment and annotations
 					updateCommentsAndAnnotation(classElement, classItem);
 					
-					// sync. behaviors
-					updateBehaviors(classElement, classItem);
+					// TODO: remove this because due to connect statements the behavior must be created after all components (ports) are created.
+					// sync. behaviors 
+//					updateBehaviors(classElement, classItem);
 					
 					// delete unappropriated stereotypes
 					// get all possible ModelicaML property stereotypes
@@ -891,6 +902,43 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		// TODO: for the components
 	}
 	
+	
+	public Element createBehaviors(final Element element, final TreeObject treeObject){
+		
+		CompoundCommand cc = new CompoundCommand("Create ModelicaML Class Behavior");
+		Command command = new RecordingCommand(editingDomain) {
+			
+			Element updatedElement = null;
+			
+			@Override
+			public Collection<?> getResult() {
+				List<Element> collection = new ArrayList<Element>();
+				if (updatedElement != null) {
+					collection.add(updatedElement);
+				}
+				return collection;
+			};
+			
+			@Override
+			protected void doExecute() {
+				// update class behavior 
+				updateBehaviors(element, treeObject);
+			}
+		};
+		
+		cc.append(command);
+		// Execute command
+		editingDomain.getCommandStack().execute(cc);
+
+		Collection<?> result = command.getResult();
+		for (Object object : result) {
+			if (object instanceof Element) {
+				return (Element)object;
+			}
+		}
+		return null;
+	}
+
 	
 	
 	private void updateBehaviors(Element element, TreeObject treeObject){
@@ -989,9 +1037,20 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			}
 			
 			// Create equations
+			/*
+			 * Only in equation sections the connects are resolved replaced by UML Connectors if possible.
+			 */
 			List<String> equations = ((ClassItem)treeObject).getEquations();
+			
+			// Delete all existing class connectors
+			if (element instanceof Class) {
+				deleteConnectors((Class)element);
+			}
+
 			if (equations != null && equations.size() > 0 ) {
 				int i = 0;
+
+
 				for (String string : equations) {
 					i ++;
 					
@@ -1003,11 +1062,16 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
 					}
 					else {
+
+						// Resolve connect statements, create UML Connectors if possible, remove connect equations from code.
+						string = resolveConnects((Class)element, string);
+
 						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
 						Stereotype stereotype = behavior.getApplicableStereotype(Constants.stereotypeQName_Equations);
 						if (stereotype != null) {
 							behavior.applyStereotype(stereotype);
 						}
+						
 						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
 					}
 				}
@@ -1017,6 +1081,140 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	}
 	
 	
+	private void deleteConnectors(Class owningClass){
+		EList<Connector> list = owningClass.getOwnedConnectors();
+		deleteElements(new HashSet<Element>(list));
+	}
+	
+	private String resolveConnects(Class owningClass, String string){
+		String updatedString = string;
+		/*
+		 * Note, the following regex does not match for loop equations,
+		 * i.e. connects containing "[" or "]" for capturing the indices.
+		 * For loop connects and connects that use array sub-scripts 
+		 * are not translated into UML connectors, but left within equations section code.
+		 */
+		Pattern pattern = Pattern.compile("connect(\\s)*\\((\\w|,|\\.|\\s|\n|\r|\t)+\\)(\\s)*;");
+		Matcher matcher = pattern.matcher(string);
+        
+		boolean result = matcher.find();
+        // Loop through and create a new String with the replacements
+        while(result) {
+        	boolean resolved = resolveConnect(owningClass, matcher.group());
+        	// if a UML Connector could be created -> remove the connect statement from code
+        	if (resolved ) {
+//    			updatedString = updatedString.replace(matcher.group(), "");
+    			updatedString = updatedString.replace(matcher.group(), "/* " + matcher.group() + " was REPLACED by a UML Connector. */");
+			}
+
+        	result = matcher.find();
+        }
+
+        return updatedString;
+	}
+	
+	private boolean resolveConnect(Class owningClass, String connectStatement) {
+		
+		String string = connectStatement.trim().replaceFirst("connect", "").trim();
+		// remove semicolon and the enclosing brackets
+		String connectionEnds = StringHandler.removeFirstLastBrackets(string.substring(0, string.length()-1));
+		
+		String[] splitted = connectionEnds.split(",");
+		if (splitted.length == 2) {
+			String portQName1 = splitted[0];
+			String portQName2 = splitted[1];
+
+			Property partWithPort1 = getPartWithPortToBeConnected(owningClass, portQName1);
+			Port port1 = getPortToBeConnected(owningClass, portQName1);
+			
+			Property partWithPort2 = getPartWithPortToBeConnected(owningClass, portQName2);
+			Port port2 = getPortToBeConnected(owningClass, portQName2);
+			
+
+			if ( port1 != null && port2 != null ) {
+				// Create a connector
+				Connector connector = owningClass.createOwnedConnector(string);
+				Stereotype s = connector.getApplicableStereotype(Constants.stereotypeQName_Connection);
+				if (s != null) {
+					connector.applyStereotype(s);
+					/*
+					 * Set the explicit connection ends.
+					 * Note, the stereotype property "explicitConnectionEnds" is only necessary 
+					 * for connecting the ports that are the nested within ports. For the sake of simplicity 
+					 * this is set for all UML Connectors when synchronizing code with ModelicaML model.
+					 */
+					connector.setValue(s, Constants.propertyName_explicitConnectionEnds, connectionEnds);
+				}
+				ConnectorEnd end1 = connector.createEnd();
+				end1.setRole(port1);
+				end1.setPartWithPort(partWithPort1);
+				ConnectorEnd end2 = connector.createEnd();
+				end2.setRole(port2);
+				end2.setPartWithPort(partWithPort2);
+				
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Port getPortToBeConnected(Class owningClass, String portQName){
+
+		if (portQName.split("\\.").length == 1) {
+			EList<Port> ports = owningClass.getOwnedPorts();
+			for (Port port : ports) {
+				if (port.getName().equals(portQName)) {
+					return port;
+				}
+			}
+		}
+		
+		else {
+			String[] splitted = portQName.trim().split("\\.");
+			if (splitted.length >= 2 ) {
+				String propertyName = splitted[0].trim();
+				String portName = splitted[1].trim();
+				
+				EList<Property> properties = owningClass.getAttributes(); // this is important to get all inherited ports!
+				for (Property property : properties) {
+
+					if (property.getName().equals(propertyName)) {
+						Type type = property.getType();
+						if (type instanceof Class) {
+							EList<Property> allProperties = ((Class)type).getAllAttributes();
+							for (Property typeProperty : allProperties) {
+								if (typeProperty instanceof Port  && typeProperty.getName().equals(portName)) {
+									return (Port) typeProperty;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	
+	private Property getPartWithPortToBeConnected(Class owningClass, String portQName){
+
+		String[] splitted = portQName.trim().split("\\.");
+		if (splitted.length >= 2 ) {
+			
+			String propertyName = splitted[0];
+			
+			EList<Property> properties = owningClass.getAttributes();
+			for (Property property : properties) {
+
+				if (property.getName().equals(propertyName)) {
+					return property;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	
 	public Element updateProperty(
 			final Element owningClass, 
@@ -1075,7 +1273,6 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						}
 					}
 				}
-				
 				
 				// add to updated components list
 				updatedProperties.add(property);

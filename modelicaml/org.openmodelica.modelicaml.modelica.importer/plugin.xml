@@ -98,6 +98,88 @@
             </visibleWhen>
          </toolbar>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
+         <menu
+               icon="icons/code2.png"
+               label="ModeicaML: Code Synchronization">
+            <command
+                  commandId="org.openmodelica.modelicaml.modelica.commands.disconnectfromcodesync"
+                  icon="icons/launch_disconnect.gif"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.modelica.commands.connecttocodesync"
+                  icon="icons/connect_co.gif"
+                  style="push">
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+                  <and>
+                     <with
+                           variable="selection">
+                        <count
+                              value="1">
+                        </count>
+                        <iterate>
+                           <adapt
+                                 type="org.eclipse.emf.ecore.EObject">
+                              <and>
+                                 <or>
+                                    <test
+                                          args="ModelicaML::ModelReferences::ModelicaModelProxy"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <instanceof
+                                          value="org.eclipse.uml2.uml.Class">
+                                    </instanceof>
+                                    <instanceof
+                                          value="org.eclipse.uml2.uml.Package">
+                                    </instanceof>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Block"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Model"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::ModelicaPackage"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Function"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Connector"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Record"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                 </or>
+                              </and>
+                           </adapt>
+                        </iterate>
+                     </with>
+                  </and>
+               </with>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -105,12 +187,103 @@
             id="org.openmodelica.modelicaml.modelica.commands.synchronizemodelicamodelproxies"
             name="Synchronize Modelica Model Proxies">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.modelica.commands.disconnectfromcodesync"
+            name="Disconnect From Code Synchronization">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.modelica.commands.connecttocodesync"
+            name="Connect To Code Synchronization">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.openmodelica.modelicaml.modelica.importer.handlers.SynchronizeModelicaModelProxiesHandler"
             commandId="org.openmodelica.modelicaml.modelica.commands.synchronizemodelicamodelproxies">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.modelica.importer.handlers.DisconnectFromCodeSyncHandler"
+            commandId="org.openmodelica.modelicaml.modelica.commands.disconnectfromcodesync">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <and>
+                        <test
+                              args="ModelicaML::ModelReferences::ModelicaModelProxy"
+                              property="org.openmodelica.modelicaml.testers.hasStereotype">
+                        </test>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.modelica.importer.handlers.ConnectToCodeSyncHandler"
+            commandId="org.openmodelica.modelicaml.modelica.commands.connecttocodesync">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <and>
+                        <or>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Block"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Model"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaPackage"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Function"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Connector"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Record"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </or>
+                        <and>
+                           <not>
+                              <test
+                                    args="ModelicaML::ModelReferences::ModelicaModelProxy"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </not>
+                        </and>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
       </handler>
    </extension>
    <extension

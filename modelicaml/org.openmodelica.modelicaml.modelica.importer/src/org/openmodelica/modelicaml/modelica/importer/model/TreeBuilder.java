@@ -219,6 +219,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			List<String> classes = getItems(omcc.getClassNames(classQName));
 			if (classes != null) {
 				for (String className : classes) {
+					
 					// exclude Modelica predefined functions defined in OMC
 					if (!className.startsWith("'")) { 
 						String qName = "";
@@ -276,7 +277,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
-	
 	public ArrayList<TreeObject> createClassElementNodes(TreeParent treeParent, boolean recursive){
 
 		ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
@@ -293,8 +293,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 				
 				// Create extends relation nodes
 				List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
-				
-				// Create extends relations nodes
 				if (inheritedClasses.size() > 0) {
 					for (String inheritedClassQName : inheritedClasses) {
 						
@@ -328,7 +326,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 					}
 				}
 				
-				List<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName), proxyQNameToElement.get(classQName));
+				List<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName, "useQuotes = true"), proxyQNameToElement.get(classQName));
 				
 				// create components nodes
 				if (components.size() > 0) {
@@ -385,15 +383,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 						/*
 						 * There is no OMC API function for getting the conditional expression. 
 						 */
+//						item.setConditionalExpression(omcc.getNthComponentCondition(item.getQName(), 0));
 						
 						// add to return list
 						createdItems.add(item);
 					}
 				}
 			}
-			
-			// ONLY for a "full" import. This data is not needed for proxies.
-			// TODO: // create connection nodes
 			
 			if (recursive) {
 				// recursive call
@@ -466,12 +462,16 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	
 	private List<TreeObject> createEnumerationLiteralNodes(TreeParent classItem){
+		
 		List<TreeObject> createdItems = new ArrayList<TreeObject>();
 		String reply = omcc.getEnumerationLiterals(classItem.getQName());
+		
 		if (!reply.trim().equals("") && !reply.equals("Error") && !reply.equals("error") && !reply.equals("false")) {
+			
 			ArrayList<String> items = StringHandler.unparseStrings(reply.trim());
 			if (items.size() > 0) {
 				for (int i = 0; i < items.size(); i++) {
+			
 					String literalName = items.get(i);
 					ComponentItem literatItem = new ComponentItem(literalName);
 					
@@ -484,7 +484,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 						qName = literatItem.getName();
 					}
 					else {
-						qName = classItem.getName() + "." + literatItem.getName();
+						qName = classItem.getQName() + "." + literatItem.getName();
 					}
 					
 					literatItem.setModelicaMLProxy(proxyQNameToElement.get(qName));
@@ -494,7 +494,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 				}
 			}
 		}
-
 		
 		return createdItems;
 	}
@@ -584,7 +583,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 				}
 			}
 
-			
 			// set class array size
 			String arraySizeString = StringHandler.removeFirstLastCurlBrackets(StringHandler.unparseArrays(classInfo).get(2));
 			EList<String> arraySize = new BasicEList<String>();
@@ -715,195 +713,298 @@ public class TreeBuilder implements IRunnableWithProgress{
 //		}
 //	}
 	
-		
+	//BACKUP
+//	private List<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
+//			
+//			/*
+//			 * 	>> getComponents(Modelica.StateGraph.Examples.Utilities.CompositeStep2)
+//				<< {{Modelica.StateGraph.Transition,
+//				transition,
+//				"", 
+//				"public", 
+//				false, 
+//				false, 
+//				false, 
+//				false, 
+//				"unspecified", 
+//				"none", 
+//				"unspecified",
+//				{}}
+//			 * 
+//			 	-	item[0] = type qualified name
+//				-	item[1] = component name
+//				-	item[2] = comment
+//				-	item[3] = visibility (public/protected)
+//				-	item[4] = Final (true/false)
+//				-	item[5] = Flow (true/false)
+//				-	item[6] = Stream (true/false)
+//				-	item[7] = Replaceable (true/false)
+//				-	item[8] = variability (constant/discrete/parameter/unspecified)
+//				-	item[9] = inner/outer/innerouter/none
+//				-	item[10] = causality (input/output/unspecified)
+//				-	item[11] = bit unsure about this value but perhaps its length of array 
+//			 */
+//			
+//			List<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
+//			String checkString = string.replaceAll("\"", "").replaceAll("\\{", "").replaceAll("\\}", "").trim();
+//			
+//			if (!checkString.equals("Error") && !checkString.equals("false") && !checkString.equals("")) {
+//				
+//				String string2 = string.trim();
+//				// remove outter braces from the entire OMC CORBA reply
+//				if (string.trim().length() > 4 
+//						&& string.trim().substring(string.trim().length()-3, string.trim().length()).equals("}}}")) {
+//					string2 = string.trim().substring(1, string.trim().length()-1);
+//				}
+//				
+//				// get entries
+//				String[] entries = string2.split("},");
+//				if (entries.length > 0) {
+//					for (int i = 0; i < entries.length; i++) {
+//						String entry = entries[i].replaceFirst("\\{", "");
+//						
+//						String entry2 = entry.trim();
+//						// remove outter braces from the individual component items
+//						if (entry.trim().length() > 2 && entry.trim().substring(entry.trim().length()-1, entry.trim().length()).equals(",")) {
+//							entry2 = entry.trim().substring(1, entry.trim().length()-1);
+//						}
+//						
+//						// default values
+//						String comment = ""; 
+//						String visibility = "public";
+//						String variability = "unspecified";
+//						String innerouter = "none";
+//						String causality = "unspecified";
+//						
+//						Pattern patternComment = Pattern.compile("\".*\",");
+//						Matcher matcherComment = patternComment.matcher(entry2);
+//						while ( matcherComment.find() ) {
+//							comment = matcherComment.group(0);
+//						}
+//						Pattern patternVisibility = Pattern.compile("\"(public|protected)\"");
+//						Matcher matcherVisibility = patternVisibility.matcher(entry2);
+//						while (matcherVisibility.find()) {
+//							visibility = matcherVisibility.group(0).replaceAll("\"", "");
+//						}
+//						Pattern patternVariability = Pattern.compile("\"(constant|discrete|parameter)\"");
+//						Matcher matcherVariability = patternVariability.matcher(entry2);
+//						while (matcherVariability.find()) {
+//							variability = matcherVariability.group(0).trim().replaceAll("\"", "");
+//						}
+//						Pattern patternInnerouter = Pattern.compile("\"(inner|outer|innerouter)\"");
+//						Matcher matcherInnerouter = patternInnerouter.matcher(entry2);
+//						while (matcherInnerouter.find()) {
+//							innerouter = matcherInnerouter.group(0).trim().replaceAll("\"", "");
+//						}
+//						Pattern patternCausality = Pattern.compile("\"(input|output)\"");
+//						Matcher matcherCausality = patternCausality.matcher(entry2);
+//						while (matcherCausality.find()) {
+//							causality = matcherCausality.group(0).trim().replaceAll("\"", "");;
+//						}
+//						
+//						// get the boolean items (i.e. true or false)
+//						Pattern patternBooleanItems = Pattern.compile("(true|false)");
+//						Matcher matcherBooleanItems = patternBooleanItems.matcher(entry2);
+//						List<String> booleanItems = new ArrayList<String>();
+//						while (matcherBooleanItems.find()) {
+//							booleanItems.add(matcherBooleanItems.group());
+//						}
+//						// default values
+//						boolean isFinal = false;
+//						boolean isFlow = false;
+//						boolean isStream = false;
+//						boolean isReplaceable= false;
+//						
+//						if (booleanItems.size() > 3) {
+//							if (booleanItems.get(0).trim().equals("true")) {
+//								isFinal = true;
+//							}
+//							if (booleanItems.get(1).trim().equals("true")) {
+//								isFlow = true;
+//							}
+//							if (booleanItems.get(2).trim().equals("true")) {
+//								isStream = true;
+//							}
+//							if (booleanItems.get(3).trim().equals("true")) {
+//								isReplaceable = true;
+//							}
+//						}
+//						
+//						// get string items within {}
+//						Pattern patternBracesItems = Pattern.compile("\\{.*\\}");
+//						Matcher matcherBracesItems = patternBracesItems.matcher(entry2);
+//						List<String> bracesItems = new ArrayList<String>();
+//						while (matcherBracesItems.find()) {
+//							bracesItems.add(matcherBracesItems.group(0).replaceAll("\\{", "").replaceAll("\\}", ""));
+//						}
+//						// default values
+//						String arraySizeString = "";
+//						EList<String> arraySize = new BasicEList<String>();
+//						if (bracesItems.size() > 0 ) {
+//							arraySizeString = bracesItems.get(0);
+//						}
+//						String[] splittedArraySizeString = arraySizeString.trim().split(",");
+//						if (splittedArraySizeString.length > 0) {
+//							for (int j = 0; j < splittedArraySizeString.length; j++) {
+//								String arraySizeItem = splittedArraySizeString[j];
+//								if (!arraySizeItem.trim().equals("")) {
+//									arraySize.add(arraySizeItem);
+//								}
+//							}
+//						}
+//						
+//						/*
+//						 * Note: the following split code works only for the first 2 items because the 3rd (Modelica comment) 
+//						 * can also contain "," so that split(",") will not work for the rest.
+//						 */
+//						
+//						// set data
+//						String[] items = entry2.split(",");
+//						if (items.length > 2 ) {
+//							ModelicaComponentData data = new ModelicaComponentData();
+//	
+//							data.typeQName = items[0].trim();
+//	//						data.type = getTypeElement(data.typeQName, owningClass);
+//							data.type = getTypeElement(data.typeQName);
+//							data.name = items[1].trim();
+//							
+//							data.comment = comment;
+//							data.visibility = visibility;
+//							data.isFinal = isFinal;
+//							data.isFlow = isFlow;
+//							data.isStream = isStream;
+//							data.isReplaceable = isReplaceable;
+//							data.variability = variability;
+//							data.innerouter = innerouter;
+//							data.causality = causality;
+//							data.arraySize = arraySize;
+//							
+//							list.add(data);
+//							
+//	//						System.err.println("typeQName: " + data.typeQName);
+//	//						System.err.println("name: " + data.name);
+//	//						System.err.println("comment: " + data.comment);
+//	//						System.err.println("visibility: " + data.visibility);
+//	//						System.err.println("isFinal: " + data.isFinal);
+//	//						System.err.println("arraySize: " + data.arraySize);
+//						}
+//					}
+//				}
+//			}
+//			if (checkString.equals("Error")) {
+//				// TODO: collect errors
+//				String errorString = omcc.getErrorString();	
+//				String msg = extractErrorMessage(errorString);
+//	
+//				// generate markers
+//				createOMCMarker(classItem, "error", msg);
+//			}
+//			return list;
+//		}
+
+	
 	private List<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
+		
+		/*
+		 * 	>> getComponents(Modelica.StateGraph.Examples.Utilities.CompositeStep2)
+			<< {{Modelica.StateGraph.Transition,
+			transition,
+			"", 
+			"public", 
+			false, 
+			false, 
+			false, 
+			false, 
+			"unspecified", 
+			"none", 
+			"unspecified",
+			{}}
+		 * 
+		 	-	item[0] = type qualified name
+			-	item[1] = component name
+			-	item[2] = comment
+			-	item[3] = visibility (public/protected)
+			-	item[4] = Final (true/false)
+			-	item[5] = Flow (true/false)
+			-	item[6] = Stream (true/false)
+			-	item[7] = Replaceable (true/false)
+			-	item[8] = variability (constant/discrete/parameter/unspecified)
+			-	item[9] = inner/outer/innerouter/none
+			-	item[10] = causality (input/output/unspecified)
+			-	item[11] = bit unsure about this value but perhaps its length of array 
+		 */
+		
+		List<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
+		
+		for (String stringFromArray : StringHandler.unparseArrays(string)) {
+		
+			ArrayList<String> items = StringHandler.unparseStrings(stringFromArray);
 			
-			/*
-			 * 	>> getComponents(Modelica.StateGraph.Examples.Utilities.CompositeStep2)
-				<< {{Modelica.StateGraph.Transition,
-				transition,
-				"", 
-				"public", 
-				false, 
-				false, 
-				false, 
-				false, 
-				"unspecified", 
-				"none", 
-				"unspecified",
-				{}}
-			 * 
-			 	-	item[0] = type qualified name
-				-	item[1] = component name
-				-	item[2] = comment
-				-	item[3] = visibility (public/protected)
-				-	item[4] = Final (true/false)
-				-	item[5] = Flow (true/false)
-				-	item[6] = Stream (true/false)
-				-	item[7] = Replaceable (true/false)
-				-	item[8] = variability (constant/discrete/parameter/unspecified)
-				-	item[9] = inner/outer/innerouter/none
-				-	item[10] = causality (input/output/unspecified)
-				-	item[11] = bit unsure about this value but perhaps its length of array 
-			 */
-			
-			List<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
-			String checkString = string.replaceAll("\"", "").replaceAll("\\{", "").replaceAll("\\}", "").trim();
-			
-			if (!checkString.equals("Error") && !checkString.equals("false") && !checkString.equals("")) {
+			if (items.size() > 2 ) {
 				
-				String string2 = string.trim();
-				// remove outter braces from the entire OMC CORBA reply
-				if (string.trim().length() > 4 
-						&& string.trim().substring(string.trim().length()-3, string.trim().length()).equals("}}}")) {
-					string2 = string.trim().substring(1, string.trim().length()-1);
+				ModelicaComponentData data = new ModelicaComponentData();
+
+				data.typeQName = items.get(0).trim();
+				data.type = getTypeElement(data.typeQName);
+				data.name = items.get(1).trim();
+				
+				data.comment =  items.get(2);
+				data.visibility = items.get(3);
+				
+				// default values
+				boolean isFinal = false;
+				boolean isFlow = false;
+				boolean isStream = false;
+				boolean isReplaceable= false;
+				
+				if (items.get(4).trim().equals("true")) {
+					isFinal = true;
+				}
+				if (items.get(5).trim().equals("true")) {
+					isFlow = true;
+				}
+				if (items.get(6).trim().equals("true")) {
+					isStream = true;
+				}
+				if (items.get(7).trim().equals("true")) {
+					isReplaceable = true;
 				}
 				
-				// get entries
-				String[] entries = string2.split("},");
-				if (entries.length > 0) {
-					for (int i = 0; i < entries.length; i++) {
-						String entry = entries[i].replaceFirst("\\{", "");
-						
-						String entry2 = entry.trim();
-						// remove outter braces from the individual component items
-						if (entry.trim().length() > 2 && entry.trim().substring(entry.trim().length()-1, entry.trim().length()).equals(",")) {
-							entry2 = entry.trim().substring(1, entry.trim().length()-1);
-						}
-						
-						// default values
-						String comment = ""; 
-						String visibility = "public";
-						String variability = "unspecified";
-						String innerouter = "none";
-						String causality = "unspecified";
-						
-						Pattern patternComment = Pattern.compile("\".*\",");
-						Matcher matcherComment = patternComment.matcher(entry2);
-						while ( matcherComment.find() ) {
-							comment = matcherComment.group(0);
-						}
-						Pattern patternVisibility = Pattern.compile("\"(public|protected)\"");
-						Matcher matcherVisibility = patternVisibility.matcher(entry2);
-						while (matcherVisibility.find()) {
-							visibility = matcherVisibility.group(0).replaceAll("\"", "");
-						}
-						Pattern patternVariability = Pattern.compile("\"(constant|discrete|parameter)\"");
-						Matcher matcherVariability = patternVariability.matcher(entry2);
-						while (matcherVariability.find()) {
-							variability = matcherVariability.group(0).trim().replaceAll("\"", "");
-						}
-						Pattern patternInnerouter = Pattern.compile("\"(inner|outer|innerouter)\"");
-						Matcher matcherInnerouter = patternInnerouter.matcher(entry2);
-						while (matcherInnerouter.find()) {
-							innerouter = matcherInnerouter.group(0).trim().replaceAll("\"", "");
-						}
-						Pattern patternCausality = Pattern.compile("\"(input|output)\"");
-						Matcher matcherCausality = patternCausality.matcher(entry2);
-						while (matcherCausality.find()) {
-							causality = matcherCausality.group(0).trim().replaceAll("\"", "");;
-						}
-						
-						// get the boolean items (i.e. true or false)
-						Pattern patternBooleanItems = Pattern.compile("(true|false)");
-						Matcher matcherBooleanItems = patternBooleanItems.matcher(entry2);
-						List<String> booleanItems = new ArrayList<String>();
-						while (matcherBooleanItems.find()) {
-							booleanItems.add(matcherBooleanItems.group());
-						}
-						// default values
-						boolean isFinal = false;
-						boolean isFlow = false;
-						boolean isStream = false;
-						boolean isReplaceable= false;
-						
-						if (booleanItems.size() > 3) {
-							if (booleanItems.get(0).trim().equals("true")) {
-								isFinal = true;
-							}
-							if (booleanItems.get(1).trim().equals("true")) {
-								isFlow = true;
-							}
-							if (booleanItems.get(2).trim().equals("true")) {
-								isStream = true;
-							}
-							if (booleanItems.get(3).trim().equals("true")) {
-								isReplaceable = true;
-							}
-						}
-						
-						// get string items within {}
-						Pattern patternBracesItems = Pattern.compile("\\{.*\\}");
-						Matcher matcherBracesItems = patternBracesItems.matcher(entry2);
-						List<String> bracesItems = new ArrayList<String>();
-						while (matcherBracesItems.find()) {
-							bracesItems.add(matcherBracesItems.group(0).replaceAll("\\{", "").replaceAll("\\}", ""));
-						}
-						// default values
-						String arraySizeString = "";
-						EList<String> arraySize = new BasicEList<String>();
-						if (bracesItems.size() > 0 ) {
-							arraySizeString = bracesItems.get(0);
-						}
-						String[] splittedArraySizeString = arraySizeString.trim().split(",");
-						if (splittedArraySizeString.length > 0) {
-							for (int j = 0; j < splittedArraySizeString.length; j++) {
-								String arraySizeItem = splittedArraySizeString[j];
-								if (!arraySizeItem.trim().equals("")) {
-									arraySize.add(arraySizeItem);
-								}
-							}
-						}
-						
-						/*
-						 * Note: the following split code works only for the first 2 items because the 3rd (Modelica comment) 
-						 * can also contain "," so that split(",") will not work for the rest.
-						 */
-						
-						// set data
-						String[] items = entry2.split(",");
-						if (items.length > 2 ) {
-							ModelicaComponentData data = new ModelicaComponentData();
-	
-							data.typeQName = items[0].trim();
-	//						data.type = getTypeElement(data.typeQName, owningClass);
-							data.type = getTypeElement(data.typeQName);
-							data.name = items[1].trim();
-							
-							data.comment = comment;
-							data.visibility = visibility;
-							data.isFinal = isFinal;
-							data.isFlow = isFlow;
-							data.isStream = isStream;
-							data.isReplaceable = isReplaceable;
-							data.variability = variability;
-							data.innerouter = innerouter;
-							data.causality = causality;
-							data.arraySize = arraySize;
-							
-							list.add(data);
-							
-	//						System.err.println("typeQName: " + data.typeQName);
-	//						System.err.println("name: " + data.name);
-	//						System.err.println("comment: " + data.comment);
-	//						System.err.println("visibility: " + data.visibility);
-	//						System.err.println("isFinal: " + data.isFinal);
-	//						System.err.println("arraySize: " + data.arraySize);
-						}
+				data.isFinal = isFinal;
+				data.isFlow = isFlow;
+				data.isStream = isStream;
+				data.isReplaceable = isReplaceable;
+				
+				data.variability = items.get(8);
+				data.innerouter = items.get(9);
+				data.causality = items.get(10);
+				
+				String[] arraySizeItems = StringHandler.removeFirstLastCurlBrackets(items.get(11).trim()).split(",");
+				if ( arraySizeItems.length > 0 ) {
+					EList<String> arraySizeItemsList = new BasicEList<String>();
+					for (int i = 0; i < arraySizeItems.length; i++) {
+						arraySizeItemsList.add(arraySizeItems[i]);
 					}
+					data.arraySize = arraySizeItemsList;
 				}
+				
+				list.add(data);
 			}
-			if (checkString.equals("Error")) {
-				// TODO: collect errors
-				String errorString = omcc.getErrorString();	
-				String msg = extractErrorMessage(errorString);
-	
-				// generate markers
-				createOMCMarker(classItem, "error", msg);
-			}
-			return list;
 		}
 
+		if (string.equals("Error")) {
+			// TODO: collect errors
+			String errorString = omcc.getErrorString();	
+			String msg = extractErrorMessage(errorString);
+
+			// generate markers
+			createOMCMarker(classItem, "error", msg);
+		}
+		
+		return list;
+	}
+	
+	
 	private String getComponentDeclarationEquation(ComponentItem component, String classQName){
 		String declaration = null;
 		if (!classQName.equals("")) {
@@ -923,6 +1024,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 		return declaration;
 	}
+	
+	
 	
 	private EList<String> getComponentModifications(ComponentItem component, String classQName){
 		EList<String> modifications = new BasicEList<String>();
@@ -1176,7 +1279,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 						
 						// check the proxy exists
 						if (!modelicaModelQNames.contains(qName)) {
-							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()+"' does not exist in the loaded Modelica models.");
+							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()
+									+"' does not exist in the loaded Modelica models.");
 						}
 						
 						// check if a property has type defined
@@ -1285,6 +1389,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 										addProxyToMaps((NamedElement)property);
 									}
 								}
+								// add function behavior paramters
 								if (proxy instanceof FunctionBehavior) {
 									EList<Parameter> parameters = ((FunctionBehavior)proxy).getOwnedParameters();
 									for (Parameter parameter : parameters) {
@@ -1293,8 +1398,10 @@ public class TreeBuilder implements IRunnableWithProgress{
 										addProxyToMaps((NamedElement)parameter);
 									}
 								}
+								// add enumeration literals
 								if (proxy instanceof Enumeration) {
 									EList<EnumerationLiteral> literals = ((Enumeration)proxy).getOwnedLiterals();
+//									System.err.println("Collected literals: " + literals);
 									for (EnumerationLiteral literal : literals) {
 										// collect literals
 										enumerationLiteralProxies.add(literal);
@@ -1304,7 +1411,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 							}
 						}
 						
-						// add class components to proxies list
+						// add components to proxies list
 						proxies.addAll(classAttributesProxies);
 						proxies.addAll(functionParametersProxies);
 						proxies.addAll(enumerationLiteralProxies);

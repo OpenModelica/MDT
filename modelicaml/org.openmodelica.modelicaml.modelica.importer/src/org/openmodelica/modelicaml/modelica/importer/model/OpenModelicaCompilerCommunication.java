@@ -313,6 +313,10 @@ public class OpenModelicaCompilerCommunication {
 		return executeCommand("getComponents(" + className + ")");
 	}
 	
+	public String getComponents(String className, String useDoubleQuotes){
+		return executeCommand("getComponents(" + className + ", " + useDoubleQuotes + ")");
+	}
+	
 	public String getComponentNames(String className){
 		return executeCommand("getComponentNames(" + className + ")");
 	}
