@@ -168,13 +168,6 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 		return null;
 	}
 
-	/**
-	 * Gets the test oracle element creation command.
-	 *
-	 * @param editingDomain the editing domain
-	 * @param owningClass the owning class
-	 * @return the test oracle element creation command
-	 */
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 		CompoundCommand cc = new CompoundCommand("Generating simulation models for '" + ((Class)selectedElement).getQualifiedName() + "'");
 		Command command = new RecordingCommand(editingDomain) {
