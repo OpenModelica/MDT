@@ -87,13 +87,17 @@ public class Constants {
 	public static final String propertyName_excludeFromCG 					= "excludeFromCG";
 	
 	// composite constructs
-	public static final String stereotypeQName_Variable 		= "ModelicaML::ModelicaCompositeConstructs::Variable";
-	public static final String stereotypeQName_FunctionArgument = "ModelicaML::ModelicaCompositeConstructs::FunctionArgument";
-	public static final String stereotypeQName_RequirementInstance 		= "ModelicaML::ModelicaRequirementConstructs::RequirementInstance";
-	public static final String stereotypeQName_Component 		= "ModelicaML::ModelicaCompositeConstructs::Component";
-	public static final String stereotypeQName_ConnectionPort 	= "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
-	public static final String stereotypeQName_CalculatedProperty = "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
+	public static final String stereotypeQName_Variable 			= "ModelicaML::ModelicaCompositeConstructs::Variable";
+	public static final String stereotypeQName_FunctionArgument 	= "ModelicaML::ModelicaCompositeConstructs::FunctionArgument";
+	public static final String stereotypeQName_RequirementInstance 	= "ModelicaML::ModelicaRequirementConstructs::RequirementInstance";
+	public static final String stereotypeQName_Component 			= "ModelicaML::ModelicaCompositeConstructs::Component";
+	public static final String stereotypeQName_ConnectionPort 		= "ModelicaML::ModelicaCompositeConstructs::ConnectionPort";
+	public static final String stereotypeQName_CalculatedProperty 	= "ModelicaML::ModelicaCompositeConstructs::CalculatedProperty";
 
+	public static final String stereotypeQName_Connection 			= "ModelicaML::ModelicaCompositeConstructs::Connection";
+	public static final String propertyName_explicitConnectionEnds	= "explicitConnectionEnds";
+	
+	
 	// relations
 	public static final String stereotypeQName_ExtendsRelation 	= "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
 	public static final String stereotypeQName_TypeRelation 	= "ModelicaML::ModelicaRelationsConstructs::TypeRelation";
