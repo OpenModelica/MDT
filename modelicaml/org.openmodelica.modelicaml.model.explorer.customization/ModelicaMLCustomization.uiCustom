@@ -356,6 +356,13 @@
       </customizedFeatures>
     </references>
   </types>
+  <types metaclassName="uml.Enumeration">
+    <references referenceName="ownedLiteral">
+      <customizedFeatures customizedFeature="collapseLink">
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
+    </references>
+  </types>
   <availableQuerySets>PapyrusBrowserQuery</availableQuerySets>
   <availableQuerySets>SysMLDefaultExplorerQueries</availableQuerySets>
   <availableQuerySets>_example_jdkAndEclipseQuerySet</availableQuerySets>
