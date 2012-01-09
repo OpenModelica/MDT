@@ -312,7 +312,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 //						System.err.println(); 
 						item.setTargetQname(inheritedClassQName);
 						
-						// Note, UML Generalization is not a NamedElement. 
+						// Note, UML Generalization is not a NamedElement. It is not possible to set
 //						item.setModelicaMLProxy(proxyQNameToElement.get(qName));
 						
 						// set modifications
@@ -326,11 +326,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 					}
 				}
 				
-				List<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName, "useQuotes = true"), proxyQNameToElement.get(classQName));
+				ArrayList<ModelicaComponentData> components = getComponentData((ClassItem) treeParent, omcc.getComponents(classQName, "useQuotes = true"), proxyQNameToElement.get(classQName));
 				
 				// create components nodes
 				if (components.size() > 0) {
-					for (ModelicaComponentData component : components) {
+//					for (ModelicaComponentData component : components) {
+					for (int i = 0; i < components.size(); i++) {
+						
+						ModelicaComponentData component = components.get(i);
 						
 						// set the qualified name
 						String qName = "";
@@ -370,22 +373,19 @@ public class TreeBuilder implements IRunnableWithProgress{
 						item.setCausality(component.causality);
 						item.setArraySize(component.arraySize);
 						
-						// set the ModelicaML proxy for this element
+						// Set the ModelicaML proxy for this element
 						item.setModelicaMLProxy(proxyQNameToElement.get(qName));
 						
-						// set component modifications
+						// Set component modifications
 						item.setModifications(getComponentModifications(item, classQName));
 						
 						// Set the declaration 
 						item.setDeclaration(getComponentDeclarationEquation(item, classQName));
 						
-						// TODO: Set the conditional expression
-						/*
-						 * There is no OMC API function for getting the conditional expression. 
-						 */
-//						item.setConditionalExpression(omcc.getNthComponentCondition(item.getQName(), 0));
+						// Set the conditional expression for the component
+						item.setConditionalExpression(omcc.getNthComponentCondition(classQName, i + 1));
 						
-						// add to return list
+						// Add to return list
 						createdItems.add(item);
 					}
 				}
@@ -903,7 +903,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 //		}
 
 	
-	private List<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
+	private ArrayList<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
 		
 		/*
 		 * 	>> getComponents(Modelica.StateGraph.Examples.Utilities.CompositeStep2)
@@ -934,7 +934,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			-	item[11] = bit unsure about this value but perhaps its length of array 
 		 */
 		
-		List<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
+		ArrayList<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
 		
 		for (String stringFromArray : StringHandler.unparseArrays(string)) {
 		

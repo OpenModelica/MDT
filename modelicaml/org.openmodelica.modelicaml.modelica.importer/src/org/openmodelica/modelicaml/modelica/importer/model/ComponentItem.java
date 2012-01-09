@@ -6,6 +6,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 
 
 public class ComponentItem extends TreeParent {
@@ -242,7 +243,14 @@ public class ComponentItem extends TreeParent {
 
 
 	public void setConditionalExpression(String conditionalExpression) {
-		this.conditionalExpression = conditionalExpression;
+		/*
+		 * The API call returns Error if there is no conditional expression defined for the component.
+		 * Except it only if it starts with "if".
+		 */
+		String string = StringHandler.removeFirstLastDoubleQuotes(conditionalExpression.trim()).trim();
+		if (string.startsWith("if")) {
+			this.conditionalExpression = string;
+		}
 	}
 
 
