@@ -132,6 +132,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		// models/libraries to be excluded
 		if (excludeModels != null) {
 			modelsToBeExcluded.addAll(excludeModels);
+			
 		}
 		
 		// create class nodes
@@ -232,7 +233,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 							qName = classQName + "." + className;
 						}
 
-						if (!modelsToBeExcluded.contains(qName)) { // take into account that some models should not be loaded
+						if ( !modelsToBeExcluded.contains(qName) ) { // take into account that some models should not be loaded
+
 							// create tree item
 							ClassItem item = new ClassItem(className);
 
@@ -564,11 +566,17 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
 
+			// get class data
+			ArrayList<String> classData = StringHandler.unparseStrings(classInfo);
+
 			// set class restriction
-			String classRestriction = StringHandler.unparseStrings(classInfo).get(0);
+			String classRestriction = "class"; // default restriction
+			if (classData.size() > 0 ) {
+				classRestriction = classData.get(0); 
+			}
 			item.setClassRestriction(classRestriction);
 			
-			// set is enum
+			// set is enumeration
 			String isEnumerationReply = omcc.isEnumeration(classQName);
 			if (isEnumerationReply.trim().contains("true")) {
 				item.setIsEnumeration(true);
@@ -583,21 +591,23 @@ public class TreeBuilder implements IRunnableWithProgress{
 				}
 			}
 
-			// set class array size
-			String arraySizeString = StringHandler.removeFirstLastCurlBrackets(StringHandler.unparseArrays(classInfo).get(2));
-			EList<String> arraySize = new BasicEList<String>();
-			String[] splited = arraySizeString.split(",");
-			for (int i = 0; i < splited.length; i++) {
-				String string = splited[i];
-				arraySize.add(string);
+			if (classData.size() > 2) {
+				// set class array size
+				String arraySizeString = StringHandler.removeFirstLastCurlBrackets(classData.get(2));
+				EList<String> arraySize = new BasicEList<String>();
+				String[] splited = arraySizeString.split(",");
+				for (int i = 0; i < splited.length; i++) {
+					String string = splited[i];
+					arraySize.add(string);
+				}
+				if (arraySize.size() > 0 ) {
+					item.setArraySize(arraySize);
+				}
+				
+				// set comment
+				String comment = StringHandler.unparseStrings(classInfo).get(1);
+				item.setComment(comment);
 			}
-			if (arraySize.size() > 0 ) {
-				item.setArraySize(arraySize);	
-			}
-			
-			// set comment
-			String comment = StringHandler.unparseStrings(classInfo).get(1);
-			item.setComment(comment);
 			
 			// set partial, final and encapsulated
 			boolean isPartial = false;
@@ -940,7 +950,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 			ArrayList<String> items = StringHandler.unparseStrings(stringFromArray);
 			
-			if (items.size() > 2 ) {
+			if (items.size() > 10 ) {
 				
 				ModelicaComponentData data = new ModelicaComponentData();
 

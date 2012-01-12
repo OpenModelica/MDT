@@ -180,6 +180,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		}
 	};
 
+	private Action actionReloadView;
+
 
 	
 	class ViewContentProvider implements IStructuredContentProvider, 
@@ -458,8 +460,10 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		manager.add(actionReload);
 		manager.add(actionSynchronize);
 		manager.add(actionRefreshAndValidate);
+		manager.add(new Separator());
+		
 		manager.add(actionClear);
-
+		manager.add(actionReloadView);
 		manager.add(new Separator());
 		
 //		manager.add(new Separator());
@@ -615,6 +619,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 
 								// build tree
 								treeBuilder.buildTree(treeRoot, null);
+								
 								return Status.OK_STATUS;
 							}
 						};
@@ -813,6 +818,20 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionClear.setToolTipText("Clear");
 		actionClear.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
+		
+		actionReloadView = new Action() {
+			public void run() {
+				// clear all
+				actionClear.run();
+				// expand the first level
+				doubleClickAction.run();
+			}
+		};
+		actionReloadView.setText("Clear and Expand The First Level");
+		actionReloadView.setToolTipText("Clear and Expand The First Level");
+		actionReloadView.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh_nav.gif"));
+
+		
 		actionExpandCollapse = new Action() {
 			public void run() {
 				doubleClickAction.run();
@@ -821,6 +840,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionExpandCollapse.setText("Expand / Collapse");
 		actionExpandCollapse.setToolTipText("Expand / Collapse");
 		actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+		
 		
 		
 		// Synch job listener
@@ -1875,6 +1895,16 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						treeBuilder.setModelicaMLModel(umlModel);
 						treeBuilder.setModelicaMLRoot(ModelicaMLRoot);
 						
+						
+						/*
+						 * Set models that should not be loaded. 
+						 * The main purpose is to avoid loading libraries that are not yet supported.  
+						 */
+						HashSet<String> modelsToBeExcluded = new HashSet<String>();
+						modelsToBeExcluded.add("Modelica.Fluid");
+						modelsToBeExcluded.add("Modelica.UsersGuide");
+						treeBuilder.setModelsToBeExcluded(modelsToBeExcluded);
+						
 //						IWorkspace workspace = ResourcesPlugin.getWorkspace();
 //						IWorkspaceRoot root = workspace.getRoot();
 //						IProject iProject = root.getProject(projectName);
@@ -1904,7 +1934,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			}
 		}
 	}
-	
+
 	
 	
 	 private List<TreeObject> getTopDownPathItems(TreeObject startItem){
@@ -1927,6 +1957,32 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		return listOfSegments;
 	}
 	
+	private TreeObject findTreeItem(String path){
+		TreeObject item = null;
+		
+		for (TreeObject treeObject : treeBuilder.getTreeItems()) {
+			if (treeObject instanceof TreeParent) {
+				if (path.equals( ((TreeParent)treeObject).getQName()) ) {
+					return treeObject;
+				}
+			}
+		}
+		return item;
+	}
+	
+	
+	private ArrayList<TreeObject> findTreeItems(ArrayList<String> parentPaths){
+		ArrayList<TreeObject> items = new ArrayList<TreeObject>();
+		
+		for (TreeObject treeObject : treeBuilder.getTreeItems()) {
+			if (treeObject instanceof TreeParent) {
+				if (parentPaths.contains( ((TreeParent)treeObject).getQName()) ) {
+					items.add(treeObject);
+				}
+			}
+		}
+		return items;
+	}
 	
 	
 	private HashSet<Object> findTreeItem(EObject selectedElement){

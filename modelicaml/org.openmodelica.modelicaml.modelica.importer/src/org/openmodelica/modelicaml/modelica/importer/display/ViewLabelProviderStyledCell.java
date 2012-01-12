@@ -328,7 +328,9 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			overlayIconImage = decorateImage( treeObject , "/icons/Parameter.gif", null );
 		}
 		else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isEnumarationLiteral()) {
-			overlayIconImage = decorateImage( treeObject , "/icons/EnumerationLiteral.gif", null );
+//			overlayIconImage = decorateImage( treeObject , "/icons/EnumerationLiteral.gif", null );
+			overlayIconImage = ResourceManager.getPluginImage("org.eclipse.uml2.uml.edit", "/icons/full/obj16/EnumerationLiteral.gif");
+
 		}
 
 		

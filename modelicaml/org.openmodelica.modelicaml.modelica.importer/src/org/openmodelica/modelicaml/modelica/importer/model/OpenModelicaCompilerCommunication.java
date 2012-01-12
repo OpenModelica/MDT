@@ -360,7 +360,7 @@ public class OpenModelicaCompilerCommunication {
 	
 	public Integer getInheritanceCount(String className){
 		String reply = executeCommand("getInheritanceCount(" + className + ")");
-		if (reply != null) {
+		if (reply != null && !reply.trim().equals("") && !reply.contains("rror") ) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;
@@ -434,7 +434,7 @@ public class OpenModelicaCompilerCommunication {
 	
 	public Integer getAnnotationCount(String className){
 		String reply = executeCommand("getAnnotationCount(" + className + ")");
-		if (reply != null ) {
+		if (reply != null && !(reply.contains("rror")) ) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;
@@ -471,7 +471,7 @@ public class OpenModelicaCompilerCommunication {
 	
 	public int getImportCount(String className){
 		String reply = executeCommand("getImportCount(" + className + ")");
-		if (reply != null && !reply.trim().equals("")) {
+		if (reply != null && !reply.trim().equals("") && !(reply.contains("rror"))) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;
@@ -495,7 +495,7 @@ public class OpenModelicaCompilerCommunication {
 //	}
 	public Integer getInitialAlgorithmCount(String className){
 		String reply = executeCommand("getInitialAlgorithmCount(" + className + ")");
-		if (reply != null && !reply.trim().equals("")) {
+		if (reply != null && !reply.trim().equals("") && !reply.contains("rror") ) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;
@@ -534,7 +534,7 @@ public class OpenModelicaCompilerCommunication {
 	
 	public Integer getAlgorithmCount(String className){
 		String reply = executeCommand("getAlgorithmCount(" + className + ")");
-		if (reply != null && !reply.trim().equals("")) {
+		if (reply != null && !reply.trim().equals("") && !reply.contains("rror")) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;
@@ -576,7 +576,7 @@ public class OpenModelicaCompilerCommunication {
 	
 	public Integer getInitialEquationCount(String className){
 		String reply = executeCommand("getInitialEquationCount(" + className + ")");
-		if (reply != null && !reply.trim().equals("")) {
+		if (reply != null && !reply.trim().equals("") && !reply.contains("rror")) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;
@@ -617,7 +617,7 @@ public class OpenModelicaCompilerCommunication {
 	
 	public Integer getEquationCount(String className){
 		String reply = executeCommand("getEquationCount(" + className + ")");
-		if (reply != null && !reply.trim().equals("")) {
+		if (reply != null && !reply.trim().equals("") && !reply.contains("rror") ) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;

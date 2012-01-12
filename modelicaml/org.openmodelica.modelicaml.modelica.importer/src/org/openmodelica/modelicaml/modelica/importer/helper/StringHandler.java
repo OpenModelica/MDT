@@ -6,11 +6,23 @@ public class StringHandler {
 
 
 	public static void main(String[] args) {
-		getComponentsExample();
+//		getComponentsExample();
 //		getClassInformationExample();
-		
+//		connectExample();
+		getNextSimcolonExample();
 	}
 
+	private static void getNextSimcolonExample(){
+		String string = "connect(Pre1.y,And1.u3) ; connect(Pre1.y,And1.u2) annotation(Line(points = {{-19,-50},{-10,-50},{-10,-18},{-2,-18}}, color = {255,0,255}));";
+		System.err.println(getNextSemicolonPosition(string, 0, "connect(Pre1.y,And1.u3"));
+	}
+
+	
+	private static void connectExample(){
+		String string = "connect(Pre1.y,And1.u2) annotation(Line(points = {{-19,-50},{-10,-50},{-10,-18},{-2,-18}}, color = {255,0,255}));";
+		System.err.println(getConnectEndsString(string));
+	}
+	
 	private static void getComponentsExample(){
 		// reply from getComponents 
 //		String value = "{{\"Real\",\"r\",\"This is a comment. Text text \", \"text\", text text ...\", \"public\", \"false\", \"false\", \"false\", \"true\", \"unspecified\", \"none\", \"unspecified\",\"{}\"}}";
@@ -205,6 +217,62 @@ public class StringHandler {
 //	        }
 	    }
 	    return lst; // ERROR?
+	}
+	
+	public static String getConnectEndsString(String value){
+	    value = value.trim();
+	    String connectEndsString = "";
+	    int i=0;
+	    
+	    // find the first bracket (i.e. after "connect")
+	    while (value.charAt(i) != '('){
+	    	i++;
+	    	value = CONSUME_CHAR(value,value,i);
+	    }
+	    
+	    while (value.charAt(i) == '(') { // start token, i.e. connect(
+	        i++;
+	        while (value.charAt(i) != ')') { // stop token
+	        	connectEndsString = CONSUME_CHAR(value,connectEndsString,i);
+	            i++;
+	        }
+	        return connectEndsString;
+	    }
+	    return null; // ERROR?
+	}
+	
+	public static int getNextSemicolonPosition(String entireString, int subStringStart, String subString){
+		int i = subStringStart + subString.length() - 1;
+		
+		if ( i >= 0 && i < entireString.length()) {
+			while (entireString.charAt(i) != ';'){
+		    	i++;
+		    	
+		    	if (entireString.charAt(i) == ';') {
+		    		return i;
+				}
+		    	if (i == entireString.length()) {
+					return -1;
+				}
+		    }
+		}
+
+		return -1;
+	}
+	
+	public static ArrayList<String> getConnectEnds(String string){
+		ArrayList<String> ends = new ArrayList<String>();
+		String connectdEndsString = getConnectEndsString(string);
+		if (connectdEndsString != null) {
+			String[] splitted = connectdEndsString.split(",");
+			if (splitted.length == 2) {
+				ends.add(splitted[0].trim());
+				ends.add(splitted[1].trim());
+				
+				return ends;
+			}
+		}
+	    return null;
 	}
 	
 }

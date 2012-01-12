@@ -83,13 +83,6 @@ public class ClassItem extends TreeParent {
 	public boolean isExpandable() {
 		return isExpandable;
 	}
-	
-//	public boolean isEnumeration(){
-//		if (this.getClassRestriction().equals("enumeration")) {
-//			return true;
-//		}
-//		return false;
-//	}
 
 	public boolean isType(){
 		if (this.getClassRestriction().equals("type")) {

@@ -203,8 +203,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 									// build tree
 									// TODO: libraries to be excluded should be selected by the user
 									ArrayList<String> modelsToBeExcluded = new ArrayList<String>();
-//									modelsToBeExcluded.add("Modelica.UsersGuide");
-//									modelsToBeExcluded.add("Modelica.Fluid");
+									modelsToBeExcluded.add("Modelica.UsersGuide");
+									modelsToBeExcluded.add("Modelica.Fluid");
 
 									treeBuilder.buildTree(treeRoot, modelsToBeExcluded);
 									return Status.OK_STATUS;

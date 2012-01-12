@@ -517,8 +517,11 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			
 			@Override
 			protected void doExecute() {
+				/*
+				 * Note, the order of of clauses is important 
+				 * to make sure that function behavior is checked before class and enum befor promitive type 
+				 */
 				if (parent instanceof Package) {
-//					createdElement = ((Package)parent).createOwnedClass(treeObject.getName(), isPartial);
 					if (classItem.getClassRestriction().equals("function")) {
 						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.FUNCTION_BEHAVIOR);
 					}
@@ -528,7 +531,6 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					else if (classItem.getClassRestriction().equals("type")) {
 						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.PRIMITIVE_TYPE);
 					}
-
 					else {
 						createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.CLASS);
 					}
@@ -537,11 +539,11 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					if (classItem.getClassRestriction().equals("function")) {
 						createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.FUNCTION_BEHAVIOR);
 					}
+					else if (classItem.isEnumeration()) {
+						createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.ENUMERATION);
+					}
 					else if (classItem.getClassRestriction().equals("type")) {
 						createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.PRIMITIVE_TYPE);
-					}
-					else if (classItem.getClassRestriction().equals("enumeration")) {
-						createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.ENUMERATION);
 					}
 					else {
 						createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.CLASS);
@@ -658,16 +660,20 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 //					System.err.println("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
 				}
 
-				if (componentTreeObject.isPort()) {
+				// port
+				if (componentTreeObject.isPort() && owningClass instanceof Class) {
 					createdElement = ((Class)owningClass).createOwnedPort(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
 				}
-				else if (componentTreeObject.isFunctionArgument()) {
+				// function argument
+				else if (componentTreeObject.isFunctionArgument() && owningClass instanceof FunctionBehavior) {
 					createdElement = ((FunctionBehavior)owningClass).createOwnedParameter(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
 				}
-				else if (componentTreeObject.isEnumarationLiteral()) {
+				// enum literal
+				else if (componentTreeObject.isEnumarationLiteral() && owningClass instanceof Enumeration) {
 					createdElement = ((Enumeration)owningClass).createOwnedLiteral(componentTreeObject.getName());
 				}
-				else {
+				// component
+				else if (owningClass instanceof Class) {
 					createdElement = ((Class)owningClass).createOwnedAttribute(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
 				}
 				
@@ -828,10 +834,6 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					// sync. comment and annotations
 					updateCommentsAndAnnotation(classElement, classItem);
 					
-					// TODO: remove this because due to connect statements the behavior must be created after all components (ports) are created.
-					// sync. behaviors 
-//					updateBehaviors(classElement, classItem);
-					
 					// delete unappropriated stereotypes
 					// get all possible ModelicaML property stereotypes
 					HashSet<Stereotype> possibleStereotype = getClassApplicableStereotypes(classElement);
@@ -890,11 +892,15 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				for (String string : annotations) {
 					Comment annotation = ((Classifier)element).createOwnedComment();
 					Stereotype stereotype = annotation.getApplicableStereotype(Constants.stereotypeQName_Annotation);
+					
+					// replace \\" with \" 
+					String updatedString = string.replaceAll("\\\\\\\\\"", "\\\\\"");
+					
 					if (stereotype != null) {
 						annotation.applyStereotype(stereotype);
-						annotation.setValue(stereotype, Constants.propertyName_fullAnnotationString, (Object) string);
+						annotation.setValue(stereotype, Constants.propertyName_fullAnnotationString, updatedString);
 					}
-					annotation.setBody(string);
+					annotation.setBody(updatedString);
 				}
 			}
 		}
@@ -964,7 +970,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				int i = 0;
 				for (String string : initialAlgorithms) {
 					i ++;
-					
+					string = string.replaceAll("\\\\\\\\\"", "\\\\\"");
 					/*
 					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
@@ -991,7 +997,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				int i = 0;
 				for (String string : initialEquations) {
 					i ++;
-					
+					string = string.replaceAll("\\\\\\\\\"", "\\\\\"");
 					/*
 					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
@@ -1017,7 +1023,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				int i = 0;
 				for (String string : algorithms) {
 					i ++;
-					
+					string = string.replaceAll("\\\\\\\\\"", "\\\\\"");
 					/*
 					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
@@ -1053,7 +1059,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 
 				for (String string : equations) {
 					i ++;
-					
+					string = string.replaceAll("\\\\\\\\\"", "\\\\\"");
 					/*
 					 * If it is a Modelica functions which is translated to UML::FunctionBehavior 
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
@@ -1094,7 +1100,10 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		 * For loop connects and connects that use array sub-scripts 
 		 * are not translated into UML connectors, but left within equations section code.
 		 */
-		Pattern pattern = Pattern.compile("connect(\\s)*\\((\\w|,|\\.|\\s|\n|\r|\t)+\\)(\\s)*;");
+//		Pattern pattern = Pattern.compile("connect(\\s)*\\((\\w|,|\\.|\\s|\n|\r|\t)+\\)(\\s)*;");
+//		Pattern pattern = Pattern.compile("connect(\\s)*\\((\\w|,|\\.|\\s|\n|\r|\t)+\\)(\\s)*(annotation\\((.)*\\))*(\\s)*;");
+		Pattern pattern = Pattern.compile("connect(\\s)*\\((\\w|,|\\.|\\s|\n|\r|\r\n|\t)+\\)");
+		
 		Matcher matcher = pattern.matcher(string);
         
 		boolean result = matcher.find();
@@ -1102,9 +1111,15 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
         while(result) {
         	boolean resolved = resolveConnect(owningClass, matcher.group());
         	// if a UML Connector could be created -> remove the connect statement from code
-        	if (resolved ) {
+        	if (resolved) {
 //    			updatedString = updatedString.replace(matcher.group(), "");
-    			updatedString = updatedString.replace(matcher.group(), "/* " + matcher.group() + " was REPLACED by a UML Connector. */");
+        		int nextSemicolonPosition = StringHandler.getNextSemicolonPosition(string, matcher.start(), matcher.group());
+//    			updatedString = updatedString.replace(matcher.group(), "/* " + matcher.group() + " was REPLACED by a UML Connector. */");
+        		if (nextSemicolonPosition > 0) {
+            		updatedString = updatedString.replace(string.substring(matcher.start(), nextSemicolonPosition + 1), 
+							"/* REPLACED by a UML Connector -> " 	+ string.substring(matcher.start(), nextSemicolonPosition + 1) 
+									+ "*/");
+				}
 			}
 
         	result = matcher.find();
@@ -1114,15 +1129,10 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	}
 	
 	private boolean resolveConnect(Class owningClass, String connectStatement) {
-		
-		String string = connectStatement.trim().replaceFirst("connect", "").trim();
-		// remove semicolon and the enclosing brackets
-		String connectionEnds = StringHandler.removeFirstLastBrackets(string.substring(0, string.length()-1));
-		
-		String[] splitted = connectionEnds.split(",");
-		if (splitted.length == 2) {
-			String portQName1 = splitted[0];
-			String portQName2 = splitted[1];
+		ArrayList<String> ends = StringHandler.getConnectEnds(connectStatement);
+		if (ends != null && ends.size() == 2) {
+			String portQName1 = ends.get(0);
+			String portQName2 = ends.get(1);
 
 			Property partWithPort1 = getPartWithPortToBeConnected(owningClass, portQName1);
 			Port port1 = getPortToBeConnected(owningClass, portQName1);
@@ -1130,10 +1140,9 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			Property partWithPort2 = getPartWithPortToBeConnected(owningClass, portQName2);
 			Port port2 = getPortToBeConnected(owningClass, portQName2);
 			
-
 			if ( port1 != null && port2 != null ) {
 				// Create a connector
-				Connector connector = owningClass.createOwnedConnector(string);
+				Connector connector = owningClass.createOwnedConnector(ends.get(0) + "," + ends.get(1));
 				Stereotype s = connector.getApplicableStereotype(Constants.stereotypeQName_Connection);
 				if (s != null) {
 					connector.applyStereotype(s);
@@ -1143,7 +1152,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					 * for connecting the ports that are the nested within ports. For the sake of simplicity 
 					 * this is set for all UML Connectors when synchronizing code with ModelicaML model.
 					 */
-					connector.setValue(s, Constants.propertyName_explicitConnectionEnds, connectionEnds);
+					connector.setValue(s, Constants.propertyName_explicitConnectionEnds, ends.get(0) + "," + ends.get(1) );
 				}
 				ConnectorEnd end1 = connector.createEnd();
 				end1.setRole(port1);
@@ -1155,9 +1164,58 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
+	
+	// BACKUP
+//	private boolean resolveConnect(Class owningClass, String connectStatement) {
+//		String string = connectStatement.trim().replaceFirst("connect", "").trim();
+//		// remove semicolon and the enclosing brackets
+//		String connectionEnds = StringHandler.removeFirstLastBrackets(string.substring(0, string.length()-1));
+//		
+//		String[] splitted = connectionEnds.split(",");
+//		if (splitted.length == 2) {
+//			String portQName1 = splitted[0];
+//			String portQName2 = splitted[1];
+//
+//			Property partWithPort1 = getPartWithPortToBeConnected(owningClass, portQName1);
+//			Port port1 = getPortToBeConnected(owningClass, portQName1);
+//			
+//			Property partWithPort2 = getPartWithPortToBeConnected(owningClass, portQName2);
+//			Port port2 = getPortToBeConnected(owningClass, portQName2);
+//			
+//
+//			if ( port1 != null && port2 != null ) {
+//				// Create a connector
+//				Connector connector = owningClass.createOwnedConnector(string);
+//				Stereotype s = connector.getApplicableStereotype(Constants.stereotypeQName_Connection);
+//				if (s != null) {
+//					connector.applyStereotype(s);
+//					/*
+//					 * Set the explicit connection ends.
+//					 * Note, the stereotype property "explicitConnectionEnds" is only necessary 
+//					 * for connecting the ports that are the nested within ports. For the sake of simplicity 
+//					 * this is set for all UML Connectors when synchronizing code with ModelicaML model.
+//					 */
+//					connector.setValue(s, Constants.propertyName_explicitConnectionEnds, connectionEnds);
+//				}
+//				ConnectorEnd end1 = connector.createEnd();
+//				end1.setRole(port1);
+//				end1.setPartWithPort(partWithPort1);
+//				ConnectorEnd end2 = connector.createEnd();
+//				end2.setRole(port2);
+//				end2.setPartWithPort(partWithPort2);
+//				
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+	
+	
+	
 	private Port getPortToBeConnected(Class owningClass, String portQName){
 
 		if (portQName.split("\\.").length == 1) {
@@ -1427,7 +1485,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			}
 			return stereotypes;
 		}
-		else {
+		else if (property instanceof Property) {
+
 			Stereotype stereotype = property.getApplicableStereotype(Constants.stereotypeQName_Component);
 			if ( stereotype != null ) { stereotypes.add(stereotype); }
 
