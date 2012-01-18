@@ -161,6 +161,25 @@ public class SynchronizeOptionsDialog extends Dialog {
 //		});
 		
 		
+		// 5 raw
+		new Label(composite, SWT.NONE);
+
+		final Button btnFullImport = new Button(composite, SWT.CHECK);
+		
+		btnFullImport.setSelection(false); 	// preselect this option.
+		setFullImport(true);
+		
+		btnFullImport.setText("Sync. only the model structure (models, inheritance, components; no behavior, no connections, etc.)");
+		btnFullImport.setToolTipText("Sync. only the model structure (models, inheritance, components; no behavior, no connections, etc.)");
+		btnFullImport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// if selected then the full import is unset, else the opposite.
+				setFullImport(!btnFullImport.getSelection());
+			}
+		});
+		
+		
 		// 6 raw
 		new Label(composite, SWT.NONE);
 
