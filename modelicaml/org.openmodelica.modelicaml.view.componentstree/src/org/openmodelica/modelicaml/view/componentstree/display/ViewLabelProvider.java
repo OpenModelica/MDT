@@ -436,7 +436,9 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		}
 		
 		// if property has no type -> indicate error
-		if (treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
+//		if (treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
+		// TODO: this is a workaround. How to deal with stateSelect 
+		if (!treeParent.getName().equals("stateSelect") && treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
 			list.add(treeParent);
 			
 			// stop searching here
