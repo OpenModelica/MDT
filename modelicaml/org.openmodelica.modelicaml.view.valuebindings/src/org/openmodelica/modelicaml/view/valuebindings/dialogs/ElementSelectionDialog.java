@@ -250,7 +250,7 @@ public class ElementSelectionDialog extends Dialog {
 	 */
 	private void createSShell() {
 		// SWT.APPLICATION_MODAL, SWT.SYSTEM_MODAL do not work, 
-		// SWT.PRIMARY_MODAL, SWT.MODELESS work
+		// SWT.PRIMARY_MODAL, SWT.MODELESS work for the window to not block the underlying Eclipse window
 		sShell = new Shell(getParentShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM);
 		
 		sShell.setText(this.title);
@@ -326,11 +326,6 @@ public class ElementSelectionDialog extends Dialog {
 									item.setInstantiationTreeObject(selectedInstantiationTreeObject);
 								}
 
-//								// OBSOLETE: add the cyclic read only nodes to the new item 
-//								if (treeBuilder != null) {
-//									treeBuilder.addReadOnlyNodes((TreeParent)item, null);
-//								}
-
 								viewer.add(children[i], item);
 								viewer.setSelection(new StructuredSelection(item), true);
 								
@@ -344,11 +339,6 @@ public class ElementSelectionDialog extends Dialog {
 									item.setInstantiationTreeObject(selectedInstantiationTreeObject);
 								}
 								
-//								// OBSOLETE: add the cyclic read only nodes to the new item
-//								if (treeBuilder != null) {
-// 									treeBuilder.addReadOnlyNodes((TreeParent)item, null);
-//								}
-
 								viewer.add(children[i], item);
 								viewer.setSelection(new StructuredSelection(item), true);
 							}
@@ -371,197 +361,6 @@ public class ElementSelectionDialog extends Dialog {
 			}
 		});
 	}
-	
-//	private Stereotype getStereotype(){
-//		String stereotypeQName = "";
-//		Stereotype stereotype = null;
-//		
-//		if (mode == Constants.MODE_ADD_CLIENT) {
-//			stereotypeQName = Constants.stereotypeQName_ValueClient;
-//		}
-//		else if (mode == Constants.MODE_ADD_PROVIDER) {
-//			stereotypeQName = Constants.stereotypeQName_ValueProvider;
-//		}
-//		
-//		if (this.selectedElement instanceof NamedElement) {
-//			// get stereotype
-//			stereotype = ((NamedElement)this.selectedElement).getAppliedStereotype(stereotypeQName);
-//			
-//			// apply stereotype if not yet applied
-//			if (stereotype == null) {
-//				final Stereotype s = ((NamedElement)this.selectedElement).getApplicableStereotype(stereotypeQName);
-//				if (s != null) {
-//					
-//					//########## storing start
-//					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-//					CompoundCommand cc = new CompoundCommand();
-//					Command command = new RecordingCommand(editingDomain) {
-//						@Override
-//						protected void doExecute() {
-//							((NamedElement)selectedElement).applyStereotype(s);
-//						}
-//					};
-//					cc.append(command);
-//					editingDomain.getCommandStack().execute(cc);
-//					
-//					
-//					// get stereotype
-//					stereotype = ((NamedElement)this.selectedElement).getAppliedStereotype(stereotypeQName); 
-//				}
-//			}
-//		}
-//		return stereotype;
-//	}
-
-//	private String getStereotypePropertyName(){
-//		String stereotypeProperty_name = null;
-//		if (this.mode.equals("addValueClient")) {
-//			stereotypeProperty_name = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-//		}
-//		else if (this.mode.equals("addValueProvider")) {
-//			stereotypeProperty_name = Constants.stereotypeQName_ValueProvider_providesValueFor;
-//		}
-//		return stereotypeProperty_name;
-//	}
-	
-//	private String getDependecyStereotypeQName(){
-//		//The stereotype for the dependency from the mediator to the selected client or provider
-//		
-//		if (mode == Constants.MODE_ADD_CLIENT) {
-//			return Constants.stereotypeQName_ProvidesValueFor;
-//		}
-//		else if (mode == Constants.MODE_ADD_PROVIDER) {
-//			return Constants.stereotypeQName_ObtainsValueFrom;
-//		}
-//		return null;
-//	}
-//	
-//	private String getDependecyName(){
-//		//The stereotype for the dependency from the mediator to the selected client or provider
-//		
-//		if (mode == Constants.MODE_ADD_CLIENT) {
-//			return "Provides value for: ";
-//		}
-//		else if (mode == Constants.MODE_ADD_PROVIDER) {
-//			return "Obtains value from: ";
-//		}
-//		return null;
-//	}
-	
-	
-//	@SuppressWarnings("rawtypes")
-//	private boolean containsObject(EList list, EObject eObject){
-//		if (list instanceof EList) {
-//			for (Object object : (EList)list) {
-//				if (object instanceof EObject) {
-////					if (((EObject)object).eCrossReferences().get(0) == eObject) {
-//					if (UMLUtil.getBaseElement((EObject)object) == eObject) {
-//						return true;
-//					}
-//				}	
-//			}
-//		}
-//		return false;
-//	}
-	
-	
-//	private boolean storeReference(){
-//		
-//		final Element valueMediatorElement = valueMediatorTreeItem.getUmlElement();
-//		final EObject valueClientOrProviderElement = selectedElement;
-//		
-//		if (valueMediatorElement instanceof Property && valueClientOrProviderElement instanceof NamedElement) {
-//			EList<Dependency> mediatorDependencies = ((Property)valueMediatorElement).getClientDependencies();
-//			boolean targetAlreadyExists = false;
-//			
-//			for (Dependency dep : mediatorDependencies) {
-//				for (Element element : dep.getTargets()) {
-//					if (element == valueClientOrProviderElement) {
-//						
-//						// set the indicator 
-//						targetAlreadyExists = true;
-//						
-//						// inform the user
-//						MessageDialog.openError(new Shell(), "Error", 
-//								((NamedElement)valueMediatorElement).getQualifiedName() 
-//								+ "already has a reference to the element " + ((NamedElement)valueClientOrProviderElement).getQualifiedName()
-//								+ "\nNo reference was stored or updated."); 
-//						return false;
-//					}
-//				}
-//			}
-//				
-//			if ( !targetAlreadyExists ) {
-//				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-//				CompoundCommand cc = new CompoundCommand("Add value mediator reference");
-//				Command command = new RecordingCommand(editingDomain) {
-//					@Override
-//					protected void doExecute() {
-//						Dependency dependency = ((Property)valueMediatorElement).createDependency((NamedElement) valueClientOrProviderElement);
-//						if (dependency != null) {
-//							dependency.setName(getDependecyName() + ((NamedElement)valueClientOrProviderElement).getName());
-//
-//							Stereotype dependencyStereotype = dependency.getApplicableStereotype(getDependecyStereotypeQName());
-//							if (dependencyStereotype != null) {
-//								dependency.applyStereotype(dependencyStereotype);
-//							}
-//							else {
-//								MessageDialog.openError(new Shell(), "Error", 
-//										"Could not set the Stereotype " + getDependecyStereotypeQName() + " for " 
-//										+ ((NamedElement)valueMediatorElement).getQualifiedName() + " to reference the element "
-//										+ ((NamedElement)valueClientOrProviderElement).getQualifiedName()
-//										+ "\nCheck if the ModelicaML Value Bindings Profile is applied."
-//										+ "\n\nNo reference was stored or updated.");
-//
-//								// delete the dependency because a stereotype must be applied ...
-//								dependency.destroy();
-//							}
-//						}
-//					}
-//				};
-//				cc.append(command);
-//				editingDomain.getCommandStack().execute(cc);
-//			}
-//		}
-//		return true;
-//	}
-//	
-//	void addValueToStereotypeProperty_List(){
-//		
-//		if (this.selectedElement instanceof NamedElement) {
-//			// get stereotype
-//			final Stereotype stereotype = getStereotype();
-//			final String stereotypeProperty_name = getStereotypePropertyName();
-//			if ( stereotype != null && stereotypeProperty_name != null) {
-//				final Object list = ((NamedElement)this.selectedElement).getValue(stereotype, stereotypeProperty_name);
-//				
-//				if (list instanceof EList) {
-////					########## storing start
-//					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-//					CompoundCommand cc = new CompoundCommand("Add value mediator reference");
-//					Command command = new RecordingCommand(editingDomain) {
-//						@SuppressWarnings({ "unchecked", "rawtypes" })
-//						@Override
-//						protected void doExecute() {
-//							if (!containsObject((EList) list, valueMediatorTreeItem.getUmlElement())) {
-//								// get the value mediator stereotype
-//								final Stereotype valueMediatorStereotype = valueMediatorTreeItem.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator);
-//								
-//								// Important: use the getStereotypeApplication to get an EObject! 
-//								DynamicEObjectImpl eObject =(DynamicEObjectImpl)valueMediatorTreeItem.getUmlElement().getStereotypeApplication(valueMediatorStereotype);
-//								
-//								// add value to the list
-//								((EList)list).add(eObject);
-//							}
-//						}
-//					};
-//					cc.append(command);
-//					editingDomain.getCommandStack().execute(cc);
-//				}
-//			}
-//		}
-//	}
-	
 	
 	
 	public int open() {

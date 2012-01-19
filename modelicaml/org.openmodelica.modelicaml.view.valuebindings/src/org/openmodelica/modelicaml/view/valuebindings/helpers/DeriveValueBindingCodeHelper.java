@@ -47,6 +47,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
@@ -93,41 +96,8 @@ public class DeriveValueBindingCodeHelper {
 	
 	private Boolean userSelectionRequired = false; // indicates if an error was detected.
 
-	
-//	public DeriveValueBindingCodeHelper(TreeObject selectedTreeItem, TreeObject instantiationTreeRoot){
-////		this.instantiationTreeRoot = instantiationTreeRoot;
-////		this.selectedTreeItem = selectedTreeItem;
-//		initialize(instantiationTreeRoot);
-//	}
-//	
-//	public DeriveValueBindingCodeHelper(TreeObject instantiationTreeRoot){
-////		this.instantiationTreeRoot = instantiationTreeRoot;
-//		initialize(instantiationTreeRoot);
-//	}
-
-//	public void initialize(TreeObject instantiationTreeRoot){
-//		Element element = instantiationTreeRoot.getSelectedClass();
-//		if (element instanceof NamedElement) {
-//			
-//			Element umlRootModel = element.getModel();
-//			try {
-//				dataCollection = new ValueBindingsDataCollector(umlRootModel, instantiationTreeRoot);
-//				new ProgressMonitorDialog(new Shell()).run(true, true, dataCollection);
-//	        } catch (InvocationTargetException e) {
-//	        	MessageDialog.openError(new Shell(), "Error", e.getMessage());
-//	        } catch (InterruptedException e) {
-//	        	MessageDialog.openInformation(new Shell(), "Cancelled", e.getMessage());
-//	        }
-//		}
-//		else {
-//			String message = "NOT VALID: No Value Bindings data could be collected from '" + instantiationTreeRoot + "'.";
-//			setError(message);
-//			addToLog(message);
-//		}
-//	}
-	
 	public void initialize(Package valueBindingsPackage, TreeObject instantiationTreeRoot, boolean showProgressMonitor){
-
+		
 		if (instantiationTreeRoot instanceof TreeParent) {
 			if (valueBindingsPackage == null) {
 				valueBindingsPackage = (Package) instantiationTreeRoot.getSelectedClass().getModel();
@@ -136,11 +106,11 @@ public class DeriveValueBindingCodeHelper {
 				try {
 					dataCollection = new ValueBindingsDataCollector();
 					dataCollection.collectAll((Element) valueBindingsPackage, instantiationTreeRoot);
-					new ProgressMonitorDialog(new Shell()).run(true, true, dataCollection);
+					new ProgressMonitorDialog(getShell()).run(true, true, dataCollection);
 		        } catch (InvocationTargetException e) {
-		        	MessageDialog.openError(new Shell(), "Error", e.getMessage());
+		        	MessageDialog.openError(getShell(), "Error", e.getMessage());
 		        } catch (InterruptedException e) {
-		        	MessageDialog.openInformation(new Shell(), "Cancelled", e.getMessage());
+		        	MessageDialog.openInformation(getShell(), "Cancelled", e.getMessage());
 		        }
 			}
 			else {
@@ -153,11 +123,15 @@ public class DeriveValueBindingCodeHelper {
 			setError(message);
 			addToLog(message);
 		}
+		
+		//reset the required user interaction indicator
+		setUserSelectionRequired(false);
+
 	}
 	
 	
 	public void deriveBindingCodeForClient(TreeObject selectedTreeItem, boolean isUserGuided, boolean isAutomaticSelectionOfPreferredProvidersEnabled){
-
+		
 		// clear all in order to delete data from the previous call
 		clientElement = null;
 		clientOperation = null;
@@ -174,6 +148,9 @@ public class DeriveValueBindingCodeHelper {
 		errorString = null;
 		
 		code = null;
+		
+		//reset the required user interaction indicator
+		setUserSelectionRequired(false);
 		
 		if (dataCollection != null && !dataCollection.wasCancelled()) {
 			
@@ -214,7 +191,7 @@ public class DeriveValueBindingCodeHelper {
 	}
 	
 	
-	public String deriveCode(TreeObject clientTreeObject, String clientScriptOperation, Element mediator, String mediatorStringOperation, HashSet<TreeObject> providers){
+	private String deriveCode(TreeObject clientTreeObject, String clientScriptOperation, Element mediator, String mediatorStringOperation, HashSet<TreeObject> providers){
 		List<String> providerCodeItems = getProviderCodeItems(mediator, providers);
 		String translatedMediatorOperation = translateMediatorScript(mediatorStringOperation, providerCodeItems); 
 		String translatedClientOperation = translateClientScript(clientTreeObject, clientScriptOperation, translatedMediatorOperation);
@@ -435,7 +412,7 @@ public class DeriveValueBindingCodeHelper {
 						String groupTitle = "Value Providers";
 						
 						SelectValueProviderDialog dialog = new SelectValueProviderDialog(
-								new Shell(), 
+								getShell(), 
 								title, 
 								clientTreeItem,
 								mediatorElement,
@@ -499,7 +476,7 @@ public class DeriveValueBindingCodeHelper {
 			boolean result = TreeUtls.addToPreferredProvider(mediator, client.getDotPath(), provider.getDotPath());
 		}
 		else {
-			MessageDialog.openError(new Shell(), "Error", "Could not add the provider to preferred providers.");
+			MessageDialog.openError(getShell(), "Error", "Could not add the provider to preferred providers.");
 		}
 	}
 	
@@ -605,7 +582,7 @@ public class DeriveValueBindingCodeHelper {
 						mediators.add(mediator);
 					}
 					
-					// NOTE: the code below is not useful because there it may be on purpose in order to let the user select.
+					// NOTE: the code below is not useful because it may be on purpose in order to let the user select.
 //					// if there are more then 1 provider instances 
 //					// -> select the mediator if it has binding operation functions to handle multiple providers.
 //					if ( providerInstances.size() > 1 && DeriveValueBindingCodeUtls.isValidMediatorMultipleItemsScript(mediatorScript)) {
@@ -661,7 +638,7 @@ public class DeriveValueBindingCodeHelper {
 										"\r\nNote, you can hover the elements to get more information. \r\n";
 				String groupTitle = "Value Mediators";
 				
-				SelectValueMediatorDialog dialog = new SelectValueMediatorDialog(new Shell(), title, textSourceTreeItem, toolTipTextSourceTreeItem, groupTitle, messageText, new ArrayList<Element>(mediators), dataCollection); 
+				SelectValueMediatorDialog dialog = new SelectValueMediatorDialog(getShell(), title, textSourceTreeItem, toolTipTextSourceTreeItem, groupTitle, messageText, new ArrayList<Element>(mediators), dataCollection); 
 				dialog.open();
 				int result = dialog.getReturnCode();
 
@@ -716,6 +693,20 @@ public class DeriveValueBindingCodeHelper {
 	}
 	
 	
+	private Shell getShell(){
+		Shell shell = null;
+		IWorkbench wb = PlatformUI.getWorkbench();
+		if (wb != null) {
+			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+			if (win != null) {
+				shell = win.getShell();
+			}
+		}
+		if (shell == null) {
+			shell = new Shell();
+		}
+		return shell;
+	}
 	
 	public void setClient(Element mediator, Element client, boolean isUserGuided){
 		if (client != null) {
@@ -731,7 +722,7 @@ public class DeriveValueBindingCodeHelper {
 					addToLog(message);
 					
 					if (isUserGuided) {  
-						MessageDialog.openError(new Shell(), "Value Client Reference Inconsistency ", message);
+						MessageDialog.openError(getShell(), "Value Client Reference Inconsistency ", message);
 					}
 					return; // stop here
 				}
@@ -746,7 +737,7 @@ public class DeriveValueBindingCodeHelper {
 
 	
 	private void findClient(TreeObject selectedTreeItem, Boolean isUserGuided){
-//		// reset
+		// reset
 		clientElement = null;
 		clientOperation = null;
 		
@@ -772,7 +763,7 @@ public class DeriveValueBindingCodeHelper {
 									addToLog(message);
 									
 									if (isUserGuided) {  
-										MessageDialog.openError(new Shell(), "Value Client Reference Inconsistency ", message);
+										MessageDialog.openError(getShell(), "Value Client Reference Inconsistency ", message);
 									}
 									
 									return; // stop here

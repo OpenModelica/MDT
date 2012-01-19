@@ -240,7 +240,7 @@ public class TreeObject implements IAdaptable {
 			}
 			
 			if ( item.getName().equals(this.getName())
-//					&& umlElementIsTheSame
+					&& umlElementIsTheSame
 					&& parentIsTheSame
 //					&& item.isReadOnly() == this.isReadOnly()
 //					&& item.isModel() == this.isModel()

@@ -34,12 +34,12 @@
  */
 package org.openmodelica.modelicaml.view.valuebindings.sections;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
@@ -110,13 +110,23 @@ public class LabelProvider_Details implements ILabelProvider {
 	    Assert.isTrue(input instanceof TreeObject);
 	    TreeObject item = (TreeObject) input;
 	    if (item != null) {
+    		Element umlElement = item.getUmlElement(); 
 	    	if (item.isValueClient()) {
+	    		if (umlElement instanceof NamedElement) {
+					return "Client '" + ((NamedElement)umlElement).getName() + "'   (" + ((NamedElement)umlElement).getQualifiedName() + ")";
+				}
 	    		return ((TreeObject)item).getName() + " (Value Client)";
 			}
 	    	if (item.isValueMediator()) {
+	    		if (umlElement instanceof NamedElement) {
+					return "Mediator '" + ((NamedElement)umlElement).getName() + "'   (" + ((NamedElement)umlElement).getQualifiedName() + ")";
+				}
 	    		return ((TreeObject)item).getName() + " (Value Mediator)";
 			}
 	    	if (item.isValueProvider()) {
+	    		if (umlElement instanceof NamedElement) {
+					return "Provider '" + ((NamedElement)umlElement).getName() + "'   (" + ((NamedElement)umlElement).getQualifiedName() + ")";
+				}
 	    		return ((TreeObject)item).getName() + " (Value Provider)";
 			}
 		    return ((TreeObject)item).getName();

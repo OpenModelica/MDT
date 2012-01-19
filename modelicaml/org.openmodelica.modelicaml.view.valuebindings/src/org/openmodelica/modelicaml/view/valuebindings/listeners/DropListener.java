@@ -49,6 +49,9 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
@@ -128,8 +131,22 @@ public class DropListener extends ViewerDropAdapter {
 					mode = Constants.MODE_ADD_PROVIDER;
 				}
 				
+				
+				// get the shell
+				Shell shell = null;
+				IWorkbench wb = PlatformUI.getWorkbench();
+				if (wb != null) {
+					IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+					if (win != null) {
+						shell = win.getShell();
+					}
+				}
+				if (shell == null) {
+					shell = new Shell();
+				}
+				
 				ElementSelectionDialog dialog = new ElementSelectionDialog(
-						new Shell(), 
+						shell, 
 						SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 						title, 
 						message, 
