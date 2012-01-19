@@ -60,6 +60,8 @@ import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
@@ -76,6 +78,8 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 	private Element testScenariosPackage; 
 	private Element valueMediatorsPackage;
 	private VerificationModelsGenerator smg;
+	
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
@@ -116,10 +120,11 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 			boolean allPackagesAreSet = targetPackage != null && requirementsPackage != null && testScenariosPackage != null && valueMediatorsPackage != null;
 			
 			if (allPackagesAreSet) {
-				boolean go = MessageDialog.openQuestion(new Shell(), "Please confirm ...", "This helper will create a package " +
-						"that will contain miltiple verification models each including one scenario and all requirements, "+ 
-						"that can be tested using this scenario, and the selected system model." +
-						"\n\nNote, only verificationi models that have scenarios and requirements with appropriate value bindings will be collected." +
+				
+				boolean go = MessageDialog.openQuestion(getShell(), "Please confirm ...", "This helper will create a package " +
+						"that will contain multiple verification models each including the selected system model, one scenario and all requirements "+ 
+						"that can be verified using this scenario." +
+						"\n\nNote, only verification models that have scenarios and requirements with appropriate value bindings will be collected." +
 						"\n\n" +
 						
 						"   - Selected system model: '" + ((Class)selectedElement).getName() + "'\n" + 
@@ -150,7 +155,7 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 							String msg = "Generation of Verification Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
 										 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
 
-							DialogMessage dialog = new DialogMessage(new Shell(), "Verification Models Generation Log", 
+							DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
 									"Data collecation and models generation log entries:", msg + smg.getLog().trim());
 							dialog.open();
 						}
@@ -161,7 +166,7 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 				}
 			}
 			else {
-				MessageDialog.openError(new Shell(), "Packages Selection for Verification Models Generation",
+				MessageDialog.openError(getShell(), "Packages Selection for Verification Models Generation",
 						"Cannot access the root model in Papyrus. Please try it again.");
 			}
 		}
@@ -175,13 +180,13 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 			protected void doExecute() {
 				try {
 					smg.generate();
-					new ProgressMonitorDialog(new Shell()).run(true, true, smg);
+					new ProgressMonitorDialog(getShell()).run(true, true, smg);
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					MessageDialog.openError(new Shell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
+					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					MessageDialog.openError(new Shell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
+					MessageDialog.openError(getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
 				}
 			}
 		};
@@ -244,8 +249,20 @@ private List<Object> getCurrentSelections() {
 	
 	
 	
-
-	
+	private Shell getShell(){
+		Shell shell = null;
+		IWorkbench wb = PlatformUI.getWorkbench();
+		if (wb != null) {
+			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+			if (win != null) {
+				shell = win.getShell();
+			}
+		}
+		if (shell == null) {
+			shell = new Shell();
+		}
+		return shell;
+	}
 	
 	
 }

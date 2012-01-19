@@ -64,12 +64,12 @@ public class InstantiateVerificationScenarioDialog extends Dialog {
 	// class where test scenarios should be instantiated
 	private Class containingClass;
 	
-	private static final String tabTitle_AllTS = "All Test Scenarios";
-	private static final String tabTitle_MatchedTS = "Matched Test Scenarios";
-	private static final String tabTitle_LinkedTS = "Linked Test Scenarios";
+	private static final String tabTitle_AllTS = "All Scenarios";
+	private static final String tabTitle_MatchedTS = "Matched Scenarios";
+	private static final String tabTitle_LinkedTS = "Linked Scenarios";
 	
-	private static final String  tabTitle_CoveredReq = "Covered Requirements";
-	private static final String  tabTitle_NotCoveredReq = "Not Covered Requirements";
+	private static final String  tabTitle_CoveredReq = "Referenced Requirements";
+	private static final String  tabTitle_NotCoveredReq = "Not Referenced Requirements";
 	
 	
 	/**
@@ -143,7 +143,7 @@ public class InstantiateVerificationScenarioDialog extends Dialog {
 		// Create "Matched test scenarios" tab 
 		if (matchedTS.size() > 0 ) {
 			String title = tabTitle_MatchedTS + " (" + matchedTS.size() + ")";
-			String message = "The following test scenarios can be used to test all selected requirements:";
+			String message = "The following scenarios can be used to test all selected requirements:";
 			ExpandBar expandBar = createTab(tabFolder, title, message, tabTitle_MatchedTS);
 			
 			// sort based on qName
@@ -172,7 +172,7 @@ public class InstantiateVerificationScenarioDialog extends Dialog {
 		// Create "Matched test scenarios" tab 
 		if (linkedTS.size() > 0 ) {
 			String title = tabTitle_LinkedTS + " (" + linkedTS.size() + ")";
-			String message = "The following test scenarios have reference to requirements:";
+			String message = "The following scenarios have references to requirements:";
 			ExpandBar expandBar = createTab(tabFolder, title, message, tabTitle_LinkedTS);
 			
 			// sort based on qName
@@ -200,7 +200,7 @@ public class InstantiateVerificationScenarioDialog extends Dialog {
 		// Create "all test scenarios" tab 
 		if (allTS.size() > 0 ) {
 			String title = tabTitle_AllTS + " (" + allTS.size() + ")";
-			String message = "The following test scenarios were found in the model:";
+			String message = "The following scenarios were found in the model:";
 			ExpandBar expandBar = createTab(tabFolder, title, message, tabTitle_AllTS);
 			
 			// sort based on qName
@@ -229,7 +229,7 @@ public class InstantiateVerificationScenarioDialog extends Dialog {
 		// Create "covered requirements" tab 
 		if (reqToTS.size() > 0 ) {
 			String title = tabTitle_CoveredReq + " (" + reqToTS.size() + ")";
-			String message = "The following are covered by test scenarios:";
+			String message = "The following requirements are referenced by scenarios:";
 			ExpandBar expandBar = createTab(tabFolder, title, message, tabTitle_CoveredReq);
 			
 			// sort based on qName
@@ -259,7 +259,7 @@ public class InstantiateVerificationScenarioDialog extends Dialog {
 		// Create "covered requirements" tab 
 		if (notCoveredRequirements.size() > 0 ) {
 			String title = tabTitle_NotCoveredReq + " (" + notCoveredRequirements.size() + ")";
-			String message = "The following are not covered by test scenarios found in this model:";
+			String message = "The following requirements are not referenced by scenarios found in this model:";
 			ExpandBar expandBar = createTab(tabFolder, title, message, tabTitle_NotCoveredReq);
 			
 			// sort based on qName
@@ -584,7 +584,7 @@ public class InstantiateVerificationScenarioDialog extends Dialog {
         super.configureShell(shell);
       	shell.setSize(850, 600);
       	shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
-      	shell.setText("ModelicaML Helper: Instantiate Test Scenarios");
+      	shell.setText("ModelicaML Helper: Instantiate Scenarios");
        	shell.setImage(SWTResourceManager.getImage(InstantiateRequirementsDialog.class, "/icons/listOfActions.png"));
     }
 

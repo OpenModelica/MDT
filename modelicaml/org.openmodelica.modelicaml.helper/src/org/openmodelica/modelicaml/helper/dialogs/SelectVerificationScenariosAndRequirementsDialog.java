@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
@@ -226,7 +228,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 			@Override
 			public void mouseDown(MouseEvent e) {
 				String infoText = "Data Collection for Simulation Models Generation Log: ";
-				DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, collectionLog);
+				DialogMessage dialog = new DialogMessage( getCurrentShell(), "Result", infoText, collectionLog);
 				dialog.open();
 			}
 		});
@@ -254,6 +256,22 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		return area;
 	}
 
+	
+	private Shell getCurrentShell(){
+		Shell shell = null;
+		IWorkbench wb = PlatformUI.getWorkbench();
+		if (wb != null) {
+			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+			if (win != null) {
+				shell = win.getShell();
+			}
+		}
+		if (shell == null) {
+			shell = new Shell();
+		}
+		return shell;
+	}
+	
 	/**
 	 * Create contents of the button bar.
 	 * 
@@ -479,8 +497,8 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 			
 			if (testSceanrio != null) {
 				String description = createDescription(testSceanrio);
-				DialogMessage dialog = new DialogMessage(new Shell(), "Test Simulation Model: Details", 
-						"Details of the selected combination of system model and test scenario:", 
+				DialogMessage dialog = new DialogMessage( getCurrentShell(), "Verification Model: Details", 
+						"Details of the selected combination of system model and scenario:", 
 						description);
 				dialog.open();
 			}
