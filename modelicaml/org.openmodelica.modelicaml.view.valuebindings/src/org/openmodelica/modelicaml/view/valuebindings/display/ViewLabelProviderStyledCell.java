@@ -625,11 +625,15 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 		if (umlElement instanceof NamedElement) {
 			// markers
+			
+			IProject iProject = null;
 			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-			String projectName = umlModel.getResource().getURI().segment(1);
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-			IProject iProject = root.getProject(projectName);
+			if (umlModel != null && umlModel.getResource() != null) {
+				String projectName = umlModel.getResource().getURI().segment(1);
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				iProject = root.getProject(projectName);
+			}
 			
 			IMarker[] markers = null;
 			try {
