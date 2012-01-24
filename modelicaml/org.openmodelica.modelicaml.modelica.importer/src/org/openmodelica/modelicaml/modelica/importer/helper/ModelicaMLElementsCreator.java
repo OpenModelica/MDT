@@ -952,17 +952,23 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		if (treeObject instanceof ClassItem && element instanceof Classifier) {
 			Classifier clazz = (Classifier)element;
 			
-			// delete existing opaqueBehaviors
+			/*
+			 * Delete existing OpaqueBehaviors before recreating class algorithm or equation sections.
+			 * Note, we assume that the proxies are not modified in the ModelicaML model. So that there are no State Machines
+			 * or other behavior except OpaqueBehaviors. That is why we only delete OpaqueBehaviors.
+			 * One exception: FunctionBehavaior is a sub-type of OpaqueBehavior. These should not be deleted. 
+			 */
 			EList<Element> existingElements = clazz.getOwnedElements();
 			EList<Behavior> existingBehaviors = new BasicEList<Behavior>();
 
 			for (Element existingElement : existingElements) {
-				if (existingElement instanceof OpaqueBehavior) {
+				if (existingElement instanceof OpaqueBehavior && !(existingElement instanceof FunctionBehavior)) {
 					existingBehaviors.add((Behavior) existingElement);
 				}
 			}
 			
 			deleteElements(new HashSet<Element>(existingBehaviors));
+			
 			
 			// Create initialAlgorithms
 			List<String> initialAlgorithms = ((ClassItem)treeObject).getInitialAlgorithms();
