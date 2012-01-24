@@ -198,44 +198,73 @@ public class TestModelicaCompletionProcessor {
 		assertTrue("did not found proposal for the 'Modelica.Math'", foundModelicaMathProp);
 		assertTrue("did not found proposal for the 'Modelica.Mechanics'", foundModelicaMechanicsProp);
 
-		/* type 'Mechanics.Rotational.Sp' inside import_rich_model */
+		/* type 'Mechanics.Rotational.Sources.Sp' inside import_rich_model */
 		editor.doRevertToSaved();
-		doc.replace(383, 0, "Mechanics.Rotational.Sp"); 
+		doc.replace(383, 0, "Mechanics.Rotational.Sources.Sp"); 
 
 		/* get proposals at the end of 'Modelica.M' */
 		props = compProc.computeCompletionProposals(textViewer, 
-				383 + "Mechanics.Rotational.Sp".length());
+				383 + "Mechanics.Rotational.Sources.Sp".length());
 		checkProposalsOrder(props);
 
-		/* 
-		 * we are expecting a proposal for the Mechanics.Rotational.Speed and 
-		 * Mechanics.Rotational.Spring packages 
-		 */
-		boolean foundSpeedProp = false;
-		boolean foundSpringDamperProp = false;
+		{
+			// we are expecting a proposal for Mechanics.Rotational.Sources.Speed 
+			boolean foundSpeedProp = false;
 
-		for (ICompletionProposal proposal : props) {
-			String proposalDisplayString = proposal.getDisplayString();
+			for (ICompletionProposal proposal : props) {
+				String proposalDisplayString = proposal.getDisplayString();
 
-			if (proposalDisplayString.startsWith("Speed")) {
-				proposal.apply(doc);
-				String result = doc.get(383, "Mechanics.Rotational.Speed".length());
-				assertEquals("unexpected result of applying proposal",
-						"Mechanics.Rotational.Speed", result);
-				foundSpeedProp = true;
-				undoManager.undo();
+				if (proposalDisplayString.equals("Speed")) {
+					proposal.apply(doc);
+					String result = doc.get(383, "Mechanics.Rotational.Sources.Speed".length());
+					assertEquals("unexpected result of applying proposal",
+							"Mechanics.Rotational.Sources.Speed", result);
+					foundSpeedProp = true;
+					undoManager.undo();
+				}
 			}
-			else if (proposalDisplayString.startsWith("SpringDamper")) {
-				proposal.apply(doc);
-				String result = doc.get(383, "Mechanics.Rotational.SpringDamper".length());
-				assertEquals("unexpected result of applying proposal", "Mechanics.Rotational.SpringDamper", result);
-				foundSpringDamperProp = true;
-				undoManager.undo();
-			}
+
+			assertTrue("did not find proposal for the Mechanics.Rotational.Sources.Speed", foundSpeedProp);
 		}
 
-		assertTrue("did not found proposal for the Mechanics.Rotational.Speed", foundSpeedProp);
-		assertTrue("did not found proposal for the Mechanics.Rotational.SpringDamper", foundSpringDamperProp);
+		/* type 'Mechanics.Rotational.Components.Sp' inside import_rich_model */
+		editor.doRevertToSaved();
+		doc.replace(383, 0, "Mechanics.Rotational.Components.Sp"); 
+
+		/* get proposals at the end of 'Modelica.M' */
+		props = compProc.computeCompletionProposals(textViewer, 
+				383 + "Mechanics.Rotational.Components.Sp".length());
+		checkProposalsOrder(props);
+
+		{
+			// we are expecting proposals for Mechanics.Rotational.Components.Spring
+			// and Mechanics.Rotational.Components.SpringDamper 
+			boolean foundSpringProp = false;
+			boolean foundSpringDamperProp = false;
+
+			for (ICompletionProposal proposal : props) {
+				String proposalDisplayString = proposal.getDisplayString();
+
+				if (proposalDisplayString.equals("Spring")) {
+					proposal.apply(doc);
+					String result = doc.get(383, "Mechanics.Rotational.Components.Spring".length());
+					assertEquals("unexpected result of applying proposal",
+							"Mechanics.Rotational.Components.Spring", result);
+					foundSpringProp = true;
+					undoManager.undo();
+				}
+				else if (proposalDisplayString.equals("SpringDamper")) {
+					proposal.apply(doc);
+					String result = doc.get(383, "Mechanics.Rotational.Components.SpringDamper".length());
+					assertEquals("unexpected result of applying proposal", "Mechanics.Rotational.Components.SpringDamper", result);
+					foundSpringDamperProp = true;
+					undoManager.undo();
+				}
+			}
+
+			assertTrue("did not found proposal for the Mechanics.Rotational.Components.Speed", foundSpringProp);
+			assertTrue("did not found proposal for the Mechanics.Rotational.Components.SpringDamper", foundSpringDamperProp);
+		}
 
 		/* type 'Modelica.Math.' */
 		editor.doRevertToSaved();
