@@ -583,8 +583,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
 		manager.add(new Separator());
-		manager.add(actionValidate);
-		manager.add(actionSimulate);
+//		manager.add(actionValidate);
+//		manager.add(actionSimulate);
 		manager.add(new Separator());
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
