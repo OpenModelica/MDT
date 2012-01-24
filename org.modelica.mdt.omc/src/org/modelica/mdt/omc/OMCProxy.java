@@ -127,16 +127,16 @@ public class OMCProxy implements IModelicaCompiler
 	/* indicates if the Modelica System Library has been loaded */
 	private boolean systemLibraryLoaded = false;
 
-	private ArrayList<String> standardLibraryPackages = null;
+	private java.util.List<String> standardLibraryPackages = null;
 
 	/* should we trace the calls to sendExpression? */
-	private  boolean traceOMCCalls  = false;
-	private  boolean traceOMCStatus = true;
+	private boolean traceOMCCalls = false;
+	private boolean traceOMCStatus = true;
 
-	private  boolean traceStatusPreferences = false;
-	private  boolean traceCommandsPreferences = false;
-	private  boolean traceErrorPreferences = false;	
-	private  boolean traceReplyPrefereces = false;	
+	private boolean traceStatusPreferences = false;
+	private boolean traceCommandsPreferences = false;
+	private boolean traceErrorPreferences = false;	
+	private boolean traceReplyPrefereces = false;	
 
 	{
 		/* load debug options and set debug flag variables accordingly */
@@ -637,7 +637,7 @@ public class OMCProxy implements IModelicaCompiler
 
 
 	/**
-	 * outputs the message about a call error that occured
+	 * outputs the message about a call error that occurred
 	 * when communicating with omc
 	 * @param message the message to log
 	 */
@@ -961,7 +961,7 @@ public class OMCProxy implements IModelicaCompiler
 			startColumn = Integer.parseInt(tokens.elementAt(3).toString());
 			endLine = Integer.parseInt(tokens.elementAt(4).toString());
 			endColumn = Integer.parseInt(tokens.elementAt(5).toString());
-			
+
 			if (startColumn == 0) {
 				assert(startLine == 1);
 				startColumn = 1;
@@ -1049,7 +1049,7 @@ public class OMCProxy implements IModelicaCompiler
 				}
 				else
 				{
-					/* OMC returned someting wierd, panic mode ! */
+					/* OMC returned something weird, panic mode ! */
 					break;
 				}
 			}
@@ -1121,35 +1121,21 @@ public class OMCProxy implements IModelicaCompiler
 	 * @throws ConnectException if we're unable to start communicating with
 	 * the server
 	 */	
-	public String[] getStandardLibrary() throws ConnectException
-	{
-		String openModelicaLibrary = System.getenv("OPENMODELICALIBRARY");
-		if (openModelicaLibrary != null)
-		{
-			File path = new File(openModelicaLibrary);
-			ArrayList<String> libs = new ArrayList<String>();
-			for (File f: path.listFiles()) if (f.isDirectory()) libs.add(f.getName());
-			standardLibraryPackages = libs; 
-		}
-
-		if (!systemLibraryLoaded)
-		{
-			if (standardLibraryPackages == null) 
-			{
-				ArrayList<String> libs = new ArrayList<String>();
-				libs.add("Modelica");
-				standardLibraryPackages = libs; 
+	public String[] getStandardLibrary() throws ConnectException {
+		if (!systemLibraryLoaded) {
+			if (standardLibraryPackages == null) {
+				standardLibraryPackages = new ArrayList<String>();
+				standardLibraryPackages.add("Modelica"); 
 			}
-			for (Object lib : standardLibraryPackages)
-			{
-				sendExpression("loadModel("+(String)lib+")", true);
 
-			}
+			sendExpression("loadModel(Modelica)", true);
 
 			systemLibraryLoaded = true;
 		}
 
-		return (String[]) standardLibraryPackages.toArray(new String[standardLibraryPackages.size()]);
+		String[] arr = standardLibraryPackages.toArray(new String[0]);
+
+		return arr;
 	}
 
 	/**
