@@ -46,6 +46,7 @@ import java.util.Collection;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -62,50 +63,46 @@ import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 /**
- * Superclass of all modelica class/package representation, collects 
+ * Superclass of all modelica class/package representation, collects
  * generic package handling code.
- * 
+ *
  * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
  * @author Elmir Jagudin
  * @author Andreas Remar
  * @author Kent Beck
  */
-abstract public class ModelicaClass extends ModelicaElement implements IModelicaClass
-{
+abstract public class ModelicaClass extends ModelicaElement implements IModelicaClass {
 	/**
-	 * The namespace where this class is defined or null if 
+	 * The namespace where this class is defined or null if
 	 * defined in top-level namespace
 	 */
 	protected IModelicaClass parentNamespace;
-	
+
 	/**
 	 * the short name of this class
 	 */
 	protected String name;
-	
+
 	/**
 	 * the fully qualified name of this class e.g. foo.bar.hej
 	 */
 	protected String fullName;
 
-	/*
-	 * the file where this class is defined, 
-	 * can be null if it is unknown
-	 * when the container is unknow the class is assumed to 
-	 * be external e.g. defined in system library
-	 */
+	// the file where this class is defined,
+	// can be null if it is unknown
+	// when the container is unknown the class is assumed to
+	// be external e.g. defined in system library
 	private IFile container;
 
-	/* class attributes (type of restriction, encapsulated status, etc) */
+	// class attributes (type of restriction, encapsulated status, etc)
 	private IClassInfo classAttributes = null;
-	
+
 	private IDefinitionLocation fLocation = null;
-	
+
 	private Restriction fRestriction = null;
 
-	
-	public ModelicaClass(IModelicaElement parent, Restriction restriction, IDefinitionLocation location)
-	{
+
+	public ModelicaClass(IModelicaElement parent, Restriction restriction, IDefinitionLocation location) {
 		super(parent);
 		fLocation = location;
 		fRestriction = restriction;
@@ -114,130 +111,146 @@ abstract public class ModelicaClass extends ModelicaElement implements IModelica
 	/**
 	 * calculate the base name of this package
 	 */
-	protected void setFullName()
-	{
-		if (parentNamespace == null)
-		{
-			/*
-			 * special case for packages that are direct children of
-			 * the root package
-			 */
+	protected void setFullName() {
+		if (parentNamespace == null) {
+			// special case for packages that are direct children of the root package
 			fullName = name;
 		}
-		else /* general case */
-		{
+		else { // general case
 			fullName = parentNamespace.getFullName() + "." + name;
 		}
 	}
-	
-	public String getPrefix()
-	{
-		if (parentNamespace == null)
-		{
-			return "";
+
+	@Override
+	public String getPrefix() {
+		String prefix = "";
+
+		if (parentNamespace != null) {
+			prefix = parentNamespace.getFullName();
 		}
-		return parentNamespace.getFullName();
+
+		return prefix;
 	}
 
-	public String getElementName() 
-	{
+	@Override
+	public String getElementName() {
 		return name;
 	}
 
-	public String getFullName() 
-	{
+	@Override
+	public String getFullName() {
 		return fullName;
 	}
-	
-	public IResource getResource() 
-	{
-		if (container == null)
-		{
+
+	@Override
+	public IResource getResource() {
+		if (container == null) {
 			IPath p = null;
-			try
-			{
-				p = new Path(getFilePath());
+
+			try {
+				String filePath = getFilePath();
+				p = new Path(filePath);
 			}
-			catch(Exception e)
-			{
+			catch(Exception e) {
 				ErrorManager.logError(e);
 			}
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			if (p == null) /* no joy */
-			{
+
+			if (p == null) { // no joy
 				return null;
 			}
-			IFile f = workspace.getRoot().getFileForLocation(p);
-			container = f;
+
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot workspaceRoot = workspace.getRoot();
+			container = workspaceRoot.getFileForLocation(p);
 		}
+
 		return container;
 	}
-	
 
-	public IModelicaClass getParentNamespace() 
-	{
+	@Override
+	public IModelicaClass getParentNamespace() {
 		return parentNamespace;
 	}
-		
+
 	/**
 	 * handles the lazyloading of class attributes
 	 */
-	protected IClassInfo getAttributes() 
-		throws CompilerInstantiationException, ConnectException,
-			UnexpectedReplyException, CoreException, InvocationError 
-	{
-		if (classAttributes == null)
-		{
+	protected IClassInfo getAttributes()
+		throws CompilerInstantiationException, ConnectException, UnexpectedReplyException, CoreException, InvocationError {
+		if (classAttributes == null) {
 			classAttributes = CompilerProxy.getClassInfo(fullName);
 		}
+
 		return classAttributes;
 	}
 
-	public IDefinitionLocation getLocation()
-		throws ConnectException, UnexpectedReplyException, 
-			InvocationError, CoreException, CompilerInstantiationException
-	{
-		if (fLocation != null) return fLocation;
-		return getAttributes().getDefinitionLocation();
-	}
-	
 	@Override
-	public String getFilePath() 
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException
-	{
-		return getAttributes().getDefinitionLocation().getPath();
+	public IDefinitionLocation getLocation()
+			throws ConnectException, UnexpectedReplyException, InvocationError, CoreException, CompilerInstantiationException {
+		IDefinitionLocation location = null;
+
+		if (fLocation != null) {
+			location = fLocation;
+		}
+		else {
+			IClassInfo classInfo = getAttributes();
+			location = classInfo.getDefinitionLocation();
+		}
+
+		return location;
 	}
-	
-	public Restriction getRestriction() 
-		throws ConnectException, CompilerInstantiationException,
-			UnexpectedReplyException, CoreException, InvocationError
-	{
-		if (fRestriction != null) return fRestriction;
-		return getAttributes().getRestriction();
+
+	@Override
+	public String getFilePath()
+		throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
+		IClassInfo classInfo = getAttributes();
+		IDefinitionLocation location = classInfo.getDefinitionLocation();
+		String path = location.getPath();
+
+		return path;
 	}
-	
+
+	@Override
+	public Restriction getRestriction()
+		throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, CoreException, InvocationError {
+		Restriction restriction = null;
+
+		if (fRestriction != null) {
+			restriction = fRestriction;
+		}
+		else {
+			IClassInfo classInfo = getAttributes();
+			restriction = classInfo.getRestriction();
+		}
+
+		return restriction;
+	}
+
+	@Override
 	public boolean isEncapsulated()
-		throws CompilerInstantiationException, ConnectException, 
-			UnexpectedReplyException, CoreException, InvocationError 
-	{
-		return getAttributes().getEncapsulated();
+		throws CompilerInstantiationException, ConnectException, UnexpectedReplyException, CoreException, InvocationError {
+		IClassInfo classInfo = getAttributes();
+		boolean isEncapsulated = classInfo.getEncapsulated();
+
+		return isEncapsulated;
 	}
 
 	@Override
 	public Collection<IModelicaElementChange> reload()
-		throws ConnectException, UnexpectedReplyException, InvocationError,
-			CompilerInstantiationException, CoreException 
-	{
+		throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
 		classAttributes = null;
-		return super.reload();
+
+		Collection<IModelicaElementChange> ret = super.reload();
+
+		return ret;
 	}
 
-	public String getDocumentation() 
-	throws ConnectException, InvocationError, UnexpectedReplyException,
-	CompilerInstantiationException, CoreException
-	{
-		return getAttributes().getDocumentation();
-	}
+	@Override
+	public String getDocumentation()
+			throws ConnectException, InvocationError, UnexpectedReplyException, CompilerInstantiationException, CoreException {
+		IClassInfo classInfo = getAttributes();
+		String documentation = classInfo.getDocumentation();
 
+		return documentation;
+	}
 }

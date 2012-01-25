@@ -52,7 +52,7 @@ import org.modelica.mdt.core.IModelicaClass.Restriction;
 
 /**
  * The interface to a modelica compiler.
- * 
+ *
  *  This interface must be implemented by the extender of the
  *  org.modelica.mdt.compiler point. This defines the methods used to
  *  access the modelica compiler by the MDT core plugin.
@@ -60,21 +60,21 @@ import org.modelica.mdt.core.IModelicaClass.Restriction;
 public interface IModelicaCompiler
 {
 	/**
-	 * @return symbolic name of the compiler suitable for end user consumtion
+	 * @return symbolic name of the compiler suitable for end user consumption
 	 */
 	public String getCompilerName();
 
 	/**
-	 * Load the modelica source file into the internal database. 
-	 * 
-	 * The file must be parsed before it is stored into the database. 
-	 * The file may contain syntax and other errors that are discoverd while
+	 * Load the modelica source file into the internal database.
+	 *
+	 * The file must be parsed before it is stored into the database.
+	 * The file may contain syntax and other errors that are discovered while
 	 * it is parsed. The compiler must make the best effort to parse as much
 	 * as possible even if errors are discovered. Compiler should return both
-	 * parse errors and the contens of the file.
-	 * 
+	 * parse errors and the contents of the file.
+	 *
 	 * @param file the modelica source code file to load
-	 * @return the modelica elemenats and parsing errors found in the file
+	 * @return the modelica elements and parsing errors found in the file
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */
@@ -83,7 +83,7 @@ public interface IModelicaCompiler
 
 	/**
 	 * Fetches the list of name of subclasses in a given class
-	 * 
+	 *
 	 * @param className the name of the class where to look for subclasses
 	 * @return the list of the names of subclasses
 	 */
@@ -92,15 +92,15 @@ public interface IModelicaCompiler
 
 	/**
 	 * Fetches the information on the elements of a class. Elements in
-	 * a class are subclasses, components, import statments etc.
+	 * a class are subclasses, components, import statements etc.
 	 */
 	public Collection<ElementInfo> getElements(String className)
 			throws ConnectException, InvocationError, UnexpectedReplyException;
 
 	/**
-	 * Fetches the location of the definition of the class in the 
-	 * source code file. 
-	 * 
+	 * Fetches the location of the definition of the class in the
+	 * source code file.
+	 *
 	 * @param className the name of the class to fetch the location of
 	 * @return the line number and the file path where the class is defined
 	 */
@@ -109,57 +109,57 @@ public interface IModelicaCompiler
 
 	/**
 	 * Fetches the restriction type of the class.
-	 * 
+	 *
 	 * @param className the name of the class to fetch restriction type of
 	 * @return the restriction type of the class
-	 * @throws UnexpectedReplyException 
+	 * @throws UnexpectedReplyException
 	 */
 	public Restriction getRestriction(String className)
 			throws ConnectException, UnexpectedReplyException;
 	/**
 	 * The method returns a list of top level packages in the standard library.
-	 * 
+	 *
 	 * @return the list of names of top-level packages in the standard library
 	 * @throws ConnectException
-	 */	
+	 */
 	public String[] getStandardLibrary() throws ConnectException;
 
 	/**
-	 * Fetches information about a class, such as encapusulated status,
+	 * Fetches information about a class, such as encapsulated status,
 	 * class definition location and so on.
-	 * 
+	 *
 	 * @param className the full name of the class to fetch info on
 	 */
-	public IClassInfo getClassInfo(String className) 
+	public IClassInfo getClassInfo(String className)
 		throws ConnectException, UnexpectedReplyException;
-	
+
 	/**
-	 * Fetches the listing of a class	 
-	 *  
+	 * Fetches the listing of a class
+	 *
 	 * @param className the full name of the class get the string for
 	 */
-	public ICompilerResult getClassString(String className) 
-		throws ConnectException, UnexpectedReplyException;	
-	
+	public ICompilerResult getClassString(String className)
+		throws ConnectException, UnexpectedReplyException;
+
 	/**
-	 * Sends a command to the compiler and gets the result string	 
-	 *  
+	 * Sends a command to the compiler and gets the result string
+	 *
 	 * @param command
 	 */
-	public ICompilerResult sendExpression(String command, boolean showInConsole) 
-		throws ConnectException, UnexpectedReplyException;	
+	public ICompilerResult sendExpression(String command, boolean showInConsole)
+		throws ConnectException, UnexpectedReplyException;
 
 	/**
 	 * @author Adrian Pop
-	 * query if the OpenModelica compiler is running in the background.	 
+	 * query if the OpenModelica compiler is running in the background.
 	 * @return <code>true</code> if the compiler is running.
 	 */
-	public boolean isRunning();	
+	public boolean isRunning();
 
 	/**
 	 * @author Adrian Pop
-	 * set the output console from the UI thread to print debug messages to it. 
-	 * 
-	 */	
-	public void setConsoleOutputStream(OutputStream outputStream);	
+	 * set the output console from the UI thread to print debug messages to it.
+	 *
+	 */
+	public void setConsoleOutputStream(OutputStream outputStream);
 }
