@@ -37,6 +37,7 @@ import org.eclipse.gmt.modisco.infra.query.core.exception.ModelQueryExecutionExc
 import org.eclipse.gmt.modisco.infra.query.core.java.IJavaModelQuery;
 import org.eclipse.gmt.modisco.infra.query.core.java.ParameterValueList;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -49,6 +50,11 @@ public class GetNamedElementLabel implements IJavaModelQuery<NamedElement, Strin
 	 */
 	public String evaluate(final NamedElement context, final ParameterValueList parameterValues)
 			throws ModelQueryExecutionException {
+		
+		if (context.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+			return (String) context.getValue(context.getAppliedStereotype(Constants.stereotypeQName_Requirement), Constants.propertyName_id) + " - " + context.getName();
+		}
+		
 		return context.getName();
 	}
 }
