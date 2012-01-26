@@ -31,7 +31,6 @@ public class VerificationModelComponentsCombination {
 	private Element systemModel;
 
 
-
 	/*
 	 * All required models that are referenced (directly or indirectly) by the selected system model 
 	 */

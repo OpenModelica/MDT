@@ -102,7 +102,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 			// collect test cases
 			VerificationScenariosCollector tsc = new VerificationScenariosCollector(containingClass.getModel());
 			tsc.setSelectedReq(selectedRequirements);
-			tsc.collectTestCasesFromModel(true);
+			tsc.collectScenariosFromModel(true);
 			
 			// if there are test scenarios at all -> open dialog
 			if (tsc.getAllTS().size() > 0 ) {

@@ -14,12 +14,12 @@ import org.openmodelica.modelicaml.common.services.ElementsCollector;
 public class VerificationScenariosDataCollector extends ElementsCollector {
 
 	// stereotypes qualified names
-	private static final String testScenarioStereotypeQName = Constants.stereotypeQName_VerificationScenario;
+	private static final String scenarioStereotypeQName = Constants.stereotypeQName_VerificationScenario;
 	private static final String requiresStereotypeQName = Constants.stereotypeQName_Requires;
 	private static final String requiredForStereotypeQName = Constants.stereotypeQName_RequiredFor;
 	
-	// all test scenarios found.
-	private HashSet<Element> allTestScenarios = new HashSet<Element>();
+	// all scenarios found.
+	private HashSet<Element> allScenarios = new HashSet<Element>();
 	
 	// all models that should always be instantiated in addition
 	private HashSet<Element> alwaysInclude = new HashSet<Element>();
@@ -32,8 +32,8 @@ public class VerificationScenariosDataCollector extends ElementsCollector {
 		// collect elements
 		collectElementsFromModel(umlRootElement, null);
 		
-		// add test scenarios
-		allTestScenarios.addAll(getElements());
+		// add scenarios
+		allScenarios.addAll(getElements());
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class VerificationScenariosDataCollector extends ElementsCollector {
 		// collect elements
 		// avoid duplicates that can occur due to the multiple imports of the same elements
 		if (element instanceof Class 
-				&& ((Element)element).getAppliedStereotype(testScenarioStereotypeQName) != null
+				&& ((Element)element).getAppliedStereotype(scenarioStereotypeQName) != null
 				&& !elements.contains(element)) {
 			
 			elements.add(element) ;
@@ -120,8 +120,8 @@ public class VerificationScenariosDataCollector extends ElementsCollector {
 	}
 	
 	// GETTER *********************************************************************
-	public HashSet<Element> getAllTestScenarios() {
-		return allTestScenarios;
+	public HashSet<Element> getAllScenarios() {
+		return allScenarios;
 	}
 	
 	public HashSet<Element> getAlwaysInclude() {

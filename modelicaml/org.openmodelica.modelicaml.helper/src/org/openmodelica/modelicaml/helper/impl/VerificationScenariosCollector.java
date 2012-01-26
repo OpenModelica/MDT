@@ -54,7 +54,7 @@ public class VerificationScenariosCollector {
 		this.umlRoolModel = model;
 	}
 	
-	public boolean collectTestCasesFromModel(Boolean sortData){
+	public boolean collectScenariosFromModel(Boolean sortData){
 		// clear the list in order to enable multiple calls of this method in the the same object
 		this.allTS.clear();
 		this.alwaysInclude.clear();
@@ -66,7 +66,7 @@ public class VerificationScenariosCollector {
 			VerificationScenariosDataCollector ec = new VerificationScenariosDataCollector(umlRoolModel);
 			
 //			this.allTS.addAll(ec.getElements());
-			this.allTS.addAll(ec.getAllTestScenarios());
+			this.allTS.addAll(ec.getAllScenarios());
 			this.alwaysInclude.addAll(ec.getAlwaysInclude());
 			this.modelToItsRequiredModels.putAll(ec.getModelToItsRequiredModels());
 			
@@ -91,7 +91,7 @@ public class VerificationScenariosCollector {
 			VerificationScenariosDataCollector ec = new VerificationScenariosDataCollector((EObject) rootPackage);
 
 //			this.allTS.addAll(ec.getElements());
-			this.allTS.addAll(ec.getAllTestScenarios());
+			this.allTS.addAll(ec.getAllScenarios());
 			this.alwaysInclude.addAll(ec.getAlwaysInclude());
 			this.modelToItsRequiredModels.putAll(ec.getModelToItsRequiredModels());
 			

@@ -159,7 +159,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		requirementsDiscarded.clear();
 	}
 	
-	private void createCombinationsForSimulationModels(){
+	public void createCombinationsForSimulationModels(){
 		monitorText1 = "Collecting data ...";
 		monitorText2 = "Analyzing combinations ...";
 		
@@ -173,7 +173,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				tsc = new VerificationScenariosCollector();
 				tsc.collectTestCasesFromPackage((Package) testScenariosPackage, true);
 				if (tsc.getAllTS().size() == 0) {
-					String message = "INFO: No test scenarios were found.";
+					String message = "INFO: No verification scenarios were found.";
 					addToLog(message);
 				}
 
