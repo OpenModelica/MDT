@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Traceability
+Bundle-SymbolicName: org.openmodelica.modelicaml.traceability; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openmodelica.modelicaml.traceability.Activator
+Bundle-Vendor: OpenModelica Project
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources;bundle-version="3.6.1",
+ org.openmodelica.modelicaml.common;bundle-version="1.0.1",
+ org.eclipse.papyrus.resource;bundle-version="0.7.4",
+ org.eclipse.uml2.uml;bundle-version="3.1.2",
+ org.eclipse.papyrus.core,
+ org.eclipse.papyrus.modelexplorer;bundle-version="0.7.4",
+ org.eclipse.ui.navigator;bundle-version="3.5.0",
+ org.openmodelica.modelicaml.helper;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.papyrus.resource.uml
