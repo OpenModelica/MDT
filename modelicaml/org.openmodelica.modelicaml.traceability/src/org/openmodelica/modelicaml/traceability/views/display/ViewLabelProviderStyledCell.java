@@ -71,7 +71,8 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
-	private final ImageDescriptor okStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/ok_st_obj.gif");
+	private final ImageDescriptor okStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/success_ovr.gif");
+	private final ImageDescriptor questionStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/question_ov.gif");
 //	private final ImageDescriptor infoImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	
 	DecorationOverlayIcon overlayIcon = null;
@@ -217,6 +218,15 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		}
 	}
 	
+	private boolean isRoot(TreeParent treeParent){
+		//get the parent: if it is the invisible root node then it will not have a parent ... 
+		if (treeParent.getParent() != null && treeParent.getParent().getParent() == null) {
+			return true;
+		}
+		return false;
+	}
+
+	
 	private Image decorateImage(Object element, String imagePath, Image image) {
 
 		if (element instanceof TreeParent) {
@@ -230,30 +240,47 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			
 			if ( imageToBeUsed != null) {
 
-				if (decorateItem) { // only if this decorate option is enabled
-					// errors
+				if (decorateItem) { 
 					
-					if (element instanceof RequirementItem) {
-						if (!((RequirementItem)element).isValid()) {
+					if (isRoot((TreeParent) element) && hasErrosInItsChildren((TreeParent) element)) {
+						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
+						return overlayIcon.createImage();
+					}
+					
+					else if (element instanceof RequirementItem) {
+
+						// if this is a not analyzed requirement
+						if (((RequirementItem)element).isUnknown()) {
+							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, questionStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
+							return overlayIcon.createImage();
+						}
+						// not a valid requirement because it has unsatisfied clients
+						else if (!((RequirementItem)element).isValid()) {
 							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
 							return overlayIcon.createImage();
 						}
-//						else{
-//							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, okStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
-//							return overlayIcon.createImage();
-//							
-//						}
+						else{
+							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, okStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
+							return overlayIcon.createImage();
+							
+						}
 					}
 					else if (element instanceof ScenarioItem) {
+						// not valid because it was discarded since it does not have appropriate providers
 						if (!((ScenarioItem)element).isValid()) {
 							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
 							return overlayIcon.createImage();
 						}
-//						else{
-//							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, okStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
-//							return overlayIcon.createImage();
-//							
-//						}
+						// if there are requirements with unsatisfied clients
+						else if (hasErrosInItsChildren((TreeParent) element)) {
+							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
+							return overlayIcon.createImage();
+						}
+						else{
+							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, okStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
+							return overlayIcon.createImage();
+							
+						}
 						
 					}
 					else if (element instanceof ClientItem) {
@@ -261,12 +288,11 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
 							return overlayIcon.createImage();
 						}
-//						else{
-//							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, okStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
-//							return overlayIcon.createImage();
-//							
-//						}
-						
+						else{
+							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, okStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
+							return overlayIcon.createImage();
+							
+						}
 					}
 					else if (hasErrosInItsChildren((TreeParent) element)) {
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
@@ -287,13 +313,13 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 
 	
 	public boolean hasErrosInItsChildren(TreeParent treeParent){
-		if (findSubComponentMarkers(treeParent).size() > 0 ) {
+		if (findChildrenErrors(treeParent).size() > 0 ) {
 			return true;
 		}
 		return false;
 	}
 	
-	public HashSet<TreeObject> findSubComponentMarkers(TreeObject item){
+	public HashSet<TreeObject> findChildrenErrors(TreeObject item){
 		HashSet<TreeObject> list = new HashSet<TreeObject>();
 		
 		// check the item itself
@@ -312,7 +338,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 				}
 				// recursive call
 				else {
-					list.addAll(findSubComponentMarkers( (TreeParent)children[i] ));	
+					list.addAll(findChildrenErrors( (TreeParent)children[i] ));	
 				}
 			}
 		}

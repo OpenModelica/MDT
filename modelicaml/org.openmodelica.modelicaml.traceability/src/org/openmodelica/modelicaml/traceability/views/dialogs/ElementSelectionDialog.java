@@ -42,6 +42,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.swt.SWT;
@@ -254,11 +255,19 @@ public class ElementSelectionDialog extends Dialog {
 				
 				if (selectedElement instanceof NamedElement) {
 					
+					Object[] expandedElements = viewer.getExpandedElements();
+					TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+
 					// Trigger the treeBuilder
 					treeBuilder.initialize((NamedElement) selectedElement);
 					treeBuilder.showTree(treeRoot, mode);
-					
 					viewer.refresh();
+					
+					viewer.setExpandedElements(expandedElements);
+					viewer.setExpandedTreePaths(expandedTreePaths);
+
+					viewer.expandToLevel(2);
+					
 					sShell.dispose();
 				}
 			}

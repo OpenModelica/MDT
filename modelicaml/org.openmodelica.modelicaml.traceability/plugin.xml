@@ -5,24 +5,12 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Traceability"
+            name="Bindings Traceability"
             icon="icons/links_view.gif"
             category="org.openmodelica.modelicaml.gen.modelica.category1"
             class="org.openmodelica.modelicaml.traceability.views.TraceabilityView"
             id="org.openmodelica.modelicaml.traceability.views.TraceabilityView">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               ratio="0.5"
-               relative="org.eclipse.ui.views.TaskList"
-               relationship="right"
-               id="org.openmodelica.modelicaml.traceability.views.TraceabilityView">
-         </view>
-      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.help.contexts">

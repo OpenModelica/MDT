@@ -10,8 +10,6 @@ public class TreeObject implements IAdaptable{
 	
 	private String name = "";
 	private TreeParent parent = null;
-	
-	private String qName = "";
 
 	private Element umlElement = null;
 	
@@ -45,21 +43,11 @@ public class TreeObject implements IAdaptable{
 	}
 	
 	
-	// Getters
-	public String getQName() {
-		return qName;
-	}
-	public void setQName(String qName) {
-		this.qName = qName;
-	}
-	
-	
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof TreeObject) {
 			TreeObject item = (TreeObject) obj;
-			if (item.getQName().equals(this.getQName())) {
+			if (item.getUmlElement().equals(this.getUmlElement())) {
 				return true;
 			}
 		}
@@ -69,11 +57,11 @@ public class TreeObject implements IAdaptable{
 	
 	@Override
 	public int hashCode() {
-		int result = 0;
+		if (this.getUmlElement() != null) {
+			return this.getName().hashCode() + this.getUmlElement().hashCode();	
+		}
+		else return this.getName().hashCode();
 		
-		// get the name 
-		result = result + this.getName().hashCode() + this.getQName().hashCode();
-		return result;
 	}
 
 	public void setUmlElement(Element umlElement) {
@@ -84,4 +72,7 @@ public class TreeObject implements IAdaptable{
 		return umlElement;
 	}
 
+	
+	
+	
 }

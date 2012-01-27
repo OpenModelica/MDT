@@ -7,6 +7,7 @@ import org.openmodelica.modelicaml.helper.impl.VerificationModelComponentsCombin
 
 public class RequirementItem extends TreeParent {
 	private boolean isValid = false;
+	private boolean isUnknown = false;
 	private List<VerificationModelComponentsCombination> combinations = new ArrayList<VerificationModelComponentsCombination>();
 	
 	public RequirementItem(String name) {
@@ -23,6 +24,14 @@ public class RequirementItem extends TreeParent {
 
 	public boolean isValid() {
 		return isValid;
+	}
+
+	public void setUnknown(boolean isUnknown) {
+		this.isUnknown = isUnknown;
+	}
+
+	public boolean isUnknown() {
+		return isUnknown;
 	}
 
 }
