@@ -47,12 +47,27 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		this.valueBindingsPackage = valueMediatorsPackage;
 	}
 	
+
+
+	public VerificationModelsGenerator() {
+		super();
+	}
+	
 	/*
 	 * Possible combinations, each containing an initial set (1 system model, 1 test scenario  and n requirements) and 
 	 * all additional model that are required by any of the initial set models. 
 	 */
-	private HashMap<Element, VerificationModelComponentsCombination> tsToTestSimulationModelCombination = new HashMap<Element, VerificationModelComponentsCombination>();
+	private HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination = new HashMap<Element, VerificationModelComponentsCombination>();
 	
+	public HashMap<Element, VerificationModelComponentsCombination> getScenarioToVerificationModelCombination() {
+		return scenarioToVerificationModelCombination;
+	}
+
+	public void setScenarioToVerificationModelCombination(
+			HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination) {
+		this.scenarioToVerificationModelCombination = scenarioToVerificationModelCombination;
+	}
+
 	// the selected model to generate the simulation models for
 	private HashSet<Element> sourceModels = null;
 
@@ -66,7 +81,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	// the package to containing the value mediators to be used
 	private Element valueBindingsPackage = null;
 	
-	private VerificationScenariosCollector tsc;
+	private VerificationScenariosCollector vsc;
 
 	// all requirements that were collected from the specified requirements package
 	private HashSet<Element> allRequirements = new HashSet<Element>();
@@ -170,20 +185,20 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				Class systemModel = (Class) sourceModel;
 				
 				// find all test scenarios
-				tsc = new VerificationScenariosCollector();
-				tsc.collectTestCasesFromPackage((Package) testScenariosPackage, true);
-				if (tsc.getAllTS().size() == 0) {
+				vsc = new VerificationScenariosCollector();
+				vsc.collectTestCasesFromPackage((Package) testScenariosPackage, true);
+				if (vsc.getAllTS().size() == 0) {
 					String message = "INFO: No verification scenarios were found.";
 					addToLog(message);
 				}
 
-				for (Element testScenario : tsc.getAllTS() ) {
+				for (Element testScenario : vsc.getAllTS() ) {
 					if (testScenario instanceof Class) {
 						
 						Class testScenarioToBeUsed = (Class) testScenario;
 
 						// get requirements
-						HashSet<Element> reqList = tsc.getTsToReq().get(testScenarioToBeUsed);
+						HashSet<Element> reqList = vsc.getTsToReq().get(testScenarioToBeUsed);
 						HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
 						
 						if (reqList != null) {
@@ -206,11 +221,11 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 								testScenarioToBeUsed, 
 								requirementsToBeUsed,
 								(Package) valueBindingsPackage,
-								tsc.getAlwaysInclude(),
-								tsc.getModelToItsRequiredModels());
+								vsc.getAlwaysInclude(),
+								vsc.getModelToItsRequiredModels());
 						
 						// add to map
-						tsToTestSimulationModelCombination.put(testScenarioToBeUsed, tsmc);
+						scenarioToVerificationModelCombination.put(testScenarioToBeUsed, tsmc);
 						
 						// add to selected or discarded test scenarios
 						if (!tsmc.isDiscarded()) {
@@ -253,7 +268,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		String errorMessage = "No scenarios were found that can be used to stimulate the model " +
 				"'"+((NamedElement)sourceModel).getName()+"'.";
 
-		if (tsc.getAllTS().size() > 0) {
+		if (vsc.getAllTS().size() > 0) {
 			if (testScenariosToBeInstantiated.size() > 0) {
 				// Create test simulation models
 				createSimulationModels(sourceModel);
@@ -272,7 +287,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		MessageDialog.openError(shell, title, message);
 	}
 	
-	private void createSimulationModels(Element sourceModel){
+	public void createSimulationModels(Element sourceModel){
 		
 		/* GUI to show the collected and discarded test scenarios and requirements.
 		 * It should enable a selection of test scenarios and requirements to be finally instantiated. 
@@ -287,9 +302,9 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				requirementsToBeInstantiated, 
 				requirementsDiscarded, 
 				sourceModel,
-				tsc,
+				vsc,
 				getLog(),
-				tsToTestSimulationModelCombination);
+				scenarioToVerificationModelCombination);
 		
 		dialog.open();
 		
@@ -349,7 +364,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 
 						//************************************************************************************
 						// Get and adopt the data from the test scenario simulation model combination object
-						VerificationModelComponentsCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
+						VerificationModelComponentsCombination tsmc = scenarioToVerificationModelCombination.get(testScenario);
 						
 						//************************************************************************************
 						// Remove requirements that were unselected
@@ -617,7 +632,22 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		return userSelectedTestScenarios;
 	}
 	
+	public VerificationScenariosCollector getVsc() {
+		return vsc;
+	}
 
+	public void setVsc(VerificationScenariosCollector vsc) {
+		this.vsc = vsc;
+	}
+	
+	public Element getTargetPackage() {
+		return targetPackage;
+	}
+
+	public void setTargetPackage(Element targetPackage) {
+		this.targetPackage = targetPackage;
+	}
+	
 	
 	// The total sleep time
 	private static final int TOTAL_TIME = 100;
