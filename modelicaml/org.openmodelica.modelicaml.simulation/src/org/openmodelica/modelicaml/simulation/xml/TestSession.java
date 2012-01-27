@@ -2,6 +2,12 @@ package org.openmodelica.modelicaml.simulation.xml;
 
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author parham.vasaiely
+ *
+ * this class represents the test session containing a set of single test (verification) models. 
+ */
 public class TestSession {
 
 	public String packageFileRelativePath = "";
@@ -12,6 +18,11 @@ public class TestSession {
 		testModels = new ArrayList<TestModel>();
 	}
 	
+	/**
+	 * Internal class test model. A test model contains all parameters to configure a simulation
+	 * @author parham.vasaiely
+	 *
+	 */
 	public static class TestModel{
 		public String qualifiedName;
 		//simulationData

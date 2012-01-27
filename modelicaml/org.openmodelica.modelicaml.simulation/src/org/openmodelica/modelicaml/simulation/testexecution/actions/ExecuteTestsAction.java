@@ -1,7 +1,6 @@
 package org.openmodelica.modelicaml.simulation.testexecution.actions;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -9,8 +8,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -42,9 +39,12 @@ public class ExecuteTestsAction implements
 		}
 		
 		if (this.xmlFilePath != null) {
+			System.out.println(xmlFilePath);
 			
-			//START of the execution as a job. 
-			//TODO 20110924 change to dynamic path
+			//TODO 20110924 change to dynamic path!! Final is needed for Jobs (internal class)
+			final String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026/";
+
+			//START of the execution as a job.
 			
 			//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
 
@@ -54,11 +54,9 @@ public class ExecuteTestsAction implements
 
 						monitor.beginTask("Doing something timeconsuming here", 100);
 						{
-							String sessionFolderPath = "C:\\Projects\\ModelicaML\\runtime-New_configuration\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20111021101526\\";
-							
-							TestSession testSessionObj = TestSessionXML_Reader.readFromXML(sessionFolderPath + "test_session.xml");
+							TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
 							String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
-							File sessionFolder = new File(sessionFolderPath);
+							File sessionFolder = new File(pathToSession);
 							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, sessionFolder, omcTempWorkingFolder, testSessionObj);
 							if(omcMessage.isEmpty()){
 								
@@ -80,7 +78,6 @@ public class ExecuteTestsAction implements
 									e.printStackTrace();
 								}
 							}
-							ParseJavaScript.parseJSTemp_generateJSFile(sessionFolderPath);	
 						}
 						monitor.done();
 						return Status.OK_STATUS;
@@ -89,11 +86,21 @@ public class ExecuteTestsAction implements
 			job.setUser(true);
 			job.schedule();
 
-
-			
-
-			
 			//END of the execution as a job.
+			//START of the evaluation as a job.
+			Job job2 = new Job("Simulating and Evaluating Test Results") {
+				protected IStatus run(IProgressMonitor monitor) {
+
+						monitor.beginTask("Evaluating Simulation Results", 100);
+						{
+							ParseJavaScript.parseJSTemp_generateJSFile(pathToSession);
+						}
+						monitor.done();
+						return Status.OK_STATUS;
+					}
+			};
+			job2.setUser(true);
+			job2.schedule();
 			
 			// TODO: When finished -> run the update action 
 			// find the js-files path 
@@ -128,64 +135,64 @@ public class ExecuteTestsAction implements
 	}
 	
 	public static void main(String[] args) {
-		String sessionFolderPath = "C:\\Projects\\ModelicaML\\runtime-New_configuration\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20111021101526";
+		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026/";
 		
-//		TestSession testSessionObj = TestSessionXML_Reader.readFromXML(sessionFolderPath + "test_session.xml");
-//		String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
-//		File sessionFolder = new File(sessionFolderPath);
-////		File tempSimulationFolder = new File(sessionFolderPath);// + "tmp");
-////		tempSimulationFolder.mkdir();
-////		tempSimulationFolder.canWrite();
-//		String omcMessage =	ExecuteSimulation.executeAllModels(sessionFolder, omcTempWorkingFolder, testSessionObj);
-//		if(omcMessage.isEmpty()){
-//			
-//		}
-//		else
-//			System.out.println("OMC Message: /n" + omcMessage);
-//		
-//		for(TestModel model : testSessionObj.testModels){
-//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", sessionFolder + "/" + model.qualifiedName + ".exe");
-//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", sessionFolder + "/" + model.qualifiedName + "_init.xml");
-////			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
-//			try {
-//				SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}//done
-		
-		
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-		try {
-			dialog.run(true, true, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					monitor
-							.beginTask("Doing something timeconsuming here",
-									100);
-					for (int i = 0; i < 10; i++) {
-						if (monitor.isCanceled())
-							return;
-						monitor.subTask("I'm doing something here " + i);
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						// worked increates the monitor, the values is added to the existing ones
-						monitor.worked(1);
-					}
-					monitor.done();
-				}
-			});
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
+		String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
+		File sessionFolder = new File(pathToSession);
+//		File tempSimulationFolder = new File(sessionFolderPath);// + "tmp");
+//		tempSimulationFolder.mkdir();
+//		tempSimulationFolder.canWrite();
+		String omcMessage =	ExecuteSimulation.executeAllModels(null, sessionFolder, omcTempWorkingFolder, testSessionObj);
+		if(omcMessage.isEmpty()){
+			
 		}
+		else
+			System.out.println("OMC Message: /n" + omcMessage);
 		
-//		ParseJavaScript.parseJSTemp_generateJSFile(sessionFolderPath);	
+		for(TestModel model : testSessionObj.testModels){
+			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", sessionFolder + "/" + model.qualifiedName + ".exe");
+			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", sessionFolder + "/" + model.qualifiedName + "_init.xml");
+//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
+			try {
+				SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}//done
+		
+		
+//		ProgressMonitorDialog dialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+//		try {
+//			dialog.run(true, true, new IRunnableWithProgress() {
+//				@Override
+//				public void run(IProgressMonitor monitor) {
+//					monitor
+//							.beginTask("Doing something timeconsuming here",
+//									100);
+//					for (int i = 0; i < 10; i++) {
+//						if (monitor.isCanceled())
+//							return;
+//						monitor.subTask("I'm doing something here " + i);
+//						try {
+//							Thread.sleep(1000);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//						// worked increates the monitor, the values is added to the existing ones
+//						monitor.worked(1);
+//					}
+//					monitor.done();
+//				}
+//			});
+//		} catch (InvocationTargetException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+		
+		ParseJavaScript.parseJSTemp_generateJSFile(pathToSession);	
 	}
 }

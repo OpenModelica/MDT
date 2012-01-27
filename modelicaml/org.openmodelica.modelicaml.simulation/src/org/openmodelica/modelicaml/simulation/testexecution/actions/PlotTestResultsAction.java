@@ -27,6 +27,8 @@ public class PlotTestResultsAction implements
 		
 		if (this.xmlFilePath != null) {
 			// TODO: open a new Dialog with the plotting facilities
+			// TODO [20111209] use same as DialogMessageWithHTMLBrowser
+			// new Shell OpenModelica-1.8.0-revision-10584.exe
 		}
 	}
 

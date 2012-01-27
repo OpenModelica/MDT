@@ -172,15 +172,15 @@ public class EvaluateResultXML {
 //		File f2 = new File(p + "\\org.openmodelica.simulation.projects\\");
 //		System.out.println(f2.list()[0]);
 		
-		String projectPath = "C:\\Projects\\ModelicaML\\runtime-New_configuration\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20110924175101\\tmp\\ModelicaMLModel.GenSimModels_for__SPWS_Environment_1.SiM_for__ts2__Fill_tank_res.xml";
+		String pathToResultXML = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.xml";
 		
 //		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", projectPath);
-		String propertyName = "_reqTestVerdict.allRequirementsEvaluated";
+		String propertyName = "_reqVerificationVerdict.allRequirementsEvaluated";
 		
-		System.out.println(checkAtLeastOneTimeTrue(propertyName, new File(projectPath)));
-		System.out.println(checkAtLeastOneTimeFalse(propertyName, new File(projectPath)));
-		System.out.println(checkAlwaysTrue(propertyName, new File(projectPath)));
-		System.out.println(checkAlwaysFalse(propertyName, new File(projectPath)));
-		System.out.println(checkChangedItsValue(propertyName, new File(projectPath)));
+		System.out.println(checkAtLeastOneTimeTrue(propertyName, new File(pathToResultXML)));
+		System.out.println(checkAtLeastOneTimeFalse(propertyName, new File(pathToResultXML)));
+		System.out.println(checkAlwaysTrue(propertyName, new File(pathToResultXML)));
+		System.out.println(checkAlwaysFalse(propertyName, new File(pathToResultXML)));
+		System.out.println(checkChangedItsValue(propertyName, new File(pathToResultXML)));
 	}
 }

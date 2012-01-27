@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 
 public class UpdateTestExecutionReportDataAction implements
 		IWorkbenchWindowActionDelegate {
@@ -32,7 +33,7 @@ public class UpdateTestExecutionReportDataAction implements
 		if (this.path != null) {
 			// TODO find the report_data.js_template in the folder "/includes/", 
 			// replace all place holders and save(overwrite) the report_data.js 
-			
+			ParseJavaScript.parseJSTemp_generateJSFile(sessionFolderPath);	
 		}
 	}
 

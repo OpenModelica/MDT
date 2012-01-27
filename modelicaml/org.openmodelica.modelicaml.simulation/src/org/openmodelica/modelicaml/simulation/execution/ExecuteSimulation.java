@@ -2,7 +2,6 @@ package org.openmodelica.modelicaml.simulation.execution;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.openmodelica.modelicaml.simulation.filehandling.cp;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
@@ -42,7 +41,7 @@ public class ExecuteSimulation {
 		load(monitor, sessionFolder, omcc, testSessionObj, omcReturnString);
 		
 		
-		check_simulate(monitor, omcc, testSessionObj, omcReturnString);
+		check_and_simulate(monitor, omcc, testSessionObj, omcReturnString);
 		
 		omcc.quit();
 		
@@ -78,11 +77,11 @@ public class ExecuteSimulation {
 		
 	}
 
-	private static String check_simulate(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
+	private static String check_and_simulate(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
 
 		//Check Model
 		for(TestModel model : testSessionObj.testModels){
-			monitor.subTask("Simulating: " + model.qualifiedName);
+//			monitor.subTask("Simulating: " + model.qualifiedName); [20120127 TODO uncomment monitor]
 			omcReturnString =  omcc.checkModel(model.qualifiedName);
 			
 			if(!omcReturnString.toLowerCase().contains("successfully") || omcReturnString.toLowerCase().contains("failed")){
@@ -108,14 +107,14 @@ public class ExecuteSimulation {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String sessionFolderPath = "C:\\Projects\\ModelicaML\\runtime-New_configuration\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20110927133331\\";
+		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
 		
-		TestSession testSessionObj = TestSessionXML_Reader.readFromXML(sessionFolderPath + "test_session.xml");
+		TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
 		String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
-		File sessionFolder = new File(sessionFolderPath);
-		File tempSimulationFolder = new File(sessionFolderPath + "tmp");
-		tempSimulationFolder.mkdir();
-		tempSimulationFolder.canWrite();
+		File sessionFolder = new File(pathToSession);
+//		File tempSimulationFolder = new File(pathToSession + "tmp");
+//		tempSimulationFolder.mkdir();
+//		tempSimulationFolder.canWrite();
 		String omcMessage =	executeAllModels(null, sessionFolder, omcTempWorkingFolder, testSessionObj);
 		if(omcMessage.isEmpty()){
 			
@@ -124,9 +123,9 @@ public class ExecuteSimulation {
 			System.out.println("OMC Message: /n" + omcMessage);
 		
 		for(TestModel model : testSessionObj.testModels){
-			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", tempSimulationFolder + "/" + model.qualifiedName + ".exe");
-			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", tempSimulationFolder + "/" + model.qualifiedName + "_init.xml");
-			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
+			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", pathToSession + "/" + model.qualifiedName + ".exe");
+			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", pathToSession + "/" + model.qualifiedName + "_init.xml");
+			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", pathToSession + "/" + model.qualifiedName + "_res.plt");
 		}
 	}
 

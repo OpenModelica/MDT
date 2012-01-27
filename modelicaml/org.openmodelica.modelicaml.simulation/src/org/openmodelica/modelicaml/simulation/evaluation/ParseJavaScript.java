@@ -15,17 +15,16 @@ public class ParseJavaScript {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v26/test-gen/test-session_20111021101526";
+		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
 		//String result_xml_file = "C:\\Projects\\ModelicaML\\runtime-New_configuration\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20110927133331\\tmp\\ModelicaMLModel.GenSimModels_for__SPWS_Environment_6.SiM_for__ts2__Fill_tank_res.xml";
 		
 		parseJSTemp_generateJSFile(pathToSession);
 	}
 	
-	/**
-	 * Parses the JavaScript template file to generate a new JavaScript file including the evaluated results
-	 * @param result_xml_file result file including properties and results to be evaluated
-	 * @param pathToJSFiles path to the report-gen\includes folder
-	 */
+/**
+ * Parses the JavaScript template file to generate a new JavaScript file including the evaluated results
+ * @param pathToSession, path to the verification session folder
+ */
 	public static void parseJSTemp_generateJSFile(String pathToSession){
 		/** The raf. */
 		RandomAccessFile raf;
@@ -84,6 +83,14 @@ public class ParseJavaScript {
 		}
 	}
 
+	/**
+	 * One iteration block covers the evaluation of one single simulation model and it's result file. In the JavaScript file it starts with {$START} and ends with {$END}
+	 * @param fw is the report_data.js
+	 * @param raf is the "report_data.js_template"
+	 * @param result_xml_file Result XML file which needs to be evaluated
+	 * @return a String containing the last line of an iteration "{$END}" or ERROR if the iteration block is not marked by "{$END}"
+	 * @throws IOException
+	 */
 	private static String startIteration(Writer fw, RandomAccessFile raf, String result_xml_file) throws IOException{
 		boolean hasDataSet = true;
 		while(hasDataSet){
@@ -106,9 +113,15 @@ public class ParseJavaScript {
 				hasDataSet= false;
 			}
 		}
-		return "ERROR"; // this line should never been reached since the end of the file is marked by {$END}
+		return "ERROR"; // this line should never been reached since the end of an iteration (start-end) should marked by {$END}
 	}
 	
+	/**
+	 * This methods parses an line from the iteration block which needs to be evaluated!
+	 * @param line Line in an iteration block which needs to be evaluated.
+	 * @param result_xml_file Result XML file which needs to be evaluated.
+	 * @return String which contains the full evaluated line.
+	 */
 	private static String startEvaluation(String line, String result_xml_file) {
 		String evaluatedLine;
 		Scanner sc = new Scanner(line);

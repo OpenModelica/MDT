@@ -19,11 +19,11 @@ public class TestSessionXML_Reader {
 	//public static ArrayList<String> invalidDataLength = new ArrayList<String>();
 
 	/**
-	 * Reads a XML file, creates a ModelicaModel object and initializes it.
-	 * The XML file can be a "ModelInit.xml" or a "ModelConfig.xml"
+	 * Reads a XML file, creates a TestSession object and initializes it.
+	 * The XML file can be a "test_session.txt" or a "verification_session.txt"
 	 *
 	 * @param xml_file the xml_file
-	 * @return complete initialized ModelicaModel object
+	 * @return complete initialized TestSession object
 	 */
 	public static TestSession readFromXML(File xml_file) {
 		return createTestSession(xml_file);
@@ -31,18 +31,18 @@ public class TestSessionXML_Reader {
 	
 	
 	/**
-	 * Reads a XML file, creates a ModelicaModel object and initializes it.
-	 * The XML file can be a "ModelInit.xml" or a "ModelConfig.xml"
+	 * Reads a XML file, creates a TestSession object and initializes it.
+	 * The XML file can be a "test_session.txt" or a "verification_session.txt"
 	 *
 	 * @param xml_file_path the xml_file_path
-	 * @return complete initialized ModelicaModel object
+	 * @return complete initialized TestSession object
 	 */
 	public static TestSession readFromXML(String xml_file_path) {
 		return createTestSession(new File(xml_file_path));
 	}
 	
 	/**
-	 * Creates the project.
+	 * Creates the TestSession.
 	 *
 	 * @param xmlFile the xml file
 	 */
@@ -117,13 +117,15 @@ public class TestSessionXML_Reader {
 	 */
 	public static void main(String[] args) {
 		
-		String projectPath = "C:\\Projects\\ModelicaML\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20110913192709\\test_session.xml";
+		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026/";
 		
-		TestSession ts = readFromXML(projectPath);
+		String testSessionObj = (pathToSession + "verification_session.xml");
+		
+		
+		TestSession ts = readFromXML(testSessionObj);
 		System.out.println(ts.packageFileRelativePath);
 		for(TestModel tempModel : ts.testModels){
 			System.out.println(tempModel.qualifiedName + ", " + tempModel.start + ", " + tempModel.stop + ", " + tempModel.numberOfIntervals + ", " + tempModel.tolerance + ", " + tempModel.solver + ", " + tempModel.outputFormat);
 		}
 	}
-
 }
