@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
 import org.openmodelica.modelicaml.simulation.filehandling.cp;
@@ -20,6 +21,7 @@ import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_generator
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
 import org.openmodelica.modelicaml.simulation.xml.TestSessionXML_Reader;
+import org.openmodelica.simulation.core.simulationresult_txt_handling.Result_TXT_reader;
 
 public class ExecuteTestsAction implements
 		IWorkbenchWindowActionDelegate {
@@ -73,6 +75,7 @@ public class ExecuteTestsAction implements
 //								cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
 								try {
 									SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
+									Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(Result_TXT_reader.readResult(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();

@@ -2,6 +2,7 @@ package org.openmodelica.modelicaml.simulation.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -58,6 +59,9 @@ public class SimulationResult_XML_reader {
 		getResult(results, propertyName, eDataset);
 	}
 
+	/** Contains a number of simulation results Key: fullqualifiedname <Key: Time, Value: value>. */
+	private Map<String, Map<String, String>> simulationResultsAsString;
+	
 	private static void getResult(SimulationResult results, String propertyName, Element eDataset) {
 		int i = 0;
 		Elements eResults = eDataset.getChildElements();

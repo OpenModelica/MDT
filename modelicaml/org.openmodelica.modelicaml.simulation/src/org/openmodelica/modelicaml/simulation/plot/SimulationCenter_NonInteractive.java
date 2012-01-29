@@ -36,8 +36,6 @@ package org.openmodelica.modelicaml.simulation.plot;
 
 import java.util.Observer;
 
-import org.openmodelica.simulation.core.models.simulation.SimulationProject;
-import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
 import org.openmodelica.simulation.core.simulationdata.SimulationResultManager_NonInteractive;
 // TODO: Auto-generated Javadoc
 /**
@@ -49,8 +47,8 @@ import org.openmodelica.simulation.core.simulationdata.SimulationResultManager_N
  */
 public class SimulationCenter_NonInteractive{
 	
-    /** Path to the _res.xml file which is the result of a test simulation */
-	private String xmlResultFile;
+//    /** Path to the _res.xml file which is the result of a test simulation */
+//	private String xmlResultFile;
 	
 	/**
 	 * All properties which should display on plot
@@ -73,10 +71,10 @@ public class SimulationCenter_NonInteractive{
 	/**
 	 * Instantiates a new simulation center_ non interactive.
 	 */
-	public SimulationCenter_NonInteractive(String xmlResultFile){
-		this.xmlResultFile = xmlResultFile;
-		this.simulationResultManager = new SimulationResultManager_NonInteractive();
-	}
+//	public SimulationCenter_NonInteractive(String xmlResultFile){
+//		this.xmlResultFile = xmlResultFile;
+//		this.simulationResultManager = new SimulationResultManager_NonInteractive();
+//	}
 	
 	/*
 	 *************************************************************************

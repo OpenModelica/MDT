@@ -35,6 +35,8 @@
 package org.openmodelica.modelicaml.simulation;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.openmodelica.modelicaml.simulation.plot.SimulationCenter_NonInteractive;
+import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
 import org.osgi.framework.BundleContext;
 
 // TODO: Auto-generated Javadoc
@@ -43,6 +45,9 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin {
 
+	/** The simulation center_ non interactive. {@link SimulationCenter_NonInteractive} */
+	private static SimulationCenter_NonInteractive simulationCenter_NonInteractive = null;
+	
 	// The plug-in ID
 	/** The Constant PLUGIN_ID. */
 	public static final String PLUGIN_ID = "com.eadsiw.modelicaml.simulation"; //$NON-NLS-1$
@@ -82,6 +87,37 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	/**
+	 * Synchronized method.
+	 *
+	 * @return the used SimulationCenter_NonInteractive;
+	 */
+	public synchronized static SimulationCenter_NonInteractive getSimulationCenter_NonInteractive() {
+		if(simulationCenter_NonInteractive==null)
+			createSimulationCenter_NonInteractive();
+		
+		return simulationCenter_NonInteractive;
+	}
+	
+	/**
+	 * Some view/editor needs a SimulationCenter_Interactive at eclipse startup.
+	 */
+	private static void createSimulationCenter_NonInteractive(){
+		simulationCenter_NonInteractive = new SimulationCenter_NonInteractive();
+	}
+	
+	/**
+	 * It is not recommended to initialize this Object at eclipse start up
+	 * To a view/editor or other component which needs this kind of object can instantiate it.
+	 *
+	 * @param selectedSimulationSessionConfiguration the selected simulation session configuration
+	 */
+	public synchronized static void initSimulationCenter_NonInteractive(SimulationSessionConfiguration selectedSimulationSessionConfiguration) {
+		if(simulationCenter_NonInteractive==null){
+			createSimulationCenter_NonInteractive();
+		}
 	}
 
 }
