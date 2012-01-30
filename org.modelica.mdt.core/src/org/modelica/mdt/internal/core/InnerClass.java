@@ -244,7 +244,8 @@ public class InnerClass extends ModelicaClass {
 			}
 		}
 
-		for (final ElementInfo info : CompilerProxy.getElements(fullName)) {
+		Collection<ElementInfo> fullNameElements = CompilerProxy.getElements(fullName);
+		for (final ElementInfo info : fullNameElements) {
 			String elementType = info.getElementType();
 			IModelicaElement.Visibility vis;
 
@@ -392,60 +393,58 @@ public class InnerClass extends ModelicaClass {
 	@Override
 	public Collection<IModelicaElementChange> reload()
 			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
-		/*
-		 * the reload strategy is as follows:
-		 */
-
-		/*
-		 * all class attribute fields are just reset and
-		 * lazily reloaded as they are queried
-		 */
+		// The reload strategy is as follows:
+		// * all class attribute fields are just reset and
+		//   lazily reloaded as they are queried
+		// * new class component are fetched and compared to
+		//   the old in order to generate a change events list.
+		// * components that are not new or were removed are notified
+		//   of the change to give them a chance to update their state
 		super.reload();
-
-		/*
-		 * new class component are fetched and compared to
-		 * the old in order to generate a change events list.
-		 *
-		 * components that are not new or were removed are notified
-		 * of the change to give them a chance to update thier's state
-		 */
+		
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 
-		if (children == null) {
-			/* if children are not loaded, then we can't reload */
-			return changes;
-		}
+		// if children are not loaded, then we can't reload
+		if (children != null) {
+			Hashtable<String, IModelicaElement> newChildrenMap = loadElements();
 
-		Hashtable<String, IModelicaElement> newChildren = loadElements();
+			@SuppressWarnings("unchecked")
+			Hashtable<String, IModelicaElement> oldChildren = (Hashtable<String, IModelicaElement>)children.clone();
+			Collection<IModelicaElement> newChildren = newChildrenMap.values();
 
-		@SuppressWarnings("unchecked")
-		Hashtable<String, IModelicaElement> oldChildren = (Hashtable<String, IModelicaElement>)children.clone();
+			for (IModelicaElement element : newChildren) {
+				String elementName = element.getElementName();
+				ModelicaElement oldElement = (ModelicaElement)oldChildren.remove(elementName);
 
-		for (IModelicaElement element : newChildren.values()) {
-			ModelicaElement oldElement = (ModelicaElement)oldChildren.remove(element.getElementName());
-
-			if (oldElement == null) {
-				/* new element added */
-				children.put(element.getElementName(), element);
-				changes.add(new ModelicaElementChange(this, element, null));
-			}
-			else {
-				/* element present before, refresh ! */
-				// adrpo 2006-10-16
-				// - the IModelicaComponent doesn't have reload
-				//   so we have to set it here!
-				// - otherwise the image doesn't get updated
-				if (oldElement instanceof IModelicaComponent && element instanceof IModelicaComponent) {
-					((ModelicaComponent)oldElement).setModelicaComponent((ModelicaComponent)element);
+				if (oldElement == null) {
+					// new element added
+					ModelicaElementChange modelicaElementChange = new ModelicaElementChange(this, element, null); 
+					changes.add(modelicaElementChange);
 				}
-				changes.addAll(oldElement.reload());
+				else {
+					/* element present before, refresh ! */
+					// adrpo 2006-10-16
+					// - the IModelicaComponent doesn't have reload
+					//   so we have to set it here!
+					// - otherwise the image doesn't get updated
+					if (oldElement instanceof IModelicaComponent && element instanceof IModelicaComponent) {
+						((ModelicaComponent)oldElement).setModelicaComponent((ModelicaComponent)element);
+					}
+					
+					changes.addAll(oldElement.reload());
+				}
 			}
-		}
 
-		/* now there is only removed elements in the oldChildren table */
-		for (IModelicaElement element : oldChildren.values()) {
-			children.remove(element.getElementName());
-			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, null));
+			// now there is only removed elements in the oldChildren table
+			for (IModelicaElement element : oldChildren.values()) {
+				changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, null));
+			}
+
+			if (children.size() != newChildren.size()) {
+				ErrorManager.logBug("org.modelica.mdt.core", "Problem in InnerClass.reload(), children and newChildren don't have the same size.");
+			}
+
+			children = newChildrenMap;
 		}
 
 		return changes;
@@ -467,7 +466,7 @@ public class InnerClass extends ModelicaClass {
 		catch (Exception e) { 
 			ErrorManager.logError(e); 
 		}
-		
+
 		IFile f = null;
 
 		if (p != null) {
