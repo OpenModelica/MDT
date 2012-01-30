@@ -49,6 +49,8 @@ import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDelete;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakInsert;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecContinue;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecFinish;
@@ -58,6 +60,8 @@ import org.modelica.mdt.debug.gdb.core.mi.command.MIExecStep;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackInfoDepth;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackListFrames;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackSelectFrame;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakInsertInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakpoint;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIStackInfoDepthInfo;
@@ -97,7 +101,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	/**
 	 * Table mapping stack frames to current variables
 	 */
-	private List<GDBStackFrame> fGDBStackFrames = null;
+	public List<GDBStackFrame> fGDBStackFrames = null;
 	private GDBStackFrame fCurrentGDBStackFrame = null;
 	private final static int MAX_STACK_DEPTH = 100;
 	private Boolean fRefreshStackFrames = true;
@@ -107,6 +111,10 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	}
 	private ExecuteCommand fExecuteCommand = ExecuteCommand.EXECSTEP;
 	private int fLastStackDepth = 0;
+	/**
+	 * Needed to handle deletion of Catch.omc:1 breakpoint
+	 */
+	private int fCatchOMCBreakpoint = 0;
 	/**
 	 * Constructs a new thread for the given target
 	 * 
@@ -131,7 +139,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @return 
 	 * @return
 	 */
-	private synchronized MIFrame[] getStackFrames(int lowFrame, int highFrame) {
+	public synchronized MIFrame[] getStackFrames(int lowFrame, int highFrame) {
 		// TODO Auto-generated method stub
 		try {
 			// get the list of frames from GDB
@@ -159,7 +167,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @return
 	 * @throws CoreException 
 	 */
-	private MIFrame[] removeCStackFrames(MIFrame[] frames) throws CoreException {
+	public MIFrame[] removeCStackFrames(MIFrame[] frames) throws CoreException {
 		// TODO Auto-generated method stub
 		int removeCounter = 0;
 		List<MIFrame> miFramesList = new ArrayList<MIFrame>(Arrays.asList(frames));
@@ -365,7 +373,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	/**
 	 * @return
 	 */
-	private int getMaxStackDepth() {
+	public int getMaxStackDepth() {
 		// TODO Auto-generated method stub
 		return MAX_STACK_DEPTH;
 	}
@@ -373,7 +381,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	/**
 	 * @return
 	 */
-	private int getStackInfoDepth() {
+	public int getStackInfoDepth() {
 		// TODO Auto-generated method stub
 		int stackDepth = 0;
 		try {
@@ -607,6 +615,11 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			CommandFactory factory = miSession.getCommandFactory();
 			MIExecStep execStepCommand = factory.createMIExecStep();
 			try {
+				/*
+				 * Adeel 2012-01-27 15:23 Before doing a step we should add a breakpoint 
+				 * at Catch.omc:1 to handle MMC_THROW()
+				 */
+				insertCatchOMCBreakpoint();
 				miSession.postCommand(execStepCommand, null);
 				setExecuteCommand(ExecuteCommand.EXECSTEP);
 				MIInfo info = execStepCommand.getMIInfo();
@@ -637,6 +650,11 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
 			MIExecNext execNextCmd = factory.createMIExecNext();
 			try {
+				/*
+				 * Adeel 2012-01-27 15:23 Before doing a step we should add a breakpoint 
+				 * at Catch.omc:1 to handle MMC_THROW()
+				 */
+				insertCatchOMCBreakpoint();
 				getGDBDebugTarget().getMISession().postCommand(execNextCmd, null);
 				setExecuteCommand(ExecuteCommand.EXECNEXT);
 				MIInfo info = execNextCmd.getMIInfo();
@@ -898,5 +916,44 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	private void invalidateCurrentGDBStackFrame() {
 		// TODO Auto-generated method stub
 		fCurrentGDBStackFrame = null;
+	}
+	
+	/**
+	 * Inserts a breakpoint at Catch.omc:1 to handle MMC_THROW()
+	 * @throws MIException
+	 * @throws CoreException
+	 */
+	
+	public void insertCatchOMCBreakpoint() throws MIException, CoreException {
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakInsert breakInsertCmd = factory.createMIBreakInsert("Catch.omc:1");
+		breakInsertCmd.setQuiet(true);
+		miSession.postCommand(breakInsertCmd, null);
+		MIBreakInsertInfo breakInsertinfo = breakInsertCmd.getMIBreakInsertInfo();
+		if (breakInsertinfo == null) {
+			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+				MDTDebugCorePlugin.getResourceString("MDTLineBreakpoint.insertBreakPoint.BreakInsert.NoAnswer"), null));
+		}
+		// get the breakpoint number
+		if (breakInsertinfo.getMIBreakpoints().length > 0) {
+			// we only read the zero index result since -break-insert filename:linenumber only add one breakpoint
+			MIBreakpoint breakPoint = breakInsertinfo.getMIBreakpoints()[0]; 
+			fCatchOMCBreakpoint = breakPoint.getNumber();
+		}
+	}
+	
+	/**
+	 * Deletes the breakpoint at Catch.omc:1
+	 * @throws MIException 
+	 */
+	public void deleteCatchOMCBreakpoint() throws MIException {
+		if (fCatchOMCBreakpoint == 0)
+			return;
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakDelete breakDeleteCmd = factory.createMIBreakDelete(new int[]{fCatchOMCBreakpoint});
+		breakDeleteCmd.setQuiet(true);
+		miSession.postCommand(breakDeleteCmd, null);
 	}
 }

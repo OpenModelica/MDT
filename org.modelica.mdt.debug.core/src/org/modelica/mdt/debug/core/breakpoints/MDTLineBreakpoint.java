@@ -129,7 +129,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 	    MIBreakInsertInfo breakInsertinfo = breakInsertCmd.getMIBreakInsertInfo();
 		if (breakInsertinfo == null) {
 			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-				MDTDebugCorePlugin.getResourceString("MDTLineBreakpoint.removeBreakPoint.BreakInsert.NoAnswer"), null));
+				MDTDebugCorePlugin.getResourceString("MDTLineBreakpoint.insertBreakPoint.BreakInsert.NoAnswer"), null));
 		}
 		// get the breakpoint number
 		if (breakInsertinfo.getMIBreakpoints().length > 0) {
@@ -137,7 +137,6 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 			MIBreakpoint breakPoint = breakInsertinfo.getMIBreakpoints()[0]; 
 			setBreakPointNumber(breakPoint.getNumber());
 		}
-		breakInsertinfo.getMIBreakpoints();
     }
     
     /**
