@@ -91,7 +91,6 @@ public class VerificationModelComponentsCombination {
 	private HashMap<TreeParent, HashSet<TreeObject>> requiredClients_unsatisfied = new HashMap<TreeParent, HashSet<TreeObject>>();
 
 
-
 	/*
 	 *  Indicates if this combination is discarded.
 	 *  The combination should be discarded if not all mandatory clients of the system model are satisfied

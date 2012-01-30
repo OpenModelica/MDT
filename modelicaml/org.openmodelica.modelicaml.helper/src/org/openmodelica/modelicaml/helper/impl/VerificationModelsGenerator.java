@@ -48,7 +48,6 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	}
 	
 
-
 	public VerificationModelsGenerator() {
 		super();
 	}
@@ -58,15 +57,6 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	 * all additional model that are required by any of the initial set models. 
 	 */
 	private HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination = new HashMap<Element, VerificationModelComponentsCombination>();
-	
-	public HashMap<Element, VerificationModelComponentsCombination> getScenarioToVerificationModelCombination() {
-		return scenarioToVerificationModelCombination;
-	}
-
-	public void setScenarioToVerificationModelCombination(
-			HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination) {
-		this.scenarioToVerificationModelCombination = scenarioToVerificationModelCombination;
-	}
 
 	// the selected model to generate the simulation models for
 	private HashSet<Element> sourceModels = null;
@@ -330,20 +320,20 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 			
 				/*
-				 * NOTE: only test scenarios from user selection are taken into account.
+				 * NOTE: only scenarios from user selection are taken into account.
 				 * Any other combination that was prepared in advance is discarded.
 				 */
 				List<Element> userSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(userSelectedTestScenarios);
 				for (Element testScenario : userSelectedTestScenariosSorted) {
 					if (testScenario instanceof Classifier) {
 						
-						// create the test simulation model class
+						// create the verification (simulation) model class
 						String simulationModelName = Constants.simModelsNamePrefix + ((NamedElement)testScenario).getName();
 						Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
 						
 						/*
-						 *  Copy the simulation annotation values 
-						 *  from the TestScenario stereotype to the Simulation (or Test) stereotype 
+						 *  Copy the simulation settings 
+						 *  from the VerificationScenario stereotype to the Simulation (or VerificationModel) stereotype 
 						 */
 						Stereotype s_model = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Model);
 						Stereotype s_simulation = simulationModel.getApplicableStereotype(Constants.stereotypeQName_Simulation);
@@ -405,7 +395,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						
 						
 						//************************************************************************************
-						// add test scenario property
+						// add scenario property
 						Property p_testScenario = simulationModel.createOwnedAttribute(
 								Constants.verificationScenarioPropertyNamePrefix 
 								+ StringUtls.replaceSpecChar(((NamedElement)testScenario).getName().toLowerCase()), 
@@ -646,6 +636,15 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 
 	public void setTargetPackage(Element targetPackage) {
 		this.targetPackage = targetPackage;
+	}
+	
+	public HashMap<Element, VerificationModelComponentsCombination> getScenarioToVerificationModelCombination() {
+		return scenarioToVerificationModelCombination;
+	}
+
+	public void setScenarioToVerificationModelCombination(
+			HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination) {
+		this.scenarioToVerificationModelCombination = scenarioToVerificationModelCombination;
 	}
 	
 	
