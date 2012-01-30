@@ -102,7 +102,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	public static final String BUILDER_ID = "org.modelica.mdt.core.syntaxChecker";
 
 	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args, IProgressMonitor monitor) throws CoreException
 	{
 		switch(kind)
 		{
