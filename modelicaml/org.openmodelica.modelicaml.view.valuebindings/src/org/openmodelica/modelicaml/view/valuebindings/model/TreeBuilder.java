@@ -102,10 +102,10 @@ public class TreeBuilder {
 			addValueMediatorsUsedInInstantaitedClass(rootModelNode, dc);
 			
 			// add client perspective nodes
-			createClientPerspectiveNodes(treeRoot, dc);
+			createClientPerspectiveNodes(treeRoot, dc, " in " + name);
 			
 			// add provider perspective nodes
-			createProviderPerspectiveNodes(treeRoot, dc);
+			createProviderPerspectiveNodes(treeRoot, dc, " in "+ name );
 		}
 		else {
 			
@@ -257,10 +257,10 @@ public class TreeBuilder {
 			}
 
 			// add client perspective nodes
-			createClientPerspectiveNodes(treeRoot, null);
+			createClientPerspectiveNodes(treeRoot, null, "");
 			
 			// add provider perspective nodes
-			createProviderPerspectiveNodes(treeRoot, null);
+			createProviderPerspectiveNodes(treeRoot, null, "");
 			
 		}
 		else {
@@ -340,10 +340,10 @@ public class TreeBuilder {
 		}
 	}
 	
-	private void createClientPerspectiveNodes(TreeObject rootItem, ValueBindingsDataCollector dc){
+	private void createClientPerspectiveNodes(TreeObject rootItem, ValueBindingsDataCollector dc, String titlePostFix){
 		if (rootItem instanceof TreeParent) {
 			// add clients
-			TreeParent valueClientsTitle = new TreeParent(Constants.valueClientsNodeName);
+			TreeParent valueClientsTitle = new TreeParent(Constants.valueClientsNodeName + titlePostFix); 
 			valueClientsTitle.setReadOnly(true);
 			
 			((TreeParent)rootItem).addChild(valueClientsTitle);
@@ -363,10 +363,10 @@ public class TreeBuilder {
 		}
 	}
 	
-	private void createProviderPerspectiveNodes(TreeObject rootItem, ValueBindingsDataCollector dc){
+	private void createProviderPerspectiveNodes(TreeObject rootItem, ValueBindingsDataCollector dc, String titlePostFix){
 		if (rootItem instanceof TreeParent) {
 			// add providers
-			TreeParent valueProvidersTitle = new TreeParent(Constants.valueProvidersNodeName);
+			TreeParent valueProvidersTitle = new TreeParent(Constants.valueProvidersNodeName + titlePostFix);
 			valueProvidersTitle.setReadOnly(true);
 			
 			((TreeParent)rootItem).addChild(valueProvidersTitle);
@@ -506,7 +506,7 @@ public class TreeBuilder {
 					if (item.isValueProvider()) {
 						
 //						TreeParent valueClientsTitle = new TreeParent(Constants.valueClientsNodeName);
-						TreeParent valueClientsTitle = new TreeParent(Constants.potentialCalueClientsNodeName);
+						TreeParent valueClientsTitle = new TreeParent(Constants.potentialClientsNodeName);
 						
 						// no actions are allowed -> user should switch to mediator perspective for adding/deleting items
 						valueClientsTitle.setReadOnly(true);

@@ -139,14 +139,14 @@ public class TreeObject implements IAdaptable {
 	}
 
 	public boolean isValueClientsNode() {
-		if (getName().equals(Constants.valueClientsNodeName) || getName().equals(Constants.potentialCalueClientsNodeName)) {
+		if (getName().startsWith(Constants.valueClientsNodeName) || getName().equals(Constants.potentialClientsNodeName)) {
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isValueMediatorsNode() {
-		if (getName().equals(Constants.valueMediatorsNodeName)) {
+		if (getName().startsWith(Constants.valueMediatorsNodeName)) {
 			return true;
 		}
 		return false;
@@ -166,7 +166,7 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	public boolean isValueProvidersNode() {
-		if (getName().equals(Constants.valueProvidersNodeName)) {
+		if (getName().startsWith(Constants.valueProvidersNodeName)) {
 			return true;
 		}
 		return false;
