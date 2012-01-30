@@ -35,22 +35,26 @@
 package org.openmodelica.modelicaml.traceability.views.model;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
@@ -64,12 +68,14 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.helper.impl.VerificationModelComponentsCombination;
 import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.traceability.views.helper.ModelComposer;
 
 public class TreeBuilder implements IRunnableWithProgress{
 
-	private EList<TreeObject> treeItems = new BasicEList<TreeObject>(); // created tree clients
+	private List<TreeObject> treeItems = new ArrayList<TreeObject>(); // created tree clients
 
 	private NamedElement selectedElement;
 	private Element targetPackage;
@@ -81,6 +87,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 	private TreeParent reqTreeRoot;
 	private TreeParent scenTreeRoot;
+	
+	private UmlModel umlModel;
 	
 	private VerificationScenariosCollector vsc;
 
@@ -148,13 +156,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 		this.selectedElement = selectedElement;
 		
 		// get the uml model that is open in Papyrus.
-		UmlModel papyrusModel = UmlUtils.getUmlModel();
-		if (papyrusModel != null ) {
+		umlModel = UmlUtils.getUmlModel();
+		if (umlModel != null ) {
 			try {
-				targetPackage = (Element) papyrusModel.lookupRoot();
-				requirementsPackage = (Element) papyrusModel.lookupRoot();
-				scenariosPackage = (Element) papyrusModel.lookupRoot();
-				valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
+				targetPackage = (Element) umlModel.lookupRoot();
+				requirementsPackage = (Element) umlModel.lookupRoot();
+				scenariosPackage = (Element) umlModel.lookupRoot();
+				valueMediatorsPackage = (Element) umlModel.lookupRoot();
 				
 			} catch (NotFoundException e) {
 				e.printStackTrace();
@@ -287,6 +295,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			ScenarioItem scenarioItem = new ScenarioItem( scenario.getName() );
 			scenarioItem .setUmlElement(scenario);
 			scenarioItem .setValid(true);
+			treeItems.add(scenarioItem);
 			
 			parent.addChild(scenarioItem);
 			
@@ -302,6 +311,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			ScenarioItem scenarioItem = new ScenarioItem( scenario.getName() );
 			scenarioItem .setUmlElement(scenario);
 			scenarioItem .setValid(false);
+			treeItems.add(scenarioItem);
 			
 			parent.addChild(scenarioItem);
 			
@@ -324,6 +334,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 				
 				RequirementItem requirementItem = new RequirementItem (getRequirementName(requirement));
 				requirementItem.setUmlElement(requirement);
+				treeItems.add(requirementItem);
 				
 				if (requirementsWithUnsatisfiedClients.contains(requirement)) {
 					requirementItem.setValid(false);
@@ -335,6 +346,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 							ClientItem clientItem = new ClientItem(client.getDotPath() + " = ?");
 							clientItem.setUmlElement(client.getUmlElement());
 							clientItem.setValid(false);
+							treeItems.add(clientItem);
 							
 							requirementItem.addChild(clientItem);
 							
@@ -360,6 +372,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			RequirementItem reqItem = new RequirementItem( getRequirementName(req) );
 			reqItem.setUmlElement(req);
 			reqItem.setValid(true);
+			treeItems.add(reqItem);
 			
 			parent.addChild(reqItem);
 			
@@ -371,6 +384,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 						ScenarioItem scenarioItem = new ScenarioItem("Possible scenario: '" + ((NamedElement)scenario).getName() + "'");
 						scenarioItem.setUmlElement(scenario);
 						scenarioItem.setValid(true);
+						treeItems.add(scenarioItem);
+						
 						reqItem.addChild(scenarioItem);
 					}
 				}
@@ -385,6 +400,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			RequirementItem reqItem = new RequirementItem( getRequirementName(req)  );
 			reqItem.setUmlElement(req);
 			reqItem.setValid(false);
+			treeItems.add(reqItem);
 			
 			parent.addChild(reqItem);
 			
@@ -395,6 +411,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 					ClientItem clientItem = new ClientItem(client.getDotPath() + " = ?");
 					clientItem.setUmlElement(client.getUmlElement());
 					clientItem.setValid(false);
+					treeItems.add(clientItem);
 					
 					reqItem.addChild(clientItem);
 					
@@ -404,6 +421,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 						for (Element scenario : scenarios) {
 							ScenarioItem scenarioItem = new ScenarioItem("Unsatisfied with scenario '" + ((NamedElement)scenario).getName() + "'");
 							scenarioItem.setUmlElement(scenario);
+							treeItems.add(scenarioItem);
+							
 							clientItem.addChild(scenarioItem);
 						}
 					}
@@ -416,7 +435,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 		/*
 		 * Add the rest of requirement.
 		 * Note, these are requirements that are not linked with scenarios. 
-		 * So at this point we don't know the scenarios, any required additional models or unsatisfied clients.
 		 */
 		
 		HashSet<Element> restOfRequirements = new HashSet<Element>();
@@ -429,8 +447,42 @@ public class TreeBuilder implements IRunnableWithProgress{
 			
 			RequirementItem reqItem = new RequirementItem( req.getName() );
 			reqItem.setUmlElement(req);
-			reqItem.setValid(false);
-			reqItem.setUnknown(true);
+			treeItems.add(reqItem);
+			
+			List<Element> modelsToBeInstantiated = new ArrayList<Element>();
+			modelsToBeInstantiated.add(req);
+			
+			ModelComposer modelComposer = new ModelComposer(this.selectedElement, modelsToBeInstantiated, (Package) valueMediatorsPackage, targetPackage);
+			org.openmodelica.modelicaml.common.instantiation.TreeParent reqInstantiationItem = modelComposer.getModelToItsInstantiation().get(req);
+			
+			if (reqInstantiationItem != null) {
+				
+				boolean allMandClientsOK = modelComposer.areAllRequiredClientsSatisfied(modelComposer.getVirtualInstantiationTreeRoot(), reqInstantiationItem );
+				
+				// if not all mandatory clients are satisfied
+				if ( !allMandClientsOK) {
+					HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> unsatisfiedClients = modelComposer.getUnsatisfiedRequiredClients(req);
+					if (unsatisfiedClients != null && unsatisfiedClients.size() > 0) {
+						List<org.openmodelica.modelicaml.common.instantiation.TreeObject> sortedList = ModelicaMLServices.getSortedByDotPath(unsatisfiedClients);
+						for (org.openmodelica.modelicaml.common.instantiation.TreeObject unsatisfiedClient : sortedList) {
+							ClientItem clientItem = new ClientItem(unsatisfiedClient.getDotPath() + " = ?");
+							clientItem.setUmlElement(unsatisfiedClient.getUmlElement());
+							clientItem.setValid(false);
+							treeItems.add(clientItem);
+							
+							reqItem.addChild(clientItem);
+						}
+					}
+				}
+				// if there are no clients at all 
+				else if ( !(modelComposer.getClients(reqInstantiationItem).size() > 0) ) {
+					reqItem.setValid(false);
+					reqItem.setUnknown(true);
+				}
+				else {
+					reqItem.setValid(true);
+				}
+			}
 			
 			parent.addChild(reqItem);
 		}
@@ -492,6 +544,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	// ******************************************************************************************************************************
 	
 	public void clearAll(){
+		
 		treeItems.clear();
 		scenarioToVerificationModelCombination.clear();
 		requirementsAll.clear();
@@ -510,45 +563,68 @@ public class TreeBuilder implements IRunnableWithProgress{
 		this.log = "";
 	}
 	
-	private HashSet<TreeObject> getAllTreeItems(TreeParent treeParent){
-		
-		HashSet<TreeObject> allTreeItems = new HashSet<TreeObject>();
-		allTreeItems.add(treeParent);
-		
-		TreeObject[] children = treeParent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			allTreeItems.add(children[i]);
-			if (children[i] instanceof TreeParent) {
-				allTreeItems.addAll(getAllTreeItems((TreeParent)children[i]));
-			}
-		}
-		
-		return allTreeItems;
-	}
-
-
-//	private TreeObject findTreeItem(String qName){
-//		TreeObject foundObject = null;
+//	private HashSet<TreeObject> getAllItemsFromParent(TreeParent treeParent){
 //		
-//		// to avoid concurrent modifications
-//		ArrayList<TreeObject> items = new ArrayList<TreeObject>();
-//		items.addAll(treeItems);
+//		HashSet<TreeObject> allTreeItems = new HashSet<TreeObject>();
+//		allTreeItems.add(treeParent);
 //		
-//		for (TreeObject treeObject : items) {
-//			if (treeObject.getQName().equals(qName)) {
-//				foundObject = treeObject;
+//		TreeObject[] children = treeParent.getChildren();
+//		for (int i = 0; i < children.length; i++) {
+//			allTreeItems.add(children[i]);
+//			if (children[i] instanceof TreeParent) {
+//				allTreeItems.addAll(getAllItemsFromParent((TreeParent)children[i]));
 //			}
 //		}
-//		return foundObject;
+//		
+//		return allTreeItems;
 //	}
 
 
-	public EList<TreeObject> getTreeItems() {
+	public List<TreeObject> findTreeItems(Object[] viewerSelection){
+
+		List<TreeObject> foundTreeItems = new ArrayList<TreeObject>();
+		
+		// to avoid concurrent modifications
+		ArrayList<TreeObject> items = new ArrayList<TreeObject>();
+		items.addAll(getTreeItems());
+		
+		for (TreeObject treeItem: items) {
+			
+			for (Object object : viewerSelection) {
+				
+				if (object instanceof TreeObject) {
+					Element umlElement1 = treeItem.getUmlElement();
+					Element umlElement2 = ((TreeObject)object).getUmlElement();
+					if (umlElement1!= null && umlElement2!=null && umlElement1.equals(umlElement2)) {
+						foundTreeItems.add(treeItem);
+					}
+					/*
+					 * The code below only works ig the equal and hashCode are overridden ...
+					 */
+//					if ( ((TreeObject)object).equals(treeItem)) {
+//						foundTreeItems.add(treeItem);
+//					}
+				}
+				// structured selection, i.e. objects from other views
+				else if (adaptSelectedElement(object) != null) {
+					EObject eObj = adaptSelectedElement(object);
+					if ( ((TreeObject)treeItem).getUmlElement().equals(eObj)) {
+						foundTreeItems.add(treeItem);
+					}
+				}
+			}
+		}
+		return foundTreeItems;
+	}
+
+
+	public List<TreeObject> getTreeItems() {
 		return treeItems;
 	}
 	
 	
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addToMapList(HashMap map, Element key, Element value){
 		Object list = map.get(key);
 		if (list instanceof HashSet) {
@@ -562,6 +638,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addToMapList(HashMap map, org.openmodelica.modelicaml.common.instantiation.TreeObject key, Element value){
 		Object list = map.get(key);
 		if (list instanceof HashSet) {
@@ -585,6 +662,38 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 	}
 	
+	public boolean hasScenarios(TreeObject reqItem){
+		if (reqItem instanceof TreeParent) {
+
+			// In Scenarios View: 
+			TreeParent parent = reqItem.getParent();
+			if (parent instanceof ScenarioItem) {
+				return true;
+			}
+
+			// In Requirements View: 
+			// Check if one of the children is a scenario
+			TreeObject[] children = ((TreeParent)reqItem).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				TreeObject treeObject = children[i];
+				if (treeObject instanceof ScenarioItem) {
+					return true;
+				}
+				
+				// Check if there are clients that are not satisfied in a scenario 
+				if (treeObject instanceof ClientItem) {
+					TreeObject[] clientItemChildren = ((ClientItem)treeObject).getChildren();
+					for (int j = 0; j < clientItemChildren.length; j++) {
+						TreeObject clientItemChild = clientItemChildren[j];
+						if (clientItemChild instanceof ScenarioItem) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 	
 	private Shell getShell(){
 		Shell shell = null;
@@ -601,6 +710,25 @@ public class TreeBuilder implements IRunnableWithProgress{
 		return shell;
 	}
 	
+	
+	protected EObject adaptSelectedElement( Object selection) {
+		EObject eObject = null;
+		if(selection != null) {
+			
+			if (selection instanceof org.openmodelica.modelicaml.common.instantiation.TreeParent) { // this is an object from components tree view plugin
+				return ((org.openmodelica.modelicaml.common.instantiation.TreeParent)selection).getProperty();
+			}
+			
+			if(selection instanceof IAdaptable) {
+				selection = ((IAdaptable)selection).getAdapter(EObject.class);
+			}
+			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
+			if(businessObject instanceof EObject) {
+				eObject = (EObject)businessObject;
+			}
+		}
+		return eObject;
+	}
 	
 	//***********************************
 	
@@ -723,6 +851,18 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 	public VerificationScenariosCollector getVsc() {
 		return vsc;
+	}
+
+
+
+	public void setUmlModel(UmlModel umlModel) {
+		this.umlModel = umlModel;
+	}
+
+
+
+	public UmlModel getUmlModel() {
+		return umlModel;
 	}
 
 }

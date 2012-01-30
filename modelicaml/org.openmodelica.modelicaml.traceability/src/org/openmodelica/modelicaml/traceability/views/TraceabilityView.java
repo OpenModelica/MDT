@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
@@ -25,7 +26,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -35,35 +35,36 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.papyrus.core.services.ServiceException;
 import org.eclipse.papyrus.core.services.ServicesRegistry;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.core.utils.ServiceUtils;
 import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Property;
-import org.eclipse.uml2.uml.Stereotype;
+import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.impl.VerificationModelsGenerator;
 import org.openmodelica.modelicaml.traceability.Activator;
 import org.openmodelica.modelicaml.traceability.views.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.traceability.views.display.ViewLabelProviderStyledCell;
+import org.openmodelica.modelicaml.traceability.views.helper.VerModelForRequirementsWithoutScenarioCreator;
 import org.openmodelica.modelicaml.traceability.views.model.RequirementItem;
 import org.openmodelica.modelicaml.traceability.views.model.ScenarioItem;
 import org.openmodelica.modelicaml.traceability.views.model.TreeBuilder;
@@ -93,10 +94,45 @@ public class TraceabilityView extends ViewPart {
 	private Action actionCreateVerificationModel;
 
 	
+	private Object[] expandedRequirementsViewElements;
+	private TreePath[] expandedRequirementsViewTreePaths;
+
+	private Object[] expandedScenariosViewElements;
+	private TreePath[] expandedScenariosViewTreePaths;
+
+	
 	private TreeParent invisibleRoot;
 	
 	TreeBuilder treeBuilder = new TreeBuilder();
 	public final int DEFAULT_EXPAND_LEVEL = 2;
+	
+	//##################### Selection handling
+	 private ISelectionListener selectionListener = new ISelectionListener() {
+		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
+			 if (actionLinkWithEditor.isChecked() && sourcepart != TraceabilityView.this && selection instanceof IStructuredSelection) {
+	        	List<Object> selectedElements = getCurrentSelections();
+				List<Object> selectedElementsAdopted = new ArrayList<Object>();
+
+	        	if (selectedElements != null && selectedElements.size() > 0 ) {
+					for (Object object : selectedElements) {
+						EObject eObj = adaptSelectedElement(object);
+						if (eObj != null) {
+							selectedElementsAdopted.add(eObj);
+						}
+					}
+				}
+	        	
+	        	List<TreeObject> list = new ArrayList<TreeObject>();
+	        	list.addAll(treeBuilder.findTreeItems(selectedElementsAdopted.toArray()));
+				
+	        	if ( selectedElementsAdopted.size() > 0 ) {
+					viewer.setSelection(new StructuredSelection(list), true);
+				}
+	        }
+	    }
+	};
+	
+	
 	
 
 	class ViewContentProvider implements IStructuredContentProvider, 
@@ -133,6 +169,9 @@ public class TraceabilityView extends ViewPart {
 		}
 
 		private void initialize() {
+			// add the selection listener
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
+
 			invisibleRoot = new TreeParent("");
 		}
 		
@@ -226,15 +265,15 @@ public class TraceabilityView extends ViewPart {
 
 	private void fillContextMenu(IMenuManager manager) {
 		
+		manager.add(actionLocateInPapyrusModelExplorer);
+		manager.add(new Separator());
+
 		ISelection selection = viewer.getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		if (obj instanceof ScenarioItem) {
+		if (obj instanceof ScenarioItem || (obj instanceof RequirementItem && !treeBuilder.hasScenarios((TreeObject) obj))) {
 			manager.add(actionCreateVerificationModel);
 		}
-		manager.add(new Separator());
 		
-		
-		manager.add(actionLocateInPapyrusModelExplorer);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		// Other plug-ins can contribute there actions here
@@ -250,6 +289,7 @@ public class TraceabilityView extends ViewPart {
 		manager.add(new Separator());
 		
 		manager.add(actionCollapseAll);
+		manager.add(actionLinkWithEditor);
 		manager.add(new Separator());
 		
 		drillDownAdapter.addNavigationActions(manager);
@@ -307,6 +347,8 @@ public class TraceabilityView extends ViewPart {
 	}
 	ValidElementFilter validElementFilter = new ValidElementFilter();
 
+	private Action actionLinkWithEditor;
+
 
 
 	
@@ -356,8 +398,8 @@ public class TraceabilityView extends ViewPart {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				if (obj instanceof ScenarioItem) {
-					final ScenarioItem scenarioItem = (ScenarioItem) obj;
-					if (scenarioItem.getUmlElement() != null && treeBuilder.getSelectedElement() != null) {
+					final TreeParent treeItem = (TreeParent) obj;
+					if (treeItem.getUmlElement() != null && treeBuilder.getSelectedElement() != null) {
 						
 						ServicesRegistry serviceRegistry;
 						try {
@@ -375,7 +417,7 @@ public class TraceabilityView extends ViewPart {
 									
 									mg.setTestScenariosDiscarded(treeBuilder.getScenariosDiscarded());
 									HashSet<Element> scenariosToBeInstantiated = new HashSet<Element>();
-									scenariosToBeInstantiated.add(scenarioItem.getUmlElement());
+									scenariosToBeInstantiated.add(treeItem.getUmlElement());
 									mg.setTestScenariosToBeInstantiated(scenariosToBeInstantiated);
 
 									mg.setVsc(treeBuilder.getVsc());
@@ -385,6 +427,53 @@ public class TraceabilityView extends ViewPart {
 									mg.setTargetPackage(treeBuilder.getTargetPackage());
 									
 									mg.createSimulationModels(treeBuilder.getSelectedElement());
+								}
+							};
+							cc.append(command);
+							editingDomain.getCommandStack().execute(cc);
+						} catch (ServiceException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				
+				/*
+				 * If it is a requirement that has no associated requirements
+				 */
+				else if (obj instanceof RequirementItem && !treeBuilder.hasScenarios((TreeObject) obj)) {
+					
+					// create a model that only contains the system design model, the selected requirements and all additional models
+					final TreeParent treeItem = (TreeParent) obj;
+					boolean go = MessageDialog.openQuestion(getSite().getShell(), "Model Creation Confirmation", "This helper will now create" +
+							"a model that will instantiate the following models: " +
+							"\n                 - '" + treeBuilder.getSelectedElement().getName() + "'," +
+							"\n                 - Requirement '" + treeItem.getName()+ "'," +
+							"\n                 - all models that are required in addition." +
+							"\n\nDo you want to proceed? ");
+					
+					if (go && treeItem.getUmlElement() != null && treeBuilder.getSelectedElement() != null) {
+						
+						ServicesRegistry serviceRegistry;
+						try {
+							
+							serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+							TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+
+							List<Element> elementsToBeInstantiated = new ArrayList<Element>();
+							elementsToBeInstantiated.add(treeItem.getUmlElement());
+							
+							final VerModelForRequirementsWithoutScenarioCreator mc = new VerModelForRequirementsWithoutScenarioCreator(
+									treeBuilder.getSelectedElement(), 
+									elementsToBeInstantiated, 
+									(Package) treeBuilder.getTargetPackage(), 
+									treeBuilder.getTargetPackage());
+							
+							CompoundCommand cc = new CompoundCommand("Add value mediator reference");
+							Command command = new RecordingCommand(editingDomain) {
+								@Override
+								protected void doExecute() {
+									EObject createdModel = mc.createModel();
+									PapyrusServices.locateWithReselection(createdModel);
 								}
 							};
 							cc.append(command);
@@ -408,10 +497,6 @@ public class TraceabilityView extends ViewPart {
 					ViewerFilter[] filters = {notValidElementFilter};
 					viewer.setFilters(filters);
 				}
-//				else {
-//					ViewerFilter[] filters = {};
-//					viewer.setFilters(filters);
-//				}
 			}
 		};
 		actionShowNotValidElements.setText("Show only NOT valid elements");
@@ -425,10 +510,6 @@ public class TraceabilityView extends ViewPart {
 					ViewerFilter[] filters = {validElementFilter};
 					viewer.setFilters(filters);
 				}
-//				else {
-//					ViewerFilter[] filters = {};
-//					viewer.setFilters(filters);
-//				}
 			}
 		};
 		actionShowValidElements.setText("Show only valid elements");
@@ -447,6 +528,17 @@ public class TraceabilityView extends ViewPart {
 		actionShowAllElements.setToolTipText("Show all elements");
 		actionShowAllElements.setChecked(true);
 //		actionShowAllElements.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/filter.gif"));
+		
+		
+		
+		actionLinkWithEditor = new Action("actionLinkWithEditor", 2) { //check box 
+			public void run() {
+			}
+		};
+		actionLinkWithEditor.setText("Link with Model Explorer");
+		actionLinkWithEditor.setToolTipText("Link with Model Explorer");
+		actionLinkWithEditor.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+
 		
 		
 		actionCollapseAll = new Action("actionCollapseAll") { //obviously a check box style
@@ -474,22 +566,34 @@ public class TraceabilityView extends ViewPart {
 		
 		
 		actionShowRequirementsView = new Action("mode: Requirement", 8) {
+			@SuppressWarnings("unchecked")
 			public void run() {
 				if (actionShowRequirementsView.isChecked()) {
 					if (treeBuilder.getReqTreeRoot() == null) {
 						actionReload.run();
 					}
 					else {
-						Object[] expandedElements = viewer.getExpandedElements();
-						TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
-
+						
+						expandedScenariosViewElements = viewer.getExpandedElements();
+						expandedScenariosViewTreePaths = viewer.getExpandedTreePaths();
+						
+						ISelection selectedElements = viewer.getSelection();
+						List<Object> selectedTreeItems = null;
+						if (selectedElements instanceof IStructuredSelection) {
+							selectedTreeItems = ((IStructuredSelection)selectedElements).toList();
+						}
+						
 						treeBuilder.showTree(invisibleRoot, treeBuilder.MODE_REQUIREMENTS_VIEW);
 						viewer.refresh();
 						
-						viewer.setExpandedElements(expandedElements);
-						viewer.setExpandedTreePaths(expandedTreePaths);
-						
-						viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+						if (expandedRequirementsViewElements == null) {
+							viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+						}
+						else {
+							viewer.setExpandedElements(expandedRequirementsViewElements);
+							viewer.setExpandedTreePaths(expandedRequirementsViewTreePaths);
+						}
+						viewer.setSelection( new StructuredSelection(treeBuilder.findTreeItems(selectedTreeItems.toArray())), true);
 					}
 				}
 			}
@@ -501,22 +605,34 @@ public class TraceabilityView extends ViewPart {
 		
 		
 		actionShowScenariosView = new Action("actionShowScenariosView", 8) {
+			@SuppressWarnings("unchecked")
 			public void run() {
 				if (actionShowScenariosView.isChecked()) {
 					if (treeBuilder.getScenTreeRoot() == null) {
 						actionReload.run();
 					}
 					else {
-						Object[] expandedElements = viewer.getExpandedElements();
-						TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+						expandedRequirementsViewElements = viewer.getExpandedElements();
+						expandedRequirementsViewTreePaths = viewer.getExpandedTreePaths();
+
+						ISelection selectedElements = viewer.getSelection();
+						List<Object> selectedTreeItems = null;
+						if (selectedElements instanceof IStructuredSelection) {
+							selectedTreeItems = ((IStructuredSelection)selectedElements).toList();
+						}
 
 						treeBuilder.showTree(invisibleRoot, treeBuilder.MODE_SCENARIOS_VIEW);
 						viewer.refresh();
 						
-						viewer.setExpandedElements(expandedElements);
-						viewer.setExpandedTreePaths(expandedTreePaths);
-
-						viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+						
+						if (expandedScenariosViewElements == null) {
+							viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+						}
+						else {
+							viewer.setExpandedElements(expandedScenariosViewElements);
+							viewer.setExpandedTreePaths(expandedScenariosViewTreePaths);
+						}
+						viewer.setSelection( new StructuredSelection(treeBuilder.findTreeItems(selectedTreeItems.toArray())), true);
 					}
 				}
 			}
@@ -554,8 +670,8 @@ public class TraceabilityView extends ViewPart {
 				}
 			}
 		};
-		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus");
-		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Papyrus Model Explorer");
+		actionLocateInPapyrusModelExplorer.setText("Locate in Model Explorer");
+		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Model Explorer");
 		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
 		
 		
@@ -575,12 +691,13 @@ public class TraceabilityView extends ViewPart {
 			}
 		});
 	}
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Traceability",
-			message);
-	}
+	
+//	private void showMessage(String message) {
+//		MessageDialog.openInformation(
+//			viewer.getControl().getShell(),
+//			"Traceability",
+//			message);
+//	}
 
 	/**
 	 * Passing the focus request to the viewer's control.
@@ -588,4 +705,35 @@ public class TraceabilityView extends ViewPart {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private List<Object> getCurrentSelections() {
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+		if(selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+			return structuredSelection.toList();
+		}
+		return null;
+	}
+	
+	protected EObject adaptSelectedElement( Object selection) {
+		EObject eObject = null;
+		if(selection != null) {
+			
+			if (selection instanceof org.openmodelica.modelicaml.common.instantiation.TreeParent) { // this is an object from components tree view plugin
+				return ((org.openmodelica.modelicaml.common.instantiation.TreeParent)selection).getProperty();
+			}
+			
+			if(selection instanceof IAdaptable) {
+				selection = ((IAdaptable)selection).getAdapter(EObject.class);
+			}
+			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
+			if(businessObject instanceof EObject) {
+				eObject = (EObject)businessObject;
+			}
+		}
+		return eObject;
+	}
+	
 }
