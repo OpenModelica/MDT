@@ -57,44 +57,54 @@ import org.modelica.mdt.core.ISourceRegion;
 /**
  * This class implements IElementLocation on behalf of OMC proxy plugin.
  */
-public class DefinitionLocation implements IDefinitionLocation
-{	
+public class DefinitionLocation implements IDefinitionLocation {	
 	private File path;
 	private ISourceRegion sourceRegion;
-	
-	private Region region = null;
-	
-	public DefinitionLocation(String path, int startLine, int startColumn, int endLine, int endColumn)
-	{
-		this.path = new File(path);
-		
-//		if (!this.path.exists())
-//		{
-//			//TODO this should not be, throw an exception
-//		}
 
-		this.sourceRegion = new DefinitionSourceRegion(startLine,startColumn,endLine,endColumn);
+	private Region region = null;
+
+	public DefinitionLocation(String path, int startLine, int startColumn, int endLine, int endColumn) {
+		this.path = new File(path);
+
+		//if (!this.path.exists()) {
+			//// TODO: this should not be, throw an exception
+		//}
+
+		this.sourceRegion = new DefinitionSourceRegion(startLine, startColumn, endLine, endColumn);
 	}
-	
-	public String getPath()
-	{
+
+	@Override
+	public String getPath() {
 		return path.getAbsolutePath();
 	}
-	
-	public ISourceRegion getSourceRegion()
-	{
+
+	@Override
+	public ISourceRegion getSourceRegion() {
 		return sourceRegion;
 	}
-
 	
+	@Override
+	public String toString() {
+		String ret = "";
+		
+		int startLine = sourceRegion.getStartLine();
+		int startColumn = sourceRegion.getStartColumn();
+		int endLine = sourceRegion.getEndLine();
+		int endColumn = sourceRegion.getEndColumn();
+		
+		ret = "startLine = " + startLine + ", startColumn = " + startColumn + ", endLine = " + endLine + ", endColumn = " + endColumn;
+		
+		return ret;
+	}
+
 	/**
 	 * @author Adrian Pop
 	 * @deprecated
 	 */
-	public IRegion getRegion()
-	{
-		if (region == null)
-		{
+	@Deprecated
+	@Override
+	public IRegion getRegion() {
+		if (region == null) { 
 			computeRegion();
 		}
 
@@ -105,67 +115,60 @@ public class DefinitionLocation implements IDefinitionLocation
 	 * @author Adrian Pop
 	 * @deprecated
 	 */	
-	private void computeRegion()
-	{
-		
+	@Deprecated
+	private void computeRegion() {
 		BufferedInputStream bis = null;
-		
-		try
-		{
+
+		try {
 			bis = new BufferedInputStream(new FileInputStream(path));
 		}
-		catch (FileNotFoundException e)
-		{
+		catch (FileNotFoundException e) {
 			/*
-			 * we allready checked in the constructor that path exists,
+			 * we already checked in the constructor that path exists,
 			 * this this is not happening
 			 */
 			//TODO bug location
 		}
+
 		String contents = "";
-
-		/*
-		 * Read in contents of the file.
-		 */
-		while(true)
-		{
-			try
-			{
+		boolean shouldBreak = false;
+		while (!shouldBreak) { // Read in contents of the file.
+			try {
 				int avail = bis.available();
-				if(avail == 0)
-					break;
-				byte[] buf = new byte[avail];
-				bis.read(buf, 0, avail);
 
-				contents += new String(buf);
+				if (avail == 0) {
+					shouldBreak = true;
+				}
+				else {
+					byte[] buf = new byte[avail];
+					bis.read(buf, 0, avail);
+
+					contents += new String(buf);
+				}
 			}
-			catch(IOException e)
-			{
+			catch(IOException e) {
 				e.printStackTrace();
+				shouldBreak = true;
 			}
 		}
 
-		/*
-		 * Convert contents of the file to a document.
-		 */
+		// Convert contents of the file to a document.
 		Document doc = new Document(contents);
-		
+
 		/*
 		 * the default values that are used if exception is 
 		 * thrown in the code below 
 		 */
 		int startChar = 1;
 		int endChar = 1;
-		try
-		{
-			startChar = doc.getLineOffset(sourceRegion.getStartLine()-1) + sourceRegion.getStartColumn()-1;
-			endChar = doc.getLineOffset(sourceRegion.getEndLine()-1) + sourceRegion.getEndColumn();
+		try {
+			startChar = doc.getLineOffset(sourceRegion.getStartLine() - 1) + sourceRegion.getStartColumn() - 1;
+			endChar = doc.getLineOffset(sourceRegion.getEndLine() - 1) + sourceRegion.getEndColumn();
 		}
-		catch(BadLocationException e)
-		{
+		catch (BadLocationException e) {
 			ErrorManager.logError(e);
 		}
-		
+
 		region = new Region(startChar, endChar - startChar);
 	}	
 }
