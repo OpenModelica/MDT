@@ -371,19 +371,18 @@ public class TestInnerClass {
 	@org.junit.Test
 	public void testLocationUpdates()
 			throws CoreException, ConnectException, CompilerInstantiationException, UnexpectedReplyException, InvocationError {
-		/* Create initial class definitions. */
+		// Create initial class definitions.
 		createClassDef();
 
-		/* Check some initial locations. */
+		// Check some initial locations.
 		testLocation("EquationComponent", 6, 1, 13, 22);
 		testLocation("EquationComponent.R", 7, 3, 9, 8);
 
-		/* Modify class definitions. */
+		// Modify class definitions.
 		modifyClassDef();
 
-		/* Check that locations where updated. */
+		// Check that locations where updated.
 		testLocation("EquationComponent", 2, 1, 11, 22);
-		Utility.printFile(proj, TestInnerClass.CHANGING_FILE);
 		testLocation("EquationComponent.R", 4, 3, 6, 8);
 	}
 
@@ -474,10 +473,10 @@ public class TestInnerClass {
 		int actualEndLine = sourceRegion.getEndLine();
 		int actualEndCol = sourceRegion.getEndColumn();
 
-		assertEquals("Expected start line did not match actual start line.", startLine, actualStartLine);
-		assertEquals("Expected start column did not match actual start column.", startCol, actualStartCol);
-		assertEquals("Expected end line did not match actual end line.", endLine, actualEndLine);
-		assertEquals("Expected end column did not match actual end column.", endCol, actualEndCol);
+		assertEquals("For className \"" + className + "\": Expected start line did not match actual start line.", startLine, actualStartLine);
+		assertEquals("For className \"" + className + "\": Expected start column did not match actual start column.", startCol, actualStartCol);
+		assertEquals("For className \"" + className + "\": Expected end line did not match actual end line.", endLine, actualEndLine);
+		assertEquals("For className \"" + className + "\": Expected end column did not match actual end column.", endCol, actualEndCol);
 	}
 
 	/**
