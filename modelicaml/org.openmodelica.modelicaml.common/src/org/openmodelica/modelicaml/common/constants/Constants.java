@@ -153,7 +153,7 @@ public class Constants {
 	public static final String preferredProvidersAssignmentSeparator	= " --> ";
 	
 	public static final String valueClientsNodeName 				= "Clients";
-	public static final String potentialCalueClientsNodeName 		= "Potential Clients";
+	public static final String potentialClientsNodeName 		= "Potential Clients";
 	public static final String valueMediatorsNodeName 				= "Mediators";
 	public static final String valueProvidersNodeName 				= "Providers";
 	public static final int MODE_ADD_CLIENT 						= 0;
