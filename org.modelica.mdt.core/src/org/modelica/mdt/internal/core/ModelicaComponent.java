@@ -92,7 +92,8 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 		this.typeName = changedComponent.getTypeName();
 
 		try {
-			this.location = changedComponent.getLocation();
+			IDefinitionLocation newLocation = changedComponent.getLocation();
+			this.location = newLocation;
 		}
 		catch(CoreException e) {
 			e.printStackTrace();
@@ -149,9 +150,9 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta) 
 			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
-		/* return an MODIFIED by default */
+		// return an MODIFIED by default
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
-		/* if only the markers have changed, don't bother! */
+		// if only the markers have changed, don't bother!
 		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0 &&	(delta.getFlags() & IResourceDelta.OPEN) == 0) {
 			return changes;	
 		}
@@ -165,7 +166,7 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	 * a direct mapping to a IResource, when it is suspected that their 
 	 * representation in the compiler have changed.
 	 *  
-	 * The element should requery the compiler and return the difference as
+	 * The element should re-query the compiler and return the difference as
 	 * a collection of IModelicaElementChange:s.
 	 * 
 	 * @return the changes to the element and it's children, or empty collection
@@ -174,9 +175,17 @@ public class ModelicaComponent extends ModelicaElement implements IModelicaCompo
 	@Override
 	public Collection<IModelicaElementChange> reload()
 			throws ConnectException, UnexpectedReplyException, InvocationError, CompilerInstantiationException, CoreException {
-		/* return an MODIFIED by default */
+		// return an MODIFIED by default
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED, null));
 		return changes;
+	}
+
+	@Override
+	public String toString() {
+		String ret = "ModelicaComponent - name = \"" + name + "\", typeName = \"" + typeName + "\".\n" +
+				"location: \"" + location + "\".";
+		
+		return ret;
 	}
 }
