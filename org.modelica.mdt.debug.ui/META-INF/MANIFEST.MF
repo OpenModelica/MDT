@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MDT Debug UI Plugin
 Bundle-SymbolicName: org.modelica.mdt.debug.ui; singleton:=true
-Bundle-Version: 0.7.20
+Bundle-Version: 0.7.21
 Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
 Bundle-Activator: org.modelica.mdt.debug.ui.MDTDebugUIPlugin
 Require-Bundle: org.eclipse.core.resources,
