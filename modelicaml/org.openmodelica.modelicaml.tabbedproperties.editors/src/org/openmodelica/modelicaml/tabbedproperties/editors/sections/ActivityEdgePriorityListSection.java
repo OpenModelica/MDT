@@ -46,11 +46,9 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.profile.ImageManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -67,6 +65,7 @@ import org.eclipse.uml2.uml.ActivityEdge;
 import org.eclipse.uml2.uml.ActivityNode;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 
 // TODO: Auto-generated Javadoc
@@ -385,14 +384,11 @@ public class ActivityEdgePriorityListSection extends AbstractPropertySection {
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		Object input = ((IStructuredSelection) selection).getFirstElement();
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				this.selectedUmlElement = (Element)eObject;
-			}
-		}
-		else if (input instanceof IUMLEditPart) {
-			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
+		
+		// Get the selected element
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
+        if (selectedElement instanceof Element) {
+        	this.selectedUmlElement = (Element)selectedElement;
 		}
 		
 		super.setInput(part, selection);

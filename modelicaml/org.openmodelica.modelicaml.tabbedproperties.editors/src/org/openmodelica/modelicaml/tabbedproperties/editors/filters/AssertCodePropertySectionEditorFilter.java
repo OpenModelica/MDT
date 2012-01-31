@@ -35,11 +35,10 @@
 package org.openmodelica.modelicaml.tabbedproperties.editors.filters;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.profile.utils.UmlElementFilter;
 import org.eclipse.uml2.uml.Constraint;
-import org.eclipse.uml2.uml.ControlFlow;
+import org.eclipse.uml2.uml.Element;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,16 +53,12 @@ public class AssertCodePropertySectionEditorFilter extends UmlElementFilter {
 	public boolean select(Object object) {
 		EObject element = null;
 		String stereotypeQName = "ModelicaML::ModelicaBehaviorConstructs::Assert";
+		
 		// Get the selected element
-		
-		// TODO: Find the right meta class for ModelElementItem
-		if (object instanceof ModelElementItem) {
-			element = ((ModelElementItem)object).getEObject();
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(object);
+        if (selectedElement instanceof Element) {
+        	element = (Element)selectedElement;
 		}
-		else if (object instanceof IUMLEditPart) {
-			element = ((IUMLEditPart)object).getUMLElement();
-		}
-		
 		
 		// Decide if an editor tab should appear
 		if ( element instanceof Constraint && ((Constraint) element).getAppliedStereotype(stereotypeQName) != null ){

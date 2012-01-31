@@ -44,11 +44,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.profile.ImageManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -66,6 +63,8 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.tabbedproperties.editors.dialogs.EditorDialog;
 
 
@@ -418,15 +417,12 @@ public abstract class AbstractMultiStringSection extends AbstractPropertySection
 		// get the selectedUmlElement
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				this.selectedUmlElement = (Element)eObject;
-			}
+		// Get the selected element
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
+        if (selectedElement instanceof Element) {
+        	this.selectedUmlElement = (Element)selectedElement;
 		}
-		else if (input instanceof IUMLEditPart) {
-			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
-		}
+		
 		super.setInput(part, selection);
 	}
 	
@@ -475,7 +471,7 @@ public abstract class AbstractMultiStringSection extends AbstractPropertySection
 
 						CompoundCommand cc = new CompoundCommand();
 						// Get Papyrus editing domain.
-						TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+						TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 						
 						// Record command
 						Command command = new RecordingCommand(editingDomain) {

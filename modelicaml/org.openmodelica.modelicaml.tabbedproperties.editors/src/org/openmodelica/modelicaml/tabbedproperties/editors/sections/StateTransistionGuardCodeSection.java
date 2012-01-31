@@ -35,19 +35,13 @@
 
 package org.openmodelica.modelicaml.tabbedproperties.editors.sections;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.umlutils.OpaqueExpressionUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -66,6 +60,7 @@ import org.eclipse.uml2.uml.OpaqueExpression;
 import org.eclipse.uml2.uml.Transition;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.editor.xtext.state.ui.internal.StatetransitionguardexpressionActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
@@ -358,33 +353,17 @@ public class StateTransistionGuardCodeSection extends AbstractPropertySection  {
 
 		// get the selectedUmlElement
 		Object input = ((IStructuredSelection) selection).getFirstElement();
-
-//		if (adaptSelectedElement(input) instanceof Element) {
-//			this.selectedUmlElement = (Element) adaptSelectedElement(input);
-//			isNewSelection = true;
-//		}
-		
-//		if (input instanceof ModelElementItem) {
-//			EObject eObject = ((ModelElementItem)input).getEObject();
-//			if ( eObject instanceof Element ) {
-//				this.selectedUmlElement = (Element)eObject;
-//				isNewSelection = true;
-//			}
-//		}
 		
 		// treat the object selected on a diagram and in the model explorer separately.
-		if (input instanceof IUMLEditPart) {
-			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
-			isNewSelection = true;
-		}
-		else if (Utils.adaptSelectedElement(input) instanceof Element) {
-			this.selectedUmlElement = (Element) Utils.adaptSelectedElement(input);
-			isNewSelection = true;
+		// Get the selected element
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
+        if (selectedElement instanceof Element) {
+        	this.selectedUmlElement = (Element)selectedElement;
+        	isNewSelection = true;
 		}
 		
 		// Get Papyrus editing domain.
 		editingDomain = (TransactionalEditingDomain) Utils.getEditingDomain(part);
-
 	}
 
 //	@Override

@@ -35,10 +35,10 @@
 package org.openmodelica.modelicaml.tabbedproperties.editors.filters;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.profile.utils.UmlElementFilter;
 import org.eclipse.uml2.uml.ControlFlow;
+import org.eclipse.uml2.uml.Element;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,12 +54,10 @@ public class ActivityEdgePrioritySectionCodeSectionFilter extends UmlElementFilt
 		EObject element = null;
 
 		// Get the selected element
-		// TODO: Find the right meta class for ModelElementItem
-		if (object instanceof ModelElementItem) {
-			element = ((ModelElementItem)object).getEObject();
-		}
-		else if (object instanceof IUMLEditPart) {
-			element = ((IUMLEditPart)object).getUMLElement();
+		// Get the selected element
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(object);
+        if (selectedElement instanceof Element) {
+        	element = (Element)selectedElement;
 		}
 		
 		// Decide if an editor tab should appear

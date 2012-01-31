@@ -35,12 +35,12 @@
 package org.openmodelica.modelicaml.tabbedproperties.editors.filters;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.profile.utils.UmlElementFilter;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.OpaqueAction;
 import org.eclipse.uml2.uml.OpaqueBehavior;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,20 +54,15 @@ public class EquationSectionCodeSectionFilter extends UmlElementFilter {
 	@Override
 	public boolean select(Object object) {
 		EObject element = null;
-		Boolean hasAppropriateStereotype = false;
+//		Boolean hasAppropriateStereotype = false;
 		
 		// Get the selected element
-		
-		// TODO: Find the right meta class for ModelElementItem
-		if (object instanceof ModelElementItem) {
-			element = ((ModelElementItem)object).getEObject();
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(object);
+        if (selectedElement instanceof Element) {
+        	element = (Element)selectedElement;
 		}
-		else if (object instanceof IUMLEditPart) {
-			element = ((IUMLEditPart)object).getUMLElement();
-		}
-		
+
 		// Decide if an editor tab should appear
-		
 		// For UML OpaqueBehavior can include Modelica equation or algorithm code
 		if ( element instanceof OpaqueBehavior && !(element instanceof FunctionBehavior) ){
 			if (((OpaqueBehavior)element).getAppliedStereotype("ModelicaML::ModelicaBehaviorConstructs::Equations(Code)") != null) { 

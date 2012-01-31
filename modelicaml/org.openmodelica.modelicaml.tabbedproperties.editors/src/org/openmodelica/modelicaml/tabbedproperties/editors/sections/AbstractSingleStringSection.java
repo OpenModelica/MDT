@@ -38,10 +38,8 @@ import java.util.Iterator;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.FocusEvent;
@@ -59,6 +57,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.tabbedproperties.editors.dialogs.StringInputDialog;
 
 
@@ -253,14 +252,10 @@ public abstract class AbstractSingleStringSection extends AbstractPropertySectio
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		
 		Object input = ((IStructuredSelection) selection).getFirstElement();
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				this.selectedUmlElement = (Element)eObject;
-			}
-		}
-		else if (input instanceof IUMLEditPart) {
-			this.selectedUmlElement = ((IUMLEditPart)input).getUMLElement();
+		// Get the selected element
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
+        if (selectedElement instanceof Element) {
+        	this.selectedUmlElement = (Element)selectedElement;
 		}
 		
 		super.setInput(part, selection);

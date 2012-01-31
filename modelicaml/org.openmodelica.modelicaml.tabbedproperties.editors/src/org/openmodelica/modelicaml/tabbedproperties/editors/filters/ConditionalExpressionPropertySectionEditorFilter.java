@@ -35,12 +35,12 @@
 package org.openmodelica.modelicaml.tabbedproperties.editors.filters;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.profile.utils.UmlElementFilter;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,21 +54,14 @@ public class ConditionalExpressionPropertySectionEditorFilter extends UmlElement
 	@Override
 	public boolean select(Object object) {
 		EObject element = null;
-
 		
 		// Get the selected element
-		
-		// TODO: Find the right meta class for ModelElementItem
-		if (object instanceof ModelElementItem) {
-			element = ((ModelElementItem)object).getEObject();
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(object);
+        if (selectedElement instanceof Element) {
+        	element = (Element)selectedElement;
 		}
-		else if (object instanceof IUMLEditPart) {
-			element = ((IUMLEditPart)object).getUMLElement();
-		}
-		
 		
 		// Decide if an editor tab should appear
-		
 		// For Modelica component modifications
 		if ( element instanceof Property 
 				&& !(element instanceof Port)  
