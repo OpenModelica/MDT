@@ -96,13 +96,16 @@
    <feature url="features/org.modelica.mdt_0.7.19.jar" id="org.modelica.mdt" version="0.7.19">
       <category name="modelica"/>
    </feature>
-   <feature url="features/org.modelica.mdt_0.7.20.jar" id="org.modelica.mdt" version="0.7.20">
+  <feature url="features/org.modelica.mdt_0.7.20.jar" id="org.modelica.mdt" version="0.7.20">
     <category name="modelica"/>
-   </feature>
-   <feature url="features/org.modelica.mdt_0.7.21.jar" id="org.modelica.mdt" version="0.7.21">
+  </feature>
+  <feature url="features/org.modelica.mdt_0.7.21.jar" id="org.modelica.mdt" version="0.7.21">
     <category name="modelica"/>
-   </feature>
-   <category-def name="modelica" label="Modelica and MetaModelica Tools">
+  </feature>
+  <feature url="features/org.modelica.mdt_0.7.22.jar" id="org.modelica.mdt" version="0.7.22">
+    <category name="modelica"/>
+  </feature>
+  <category-def name="modelica" label="Modelica and MetaModelica Tools">
       <description>
          Tools for Modelica and MetaModelica
       </description>
