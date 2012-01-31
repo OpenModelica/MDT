@@ -166,39 +166,22 @@ public class TestCompilerProxy extends TestCase {
 	}
 
 	/**
-	 * Test that both compile errors and contents are found in a problematic file.
+	 * Test for compile errors in a problematic file.
 	 */
 	public void testErrorReporting() 
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
 		IParseResults parseResults = CompilerProxy.loadSourceFile(broken_nested_models_mo);
 		String[] classes = parseResults.getClasses();
 
-		for(String cls : classes) {
-			boolean wasRemoved = expectedClasses.remove(cls);
+		assertTrue(classes.length == 0);
 
-			if (wasRemoved) {
-				System.out.println("Removed \"" + cls + "\" from expectedClasses.");
-			}
-			else {
-				System.out.println("\"" + cls + "\" was not present in expectedClasses.");
-			}
-		}
-
-		boolean expectedClassesIsEmpty = expectedClasses.isEmpty();
-
-		String errorMsg = "Could not find following expected classes:";
-		for (String cls : expectedClasses) {
-			errorMsg += " " + cls;
-		}
-
-		assertTrue(errorMsg, expectedClassesIsEmpty);
-
-		ICompileError[] errs = parseResults.getCompileErrors();
-		assertEquals(7, errs[0].getStartLine()); 
-		assertEquals(9, errs[1].getStartLine()); 
-		assertEquals(11, errs[2].getStartLine()); 
-		assertEquals(14, errs[3].getStartLine()); 
-		assertEquals(16, errs[4].getStartLine()); 
+		ICompileError[] compileErrors = parseResults.getCompileErrors();
+		assertTrue(compileErrors.length == 1);
+		assertTrue(compileErrors[0].getStartLine() == 7);
+		assertTrue(compileErrors[0].getStartColumn() == 12);
+		assertTrue(compileErrors[0].getEndLine() == 8);
+		assertTrue(compileErrors[0].getEndColumn() == 8);
+		assertTrue(compileErrors[0].getErrorDescription().equals(";"));
 	}
 
 	/**
