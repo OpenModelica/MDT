@@ -427,23 +427,15 @@ public class Area51Projects {
 
 		// root_package/sub_package/leaf_package/package.mo
 		file = folder.getFile("package.mo");
-		contents =
-				"within root_package.sub_package;\n" +
-						"\n" +
-						"encapsulated package leaf_package\n" +
-						"\n" + 
-						"end leaf_package;\n";
-		file.create(Utility.getByteStream(contents), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_package/sub_package/leaf_package/package.mo");
+		file.create(is, true, null);
 
 		// childless_package
 		folder = modelica_project.getFolder("childless_package");
 		folder.create(false, true, null);
 
 		file = folder.getFile("package.mo");
-		contents = 
-				"encapsulated package childless_package\n" +
-						"\n" + 
-						"end childless_package;\n";
-		file.create(Utility.getByteStream(contents), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/childless_package/package.mo");
+		file.create(is, true, null);
 	}
 }
