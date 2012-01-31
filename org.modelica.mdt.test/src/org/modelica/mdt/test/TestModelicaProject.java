@@ -73,30 +73,11 @@ public class TestModelicaProject {
 	/* the test subject, Area51 modelica project */
 	private IModelicaProject project;
 
-	/* the names of the expected root packages in the area51 modelica project */
-	private Vector<String> expectedRootPackages = new Vector<String>();
-
 	@org.junit.Before
 	public void setUp() {
 		Area51Projects.createProjects();
 
 		project = Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
-
-		assertTrue(Collections.addAll(expectedRootPackages,
-				"file_package1",
-				"foo",
-				"file_package2",
-				"root_package",
-				"bruuken_muu",
-				"foobared",
-				"components_bananza",
-				"nested_models",
-				"childless_package",
-				"import_rich_model",
-				"folder_package",
-				"hepp",
-				"muu",
-				"root_model"));
 	}
 
 	/**
@@ -211,6 +192,23 @@ public class TestModelicaProject {
 	public void testGetRootClasses()
 			throws ConnectException, CompilerInstantiationException, UnexpectedReplyException, CoreException {
 		Collection<? extends IModelicaClass> rootClasses = project.getRootClasses();
+
+		// The names of the expected root packages in the Area51 Modelica project.
+		Vector<String> expectedRootPackages = new Vector<String>();
+
+		Collections.addAll(expectedRootPackages,
+				"file_package1",
+				"foo",
+				"file_package2",
+				"root_package",
+				"components_bananza",
+				"nested_models",
+				"childless_package",
+				"import_rich_model",
+				"folder_package",
+				"hepp",
+				"muu",
+				"root_model");
 
 		for (IModelicaClass cls : rootClasses) {
 			String classPrefix = cls.getPrefix();
