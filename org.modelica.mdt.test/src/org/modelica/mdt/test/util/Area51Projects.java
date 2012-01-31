@@ -313,7 +313,7 @@ public class Area51Projects {
 				"    end hehehe;\n" +
 				"end broken_hepp;\n";
 
-		/* Version of broken_nested_models.mo without syntax errors: */
+		// Version of broken_nested_models.mo without syntax errors:
         /*
 		contents = "model broken_nested_models\n" +
 				"    import Modelica;\n" +
@@ -403,39 +403,29 @@ public class Area51Projects {
 		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_package/root_package_function.mo");		
 		file.create(is, true, null);
 
-		/* a (non-package) folder inside the root_package */
+		// a (non-package) folder inside the root_package
 		subFolder = folder.getFolder("root_package_folder");
 		subFolder.create(false, true, null);
 
-		/* root_package/sub_package */
+		// root_package/sub_package
 		folder = folder.getFolder("sub_package");
 		folder.create(false, true, null);
 
-		/* root_package/sub_package/package.mo */
+		// root_package/sub_package/package.mo
 		file = folder.getFile("package.mo");
-		contents = 
-				"within root_package;\n" +
-						"\n" +
-						"package sub_package\n" +
-						"\n" + 
-						"end sub_package;\n";
-		file.create(Utility.getByteStream(contents), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_package/sub_package/package.mo");
+		file.create(is, true, null);
 
-		/* root_package/sub_package/sub_package_model.mo */
+		// root_package/sub_package/sub_package_model.mo
 		file = folder.getFile("sub_package_model.mo");
-		contents =
-				"within root_package.sub_package;\n" +
-						"\n" +
-						"model sub_package_model\n" +
-						"\n" + 
-						"end sub_package_model;\n";
-		file.create(Utility.getByteStream(contents), true, null);
+		is = Area51Projects.class.getResourceAsStream("/org/modelica/mdt/test/modelicafiles/area51/root_package/sub_package/sub_package_model.mo");
+		file.create(is, true, null);
 
-		/* root_package/sub_package/leaf_package */
+		// root_package/sub_package/leaf_package
 		folder = folder.getFolder("leaf_package");
 		folder.create(false, true, null);
 
-		/* root_package/sub_package/leaf_package/package.mo */
+		// root_package/sub_package/leaf_package/package.mo
 		file = folder.getFile("package.mo");
 		contents =
 				"within root_package.sub_package;\n" +
@@ -445,7 +435,7 @@ public class Area51Projects {
 						"end leaf_package;\n";
 		file.create(Utility.getByteStream(contents), true, null);
 
-		/* childless_package */
+		// childless_package
 		folder = modelica_project.getFolder("childless_package");
 		folder.create(false, true, null);
 
