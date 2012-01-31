@@ -135,8 +135,6 @@ public class TestModelicaProject {
 
 		testGetClass("nested_models.hepp", "nested_models.hepp", IModelicaClass.Restriction.RECORD);
 
-		testGetClass("broken_nested_models.foo", "broken_nested_models.foo", IModelicaClass.Restriction.CLASS);
-
 		testGetClass("foo", "foo", IModelicaClass.Restriction.MODEL);
 
 		testGetClass("hej.ine_paketen", "hej.ine_paketen", IModelicaClass.Restriction.PACKAGE);
@@ -154,16 +152,6 @@ public class TestModelicaProject {
 		testGetClass("nested_models.foo.bar", "nested_models.foo.bar", IModelicaClass.Restriction.CLASS);
 
 		testGetClass("root_model", "root_model", IModelicaClass.Restriction.MODEL);
-
-		testGetClass("broken_nested_models", "broken_nested_models", IModelicaClass.Restriction.MODEL);
-
-		testGetClass("broken_nested_models.hepp", "broken_nested_models.hepp", IModelicaClass.Restriction.RECORD);
-
-		testGetClass("broken_nested_models.foo.bar", "broken_nested_models.foo.bar", IModelicaClass.Restriction.CLASS);
-
-		testGetClass("bruuken_muu", "bruuken_muu", IModelicaClass.Restriction.MODEL);
-
-		testGetClass("foobared", "foobared", IModelicaClass.Restriction.MODEL);
 
 		/*
 		 * check that non-existent packages are not found
@@ -203,6 +191,7 @@ public class TestModelicaProject {
 				"root_package",
 				"components_bananza",
 				"nested_models",
+				"hej",
 				"childless_package",
 				"import_rich_model",
 				"folder_package",
