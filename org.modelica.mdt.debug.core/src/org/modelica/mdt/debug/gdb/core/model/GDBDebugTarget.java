@@ -335,15 +335,17 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
-		if (supportsBreakpoint(breakpoint)) {
-			try {
-				if ((breakpoint.isEnabled() && getBreakpointManager().isEnabled()) || !breakpoint.isRegistered()) {
-					MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
-					mdtBreakpoint.insertBreakpoint(this);
+		synchronized (getLock()) {
+			if (supportsBreakpoint(breakpoint)) {
+				try {
+					if ((breakpoint.isEnabled() && getBreakpointManager().isEnabled()) || !breakpoint.isRegistered()) {
+						MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
+						mdtBreakpoint.insertBreakpoint(this);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					MDTDebugCorePlugin.log(null, e);
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
 			}
 		}
 	}
@@ -355,14 +357,18 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	 *      org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		if (supportsBreakpoint(breakpoint)) {
-			try 
-			{
-			    MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
-				mdtBreakpoint.removeBreakpoint(this);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				MDTDebugCorePlugin.log(null, e);
+		synchronized (getLock()) {
+			if (supportsBreakpoint(breakpoint)) {
+				try 
+				{
+				    MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
+				    if (mdtBreakpoint == null)		// the disable breakpoint sends 0 as breakpoint number.
+				    	return;
+					mdtBreakpoint.removeBreakpoint(this);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					MDTDebugCorePlugin.log(null, e);
+				}
 			}
 		}
 	}
@@ -376,12 +382,14 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
 			try {
+				MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
 				if (breakpoint.isEnabled() && getBreakpointManager().isEnabled()) {
-					breakpointAdded(breakpoint);
+					mdtBreakpoint.enableBreakpoint(this);
 				} else {
-					breakpointRemoved(breakpoint, null);
+					mdtBreakpoint.disableBreakpoint(this);
 				}
-			} catch (CoreException e) {
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				MDTDebugCorePlugin.log(null, e);
 			}
 		}

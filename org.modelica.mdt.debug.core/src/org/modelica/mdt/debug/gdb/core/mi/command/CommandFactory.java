@@ -179,6 +179,26 @@ public class CommandFactory {
 		return new MIBreakDelete(breakPointNumbers);
 	}
 	
+	/**
+	 * Creates the -break-enable command
+	 * @param breakPointNumbers
+	 * @return MIBreakEnable
+	 */
+	public MIBreakEnable createMIBreakEnable(int[] breakPointNumbers) {
+		// TODO Auto-generated method stub
+		return new MIBreakEnable(breakPointNumbers);
+	}
+	
+	/**
+	 * Creates the -break-disable command
+	 * @param breakPointNumbers
+	 * @return MIBreakDisable
+	 */
+	public MIBreakDisable createMIBreakDisable(int[] breakPointNumbers) {
+		// TODO Auto-generated method stub
+		return new MIBreakDisable(breakPointNumbers);
+	}
+	
 	/* Stack Manipulation Commands */
 	
 	/**

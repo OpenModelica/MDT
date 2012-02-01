@@ -21,6 +21,8 @@ import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDelete;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDisable;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakEnable;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakInsert;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
@@ -208,6 +210,44 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 //		}
 		fGDBTarget = null;
 	}
+	
+	/**
+     * 
+     * Enable the breakpoint in gdb.
+     * Registers this breakpoint as an observer of MISession. 
+     * Sends the -break-enable command to gdb.
+     * 
+	 * @param gdbDebugTarget
+     * @throws MIException 
+     * @throws CoreException 
+	 */
+	public void enableBreakpoint(GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = getGDBDebugTarget().getMISession();
+		miSession.addObserver(this);
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakEnable breakEnableCmd = factory.createMIBreakEnable(new int[]{getBreakPointNumber()});
+		miSession.postCommand(breakEnableCmd, -1, null);
+	}
+	
+	/**
+     * 
+     * Disable the breakpoint in gdb.
+     * Unregisters this breakpoint as an observer of MISession. 
+     * Sends the -break-disable command to gdb.
+     * 
+	 * @param gdbDebugTarget
+     * @throws MIException 
+     * @throws CoreException 
+	 */
+	public void disableBreakpoint(GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = getGDBDebugTarget().getMISession();
+		miSession.deleteObserver(this);
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakDisable breakDisableCmd = factory.createMIBreakDisable(new int[]{getBreakPointNumber()});
+		miSession.postCommand(breakDisableCmd, -1, null);
+	}
     
     /**
      * Returns the target this breakpoint is installed in or <code>null</code>.
@@ -223,7 +263,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
      * 
      * @return the GDB target this breakpoint is inserted in or <code>null</code>
      */
-    protected GDBDebugTarget getGDBDebugTarget() {
+    public GDBDebugTarget getGDBDebugTarget() {
     	return fGDBTarget;
     }
     
