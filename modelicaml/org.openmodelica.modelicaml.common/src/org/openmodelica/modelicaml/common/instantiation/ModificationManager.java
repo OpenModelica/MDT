@@ -41,10 +41,8 @@ import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
@@ -52,6 +50,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
@@ -115,7 +114,7 @@ public class ModificationManager {
 			Collections.sort(newValue); // sort the new list
 			
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -137,7 +136,7 @@ public class ModificationManager {
 		final Stereotype stereotype = getElementStereotype(element);
 		if (stereotype != null) {
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -189,7 +188,7 @@ public class ModificationManager {
 			
 			
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -278,7 +277,7 @@ public class ModificationManager {
 			
 			
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -361,7 +360,7 @@ public class ModificationManager {
 		
 		if (inputsClassCheck == null) {
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -387,7 +386,7 @@ public class ModificationManager {
 			final Stereotype resultsClassStereotype = inputsClass.getApplicableStereotype(Constants.stereotypeQName_Model);
 			
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -409,7 +408,7 @@ public class ModificationManager {
 
 		if (pCheck == null) {
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -428,7 +427,7 @@ public class ModificationManager {
 		if ( !UmlServices.hasStereotype(p, Constants.stereotypeQName_Variable) ) {
 			final Stereotype pStereotype = p.getApplicableStereotype(Constants.stereotypeQName_Variable);
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -449,7 +448,7 @@ public class ModificationManager {
 
 		//########## storing start
 		if (inputsPropertyCheck == null) {
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -468,7 +467,7 @@ public class ModificationManager {
 		if (inputsProperty.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) == null) {
 			//########## storing start
 			if (inputsClassCheck == null) {
-				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+				TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 				CompoundCommand cc = new CompoundCommand();
 				Command command = new RecordingCommand(editingDomain) {
 					@Override
@@ -512,7 +511,7 @@ public class ModificationManager {
 		
 		if (outputsClassCheck == null) {
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -532,7 +531,7 @@ public class ModificationManager {
 			final Stereotype resultsClassStereotype = outputsClass.getApplicableStereotype(Constants.stereotypeQName_Record);
 			
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -551,7 +550,7 @@ public class ModificationManager {
 		
 		if (pCheck == null) {
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -571,7 +570,7 @@ public class ModificationManager {
 			final Stereotype pStereotype = p.getApplicableStereotype(Constants.stereotypeQName_Variable);
 			
 			//########## storing start
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -590,7 +589,7 @@ public class ModificationManager {
 		
 		//########## storing start
 		if (outputsPropertyCheck == null) {
-			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -610,7 +609,7 @@ public class ModificationManager {
 			
 			//########## storing start
 			if (outputsClassCheck == null) {
-				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+				TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 				CompoundCommand cc = new CompoundCommand();
 				Command command = new RecordingCommand(editingDomain) {
 					@Override
@@ -667,7 +666,7 @@ public class ModificationManager {
 									&& modRightHand.matches("(.+)?" + Constants.inputsComponentName + "." + StringUtls.replaceSpecChar(componentDotPath) + "(.+)?" ) ) {
 									
 									if (deleteIt) {
-										TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+										TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 										//########## storing start
 										CompoundCommand cc = new CompoundCommand();
 										Command command = new RecordingCommand(editingDomain) {
@@ -735,7 +734,7 @@ public class ModificationManager {
 				Property outputsPropertyCheck = selectedClass.getOwnedAttribute(Constants.outputsComponentName, outputsClass, true, UMLPackage.Literals.PROPERTY, false);
 				//########## storing start
 				if (outputsPropertyCheck == null) {
-					TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+					TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 					CompoundCommand cc = new CompoundCommand();
 					Command command = new RecordingCommand(editingDomain) {
 						@Override
@@ -768,7 +767,7 @@ public class ModificationManager {
 									
 									if (deleteIt) {
 
-										TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+										TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 										
 										//########## storing start
 										CompoundCommand cc = new CompoundCommand();

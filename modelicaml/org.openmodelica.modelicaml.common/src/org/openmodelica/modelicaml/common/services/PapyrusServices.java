@@ -5,7 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.papyrus.core.services.ServiceException;
+import org.eclipse.papyrus.core.services.ServicesRegistry;
+import org.eclipse.papyrus.core.utils.ServiceUtils;
+import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.ui.IViewPart;
@@ -15,6 +20,22 @@ import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 
 public class PapyrusServices {
 
+	public static TransactionalEditingDomain getPapyrusEditingDomain(){
+		ServicesRegistry serviceRegistry;
+		TransactionalEditingDomain editingDomain = null;
+		try {
+			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return editingDomain;
+	}
+	
+	
 	public static CommonViewer getModelExplorerView(){
 		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
 

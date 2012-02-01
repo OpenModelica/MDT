@@ -6,7 +6,10 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
@@ -15,6 +18,23 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 
 public class ModelicaMLServices {
 
+	
+	public static EObject adaptSelectedElement( Object selection) {
+		EObject eObject = null;
+		if(selection != null) {
+			// from any adaptable
+			if(selection instanceof IAdaptable) {
+				selection = ((IAdaptable)selection).getAdapter(EObject.class);
+			}
+	
+			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
+			if(businessObject instanceof EObject) {
+				eObject = (EObject)businessObject;
+			}
+		}
+		return eObject;
+	}
+	
 	public static String getRequirementID(Element req){
 		if (req instanceof NamedElement) {
 			Stereotype s = ((NamedElement)req).getAppliedStereotype(Constants.stereotypeQName_Requirement);
