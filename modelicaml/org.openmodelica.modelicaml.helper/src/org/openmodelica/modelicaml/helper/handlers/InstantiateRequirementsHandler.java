@@ -59,6 +59,7 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
 import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
@@ -132,7 +133,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 				HashSet<Class> selectedReq = dialog.getSelectedList();
 				HashMap<Class, Integer> selectedNumberOfInstantiations = dialog.getSelectedNumberOfInstantiations();
 				
-				TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+				TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 				
 				// instantiate requirements
 				editingDomain.getCommandStack().execute(getCommand(editingDomain, selectedReq, selectedNumberOfInstantiations, (Class) selectedElement));
