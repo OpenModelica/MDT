@@ -63,6 +63,7 @@ import org.eclipse.uml2.uml.OpaqueAction;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.editor.xtext.algorithm.ui.internal.AlgorithmsectionActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
@@ -152,7 +153,7 @@ public class AlgorithmSectionCodeSection extends AbstractPropertySection  {
 			}
 		});
 		// Get Papyrus editing domain
-		editingDomain = EditorUtils.getTransactionalEditingDomain();
+		editingDomain = PapyrusServices.getPapyrusEditingDomain();
 	}
 	
 	/**
