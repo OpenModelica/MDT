@@ -71,6 +71,7 @@ import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.simulation.environment.wizard.newsimulationproject.NewSimulationProjectFromModellingEnvironmentWizard;
 import org.openmodelica.simulation.environment.wizard.sessionconfiguration.interactive.SessionConfiguration_InteractiveWizard;
@@ -124,7 +125,7 @@ public class CGFromEntireModelAndSimThisClassWithOMCSimCenterAction extends Abst
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}
