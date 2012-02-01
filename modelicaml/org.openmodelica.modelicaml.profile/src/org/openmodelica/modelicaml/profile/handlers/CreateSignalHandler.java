@@ -55,6 +55,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Signal;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 
 
 // TODO: Auto-generated Javadoc
@@ -82,7 +83,7 @@ private EObject selectedElement = null;
 	 *             the execution exception
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}

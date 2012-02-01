@@ -59,6 +59,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 
 
 // TODO: Auto-generated Javadoc
@@ -93,7 +94,7 @@ private Element createdElement = null;
 	 *             the execution exception
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return createdElement;
 	}

@@ -63,6 +63,7 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.profile.dialogs.OneOrTwoColumnWithTextAndOptionalComboDialog;
 
 // TODO: Auto-generated Javadoc
@@ -85,7 +86,7 @@ private EObject selectedElement = null;
 	 *             the execution exception
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}
