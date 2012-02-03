@@ -789,6 +789,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 			ISelection s= fOutlineViewer.getSelection();
 			if (s instanceof IStructuredSelection) {
 				IStructuredSelection ss= (IStructuredSelection) s;
+				@SuppressWarnings("rawtypes")
 				List elements= ss.toList();
 				if (!elements.contains(reference)) {
 					s= (reference == null ? StructuredSelection.EMPTY : new StructuredSelection(reference));
@@ -816,7 +817,8 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 	/*
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	public Object getAdapter(Class key) {
+	// FIXME: The three top-level conditions test the same thing and all three returns from the function.
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 		if (key == IModelicaElement.class) {
 			return getShowInSource();
 		}
