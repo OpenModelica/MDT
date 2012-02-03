@@ -41,9 +41,6 @@
 
 package org.modelica.mdt.internal.core;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -124,17 +121,17 @@ public class CorePlugin extends AbstractUIPlugin
 //	lazyLoadImports.start();
 	
 	
-	private static Map lazyLoadList = new HashMap(); 
-	
-	public Map getLazyLoadList()
-	{
-		return lazyLoadList;
-	}
-
-	public void addToLazyLoadList()
-	{
-		//return lazyLoadList;
-	}
+//	private static Map lazyLoadList = new HashMap(); 
+//	
+//	public Map getLazyLoadList()
+//	{
+//		return lazyLoadList;
+//	}
+//
+//	public void addToLazyLoadList()
+//	{
+//		//return lazyLoadList;
+//	}
 	
 	/**
 	 * 
@@ -167,10 +164,12 @@ public class CorePlugin extends AbstractUIPlugin
 	IWorkbenchListener onExitListener = new IWorkbenchListener()
 	{
 
+		@Override
 		public void postShutdown(IWorkbench workbench) {
 			/* do nothing */
 		}
 
+		@Override
 		public boolean preShutdown(IWorkbench workbench, boolean forced) {
 			try
 			{
@@ -199,6 +198,7 @@ public class CorePlugin extends AbstractUIPlugin
 	 * This method is called upon plug-in activation
 	 * @param context
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception 
 	{
 		super.start(context);
@@ -209,6 +209,7 @@ public class CorePlugin extends AbstractUIPlugin
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception 
 	{
 		ModelicaCore.stop();

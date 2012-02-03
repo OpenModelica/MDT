@@ -41,14 +41,15 @@
 
 package org.modelica.mdt.core;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
@@ -56,99 +57,88 @@ import org.modelica.mdt.internal.core.CorePlugin;
 import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.ModelicaRoot;
 
-public class ModelicaCore 
-{
+public class ModelicaCore {
 	public static String PLUGIN_ID = "ModelicaCorePlugin";
 	private static ModelicaRoot modelicaRoot = null;
 
-
-	
 	/* 
 	 * regexp pattern of a valid modelica class name,
 	 * see modelica specification page 9 (and perhaps some other pages as well)
 	 * for the formal definition
 	 * http://www.modelica.org/documents/ModelicaSpec22.pdf
 	 */
-	private static String getPattern()
-	{
-
+	private static String getPattern() {
 		String IDENT = "([_a-zA-Z]\\w*)";
-		
+
 		/* \p{Graph} are all printable characters in the POSIX standard
 		 * Q-CHAR = [\p{Graph}&&[^'\]] */
 		String Q_CHAR = "[\\p{Graph}&&[^'\\\\]]";
-		
+
 		/* S-ESCAPE = \'|\"|\?|\\|\a|\b|\f|\n|\r|\t|\v */
 		String S_ESCAPE = "((\\\\')|(\\\\\")|(\\\\\\?)|(\\\\\\\\)|(\\\\a)"
-			+"|(\\\\b)|(\\\\f)|(\\\\n)|(\\\\r)|(\\\\t)|(\\\\v))";
-		
+				+"|(\\\\b)|(\\\\f)|(\\\\n)|(\\\\r)|(\\\\t)|(\\\\v))";
+
 		/* Q-IDENT = "'" (Q-CHAR | S-ESCAPE) {Q-CHAR | S-ESCAPE} "'" */
 		String Q_IDENT = "('(" + Q_CHAR + "|" + S_ESCAPE + ")+')";
-		
+
 		String pattern = IDENT + "|" + Q_IDENT;
-		
+
 		return pattern;
 	}
-    private static Pattern classNamePattern = Pattern.compile(getPattern());
-	
-	public static IModelicaRoot getModelicaRoot()
-	{
+
+	private static Pattern classNamePattern = Pattern.compile(getPattern());
+
+	public static IModelicaRoot getModelicaRoot() {
 		return modelicaRoot;
 	}
 
-	public static void start()
-	{
+	public static void start() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IPathVariableManager pathMan = workspace.getPathVariableManager();
 		String name = "OPENMODELICALIBRARY";
 		String path = null; path = System.getenv(name);
-		if (path != null)
-		{
-			IPath value = new Path(path);
-			try
-			{
-				if (pathMan.validateName(name).isOK() && pathMan.validateValue(value).isOK()) 
-				{
-					pathMan.setValue(name, value);
+		if (path != null) {
+			try {
+				URI value = new URI(path);
+
+				if (pathMan.validateName(name).isOK() && pathMan.validateValue(value).isOK()) {
+					pathMan.setURIValue(name, value);
 				} 
-				else 
-				{
+				else {
 					Display display = CorePlugin.getDisplay();
-					display.asyncExec(new Runnable()
-					{
-						public void run()
-						{
+					display.asyncExec(new Runnable() {
+						@Override
+						public void run() {
 							ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
 									new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
 											"OPENMODELICALIBRARY environment variable is not set!\n" +
-											"Please exit Eclipse and set the variable if you want to be able " +
-											"to browse the Modelica Library", null));
+													"Please exit Eclipse and set the variable if you want to be able " +
+													"to browse the Modelica Library", null));
 						}
 					});
 				}
 			}
-			catch(CoreException e)
-			{
+			catch (URISyntaxException e) {
+				ErrorManager.logError(e);
+			}
+			catch (CoreException e) {
 				ErrorManager.logError(e);
 			}
 		}
+
 		modelicaRoot = new ModelicaRoot();
 		modelicaRoot.start();
 	}
 
-
-	public static void stop()
-	{
+	public static void stop() {
 		modelicaRoot.stop();
 		modelicaRoot = null;
 	}
 
-
 	/**
 	 * @return true if name is a valid modelica identifier name
 	 */
-	public static boolean isLegalIdentifierName(String name)
-	{
+	public static boolean isLegalIdentifierName(String name) {
 		return ModelicaCore.classNamePattern.matcher(name).matches();
 	}
 }
