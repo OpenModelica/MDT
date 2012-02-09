@@ -402,9 +402,10 @@ public class StateDoCodeSection extends AbstractPropertySection  {
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		// Get the selected element
         EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
-        if (selectedElement instanceof Element) {
+        if (selectedElement instanceof State) {
         	this.selectedUmlElement = (Element)selectedElement;
-        	isNewSelection = true;
+//        	isNewSelection = true;
+			selectedState = (State)selectedUmlElement;
 		}
         
 		// Get Papyrus editing domain.
