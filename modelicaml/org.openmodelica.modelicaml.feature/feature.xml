@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.openmodelica.modelicaml.feature"
+      label="ModelicaML - Papyrus Customization, Modelica Code Generation, Simulation with OMC"
+      version="1.8.4.qualifier"
+      provider-name="OpenModelica Project">
+
+   <description url="http://www.openmodelica.org/modelicaml">
+      ModelicaML is a UML Profile for modeling and simulating of the
+system dynamic behavior. It enables engineers to formalize system
+requirements and designs, to simulate designs and to verify desings
+againts requirements.
+   </description>
+
+   <copyright url="http://www.openmodelica.org/index.php/home/license">
+      Copyright (c) 1998-CurrentYear, Linköping University,
+Department of Computer and Information Science,
+SE-58183 Linköping, Sweden.
+
+All rights reserved.
+   </copyright>
+
+   <license url="http://www.openmodelica.org/index.php/home/license">
+      THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 
+AND THIS OSMC PUBLIC LICENSE (OSMC-PL). 
+ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES
+RECIPIENT&apos;S ACCEPTANCE OF THE OSMC PUBLIC LICENSE.
+The OpenModelica software and the Open Source Modelica
+Consortium (OSMC) Public License (OSMC-PL) are obtained
+from Linköping University, either from the above address,
+from the URLs: http://www.ida.liu.se/projects/OpenModelica
+or  
+http://www.openmodelica.org, and in the OpenModelica distribution.
+GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
+This program is distributed WITHOUT ANY WARRANTY; without
+even the implied warranty of  MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
+IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS
+OF OSMC-PL.
+See the full OSMC Public License conditions for more details.
+   </license>
+
+   <url>
+      <update label="ModelicaML Update Site" url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/ModelicaML/update"/>
+      <discovery label="OpenModelica Project" url="http://www.openmodelica.org"/>
+   </url>
+
+   <requires>
+      <import plugin="fr.obeo.acceleo.gen"/>
+      <import plugin="org.eclipse.xtext"/>
+      <import plugin="org.eclipse.papyrus.core"/>
+      <import plugin="org.antlr.runtime"/>
+      <import plugin="fr.obeo.acceleo.chain"/>
+      <import plugin="fr.obeo.acceleo.template"/>
+   </requires>
+
+   <plugin
+         id="org.openmodelica.modelicaml.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.activitycontrolflowguardexpression"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.activitycontrolflowguardexpression.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.activitycontrolflowguardexpression.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.algorithmsection"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.algorithmsection.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.algorithmsection.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.arraysubscript"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.arraysubscript.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.arraysubscript.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.conditionalattribute"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.conditionalattribute.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.conditionalattribute.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.declaration"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.declaration.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.declaration.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.equationsection"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.equationsection.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.equationsection.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modeleditor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modeleditor.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modeleditor.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modification"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modification.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modification.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.gen.modelica"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.helper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.model.explorer.customization"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.perspective"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.preferences"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.profile"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.simulation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.tabbedproperties.editors"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.tabbedproperties.editors.glue"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.tabbedproperties.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.view.componentstree"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.simulation.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.simulation.libs.jfreechart"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openmodelica.simulation.libs.xom"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.view.valuebindings"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.modelica.importer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.traceability"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.simulation.environment"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

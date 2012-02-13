@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="equationsection"
+    nsURI="http://www.openmodelica.org/modelicaml/editor/xtext/equation/Equationsection"
+    nsPrefix="equationsection">
+  <eClassifiers xsi:type="ecore:EClass" name="equation_section">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Eqn" upperBound="-1" eType="#//equation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sim" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//simple_expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="when_equation" eSuperTypes="#//equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="whenEpr" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Eqn_Then" upperBound="-1"
+        eType="#//equation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elseWhenEpr" upperBound="-1"
+        eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="if_equation" eSuperTypes="#//equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exprtrue" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Eqn" upperBound="-1" eType="#//equation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exprStilltrue" upperBound="-1"
+        eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thenEqn" upperBound="-1"
+        eType="#//equation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elseEqn" upperBound="-1"
+        eType="#//equation" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="for_equation" eSuperTypes="#//equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="for_loop" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//for_indices"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="For_Eqn" upperBound="-1"
+        eType="#//equation" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="connect_clause" eSuperTypes="#//equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="connector1" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="connector2" eType="ecore:EClass ../../../../../../../../org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

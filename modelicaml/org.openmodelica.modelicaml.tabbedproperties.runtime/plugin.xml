@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+     <extension point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="TreeOutlinePage"
+            labelProvider="org.eclipse.papyrus.properties.tabbed.core.provider.EMFObjectLabelProvider"
+            tabDescriptorProvider="org.eclipse.papyrus.properties.tabbed.core.provider.XMLBasedTabDescriptorProvider">
+         <propertyCategory
+               category="org.eclipse.papyrus"/>
+      </propertyContributor>
+   </extension>
+	<extension
+      point="org.eclipse.papyrus.properties.runtime.propertyViewProvider">
+   <propertyViewProvider
+         class="org.eclipse.papyrus.properties.tabbed.core.view.XMLPropertyTabViewProvider">
+      <Priority
+            name="Highest">
+      </Priority>
+      <PropertyViewContribution
+            description="This is the generic view for ModelicaML tabbed properties"
+            id="propertyview.modelicaML.basic"
+            icon=""
+            name="ModelicaML"
+            path="resources/modelicaML_generic_sections.xml">
+      </PropertyViewContribution>
+   </propertyViewProvider>
+</extension>
+<extension
+      point="org.eclipse.papyrus.properties.runtime.propertyEditorControllerProvider">
+   <propertyEditorControllerProvider
+         class="org.eclipse.papyrus.properties.runtime.controller.predefined.PredefinedPropertyControllerProvider"
+         description="this is the basic provider for ModelicaML features"
+            id="org.eclipse.papyrus.properties.view.modelicaML.structuralFeaturesEMFTPredefinedControllers">
+      <Priority name="Highest"/>
+      <PredefinedControllers
+            id="org.eclipse.papyrus.properties.view.modelicaML.structuralFeaturesEMFTPredefinedControllers"
+            name="ModelicaML Predefined Controllers for Structural Features"
+            path="resources/modelicaML_predefined_controllers.xml">
+      </PredefinedControllers>
+   </propertyEditorControllerProvider>
+</extension>
+</plugin>

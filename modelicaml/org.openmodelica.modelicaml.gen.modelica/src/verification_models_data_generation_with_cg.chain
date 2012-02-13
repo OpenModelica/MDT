@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ASCII"?>
+<chain:Chain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:chain="http://www.obeo.fr/acceleo/chain" documentation="Generate Modelica Code from ModelicaML Model" parametersFiles="//@repository/@files.0 //@repository/@files.1 //@repository/@files.2" keepModelInMemory="false">
+  <repository>
+    <files xsi:type="chain:Model" path="/MyProject/myUMLModel.uml"/>
+    <files xsi:type="chain:Folder" path="/org.openmodelica.modelicaml.gen.modelica/test"/>
+    <files xsi:type="chain:Log" path="/org.openmodelica.modelicaml.gen.modelica/test/erros.log"/>
+    <files xsi:type="chain:EmfMetamodel" path="http://www.eclipse.org/uml2/3.0.0/UML"/>
+    <files xsi:type="chain:Generator" path="/org.openmodelica.modelicaml.gen.modelica/src/ModelicaML2Modelica_v04.mt"/>
+    <files xsi:type="chain:Generator" path="/org.openmodelica.modelicaml.gen.modelica/src/org/openmodelica/modelicaml/gen/modelica/testexecution/test_execution_report_css.mt"/>
+    <files xsi:type="chain:Generator" path="/org.openmodelica.modelicaml.gen.modelica/src/org/openmodelica/modelicaml/gen/modelica/testexecution/test_execution_report_data_js_template.mt"/>
+    <files xsi:type="chain:Generator" path="/org.openmodelica.modelicaml.gen.modelica/src/org/openmodelica/modelicaml/gen/modelica/testexecution/test_execution_report_data_js.mt"/>
+    <files xsi:type="chain:Generator" path="/org.openmodelica.modelicaml.gen.modelica/src/org/openmodelica/modelicaml/gen/modelica/testexecution/test_execution_report_html.mt"/>
+    <files xsi:type="chain:Generator" path="/org.openmodelica.modelicaml.gen.modelica/src/org/openmodelica/modelicaml/gen/modelica/testexecution/test_session_xml.mt"/>
+    <files xsi:type="chain:Generator" path="/org.openmodelica.modelicaml.gen.modelica/src/org/openmodelica/modelicaml/gen/modelica/testexecution/test_execution_report_functions_js.mt"/>
+  </repository>
+  <actions>
+    <actions xsi:type="chain:Generate" documentation="CGModelicaML2Modelica" log="//@repository/@files.2" model="//@repository/@files.0" metamodel="//@repository/@files.3" generator="//@repository/@files.4" folder="//@repository/@files.1"/>
+    <actions xsi:type="chain:Generate" documentation="ModelicaML2ModelicaCSS" log="//@repository/@files.2" model="//@repository/@files.0" metamodel="//@repository/@files.3" generator="//@repository/@files.5" folder="//@repository/@files.1"/>
+    <actions xsi:type="chain:Generate" documentation="ModelicaML2ModelicaJSTemplate" log="//@repository/@files.2" model="//@repository/@files.0" metamodel="//@repository/@files.3" generator="//@repository/@files.6" folder="//@repository/@files.1"/>
+    <actions xsi:type="chain:Generate" documentation="ModelicaML2ModelicaJS" log="//@repository/@files.2" model="//@repository/@files.0" metamodel="//@repository/@files.3" generator="//@repository/@files.7" folder="//@repository/@files.1"/>
+    <actions xsi:type="chain:Generate" documentation="ModelicaML2ModelicaHTML" log="//@repository/@files.2" model="//@repository/@files.0" metamodel="//@repository/@files.3" generator="//@repository/@files.8" folder="//@repository/@files.1"/>
+    <actions xsi:type="chain:Generate" documentation="ModelicaML2ModelicaXML" log="//@repository/@files.2" model="//@repository/@files.0" metamodel="//@repository/@files.3" generator="//@repository/@files.9" folder="//@repository/@files.1"/>
+    <actions xsi:type="chain:Generate" documentation="ModelicaML2ModelicaJSFunctions" log="//@repository/@files.2" model="//@repository/@files.0" metamodel="//@repository/@files.3" generator="//@repository/@files.10" folder="//@repository/@files.1"/>
+  </actions>
+</chain:Chain>

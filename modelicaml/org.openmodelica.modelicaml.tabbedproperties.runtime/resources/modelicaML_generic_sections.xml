@@ -1,0 +1,2256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<propertyTabView pluginId="org.openmodelica.modelicaml.tabbedproperties.runtime">
+	
+	<tab category="ModelicaML" id="basicTabModelicaML" label="ModelicaML"/>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+<sectionSet name="sectionSet_Single_Package">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Package" /> 
+  </context>
+ <section adapterId="Semantic" id="section_Single_Package" tabId="basicTabModelicaML">
+ <replacedSections>
+  <replacedSection id="section_Multiple_Package" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Namespace" /> 
+  <replacedSection id="section_Single_ParameterableElement" /> 
+  <replacedSection id="section_Single_PackageableElement" /> 
+  <replacedSection id="section_Single_TemplateableElement" /> 
+  </replacedSections>
+ <fragment id="fragment_Single_Package">
+	 <context enablesFor="1">
+	  <elementClass name="org.eclipse.uml2.uml.Package" /> 
+	  </context>
+	 <content>
+		 <container>
+			  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+			  <controller predefinedId="UML_NamedElement_name" /> 
+		  </container>
+	  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+ <sectionSet name="sectionSet_Multiple_Package">
+ <context enablesFor="-1">
+  <elementClass name="org.eclipse.uml2.uml.Package" /> 
+  </context>
+ <section adapterId="Semantic" id="section_Multiple_Package" tabId="basicTabModelicaML">
+ <replacedSections>
+  <replacedSection id="section_Multiple_Element" /> 
+  <replacedSection id="section_Multiple_NamedElement" /> 
+  <replacedSection id="section_Multiple_Namespace" /> 
+  <replacedSection id="section_Multiple_ParameterableElement" /> 
+  <replacedSection id="section_Multiple_PackageableElement" /> 
+  <replacedSection id="section_Multiple_TemplateableElement" /> 
+  </replacedSections>
+ <fragment id="fragment_Multiple_Package">
+ <context enablesFor="-1">
+  <elementClass name="org.eclipse.uml2.uml.Package" /> 
+  </context>
+ <content>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+	
+	
+	 <sectionSet name="sectionSet_Single_Model">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Model" /> 
+  </context>
+ <section adapterId="Semantic" afterSection="top" id="section_Single_Model" tabId="basicTabModelicaML">
+ <replacedSections>
+  <replacedSection id="section_Multiple_Model" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Namespace" /> 
+  <replacedSection id="section_Single_ParameterableElement" /> 
+  <replacedSection id="section_Single_PackageableElement" /> 
+  <replacedSection id="section_Single_TemplateableElement" /> 
+  <replacedSection id="section_Single_Package" /> 
+  </replacedSections>
+ <fragment id="fragment_Single_Model">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Model" /> 
+  </context>
+ <content>
+ <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+ <sectionSet name="sectionSet_Multiple_Model">
+ <context enablesFor="-1">
+  <elementClass name="org.eclipse.uml2.uml.Model" /> 
+  </context>
+ <section adapterId="Semantic" afterSection="top" id="section_Multiple_Model" tabId="basicTabModelicaML">
+ <replacedSections>
+  <replacedSection id="section_Multiple_Element" /> 
+  <replacedSection id="section_Multiple_NamedElement" /> 
+  <replacedSection id="section_Multiple_Namespace" /> 
+  <replacedSection id="section_Multiple_ParameterableElement" /> 
+  <replacedSection id="section_Multiple_PackageableElement" /> 
+  <replacedSection id="section_Multiple_TemplateableElement" /> 
+  <replacedSection id="section_Multiple_Package" /> 
+  </replacedSections>
+ <fragment id="fragment_Multiple_Model">
+ <context enablesFor="-1">
+  <elementClass name="org.eclipse.uml2.uml.Model" /> 
+  </context>
+ <content>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+	
+	
+	<sectionSet name="sectionSet_Single_State">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.State" /> 
+  </context>
+ <section adapterId="Semantic" afterSection="top" id="section_Single_State" tabId="basicTabModelicaML">
+ <replacedSections>
+  <replacedSection id="section_Multiple_State" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Namespace" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_Vertex" /> 
+  </replacedSections>
+ <fragment id="fragment_Single_State">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.State" /> 
+  </context>
+ <content>
+ <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+ <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_State_entry" /> 
+  <controller predefinedId="UML_State_doActivity" />
+  <controller predefinedId="UML_State_exit" /> 
+  </container>
+
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+	
+	
+<sectionSet name="sectionSet_Single_Transition">
+- <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Transition" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_Transition" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_Transition" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Namespace" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_Transition">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Transition" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_Transition_effect" /> 
+  <!--<controller predefinedId="UML_Transition_guard" />-->
+  </container>
+  
+<!--
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_Transition_trigger" /> 
+  </container>
+ -->
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+	
+	
+	
+<sectionSet name="sectionSet_Single_ControlFlow">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.ControlFlow" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_ControlFlow" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_ControlFlow" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ActivityEdge" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_ControlFlow">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.ControlFlow" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <!--<controller predefinedId="UML_ActivityEdge_guard" />-->  
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+<sectionSet name="sectionSet_Single_CallBehaviorAction">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.CallBehaviorAction" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_CallBehaviorAction" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_CallBehaviorAction" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ActivityNode" /> 
+  <replacedSection id="section_Single_ExecutableNode" /> 
+  <replacedSection id="section_Single_Action" /> 
+  <replacedSection id="section_Single_InvocationAction" /> 
+  <replacedSection id="section_Single_CallAction" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_CallBehaviorAction">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.CallBehaviorAction" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  <container>
+  <layout kind="Grid" numColumns="2" sameWidth="true" /> 
+  <controller predefinedId="UML_CallBehaviorAction_behavior" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+
+
+<sectionSet name="sectionSet_Single_DecisionNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.DecisionNode" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_DecisionNode" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_DecisionNode" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ActivityNode" /> 
+  <replacedSection id="section_Single_ControlNode" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_DecisionNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.DecisionNode" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+<sectionSet name="sectionSet_Single_MergeNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.MergeNode" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_MergeNode" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_MergeNode" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ActivityNode" /> 
+  <replacedSection id="section_Single_ControlNode" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_MergeNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.MergeNode" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+	
+	
+	
+<sectionSet name="sectionSet_Single_Region"> 
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Region" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_Region" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_Region" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Namespace" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_Region">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Region" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+	
+
+
+<sectionSet name="sectionSet_Single_Pseudostate">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Pseudostate" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_Pseudostate" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_Pseudostate" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Vertex" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_Pseudostate">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.Pseudostate" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+
+<sectionSet name="sectionSet_Single_ConnectionPointReference">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.ConnectionPointReference" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_ConnectionPointReference" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_ConnectionPointReference" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Vertex" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_ConnectionPointReference">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.ConnectionPointReference" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+
+<sectionSet name="sectionSet_Single_FinalState">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.FinalState" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_FinalState" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_FinalState" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Namespace" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_Vertex" /> 
+  <replacedSection id="section_Single_State" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_FinalState">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.FinalState" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+
+<sectionSet name="sectionSet_Single_InitialNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.InitialNode" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_InitialNode" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_InitialNode" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ActivityNode" /> 
+  <replacedSection id="section_Single_ControlNode" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_InitialNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.InitialNode" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+
+
+<sectionSet name="sectionSet_Single_ActivityFinalNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.ActivityFinalNode" /> 
+  </context>
+  <section adapterId="Semantic" afterSection="top" id="section_Single_ActivityFinalNode" tabId="basicTabModelicaML">
+  <replacedSections>
+  <replacedSection id="section_Multiple_ActivityFinalNode" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ActivityNode" /> 
+  <replacedSection id="section_Single_ControlNode" /> 
+  <replacedSection id="section_Single_FinalNode" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_ActivityFinalNode">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.ActivityFinalNode" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+
+<sectionSet name="sectionSet_Single_OpaqueBehavior">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.OpaqueBehavior" /> 
+  </context>
+ <section adapterId="Semantic" afterSection="top" id="section_Single_OpaqueBehavior" tabId="basicTabModelicaML">
+ <replacedSections>
+  <replacedSection id="section_Multiple_OpaqueBehavior" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_Namespace" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ParameterableElement" /> 
+  <replacedSection id="section_Single_PackageableElement" /> 
+  <replacedSection id="section_Single_Type" /> 
+  <replacedSection id="section_Single_TemplateableElement" /> 
+  <replacedSection id="section_Single_Classifier" /> 
+  <replacedSection id="section_Single_StructuredClassifier" /> 
+  <replacedSection id="section_Single_EncapsulatedClassifier" /> 
+  <replacedSection id="section_Single_BehavioredClassifier" /> 
+  <replacedSection id="section_Single_Class" /> 
+  <replacedSection id="section_Single_Behavior" /> 
+  </replacedSections>
+ <fragment id="fragment_Single_OpaqueBehavior">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.OpaqueBehavior" /> 
+  </context>
+ <content>
+ <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+<!--  <controller predefinedId="UML_OpaqueBehavior_body" /> 
+  <controller predefinedId="UML_OpaqueBehavior_language" />--> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+
+<sectionSet name="sectionSet_Single_OpaqueAction">
+ <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.OpaqueAction" /> 
+  </context>
+ <section adapterId="Semantic" afterSection="top" id="section_Single_OpaqueAction" tabId="basicTabModelicaML">
+ <replacedSections>
+  <replacedSection id="section_Multiple_OpaqueAction" /> 
+  <replacedSection id="section_Single_Element" /> 
+  <replacedSection id="section_Single_NamedElement" /> 
+  <replacedSection id="section_Single_RedefinableElement" /> 
+  <replacedSection id="section_Single_ActivityNode" /> 
+  <replacedSection id="section_Single_ExecutableNode" /> 
+  <replacedSection id="section_Single_Action" /> 
+  </replacedSections>
+  <fragment id="fragment_Single_OpaqueAction">
+  <context enablesFor="1">
+  <elementClass name="org.eclipse.uml2.uml.OpaqueAction" /> 
+  </context>
+  <content>
+  <container>
+  <layout kind="Grid" numColumns="1" sameWidth="true" /> 
+<!--  <controller predefinedId="UML_OpaqueAction_body" /> 
+  <controller predefinedId="UML_OpaqueAction_language" /> --> 
+  <controller predefinedId="UML_NamedElement_name" /> 
+  </container>
+  </content>
+  </fragment>
+  </section>
+  </sectionSet>
+
+
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_Function">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Function"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Function" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Function"/>
+				<replacedSection id="sectionSet_Single_OpaqueBehavior"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Function">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Function"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Function Parameters">
+  						<controller predefinedId="UML_BehavioralFeature_ownedParameter" />
+  						<layout kind="Grid" numColumns="1" sameWidth="true" />
+   					</expandableContainer>
+					
+					<expandableContainer label="Modelica Specific Properties: Function">
+						<controller predefinedId="ModelicaML_Function_scope"/>
+
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Function_partial"/>
+						<controller predefinedId="ModelicaML_Function_replaceable"/>
+						<controller predefinedId="ModelicaML_Function_final"/>
+						<controller predefinedId="ModelicaML_Function_encapsulated"/>
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+					<expandableContainer label="Modelica Specific Properties: External Function Call">
+						<controller predefinedId="ModelicaML_Function_externalAnnotation"/>
+						<controller predefinedId="ModelicaML_Function_externalFunctionCall"/>
+						<controller predefinedId="ModelicaML_Function_externalLanguageSpecification"/>
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_Block">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Block"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Block" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Block"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Block">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Block"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Block_partial"/>
+						<controller predefinedId="ModelicaML_Block_replaceable"/>
+						<controller predefinedId="ModelicaML_Block_final"/>
+						<controller predefinedId="ModelicaML_Block_encapsulated"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_ModelicaModel">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Model"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ModelicaModel" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ModelicaModel"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Model">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Model"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Model_partial"/>
+						<controller predefinedId="ModelicaML_Model_replaceable"/>
+						<controller predefinedId="ModelicaML_Model_final"/>
+						<controller predefinedId="ModelicaML_Model_encapsulated"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_ModelicaPackage">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaPackage"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ModelicaPackage" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ModelicaPackage"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ModelicaPackage">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaPackage"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_ModelicaPackage_partial"/>
+						<controller predefinedId="ModelicaML_ModelicaPackage_replaceable"/>
+						<controller predefinedId="ModelicaML_ModelicaPackage_final"/>
+						<controller predefinedId="ModelicaML_ModelicaPackage_encapsulated"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_Connector">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Connector"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Connector" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Connector"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Connector">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Connector"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Connector_expandable"/>
+						<controller predefinedId="ModelicaML_Connector_partial"/>
+						<controller predefinedId="ModelicaML_Connector_replaceable"/>
+						<controller predefinedId="ModelicaML_Connector_final"/>
+						<controller predefinedId="ModelicaML_Connector_encapsulated"/>
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_Record">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Record"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Record" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Record"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Record">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Record"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Record_partial"/>
+						<controller predefinedId="ModelicaML_Record_replaceable"/>
+						<controller predefinedId="ModelicaML_Record_final"/>
+						<controller predefinedId="ModelicaML_Record_encapsulated"/>
+
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_Type">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Type"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Type" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Type"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Type">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Type"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Type_partial"/>
+						<controller predefinedId="ModelicaML_Type_replaceable"/>
+						<controller predefinedId="ModelicaML_Type_final"/>
+						<controller predefinedId="ModelicaML_Type_encapsulated"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_CalculationModel">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::CalculationModel"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_CalculationModel" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_CalculationModel"/>
+				<replacedSection id="section_Single_Model"/>
+			</replacedSections>
+			<fragment id="fragment_Single_CalculationModel">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::CalculationModel"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_CalculationModel_partial"/>
+						<controller predefinedId="ModelicaML_CalculationModel_replaceable"/>
+						<controller predefinedId="ModelicaML_CalculationModel_final"/>
+						<controller predefinedId="ModelicaML_CalculationModel_encapsulated"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_ModelicaEnumeration">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaEnumeration"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ModelicaEnumeration" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ModelicaEnumeration"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ModelicaEnumeration">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaEnumeration"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_ModelicaEnumeration_partial"/>
+						<controller predefinedId="ModelicaML_ModelicaEnumeration_replaceable"/>
+						<controller predefinedId="ModelicaML_ModelicaEnumeration_final"/>
+						<controller predefinedId="ModelicaML_ModelicaEnumeration_encapsulated"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_ModelicaClass">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaClass"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ModelicaClass" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ModelicaClass"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ModelicaClass">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaClass"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Class">
+						<controller predefinedId="ModelicaML_ModelicaClass_partial"/>
+						<controller predefinedId="ModelicaML_ModelicaClass_replaceable"/>
+						<controller predefinedId="ModelicaML_ModelicaClass_final"/>
+						<controller predefinedId="ModelicaML_ModelicaClass_encapsulated"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_Operator">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Operator"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Operator" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Operator"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Operator">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::Operator"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Operator_partial"/>
+						<controller predefinedId="ModelicaML_Operator_replaceable"/>
+						<controller predefinedId="ModelicaML_Operator_final"/>
+						<controller predefinedId="ModelicaML_Operator_encapsulated"/>
+
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_Requirement">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRequirementConstructs::Requirement"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Requirement" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Requirement"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Requirement">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRequirementConstructs::Requirement"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="ModelicaML Specific Properties: Requirement">
+						<controller predefinedId="ModelicaML_Requirement_id"/>
+						<controller predefinedId="ModelicaML_Requirement_text"/>
+					<!--<controller predefinedId="ModelicaML_Requirement_specifiesObject"/>-->
+					<!--<controller predefinedId="ModelicaML_Requirement_specifiesType"/>-->
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+					
+					<!--
+					<expandableContainer label="ModelicaML Specific Properties: Restricted Class">
+						<controller predefinedId="ModelicaML_Requirement_partial"/>
+						<controller predefinedId="ModelicaML_Requirement_replaceable"/>
+						<controller predefinedId="ModelicaML_Requirement_final"/>
+						<controller predefinedId="ModelicaML_Requirement_encapsulated"/>
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+					-->
+					
+					
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	
+	<sectionSet name="sectionSet_Single_ModelicaModelReference">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaModelReference"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ModelicaModelReference" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ModelicaModelReference"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ModelicaModelReference">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaClassConstructs::ModelicaModelReference"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_ModelicaModelReference_modelPath"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<!-- TODO: does not work. maybe because the profile is a different one... -->
+	<sectionSet name="sectionSet_Single_ValueMediatorsContainer">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediatorsContainer"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ValueMediatorsContainer" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ValueMediatorsContainer"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Block">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediatorsContainer"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_Component">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::Component"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Component" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Component"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Component">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::Component"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="2" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  						<!--<controller predefinedId="UML_NamedElement_visibility" />-->
+  					</container>
+					<expandableContainer label="Modelica Specific Properties: Component">
+						<!--<controller predefinedId="ModelicaML_Component_conditionalExpression"/>-->
+						<!--<controller predefinedId="ModelicaML_Component_iconImagePath"/>-->
+						<controller predefinedId="ModelicaML_Component_final"/>
+						<controller predefinedId="ModelicaML_Component_replaceable"/>
+						<!--<controller predefinedId="ModelicaML_Component_arraySize"/>-->
+						<!--<controller predefinedId="ModelicaML_Component_modification"/>-->
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_ConnectionPort">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::ConnectionPort"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ConnectionPort" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ConnectionPort"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ConnectionPort">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::ConnectionPort"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  					</container>
+					<expandableContainer label="Modelica Specific Properties: Component">
+						<!--<controller predefinedId="ModelicaML_ConnectionPort_conditionalExpression"/>-->
+						<!--<controller predefinedId="ModelicaML_ConnectionPort_iconImagePath"/>-->
+						<controller predefinedId="ModelicaML_ConnectionPort_final"/>
+						<controller predefinedId="ModelicaML_ConnectionPort_replaceable"/>
+						<controller predefinedId="ModelicaML_ConnectionPort_causality"/>
+						<!--<controller predefinedId="ModelicaML_ConnectionPort_arraySize"/>-->
+						<!--<controller predefinedId="ModelicaML_ConnectionPort_modification"/>-->
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_Variable">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::Variable"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Variable" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Variable"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Variable">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::Variable"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  					</container>
+					<expandableContainer label="Modelica Specific Properties: Component">
+						<controller predefinedId="ModelicaML_Variable_variability"/>
+						<controller predefinedId="ModelicaML_Variable_causality"/>
+						<controller predefinedId="ModelicaML_Variable_flowFlag"/>
+						<controller predefinedId="ModelicaML_Variable_scope"/>
+						<controller predefinedId="ModelicaML_Variable_final"/>
+						<controller predefinedId="ModelicaML_Variable_replaceable"/>
+
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_FunctionArgument">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::FunctionArgument"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_FunctionArgument" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_FunctionArgument"/>
+			</replacedSections>
+			<fragment id="fragment_Single_FunctionArgument">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::FunctionArgument"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  					</container>
+					<expandableContainer label="Modelica Specific Properties: Function Argument">
+						<!--<controller predefinedId="ModelicaML_FunctionArgument_conditionalExpression"/>-->
+						<!--<controller predefinedId="ModelicaML_FunctionArgument_declarationEquationOrAssignment"/>-->
+						<!--<controller predefinedId="ModelicaML_FunctionArgument_iconImagePath"/>-->
+						<controller predefinedId="ModelicaML_FunctionArgument_variability"/>
+						<controller predefinedId="ModelicaML_FunctionArgument_causality"/>
+						<controller predefinedId="ModelicaML_FunctionArgument_flowFlag"/>
+						<controller predefinedId="ModelicaML_FunctionArgument_scope"/>
+						
+						<controller predefinedId="ModelicaML_FunctionArgument_final"/>
+						<controller predefinedId="ModelicaML_FunctionArgument_replaceable"/>
+						
+						<!--<controller predefinedId="ModelicaML_FunctionArgument_arraySize"/>-->
+						<!--<controller predefinedId="ModelicaML_FunctionArgument_modification"/>-->
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_CalculatedProperty">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::CalculatedProperty"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_CalculatedProperty" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_CalculatedProperty"/>
+				<replacedSection id="section_Single_Component"/>
+			</replacedSections>
+			<fragment id="fragment_Single_CalculatedProperty">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::CalculatedProperty"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  					</container>
+					<expandableContainer label="Modelica Specific Properties: Component">
+						<!--<controller predefinedId="ModelicaML_CalculatedProperty_conditionalExpression"/>-->
+						<!--<controller predefinedId="ModelicaML_CalculatedProperty_iconImagePath"/>-->
+						<controller predefinedId="ModelicaML_CalculatedProperty_final"/>
+						<controller predefinedId="ModelicaML_CalculatedProperty_replaceable"/>
+						<!--<controller predefinedId="ModelicaML_CalculatedProperty_arraySize"/>-->
+						<!--<controller predefinedId="ModelicaML_CalculatedProperty_modification"/>-->
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_RequirementInstance">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRequirementConstructs::RequirementInstance"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_RequirementInstance" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_RequirementInstance"/>
+				<replacedSection id="section_Single_Component"/>
+			</replacedSections>
+			<fragment id="fragment_Single_RequirementInstance">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRequirementConstructs::RequirementInstance"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  					</container>
+					<expandableContainer label="ModelicaML Specific Properties: Component">
+						<!--<controller predefinedId="ModelicaML_RequirementInstance_conditionalExpression"/>-->
+						<!--<controller predefinedId="ModelicaML_RequirementInstance_iconImagePath"/>-->
+						<controller predefinedId="ModelicaML_RequirementInstance_final"/>
+						<controller predefinedId="ModelicaML_RequirementInstance_replaceable"/>
+						<!--<controller predefinedId="ModelicaML_RequirementInstance_arraySize"/>-->
+						<!--<controller predefinedId="ModelicaML_RequirementInstance_modification"/>-->
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	<sectionSet name="sectionSet_Single_ValueMediator">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediator"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ValueMediator" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ValueMediator"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ValueMediator">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ValueBinding::ValueMediator"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name" />
+					</container>
+					<container>
+  						<layout kind="Grid" numColumns="1" sameWidth="true" /> 
+  						<controller predefinedId="UML_TypedElement_type" />
+  						<controller predefinedId="ModelicaML_ValueMediator_variability"/>
+  					</container>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_Connection">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::Connection"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Connection" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Connection"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Connection">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaCompositeConstructs::Connection"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>
+					<expandableContainer label="Modelica Specific Properties: Connection">
+						<controller predefinedId="ModelicaML_Connection_explicitConnectionEnds" />
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	
+	
+	
+	
+<!--
+	<sectionSet name="sectionSet_Single_TypeRelation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::TypeRelation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_TypeRelation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_TypeRelation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_TypeRelation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::TypeRelation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_TypeRelation_arraySize"/>
+						<controller predefinedId="ModelicaML_TypeRelation_modification"/>
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_ExtendsRelation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::ExtendsRelation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ExtendsRelation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ExtendsRelation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ExtendsRelation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::ExtendsRelation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_ExtendsRelation_modification"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+-->	
+	
+<!--
+	<sectionSet name="sectionSet_Single_RedeclareRelation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::RedeclareRelation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_RedeclareRelation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_RedeclareRelation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_RedeclareRelation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::RedeclareRelation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_RedeclareRelation_modification"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_ConstrainedByRelation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ConstrainedByRelation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ConstrainedByRelation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ConstrainedByRelation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_ConstrainedByRelation_modification"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_PartialDerivativeOfFunctionRelation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_PartialDerivativeOfFunctionRelation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_PartialDerivativeOfFunctionRelation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_PartialDerivativeOfFunctionRelation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_PartialDerivativeOfFunctionRelation_arguments"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+-->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_AlgorithmCode">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AlgorithmCode" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AlgorithmCode"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AlgorithmCode">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<!--<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>-->
+					
+					
+					<expandableContainer label="Modelica Specific Properties">
+						<!--<controller predefinedId="ModelicaML_AlgorithmCode_forIndices"/>-->
+						<!--<controller predefinedId="ModelicaML_AlgorithmCode_whileExpression"/>-->
+						<controller predefinedId="ModelicaML_AlgorithmCode_initial"/>
+						<!--<controller predefinedId="ModelicaML_AlgorithmCode_loopKind"/>-->
+						
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+					
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_EquationsCode">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Equations(Code)"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_EquationsCode" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_EquationsCode"/>
+				<replacedSection id="sectionSet_Single_OpaqueBehavior"/>
+			</replacedSections>
+			<fragment id="fragment_Single_EquationsCode">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Equations(Code)"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<!--<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>-->
+					
+					<expandableContainer label="Modelica Specific Properties">
+						<!--<controller predefinedId="ModelicaML_EquationsCode_forIndices"/>-->
+						<controller predefinedId="ModelicaML_EquationsCode_initial"/>
+						<!--<controller predefinedId="ModelicaML_EquationsCode_loopKind"/>-->
+						
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+					
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_ConditionalAlgorithmDiagram">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ConditionalAlgorithm(Diagram)"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ConditionalAlgorithmDiagram" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ConditionalAlgorithmDiagram"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ConditionalAlgorithmDiagram">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ConditionalAlgorithm(Diagram)"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<!--<controller predefinedId="ModelicaML_ConditionalAlgorithmDiagram_forIndices"/>-->
+						<!--<controller predefinedId="ModelicaML_ConditionalAlgorithmDiagram_whileExpression"/>-->
+						<!--<controller predefinedId="ModelicaML_ConditionalAlgorithmDiagram_initial"/>-->
+						<controller predefinedId="ModelicaML_ConditionalAlgorithmDiagram_isSubActivity"/>
+						<!--<controller predefinedId="ModelicaML_ConditionalAlgorithmDiagram_loopKind"/>-->
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_ConditionalEquationsDiagram">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ConditionalEquationsDiagram" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ConditionalEquationsDiagram"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ConditionalEquationsDiagram">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<!--<controller predefinedId="ModelicaML_ConditionalEquationsDiagram_forIndices"/>-->
+						<!--<controller predefinedId="ModelicaML_ConditionalEquationsDiagram_initial"/>-->
+						<controller predefinedId="ModelicaML_ConditionalEquationsDiagram_isSubActivity"/>
+						<!--<controller predefinedId="ModelicaML_ConditionalEquationsDiagram_loopKind"/>-->
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_EquationsCodeInDiagram">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Equations(CodeInDiagram)"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_EquationsCodeInDiagram" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_EquationsCodeInDiagram"/>
+			</replacedSections>
+			<fragment id="fragment_Single_EquationsCodeInDiagram">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Equations(CodeInDiagram)"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<!--<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>-->
+					
+					<!--
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_EquationsCodeInDiagram_forIndices"/>
+						<controller predefinedId="ModelicaML_EquationsCodeInDiagram_loopKind"/>
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+					-->
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_AlgorithmStatementsCodeInDiagram">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::AlgorithmStatements(CodeInDiagram)"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AlgorithmStatementsCodeInDiagram" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AlgorithmStatementsCodeInDiagram"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AlgorithmStatementsCodeInDiagram">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::AlgorithmStatements(CodeInDiagram)"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<!--<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>-->
+					
+					<!--
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_AlgorithmStatementsCodeInDiagram_forIndices"/>
+						<controller predefinedId="ModelicaML_AlgorithmStatementsCodeInDiagram_whileExpression"/>
+						<controller predefinedId="ModelicaML_AlgorithmStatementsCodeInDiagram_loopKind"/>
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+					-->
+					
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_ModelicaMLStateMachine">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ModelicaMLStateMachine" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ModelicaMLStateMachine"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ModelicaMLStateMachine">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>
+					
+					<!--
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_ModelicaMLStateMachine_samplingExpression"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+					-->
+					
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	<!--
+	<sectionSet name="sectionSet_Single_ExecutionOrderPriority">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ExecutionOrderPriority"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ExecutionOrderPriority" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ExecutionOrderPriority"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ExecutionOrderPriority">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::ExecutionOrderPriority"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_ExecutionOrderPriority_priority"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	<sectionSet name="sectionSet_Single_StateTransitionSpecification">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::StateTransitionSpecification"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_StateTransitionSpecification" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_StateTransitionSpecification"/>
+			</replacedSections>
+			<fragment id="fragment_Single_StateTransitionSpecification">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::StateTransitionSpecification"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_StateTransitionSpecification_suppressEntryActions"/>
+						<controller predefinedId="ModelicaML_StateTransitionSpecification_suppressExitActions"/>
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_StateSpecification">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::StateSpecification"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_StateSpecification" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_StateSpecification"/>
+			</replacedSections>
+			<fragment id="fragment_Single_StateSpecification">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::StateSpecification"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties">
+						<controller predefinedId="ModelicaML_StateSpecification_freezeExpression"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	-->
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_Assert">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Assert"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Assert" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Assert"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Assert">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::Assert"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<container>
+						<layout kind="Grid" numColumns="1" sameWidth="true" />
+						<controller predefinedId="UML_NamedElement_name"/>
+					</container>
+					
+					<expandableContainer label="Modelica Specific Properties">
+						<!--<controller predefinedId="ModelicaML_Assert_condition"/>-->
+						<controller predefinedId="ModelicaML_Assert_message"/>
+						<controller predefinedId="ModelicaML_Assert_level"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	
+	
+	<!--
+	<sectionSet name="sectionSet_Single_AdditionalIncludes">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::AdditionalIncludes"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AdditionalIncludes" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AdditionalIncludes"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AdditionalIncludes">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaBehaviorConstructs::AdditionalIncludes"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_AdditionalIncludes_additionalActionCode"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	-->
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	<!--
+	<sectionSet name="sectionSet_Single_Traceability">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaRequirementConstructs::Traceability"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Traceability" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Traceability"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Traceability">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaRequirementConstructs::Traceability"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_Traceability_specifiedByRequirement"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	-->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_Simulation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::Simulation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Simulation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Simulation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Simulation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::Simulation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties: Simulation">
+						<controller predefinedId="ModelicaML_Simulation_startTime"/>
+						<controller predefinedId="ModelicaML_Simulation_stopTime"/>
+						<controller predefinedId="ModelicaML_Simulation_tolerance"/>
+						<controller predefinedId="ModelicaML_Simulation_numberOfIntervals"/>
+						
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	
+	
+	<!--
+	<sectionSet name="sectionSet_Single_UserInteractive">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::UserInteractive"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_UserInteractive" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_UserInteractive"/>
+			</replacedSections>
+			<fragment id="fragment_Single_UserInteractive">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::UserInteractive"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_UserInteractive_declaration"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_ExcludeFromCGIfUserInteractive">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::ExcludeFromCGIfUserInteractive"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_ExcludeFromCGIfUserInteractive" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_ExcludeFromCGIfUserInteractive"/>
+			</replacedSections>
+			<fragment id="fragment_Single_ExcludeFromCGIfUserInteractive">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::ExcludeFromCGIfUserInteractive"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_ExcludeFromCGIfUserInteractive_variableReference"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_CodeGeneration">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::CodeGeneration"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_CodeGeneration" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_CodeGeneration"/>
+			</replacedSections>
+			<fragment id="fragment_Single_CodeGeneration">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaSimulationConstructs::CodeGeneration"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="ModelicaML Specific Properties">
+						<controller predefinedId="ModelicaML_CodeGeneration_excludeFromCG"/>
+						<controller predefinedId="ModelicaML_CodeGeneration_generateInteractiveSimInitFile"/>
+						<layout kind="Grid" numColumns="2" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	-->
+	
+	
+	
+	
+	
+	
+	
+	
+	<sectionSet name="sectionSet_Single_AnnotationDocumentation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationDocumentation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AnnotationDocumentation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AnnotationDocumentation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AnnotationDocumentation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationDocumentation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties: Documentation Annotation">
+						<controller predefinedId="ModelicaML_AnnotationDocumentation_info"/>
+						<controller predefinedId="ModelicaML_AnnotationDocumentation_revisions"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_AnnotationCodeGeneration">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationCodeGeneration"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AnnotationCodeGeneration" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AnnotationCodeGeneration"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AnnotationCodeGeneration">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationCodeGeneration"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties: Annotation for Code Generation">
+						<controller predefinedId="ModelicaML_AnnotationCodeGeneration_smoothOrder"/>
+						<controller predefinedId="ModelicaML_AnnotationCodeGeneration_Evaluate"/>
+						<controller predefinedId="ModelicaML_AnnotationCodeGeneration_HideResult"/>
+						<controller predefinedId="ModelicaML_AnnotationCodeGeneration_Inline"/>
+						<controller predefinedId="ModelicaML_AnnotationCodeGeneration_LateInline"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_AnnotationSimulationExperiment">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationSimulationExperiment"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AnnotationSimulationExperiment" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AnnotationSimulationExperiment"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AnnotationSimulationExperiment">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationSimulationExperiment"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties: Annotation for Simulation Experiment">
+						<controller predefinedId="ModelicaML_AnnotationSimulationExperiment_StartTime"/>
+						<controller predefinedId="ModelicaML_AnnotationSimulationExperiment_StopTime"/>
+						<controller predefinedId="ModelicaML_AnnotationSimulationExperiment_Tolerance"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_Annotation">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::Annotation"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_Annotation" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_Annotation"/>
+			</replacedSections>
+			<fragment id="fragment_Single_Annotation">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::Annotation"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties: Full Annotation String">
+						<controller predefinedId="ModelicaML_Annotation_fullAnnotationString"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_AnnotationVersionHandling">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationVersionHandling"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AnnotationVersionHandling" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AnnotationVersionHandling"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AnnotationVersionHandling">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationVersionHandling"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties: Annotation Version Handling">
+						<controller predefinedId="ModelicaML_AnnotationVersionHandling_uses"/>
+						<controller predefinedId="ModelicaML_AnnotationVersionHandling_conversion"/>
+						<controller predefinedId="ModelicaML_AnnotationVersionHandling_version"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+	<sectionSet name="sectionSet_Single_AnnotationIcon">
+		<context enablesFor="1">
+			<appliedStereotypes>
+				<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationIcon"/>
+			</appliedStereotypes>
+		</context>
+		<section adapterId="Semantic" id="section_Single_AnnotationIcon" tabId="basicTabModelicaML">
+			<replacedSections>
+				<replacedSection id="section_Multiple_AnnotationIcon"/>
+			</replacedSections>
+			<fragment id="fragment_Single_AnnotationIcon">
+				<context enablesFor="1">
+					<appliedStereotypes>
+						<appliedStereotype qualifiedName="ModelicaML::ModelicaAnnotationConstructs::AnnotationIcon"/>
+					</appliedStereotypes>
+				</context>
+				<content>
+					<expandableContainer label="Modelica Specific Properties: Icon Annotation">
+						<controller predefinedId="ModelicaML_AnnotationIcon_iconAnnotationString"/>
+						<layout kind="Grid" numColumns="1" sameWidth="true"/>
+					</expandableContainer>
+				</content>
+			</fragment>
+		</section>
+	</sectionSet>
+
+
+</propertyTabView>

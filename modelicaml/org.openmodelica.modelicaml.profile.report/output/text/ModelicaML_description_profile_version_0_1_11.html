@@ -1,0 +1,825 @@
+<html>
+	<head>
+		<title>ModelicaML Profile - Full List Of Stereotypes (v0.1.11)</title>
+		
+	<head>
+<body>
+
+	<h1>ModelicaML Profile - Full List Of Stereotypes</h1>
+	Profile Version: <strong>0.1.11</strong>
+	<br />
+<em>Note: In each section the stereotypes are sorted alphabetically.</em>
+<br /><br /><br />
+	<a name="ModelicaML.ModelicaClassConstructs"></a>
+	<h2>ModelicaClassConstructs</h2>
+			<a name="ModelicaClassConstructs.Block"></a><h3>Stereotype: <span>&#171;Block&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica "block". Modelica "block" is the same as Modelica "model", but the ports (instances of "connector" classes)  must have fixed causality (i.e. "input" or "output").
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.CalculationModel"></a><h3>Stereotype: <span>&#171;CalculationModel&#187;</span> </h3>
+				<em>Description:</em> A CalculationModel is a sub-type of Modelica "model". It is defined in order to enable reusing of equations. It does not represent a physical system part and cannot have external connectors. <br />When instantiated, it calculates values that are used by other components.
+				<br /><br />
+				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>Model</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.Connector"></a><h3>Stereotype: <span>&#171;Connector&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica restricted class "connector".  A "connector" cannot contain equation or algorithm sections, it can have causality and flow specification. All ports must be typed by a "connector".
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>expandable</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+				<br /><br />
+			<a name="ModelicaClassConstructs.Function"></a><h3>Stereotype: <span>&#171;Function&#187;</span> </h3>
+				<em>Description:</em> Modelica "function" resembles the Modelica "block" but it:<br />- can only have inputs and outputs; no connectors<br />- does not have a connectable interface but instead needs to be called<br />- can be called recursively<br />- is more dynamic; the arguments are computed at run-time <br />- does not have internal states<br />- can have only one algorithm section and no equation section; is always imperative<br />- becomes part of the equation system as black boxes only; the internals are not manipulated symbolically by the solver
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>FunctionBehavior</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>externalLanguageSpecification</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+						<span>Property:</span> <strong>externalFunctionCall</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+						<span>Property:</span> <strong>externalAnnotation</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+						<span>Property:</span> <strong>scope</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaScope (inner, outer). 
+						<br />
+				<br /><br />
+			<a name="ModelicaClassConstructs.Model"></a><h3>Stereotype: <span>&#171;Model&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica restricted class "model". All the following Modelica class elements are allowed in models: Both equation and algorithm sections; connectors, inputs, outputs; states;
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.ModelicaClass"></a><h3>Stereotype: <span>&#171;ModelicaClass&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica "class".
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.ModelicaClassDefinition"></a><h3>Stereotype: <span>&#171;ModelicaClassDefinition&#187;</span> <span>(is abstract)</span> </h3>
+				<em>Description:</em> This stereotype has attributes that are common to all Modelica restricted classes.
+				<br /><br />
+				<br />
+				
+						<span>Property:</span> <strong>encapsulated</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>partial</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>final</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>replaceable</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>iconImagePath</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> This is the path to the icon image relative to the location of the model file.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaClassConstructs.ModelicaEnumeration"></a><h3>Stereotype: <span>&#171;ModelicaEnumeration&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Enumeration</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.ModelicaModelReference"></a><h3>Stereotype: <span>&#171;ModelicaModelReference&#187;</span> </h3>
+				<em>Description:</em> This stereotype represents an existing Modelica model that is included as black-box into ModelicaML model.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>modelPath</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> String. <em>Property description:</em> This string is the absolute model path (dot-notation, starting with the top-level package) to the referenced model.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaClassConstructs.ModelicaPackage"></a><h3>Stereotype: <span>&#171;ModelicaPackage&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica restricted class "package".
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.Operator"></a><h3>Stereotype: <span>&#171;Operator&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica restricted class "operator".
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.Record"></a><h3>Stereotype: <span>&#171;Record&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica "record". A  Modelica "record" cannot contain equation or algorithm sections and does not contain causality and flow specification.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaClassConstructs.Type"></a><h3>Stereotype: <span>&#171;Type&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica restricted class "type".
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>PrimitiveType</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+	<br />
+	<a name="ModelicaML.ModelicaCompositeConstructs"></a>
+	<h2>ModelicaCompositeConstructs</h2>
+			<a name="ModelicaCompositeConstructs.CalculatedProperty"></a><h3>Stereotype: <span>&#171;CalculatedProperty&#187;</span> </h3>
+				<em>Description:</em> Does not represent a physical system part. This component supplies other components with calculated values.
+				<br /><br />
+				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>Component</strong>&#187;</span>
+				the properties: <span>final, modification, arraySize, replaceable, conditionalExpression, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaCompositeConstructs.Component"></a><h3>Stereotype: <span>&#171;Component&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent a Modelica component of a composite type.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Property</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>InstanceOfAClass</strong>&#187;</span>
+				the properties: <span>final, modification, arraySize, replaceable, conditionalExpression, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaCompositeConstructs.Connection"></a><h3>Stereotype: <span>&#171;Connection&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica "connection" clause and implies its associated semantics (Kirchhoff's laws).
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Connector</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>explicitConnectionEnds</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> This property can be used to define the content of a Modelica connect clause. 
+The keyword "connect" and the parenthesizes are omitted. The string must contain paths to both ports (using the dot-notation) separated by comma. 
+ Example: component1.port1.variable1 , component2.port2.variable2<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaCompositeConstructs.ConnectionPort"></a><h3>Stereotype: <span>&#171;ConnectionPort&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent a Modelica class instance of the type "connector".
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Port</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>InstanceOfAClass</strong>&#187;</span>
+				the properties: <span>final, modification, arraySize, replaceable, conditionalExpression, iconImagePath</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>causality</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaCausality (input, output). 
+						<br />
+				<br /><br />
+			<a name="ModelicaCompositeConstructs.FunctionArgument"></a><h3>Stereotype: <span>&#171;FunctionArgument&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent variables of functions.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Parameter</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>InstanceOfAClass</strong>&#187;</span>
+				the properties: <span>final, modification, arraySize, replaceable, conditionalExpression, iconImagePath</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>flowFlag</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaFlowFlag (flow, stream). 
+						<br />
+						<span>Property:</span> <strong>scope</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaScope (inner, outer). 
+						<br />
+						<span>Property:</span> <strong>causality</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> ModelicaCausality (input, output). 
+						<br />
+						<span>Property:</span> <strong>variability</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> ModelicaVariability (continuous, discrete, parameter, constant). 
+						<br />
+						<span>Property:</span> <strong>declarationEquationOrAssignment</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> This refers to the shorthand notation in Modelica. 
+The result must be of the same type as the Modelica component itself.
+In this case the value is the right-hand-expression of the equation or assigment. 
+The "=" or ":=" sign must be included.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaCompositeConstructs.InstanceOfAClass"></a><h3>Stereotype: <span>&#171;InstanceOfAClass&#187;</span> <span>(is abstract)</span> </h3>
+				<em>Description:</em> This stereotype has attributes that are common to all Modelica class instances.
+				<br /><br />
+				<br />
+				
+						<span>Property:</span> <strong>final</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>modification</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> Each entry represents one instance modification of type "instance name = modification expression". 
+The parenthesis "(" and ")" and the commas are omitted.<br />
+						<br />
+						<span>Property:</span> <strong>arraySize</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> Each entry string contains the full specification of the array. For example, "[1,3,:]".<br />
+						<br />
+						<span>Property:</span> <strong>replaceable</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>conditionalExpression</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> Only if the condition is true then the Modelica component is created; the condition is only evaluated at compilation time and is often used for configuration changes.
+The result of expression must be of type Boolean. This string contains the expression. The keyword "if" is omitted.<br />
+						<br />
+						<span>Property:</span> <strong>iconImagePath</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> This is the path to the icon image relative to the location of the model file. 
+If no icon is defined for a property then the icon of the property type is displayed (if defined, else no icon is displayed).<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaCompositeConstructs.Variable"></a><h3>Stereotype: <span>&#171;Variable&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent a Modelica class instance of a primitive type (Real, String, Boolean, Integer) or a sub-type of Modelica restricted class "type".
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Property</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>InstanceOfAClass</strong>&#187;</span>
+				the properties: <span>final, modification, arraySize, replaceable, conditionalExpression, iconImagePath</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>flowFlag</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaFlowFlag (flow, stream). 
+						<br />
+						<span>Property:</span> <strong>scope</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaScope (inner, outer). 
+						<br />
+						<span>Property:</span> <strong>causality</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaCausality (input, output). 
+						<br />
+						<span>Property:</span> <strong>variability</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> ModelicaVariability (continuous, discrete, parameter, constant). 
+						<br />
+						<span>Property:</span> <strong>declarationEquationOrAssignment</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> This refers to the shorthand notation in Modelica. 
+The result must be of the same type as the Modelica component itself.
+In this case the value is the right-hand-expression of the equation or assigment. 
+The "=" or ":=" sign must be included.<br />
+						<br />
+				<br /><br />
+	<br />
+	<a name="ModelicaML.ModelicaBehaviorConstructs"></a>
+	<h2>ModelicaBehaviorConstructs</h2>
+			<a name="ModelicaBehaviorConstructs.AdditionalIncludes"></a><h3>Stereotype: <span>&#171;AdditionalIncludes&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>StateMachine</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>additionalActionCode</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.Algorithm(Code)"></a><h3>Stereotype: <span>&#171;Algorithm(Code)&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent a set of statements in an algorithm section.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>OpaqueBehavior</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>AlgorithmLoopProperties</strong>&#187;</span>
+				the properties: <span>loopKind, forIndices, whileExpression</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>initial</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.AlgorithmLoopProperties"></a><h3>Stereotype: <span>&#171;AlgorithmLoopProperties&#187;</span> <span>(is abstract)</span> </h3>
+				<em>Description:</em> This stereotype has properties that are inherited by other stereotypes in order to be able to capture the "for" or a "while" loop with the "for-indices" or "while expression" respectively.
+				<br /><br />
+				<br />
+				
+						<span>Property:</span> <strong>loopKind</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaAlgorithmLoopKind (for, while). 
+						<br />
+						<span>Property:</span> <strong>forIndices</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+						<span>Property:</span> <strong>whileExpression</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.AlgorithmStatements(CodeInDiagram)"></a><h3>Stereotype: <span>&#171;AlgorithmStatements(CodeInDiagram)&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent a set of algorithm statements in a diagram.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>OpaqueAction</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>AlgorithmLoopProperties</strong>&#187;</span>
+				the properties: <span>loopKind, forIndices, whileExpression</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.Assert"></a><h3>Stereotype: <span>&#171;Assert&#187;</span> </h3>
+				<em>Description:</em> This stereotype represents the Modelica assert() function.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Constraint</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>condition</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> String. 
+						<br />
+						<span>Property:</span> <strong>message</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> String. 
+						<br />
+						<span>Property:</span> <strong>level</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> ModelicaAssertionLevel (warning, error). 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.ConditionalAlgorithm(Diagram)"></a><h3>Stereotype: <span>&#171;ConditionalAlgorithm(Diagram)&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent an algorithm section. An Activity Diagram is used to model the conditional constructs (loop, if, when). Any OpaqueActions, in such an Activity Diagram, must contain Modelica statements in the "body" attribute.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Activity</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>AlgorithmLoopProperties</strong>&#187;</span>
+				the properties: <span>loopKind, forIndices, whileExpression</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>isSubActivity</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> This attribute indicates that this activity is a sub-activity. It is invoked by another activity using CallBehaviorAction.<br />
+						<br />
+						<span>Property:</span> <strong>initial</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.ConditionalEquations(Diagram)"></a><h3>Stereotype: <span>&#171;ConditionalEquations(Diagram)&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent an equation section. An Activity Diagram is used to model the conditional constructs (loop, if, when). Any OpaqueActions, in such an Activity Diagram, must contain Modelica equations in the "body" attribute.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Activity</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>EquationsLoopProperties</strong>&#187;</span>
+				the properties: <span>loopKind, forIndices</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>isSubActivity</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> This attribute indicates that this activity is a sub-activity. It is invoked by another activity using CallBehaviorAction.<br />
+						<br />
+						<span>Property:</span> <strong>initial</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.Equations(Code)"></a><h3>Stereotype: <span>&#171;Equations(Code)&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent a set of equations in an equation section.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>OpaqueBehavior</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>EquationsLoopProperties</strong>&#187;</span>
+				the properties: <span>loopKind, forIndices</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>initial</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.Equations(CodeInDiagram)"></a><h3>Stereotype: <span>&#171;Equations(CodeInDiagram)&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent a set of equations in a diagram.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>OpaqueAction</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>EquationsLoopProperties</strong>&#187;</span>
+				the properties: <span>loopKind, forIndices</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.EquationsLoopProperties"></a><h3>Stereotype: <span>&#171;EquationsLoopProperties&#187;</span> <span>(is abstract)</span> </h3>
+				<em>Description:</em> This stereotype has properties that are inherited by other stereotypes in order to be able to capture the "for" loop with the "for-indices".
+				<br /><br />
+				<br />
+				
+						<span>Property:</span> <strong>loopKind</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaEquationsLoopKind (for). 
+						<br />
+						<span>Property:</span> <strong>forIndices</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.ExecutionOrderPriority"></a><h3>Stereotype: <span>&#171;ExecutionOrderPriority&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Transition, ControlFlow, Region</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>priority</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Integer. <em>Property description:</em> Execution priority in code. A lower number implies a higher execution priority. Elements with higher priority are executed first.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.If"></a><h3>Stereotype: <span>&#171;If&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica "if" keyword.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>DecisionNode</strong></span><br />				<br />
+				
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.ModelicaMLStateMachine"></a><h3>Stereotype: <span>&#171;ModelicaMLStateMachine&#187;</span> </h3>
+				<em>Description:</em> This stereotypes indicates that this a special case of the UML StateMachine. It uses a limited set of the UML StateMachine meta-model classes. It is capable to be translated into executable Modelica code.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>StateMachine</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>samplingExpression</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.StateDependency"></a><h3>Stereotype: <span>&#171;StateDependency&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>ControlFlow, Transition</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>isInState</strong> <span>(multiplicity of entries: 1..*)</span>, <span> type:</span> State. <em>Property description:</em> Reference to a state in one of the state machines of the class.<br />
+						<br />
+						<span>Property:</span> <strong>logicalOperator</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> LogicalOperators (and, or, not). <em>Property description:</em> The logical operator to be used between the multiple state references.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.StateSpecification"></a><h3>Stereotype: <span>&#171;StateSpecification&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>State, StateMachine</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>freezeExpression</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> The state machine or the composite state is fozen, i.e., the state is active but no reactions and no actions will be executed inside the state, as long as this expression evaluates to true.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.StateTransitionSpecification"></a><h3>Stereotype: <span>&#171;StateTransitionSpecification&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Transition</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>suppressExitActions</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> If set to true then exit actions of the transition source-state and its sub-states are not executed.<br />
+						<br />
+						<span>Property:</span> <strong>suppressEntryActions</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> If set to true then entry actions of the transition target-state (not its sub-states) are not executed.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaBehaviorConstructs.When"></a><h3>Stereotype: <span>&#171;When&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to represent the Modelica "when" keyword.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>DecisionNode</strong></span><br />				<br />
+				
+				<br /><br />
+	<br />
+	<a name="ModelicaML.ModelicaRelationsConstructs"></a>
+	<h2>ModelicaRelationsConstructs</h2>
+			<a name="ModelicaRelationsConstructs.ConstrainedByRelation"></a><h3>Stereotype: <span>&#171;ConstrainedByRelation&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>modification</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaRelationsConstructs.ExtendsRelation"></a><h3>Stereotype: <span>&#171;ExtendsRelation&#187;</span> </h3>
+				<em>Description:</em> This stereotype has attributes which allow the capturing of type modifications.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Generalization</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>modification</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> Each entry represents a Modelica type modification. Commas and the parenthesis "(" and ")" are omitted.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaRelationsConstructs.Import"></a><h3>Stereotype: <span>&#171;Import&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>alias</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaRelationsConstructs.PartialDerivativeOfFunctionRelation"></a><h3>Stereotype: <span>&#171;PartialDerivativeOfFunctionRelation&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>arguments</strong> <span>(multiplicity of entries: 1..*)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaRelationsConstructs.RedeclareRelation"></a><h3>Stereotype: <span>&#171;RedeclareRelation&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>modification</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaRelationsConstructs.TypeRelation"></a><h3>Stereotype: <span>&#171;TypeRelation&#187;</span> </h3>
+				<em>Description:</em> This stereotype has attributes which allow the capturing of type modifications. It can only be used between classes of primitive type.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Generalization</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>modification</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> Each entry represents a Modelica type modification. 
+Commas and the parenthesis "(" and ")" are omitted.<br />
+						<br />
+						<span>Property:</span> <strong>arraySize</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> Each string contains the full array specification (e.g. "[1,3,:]")<br />
+						<br />
+				<br /><br />
+	<br />
+	<a name="ModelicaML.ModelicaRequirementConstructs"></a>
+	<h2>ModelicaRequirementConstructs</h2>
+			<a name="ModelicaRequirementConstructs.Requirement"></a><h3>Stereotype: <span>&#171;Requirement&#187;</span> </h3>
+				<em>Description:</em> The concept of textual requirements is reused from the OMG SysML. This stereotype is used to represent a requirement with properties such as id, text (representing the textual statement), etc. <br />Moreover, a requirement can have variables and behavior defined which can be evaluated during simulations.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ModelicaClassDefinition</strong>&#187;</span>
+				the properties: <span>encapsulated, partial, final, replaceable, iconImagePath</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>id</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> String. <em>Property description:</em> Requirement ID.<br />
+						<br />
+						<span>Property:</span> <strong>text</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> String. <em>Property description:</em> Textual requirement statement.<br />
+						<br />
+						<span>Property:</span> <strong>specifiesType</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> ModelicaClassDefinition. <em>Property description:</em> This property implies that all instantiated objects of the referenced types shall fulfill this requirement.<br />
+						<br />
+						<span>Property:</span> <strong>specifiesObject</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> This property implies that only the referenced objects shall fulfill this requirement.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaRequirementConstructs.RequirementInstance"></a><h3>Stereotype: <span>&#171;RequirementInstance&#187;</span> </h3>
+				<em>Description:</em> This stereotype indicates that this component is an instantiation of a requirement.
+				<br /><br />
+				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>Component</strong>&#187;</span>
+				the properties: <span>final, modification, arraySize, replaceable, conditionalExpression, iconImagePath</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ModelicaRequirementConstructs.Traceability"></a><h3>Stereotype: <span>&#171;Traceability&#187;</span> </h3>
+				<em>Description:</em> This stereotype can be applied to any model element. <br />It has properties that can be used for setting up the traceability between requirements and design artifacts.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>NamedElement</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>specifiedByRequirement</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> Requirement. 
+						<br />
+				<br /><br />
+	<br />
+	<a name="ModelicaML.ModelicaSimulationConstructs"></a>
+	<h2>ModelicaSimulationConstructs</h2>
+			<a name="ModelicaSimulationConstructs.CodeGeneration"></a><h3>Stereotype: <span>&#171;CodeGeneration&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used for caturing of code generation specific information.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Element</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>generateInteractiveSimInitFile</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> If this property is set for a class the code generator will generate an init-file that is required for the interactive simulation (OMC specific).<br />
+						<br />
+						<span>Property:</span> <strong>excludeFromCG</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> This flag indicates that no code shall be generated for this element.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaSimulationConstructs.ExcludeFromCGIfUserInteractive"></a><h3>Stereotype: <span>&#171;ExcludeFromCGIfUserInteractive&#187;</span> </h3>
+				<em>Description:</em> This stereotypes is used to indicate that this behavior shall be excluded from the code generation if the referenced variable is set to be user interactive (variability is set to "parameter").
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>StateMachine, OpaqueBehavior, Activity</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>variableReference</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Variable. <em>Property description:</em> Reference to the variable that is user interactive (must have the stereotype <<UserInteractive>> applied) and thus does not need the behavior (equations or algorithm) for its calculation.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaSimulationConstructs.Simulation"></a><h3>Stereotype: <span>&#171;Simulation&#187;</span> </h3>
+				<em>Description:</em> This stereotype contains the properties which are used in the "simulate()" command in Modelica tools.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>startTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural. 
+						<br />
+						<span>Property:</span> <strong>stopTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural. 
+						<br />
+						<span>Property:</span> <strong>numberOfIntervals</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Integer. 
+						<br />
+						<span>Property:</span> <strong>tolerance</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaSimulationConstructs.UserInteractive"></a><h3>Stereotype: <span>&#171;UserInteractive&#187;</span> </h3>
+				<em>Description:</em> This stereotype is used to indicate that the value of this variable shall be manipulated by the user. Therefore it is necessary to set the variability to "parameter" (this requirement is OMC-specific). Moreover, the modeler can define declaration value for the parameter if necessary.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Property</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>declaration</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> Declaration value for the parameter.<br />
+						<br />
+				<br /><br />
+	<br />
+	<a name="ModelicaML.ModelicaAnnotationConstructs"></a>
+	<h2>ModelicaAnnotationConstructs</h2>
+			<a name="ModelicaAnnotationConstructs.Annotation(CodeGeneration)"></a><h3>Stereotype: <span>&#171;Annotation(CodeGeneration)&#187;</span> </h3>
+				<em>Description:</em> See the Modelica specification.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Comment</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>Evaluate</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>HideResult</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>Inline</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>LateInline</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean. 
+						<br />
+						<span>Property:</span> <strong>smoothOrder</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Integer. 
+						<br />
+				<br /><br />
+			<a name="ModelicaAnnotationConstructs.Annotation(Documentation)"></a><h3>Stereotype: <span>&#171;Annotation(Documentation)&#187;</span> </h3>
+				<em>Description:</em> See the Modelica specification.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Comment</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>info</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+						<span>Property:</span> <strong>revisions</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaAnnotationConstructs.Annotation(Icon)"></a><h3>Stereotype: <span>&#171;Annotation(Icon)&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Comment</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>iconAnnotationString</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ModelicaAnnotationConstructs.Annotation(SimulationExperiment)"></a><h3>Stereotype: <span>&#171;Annotation(SimulationExperiment)&#187;</span> </h3>
+				<em>Description:</em> The experiment annotation defines the default start time (StartTime) in [s], the default stop time (StopTime) in [s], <br />and the default relative integration tolerance (Tolerance) for simulation experiments to be carried out with the model or block at hand.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Comment</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>StartTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural. 
+						<br />
+						<span>Property:</span> <strong>StopTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural. 
+						<br />
+						<span>Property:</span> <strong>Tolerance</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural. 
+						<br />
+				<br /><br />
+			<a name="ModelicaAnnotationConstructs.Annotation(VersionHandling)"></a><h3>Stereotype: <span>&#171;Annotation(VersionHandling)&#187;</span> </h3>
+				<em>Description:</em> A top-level package or model can specify the version of top-level classes it uses, its own version number, and if possible how to convert from previous versions. <br />This can be used by a tool to guarantee that consistent versions are used, and if possible to upgrade usage from an earlier version to a current one.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Comment</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>version</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> Defines the version number of the model or package. All classes within this top-level class have this version number.<br />
+						<br />
+						<span>Property:</span> <strong>conversion</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. <em>Property description:</em> The first "(" and the last ")" are omitted.<br />
+						<br />
+						<span>Property:</span> <strong>uses</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> String. <em>Property description:</em> The first "(" and the last ")" are omitted.<br />
+						<br />
+				<br /><br />
+			<a name="ModelicaAnnotationConstructs.Annotation"></a><h3>Stereotype: <span>&#171;Annotation&#187;</span> </h3>
+				<em>Description:</em> Annotations are intended for storing extra information about a model, such as graphics, documentation or versioning, etc. A Modelica tool is free to define and use other annotations, in addition to those defined here, according to section 14.1. of the Modelica specification. <br />The only requirement is that any tool shall save files with all annotations from this chapter and all vendor-specific annotations intact. To ensure this, annotations must be represented with constructs according to the Modelica grammar. The specification in this document defines the semantic meaning if a tool implements any of these annotations.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Comment</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>fullAnnotationString</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. <em>Property description:</em> This is a qualified annotation string. The first "(" and the last ")" are omitted.<br />
+						<br />
+				<br /><br />
+	<br />
+	<a name="ModelicaML.TestDefinition"></a>
+	<h2>TestDefinition</h2>
+			<a name="TestDefinition.Includes"></a><h3>Stereotype: <span>&#171;Includes&#187;</span> </h3>
+				<em>Description:</em> This relation indicates that the test suite, it points from, contains the test scenario it points to. 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+				<br /><br />
+			<a name="TestDefinition.RequiredFor"></a><h3>Stereotype: <span>&#171;RequiredFor&#187;</span> </h3>
+				<em>Description:</em> This stereotype is the opposite of the "requires" stereotype. The two stereotypes are mutually exclusive and should be used depending on the desired direction of the dependency and the resulting modification of the dependency client.
+				<br /><br />
+				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>Requires</strong>&#187;</span>
+				the properties: <span>onlyInCombinationWith, always</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="TestDefinition.Requires"></a><h3>Stereotype: <span>&#171;Requires&#187;</span> </h3>
+				<em>Description:</em> This dependency indicates that when the client model is instantiated it requires the target model to be instantiated as well. 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>onlyInCombinationWith</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> ModelicaClassDefinition. <em>Property description:</em> This property means that the target model shall be instantiated together with the client model only if listed (other) models will be instantiated too.<br />
+						<br />
+						<span>Property:</span> <strong>always</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> This property means that the target model shall always be instantiated together with the dependency client model.<br />
+						<br />
+				<br /><br />
+			<a name="TestDefinition.Test"></a><h3>Stereotype: <span>&#171;Test&#187;</span> </h3>
+				<em>Description:</em> A Test model typically includes one system model that is to be verified against requirements models by means of one test scenario model.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<br />
+				
+				<br /><br />
+			<a name="TestDefinition.TestScenario"></a><h3>Stereotype: <span>&#171;TestScenario&#187;</span> </h3>
+				<em>Description:</em> Test scenario a step by step description of action that stimulate the system under test. Usually a test scenario also includes the initialization of the system under test in order to ensure the required pre-condition are met. Test scenario may used to verify system design against system requirements. 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>Simulation</strong>&#187;</span>
+				the properties: <span>startTime, stopTime, numberOfIntervals, tolerance</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>usedToVerify</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> Requirement. <em>Property description:</em> This relation indicates that this test scenario can be used to verify the listed requirements.<br />
+						<br />
+				<br /><br />
+			<a name="TestDefinition.TestSuite"></a><h3>Stereotype: <span>&#171;TestSuite&#187;</span> </h3>
+				<em>Description:</em> Test suite is a collection of test scenario that are grouped for specific purpose. 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Package</strong></span><br />				<br />
+				
+						<span>Property:</span> <strong>includes</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> TestScenario. <em>Property description:</em> List of test scenarios that test suite contains. <br />
+						<br />
+				<br /><br />
+			<a name="TestDefinition.UsedToVerify"></a><h3>Stereotype: <span>&#171;UsedToVerify&#187;</span> </h3>
+				<em>Description:</em> This relation indicates that the test scenario, it points from, can be used to verify the requirements it points to.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+				<br /><br />
+	<br />
+	<a name="ModelicaML.ValueBinding"></a>
+	<h2>ValueBinding</h2>
+			<a name="ValueBinding.ObtainsValueFrom"></a><h3>Stereotype: <span>&#171;ObtainsValueFrom&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
+				the properties: <span>operation</span>
+				<br /><br />
+				
+				<br /><br />
+			<a name="ValueBinding.ProvidesValueFor"></a><h3>Stereotype: <span>&#171;ProvidesValueFor&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
+				the properties: <span>operation</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>isRequired</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> If set to true this property means that this client always needs a bindings even if a default value is set in its declaration. <br />
+						<br />
+				<br /><br />
+			<a name="ValueBinding.ValueClient"></a><h3>Stereotype: <span>&#171;ValueClient&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Property</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
+				the properties: <span>operation</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>obtainsValueFrom</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> ValueMediator. 
+						<br />
+				<br /><br />
+			<a name="ValueBinding.ValueComputation"></a><h3>Stereotype: <span>&#171;ValueComputation&#187;</span> <span>(is abstract)</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+				<br />
+				
+						<span>Property:</span> <strong>operation</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ValueBinding.ValueMediator"></a><h3>Stereotype: <span>&#171;ValueMediator&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Property</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
+				the properties: <span>operation</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>variability</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> ModelicaVariability (continuous, discrete, parameter, constant). 
+						<br />
+						<span>Property:</span> <strong>preferredProviders</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> String. 
+						<br />
+				<br /><br />
+			<a name="ValueBinding.ValueMediatorsContainer"></a><h3>Stereotype: <span>&#171;ValueMediatorsContainer&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<br />
+				
+				<br /><br />
+			<a name="ValueBinding.ValueProvider"></a><h3>Stereotype: <span>&#171;ValueProvider&#187;</span> </h3>
+				<em>Description:</em> 
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Property, State</strong></span><br />				<em>Inherits from the Stereotype:</em> 
+				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
+				the properties: <span>operation</span>
+				<br /><br />
+				
+						<span>Property:</span> <strong>providesValueFor</strong> <span>(multiplicity of entries: 0..*)</span>, <span> type:</span> ValueMediator. 
+						<br />
+				<br /><br />
+	<br />
+
+	<a name="ModelicaML.ModelicaPredefinedTypes"></a>
+	<h2>ModelicaPredefinedTypes</h2>
+	
+			<h3>Primitive Type: <span><strong>ModelicaBoolean</strong></span></h3>
+				
+					<span>Property:</span> <strong>quantity</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String.<br />
+					<span>Property:</span> <strong>fixed</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean.<br />
+					<span>Property:</span> <strong>start</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean.<br />
+			<h3>Primitive Type: <span><strong>ModelicaInteger</strong></span></h3>
+				
+					<span>Property:</span> <strong>quantity</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String.<br />
+					<span>Property:</span> <strong>min</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Integer.<br />
+					<span>Property:</span> <strong>max</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Integer.<br />
+					<span>Property:</span> <strong>fixed</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean.<br />
+					<span>Property:</span> <strong>start</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Integer.<br />
+			<h3>Primitive Type: <span><strong>ModelicaReal</strong></span></h3>
+				
+					<span>Property:</span> <strong>quantity</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String.<br />
+					<span>Property:</span> <strong>unit</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String.<br />
+					<span>Property:</span> <strong>displayUnit</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> String.<br />
+					<span>Property:</span> <strong>min</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural.<br />
+					<span>Property:</span> <strong>max</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural.<br />
+					<span>Property:</span> <strong>fixed</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Boolean.<br />
+					<span>Property:</span> <strong>nominal</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural.<br />
+					<span>Property:</span> <strong>start</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural.<br />
+					<span>Property:</span> <strong>stateSelect</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> ModelicaStateSelect (default, never, avoid, prefer, always).<br />
+			<h3>Primitive Type: <span><strong>ModelicaString</strong></span></h3>
+				
+					<span>Property:</span> <strong>quantity</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String.<br />
+					<span>Property:</span> <strong>start</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String.<br />
+	<br /><br />
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+</body>
+</html>

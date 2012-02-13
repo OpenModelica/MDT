@@ -1,0 +1,24 @@
+Interactive Simulation
+Pre-Condition:
+	P1. [OK] A Simulation project and a corresponding Simulation session configuration had been chosen
+	P2. [OK] Simulation Runtime has been prepared and is running
+	P3. [OK] Change Perspective to Simulation Perspective
+
+Post-Condition:
+	Post1. Close Simulation Perspective
+
+1. Simulation Center
+
+2. Simulation Session Control
+	2.1 Add a visualization wizard
+		o Properties to be plot on display (Dialog mit check box aller verfügbaren properties)
+	2.2 Delte, ...
+	
+3. Simulation Property Control
+	3.1 Manuelle eingabe des wertes
+	3.2 Slider zum ändern das wertes
+	
+4. Simulation Visualization
+	4.1 anzeigen der Werte in einem fortlaufenden Intervall fenster
+	4.2 anzeigen aller werte aber nur als snapshot beim anklicken!?
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+<template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.model.Modeleditor.conditional_expr" deleted="false" description="conditional expression for expressions" enabled="true" id="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.conditional_expr" name="conditional expression">if ${ifexpr}  then 
+ ${thenexpr}
+elseif ${elseifexpr} then 
+ ${trueexpr}
+else 
+ ${falseexpr}
+</template><template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.for_statement" deleted="false" description="for statement for algorithm" enabled="true" id="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.for_statement" name="for_statement_algorithm">for ${Ident} in ${for_expression} loop
+ ${for_Algo};
+end for;
+</template>
+<template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.if_statement" deleted="false" description="if statement for algorithm" enabled="true" id="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.if_statement" name="if_statement_algorithm">if ${exprtrue} then 
+ ${algorithm_true};&#13;
+elseif ${exprStilltrue} then 
+ ${algorithmStilltrue};&#13;
+else 
+ ${elsealgorithm};&#13;
+end if;
+</template>
+<template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.when_statement" deleted="false" description="when for algorithm" enabled="true" id="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.when_statement" name="when_algorithm">when ${when_expr} then&#13;
+ ${when_algo_true}; &#13;
+elsewhen ${else_when_expr} then&#13;
+ ${then_algo};&#13;
+end when;
+</template>
+<template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.while_statement" deleted="false" description="while statement for algorithm" enabled="true" id="org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection.while_statement" name="while_algorithm_statement">while ${while_expr} loop&#13;
+ ${ while_algo};&#13;
+end while;
+</template>
+</templates>

@@ -1,0 +1,8 @@
+
+- VALIDATOR: no callEvels or TimeEvents are supported.
+- predefined annotations.
+- "isUserInteractive" for properties. 
+- "excludeMe" for model elements. For example, if user interactive is set for a property or if the model element shall be excluded from code generation.
+
+DONE: Loop (for /while) for OpaqueBehavior (algorithm and equations)
+DONE: isSubActivity for activities (algorithm and equations)

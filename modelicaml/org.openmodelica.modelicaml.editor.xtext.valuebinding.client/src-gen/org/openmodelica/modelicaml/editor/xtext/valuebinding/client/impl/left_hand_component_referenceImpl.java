@@ -1,0 +1,349 @@
+/**
+ * <copyright>
+ * </copyright>
+ *
+
+ */
+package org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl;
+
+import java.util.Collection;
+
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.ecore.util.EDataTypeEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.array_subscripts;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ClientPackage;
+import org.openmodelica.modelicaml.editor.xtext.valuebinding.client.left_hand_component_reference;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model object '<em><b>left hand component reference</b></em>'.
+ * <!-- end-user-doc -->
+ * <p>
+ * The following features are implemented:
+ * <ul>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl#getRef <em>Ref</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl#getSubscripts1 <em>Subscripts1</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl#getRef1 <em>Ref1</em>}</li>
+ *   <li>{@link org.openmodelica.modelicaml.editor.xtext.valuebinding.client.impl.left_hand_component_referenceImpl#getSubscripts <em>Subscripts</em>}</li>
+ * </ul>
+ * </p>
+ *
+ * @generated
+ */
+public class left_hand_component_referenceImpl extends MinimalEObjectImpl.Container implements left_hand_component_reference
+{
+  /**
+   * The default value of the '{@link #getRef() <em>Ref</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRef()
+   * @generated
+   * @ordered
+   */
+  protected static final String REF_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getRef() <em>Ref</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRef()
+   * @generated
+   * @ordered
+   */
+  protected String ref = REF_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getSubscripts1() <em>Subscripts1</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSubscripts1()
+   * @generated
+   * @ordered
+   */
+  protected array_subscripts subscripts1;
+
+  /**
+   * The cached value of the '{@link #getRef1() <em>Ref1</em>}' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRef1()
+   * @generated
+   * @ordered
+   */
+  protected EList<String> ref1;
+
+  /**
+   * The cached value of the '{@link #getSubscripts() <em>Subscripts</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSubscripts()
+   * @generated
+   * @ordered
+   */
+  protected EList<array_subscripts> subscripts;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected left_hand_component_referenceImpl()
+  {
+    super();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  protected EClass eStaticClass()
+  {
+    return ClientPackage.Literals.LEFT_HAND_COMPONENT_REFERENCE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getRef()
+  {
+    return ref;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRef(String newRef)
+  {
+    String oldRef = ref;
+    ref = newRef;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF, oldRef, ref));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public array_subscripts getSubscripts1()
+  {
+    return subscripts1;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetSubscripts1(array_subscripts newSubscripts1, NotificationChain msgs)
+  {
+    array_subscripts oldSubscripts1 = subscripts1;
+    subscripts1 = newSubscripts1;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1, oldSubscripts1, newSubscripts1);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setSubscripts1(array_subscripts newSubscripts1)
+  {
+    if (newSubscripts1 != subscripts1)
+    {
+      NotificationChain msgs = null;
+      if (subscripts1 != null)
+        msgs = ((InternalEObject)subscripts1).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1, null, msgs);
+      if (newSubscripts1 != null)
+        msgs = ((InternalEObject)newSubscripts1).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1, null, msgs);
+      msgs = basicSetSubscripts1(newSubscripts1, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1, newSubscripts1, newSubscripts1));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<String> getRef1()
+  {
+    if (ref1 == null)
+    {
+      ref1 = new EDataTypeEList<String>(String.class, this, ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF1);
+    }
+    return ref1;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<array_subscripts> getSubscripts()
+  {
+    if (subscripts == null)
+    {
+      subscripts = new EObjectContainmentEList<array_subscripts>(array_subscripts.class, this, ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS);
+    }
+    return subscripts;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1:
+        return basicSetSubscripts1(null, msgs);
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS:
+        return ((InternalEList<?>)getSubscripts()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
+    switch (featureID)
+    {
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF:
+        return getRef();
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1:
+        return getSubscripts1();
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF1:
+        return getRef1();
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS:
+        return getSubscripts();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
+    switch (featureID)
+    {
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF:
+        setRef((String)newValue);
+        return;
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1:
+        setSubscripts1((array_subscripts)newValue);
+        return;
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF1:
+        getRef1().clear();
+        getRef1().addAll((Collection<? extends String>)newValue);
+        return;
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS:
+        getSubscripts().clear();
+        getSubscripts().addAll((Collection<? extends array_subscripts>)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void eUnset(int featureID)
+  {
+    switch (featureID)
+    {
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF:
+        setRef(REF_EDEFAULT);
+        return;
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1:
+        setSubscripts1((array_subscripts)null);
+        return;
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF1:
+        getRef1().clear();
+        return;
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS:
+        getSubscripts().clear();
+        return;
+    }
+    super.eUnset(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean eIsSet(int featureID)
+  {
+    switch (featureID)
+    {
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF:
+        return REF_EDEFAULT == null ? ref != null : !REF_EDEFAULT.equals(ref);
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS1:
+        return subscripts1 != null;
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__REF1:
+        return ref1 != null && !ref1.isEmpty();
+      case ClientPackage.LEFT_HAND_COMPONENT_REFERENCE__SUBSCRIPTS:
+        return subscripts != null && !subscripts.isEmpty();
+    }
+    return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (ref: ");
+    result.append(ref);
+    result.append(", ref1: ");
+    result.append(ref1);
+    result.append(')');
+    return result.toString();
+  }
+
+} //left_hand_component_referenceImpl

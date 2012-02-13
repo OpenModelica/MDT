@@ -1,0 +1,35 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ModelicaML - A UML Profile for Modelica
+Bundle-SymbolicName: org.openmodelica.modelicaml.profile;singleton:=true
+Bundle-Version: 1.2.19.qualifier
+Bundle-Activator: org.openmodelica.modelicaml.profile.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore,
+ org.eclipse.core.resources,
+ org.eclipse.papyrus.extensionpoints.editors;bundle-version="0.7.1",
+ org.eclipse.papyrus.extensionpoints.uml2;bundle-version="0.7.1",
+ org.eclipse.papyrus.umlutils;bundle-version="0.7.1",
+ org.eclipse.papyrus.core;bundle-version="0.7.1",
+ org.eclipse.papyrus.profile;bundle-version="0.7.1",
+ org.eclipse.core.expressions,
+ org.eclipse.papyrus.diagram.clazz;bundle-version="0.7.2",
+ org.eclipse.papyrus.diagram.composite;bundle-version="0.7.2",
+ org.eclipse.papyrus.diagram.activity;bundle-version="0.7.2",
+ org.eclipse.papyrus.diagram.statemachine;bundle-version="0.7.1",
+ org.eclipse.papyrus.core.adaptor.gmf;bundle-version="0.7.2",
+ org.eclipse.papyrus.diagram.common;bundle-version="0.7.2",
+ org.openmodelica.modelicaml.common;bundle-version="1.0.1",
+ org.eclipse.papyrus.wizards;bundle-version="0.7.3"
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.papyrus.diagram.common.actions,
+ org.eclipse.papyrus.diagram.common.editparts,
+ org.eclipse.papyrus.editor,
+ org.eclipse.ui.views.contentoutline,
+ org.eclipse.ui.views.markers,
+ org.eclipse.uml2.uml
+Bundle-Vendor: OpenModelica Project
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openmodelica.modelicaml.profile.handlers

@@ -1,0 +1,9 @@
+org.openmodelica.simulation.core
+org.openmodelica.simulation.core.init_txt_handling
+org.openmodelica.simulation.core.models.modelica
+org.openmodelica.simulation.core.models.simulation
+org.openmodelica.simulation.core.network
+org.openmodelica.simulation.core.omc
+org.openmodelica.simulation.core.simulationdata
+org.openmodelica.simulation.core.xml.generator
+org.openmodelica.simulation.core.xml.reader

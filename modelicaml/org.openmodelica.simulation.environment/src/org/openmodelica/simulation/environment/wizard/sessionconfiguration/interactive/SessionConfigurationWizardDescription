@@ -1,0 +1,33 @@
+Session Configuration Wizard
+
+Pre-Requirement: 
+	P1. <OK> Modell muss gegeben sein (Initiales oder Configuriertes Model)
+	P2. Initiales Modell immer mit geben, dadurch können initialen werte immer mit angegeben bzw. wieder hergestellt werden
+	P3. <OK> Ein Default Setup muss in den preferences angegeben werden können! (Erleichtert jede eingabe sehr...!)
+
+1. Neue Session Configuration erzeugen
+	1.1 Aus Initial Modell + Default Settings:
+	Wo: Projekt Listing (mit ausgewähltem projekt), SessionConfiguration Listing (mit ausgewähltem projekt)
+	Beschreibung: Es wird eine neue Session Config erzeugt, ohne vorlage nur mit dem initialen modell und den default setup daten
+	- <OK> Änderungen Rückgängig machen / Daten wieder herstellen
+	- <OK> Eingabe der Felder Prüfen
+	- Port in use warnung angeben ABER kein änderungszwang vor erzeugung! 
+	
+	1.2 Mit Vorlage von ConfigModel + Setup/Default Setup (Aus selbem Projekt)
+	Wo: SessionConfiguration Listing (mit ausgewählter konfiguration)
+	Beschreibung: SessionConfig auswählen und als Vorlage verwenden im selben projekt verwenden.
+	- <OK> Änderungen Rückgängig machen / Daten wieder herstellen (Rückgängig zu Initial dann neues herstellen. Initial Model nur zum anzeigen der initialen werte als unterstützung)
+	- <OK> Eingabe der Felder Prüfen
+	- Port in use warnung angeben ABER kein änderungszwang vor erzeugung! 
+	
+2. Session Configuration Ändern
+	2.1 Mit Vorlage von ConfigModel + Setup
+	Wo: SessionConfiguration Listing (mit ausgewählter konfiguration)
+	Beschreibung: Eine bestehende Session Config wird ausgewählt und geändert.
+	- <OK> Änderungen Rückgängig machen / Daten wieder herstellen (Rückgängig zu Initial dann neues herstellen. Initial Model nur zum anzeigen der initialen werte als unterstützung)
+	- <OK> Eingabe der Felder Prüfen
+	- Port in use warnung angeben ABER kein änderungszwang vor erzeugung! 
+	
+3. Session Configuration Importieren
+
+4. Session Configuration Exportieren
