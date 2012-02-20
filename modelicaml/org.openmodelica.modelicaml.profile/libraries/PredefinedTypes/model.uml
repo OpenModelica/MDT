@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_6lrfIFLzEeGIKshlJ_EuPQ" name="ModelicaMLPredefinedTypes">
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_T232kFL0EeGIKshlJ_EuPQ" name="ModelicaReal">
+    <ownedAttribute xmi:id="_T232kVL0EeGIKshlJ_EuPQ" name="quantity" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232klL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232k1L0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232lFL0EeGIKshlJ_EuPQ" name="unit" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232lVL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232llL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232l1L0EeGIKshlJ_EuPQ" name="displayUnit" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232mFL0EeGIKshlJ_EuPQ" name="min" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232mVL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232mlL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232m1L0EeGIKshlJ_EuPQ" name="max" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232nFL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232nVL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232nlL0EeGIKshlJ_EuPQ" name="fixed" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232n1L0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232oFL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232oVL0EeGIKshlJ_EuPQ" name="nominal" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232olL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232o1L0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232pFL0EeGIKshlJ_EuPQ" name="start" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232pVL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232plL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232p1L0EeGIKshlJ_EuPQ" name="stateSelect" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:Enumeration" href="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml#_7f5kAFNOEd6YXtyPQ2LL6Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232qFL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232qVL0EeGIKshlJ_EuPQ"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_T232qlL0EeGIKshlJ_EuPQ" value="default"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_T232q1L0EeGIKshlJ_EuPQ" name="ModelicaBoolean">
+    <ownedAttribute xmi:id="_T232rFL0EeGIKshlJ_EuPQ" name="quantity" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232rVL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232rlL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232r1L0EeGIKshlJ_EuPQ" name="fixed" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232sFL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232sVL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232slL0EeGIKshlJ_EuPQ" name="start" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232s1L0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232tFL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_T232tVL0EeGIKshlJ_EuPQ" name="ModelicaInteger">
+    <ownedAttribute xmi:id="_T232tlL0EeGIKshlJ_EuPQ" name="quantity" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232t1L0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232uFL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232uVL0EeGIKshlJ_EuPQ" name="min" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232ulL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232u1L0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232vFL0EeGIKshlJ_EuPQ" name="max" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232vVL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232vlL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232v1L0EeGIKshlJ_EuPQ" name="fixed" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232wFL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232wVL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232wlL0EeGIKshlJ_EuPQ" name="start" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232w1L0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232xFL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_T232xVL0EeGIKshlJ_EuPQ" name="ModelicaString">
+    <ownedAttribute xmi:id="_T232xlL0EeGIKshlJ_EuPQ" name="quantity" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232x1L0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232yFL0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T232yVL0EeGIKshlJ_EuPQ" name="start" isUnique="false" aggregation="composite">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T232ylL0EeGIKshlJ_EuPQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T232y1L0EeGIKshlJ_EuPQ"/>
+    </ownedAttribute>
+  </packagedElement>
+</uml:Model>

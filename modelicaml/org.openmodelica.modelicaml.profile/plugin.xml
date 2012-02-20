@@ -50,6 +50,17 @@
       </library>
    </extension>
    <extension
+         point="org.eclipse.papyrus.extensionpoints.uml2.UMLLibrary">
+      <library
+            description="ModelicaML Primitive Types"
+            iconpath="resources/icons/icons16/type.gif"
+            name="ModelicaML Primitive Types"
+            path="pathmap://PATH_LIBRARIES/PredefinedTypes/model.uml"
+            provider="OpenModelica Project">
+      </library>
+   </extension>
+   <!--
+   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
@@ -98,6 +109,7 @@
          </menu>
       </menuContribution>
    </extension>
+   -->
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
