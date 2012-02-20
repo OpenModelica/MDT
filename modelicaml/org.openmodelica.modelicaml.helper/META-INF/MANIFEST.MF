@@ -11,7 +11,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.papyrus.core;bundle-version="0.7.3",
  org.openmodelica.modelicaml.common;bundle-version="1.0.1",
  org.eclipse.papyrus.umlutils;bundle-version="0.7.3",
- org.eclipse.gmt.modisco.infra.browser.uicore;bundle-version="0.8.2",
  org.eclipse.papyrus.diagram.common;bundle-version="0.7.3",
  org.openmodelica.modelicaml.view.valuebindings;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy

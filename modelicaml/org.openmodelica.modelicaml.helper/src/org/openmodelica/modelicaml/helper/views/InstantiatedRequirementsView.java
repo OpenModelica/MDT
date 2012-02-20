@@ -42,7 +42,7 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
+//import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
@@ -65,6 +65,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 
@@ -119,13 +120,12 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 		if (!shell.isDisposed() && selection != null && selection instanceof IStructuredSelection) {
 			Object first = ((IStructuredSelection) selection).getFirstElement();
 			
-			EObject selectedElement = null;
+//			EObject selectedElement = null;
 
-			if (first instanceof ModelElementItem) {
-				selectedElement = ((ModelElementItem)first).getEObject();
-			}
-			else if (first instanceof IUMLEditPart) {
-				selectedElement = ((IUMLEditPart)first).getUMLElement();
+			// Get the selected element
+	        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(first);
+	        if (selectedElement instanceof Element) {
+	        	selectedElement = (Element)selectedElement;
 			}
 			
 			if (selectedElement instanceof Class ) {
