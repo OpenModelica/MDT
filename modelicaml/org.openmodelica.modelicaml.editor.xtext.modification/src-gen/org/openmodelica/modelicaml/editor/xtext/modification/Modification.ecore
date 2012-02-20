@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="modification"
+    nsURI="http://www.openmodelica.org/modelicaml/editor/xtext/modification/Modification"
+    nsPrefix="modification">
+  <eClassifiers xsi:type="ecore:EClass" name="modification_alternatives">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Modification_Rule" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//modification"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="left_hand_component_reference" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//modification_alternatives">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ref" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts1" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//array_subscripts"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ref1" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subscripts" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//array_subscripts"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="modification">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="class_modification" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//modification"/>
+  <eClassifiers xsi:type="ecore:EClass" name="argument_list"/>
+  <eClassifiers xsi:type="ecore:EClass" name="argument" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//argument_list"/>
+  <eClassifiers xsi:type="ecore:EClass" name="element_modification_or_replaceable"
+      eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//argument">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Element_mod" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element_modification"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Element_rep" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element_replaceable"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="element_modification">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Name" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//name"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Modification" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//modification"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="element_replaceable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Class_Def" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_definition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Comp_clause2" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_clause1"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Constrain_Clause" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//constraining_clause"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="constraining_clause">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Name" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//name"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Class_Mod" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_modification"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="element_redeclaration" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//argument">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Class_Def" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_definition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Comp_clause1" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_clause1"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Element_R" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element_replaceable"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="component_clause"/>
+  <eClassifiers xsi:type="ecore:EClass" name="component_list"/>
+  <eClassifiers xsi:type="ecore:EClass" name="component_declaration" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_list">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="component_Dec" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_declaration"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Dec" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//declaration"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Conditional_Att" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//conditional_attribute"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="conditional_attribute">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="component_clause1"/>
+  <eClassifiers xsi:type="ecore:EClass" name="component_declaration1"/>
+  <eClassifiers xsi:type="ecore:EClass" name="type_specifier" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_clause platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_clause1">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Array_Subs" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//array_subscripts"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Com_List" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_list"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Com_Dec" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_declaration1"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Name" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//name"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="declaration" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_declaration1">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="redeclaredComponentName"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ArraySubs" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//array_subscripts"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Mod" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//modification"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="class_definition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="class_specifier" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_definition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Comp" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//composition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Name" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//name"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Array_Subs" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//array_subscripts"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Class_mod" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_modification"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="var" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Enum_list" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//enum_list"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="enum_list">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Ennum_Lit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="E_literal" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="composition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="E_List_Initial" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element_list"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="E_List_Public" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element_list"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="E_List_Protected" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element_list"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Eqn_section" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//equation_section"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Alg_section" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//algorithm_section"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Lang_Spec" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//language_specification"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="External_F_C" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//external_function_call"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Annotation1" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//annotation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Annotation2" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//annotation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="element_list">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Element" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="element">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Class_Def" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_definition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Comp_Clause" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//component_clause"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Constrain_Clause" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//constraining_clause"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Name" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//name"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="equation_section">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Eqn" upperBound="-1" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//equation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sim" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//simple_expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="IF_EQN" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//if_equation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="FOR_EQN" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//for_equation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Con" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//connect_clause"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="WHEN_EQN" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//when_equation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="when_equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="whenEpr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Eqn_Then" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//equation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elseWhenEpr" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="if_equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exprtrue" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Eqn" upperBound="-1" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//equation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exprStilltrue" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thenEqn" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//equation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elseEqn" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//equation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="for_equation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="for_loop" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//for_indices"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="For_Eqn" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//equation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="connect_clause">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="connector1" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="connector2" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="algorithm_section"/>
+  <eClassifiers xsi:type="ecore:EClass" name="statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="If_statement" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//if_statement"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="State_OutputExprList" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//state_OutputExprList"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="state_Comp_Ref" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//state_Comp_Ref"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="For_statement" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//for_statement"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="When_statement" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//when_statement"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="While_statement" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//while_statement"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="state_OutputExprList">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="output_expression_list"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//output_expression_list"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Component_ref" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fun_call_args" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//function_call_args"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="state_Comp_Ref">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="component_reference" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fun_call_args" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//function_call_args"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="when_statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="When_expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="When_stat_true" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//statement"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Else_When_expr" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Then_statement" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//statement"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="while_statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="while_expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="While_stat" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//while_statement"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="for_statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="For_indices" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//for_indices"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="For_statement" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//for_statement"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="if_statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exprtrue" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="state" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//statement"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exprStilltrue" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="extends_clause" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Class_Mod" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_modification"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Annotation" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//annotation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="annotation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Class_Mod" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_modification"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="import_clause" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//element"/>
+  <eClassifiers xsi:type="ecore:EClass" name="language_specification">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Str" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="external_function_call">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="component_reference" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="E_List" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression_list"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="class_modification_action" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//class_modification">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Arg" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//argument_list"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="algorithm_clause" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//algorithm_section">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Algorithm" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modification/src-gen/org/openmodelica/modelicaml/editor/xtext/modification/Modification.ecore#//statement"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>
