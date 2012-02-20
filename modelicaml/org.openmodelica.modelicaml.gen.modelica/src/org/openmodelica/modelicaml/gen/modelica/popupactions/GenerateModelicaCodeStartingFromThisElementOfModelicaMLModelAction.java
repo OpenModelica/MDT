@@ -54,7 +54,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
@@ -63,6 +62,9 @@ import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.State;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.CGConfigurationManager;
 
 import fr.obeo.acceleo.chain.File;
@@ -108,8 +110,8 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils
-				.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+//		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}
@@ -126,15 +128,22 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				umlElement = (Element)eObject;
-			}
+		
+		EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
+        if (selectedElement instanceof State) {
+        	umlElement = (Element)selectedElement;
 		}
-		else if (input instanceof IUMLEditPart) {
-			umlElement = ((IUMLEditPart)input).getUMLElement();
-		}
+        
+//		
+//		if (input instanceof ModelElementItem) {
+//			EObject eObject = ((ModelElementItem)input).getEObject();
+//			if ( eObject instanceof Element ) {
+//				umlElement = (Element)eObject;
+//			}
+//		}
+//		else if (input instanceof IUMLEditPart) {
+//			umlElement = ((IUMLEditPart)input).getUMLElement();
+//		}
 		
 		if (umlElement instanceof org.eclipse.uml2.uml.Class 
 				|| umlElement instanceof org.eclipse.uml2.uml.Package
