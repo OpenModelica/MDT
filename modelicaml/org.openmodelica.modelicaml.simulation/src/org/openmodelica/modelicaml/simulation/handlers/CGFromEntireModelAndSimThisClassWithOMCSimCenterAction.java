@@ -1,303 +1,303 @@
-/*
- * This file is part of OpenModelica.
- *
- * Copyright (c) 1998-CurrentYear, Open Source Modelica Consortium (OSMC),
- * c/o Linköpings universitet, Department of Computer and Information Science,
- * SE-58183 Linköping, Sweden.
- *
- * All rights reserved.
- *
- * THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 LICENSE OR 
- * THIS OSMC PUBLIC LICENSE (OSMC-PL). 
- * ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE
- * OF THE OSMC PUBLIC LICENSE OR THE GPL VERSION 3, ACCORDING TO RECIPIENTS CHOICE. 
- *
- * The OpenModelica software and the Open Source Modelica
- * Consortium (OSMC) Public License (OSMC-PL) are obtained
- * from OSMC, either from the above address,
- * from the URLs: http://www.ida.liu.se/projects/OpenModelica or  
- * http://www.openmodelica.org, and in the OpenModelica distribution. 
- * GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
- *
- * This program is distributed WITHOUT ANY WARRANTY; without
- * even the implied warranty of  MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
- * IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS OF OSMC-PL.
- *
- * See the full OSMC Public License conditions for more details.
- *
- * Main author: Wladimir Schamai, EADS Innovation Works / Linköping University, 2009-now
- *
- * Contributors: 
- *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
- *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
- */
-package org.openmodelica.modelicaml.simulation.handlers;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CompoundCommand;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.uml2.uml.NamedElement;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
-import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.simulation.environment.wizard.newsimulationproject.NewSimulationProjectFromModellingEnvironmentWizard;
-import org.openmodelica.simulation.environment.wizard.sessionconfiguration.interactive.SessionConfiguration_InteractiveWizard;
-import org.openmodelica.simulation.environment.wizard.sessionconfiguration.noninteractive.SessionConfiguration_NonInteractiveWizard;
-
-import fr.obeo.acceleo.chain.File;
-import fr.obeo.acceleo.chain.impl.spec.CChain;
-import fr.obeo.acceleo.chain.impl.spec.CFolder;
-import fr.obeo.acceleo.chain.impl.spec.CLog;
-import fr.obeo.acceleo.chain.impl.spec.CModel;
-import fr.obeo.acceleo.gen.IGenFilter;
-import fr.obeo.acceleo.gen.template.eval.LaunchManager;
-
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class
- * GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClassWithOMCSimCenterAction
- * .
- * 
- * @author rmwscham
- */
-public class CGFromEntireModelAndSimThisClassWithOMCSimCenterAction extends AbstractHandler {
-
-	// private ModelManager modelManager = null;
-	/** The project. */
-	private String project = null;
-	
-	/** The my chain. */
-	private CChain myChain = null;
-	
-	/** The model file uri. */
-	private String modelFileURI = null;
-	
-	/** The model name. */
-	private String modelName = null;
-
-	/** The shell. */
-	Shell shell = new Shell();
-	
-	
-	/** The filter. */
-	IGenFilter filter = new IGenFilter() {
-		public boolean filter(java.io.File script, IFile targetFile,
-				EObject object) throws CoreException {
-			return true;
-		}
-	};
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
-		editingDomain.getCommandStack().execute(getCommand(editingDomain));
-		return null;
-	}
-
-	/**
-	 * Gets the command.
-	 * 
-	 * @param editingDomain
-	 *            the editing domain
-	 * @return the command
-	 */
-	protected Command getCommand(TransactionalEditingDomain editingDomain) {
-
-		EObject umlElement = null;
-		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
-		Object input = ((IStructuredSelection) selection).getFirstElement();
-		
-//		if (input instanceof ModelElementItem) {
-//		EObject eObject = ((ModelElementItem)input).getEObject();
-//		if ( eObject instanceof Element ) {
-//			umlElement = (Element)eObject;
+///*
+// * This file is part of OpenModelica.
+// *
+// * Copyright (c) 1998-CurrentYear, Open Source Modelica Consortium (OSMC),
+// * c/o Linköpings universitet, Department of Computer and Information Science,
+// * SE-58183 Linköping, Sweden.
+// *
+// * All rights reserved.
+// *
+// * THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 LICENSE OR 
+// * THIS OSMC PUBLIC LICENSE (OSMC-PL). 
+// * ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE
+// * OF THE OSMC PUBLIC LICENSE OR THE GPL VERSION 3, ACCORDING TO RECIPIENTS CHOICE. 
+// *
+// * The OpenModelica software and the Open Source Modelica
+// * Consortium (OSMC) Public License (OSMC-PL) are obtained
+// * from OSMC, either from the above address,
+// * from the URLs: http://www.ida.liu.se/projects/OpenModelica or  
+// * http://www.openmodelica.org, and in the OpenModelica distribution. 
+// * GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
+// *
+// * This program is distributed WITHOUT ANY WARRANTY; without
+// * even the implied warranty of  MERCHANTABILITY or FITNESS
+// * FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
+// * IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS OF OSMC-PL.
+// *
+// * See the full OSMC Public License conditions for more details.
+// *
+// * Main author: Wladimir Schamai, EADS Innovation Works / Linköping University, 2009-now
+// *
+// * Contributors: 
+// *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
+// *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
+// */
+//package org.openmodelica.modelicaml.simulation.handlers;
+//
+//import java.io.IOException;
+//import java.util.List;
+//
+//import org.eclipse.core.commands.AbstractHandler;
+//import org.eclipse.core.commands.ExecutionEvent;
+//import org.eclipse.core.commands.ExecutionException;
+//import org.eclipse.core.resources.IFile;
+//import org.eclipse.core.resources.IProject;
+//import org.eclipse.core.resources.IWorkspace;
+//import org.eclipse.core.resources.IWorkspaceRoot;
+//import org.eclipse.core.resources.ResourcesPlugin;
+//import org.eclipse.core.runtime.CoreException;
+//import org.eclipse.core.runtime.IAdaptable;
+//import org.eclipse.core.runtime.IProgressMonitor;
+//import org.eclipse.core.runtime.IStatus;
+//import org.eclipse.core.runtime.Platform;
+//import org.eclipse.core.runtime.Status;
+//import org.eclipse.core.runtime.jobs.Job;
+//import org.eclipse.emf.common.command.Command;
+//import org.eclipse.emf.common.command.CompoundCommand;
+//import org.eclipse.emf.common.util.EList;
+//import org.eclipse.emf.common.util.URI;
+//import org.eclipse.emf.ecore.EObject;
+//import org.eclipse.emf.ecore.resource.Resource;
+//import org.eclipse.emf.ecore.resource.ResourceSet;
+//import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+//import org.eclipse.emf.transaction.TransactionalEditingDomain;
+//import org.eclipse.jface.viewers.ISelection;
+//import org.eclipse.jface.viewers.IStructuredSelection;
+//import org.eclipse.jface.wizard.WizardDialog;
+//import org.eclipse.papyrus.core.utils.BusinessModelResolver;
+//import org.eclipse.papyrus.core.utils.EditorUtils;
+//import org.eclipse.papyrus.resource.uml.UmlModel;
+//import org.eclipse.papyrus.resource.uml.UmlUtils;
+//import org.eclipse.swt.widgets.Shell;
+//import org.eclipse.ui.PlatformUI;
+//import org.eclipse.uml2.uml.NamedElement;
+//import org.openmodelica.modelicaml.common.services.PapyrusServices;
+//import org.openmodelica.modelicaml.common.services.StringUtls;
+//import org.openmodelica.simulation.environment.wizard.newsimulationproject.NewSimulationProjectFromModellingEnvironmentWizard;
+//import org.openmodelica.simulation.environment.wizard.sessionconfiguration.interactive.SessionConfiguration_InteractiveWizard;
+//import org.openmodelica.simulation.environment.wizard.sessionconfiguration.noninteractive.SessionConfiguration_NonInteractiveWizard;
+//
+//import fr.obeo.acceleo.chain.File;
+//import fr.obeo.acceleo.chain.impl.spec.CChain;
+//import fr.obeo.acceleo.chain.impl.spec.CFolder;
+//import fr.obeo.acceleo.chain.impl.spec.CLog;
+//import fr.obeo.acceleo.chain.impl.spec.CModel;
+//import fr.obeo.acceleo.gen.IGenFilter;
+//import fr.obeo.acceleo.gen.template.eval.LaunchManager;
+//
+//
+//// TODO: Auto-generated Javadoc
+///**
+// * The Class
+// * GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClassWithOMCSimCenterAction
+// * .
+// * 
+// * @author rmwscham
+// */
+//public class CGFromEntireModelAndSimThisClassWithOMCSimCenterAction extends AbstractHandler {
+//
+//	// private ModelManager modelManager = null;
+//	/** The project. */
+//	private String project = null;
+//	
+//	/** The my chain. */
+//	private CChain myChain = null;
+//	
+//	/** The model file uri. */
+//	private String modelFileURI = null;
+//	
+//	/** The model name. */
+//	private String modelName = null;
+//
+//	/** The shell. */
+//	Shell shell = new Shell();
+//	
+//	
+//	/** The filter. */
+//	IGenFilter filter = new IGenFilter() {
+//		public boolean filter(java.io.File script, IFile targetFile,
+//				EObject object) throws CoreException {
+//			return true;
+//		}
+//	};
+//
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+//	 */
+//	public Object execute(ExecutionEvent event) throws ExecutionException {
+//		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+//		editingDomain.getCommandStack().execute(getCommand(editingDomain));
+//		return null;
+//	}
+//
+//	/**
+//	 * Gets the command.
+//	 * 
+//	 * @param editingDomain
+//	 *            the editing domain
+//	 * @return the command
+//	 */
+//	protected Command getCommand(TransactionalEditingDomain editingDomain) {
+//
+//		EObject umlElement = null;
+//		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
+//		Object input = ((IStructuredSelection) selection).getFirstElement();
+//		
+////		if (input instanceof ModelElementItem) {
+////		EObject eObject = ((ModelElementItem)input).getEObject();
+////		if ( eObject instanceof Element ) {
+////			umlElement = (Element)eObject;
+////		}
+////	}
+////	else if (input instanceof IUMLEditPart) {
+////		umlElement = ((IUMLEditPart)input).getUMLElement();
+////	}
+//		
+//		umlElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+//		
+//		if (umlElement instanceof NamedElement) {
+//		
+//			UmlModel umlModel = UmlUtils.getUmlModel();
+//			modelFileURI = umlModel.getResourceURI().toString();
+//
+//			modelName = umlModel.getResourceURI().lastSegment();
+//			project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+//			
+////			String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
+//			String projectName = umlModel.getResource().getURI().segment(1);
+//			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//			IWorkspaceRoot root = workspace.getRoot();
+//			IProject iProject = root.getProject(projectName);
+//			
+//			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+//			
+//			String modelElementQualifiedName = ((NamedElement)umlElement).getQualifiedName();
+//			String temp_modelElementWoSpecChar = StringUtls.replaceSpecCharExceptThis(modelElementQualifiedName, "::");
+//			final String modelElementDotPath = temp_modelElementWoSpecChar.replaceAll("::", ".");
+//			final String packageMoFilePath = projectPath+"/code-gen/"+ StringUtls.replaceSpecChar( ((NamedElement)umlElement).getModel().getName()) + "/" +"package.mo";
+//
+//			URI chainURI = URI.createPlatformPluginURI("/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain",true);
+//			ResourceSet rs = new ResourceSetImpl();
+//			Resource r = (Resource) rs.createResource(chainURI);
+//			try {
+//				r.load(null);
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//
+//			myChain = (CChain) r.getContents().get(0);
+//
+//			String modelFilePath = modelFileURI.replace("platform:/resource/", "");
+//			String outputFolderPath = project;
+//			String logPath = project + "/errors.log";
+//
+//			// Don't create Parameter Files... simply set the correct path into them
+//			EList<File> files = myChain.getParametersFiles();
+//			for (File file : files) {
+//				if (file instanceof CModel) {
+//					file.setPath(modelFilePath);
+//				} else if (file instanceof CFolder) {
+//					file.setPath(outputFolderPath);
+//				} else if (file instanceof CLog) {
+//					file.setPath(logPath);
+//				}
+//			}
+//
+//			Job job = new Job("Modelica Simulation with OMCSim Center") {
+//				protected IStatus run(IProgressMonitor monitor) {
+//					Boolean RegenerateCodeBeforeEachSimulation = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "RegenerateCodeBeforeEachSimulation", false, null);
+//					if (RegenerateCodeBeforeEachSimulation) {
+//						runchain(monitor);
+//					}
+//					return Status.OK_STATUS;
+//				}
+//			};
+//			job.setUser(true);
+//			job.schedule();
+//		    
+//		    
+//		    NewSimulationProjectFromModellingEnvironmentWizard projectWizard = new NewSimulationProjectFromModellingEnvironmentWizard(packageMoFilePath, modelElementDotPath, job);
+//			WizardDialog wizard = new WizardDialog(
+//					this.shell, projectWizard
+//					);
+//			wizard.open();
+//			
+//			if (projectWizard.getCreateConfig().equals("interactive")) {
+//				WizardDialog wizardinteractive = new WizardDialog(
+//						this.shell,
+//						new SessionConfiguration_InteractiveWizard());
+//				wizardinteractive.open();
+//			} else if (projectWizard.getCreateConfig().equals("noninteractive")) {
+//				WizardDialog wizardnoninteractive = new WizardDialog(
+//						this.shell,
+//						new SessionConfiguration_NonInteractiveWizard());
+//				wizardnoninteractive.open();
+//			}
+//		    
+//			CompoundCommand cc = new CompoundCommand("Modelica Code Generation");
+//			return (cc.unwrap());			
+//		}
+//		
+//		return null;
+//	}
+//
+//	
+//	private List<Object> getCurrentSelections() {
+//		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+//		if(selection instanceof IStructuredSelection) {
+//			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+//			return structuredSelection.toList();
+//		}
+//	
+//		return null;
+//	}
+//	
+//	protected EObject adaptSelectedElement( Object selection) {
+//		EObject eObject = null;
+//		if(selection != null) {
+//			if(selection instanceof IAdaptable) {
+//				selection = ((IAdaptable)selection).getAdapter(EObject.class);
+//			}
+//			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
+//			if(businessObject instanceof EObject) {
+//				eObject = (EObject)businessObject;
+//			}
+//		}
+//		return eObject;
+//	}
+//	
+//	/**
+//	 * Runchain.
+//	 * 
+//	 * @param monitor
+//	 *            the monitor
+//	 */
+//	public void runchain(IProgressMonitor monitor) {
+//		try {
+//			myChain.launch(filter, monitor, LaunchManager.create("run", true));
+//		} catch (CoreException e) {
+//			e.printStackTrace();
 //		}
 //	}
-//	else if (input instanceof IUMLEditPart) {
-//		umlElement = ((IUMLEditPart)input).getUMLElement();
+//
+//	/**
+//	 * Checks if is enabled.
+//	 * 
+//	 * @return true, if is enabled
+//	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
+//	 */
+//	public boolean isEnabled() {
+//		return true;
 //	}
-		
-		umlElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
-		
-		if (umlElement instanceof NamedElement) {
-		
-			UmlModel umlModel = UmlUtils.getUmlModel();
-			modelFileURI = umlModel.getResourceURI().toString();
-
-			modelName = umlModel.getResourceURI().lastSegment();
-			project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
-			
-//			String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
-			String projectName = umlModel.getResource().getURI().segment(1);
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-			IProject iProject = root.getProject(projectName);
-			
-			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-			
-			String modelElementQualifiedName = ((NamedElement)umlElement).getQualifiedName();
-			String temp_modelElementWoSpecChar = StringUtls.replaceSpecCharExceptThis(modelElementQualifiedName, "::");
-			final String modelElementDotPath = temp_modelElementWoSpecChar.replaceAll("::", ".");
-			final String packageMoFilePath = projectPath+"/code-gen/"+ StringUtls.replaceSpecChar( ((NamedElement)umlElement).getModel().getName()) + "/" +"package.mo";
-
-			URI chainURI = URI.createPlatformPluginURI("/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain",true);
-			ResourceSet rs = new ResourceSetImpl();
-			Resource r = (Resource) rs.createResource(chainURI);
-			try {
-				r.load(null);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			myChain = (CChain) r.getContents().get(0);
-
-			String modelFilePath = modelFileURI.replace("platform:/resource/", "");
-			String outputFolderPath = project;
-			String logPath = project + "/errors.log";
-
-			// Don't create Parameter Files... simply set the correct path into them
-			EList<File> files = myChain.getParametersFiles();
-			for (File file : files) {
-				if (file instanceof CModel) {
-					file.setPath(modelFilePath);
-				} else if (file instanceof CFolder) {
-					file.setPath(outputFolderPath);
-				} else if (file instanceof CLog) {
-					file.setPath(logPath);
-				}
-			}
-
-			Job job = new Job("Modelica Simulation with OMCSim Center") {
-				protected IStatus run(IProgressMonitor monitor) {
-					Boolean RegenerateCodeBeforeEachSimulation = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "RegenerateCodeBeforeEachSimulation", false, null);
-					if (RegenerateCodeBeforeEachSimulation) {
-						runchain(monitor);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.setUser(true);
-			job.schedule();
-		    
-		    
-		    NewSimulationProjectFromModellingEnvironmentWizard projectWizard = new NewSimulationProjectFromModellingEnvironmentWizard(packageMoFilePath, modelElementDotPath, job);
-			WizardDialog wizard = new WizardDialog(
-					this.shell, projectWizard
-					);
-			wizard.open();
-			
-			if (projectWizard.getCreateConfig().equals("interactive")) {
-				WizardDialog wizardinteractive = new WizardDialog(
-						this.shell,
-						new SessionConfiguration_InteractiveWizard());
-				wizardinteractive.open();
-			} else if (projectWizard.getCreateConfig().equals("noninteractive")) {
-				WizardDialog wizardnoninteractive = new WizardDialog(
-						this.shell,
-						new SessionConfiguration_NonInteractiveWizard());
-				wizardnoninteractive.open();
-			}
-		    
-			CompoundCommand cc = new CompoundCommand("Modelica Code Generation");
-			return (cc.unwrap());			
-		}
-		
-		return null;
-	}
-
-	
-	private List<Object> getCurrentSelections() {
-		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-		if(selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-			return structuredSelection.toList();
-		}
-	
-		return null;
-	}
-	
-	protected EObject adaptSelectedElement( Object selection) {
-		EObject eObject = null;
-		if(selection != null) {
-			if(selection instanceof IAdaptable) {
-				selection = ((IAdaptable)selection).getAdapter(EObject.class);
-			}
-			Object businessObject = BusinessModelResolver.getInstance().getBusinessModel(selection);
-			if(businessObject instanceof EObject) {
-				eObject = (EObject)businessObject;
-			}
-		}
-		return eObject;
-	}
-	
-	/**
-	 * Runchain.
-	 * 
-	 * @param monitor
-	 *            the monitor
-	 */
-	public void runchain(IProgressMonitor monitor) {
-		try {
-			myChain.launch(filter, monitor, LaunchManager.create("run", true));
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Checks if is enabled.
-	 * 
-	 * @return true, if is enabled
-	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return true;
-	}
-
-	/**
-	 * Checks if is visible.
-	 * 
-	 * @return true, if is visible
-	 */
-	public boolean isVisible() {
-		return true;
-	}
-
-}
+//
+//	/**
+//	 * Checks if is visible.
+//	 * 
+//	 * @return true, if is visible
+//	 */
+//	public boolean isVisible() {
+//		return true;
+//	}
+//
+//}

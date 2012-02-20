@@ -59,17 +59,17 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.State;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.simulation.omc.OMCCommandExecuter;
 import org.openmodelica.modelicaml.simulation.omc.OMCSimulationDataStorage;
@@ -152,15 +152,20 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		
-		if (input instanceof ModelElementItem) {
-			EObject eObject = ((ModelElementItem)input).getEObject();
-			if ( eObject instanceof Element ) {
-				umlElement = (Element)eObject;
-			}
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
+        if (selectedElement instanceof State) {
+        	umlElement = (Element)selectedElement;
 		}
-		else if (input instanceof IUMLEditPart) {
-			umlElement = ((IUMLEditPart)input).getUMLElement();
-		}
+		
+//		if (input instanceof ModelElementItem) {
+//			EObject eObject = ((ModelElementItem)input).getEObject();
+//			if ( eObject instanceof Element ) {
+//				umlElement = (Element)eObject;
+//			}
+//		}
+//		else if (input instanceof IUMLEditPart) {
+//			umlElement = ((IUMLEditPart)input).getUMLElement();
+//		}
 		
 		UmlModel umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toString();

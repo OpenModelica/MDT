@@ -309,7 +309,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			myChain.launch(filter, monitor, LaunchManager.create("run", true));
 			
 			// TODO: Here the call for the tests execution
-			testSessionXMLFileToReadAbsolutePath = testSessionFolderAbsolutePath + "/test_session.xml";
+			testSessionXMLFileToReadAbsolutePath = testSessionFolderAbsolutePath + "/verification_session.xml";
 			// TODO: read the file and execute models one after another
 			// This functionality shall also be available as an Eclipse action 
 			// so that the user can re-start the execution at any time by selecting the test_session.xml.

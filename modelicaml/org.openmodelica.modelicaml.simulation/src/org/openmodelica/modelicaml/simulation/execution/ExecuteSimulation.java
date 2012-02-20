@@ -40,7 +40,6 @@ public class ExecuteSimulation {
 		//Load package.mo
 		load(monitor, sessionFolder, omcc, testSessionObj, omcReturnString);
 		
-		
 		check_and_simulate(monitor, omcc, testSessionObj, omcReturnString);
 		
 		omcc.quit();
@@ -103,30 +102,30 @@ public class ExecuteSimulation {
 		return "";
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
-		
-		TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
-		String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
-		File sessionFolder = new File(pathToSession);
-//		File tempSimulationFolder = new File(pathToSession + "tmp");
-//		tempSimulationFolder.mkdir();
-//		tempSimulationFolder.canWrite();
-		String omcMessage =	executeAllModels(null, sessionFolder, omcTempWorkingFolder, testSessionObj);
-		if(omcMessage.isEmpty()){
-			
-		}
-		else
-			System.out.println("OMC Message: /n" + omcMessage);
-		
-		for(TestModel model : testSessionObj.testModels){
-			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", pathToSession + "/" + model.qualifiedName + ".exe");
-			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", pathToSession + "/" + model.qualifiedName + "_init.xml");
-			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", pathToSession + "/" + model.qualifiedName + "_res.plt");
-		}
-	}
+//	/**
+//	 * @param args
+//	 */
+//	public static void main(String[] args) {
+//		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
+//		
+//		TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
+//		String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
+//		File sessionFolder = new File(pathToSession);
+////		File tempSimulationFolder = new File(pathToSession + "tmp");
+////		tempSimulationFolder.mkdir();
+////		tempSimulationFolder.canWrite();
+//		String omcMessage =	executeAllModels(null, sessionFolder, omcTempWorkingFolder, testSessionObj);
+//		if(omcMessage.isEmpty()){
+//			
+//		}
+//		else
+//			System.out.println("OMC Message: /n" + omcMessage);
+//		
+//		for(TestModel model : testSessionObj.testModels){
+//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", pathToSession + "/" + model.qualifiedName + ".exe");
+//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", pathToSession + "/" + model.qualifiedName + "_init.xml");
+//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", pathToSession + "/" + model.qualifiedName + "_res.plt");
+//		}
+//	}
 
 }

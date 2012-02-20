@@ -99,8 +99,10 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				String[] splitted = decodedLocation.replaceFirst("locate:", "").split("#");
 				
 				String elementQName = splitted[0];
-				for (Element  element : findElement(elementQName)) {
-					PapyrusServices.locateWithReselection(element);
+				if (elementQName != null) {
+					for (Element  element : findElement(elementQName)) {
+						PapyrusServices.locateWithReselection(element);
+					}
 				}
 				
 				String componentDotPath = "";
