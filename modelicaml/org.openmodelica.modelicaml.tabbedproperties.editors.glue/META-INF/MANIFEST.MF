@@ -23,5 +23,4 @@ Export-Package: org.openmodelica.modelicaml.tabbedproperties.editors.glue,
  org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part,
  org.openmodelica.modelicaml.tabbedproperties.editors.glue.editingdomain
 Import-Package: org.apache.log4j;version="1.2.15",
- org.eclipse.papyrus.umlutils,
- org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part
+ org.eclipse.papyrus.umlutils

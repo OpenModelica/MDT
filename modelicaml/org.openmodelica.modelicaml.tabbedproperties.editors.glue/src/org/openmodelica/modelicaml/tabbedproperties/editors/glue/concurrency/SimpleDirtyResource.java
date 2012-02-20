@@ -102,4 +102,9 @@ public class SimpleDirtyResource implements IDirtyResource {
 		return resource;
 	}
 
+	public String getActualContents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

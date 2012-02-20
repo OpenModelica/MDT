@@ -132,7 +132,8 @@ public class SourceViewerHandle {
 	 * @return PartialModelEditor
 	 */
 	public PartialModelEditor createPartialEditor(String prefix, String editablePart, String suffix) {
-		PartialModelEditor result = new PartialModelEditor(viewer, resourceProvider, false);
+//		PartialModelEditor result = new PartialModelEditor(viewer, resourceProvider, false);
+		PartialModelEditor result = new PartialModelEditor(viewer, resourceProvider, true);
 		result.setModel(getDocument(), prefix, editablePart, suffix);
 		return result;
 	}

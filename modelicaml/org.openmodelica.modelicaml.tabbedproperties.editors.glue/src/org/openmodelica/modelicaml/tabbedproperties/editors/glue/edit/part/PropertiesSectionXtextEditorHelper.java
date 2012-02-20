@@ -75,6 +75,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.Activator;
+import org.openmodelica.modelicaml.tabbedproperties.editors.glue.helper.ActiveFocusControlExpression;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.partialEditing.ISyntheticResourceProvider;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.partialEditing.OperationHistoryListener;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.partialEditing.PartialModelEditor;
@@ -413,7 +414,8 @@ private OperationHistoryListener operationHistoryListener;
 		return (xtextDocument.readOnly(new IUnitOfWork<Boolean, XtextResource>() {
 			public Boolean exec(XtextResource state) throws Exception {
 				IParseResult parseResult = state.getParseResult();
-				return !state.getErrors().isEmpty() || parseResult == null || !parseResult.getParseErrors().isEmpty();
+//				return !state.getErrors().isEmpty() || parseResult == null || !parseResult.getSyntaxErrors().iterator().hasNext();
+				return !state.getErrors().isEmpty() || parseResult == null;
 			}
 		}));
 	}
@@ -538,9 +540,11 @@ protected Status createErrorStatus(String message, TemplateException e) {
 			}
 			public void focusGained(FocusEvent e) {
 				IAction action= fGlobalActions.get(ITextEditorActionConstants.REDO);
-				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), expression));
+//				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), expression));
+				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), new ActiveFocusControlExpression(getEditorWidget())));
 				action= fGlobalActions.get(ITextEditorActionConstants.UNDO);
-				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, new ActionHandler(action), expression));
+//				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, new ActionHandler(action), expression));
+				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, new ActionHandler(action), new ActiveFocusControlExpression(getEditorWidget())));
 				action= fGlobalActions.get(ITextEditorActionConstants.CONTENT_ASSIST);
 				handlerActivations.add(handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action), expression));
 			}
