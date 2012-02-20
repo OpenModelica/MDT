@@ -1,0 +1,38 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.openmodelica.modelicaml.editor.xtext.arraysubscript
+Bundle-Vendor: OpenModelica Project
+Bundle-Version: 1.0.0
+Bundle-SymbolicName: org.openmodelica.modelicaml.editor.xtext.arraysubscript; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
+ org.apache.log4j;bundle-version="1.2.15";visibility:=reexport,
+ org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional;visibility:=reexport,
+ org.eclipse.xtext.generator;resolution:=optional,
+ org.eclipse.emf.codegen.ecore;resolution:=optional,
+ org.eclipse.emf.mwe.utils;resolution:=optional,
+ org.eclipse.emf.mwe2.launch;resolution:=optional,
+ org.openmodelica.modelicaml.editor.xtext.modeleditor;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.editor.xtext.modeleditor.ui;bundle-version="1.0.0",
+ org.eclipse.uml2.codegen.ecore;bundle-version="1.7.1",
+ org.eclipse.uml2.uml;bundle-version="3.2.100",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types
+Import-Package: org.apache.log4j,
+ org.apache.commons.logging,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.xtend2.lib
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.openmodelica.modelicaml.editor.xtext.array,
+ org.openmodelica.modelicaml.editor.xtext.array.services,
+ org.openmodelica.modelicaml.editor.xtext.array.arraysubscript,
+ org.openmodelica.modelicaml.editor.xtext.array.arraysubscript.impl,
+ org.openmodelica.modelicaml.editor.xtext.array.arraysubscript.util,
+ org.openmodelica.modelicaml.editor.xtext.array.serializer,
+ org.openmodelica.modelicaml.editor.xtext.array.parser.antlr,
+ org.openmodelica.modelicaml.editor.xtext.array.parser.antlr.internal,
+ org.openmodelica.modelicaml.editor.xtext.array.validation
+
