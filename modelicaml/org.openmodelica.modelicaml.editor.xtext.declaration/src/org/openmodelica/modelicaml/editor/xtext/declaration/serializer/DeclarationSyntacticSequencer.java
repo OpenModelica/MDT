@@ -1,0 +1,4 @@
+package org.openmodelica.modelicaml.editor.xtext.declaration.serializer;
+
+public class DeclarationSyntacticSequencer extends AbstractDeclarationSyntacticSequencer {
+}

@@ -1,0 +1,16 @@
+grammar org.openmodelica.modelicaml.editor.xtext.declaration.Declaration 
+	with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+
+generate declaration "http://www.openmodelica.org/modelicaml/editor/xtext/declaration/Declaration"
+
+////////////////////////////////component_declaration//////////////
+component_declaration :
+(Mod=modification (Conditional_Att=conditional_attribute)? comment)?
+;
+///////////////////////////////////////Modifications////////////////////
+modification :
+"=" Expr=expression | ":=" Expr=expression
+;
+conditional_attribute:
+'if' Expr=expression
+;
