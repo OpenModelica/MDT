@@ -34,9 +34,9 @@
  */
 package org.openmodelica.modelicaml.model.explorer.customization;
 import org.eclipse.uml2.uml.Dependency;
-import org.eclipse.gmt.modisco.infra.query.core.exception.ModelQueryExecutionException;
-import org.eclipse.gmt.modisco.infra.query.core.java.IJavaModelQuery;
-import org.eclipse.gmt.modisco.infra.query.core.java.ParameterValueList;
+import org.eclipse.emf.facet.infra.query.core.exception.ModelQueryExecutionException;
+import org.eclipse.emf.facet.infra.query.core.java.IJavaModelQuery;
+import org.eclipse.emf.facet.infra.query.core.java.ParameterValueList;
 import org.openmodelica.modelicaml.common.constants.Constants;
 
 /** Checks if this dependency has a Value Binding stereotype */

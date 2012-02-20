@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<query:ModelQuerySet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:query="http://www.eclipse.org/MoDisco/infra/query/0.8.incubation" name="ModelicaML" description="ModelicaML specific queries">
+<query:ModelQuerySet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:query="http://www.eclipse.org/EmfFacet/infra/query/0.8.incubation" name="ModelicaML" description="ModelicaML specific queries">
   <associatedMetamodels href="http://www.eclipse.org/emf/2002/Ecore#/"/>
   <associatedMetamodels href="http://www.eclipse.org/uml2/3.0.0/UML#/"/>
   <queries xsi:type="query:JavaModelQuery" name="getModelicaMLComponentIconPath" description="returns the icon path" implementationClassName="org.openmodelica.modelicaml.model.explorer.customization.GetModelicaMLComponentIconPath">

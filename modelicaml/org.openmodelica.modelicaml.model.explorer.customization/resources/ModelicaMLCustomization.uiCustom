@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
-<uicustom:MetamodelView xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:query="http://www.eclipse.org/MoDisco/infra/query/0.8.incubation" xmlns:uicustom="http://www.eclipse.org/MoDisco/infra/browser/custom/0.8" metamodelURI="http://www.eclipse.org/uml2/3.0.0/UML" allQuerySetsAvailable="false">
+<uicustom:MetamodelView xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:query="http://www.eclipse.org/EmfFacet/infra/query/0.8.incubation" xmlns:uicustom="http://www.eclipse.org/EmfFacet/infra/browser/custom/0.8" metamodelURI="http://www.eclipse.org/uml2/3.0.0/UML">
   <types metaclassName="uml.NamedElement">
     <customizedFeatures customizedFeature="label">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getNamedElementLabel"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#getNamedElementLabel"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
     <references referenceName="owner">
@@ -24,9 +24,9 @@
     <customizedFeatures customizedFeature="icon">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getModelicaMLClassIcon"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#getModelicaMLClassIcon"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
     <references referenceName="classifierBehavior">
@@ -89,39 +89,39 @@
     <customizedFeatures customizedFeature="icon">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getModelicaMLComponentIconPath"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#getModelicaMLComponentIconPath"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
     <customizedFeatures customizedFeature="label">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#GetTypedElementLabel"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#GetTypedElementLabel"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
     <customizedFeatures customizedFeature="color">
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(255,0,255)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isFlow"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isFlow"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(128,128,128)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isConstant"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isConstant"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(128,128,255)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isParameter"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isParameter"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(234,0,0)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isInput"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isInput"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(0,187,0)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isOutput"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isOutput"/>
       </valueCases>
     </customizedFeatures>
     <references referenceName="class">
@@ -143,7 +143,7 @@
   <types metaclassName="uml.Generalization">
     <customizedFeatures customizedFeature="label">
       <defaultValue xsi:type="uicustom:DerivedFeatureValue">
-        <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getGeneralizationLabel"/>
+        <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#getGeneralizationLabel"/>
       </defaultValue>
     </customizedFeatures>
     <references referenceName="specific">
@@ -161,31 +161,31 @@
     <customizedFeatures customizedFeature="label">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#GetTypedElementLabel"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#GetTypedElementLabel"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
     <customizedFeatures customizedFeature="color">
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(255,0,255)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isFlow"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isFlow"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(0,128,255)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isParameter"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isParameter"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(128,128,128)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isConstant"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isConstant"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(234,0,0)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isInput"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isInput"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(0,187,0)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isOutput"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isOutput"/>
       </valueCases>
     </customizedFeatures>
   </types>
@@ -193,9 +193,9 @@
     <customizedFeatures customizedFeature="label">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getConnectorLabel"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#getConnectorLabel"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
     <references referenceName="end">
@@ -223,9 +223,9 @@
     <customizedFeatures customizedFeature="label">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getOpaqueBehaviorLabel"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#getOpaqueBehaviorLabel"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
   </types>
@@ -233,19 +233,19 @@
     <customizedFeatures customizedFeature="label">
       <valueCases>
         <value xsi:type="uicustom:DerivedFeatureValue">
-          <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#GetTypedElementLabel"/>
+          <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#GetTypedElementLabel"/>
         </value>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isModelicaMLStereotypeApplied"/>
       </valueCases>
     </customizedFeatures>
     <customizedFeatures customizedFeature="color">
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(234,0,0)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isInput"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isInput"/>
       </valueCases>
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="(0,187,0)"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isOutput"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isOutput"/>
       </valueCases>
     </customizedFeatures>
   </types>
@@ -253,7 +253,7 @@
     <customizedFeatures customizedFeature="italic">
       <valueCases>
         <value xsi:type="uicustom:StaticFeatureValue" value="true"/>
-        <condition xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#isPartial"/>
+        <condition xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#isPartial"/>
       </valueCases>
     </customizedFeatures>
     <references referenceName="ownedRule">
@@ -265,7 +265,7 @@
   <types metaclassName="uml.Dependency">
     <customizedFeatures customizedFeature="label">
       <defaultValue xsi:type="uicustom:DerivedFeatureValue">
-        <valueCalculator xsi:type="query:JavaModelQuery" href="modisco:/query/ModelicaML#getDependecyLabel"/>
+        <valueCalculator xsi:type="query:JavaModelQuery" href="emffacet:/query/ModelicaML#getDependecyLabel"/>
       </defaultValue>
     </customizedFeatures>
   </types>

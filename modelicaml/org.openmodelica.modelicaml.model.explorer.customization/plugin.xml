@@ -2,6 +2,21 @@
 <?eclipse version="3.4"?>
 
 <plugin>
+   <extension
+         point="org.eclipse.emf.facet.infra.browser.custom.core.registration">
+      <browserCustomization
+            file="resources/ModelicaMLCustomization.uiCustom"
+            loadByDefault="true">
+      </browserCustomization>
+   </extension>
+   <extension
+         point="org.eclipse.emf.facet.infra.query.registration">
+      <modelqueryset
+            file="resources/ModelicaML.querySet">
+      </modelqueryset>
+   </extension>
+  
+   <!--
    <extension point="org.eclipse.gmt.modisco.infra.browser.custom.core.registration">
       <browserCustomization
             file="ModelicaMLCustomization.uiCustom"
@@ -10,4 +25,11 @@
    <extension point="org.eclipse.gmt.modisco.infra.query.registration">
       <modelqueryset file="ModelicaML.querySet"/>
    </extension>
+    <extension
+         point="org.eclipse.gmt.modisco.infra.query.registration">
+      <modelqueryset
+            file="ModelicaML.querySet">
+      </modelqueryset>
+   </extension>
+   -->
 </plugin>

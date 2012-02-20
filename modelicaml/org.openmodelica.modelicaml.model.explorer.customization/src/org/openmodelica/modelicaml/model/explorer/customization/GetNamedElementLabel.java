@@ -33,9 +33,9 @@
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
 package org.openmodelica.modelicaml.model.explorer.customization;
-import org.eclipse.gmt.modisco.infra.query.core.exception.ModelQueryExecutionException;
-import org.eclipse.gmt.modisco.infra.query.core.java.IJavaModelQuery;
-import org.eclipse.gmt.modisco.infra.query.core.java.ParameterValueList;
+import org.eclipse.emf.facet.infra.query.core.exception.ModelQueryExecutionException;
+import org.eclipse.emf.facet.infra.query.core.java.IJavaModelQuery;
+import org.eclipse.emf.facet.infra.query.core.java.ParameterValueList;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 
