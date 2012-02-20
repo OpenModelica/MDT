@@ -1,4 +1,0 @@
-import org::openmodelica::modelicaml::editor::xtext::valuebinding::mediator;
-
-sortedGreetings(Model this) :
-	this.greetings.sortBy(g|g.name.toLowerCase());

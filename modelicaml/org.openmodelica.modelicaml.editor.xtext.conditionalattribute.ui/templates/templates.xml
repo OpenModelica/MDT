@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<templates><template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.model.Modeleditor.conditional_expr" deleted="false" description="conditional expression for expressions" enabled="true" id="org.openmodelica.modelicaml.editor.xtext.condition.Conditionalattribute.conditional_expr" name="conditional expression">
-if ${ifexpr} then &#13;
- ${thenexpr}&#13;
-elseif ${elseifexpr} then &#13;
- ${trueexpr}&#13;
-else &#13;
- ${falseexpr}
-</template><template autoinsert="true" context="org.openmodelica.modelicaml.editor.xtext.condition.Conditionalattribute.conditional_attribute" deleted="false" description="if statement for condition expressions" enabled="true" id="org.openmodelica.modelicaml.editor.xtext.condition.Conditionalattribute.conditional_attribute" name="if_conditional_expression">if ${expression}</template></templates>
