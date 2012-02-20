@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="provider"
+    nsURI="http://www.openmodelica.org/modelicaml/editor/xtext/valuebinding/Provider"
+    nsPrefix="provider">
+  <eClassifiers xsi:type="ecore:EClass" name="ProviderOperation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Expr" eType="ecore:EClass platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="name" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//name"/>
+  <eClassifiers xsi:type="ecore:EClass" name="component_reference" eSuperTypes="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/model/Modeleditor.ecore#//component_reference"/>
+</ecore:EPackage>
