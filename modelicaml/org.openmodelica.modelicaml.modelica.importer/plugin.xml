@@ -286,12 +286,5 @@
          </activeWhen>
       </handler>
    </extension>
-   <extension
-         point="org.eclipse.papyrus.core.modelListener">
-      <listener
-            name="org.openmodelica.modelicaml.modelica.importer.papyrusListener"
-            realization="org.openmodelica.modelicaml.modelica.importer.views.ModelicaOMCCodeViewer$PapyrusListener">
-      </listener>
-   </extension>
 
 </plugin>
