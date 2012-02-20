@@ -6,96 +6,112 @@
       <propertyTabs
             contributorId="TreeOutlinePage">
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.equationsection.code.tab"
                indented="true"
                label="Equations">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.algorithmsection.code.tab"
                indented="true"
                label="Algorithm">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.tabbedproperties.conditionalexpression.tab"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.arraysubscripts.tab"
                indented="true"
                label="Array Subscripts">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.tabbedproperties.modifications.tab"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.conditionalexpression.tab"
                indented="true"
                label="Cond. Expression">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.declaration.tab"
                indented="true"
                label="Declaration">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.tabbedproperties.declaration.tab"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.modifications.tab"
                indented="true"
                label="Modifications">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.tabbedproperties.statedo.code.tab"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.stateexit.code.tab"
                indented="true"
                label="Exit Code">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.tabbedproperties.stateentry.code.tab"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.statedo.code.tab"
                indented="true"
                label="Do Code">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.stateentry.code.tab"
                indented="true"
                label="Entry Code">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.extendsmodifications.tab"
                indented="true"
                label="Modifications">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.regionpriority.tab"
                indented="true"
                label="Priority">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.statetransitionpriority.tab"
                indented="true"
                label="Priority">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.activityedgepriority.tab"
                indented="true"
                label="Priority">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.statetransitionguard.code.tab"
                indented="true"
                label="Guard Code">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.activityedgeguard.code.tab"
                indented="true"
                label="Guard Code">
          </propertyTab>
          <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
                category="org.eclipse.papyrus"
                id="org.openmodelica.modelicaml.tabbedproperties.assert.code.tab"
                indented="true"
