@@ -1181,7 +1181,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	//##################### Selection handling
 	 private ISelectionListener selectionListener = new ISelectionListener() {
 		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-			 if (actionLinkWithEditor.isChecked() && sourcepart != ValueBindingsView.this && selection instanceof IStructuredSelection) {
+			 if (actionLinkWithEditor != null && actionLinkWithEditor.isChecked() && sourcepart != null && sourcepart != ValueBindingsView.this && selection instanceof IStructuredSelection) {
 	        	EObject selectedElement = null;
 	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
 					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
