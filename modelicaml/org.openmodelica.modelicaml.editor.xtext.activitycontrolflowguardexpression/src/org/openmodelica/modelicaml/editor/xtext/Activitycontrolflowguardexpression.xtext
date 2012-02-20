@@ -1,0 +1,18 @@
+grammar org.openmodelica.modelicaml.editor.xtext.activity.Activitycontrolflowguardexpression 
+	with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+
+generate activitycontrolflowguardexpression "http://www.openmodelica.org/modelicaml/editor/xtext/activity/Activitycontrolflowguardexpression"
+
+activityControlFlowExpression : {activityControlFlowExpression}
+	(Epression=expression)?
+;
+
+expression: {expression} // Just need logical expressions without if else statements
+Expr=simple_expression     //not using if expression then expression { elseif expression then expression }else expression
+| ElseKeyword='else'
+;
+
+
+//expression:
+//simple_Exp=simple_expression     //not using if expression then expression { elseif expression then expression }else expression
+//;
