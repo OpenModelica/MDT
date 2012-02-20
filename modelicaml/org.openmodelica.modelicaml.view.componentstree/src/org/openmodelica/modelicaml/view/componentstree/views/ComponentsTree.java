@@ -78,7 +78,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -116,9 +115,8 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.OMCClassValidator;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
-import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
-import org.openmodelica.modelicaml.simulation.handlers.CGFromEntireModelAndSimThisClassWithOMCSimCenterAction;
+import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
@@ -797,14 +795,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		actionSimulate = new Action("actionSimulate") {
 			public void run() {
-				viewer.setSelection(new StructuredSelection(root));
-				CGFromEntireModelAndSimThisClassWithOMCSimCenterAction c = new CGFromEntireModelAndSimThisClassWithOMCSimCenterAction();
-				try {
-					c.execute(null);
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				viewer.setSelection(new StructuredSelection(root));
+//				CGFromEntireModelAndSimThisClassWithOMCSimCenterAction c = new CGFromEntireModelAndSimThisClassWithOMCSimCenterAction();
+//				try {
+//					c.execute(null);
+//				} catch (ExecutionException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 		};
 		actionSimulate.setText("Simulate with OMC");
@@ -2318,19 +2316,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
 						selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 					}
-					
-//					// TODO: Find the right meta class for ModelElementItem
-//					if (first instanceof ModelElementItem) {
-//						selectedElement = ((ModelElementItem)first).getEObject();
-//					}
-//					else if (first instanceof IUMLEditPart) {
-//						selectedElement = ((IUMLEditPart)first).getUMLElement();
-//					}
-					
-//					if (first instanceof IUMLElementEditPart<?>) {
-//						first = ((IUMLElementEditPart<?>) first).getUmlElement();
-//						
-//					}
 					
 //					if (first instanceof Property) {
 //						Type type = ((Property)first).getType();
