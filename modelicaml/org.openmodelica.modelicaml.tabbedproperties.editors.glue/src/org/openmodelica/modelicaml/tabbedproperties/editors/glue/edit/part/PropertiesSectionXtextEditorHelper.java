@@ -38,6 +38,7 @@ package org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
@@ -45,6 +46,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -53,6 +55,8 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -66,9 +70,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.operations.OperationHistoryActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
+import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.XtextResource;
@@ -111,25 +119,20 @@ import com.google.inject.Injector;
  * 		editor.
  */
 
-public class PropertiesSectionXtextEditorHelper  {
+public class PropertiesSectionXtextEditorHelper implements FocusListener, DisposeListener  {
 
 	/** The host edit part. */
 	private Element hostEditPart;
-//	private IEditorPart diagramEditor;
-//	private int editorOffset;
-//	private int initialEditorSize;
-//	private int initialDocumentSize;
+	
 	/** The xtext editor composite. */
-private Composite xtextEditorComposite;
+	private Composite xtextEditorComposite;
 	
 	/** The xtext injector. */
 	private final Injector xtextInjector;
-//	private XtextResource xtextResource;
-//	private String semanticElementFragment;
-//	private EObject semanticElement ;
+	
 	/** The text to edit. */
-private String textToEdit ;
-//	private XtextSourceViewer fSourceViewer;
+	private String textToEdit ;
+	
 	/** The file extension used to dynamically select the appropriate xtext editor. */
 	public static String fileExtension ;
 	
@@ -144,12 +147,13 @@ private String textToEdit ;
 	
 	/** The partial editor. */
 	private PartialModelEditor partialEditor ;
-//	private Shell diagramShell ;
+
 	/** The operation history listener. */
-private OperationHistoryListener operationHistoryListener;
+	private OperationHistoryListener operationHistoryListener;
 	/**
 	 * The context EObject for this editor. It can be used for content assist, verification, etc.
 	 */
+	
 	public EObject context ;
 	
 	/** The selected uml element. */
@@ -195,22 +199,7 @@ private OperationHistoryListener operationHistoryListener;
 	 */
 	public void showEditor(Composite composite, int style) {
 		try {
-//			semanticElement = hostEditPart.resolveSemanticElement();
-//			if (semanticElement == null) {
-//				return;
-//			}
-			//semanticElement = hostEditPart;
 			this.context = hostEditPart ;
-			//Resource semanticResource = semanticElement.eResource();
-
-//			semanticElementFragment = semanticResource.getURIFragment(semanticElement);
-//			if (semanticElementFragment == null || "".equals(semanticElementFragment)) {
-//				return;
-//			}
-//			IDiagramEditDomain diagramEditDomain = hostEditPart.getDiagramEditDomain();
-//			
-//			diagramEditor = ((DiagramEditDomain) diagramEditDomain).getEditorPart();
-			
 			createXtextEditor(null, composite) ;
 			
 		} catch (Exception e) {
@@ -259,11 +248,6 @@ private OperationHistoryListener operationHistoryListener;
 	 */
 	public XtextResource getXtextResource(){
 		return partialEditor.createResource(getText());
-//		int documentGrowth = xtextDocument.getLength() - initialDocumentSize ;
-//		String newText = xtextDocument.get(editorOffset , initialEditorSize + documentGrowth) ;
-//		xtextResource = partialEditor.createResource(newText) ;						
-//		if (xtextResource.getAllContents().hasNext())
-//			modelReconciler.reconcile(semanticElement, xtextResource.getAllContents().next()) ;
 	}
 	
 	/**
@@ -286,57 +270,6 @@ private OperationHistoryListener operationHistoryListener;
 	}
 	
 	
-//	/**
-//	 * This element was originally not documented in the XText/GMF integration example.
-//	 * 
-//	 * Changes performed by CEA LIST:
-//	 * 	- new statements for managing the reconciliation between the original UML model and 
-//	 * 		the textual specification resulting from the edition in the popup xtext editor. The 
-//	 * 		temporary text file created by showEditor is also deleted.
-//	 * @param isReconcile Determines whether a reconciliation must be performed or not
-//	 * 
-//	 */
-//	
-//	/*
-//	 *  @param isReconcile Determines whether a reconciliation must be performed or not
-//	 */
-//	public void closeEditor(boolean isReconcile) {
-//		if (sourceViewerHandle != null) {
-//			if (isReconcile) {
-//				try {
-//					final IXtextDocument xtextDocument = sourceViewerHandle.getDocument();
-//					if (!isDocumentHasErrors(xtextDocument)) {
-//						int documentGrowth = xtextDocument.getLength() - initialDocumentSize ;
-//						String newText = xtextDocument.get(editorOffset , initialEditorSize + documentGrowth) ;
-//						xtextResource = partialEditor.createResource(newText) ;						
-//						if (xtextResource.getAllContents().hasNext())
-//							modelReconciler.reconcile(semanticElement, xtextResource.getAllContents().next()) ;
-//					}
-//				} catch (Exception exc) {
-//					Activator.logError(exc);
-//				}
-//			}
-//			xtextEditorComposite.setVisible(false);
-//			System.err.println("Closing the editor ...");
-//			xtextEditorComposite.dispose();
-//		}
-//	}
-	
-
-	
-	
-//	/**
-//	 * Computes the size of the given label
-//	 * @param text the text to compute
-//	 * @return the approximate size of the text
-//	 */
-//	protected int computeLabelSize(Composite parent, String text) {
-//		GC gc = new GC (parent);
-//        FontMetrics fm = gc.getFontMetrics ();
-//        int width = text.length() * fm.getAverageCharWidth ();
-//        gc.dispose ();
-//        return width;
-//	}
 	
 	/**
  * This element was originally not documented in the XText/GMF integration example
@@ -350,8 +283,7 @@ private OperationHistoryListener operationHistoryListener;
  * @throws Exception the exception
  */
 	private void createXtextEditor(IEditorInput editorInput, Composite composite) throws Exception {
-		//diagramShell = diagramEditor.getSite().getShell();
-		//xtextEditorComposite = new Shell(SWT.RESIZE) ;
+		
 		xtextEditorComposite = composite;
 		xtextEditorComposite.setLayout(new FillLayout());
 		
@@ -359,11 +291,12 @@ private OperationHistoryListener operationHistoryListener;
 		SourceViewerHandleFactory factory = xtextInjector.getInstance(SourceViewerHandleFactory.class) ;
 		sourceViewerHandle = factory.create(xtextEditorComposite, resourceProvider) ;
 		partialEditor = sourceViewerHandle.createPartialEditor("", textToEdit, "") ;	
-		registerKeyListener();
-		//setEditorBounds(); TODO
+		
+//		registerKeyListener();
 		
 		initializeActions();
-		installUndoRedoSupport(sourceViewerHandle.getViewer());
+		
+//		installUndoRedoSupport(sourceViewerHandle.getViewer());
 		
 //		sourceViewerHandle.getViewer().getTextWidget().addFocusListener(new FocusListener() {
 //			
@@ -383,84 +316,94 @@ private OperationHistoryListener operationHistoryListener;
 		
 		xtextEditorComposite.setVisible(true);
 		sourceViewerHandle.getViewer().showAnnotationsOverview(true) ;
-		sourceViewerHandle.getViewer().getTextWidget().setFocus() ;
+		sourceViewerHandle.getViewer().getTextWidget().setFocus();
+
+		StyledText textWidget = sourceViewerHandle.getViewer().getTextWidget();   
+		textWidget.addFocusListener(this);   
+		textWidget.addDisposeListener(this);
+		
+//		if (sourceViewerHandle.getViewer().getTextWidget().isFocusControl()) {    
+//			activateContext();   
+//		}
+	}
+
+	public void focusLost(FocusEvent e) {
+		deactivateContext();
+	}
+
+	public void focusGained(FocusEvent e) {
+		activateContext();
+	}
+
+	public void widgetDisposed(DisposeEvent e) {
+		deactivateContext();
 	}
 	
-	/** The key listener. */
-	private PropertiesSectionXtextEditorKeyListener keyListener ;
 	
-	/**
-	 * Register key listener.
-	 */
-	private void registerKeyListener() {
-		//XtextSourceViewer sourceViewer = (XtextSourceViewer) xtextEditor.getInternalSourceViewer();
-		final StyledText xtextTextWidget = sourceViewerHandle.getViewer().getTextWidget();
-		keyListener = 
-			new PropertiesSectionXtextEditorKeyListener
-						(this, sourceViewerHandle.getViewer().getContentAssistant());
-//		keyListener.installUndoRedoSupport(sourceViewerHandle.getViewer()) ;
-		xtextTextWidget.addVerifyKeyListener(keyListener);
-		xtextTextWidget.addKeyListener(keyListener);
-	}
+	
+//	/** The key listener. */
+//	private PropertiesSectionXtextEditorKeyListener keyListener ;
+//	
+//	/**
+//	 * Register key listener.
+//	 */
+//	private void registerKeyListener() {
+//		//XtextSourceViewer sourceViewer = (XtextSourceViewer) xtextEditor.getInternalSourceViewer();
+//		final StyledText xtextTextWidget = sourceViewerHandle.getViewer().getTextWidget();
+//		keyListener = new PropertiesSectionXtextEditorKeyListener (this, sourceViewerHandle.getViewer().getContentAssistant());
+////		keyListener.installUndoRedoSupport(sourceViewerHandle.getViewer()) ;
+//		xtextTextWidget.addVerifyKeyListener(keyListener);
+//		xtextTextWidget.addKeyListener(keyListener);
+//	}
 
 	
 	/**
 	 * Checks if is document has errors.
 	 *
-	 * @return aa
+	 * @return boolean
 	 */
 	public boolean isDocumentHasErrors() {
 		IXtextDocument xtextDocument = sourceViewerHandle.getDocument();
 		return (xtextDocument.readOnly(new IUnitOfWork<Boolean, XtextResource>() {
 			public Boolean exec(XtextResource state) throws Exception {
 				IParseResult parseResult = state.getParseResult();
-//				return !state.getErrors().isEmpty() || parseResult == null || !parseResult.getSyntaxErrors().iterator().hasNext();
 				return !state.getErrors().isEmpty() || parseResult == null;
 			}
 		}));
 	}
 	
-
-//	private boolean isDocumentHasErrors(final IXtextDocument xtextDocument) {
-//		return (xtextDocument.readOnly(new IUnitOfWork<Boolean, XtextResource>() {
-//			public Boolean exec(XtextResource state) throws Exception {
-//				IParseResult parseResult = state.getParseResult();
-//				return !state.getErrors().isEmpty() || parseResult == null || !parseResult.getParseErrors().isEmpty();
-//			}
-//		}));
-//	}
 	
 	/**
- * Creates the error status.
- *
- * @param message the message
- * @param e the e
- * @return the status
- */
-protected Status createErrorStatus(String message, TemplateException e) {
+	 * Creates the error status.
+	 *
+	 * @param message the message
+	 * @param e the e
+	 * @return the status
+	 */
+	protected Status createErrorStatus(String message, TemplateException e) {
 		return new Status(IStatus.ERROR, 
 			"org.eclipse.papyrus.property.editor.xtext",message, e);
 		
 	}
 	
 	
-	/**
-	 * Install undo redo support.
-	 *
-	 * @param viewer the viewer
-	 */
-	protected void installUndoRedoSupport(SourceViewer viewer) {
-		IDocumentUndoManager undoManager = DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument());
-		final IUndoContext context = undoManager.getUndoContext();
-		IOperationHistory operationHistory = OperationHistoryFactory.getOperationHistory() ;
-		operationHistoryListener = new OperationHistoryListener(context, new IUpdate() {
-			public void update() {
-				updateAction(ITextEditorActionConstants.REDO);
-				updateAction(ITextEditorActionConstants.UNDO);
-			}
-		});
-		operationHistory.addOperationHistoryListener(operationHistoryListener);
-	}
+//	/**
+//	 * Install undo redo support.
+//	 *
+//	 * @param viewer the viewer
+//	 */
+//	protected void installUndoRedoSupport(SourceViewer viewer) {
+//		IDocumentUndoManager undoManager = DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument());
+//		final IUndoContext context = undoManager.getUndoContext();
+//		IOperationHistory operationHistory = OperationHistoryFactory.getOperationHistory() ;
+//		operationHistoryListener = new OperationHistoryListener(context, new IUpdate() {
+//			public void update() {
+//				updateAction(ITextEditorActionConstants.REDO);
+//				updateAction(ITextEditorActionConstants.UNDO);
+//			}
+//		});
+//		operationHistory.addOperationHistoryListener(operationHistoryListener);
+//	}
 	
 	/** The global actions. */
 	private Map<String, org.eclipse.ui.console.actions.TextViewerAction> fGlobalActions= Maps.newHashMapWithExpectedSize(10);
@@ -468,33 +411,47 @@ protected Status createErrorStatus(String message, TemplateException e) {
 	/** The selection actions. */
 	private List<String> fSelectionActions = Lists.newArrayListWithExpectedSize(3);
 	
-	/**
-	 * Update action.
-	 *
-	 * @param actionId the action id
-	 */
-	protected void updateAction(String actionId) {
-		IAction action= fGlobalActions.get(actionId);
-		if (action instanceof IUpdate)
-			((IUpdate) action).update();
-	}
+//	/**
+//	 * Update action.
+//	 *
+//	 * @param actionId the action id
+//	 */
+//	protected void updateAction(String actionId) {
+//		IAction action= fGlobalActions.get(actionId);
+//		if (action instanceof IUpdate)
+//			((IUpdate) action).update();
+//	}
+//	
+//	/**
+//	 * Uninstall undo redo support.
+//	 */
+//	protected void uninstallUndoRedoSupport() {
+//		IOperationHistory operationHistory = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
+//		operationHistory.removeOperationHistoryListener(operationHistoryListener);
+//		operationHistoryListener = null;
+//	}
+
 	
-	/**
-	 * Uninstall undo redo support.
-	 */
-	protected void uninstallUndoRedoSupport() {
-		IOperationHistory operationHistory = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
-		operationHistory.removeOperationHistoryListener(operationHistoryListener);
-		operationHistoryListener = null;
-	}
+	final List<IHandlerActivation> handlerActivations= Lists.newArrayListWithExpectedSize(3);
+	final IHandlerService handlerService= (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 	
 	/**
 	 * Initialize actions.
 	 */
 	private void initializeActions() {
-		final List<IHandlerActivation> handlerActivations= Lists.newArrayListWithExpectedSize(3);
-		final IHandlerService handlerService= (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
-		final Expression expression= new ActiveShellExpression(sourceViewerHandle.getViewer().getControl().getShell());
+		
+//		OperationHistoryActionHandler undoAction = new UndoActionHandler(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getSite(), 
+//				PlatformUI.getWorkbench().getOperationSupport().getUndoContext());
+//		PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+//		undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+//		undoAction.setId(ITextEditorActionConstants.UNDO);
+//		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+//		handlerService.activateHandler(undoAction.getActionDefinitionId(), new ActionHandler(undoAction));
+		
+		
+//		final List<IHandlerActivation> handlerActivations= Lists.newArrayListWithExpectedSize(3);
+//		final IHandlerService handlerService= (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+//		final Expression expression= new ActiveShellExpression(sourceViewerHandle.getViewer().getControl().getShell());
 
 //		diagramShell.addDisposeListener(new DisposeListener() {
 //			public void widgetDisposed(DisposeEvent e) {
@@ -502,15 +459,15 @@ protected Status createErrorStatus(String message, TemplateException e) {
 //				}
 //		});
 
-		TextViewerAction action= new TextViewerAction(sourceViewerHandle.getViewer(), ITextOperationTarget.UNDO);
-		action.setText("UNDO");
-		fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
+//		TextViewerAction action= new TextViewerAction(sourceViewerHandle.getViewer(), ITextOperationTarget.UNDO);
+//		action.setText("UNDO");
+//		fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
+//
+//		action= new TextViewerAction(sourceViewerHandle.getViewer(), ITextOperationTarget.REDO);
+//		action.setText("REDO");
+//		fGlobalActions.put(ITextEditorActionConstants.REDO, action);
 
-		action= new TextViewerAction(sourceViewerHandle.getViewer(), ITextOperationTarget.REDO);
-		action.setText("REDO");
-		fGlobalActions.put(ITextEditorActionConstants.REDO, action);
-
-		action= new TextViewerAction(sourceViewerHandle.getViewer(), ITextOperationTarget.CUT);
+		TextViewerAction action= new TextViewerAction(sourceViewerHandle.getViewer(), ITextOperationTarget.CUT);
 		action.setText("CUT");
 		fGlobalActions.put(ITextEditorActionConstants.CUT, action);
 
@@ -534,22 +491,72 @@ protected Status createErrorStatus(String message, TemplateException e) {
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
 		
-		sourceViewerHandle.getViewer().getTextWidget().addFocusListener(new FocusListener() {
-			public void focusLost(FocusEvent e) {
-				handlerService.deactivateHandlers(handlerActivations);
-			}
-			public void focusGained(FocusEvent e) {
-				IAction action= fGlobalActions.get(ITextEditorActionConstants.REDO);
-//				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), expression));
-				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), new ActiveFocusControlExpression(getEditorWidget())));
-				action= fGlobalActions.get(ITextEditorActionConstants.UNDO);
-//				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, new ActionHandler(action), expression));
-				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, new ActionHandler(action), new ActiveFocusControlExpression(getEditorWidget())));
-				action= fGlobalActions.get(ITextEditorActionConstants.CONTENT_ASSIST);
-				handlerActivations.add(handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action), expression));
-			}
-		});
+//		sourceViewerHandle.getViewer().getTextWidget().addFocusListener(new FocusListener() {
+//			public void focusLost(FocusEvent e) {
+//				handlerService.deactivateHandlers(handlerActivations);
+//			}
+//			public void focusGained(FocusEvent e) {
+//				IAction action= fGlobalActions.get(ITextEditorActionConstants.REDO);
+//				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), new ActiveFocusControlExpression(getEditorWidget())));
+//				action= fGlobalActions.get(ITextEditorActionConstants.UNDO);
+//				handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, new ActionHandler(action), new ActiveFocusControlExpression(getEditorWidget())));
+//				action= fGlobalActions.get(ITextEditorActionConstants.CONTENT_ASSIST);
+//				handlerActivations.add(handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action), expression));
+//			}
+//		});
 
+	}
+	
+	
+	protected void activateContext() {
+		if (handlerActivations.isEmpty()) {
+			
+			IAction action= fGlobalActions.get(ITextEditorActionConstants.CONTENT_ASSIST);
+			handlerActivations.add(handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action), new ActiveFocusControlExpression(getEditorWidget())));
+
+//			activateHandler(ISourceViewer.QUICK_ASSIST, ITextEditorActionDefinitionIds.QUICK_ASSIST);
+//			activateHandler(ISourceViewer.CONTENTASSIST_PROPOSALS, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+//			activateHandler(ITextOperationTarget.CUT, ITextEditorActionDefinitionIds.CUT);
+//			activateHandler(ITextOperationTarget.COPY, ITextEditorActionDefinitionIds.COPY);
+//			activateHandler(ITextOperationTarget.PASTE, ITextEditorActionDefinitionIds.PASTE);
+//			activateHandler(ITextOperationTarget.DELETE, ITextEditorActionDefinitionIds.DELETE);
+
+//			activateHandler(ITextOperationTarget.UNDO, ITextEditorActionDefinitionIds.UNDO);
+//			activateHandler(ITextOperationTarget.REDO, ITextEditorActionDefinitionIds.REDO);
+			activateHandler(ITextOperationTarget.UNDO, IWorkbenchCommandConstants.EDIT_UNDO);
+			activateHandler(ITextOperationTarget.REDO, IWorkbenchCommandConstants.EDIT_REDO);
+
+		}
+	}
+
+	protected void activateHandler(int operation, String actionDefinitionId) {
+		StyledText textWidget = sourceViewerHandle.getViewer().getTextWidget();
+		IHandler actionHandler = createActionHandler(operation, actionDefinitionId);
+		IHandlerActivation handlerActivation = handlerService.activateHandler(actionDefinitionId, actionHandler, new ActiveFocusControlExpression(textWidget));
+		handlerActivations.add(handlerActivation);
+	}
+
+	private IHandler createActionHandler(final int operation, String actionDefinitionId) {
+		Action action = new Action() {
+			@Override
+			public void run() {
+				if (sourceViewerHandle.getViewer().canDoOperation(operation)) {
+					sourceViewerHandle.getViewer().doOperation(operation);
+				}
+			}
+		};
+		action.setActionDefinitionId(actionDefinitionId);
+		return new ActionHandler(action);
+	}
+
+	protected void deactivateContext() {
+		if (!handlerActivations.isEmpty()) {
+			for (IHandlerActivation activation : handlerActivations) {
+				handlerService.deactivateHandler(activation);
+				activation.getHandler().dispose();
+			}
+			handlerActivations.clear();
+		}
 	}
 	
 }
