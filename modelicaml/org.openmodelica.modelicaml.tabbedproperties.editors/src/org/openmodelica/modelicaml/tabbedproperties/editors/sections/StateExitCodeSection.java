@@ -46,6 +46,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.umlutils.OpaqueBehaviorUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -139,14 +141,14 @@ public class StateExitCodeSection extends AbstractPropertySection  {
 		
 		editor.showEditor(editorComposite, SWT.BORDER);
 		
-//		FocusListener was replaced by ModifyListener (see below)
-//		editor.getEditorWidget().addFocusListener(new FocusListener() {
-//			public void focusLost(FocusEvent e) {
-//				storeText(contextElement, editor.getText());
-//			}			
-//			public void focusGained(FocusEvent e) {
-//			}
-//		}) ;
+		//FocusListener to make sure that text is stored if the last modification was undo or redo actions
+		editor.getEditorWidget().addFocusListener(new FocusListener() {
+			public void focusLost(FocusEvent e) {
+				storeText(stateBehavior, editor.getText());
+			}			
+			public void focusGained(FocusEvent e) {
+			}
+		});
 
 		editor.getEditorWidget().addModifyListener(new ModifyListener() {
 			// TODO: observe if it has impact on performance ...
@@ -406,7 +408,7 @@ public class StateExitCodeSection extends AbstractPropertySection  {
         EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
         if (selectedElement instanceof State) {
         	this.selectedUmlElement = (Element)selectedElement;
-//        	isNewSelection = true;
+        	isNewSelection = true;
 			selectedState = (State)selectedUmlElement;
 		}
 		
