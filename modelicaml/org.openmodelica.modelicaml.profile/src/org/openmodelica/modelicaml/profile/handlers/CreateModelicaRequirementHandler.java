@@ -204,24 +204,33 @@ private EObject selectedElement = null;
 			
 			stereotype = element.getApplicableStereotype(stereotypePath+"::"+stereotypeName);
 			
-			Type booleanType = element.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaBoolean");
+//			Type booleanType = element.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaBoolean");
+			Type integerType = element.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaInteger");
 			
-			Property violatedAttribute = element.getOwnedAttribute(Constants.propertyName_violated, booleanType, true, UMLPackage.Literals.PROPERTY, true);
-			Stereotype violatedAttributeStereotype = violatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
-			if (violatedAttribute.getAppliedStereotype(violatedAttributeStereotype.getQualifiedName()) == null) {
-				violatedAttribute.applyStereotype(violatedAttributeStereotype);
-				violatedAttribute.setValue(violatedAttributeStereotype, "causality", "output");
+			Property statusAttribute = element.getOwnedAttribute(Constants.propertyName_mStatus, integerType, true, UMLPackage.Literals.PROPERTY, true);
+			Stereotype violatedAttributeStereotype = statusAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
+			if (statusAttribute.getAppliedStereotype(violatedAttributeStereotype.getQualifiedName()) == null) {
+				statusAttribute.applyStereotype(violatedAttributeStereotype);
+				statusAttribute.setValue(violatedAttributeStereotype, "causality", "output");
 			}
-
-			Property evaluatedAttribute = element.getOwnedAttribute(Constants.propertyName_evaluated, booleanType, true, UMLPackage.Literals.PROPERTY, true);
-			Stereotype evaluatedAttributeStereotype = evaluatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
-			if (evaluatedAttribute.getAppliedStereotype(evaluatedAttributeStereotype.getQualifiedName()) == null) {
-				evaluatedAttribute.applyStereotype(evaluatedAttributeStereotype);
-				evaluatedAttribute.setValue(evaluatedAttributeStereotype, "causality", "output");
-			}
+			
+//			Property violatedAttribute = element.getOwnedAttribute(Constants.propertyName_violated, booleanType, true, UMLPackage.Literals.PROPERTY, true);
+//			Stereotype violatedAttributeStereotype = violatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
+//			if (violatedAttribute.getAppliedStereotype(violatedAttributeStereotype.getQualifiedName()) == null) {
+//				violatedAttribute.applyStereotype(violatedAttributeStereotype);
+//				violatedAttribute.setValue(violatedAttributeStereotype, "causality", "output");
+//			}
+//
+//			Property evaluatedAttribute = element.getOwnedAttribute(Constants.propertyName_evaluated, booleanType, true, UMLPackage.Literals.PROPERTY, true);
+//			Stereotype evaluatedAttributeStereotype = evaluatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
+//			if (evaluatedAttribute.getAppliedStereotype(evaluatedAttributeStereotype.getQualifiedName()) == null) {
+//				evaluatedAttribute.applyStereotype(evaluatedAttributeStereotype);
+//				evaluatedAttribute.setValue(evaluatedAttributeStereotype, "causality", "output");
+//			}
 			
 			// apply ModelicaML stereotype
-			if (stereotype == null || evaluatedAttributeStereotype == null || violatedAttributeStereotype == null) {
+//			if (stereotype == null || evaluatedAttributeStereotype == null || violatedAttributeStereotype == null) {
+			if (stereotype == null || statusAttribute == null ) {
 				Shell shell = new Shell();
 				MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 			}
