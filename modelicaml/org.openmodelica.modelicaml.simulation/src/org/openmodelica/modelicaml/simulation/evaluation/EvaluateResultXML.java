@@ -2,6 +2,7 @@ package org.openmodelica.modelicaml.simulation.evaluation;
 
 import java.io.File;
 
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_reader;
 
 /**
@@ -101,6 +102,100 @@ public class EvaluateResultXML {
 			return "true";
 	}
 	
+	
+	/**
+	 * Evaluate the values of a property to be changed its value
+	 * @param propertyName name of the property to be evaluated
+	 * @param result xml file
+	 */
+	private static String checkHadNotAlwaysValue(String propertyName, String argsString, File xml_file){
+		if(!xml_file.exists())
+			return "fileNotFound";
+		
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
+
+		if(sr == null || sr.property.isEmpty()){
+			return "resultsNotfound";
+		}
+		
+		/*
+		 * We assume that it always had the value until we prove the opposite.
+		 */
+		Double valueToCheck = Double.valueOf(argsString);
+		String result = "false";
+		for(Double d : sr.values.values()){
+			if( !valueToCheck.equals(d) ){
+				result = "true";
+			}
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Evaluate the values of a property to be changed its value
+	 * @param propertyName name of the property to be evaluated
+	 * @param result xml file
+	 */
+	private static String checkHadAtLeastOnceValue(String propertyName, String argsString, File xml_file){
+		if(!xml_file.exists())
+			return "fileNotFound";
+		
+		
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
+
+		if(sr == null || sr.property.isEmpty()){
+			return "resultsNotfound";
+		}
+		
+//		/*
+//		 * We assume that it never had the value until we prove the opposite.
+//		 */
+		Double valueToCheck = Double.valueOf(argsString);
+//		String result = "false";
+//		for(Double d : sr.values.values()){
+//			if( valueToCheck.equals(d) ){
+//				return "true";
+//			}
+//		}
+//		return result;
+		
+		if(sr.values.values().contains(valueToCheck))
+			return "true";
+		else
+			return "false";
+		
+	}
+	
+	
+	/**
+	 * Evaluate the values of a property to be changed its value
+	 * @param propertyName name of the property to be evaluated
+	 * @param result xml file
+	 */
+	private static String checkHadNeverValue(String propertyName, String argsString, File xml_file){
+		if(!xml_file.exists())
+			return "fileNotFound";
+		
+		
+		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
+
+		if(sr == null || sr.property.isEmpty()){
+			return "resultsNotfound";
+		}
+		
+		/*
+		 * We assume that it had the value until we prove the opposite.
+		 */
+		Double valueToCheck = Double.valueOf(argsString);
+		if(sr.values.values().contains(valueToCheck))
+			return "false";
+		else
+			return "true";
+	}
+	
+	
 	/**
 	 * Evaluate the values of a property to be changed its value
 	 * @param propertyName name of the property to be evaluated
@@ -148,39 +243,65 @@ public class EvaluateResultXML {
 		
 		if(checkMode.equals("atLeastOneTimeTrue"))
 			return checkAtLeastOneTimeTrue(propertyName, xmlResultFile);		
+		
 		if(checkMode.equals("atLeastOneTimeFalse"))
 			return checkAtLeastOneTimeFalse(propertyName, new File(result_xml_file));
+		
 		if(checkMode.equals("alwaysTrue"))
 			return checkAlwaysTrue(propertyName, new File(result_xml_file));
+		
 		if(checkMode.equals("alwaysFalse"))
 			return checkAlwaysFalse(propertyName, new File(result_xml_file));
+		
 		if(checkMode.equals("changedItsValue"))
 			return checkChangedItsValue(propertyName, new File(result_xml_file));
+		
+		if(checkMode.contains(Constants.MACRO_hadNotAlwaysValue))
+			return checkHadNotAlwaysValue(propertyName, getPropertyValueArg(checkMode.replaceFirst(Constants.MACRO_hadNotAlwaysValue, "")), new File(result_xml_file));
+		
+		if(checkMode.contains(Constants.MACRO_hadAtLeastOnceValue))
+			return checkHadAtLeastOnceValue(propertyName, getPropertyValueArg(checkMode.replaceFirst(Constants.MACRO_hadAtLeastOnceValue, "")), new File(result_xml_file));
+
+		if(checkMode.contains(Constants.MACRO_hadNeverValue))
+			return checkHadNeverValue(propertyName, getPropertyValueArg(checkMode.replaceFirst(Constants.MACRO_hadNeverValue, "")), new File(result_xml_file));
+
+		
 		else
 			return "checkModeUnknown";
 	}
 	
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args) {
-//		File f = new File("");
-//		String p = f.getAbsolutePath();
-//		p = p.substring(0, p.lastIndexOf(System.getProperty("file.separator")));
-//		File f2 = new File(p + "\\org.openmodelica.simulation.projects\\");
-//		System.out.println(f2.list()[0]);
-		
-		String pathToResultXML = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.xml";
-		
-//		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", projectPath);
-		String propertyName = "_reqVerificationVerdict.allRequirementsEvaluated";
-		
-		System.out.println(checkAtLeastOneTimeTrue(propertyName, new File(pathToResultXML)));
-		System.out.println(checkAtLeastOneTimeFalse(propertyName, new File(pathToResultXML)));
-		System.out.println(checkAlwaysTrue(propertyName, new File(pathToResultXML)));
-		System.out.println(checkAlwaysFalse(propertyName, new File(pathToResultXML)));
-		System.out.println(checkChangedItsValue(propertyName, new File(pathToResultXML)));
+	
+	private static String getPropertyValueArg(String string){
+		if (string.matches("(\\s+)?\\([0-9]+(\\.)?([0-9]+)?\\)")) {
+			String stringInBrackets = string.trim();
+			String argsString = stringInBrackets.substring(1, stringInBrackets.length() - 1).trim();
+			return argsString;
+		}
+		return string;
 	}
+	
+	
+//	/**
+//	 * The main method.
+//	 *
+//	 * @param args the arguments
+//	 */
+//	public static void main(String[] args) {
+////		File f = new File("");
+////		String p = f.getAbsolutePath();
+////		p = p.substring(0, p.lastIndexOf(System.getProperty("file.separator")));
+////		File f2 = new File(p + "\\org.openmodelica.simulation.projects\\");
+////		System.out.println(f2.list()[0]);
+//		
+//		String pathToResultXML = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.xml";
+//		
+////		SimulationResult sr = SimulationResult_XML_reader.readFromXML("_reqTestVerdict.allRequirementsEvaluated", projectPath);
+//		String propertyName = "_reqVerificationVerdict.allRequirementsEvaluated";
+//		
+//		System.out.println(checkAtLeastOneTimeTrue(propertyName, new File(pathToResultXML)));
+//		System.out.println(checkAtLeastOneTimeFalse(propertyName, new File(pathToResultXML)));
+//		System.out.println(checkAlwaysTrue(propertyName, new File(pathToResultXML)));
+//		System.out.println(checkAlwaysFalse(propertyName, new File(pathToResultXML)));
+//		System.out.println(checkChangedItsValue(propertyName, new File(pathToResultXML)));
+//	}
 }

@@ -20,6 +20,7 @@ public class UpdateTestExecutionReportDataAction implements
 		IWorkbenchWindowActionDelegate {
 
 	private String path = null;
+	private String reportHTMLFile;
 	
 	public void setPath(String path){
 		this.path = path;
@@ -33,7 +34,11 @@ public class UpdateTestExecutionReportDataAction implements
 				Object firstElement = ((IStructuredSelection)selection).getFirstElement();
 				if (firstElement instanceof IFile) {
 					String selectedFile = ((IFile)firstElement).getLocationURI().toString().replaceFirst("file:\\/", "");
+					
+					
 					if (selectedFile.contains("report")) {
+						reportHTMLFile = selectedFile;
+						
 						IFileSystem fileSystem = EFS.getLocalFileSystem();
 						IFileStore xmlFile = fileSystem.getStore(URI.create(selectedFile));
 						// get the parent folder (i.e. report-gen)
@@ -53,7 +58,17 @@ public class UpdateTestExecutionReportDataAction implements
 		if (this.path != null) {
 			// Find the report_data.js_template in the folder "/includes/", 
 			// replace all place holders and save(overwrite) the report_data.js 
-			ParseJavaScript.parseJSTemp_generateJSFile(this.path);	
+			ParseJavaScript.parseJSTemp_generateJSFile(this.path);
+			
+			// open report afterwards
+			if (reportHTMLFile != null) {
+				OpenTestExecutionReportAction openReport = new OpenTestExecutionReportAction();
+				openReport.setPath(reportHTMLFile);
+				openReport.run(null);
+			}
+			else {
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Update of the Verification Report Failed", "Could not find the report.html file.");
+			}
 		}
 		else {
 			MessageDialog.openError(new Shell(), "Error Occured", "Could not access the verification sessioin report files.");

@@ -11,15 +11,15 @@ import java.util.Scanner;
 public class ParseJavaScript {
 	
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
-		//String result_xml_file = "C:\\Projects\\ModelicaML\\runtime-New_configuration\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20110927133331\\tmp\\ModelicaMLModel.GenSimModels_for__SPWS_Environment_6.SiM_for__ts2__Fill_tank_res.xml";
-		
-		parseJSTemp_generateJSFile(pathToSession);
-	}
+//	/**
+//	 * @param args
+//	 */
+//	public static void main(String[] args) {
+//		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
+//		//String result_xml_file = "C:\\Projects\\ModelicaML\\runtime-New_configuration\\modelicaml.example.potableWaterSystem_v26\\test-gen\\test-session_20110927133331\\tmp\\ModelicaMLModel.GenSimModels_for__SPWS_Environment_6.SiM_for__ts2__Fill_tank_res.xml";
+//		
+//		parseJSTemp_generateJSFile(pathToSession);
+//	}
 	
 /**
  * Parses the JavaScript template file to generate a new JavaScript file including the evaluated results

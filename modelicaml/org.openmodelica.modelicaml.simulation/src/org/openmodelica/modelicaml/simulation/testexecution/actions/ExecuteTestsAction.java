@@ -2,11 +2,15 @@ package org.openmodelica.modelicaml.simulation.testexecution.actions;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,7 +29,6 @@ import org.eclipse.ui.PlatformUI;
 import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
-import org.openmodelica.modelicaml.simulation.filehandling.cp;
 import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_generator;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
@@ -38,7 +41,7 @@ public class ExecuteTestsAction implements
 	private String xmlFilePath = null;
 	private String folderAbsolutePath = null;
 	private Job jobPostProcessSimResutls;
-	
+	private List<String> errorMsgGetGeneratedFiles;
 	@Override
 	public void run(IAction action) {
 		if (this.xmlFilePath == null) {
@@ -74,29 +77,106 @@ public class ExecuteTestsAction implements
 						monitor.beginTask("Executing verification models ...", 100);
 						{
 							TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
-							String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
+							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "/tmp").replaceAll("\\\\", "/"); 
 							File sessionFolder = new File(pathToSession);
-							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, sessionFolder, omcTempWorkingFolder, testSessionObj);
-							if(omcMessage.isEmpty()){
-								
-							}
-							else
-								System.out.println("OMC Message: /n" + omcMessage);
-
+							
+							/*
+							 * First delete old files from the tmp directory.
+							 * This is necessary in case the same models should be simulated and the new simulation fails.
+							 * Old files needs to be deleted so that the simulation results will not get confused with older simulations.
+							 */
+							IFileSystem fileSystem = EFS.getLocalFileSystem();
+							
 							for(TestModel model : testSessionObj.testModels){
 								if (monitor.isCanceled())
 									return Status.CANCEL_STATUS;
-								monitor.subTask("Processing: " + model.qualifiedName);
-								cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", sessionFolder + "/" + model.qualifiedName + ".exe");
-								cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", sessionFolder + "/" + model.qualifiedName + "_init.xml");
-//								cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
+								
+								monitor.subTask("Deleting files from OMC tmp folder: " + model.qualifiedName + ".exe");
+								IFileStore oldExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
+								IFileStore oldXMLInitFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml"));
+								IFileStore oldPltFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
 								try {
-									SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
-									Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(Result_TXT_reader.readResult(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
-								} catch (Exception e) {
+									oldExeFile.delete(EFS.NONE, monitor);
+									oldXMLInitFile.delete(EFS.NONE, monitor);
+									oldPltFile.delete(EFS.NONE, monitor);
+								} catch (CoreException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
+							}
+							
+							/*
+							 * Simulated all models one after another
+							 * TODO: each model should be simulated in a separate sub job to enable the canceling of one specific model and not being forced to cancel all model executions by that!
+							 * TODO: what should happen if the simulation failed? 
+							 */
+							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, sessionFolder, omcTempWorkingFolder, testSessionObj);
+							if(!omcMessage.isEmpty()){
+								System.out.println("OMC Message: /n" + omcMessage);
+								openErrorMsg("Verification Models Execution Error", omcMessage);
+							}
+							
+							errorMsgGetGeneratedFiles = new ArrayList<String>();
+							
+							for(TestModel model : testSessionObj.testModels){
+								
+								if (monitor.isCanceled()){
+									return Status.CANCEL_STATUS;
+								}
+									
+								monitor.subTask("Processing: " + model.qualifiedName);
+
+								IFileStore newExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
+								IFileInfo newExeFileInfo = newExeFile.fetchInfo();
+								IFileStore newXMLInitFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml"));
+								IFileInfo newXMLInitFileInfo = newXMLInitFile.fetchInfo();
+								IFileStore newPltFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
+								IFileInfo newPltFileInfo = newPltFile.fetchInfo();
+
+								if (newExeFileInfo.exists() && newXMLInitFileInfo.exists() && newPltFileInfo.exists()) {
+									
+									/*
+									 * Copy the .exe and the _init.xml files
+									 */
+									IFileStore newExeFileCopy = fileSystem.getStore(URI.create("file:/" + pathToSession + "/" + model.qualifiedName + ".exe"));
+									IFileStore newXMLInitFileCopy = fileSystem.getStore(URI.create("file:/" + pathToSession + "/" + model.qualifiedName + "_init.xml"));
+									
+									try {
+										newExeFile.copy(newExeFileCopy, EFS.OVERWRITE, monitor);
+										newXMLInitFile.copy(newXMLInitFileCopy, EFS.OVERWRITE, monitor);
+									} catch (CoreException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+									
+//									cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", sessionFolder + "/" + model.qualifiedName + ".exe");
+//									cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", sessionFolder + "/" + model.qualifiedName + "_init.xml");
+//									cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
+									
+									/*
+									 * Create the _res.xml based on the _res.plt
+									 */
+									try {
+										SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
+										Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(Result_TXT_reader.readResult(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+								else {
+									errorMsgGetGeneratedFiles.add("Could not find the generated files for '"+model.qualifiedName+"'");
+								}
+
+							}
+							
+							// if there were errors during copying files -> display on a dialog
+							if (errorMsgGetGeneratedFiles.size() > 0) {
+								String msg = "";
+								for (String string : errorMsgGetGeneratedFiles) {
+									msg = string + "\n\r" + msg ;
+								}
+								openErrorMsg("Verification Models Execution Error", msg);
 							}
 						}
 						monitor.done();
@@ -122,7 +202,7 @@ public class ExecuteTestsAction implements
 			// add listener to the results post processing job to open report. 
 			JobChangeAdapter jobPostProcessSimResultsChangeAdapter = new JobChangeAdapter() {
 				public void done(IJobChangeEvent event) {
-		            if (event.getResult().isOK()) {
+		            if (event.getResult().isOK() && !(errorMsgGetGeneratedFiles.size() > 0) ) {
 		            		openReport(pathToSession);
 		            	}
 		            }
@@ -147,6 +227,16 @@ public class ExecuteTestsAction implements
 		}
 	}
 
+	
+	private void openErrorMsg(final String title, final String erroMsg){
+ 		// Use this to open a Shell in the UI thread
+ 		Display.getDefault().asyncExec(new Runnable() {
+ 			public void run() {
+ 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, erroMsg);
+ 			}
+ 		});
+ 	}
+	
 	
 	private void openReport(final String pathToSession){
  		// Use this to open a Shell in the UI thread
@@ -199,66 +289,5 @@ public class ExecuteTestsAction implements
 	public void setFolderAbsolutePath(String folderAbsolutePath) {
 		this.folderAbsolutePath = folderAbsolutePath;
 	}
-	
-//	public static void main(String[] args) {
-//		String pathToSession = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026/";
-//		
-//		TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
-//		String omcTempWorkingFolder = System.getenv().get("OPENMODELICAHOME") + "/tmp"; 
-//		File sessionFolder = new File(pathToSession);
-////		File tempSimulationFolder = new File(sessionFolderPath);// + "tmp");
-////		tempSimulationFolder.mkdir();
-////		tempSimulationFolder.canWrite();
-//		String omcMessage =	ExecuteSimulation.executeAllModels(null, sessionFolder, omcTempWorkingFolder, testSessionObj);
-//		if(omcMessage.isEmpty()){
-//			
-//		}
-//		else
-//			System.out.println("OMC Message: /n" + omcMessage);
-//		
-//		for(TestModel model : testSessionObj.testModels){
-//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + ".exe", sessionFolder + "/" + model.qualifiedName + ".exe");
-//			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", sessionFolder + "/" + model.qualifiedName + "_init.xml");
-////			cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
-//			try {
-//				SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}//done
-//		
-//		
-////		ProgressMonitorDialog dialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-////		try {
-////			dialog.run(true, true, new IRunnableWithProgress() {
-////				@Override
-////				public void run(IProgressMonitor monitor) {
-////					monitor
-////							.beginTask("Doing something timeconsuming here",
-////									100);
-////					for (int i = 0; i < 10; i++) {
-////						if (monitor.isCanceled())
-////							return;
-////						monitor.subTask("I'm doing something here " + i);
-////						try {
-////							Thread.sleep(1000);
-////						} catch (InterruptedException e) {
-////							// TODO Auto-generated catch block
-////							e.printStackTrace();
-////						}
-////						// worked increates the monitor, the values is added to the existing ones
-////						monitor.worked(1);
-////					}
-////					monitor.done();
-////				}
-////			});
-////		} catch (InvocationTargetException e) {
-////			e.printStackTrace();
-////		} catch (InterruptedException e) {
-////			e.printStackTrace();
-////		}
-//		
-//		ParseJavaScript.parseJSTemp_generateJSFile(pathToSession);	
-//	}
+
 }
