@@ -154,13 +154,21 @@ public class VerificationVerdictElementsGenerator {
 				if (t instanceof Class) {
 					Stereotype reqStereotype = t.getAppliedStereotype(Constants.stereotypeQName_Requirement);
 					if (reqStereotype != null) {
-						Property violated = ((Class)t).getOwnedAttribute(Constants.propertyName_violated, null);
-						Property evaluated = ((Class)t).getOwnedAttribute(Constants.propertyName_evaluated, null);
-						if ( violated != null && evaluated != null) {
-							Type violatedType = violated.getType();
-							Type evaluatedType = evaluated.getType();
-							if (violatedType != null && evaluatedType != null ) {
-								if (violatedType.getName().equals(Constants.predefinedTypeName_boolean) && evaluatedType.getName().equals(Constants.predefinedTypeName_boolean)) {
+//						Property violated = ((Class)t).getOwnedAttribute(Constants.propertyName_violated, null);
+//						Property evaluated = ((Class)t).getOwnedAttribute(Constants.propertyName_evaluated, null);
+						Property mStatus = ((Class)t).getOwnedAttribute(Constants.propertyName_mStatus, null);
+
+//						if ( (violated != null && evaluated != null) || mStatus != null) {
+						if ( mStatus != null ) {
+//							Type violatedType = violated.getType();
+//							Type evaluatedType = evaluated.getType();
+							Type mStatusType = mStatus.getType();
+
+//							if (violatedType != null && evaluatedType != null ) {
+							if (mStatusType != null) {
+							// check if the type is correct
+//								if (violatedType.getName().equals(Constants.predefinedTypeName_boolean) && evaluatedType.getName().equals(Constants.predefinedTypeName_boolean)) {
+								if (mStatusType.getName().equals(Constants.predefinedTypeName_integer)) {
 									reqInstances.add(property);
 								}
 								else {
@@ -177,10 +185,16 @@ public class VerificationVerdictElementsGenerator {
 					}
 				}
 			}
+			
 			for (Property property : reqInstances) {
 				//violatedExpression = violatedExpression + Utls.replaceSpecChar(property.getName()) + ".violated, ";
-				violatedExpression = violatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_violated+" or ";
-				evaluatedExpression = evaluatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_evaluated+" and ";
+				
+				// TODO: use mStatus with 
+				violatedExpression = violatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_mStatus+" == 2" +" or ";
+				evaluatedExpression = evaluatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_mStatus + " > 0" +" and ";
+
+//				violatedExpression = violatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_violated+" or ";
+//				evaluatedExpression = evaluatedExpression + StringUtls.replaceSpecChar(property.getName()) + "."+Constants.propertyName_evaluated+" and ";
 			}
 		}
 		
@@ -191,9 +205,8 @@ public class VerificationVerdictElementsGenerator {
 			}
 			Shell shell = new Shell();
 			MessageDialog.openError(shell, "Error", 
-					"The following requirements do not have the manatory attributes '"
-					+Constants.propertyName_evaluated+
-					"' and '"+Constants.propertyName_violated+"' of type 'ModelicaBoolean'." +
+					"The following requirements do not have the mandatory attribute '"
+					+Constants.propertyName_mStatus+ "' of type 'ModelicaInteger'." +
 				invalidComponentNames + 
 				"\n\nNo verification verdict was created in '"+selectedClass.getName()+"'.");
 			return false;
