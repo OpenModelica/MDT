@@ -111,7 +111,9 @@ public class Constants {
 	public static final String propertyName_text	 			= "text";
 	public final static String propertyName_evaluated 			= "evaluated";
 	public final static String propertyName_violated 			= "violated";
-	
+	public final static String propertyName_mStatus 			= "status"; 	/* Monitoring status: The value meaning depends on the application.
+																					For a requirement 0 =not evaluated, 1=evaluated and not violated, 2=evaluated and violated
+																			 	*/
 	
 	public static final String propertyName_encapsulated 		= "encapsulated";
 	public static final String propertyName_expandable 		= "expandable";
@@ -153,7 +155,7 @@ public class Constants {
 	public static final String preferredProvidersAssignmentSeparator	= " --> ";
 	
 	public static final String valueClientsNodeName 				= "Clients";
-	public static final String potentialClientsNodeName 		= "Potential Clients";
+	public static final String potentialClientsNodeName 			= "Potential Clients";
 	public static final String valueMediatorsNodeName 				= "Mediators";
 	public static final String valueProvidersNodeName 				= "Providers";
 	public static final int MODE_ADD_CLIENT 						= 0;
@@ -220,7 +222,12 @@ public class Constants {
 	public final static String MACRO_alwaysTrue 							= "alwaysTrue";
 	public final static String MACRO_alwaysFalse 							= "alwaysFalse";
 	public final static String MACRO_changedItsValue 						= "changedItsValue";
+
 	
+	public final static String MACRO_hadNotAlwaysValue 						= "hadNotAlwaysValue";
+	public final static String MACRO_hadAtLeastOnceValue 					= "hadAtLeastOnceValue";
+	public final static String MACRO_hadNeverValue 							= "hadNeverValue";
+
 	
 	// code generation
 	public final static String folderName_code_gen = "code-gen";

@@ -330,19 +330,17 @@ public class VerificationExecutionServices {
 		return "Model";
 	}
 	
-	private static boolean isRequirement (TreeObject treeItem){
-		Element element = treeItem.getUmlElement();
-		if (element instanceof Property) {
-			Type type = ((Property)element).getType();
-			if (type != null) {
-				Stereotype s = type.getAppliedStereotype(Constants.stereotypeQName_Requirement);
-				if (s != null ) { return true; }
-			}
-		}
-		return false;
-	}
-	
-	
+//	private static boolean isRequirement (TreeObject treeItem){
+//		Element element = treeItem.getUmlElement();
+//		if (element instanceof Property) {
+//			Type type = ((Property)element).getType();
+//			if (type != null) {
+//				Stereotype s = type.getAppliedStereotype(Constants.stereotypeQName_Requirement);
+//				if (s != null ) { return true; }
+//			}
+//		}
+//		return false;
+//	}
 	
 	
 	
@@ -454,8 +452,6 @@ public class VerificationExecutionServices {
 	
 	
 	
-	
-	
 	/*
 	 * HTML generation
 	 */
@@ -505,6 +501,7 @@ public class VerificationExecutionServices {
 		"";
 		return html;
 	}
+
 	
 	
 	public static String getRequirementHTML(TreeObject treeItem, Class testModel){
@@ -517,11 +514,16 @@ public class VerificationExecutionServices {
 			"	<div style='padding:5px;'>" + "\n" + 
 				"	<span style='color:#000000;'>" + "\n" + 
 				
-				"		<script type='text/javascript'>" + "\n" + 
-				"			writeRequirementPassedString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']," + "\n" + 
-				"			data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"']);" + "\n" + 
-				"		</script>" + "\n" + 
+//				"		<script type='text/javascript'>" + "\n" + 
+//				"			writeRequirementPassedString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']," + "\n" + 
+//				"			data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"']);" + "\n" + 
+//				"		</script>" + "\n" + 
 				
+				"		<script type='text/javascript'>" + "\n" + 
+				"			writeRequirementPassedString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"-"+Constants.propertyName_evaluated+"']['"+Constants.MACRO_hadNotAlwaysValue+"(0)']," + "\n" + 
+				"			data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"-"+Constants.propertyName_violated+"']['"+Constants.MACRO_hadAtLeastOnceValue+"(2)']);" + "\n" + 
+				"		</script>" + "\n" + 
+
 				"	</span>" + "\n" + 
 				"	<span style='color:#000000; margin-left:10px;'>" + getComponentIndicator(treeItem)+": "+"\n" + 
 				
@@ -539,35 +541,57 @@ public class VerificationExecutionServices {
 				"		<tr>" + "\n" + 
 				"			<td><i>verdict</i>" + "\n" +
 				
+//				"				<script type='text/javascript'>" + "\n" + 
+//				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"', '<strong>"+Constants.propertyName_evaluated+"</strong>');" + "\n" + 
+//				"				</script>" + "\n" +
+//				
+//				"				<td>&nbsp;:&nbsp;</td>" + "\n" + 
+//				"				<td>" + "\n" + 
+//				
+//				"				<script type='text/javascript'>	" + "\n" + 
+//				"					writeAtLeastOneTimeTrueString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']);" + "\n" + 
+//				"				</script>" + "\n" +
+				
 				"				<script type='text/javascript'>" + "\n" + 
-				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"', '<strong>"+Constants.propertyName_evaluated+"</strong>');" + "\n" + 
+				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"', '<strong>"+Constants.propertyName_evaluated+"</strong>');" + "\n" + 
 				"				</script>" + "\n" +
 				
 				"				<td>&nbsp;:&nbsp;</td>" + "\n" + 
 				"				<td>" + "\n" + 
 				
 				"				<script type='text/javascript'>	" + "\n" + 
-				"					writeAtLeastOneTimeTrueString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"']);" + "\n" + 
+				"					writeBooleanGreenYesString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"-"+Constants.propertyName_evaluated+"']['"+Constants.MACRO_hadNotAlwaysValue+"(0)']);" + "\n" + 
 				"				</script>" + "\n" +
 				
 				"			</td>" + "\n" + 
 				"		</tr>" + "\n" + 
 				"		<tr>" + "\n" + 
-				"		<td><i>verdict</i>" + "\n" + 
-				
-				"			<script type='text/javascript'>" + "\n" + 
-				"				writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"', '<strong>"+Constants.propertyName_violated+"</strong>');" + "\n" + 
-				"			</script>" + "\n" + 
-				
-				"			</td>" + "\n" +  "\n" + 
-				"			<td>&nbsp;:&nbsp;</td>" + "\n" + 
-				"			<td>" + "\n" + 
-				
-				"				<script type='text/javascript'>" + "\n" + 
-				"					writeAlwaysFalseString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"']);" + "\n" + 
-				"				</script>" + "\n" + 
-				
-				"			</td>" + "\n" + 
+				"			<td><i>verdict</i>" + "\n" + 
+//				"				<script type='text/javascript'>" + "\n" + 
+//				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"', '<strong>"+Constants.propertyName_violated+"</strong>');" + "\n" + 
+	//				"			</script>" + "\n" + 
+	//				
+	//				"			</td>" + "\n" +  "\n" + 
+	//				"			<td>&nbsp;:&nbsp;</td>" + "\n" + 
+	//				"			<td>" + "\n" + 
+	//				
+	//				"			<script type='text/javascript'>" + "\n" + 
+	//				"				writeAlwaysFalseString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"']);" + "\n" + 
+	//				"			</script>" + "\n" + 
+					
+					"			<script type='text/javascript'>" + "\n" + 
+					"				writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"', '<strong>"+Constants.propertyName_violated+"</strong>');" + "\n" + 
+					"			</script>" + "\n" + 
+					
+					"			</td>" + "\n" +  "\n" + 
+					"			<td>&nbsp;:&nbsp;</td>" + "\n" + 
+					"			<td>" + "\n" + 
+					
+					"			<script type='text/javascript'>" + "\n" + 
+					"				writeBooleanRedYesString(data['"+testModel.getQualifiedName()+"']['" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"-"+Constants.propertyName_violated+"']['"+Constants.MACRO_hadAtLeastOnceValue+"(2)']);" + "\n" + 
+					"			</script>" + "\n" +
+					
+					"			</td>" + "\n" + 
 				"		</tr>" + "\n" + 
 				"	</table>" + "\n" + 
 				"</div>" + "\n" +
@@ -638,11 +662,19 @@ public class VerificationExecutionServices {
 		if (elt instanceof Class) {
 			for (TreeObject treeObject : requirements) {
 				js = js + "/* ~~~~~ Requirement "+treeObject.getDotPath()+": verdicts ~~~~~ */" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+"'] = new Array();" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+":"+Constants.MACRO_atLeastOneTimeTrue+"###';" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"'] = new Array();" + "\n" + 
-				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_violated+":"+Constants.MACRO_alwaysFalse+"###';" + "\n" +
+//				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+"'] = new Array();" + "\n" + 
+//				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+"']['"+Constants.MACRO_atLeastOneTimeTrue+"'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_evaluated+":"+Constants.MACRO_atLeastOneTimeTrue+"###';" + "\n" + 
+//				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"'] = new Array();" + "\n" + 
+//				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_violated+"']['"+Constants.MACRO_alwaysFalse+"'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_violated+":"+Constants.MACRO_alwaysFalse+"###';" + "\n" +
+				
+				// Use the property mStatus and check evaluated = hadNotAlwaysValue(0), violated = hadNeverValue(2); 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_mStatus+"-"+Constants.propertyName_evaluated+"'] = new Array();" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_mStatus+"-"+Constants.propertyName_evaluated+"']['"+Constants.MACRO_hadNotAlwaysValue+"(0)'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_mStatus+":"+Constants.MACRO_hadNotAlwaysValue +"(0)" + "###';" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_mStatus+"-"+Constants.propertyName_violated+"'] = new Array();" + "\n" + 
+				"data['"+((Class)elt).getQualifiedName()+"']['"+treeObject.getDotPath()+"."+Constants.propertyName_mStatus+"-"+Constants.propertyName_violated+"']['"+Constants.MACRO_hadAtLeastOnceValue+"(2)'] = '###"+treeObject.getDotPath()+"."+Constants.propertyName_mStatus+":"+Constants.MACRO_hadAtLeastOnceValue + "(2)" +"###';" + "\n" +
+
 				"" ;
+				
 				
 				js = js + "\n" + getRequiredClientsJS(treeObject, (Class) elt);
 			}
