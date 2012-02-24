@@ -43,15 +43,15 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			(<strong><script type='text/javascript'>document.write(testsNumber)</script></strong>), 
 		</span> 
 		
-		<span style='color:#ff9900'>Verification models executed 
+		<span style='color:#ff9900'>Executed 
 			(<strong><script type='text/javascript'>document.write(testsExecutedNumber)</script></strong>), 
 		</span>
 		
-		<span style='color:#32CD32'>Verifications passed 
+		<span style='color:#32CD32'>Passed 
 			(<strong><script type='text/javascript'>document.write(testsPassedNumber)</script></strong>), 
 		</span>
 		
-		<span style='color:#FF0000'>Verifications failed  
+		<span style='color:#FF0000'>Failed  
 			(<strong><script type='text/javascript'>document.write(testsFailedNumber)</script></strong>)
 		</span> 
 		

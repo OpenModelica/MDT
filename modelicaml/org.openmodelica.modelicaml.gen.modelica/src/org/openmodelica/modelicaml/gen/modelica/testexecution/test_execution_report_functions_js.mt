@@ -37,11 +37,28 @@ function writeTestPassedString(value){
 }
 */
 
+/* OLD
 function writeRequirementPassedString(evaluted_atLeastOneTimeTrue, violated_alwaysFalse){
 	if (evaluted_atLeastOneTimeTrue == "true" && violated_alwaysFalse == "true"){
 		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
 	}
 	else if (evaluted_atLeastOneTimeTrue == "false" || violated_alwaysFalse == "false"){
+		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+	}
+	else {
+		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
+	}
+}
+*/
+
+function writeRequirementPassedString(evaluted, violated){
+	if (evaluted == "true" && violated == "true"){
+		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+	}
+	else if (evaluted == "true" || violated == "false"){
+		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
+	}
+	else if (evaluted == "false" || violated == "false"){
 		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
 	}
 	else {
@@ -55,6 +72,43 @@ function writeAlwaysFalseString(value){
 	}
 	else if (value == "false"){
 		document.write('<font color="#FF0000"><strong>was not always false</strong></font>');
+	}
+	else if (value == "fileNotFound"){
+		document.write('<font color="#FF0000"><strong>Results file not found.</strong></font>');
+	}
+	else if (value == "resultsNotFound"){
+		document.write('<font color="#FF0000"><strong>Results do not exist.</strong></font>');
+	}
+	else {
+		document.write('<font color="#FF0000"><strong>Results are unknown</strong></font>');
+	}
+}
+
+function writeBooleanGreenYesString(value){
+	if (value == "true") {
+		document.write('<font color="#32CD32"><strong>yes</strong></font>');
+	}
+	else if (value == "false"){
+		document.write('<font color="#FF0000"><strong>no</strong></font>');
+	}
+	else if (value == "fileNotFound"){
+		document.write('<font color="#FF0000"><strong>Results file not found.</strong></font>');
+	}
+	else if (value == "resultsNotFound"){
+		document.write('<font color="#FF0000"><strong>Results do not exist.</strong></font>');
+	}
+	else {
+		document.write('<font color="#FF0000"><strong>Results are unknown</strong></font>');
+	}
+}
+
+
+function writeBooleanRedYesString(value){
+	if (value == "true") {
+		document.write('<font color="#FF0000"><strong>yes</strong></font>');
+	}
+	else if (value == "false"){
+		document.write('<font color="#32CD32"><strong>no</strong></font>');
 	}
 	else if (value == "fileNotFound"){
 		document.write('<font color="#FF0000"><strong>Results file not found.</strong></font>');
