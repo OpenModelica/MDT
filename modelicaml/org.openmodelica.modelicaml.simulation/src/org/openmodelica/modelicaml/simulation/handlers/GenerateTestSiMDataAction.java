@@ -345,12 +345,16 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			// but if any files are in place on the destination matching files to 
 			// be copied an exception will be thrown with that given file name.
 			codeGenDir.copy(testSessionCodeGenDir, EFS.NONE, null);
+
+			/*
+			 * copy also the code-sync folder
+			 */
+			IFileStore codeSyncDir = fileSystem.getStore(URI.create(VerificationExecutionServices.projectAbsolutePath + "/" + Constants.folderName_code_sync));
+			IFileStore testSessionCodeSyncDir = fileSystem.getStore(URI.create(VerificationExecutionServices.verificationSessionFolderAbsolutePath + "/" + Constants.folderName_code_sync));
+			codeSyncDir.copy(testSessionCodeSyncDir, EFS.NONE, null);
 			
+			// refresh the project browser
 			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-			
-			// Will recursively copy the home directory to the backup 
-			//directory, overwriting any files in the backup directory in the way.
-//			codeGenDir.copy(testSessionCodeGenDir, EFS.OVERWRITE, null);
 			
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

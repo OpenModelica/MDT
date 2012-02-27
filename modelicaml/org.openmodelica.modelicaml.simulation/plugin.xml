@@ -85,10 +85,12 @@
             id="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMC"
             name="Simulate with OMC">
       </command>
+      <!--
       <command
             id="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMCSimCenter"
             name="Simulate with OMC Simulation Center">
       </command>
+      -->
       <command
             id="org.openmodelica.modelicaml.helper.commands.runtests"
             name="Run Tests">
@@ -97,7 +99,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.openmodelica.modelicaml.simulation.handlers.GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClassWithOMCAction"
+            class="org.openmodelica.modelicaml.simulation.handlers.CGAndSimulationOMCAction"
             commandId="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMC">
          <activeWhen>
             <with
@@ -123,6 +125,7 @@
             </with>
          </activeWhen>
       </handler>
+     <!--
       <handler
             class="org.openmodelica.modelicaml.simulation.handlers.CGFromEntireModelAndSimThisClassWithOMCSimCenterAction"
             commandId="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMCSimCenter">
@@ -150,6 +153,7 @@
             </with>
          </activeWhen>
       </handler>
+      -->
       <handler
             class="org.openmodelica.modelicaml.simulation.handlers.GenerateTestSiMDataAction"
             commandId="org.openmodelica.modelicaml.helper.commands.runtests">

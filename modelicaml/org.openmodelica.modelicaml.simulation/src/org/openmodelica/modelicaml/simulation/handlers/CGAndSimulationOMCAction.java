@@ -35,6 +35,8 @@
 package org.openmodelica.modelicaml.simulation.handlers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -61,15 +63,15 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.State;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.simulation.omc.OMCCommandExecuter;
 import org.openmodelica.modelicaml.simulation.omc.OMCSimulationDataStorage;
@@ -91,7 +93,7 @@ import fr.obeo.acceleo.gen.template.eval.LaunchManager;
  * 
  * @author rmwscham
  */
-public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClassWithOMCAction extends AbstractHandler {
+public class CGAndSimulationOMCAction extends AbstractHandler {
 
 	// private ModelManager modelManager = null;
 	/** The project. */
@@ -133,8 +135,7 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils
-				.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}
@@ -153,20 +154,10 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		
         EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
-        if (selectedElement instanceof State) {
+        if (selectedElement instanceof Element) {
         	umlElement = (Element)selectedElement;
 		}
-		
-//		if (input instanceof ModelElementItem) {
-//			EObject eObject = ((ModelElementItem)input).getEObject();
-//			if ( eObject instanceof Element ) {
-//				umlElement = (Element)eObject;
-//			}
-//		}
-//		else if (input instanceof IUMLEditPart) {
-//			umlElement = ((IUMLEditPart)input).getUMLElement();
-//		}
-		
+
 		UmlModel umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toString();
 
@@ -174,7 +165,6 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 		project = umlModel.getResourceURI().path().replace(modelName, "")
 				.replace("/resource/", "");
 
-		
 //		String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
 		String projectName = umlModel.getResource().getURI().segment(1);
 		
@@ -190,14 +180,16 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 		String modelElementQualifiedName = ((NamedElement)umlElement).getQualifiedName();
 		String temp_modelElementWoSpecChar = StringUtls.replaceSpecCharExceptThis(modelElementQualifiedName, "::");
 		final String modelElementDotPath = temp_modelElementWoSpecChar.replaceAll("::", ".");
+		
 		final String packageMoFilePath = projectPath+"/code-gen/"+ StringUtls.replaceSpecChar(umlElement.getModel().getName()) + "/" +"package.mo";
-		final String folderPath = projectPath + "/code-gen";
+	
+		final String codeGenFolderPath = projectPath + "/" + Constants.folderName_code_gen + "/";
+		final String codeGenModelFolderPath = codeGenFolderPath + StringUtls.replaceSpecChar(umlElement.getModel().getName()) + "/";
+		
+		final String codeSyncFolderPath = projectPath + "/" + Constants.folderName_code_sync + "/";
 		final Element modelElement = umlElement;
 		
-		URI chainURI = URI
-				.createPlatformPluginURI(
-						"/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain",
-						true);
+		URI chainURI = URI.createPlatformPluginURI("/org.openmodelica.modelicaml.gen.modelica/bin/code_generation.chain", true);
 		ResourceSet rs = new ResourceSetImpl();
 		Resource r = (Resource) rs.createResource(chainURI);
 		try {
@@ -214,6 +206,7 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 		String logPath = project + "/errors.log";
 
 		// Don't create Parameter Files... simply set the correct path into them
+		@SuppressWarnings("unchecked")
 		EList<File> files = myChain.getParametersFiles();
 		for (File file : files) {
 			if (file instanceof CModel) {
@@ -250,7 +243,13 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAndSimulationThisClass
 					if (RegenerateCodeBeforeEachSimulation) {
 						runchain(monitor);
 					}
-					new OMCCommandExecuter(modelElement, folderPath, packageMoFilePath, modelElementDotPath, plotCommand, simPar);
+					
+					List<String> foldersToLoad = new ArrayList<String>();
+					foldersToLoad.add(codeGenModelFolderPath);
+					foldersToLoad.add(codeSyncFolderPath);
+					
+					new OMCCommandExecuter(modelElement, foldersToLoad, modelElementDotPath, plotCommand, simPar);
+					
 					return Status.OK_STATUS;
 				}
 			};

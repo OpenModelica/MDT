@@ -58,6 +58,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -159,6 +162,41 @@ public class SimulationConfigurationWizardPage extends WizardPage {
         this.modelElement = modelElement;
 	}
 
+	
+	private void setSimulationParameters(){
+		
+		if (this.modelElement instanceof NamedElement) {
+			
+			NamedElement element  = (NamedElement) this.modelElement;
+			Stereotype stereotype = element.getAppliedStereotype(Constants.stereotypeQName_Simulation);
+			
+			if (stereotype == null) {
+				stereotype = element.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario);
+			}
+			
+			if (stereotype != null) {
+				Object startTime = element.getValue(stereotype, Constants.propertyName_startTime);
+				if (startTime != null) {
+					textStartTime.setText(startTime.toString());
+				}
+				
+				Object stopTime = element.getValue(stereotype, Constants.propertyName_stopTime);
+				if (startTime != null) {
+					textStopTime.setText(stopTime.toString());
+				}
+
+				Object tolerance = element.getValue(stereotype, Constants.propertyName_tolerance);
+				if (tolerance != null) {
+					textTolerance.setText(tolerance.toString());
+				}
+				
+//				Object interval = element.getValue(stereotype, Constants.propertyName_numberOfIntervals);
+//				if (interval != null) {
+//					textInterval.setText(interval.toString());
+//				}
+			}
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -443,12 +481,15 @@ public class SimulationConfigurationWizardPage extends WizardPage {
 					comboSolver = new Combo(compositeSimulationSetupInterval,
 							SWT.BORDER | SWT.READ_ONLY);
 					comboSolver.setLayoutData(comboSolverLData);
-					comboSolver.setItems(new java.lang.String[] { "dassl2", "rungekutta", "dassl",  "euler" });
+					comboSolver.setItems(new java.lang.String[] {"dassl","dassl2", "rungekutta", "dassl",  "euler" });
 					comboSolver.select(0);
 				}
 			}
 		}
 		
+		
+        // Preset the simulation parameters 
+        setSimulationParameters();
 		
 		//compositeSelectedValueData.setEnabled(false); //Can't set invisible because size will be corrupt...
 	}

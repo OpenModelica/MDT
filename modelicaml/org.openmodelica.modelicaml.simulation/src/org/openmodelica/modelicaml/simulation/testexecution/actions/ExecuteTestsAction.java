@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
+import org.openmodelica.modelicaml.simulation.testexecution.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_generator;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
@@ -41,7 +42,11 @@ public class ExecuteTestsAction implements
 	private String xmlFilePath = null;
 	private String folderAbsolutePath = null;
 	private Job jobPostProcessSimResutls;
-	private List<String> errorMsgGetGeneratedFiles;
+	private List<String> simulationFailedList;
+	private List<String> simulationSuccededList;
+	private String omcLog = "";
+
+	
 	@Override
 	public void run(IAction action) {
 		if (this.xmlFilePath == null) {
@@ -88,10 +93,11 @@ public class ExecuteTestsAction implements
 							IFileSystem fileSystem = EFS.getLocalFileSystem();
 							
 							for(TestModel model : testSessionObj.testModels){
-								if (monitor.isCanceled())
+								if (monitor.isCanceled()){
 									return Status.CANCEL_STATUS;
+								}
 								
-								monitor.subTask("Deleting files from OMC tmp folder: " + model.qualifiedName + ".exe");
+								monitor.subTask("Deleting files from OMC tmp folder for '" + model.qualifiedName + "'");
 								IFileStore oldExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
 								IFileStore oldXMLInitFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml"));
 								IFileStore oldPltFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
@@ -110,13 +116,18 @@ public class ExecuteTestsAction implements
 							 * TODO: each model should be simulated in a separate sub job to enable the canceling of one specific model and not being forced to cancel all model executions by that!
 							 * TODO: what should happen if the simulation failed? 
 							 */
+							omcLog = "";
+							monitor.subTask("Executing models ...");
 							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, sessionFolder, omcTempWorkingFolder, testSessionObj);
-							if(!omcMessage.isEmpty()){
-								System.out.println("OMC Message: /n" + omcMessage);
-								openErrorMsg("Verification Models Execution Error", omcMessage);
-							}
+							omcLog = omcMessage;
+									
+//							if(!omcMessage.isEmpty()){
+//								System.out.println("OMC Message: /n" + omcMessage);
+//								openErrorMsg("Verification Models Execution Error", omcMessage);
+//							}
 							
-							errorMsgGetGeneratedFiles = new ArrayList<String>();
+							simulationFailedList = new ArrayList<String>();
+							simulationSuccededList = new ArrayList<String>();
 							
 							for(TestModel model : testSessionObj.testModels){
 								
@@ -124,7 +135,7 @@ public class ExecuteTestsAction implements
 									return Status.CANCEL_STATUS;
 								}
 									
-								monitor.subTask("Processing: " + model.qualifiedName);
+								monitor.subTask("Processing generated files for: " + model.qualifiedName);
 
 								IFileStore newExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
 								IFileInfo newExeFileInfo = newExeFile.fetchInfo();
@@ -134,6 +145,11 @@ public class ExecuteTestsAction implements
 								IFileInfo newPltFileInfo = newPltFile.fetchInfo();
 
 								if (newExeFileInfo.exists() && newXMLInitFileInfo.exists() && newPltFileInfo.exists()) {
+									
+									/*
+									 * Indicate that OMc generated files -> simulation was ok
+									 */
+									simulationSuccededList.add(model.qualifiedName);
 									
 									/*
 									 * Copy the .exe and the _init.xml files
@@ -165,18 +181,9 @@ public class ExecuteTestsAction implements
 									}
 								}
 								else {
-									errorMsgGetGeneratedFiles.add("Could not find the generated files for '"+model.qualifiedName+"'");
+									simulationFailedList.add(model.qualifiedName);
 								}
 
-							}
-							
-							// if there were errors during copying files -> display on a dialog
-							if (errorMsgGetGeneratedFiles.size() > 0) {
-								String msg = "";
-								for (String string : errorMsgGetGeneratedFiles) {
-									msg = string + "\n\r" + msg ;
-								}
-								openErrorMsg("Verification Models Execution Error", msg);
 							}
 						}
 						monitor.done();
@@ -198,12 +205,51 @@ public class ExecuteTestsAction implements
 			job.setUser(true);
 			job.schedule();
 
-			//START of the results post processing job.
-			// add listener to the results post processing job to open report. 
+			// add listener to the results post processing job to open reports. 
 			JobChangeAdapter jobPostProcessSimResultsChangeAdapter = new JobChangeAdapter() {
 				public void done(IJobChangeEvent event) {
-		            if (event.getResult().isOK() && !(errorMsgGetGeneratedFiles.size() > 0) ) {
-		            		openReport(pathToSession);
+
+					if (event.getResult().isOK()) {
+							
+						/* 
+						 * Create report data. 
+						 */
+						String msgSimulationFailed = "";
+						String msgSimulationSucceded= "";
+						String infoText  = "Simulation was successful.";
+						boolean errorsExist = false;
+						
+						// if there were errors during copying files -> display on a dialog
+						if (simulationFailedList != null && simulationFailedList.size() > 0) {
+							
+							infoText = "Errors occured during simulation.";
+							errorsExist = true;
+							msgSimulationFailed = "Simulation failed for:";
+							
+							for (String string : simulationFailedList) {
+								msgSimulationFailed = msgSimulationFailed +  "\n" + "                  - " + string;
+							}
+							
+							msgSimulationFailed = msgSimulationFailed + "\n\n";
+						}
+						
+						if (simulationSuccededList != null && simulationSuccededList.size() > 0) {
+							msgSimulationSucceded = "Simulation succeded for:";
+							for (String string : simulationSuccededList) {
+								msgSimulationSucceded = msgSimulationSucceded +  "\n" + "                  - " + string;
+							}
+							msgSimulationSucceded = msgSimulationSucceded + "\n\n";
+						}
+						
+						String simulationReport = msgSimulationFailed + msgSimulationSucceded;
+
+						// add log messages if there are any. 
+						if (omcLog != null && !omcLog.trim().equals("")) {
+							simulationReport = simulationReport + "************************** LOG ************************\n" + omcLog.trim();
+						}
+						
+						// open log and the report afterwards 
+						openReport(pathToSession, infoText, simulationReport, errorsExist);
 		            	}
 		            }
 		         };
@@ -228,20 +274,27 @@ public class ExecuteTestsAction implements
 	}
 
 	
-	private void openErrorMsg(final String title, final String erroMsg){
+//	private void openErrorMsg(final String title, final String erroMsg){
+// 		// Use this to open a Shell in the UI thread
+// 		Display.getDefault().asyncExec(new Runnable() {
+// 			public void run() {
+// 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, erroMsg);
+// 			}
+// 		});
+// 	}
+	
+	
+	private void openReport(final String pathToSession, final String infoText, final String simulationReport, final boolean errorsExist){
  		// Use this to open a Shell in the UI thread
  		Display.getDefault().asyncExec(new Runnable() {
  			public void run() {
- 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, erroMsg);
- 			}
- 		});
- 	}
-	
-	
-	private void openReport(final String pathToSession){
- 		// Use this to open a Shell in the UI thread
- 		Display.getDefault().asyncExec(new Runnable() {
- 			public void run() {
+ 				
+				/* open log and the report afterwards 
+				 */
+				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+						"Models Execution Report", infoText, simulationReport, errorsExist);
+				dialog.open();
+ 				
  				boolean open = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Open Report?", "The simulation is completed. Do you want to see the report?");
  				if (open) {
  	            	OpenTestExecutionReportAction openReport = new OpenTestExecutionReportAction();

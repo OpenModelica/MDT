@@ -34,6 +34,8 @@
  */
 package org.openmodelica.modelicaml.simulation.omc;
 
+import java.util.List;
+
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.modelica.ConnectException;
@@ -55,7 +57,7 @@ public class OMCCommandExecuter {
 	private String simulationParameters = "";
 	
 	/** The dir. */
-	private String dir;
+//	private String dir;
 	
 	/** The error string. */
 	private String errorString = "";
@@ -63,6 +65,11 @@ public class OMCCommandExecuter {
 	/** The elt. */
 	private Element elt;
 	
+	private List<String> foldersToLoad;
+//	private String modelFilePath;
+	private String modelElementQualifiedName;
+	private String plotCommand;
+	private String simPar;
 	
 	/**
 	 * Instantiates a new oMC command executer.
@@ -80,10 +87,19 @@ public class OMCCommandExecuter {
 	 * @param simPar
 	 *            the sim par
 	 */
-	public OMCCommandExecuter(Element elt, String folderPath, String modelFilePath, String modelElementQualifiedName, String plotCommand, String simPar) {
-		this.dir = folderPath;
+	public OMCCommandExecuter(Element elt, 
+								List<String> foldersToLoad, 
+								String modelElementQualifiedName, 
+								String plotCommand, 
+								String simPar) {
+		
+		this.foldersToLoad = foldersToLoad;
+		this.modelElementQualifiedName = modelElementQualifiedName;
+		this.plotCommand = plotCommand;
+		this.simPar = simPar;
+		
 		this.elt = elt;
-		executeOMCCommand(dir, modelFilePath,modelElementQualifiedName, plotCommand, simPar);
+		loadAndSimulate();
 	}
 
 	/**
@@ -101,7 +117,7 @@ public class OMCCommandExecuter {
 	 *            the sim par
 	 * @return the string
 	 */
-	private String executeOMCCommand(String folderPath, String modelFilePath, String modelElementQualifiedName, String plotCommand, String simPar) {
+	private String loadAndSimulate() {
 		
 		if (simPar != null) {
 			simulationParameters = "," + simPar;
@@ -117,46 +133,53 @@ public class OMCCommandExecuter {
 				System.err.println("No connection to OMC! ");
 				MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "No connection to OMC! ");
 			}
-
-			status = proxy.sendExpression("loadFile(\"" + modelFilePath + "\")");
 			
-			if (status.contains("error") || status.contains("false")) {
-				System.err.println("Cannot find the package " + modelFilePath + "!");
-				MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "Cannot find the package " + modelFilePath + "!");
+			for (String folderPath : foldersToLoad) {
+				status = proxy.sendExpression("loadFile(\"" + folderPath + "package.mo"+ "\")");
+				
+//				if (status.contains("error") || status.contains("false")) {
+//					System.err.println("Cannot find the package " + folderPath + "/package.mo"+ "!");
+//					MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "Cannot find the package " + folderPath + "/package.mo"+ "!");
+//				}
 			}
 			
-			errorString = proxy.sendExpression("getErrorString()");
-			if (!errorString.equals("")) {
-				System.err.println(errorString);
-			}
-			
-			status = proxy.sendExpression("checkModel("
-					+ modelElementQualifiedName + ")");
-			
-			errorString = proxy.sendExpression("getErrorString()");
-			if (!errorString.equals("")) {
-				System.err.println(errorString);
-			}
+//			errorString = proxy.sendExpression("getErrorString()");
+//			if (!errorString.equals("")) {
+//				System.err.println(errorString);
+//			}
+//			
+//			status = proxy.sendExpression("checkModel("
+//					+ modelElementQualifiedName + ")");
+//			
+//			errorString = proxy.sendExpression("getErrorString()");
+//			if (!errorString.equals("")) {
+//				System.err.println(errorString);
+//			}
 			
 			status = proxy.sendExpression("simulate("
 					+ modelElementQualifiedName + simulationParameters + ")");
 			
 			if (status.contains("error") || status.contains("imulation failed")) {
+				setErrorString(status);
 				MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "Simulation of the class '"+ ((NamedElement)elt).getName() +"' failed." + "\n" + status);
+//				DialogMessage dialog = new DialogMessage(new Shell(), "Errors", "Errors occured during simulation", status);
+//				dialog.open();
 			}
 			else  {
-				MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "info", "Simulation of the class '"+ ((NamedElement)elt).getName() +"' was successful.");
+//				MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "info", "Simulation of the class '"+ ((NamedElement)elt).getName() +"' was successful.");
 			}
-			
 			
 			if (plotCommand != null) {
 				status = proxy.sendExpression(plotCommand);
-				if (status.contains("No simulation result to plot")) {
-					MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "No simulation result to plot.");
-				}
-				else {
-					MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "info", "Simulation results are plotted in a separate window.");
-				}
+//				if (status.contains("No simulation result to plot")) {
+//					MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "No simulation result to plot.");
+//				}
+//				else {
+//					MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "info", "Simulation results are plotted in a separate window.");
+//				}
+			}
+			else {
+//				MessageDialog.openInformation(new Shell(), "Nothing to plot", "No variables were selected to be plotted after simulation.");
 			}
 
 		} catch (ConnectException e) {
@@ -164,6 +187,14 @@ public class OMCCommandExecuter {
 			e.printStackTrace();
 		}
 		return status;
+	}
+
+	public String getErrorString() {
+		return errorString;
+	}
+
+	public void setErrorString(String errorString) {
+		this.errorString = errorString;
 	}
 
 }

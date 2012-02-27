@@ -17,9 +17,15 @@ public class EvaluateResultXML {
 	 * @param propertyName name of the property to be evaluated
 	 * @param result xml file
 	 */
+	
+	private static String resultsNotfound 	= "resultsNotfound";
+	private static String fileNotFound 		= "fileNotFound";
+	private static String checkModeUnknown 	= "checkModeUnknown";
+	
+	
 	private static String checkAtLeastOneTimeTrue(String propertyName, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
+			return fileNotFound;
 		
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
@@ -27,13 +33,21 @@ public class EvaluateResultXML {
 		
 		if(sr == null || sr.property.isEmpty()){
 //			System.out.println("#2-> " + propertyName + " resultsNotfound");
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
+//		
+//		if(sr.values.values().contains(1.0))
+//			return "true";
+//		else
+//			return "false";
 		
-		if(sr.values.values().contains(1.0))
-			return "true";
-		else
-			return "false";
+		Double valueToCheck = Double.valueOf("1");
+		for(Double d : sr.values.values()){
+			if( d.equals(valueToCheck) ){
+				return "true";
+			}
+		}
+		return "false";
 	}
 	
 	/**
@@ -43,19 +57,27 @@ public class EvaluateResultXML {
 	 */
 	private static String checkAtLeastOneTimeFalse(String propertyName, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
+			return fileNotFound;
 		
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
 		if(sr == null || sr.property.isEmpty()){
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
 		
-		if(sr.values.values().contains(0.0))
-			return "true";
-		else
-			return "false";
+//		if(sr.values.values().contains(0.0))
+//			return "true";
+//		else
+//			return "false";
+		
+		Double valueToCheck = Double.valueOf("0");
+		for(Double d : sr.values.values()){
+			if( d.equals(valueToCheck) ){
+				return "true";
+			}
+		}
+		return "false";
 	}
 	
 	/**
@@ -65,19 +87,27 @@ public class EvaluateResultXML {
 	 */
 	private static String checkAlwaysTrue(String propertyName, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
+			return fileNotFound;
 		
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
 		if(sr == null || sr.property.isEmpty()){
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
 		
-		if(sr.values.values().contains(0.0))
-			return "false";
-		else
-			return "true";
+//		if(sr.values.values().contains(0.0))
+//			return "false";
+//		else
+//			return "true";
+		
+		Double valueToCheck = Double.valueOf("1");
+		for(Double d : sr.values.values()){
+			if( !d.equals(valueToCheck) ){
+				return "false";
+			}
+		}
+		return "true";
 	}
 	
 	/**
@@ -87,19 +117,26 @@ public class EvaluateResultXML {
 	 */
 	private static String checkAlwaysFalse(String propertyName, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
-		
+			return fileNotFound;
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
 		if(sr == null || sr.property.isEmpty()){
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
 		
-		if(sr.values.values().contains(1.0))
-			return "false";
-		else
-			return "true";
+//		if(sr.values.values().contains(1.0))
+//			return "false";
+//		else
+//			return "true";
+		
+		Double valueToCheck = Double.valueOf("0");
+		for(Double d : sr.values.values()){
+			if( !d.equals(valueToCheck)){
+				return "false";
+			}
+		}
+		return "true";
 	}
 	
 	
@@ -110,12 +147,12 @@ public class EvaluateResultXML {
 	 */
 	private static String checkHadNotAlwaysValue(String propertyName, String argsString, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
+			return fileNotFound;
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
 		if(sr == null || sr.property.isEmpty()){
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
 		
 		/*
@@ -128,7 +165,6 @@ public class EvaluateResultXML {
 				result = "true";
 			}
 		}
-		
 		return result;
 	}
 	
@@ -140,31 +176,31 @@ public class EvaluateResultXML {
 	 */
 	private static String checkHadAtLeastOnceValue(String propertyName, String argsString, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
+			return fileNotFound;
 		
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
 		if(sr == null || sr.property.isEmpty()){
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
 		
 //		/*
 //		 * We assume that it never had the value until we prove the opposite.
 //		 */
 		Double valueToCheck = Double.valueOf(argsString);
-//		String result = "false";
-//		for(Double d : sr.values.values()){
-//			if( valueToCheck.equals(d) ){
-//				return "true";
-//			}
-//		}
-//		return result;
+		String result = "false";
+		for(Double d : sr.values.values()){
+			if( valueToCheck.equals(d) ){
+				return "true";
+			}
+		}
+		return result;
 		
-		if(sr.values.values().contains(valueToCheck))
-			return "true";
-		else
-			return "false";
+//		if(sr.values.values().contains(valueToCheck))
+//			return "true";
+//		else
+//			return "false";
 		
 	}
 	
@@ -176,13 +212,13 @@ public class EvaluateResultXML {
 	 */
 	private static String checkHadNeverValue(String propertyName, String argsString, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
+			return fileNotFound;
 		
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
 		if(sr == null || sr.property.isEmpty()){
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
 		
 		/*
@@ -203,13 +239,13 @@ public class EvaluateResultXML {
 	 */
 	private static String checkChangedItsValue(String propertyName, File xml_file){
 		if(!xml_file.exists())
-			return "fileNotFound";
+			return fileNotFound;
 		
 		
 		SimulationResult sr = SimulationResult_XML_reader.readFromXML(propertyName, xml_file.getAbsoluteFile());
 
 		if(sr == null || sr.property.isEmpty()){
-			return "resultsNotfound";
+			return resultsNotfound;
 		}
 		
 		Double firstValue = null;
@@ -236,24 +272,24 @@ public class EvaluateResultXML {
 		File xmlResultFile = new File(result_xml_file);
 		try{
 			if(!xmlResultFile.exists() || !xmlResultFile.canRead())
-				return "fileNotFound";
+				return fileNotFound;
 		}catch (Exception e) {
 			// TODO: handle exception
 		}
 		
-		if(checkMode.equals("atLeastOneTimeTrue"))
+		if(checkMode.equals(Constants.MACRO_atLeastOneTimeTrue))
 			return checkAtLeastOneTimeTrue(propertyName, xmlResultFile);		
 		
-		if(checkMode.equals("atLeastOneTimeFalse"))
+		if(checkMode.equals(Constants.MACRO_atLeastOneTimeFalse))
 			return checkAtLeastOneTimeFalse(propertyName, new File(result_xml_file));
 		
-		if(checkMode.equals("alwaysTrue"))
+		if(checkMode.equals(Constants.MACRO_alwaysTrue))
 			return checkAlwaysTrue(propertyName, new File(result_xml_file));
 		
-		if(checkMode.equals("alwaysFalse"))
+		if(checkMode.equals(Constants.MACRO_alwaysFalse))
 			return checkAlwaysFalse(propertyName, new File(result_xml_file));
 		
-		if(checkMode.equals("changedItsValue"))
+		if(checkMode.equals(Constants.MACRO_changedItsValue))
 			return checkChangedItsValue(propertyName, new File(result_xml_file));
 		
 		if(checkMode.contains(Constants.MACRO_hadNotAlwaysValue))
@@ -264,10 +300,9 @@ public class EvaluateResultXML {
 
 		if(checkMode.contains(Constants.MACRO_hadNeverValue))
 			return checkHadNeverValue(propertyName, getPropertyValueArg(checkMode.replaceFirst(Constants.MACRO_hadNeverValue, "")), new File(result_xml_file));
-
 		
 		else
-			return "checkModeUnknown";
+			return checkModeUnknown;
 	}
 	
 	
