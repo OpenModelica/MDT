@@ -117,6 +117,7 @@ import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandle
 import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
+import org.openmodelica.modelicaml.simulation.handlers.CGAndSimulationOMCAction;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
@@ -581,8 +582,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
 		manager.add(new Separator());
-//		manager.add(actionValidate);
-//		manager.add(actionSimulate);
+		manager.add(actionValidate);
+		manager.add(actionSimulate);
 		manager.add(new Separator());
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
@@ -795,6 +796,17 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		actionSimulate = new Action("actionSimulate") {
 			public void run() {
+				// simulation with a simple dialog
+				CGAndSimulationOMCAction action = new CGAndSimulationOMCAction();
+				viewer.setSelection(new StructuredSelection(root));
+				try {
+					action.execute(null);
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				// @deprecated: Simulation with OMC Center 
 //				viewer.setSelection(new StructuredSelection(root));
 //				CGFromEntireModelAndSimThisClassWithOMCSimCenterAction c = new CGFromEntireModelAndSimThisClassWithOMCSimCenterAction();
 //				try {
@@ -803,6 +815,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
+				
+//				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Not available", "The simulation function is not available yet.");
 			}
 		};
 		actionSimulate.setText("Simulate with OMC");
