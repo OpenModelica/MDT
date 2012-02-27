@@ -193,6 +193,63 @@ public class VerificationExecutionServices {
 		return "";
 	}
 	
+	
+	public static String getStartTimeReportString (Element umlElement){
+		if (umlElement instanceof NamedElement) {
+			NamedElement namedElement = ((NamedElement)umlElement); 
+			Stereotype stereotype = namedElement.getAppliedStereotype(Constants.stereotypeQName_Simulation);
+			if (stereotype != null ) {
+				Object value = namedElement.getValue(stereotype, Constants.propertyName_startTime);
+				if (value != null) {
+					return value.toString();
+				}
+			}
+		}
+		return "default";
+	}
+	
+	public static String getStopTimeReportString (Element umlElement){
+		if (umlElement instanceof NamedElement) {
+			NamedElement namedElement = ((NamedElement)umlElement); 
+			Stereotype stereotype = namedElement.getAppliedStereotype(Constants.stereotypeQName_Simulation);
+			if (stereotype != null ) {
+				Object value = namedElement.getValue(stereotype, Constants.propertyName_stopTime);
+				if (value != null) {
+					return value.toString();
+				}
+			}
+		}
+		return "default";
+	}
+	
+	public static String getToleranceReportString (Element umlElement){
+		if (umlElement instanceof NamedElement) {
+			NamedElement namedElement = ((NamedElement)umlElement); 
+			Stereotype stereotype = namedElement.getAppliedStereotype(Constants.stereotypeQName_Simulation);
+			if (stereotype != null ) {
+				Object value = namedElement.getValue(stereotype, Constants.propertyName_tolerance);
+				if (value != null) {
+					return value.toString();
+				}
+			}
+		}
+		return "default";
+	}
+	
+	public static String getNumberOfIntervalsReportString (Element umlElement){
+		if (umlElement instanceof NamedElement) {
+			NamedElement namedElement = ((NamedElement)umlElement); 
+			Stereotype stereotype = namedElement.getAppliedStereotype(Constants.stereotypeQName_Simulation);
+			if (stereotype != null ) {
+				Object value = namedElement.getValue(stereotype, Constants.propertyName_numberOfIntervals);
+				if (value != null) {
+					return value.toString();
+				}
+			}
+		}
+		return "default";
+	}
+	
 	public static String getStartTime(Element elt){
 		if (elt instanceof NamedElement) {
 			Stereotype s = elt.getAppliedStereotype(Constants.stereotypeQName_Simulation);
@@ -257,7 +314,6 @@ public class VerificationExecutionServices {
 	public static String getSolver(Element elt){
 		return "dassl";
 	}
-	
 	
 	
 	public static String getRequirementID(TreeObject treeItem){

@@ -63,7 +63,8 @@ public class DialogMessage extends Dialog {
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
    		shell.setText(this.title);
-//    	shell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png"));
+   		
+//    	shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_ERROR));
     }
 	
 //	@Override
