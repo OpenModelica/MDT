@@ -43,15 +43,15 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			(<strong><script type='text/javascript'>document.write(testsNumber)</script></strong>), 
 		</span> 
 		
-		<span style='color:#ff9900'>Executed 
+		<span style='color:#ff9900'>executed 
 			(<strong><script type='text/javascript'>document.write(testsExecutedNumber)</script></strong>), 
 		</span>
 		
-		<span style='color:#32CD32'>Passed 
+		<span style='color:#32CD32'>passed 
 			(<strong><script type='text/javascript'>document.write(testsPassedNumber)</script></strong>), 
 		</span>
 		
-		<span style='color:#FF0000'>Failed  
+		<span style='color:#FF0000'>failed  
 			(<strong><script type='text/javascript'>document.write(testsFailedNumber)</script></strong>)
 		</span> 
 		
@@ -121,6 +121,16 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 		<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span>
 	</div>
 	
+	<!-- simulation settings -->
+	<div style='padding:10px;'>
+		<strong>Settings:</strong> 
+		startTime = <%getStartTimeReportString()%>, 
+		<strong>stopTime = <%getStopTimeReportString()%></strong>, 
+		tolerance = <%getToleranceReportString()%>,  
+		intervals = <%getNumberOfIntervalsReportString()%>, 
+		outputFormat = <%getOutputFormat()%> <br />	
+	</div>
+	
 	<!-- test model veridcts -->
 	<div style='padding:10px;'>
 		<table cellpadding='0' cellspacing='0' border='0'>
@@ -133,7 +143,8 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 				<td>&nbsp;:&nbsp;</td>
 				<td>
 					<script type='text/javascript'>
-						writeAtLeastOneTimeTrueString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);
+<!--					writeAtLeastOneTimeTrueString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);-->
+						writeBooleanGreenYesString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);
 					</script>
 				</td>
 			</tr>
@@ -145,7 +156,8 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 				<td>&nbsp;:&nbsp;</td>
 				<td>
 					<script type='text/javascript'>
-						writeAlwaysFalseString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse%>']);
+<!--					writeAlwaysFalseString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse()%>']);-->
+						writeBooleanRedYesString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);
 					</script>
 				</td>
 			</tr>

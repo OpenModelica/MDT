@@ -61,13 +61,13 @@ import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.modelica.ConnectException;
 import org.modelica.OMCProxy;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLOMCMarkerSupport;
@@ -91,8 +91,8 @@ public class OMCClassValidator {
 	/** The model file uri. */
 	private String modelFileURI = null;
 	
-	/** The model name. */
-	private String modelName = null;
+//	/** The model name. */
+//	private String modelName = null;
 	
 	/** The proxy. */
 	private OMCProxy proxy = null;
@@ -104,13 +104,13 @@ public class OMCClassValidator {
 	private String UMLModelName = null;
 	
 	/** The model file path. */
-	private String modelFilePath = null;
+//	private String modelFilePath = null;
 	
 	/** The output folder path. */
-	private String outputFolderPath = null;
+//	private String outputFolderPath = null;
 	
 	/** The log path. */
-	private String logPath = null;
+//	private String logPath = null;
 	
 	/** The i project. */
 	private IProject iProject = null;
@@ -124,7 +124,7 @@ public class OMCClassValidator {
 	/** The r code generation. */
 	private Resource rCodeGeneration = null;
 
-	private Element classToBeValidated = null;
+//	private Element classToBeValidated = null;
 	
 	private String dotPath_classToBeValidated = "";
 	
@@ -211,7 +211,7 @@ public class OMCClassValidator {
 	public OMCClassValidator(Element classToBeValidated) {
 		if (classToBeValidated instanceof Class) {
 			
-			this.classToBeValidated = classToBeValidated;
+//			this.classToBeValidated = classToBeValidated;
 			this.dotPath_classToBeValidated = StringUtls.replaceSpecCharExceptThis(((Classifier)classToBeValidated).getQualifiedName().replaceAll("::", "."), "\\.");
 
 		}
@@ -272,7 +272,7 @@ public class OMCClassValidator {
 		UmlModel umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
 
-		modelName = umlModel.getResourceURI().lastSegment();
+//		modelName = umlModel.getResourceURI().lastSegment();
 //		project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
 		project = umlModel.getResource().getURI().segment(1);
 		
@@ -290,6 +290,7 @@ public class OMCClassValidator {
 		codeGenerationChain = (CChain) rCodeGeneration.getContents().get(0);
 		
 		// Don't create Parameter Files... simply set the correct path into them
+		@SuppressWarnings("unchecked")
 		EList<File> files = codeGenerationChain.getParametersFiles();
 		for (File file : files) {
 			if (file instanceof CModel) {
@@ -317,6 +318,8 @@ public class OMCClassValidator {
 			}
 			
 			String packageMoFilePath = null;
+			String codeSyncFolderPath = null;
+			
 			if (UMLModelName != null) {
 				//String projectName = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
 				String projectName = umlModel.getResource().getURI().segment(1);
@@ -324,8 +327,10 @@ public class OMCClassValidator {
 				IWorkspaceRoot root = workspace.getRoot();
 				iProject = root.getProject(projectName);
 				String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-				packageMoFilePath = projectPath+"/code-gen/"+ UMLModelName + "/" +"package.mo";
-
+				packageMoFilePath = projectPath+"/"+Constants.folderName_code_gen+"/"+ UMLModelName + "/" +"package.mo";
+				
+				codeSyncFolderPath = projectPath+"/"+Constants.folderName_code_sync+"/"; 
+				
 				//ModelicaMLOMCMarkerSupport.deleteAllOMCMarkers(iProject);
 			}
 			
@@ -341,6 +346,15 @@ public class OMCClassValidator {
 					}
 				}
 				
+				/*
+				 * Load first the code from code-sync folder
+				 * TODO: get the possible list of all contained models? 
+				 */
+				status = proxy.sendExpression("loadFile(\"" + codeSyncFolderPath + "package.mo" + "\")");
+				
+				/*
+				 * Load code from the code-gen folder
+				 */
 				status = proxy.sendExpression("loadFile(\"" + packageMoFilePath + "\")");
 				setLog(status);
 				if (status.contains("error") || status.contains("Error") || status.contains("false")) {
