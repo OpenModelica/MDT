@@ -467,6 +467,12 @@
     <sections name="SingleModelicaMLStateMachine" sectionFile="ui/SingleModelicaMLStateMachine.xwt">
       <widget href="ui/SingleModelicaMLStateMachine.xwt#/"/>
     </sections>
+    <sections name="SingleUMLOpaqueBehavior" sectionFile="ui/SingleUMLOpaqueBehavior.xwt">
+      <widget href="ui/SingleUMLOpaqueBehavior.xwt#/"/>
+    </sections>
+    <sections name="SingleSimulationSectionForVerificationScenario" sectionFile="ui/SingleSimulationSectionForVerificationScenario.xwt">
+      <widget href="ui/SingleSimulationSectionForVerificationScenario.xwt#/"/>
+    </sections>
   </tabs>
   <views name="Single Simulation" sections="//@tabs.0/@sections.0" automaticContext="true" datacontexts="//@dataContexts.0/@elements.8/@elements.0">
     <constraints xsi:type="contexts:SimpleConstraint" name="isSingleSimulation">
@@ -962,6 +968,12 @@
       <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="OpaqueAction"/>
     </constraints>
   </views>
+  <views name="Single OpaqueBehavior" sections="//@tabs.0/@sections.155">
+    <constraints xsi:type="contexts:SimpleConstraint" name="isOpaqueBehavior">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="OpaqueBehavior"/>
+    </constraints>
+  </views>
   <dataContexts name="ModelicaML" label="ModelicaML">
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaRequirementConstructs">
       <elements name="Requirement">
@@ -1250,7 +1262,7 @@
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaSimulationConstructs">
       <elements name="Simulation">
         <properties name="startTime"/>
-        <properties name="numberOfIntervals" type="Integer"/>
+        <properties name="numberOfIntervals"/>
         <properties name="tolerance"/>
         <properties name="stopTime"/>
         <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>

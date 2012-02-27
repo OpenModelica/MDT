@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Composite xmlns:x="http://www.eclipse.org/xwt" xmlns:j="clr-namespace:java.lang"
+<Composite xmlns:ppel="clr-namespace:org.eclipse.papyrus.properties.widgets.layout"
 	xmlns:ppe="clr-namespace:org.eclipse.papyrus.properties.widgets"
-	xmlns:ppel="clr-namespace:org.eclipse.papyrus.properties.widgets.layout"
+	xmlns:x="http://www.eclipse.org/xwt" xmlns:j="clr-namespace:java.lang"
 	xmlns="http://www.eclipse.org/xwt/presentation">
 	<Composite.layout>
 		<ppel:PropertiesLayout></ppel:PropertiesLayout>
@@ -13,22 +13,10 @@
 		<ppe:StringEditor input="{Binding}"
 			property="ModelicaML:ModelicaSimulationConstructs:Simulation:startTime"></ppe:StringEditor>
 		<ppe:StringEditor input="{Binding}"
-			property="ModelicaML:ModelicaSimulationConstructs:Simulation:tolerance"></ppe:StringEditor>
-		<ppe:StringEditor input="{Binding}"
 			property="ModelicaML:ModelicaSimulationConstructs:Simulation:stopTime"></ppe:StringEditor>
-	</Composite>
-	<Composite>
-		<Composite.layout>
-			<ppel:PropertiesLayout numColumns="2"></ppel:PropertiesLayout>
-		</Composite.layout>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:tolerance"></ppe:StringEditor>
 		<ppe:IntegerEditor input="{Binding}"
 			property="ModelicaML:ModelicaSimulationConstructs:Simulation:numberOfIntervals"></ppe:IntegerEditor>
-	</Composite>
-	<Composite>
-		<Composite.layout>
-			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
-		</Composite.layout>
-		<ppe:ReferenceDialog input="{Binding}"
-			property="ModelicaML:Verification:VerificationScenario:usedToVerify"></ppe:ReferenceDialog>
 	</Composite>
 </Composite>
