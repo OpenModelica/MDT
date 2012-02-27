@@ -59,7 +59,6 @@
             provider="OpenModelica Project">
       </library>
    </extension>
-   <!--
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -69,9 +68,9 @@
                icon="resources/icons/timeline_marker.png"
                label="ModelicaML: Simulation">
             <command
-                  commandId="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMCSimCenter"
+                  commandId="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMC"
                   icon="resources/icons/timeline_marker.png"
-                  label="Simulate with OMSim Center"
+                  label="Simulate with OMC"
                   style="push"
                   tooltip="Open in OMC Simulation Center">
                <visibleWhen
@@ -109,7 +108,6 @@
          </menu>
       </menuContribution>
    </extension>
-   -->
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution

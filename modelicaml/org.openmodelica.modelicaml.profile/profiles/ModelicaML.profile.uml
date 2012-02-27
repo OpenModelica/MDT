@@ -2356,17 +2356,17 @@ It has properties that can be used for setting up the traceability between requi
         <body>This stereotype contains the properties which are used in the &quot;simulate()&quot; command in Modelica tools.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_4YJ5gFNaEd6YXtyPQ2LL6Q" name="startTime" isUnique="false">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7Ej1YFNaEd6YXtyPQ2LL6Q" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7EaEYFNaEd6YXtyPQ2LL6Q"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_7dvKYFNaEd6YXtyPQ2LL6Q" name="stopTime" isUnique="false">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9uSQsFNaEd6YXtyPQ2LL6Q" value="1"/>
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9uSQsFNaEd6YXtyPQ2LL6Q" name="" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9uIfsFNaEd6YXtyPQ2LL6Q"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_jHShYKOSEd6QGeS9Jr9djA" name="numberOfIntervals" isUnique="false" aggregation="composite">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_H1EQ4KOTEd6QGeS9Jr9djA" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_H07G8KOTEd6QGeS9Jr9djA"/>
       </ownedAttribute>
@@ -4224,6 +4224,66 @@ This can be used by a tool to guarantee that consistent versions are used, and i
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_yKNj0OjpEeCDZad2kIJ0mw" name="ModelReferences" metaclassReference="_gRgdMAJhEeG_m9SrLqG2hw _nBMBQAJhEeG_m9SrLqG2hw">
     <eAnnotations xmi:id="_9LZn4PAREeCmxdyA8VCpAw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <contents xmi:type="ecore:EPackage" xmi:id="_2HHIEGFXEeGhytencc_a3w" name="ModelReferences" nsURI="http://ModelicaML/schemas/ModelReferences/_2HFS4GFXEeGhytencc_a3w/4" nsPrefix="ModelReferences">
+        <eAnnotations xmi:id="_2HbRIGFXEeGhytencc_a3w" source="PapyrusVersion">
+          <details xmi:id="_2HbRIWFXEeGhytencc_a3w" key="Version" value="0.1.3"/>
+          <details xmi:id="_2HbRImFXEeGhytencc_a3w" key="Comment" value=""/>
+          <details xmi:id="_2HbRI2FXEeGhytencc_a3w" key="Copyright" value=""/>
+          <details xmi:id="_2HbRJGFXEeGhytencc_a3w" key="Date" value="2012-02-27"/>
+          <details xmi:id="_2HbRJWFXEeGhytencc_a3w" key="Author" value=""/>
+        </eAnnotations>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_2HHIEWFXEeGhytencc_a3w" name="ModelicaModelReference">
+          <eAnnotations xmi:id="_2HHIEmFXEeGhytencc_a3w" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_3yuNkFQpEd-dXMMi5z6Tlw"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_2HHIE2FXEeGhytencc_a3w" name="modelPath" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2HHIFWFXEeGhytencc_a3w" name="base_Class" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_2HHIF2FXEeGhytencc_a3w" name="ModelicaModelProxy">
+          <eAnnotations xmi:id="_2HHIGGFXEeGhytencc_a3w" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_nLPKQOjoEeCDZad2kIJ0mw"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2HHIGWFXEeGhytencc_a3w" name="base_Element" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Element"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_2HHIG2FXEeGhytencc_a3w" name="InstalledLibrary">
+          <eAnnotations xmi:id="_2HHIHGFXEeGhytencc_a3w" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_kEF-AAJhEeG_m9SrLqG2hw"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2HHIHWFXEeGhytencc_a3w" name="base_Model" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Model"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+      </contents>
+      <contents xmi:type="ecore:EPackage" xmi:id="_BicxsGFSEeGHTa4bk1tYKw" name="ModelReferences" nsURI="http://ModelicaML/schemas/ModelReferences/_BiZuYGFSEeGHTa4bk1tYKw/3" nsPrefix="ModelReferences">
+        <eAnnotations xmi:id="_Bi9IAGFSEeGHTa4bk1tYKw" source="PapyrusVersion">
+          <details xmi:id="_Bi9IAWFSEeGHTa4bk1tYKw" key="Version" value="0.1.2"/>
+          <details xmi:id="_Bi9IAmFSEeGHTa4bk1tYKw" key="Comment" value="simulation start/Stop time and intervals type changed to String in order to enable the usage of the Papyrus properties framework."/>
+          <details xmi:id="_Bi9IA2FSEeGHTa4bk1tYKw" key="Copyright" value=""/>
+          <details xmi:id="_Bi9IBGFSEeGHTa4bk1tYKw" key="Date" value="2012-02-27"/>
+          <details xmi:id="_Bi9IBWFSEeGHTa4bk1tYKw" key="Author" value=""/>
+        </eAnnotations>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_BicxsWFSEeGHTa4bk1tYKw" name="ModelicaModelReference">
+          <eAnnotations xmi:id="_BicxsmFSEeGHTa4bk1tYKw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_3yuNkFQpEd-dXMMi5z6Tlw"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_Bicxs2FSEeGHTa4bk1tYKw" name="modelPath" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_BicxtWFSEeGHTa4bk1tYKw" name="base_Class" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_Bicxt2FSEeGHTa4bk1tYKw" name="ModelicaModelProxy">
+          <eAnnotations xmi:id="_BicxuGFSEeGHTa4bk1tYKw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_nLPKQOjoEeCDZad2kIJ0mw"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_BicxuWFSEeGHTa4bk1tYKw" name="base_Element" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Element"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_Bicxu2FSEeGHTa4bk1tYKw" name="InstalledLibrary">
+          <eAnnotations xmi:id="_BicxvGFSEeGHTa4bk1tYKw" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_kEF-AAJhEeG_m9SrLqG2hw"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_BicxvWFSEeGHTa4bk1tYKw" name="base_Model" ordered="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Model"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+      </contents>
       <contents xmi:type="ecore:EPackage" xmi:id="_0zodcAJhEeG_m9SrLqG2hw" name="ModelReferences" nsURI="http://ModelicaML/schemas/ModelReferences/_0sodkAJhEeG_m9SrLqG2hw/2" nsPrefix="ModelReferences">
         <eAnnotations xmi:id="_0z7_cAJhEeG_m9SrLqG2hw" source="PapyrusVersion">
           <details xmi:id="_0z7_cQJhEeG_m9SrLqG2hw" key="Version" value="0.1.1"/>
