@@ -52,6 +52,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
@@ -226,7 +227,7 @@ public class TreeUtls {
 								}
 							}
 							else {
-								MessageDialog.openError(new Shell(), "Error", 
+								MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", 
 										"Could not set the Stereotype " + getDependecyStereotypeQName(mode) + " for " 
 										+ ((NamedElement)valueMediatorElement).getQualifiedName() + " to reference the element "
 										+ ((NamedElement)valueClientOrProviderElement).getQualifiedName()
@@ -295,12 +296,12 @@ public class TreeUtls {
 				}
 			}
 			else {
-				MessageDialog.openError(new Shell(), "Error", "Invalid mediator reference for " + dependencyTargetItem.getName());
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Invalid mediator reference for " + dependencyTargetItem.getName());
 				return false;
 			}
 		}
 		else {
-			MessageDialog.openError(new Shell(), "Error", "Could not find the Mediator for " + dependencyTargetItem.getName());
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not find the Mediator for " + dependencyTargetItem.getName());
 			return false;
 		}
 

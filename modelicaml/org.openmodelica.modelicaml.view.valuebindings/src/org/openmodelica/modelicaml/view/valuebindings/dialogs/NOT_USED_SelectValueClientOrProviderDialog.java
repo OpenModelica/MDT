@@ -604,7 +604,7 @@ public class NOT_USED_SelectValueClientOrProviderDialog extends Dialog {
 			}
 		}
 		else {
-			MessageDialog.openError(new Shell(), "Error", "Could not finish the operation. No updates were performed.");
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not finish the operation. No updates were performed.");
 		}
 	}
 	

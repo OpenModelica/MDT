@@ -348,7 +348,7 @@ public class PropertySection_Details extends AbstractPropertySection {
 					dependencyToClient = depList.get(0);
 				}
 				else {
-					MessageDialog.openError(new Shell(), "Value Mediator Inconsitency", "There are multiple links form the Mediator '" + mediator.getName() + "' " +
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Value Mediator Inconsitency", "There are multiple links form the Mediator '" + mediator.getName() + "' " +
 							" to the Value Client '" + item.getName() + "'. \n\nThis is not allowed."  );
 				}
 			}

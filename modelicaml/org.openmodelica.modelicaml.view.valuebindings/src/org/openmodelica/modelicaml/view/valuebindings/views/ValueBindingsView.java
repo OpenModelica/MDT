@@ -736,7 +736,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					int mode = Constants.MODE_ADD_CLIENT;
 					
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
-							new Shell(), 
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 							SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 							title, 
 							message, 
@@ -778,7 +778,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 //					String mode = "addValueProvider";
 					int mode = Constants.MODE_ADD_PROVIDER;
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
-							new Shell(), 
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 							SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 							title, 
 							message, 
@@ -897,7 +897,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					String title = "Delete Reference";
 					String message = "Are you sure you want to delete " + "'" + name + "'?" +
 							"\nThis action cannot be undone.";
-					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+					Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 
 					if (go) {
 						//delete dependency from mediator in UML model
@@ -986,7 +986,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					String title = "Delete Element";
 					String message = "Are you sure you want to delete " + "'" + name + "'?" +
 							"\nThis action cannot be undone.";
-					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+					Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 
 					if (go) {
 						DeleteCommandHandler h = new DeleteCommandHandler();
@@ -997,7 +997,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 //							}
 						} catch (ExecutionException e) {
 							e.printStackTrace();
-							MessageDialog.openError(new Shell(), "Error", "Could not delete the element '" + name + "'.");
+							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not delete the element '" + name + "'.");
 //							showMessage("Could not finish the action DeleteModelElement ...");
 						}
 					}

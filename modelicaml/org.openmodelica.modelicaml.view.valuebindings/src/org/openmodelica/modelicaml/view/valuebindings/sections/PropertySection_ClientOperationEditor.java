@@ -56,6 +56,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Class;
@@ -145,7 +146,7 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 						storeLocation = depList.get(0);
 					}
 					else {
-						MessageDialog.openError(new Shell(), "Value Mediator Inconsitency", "There are multiple links form the Mediator '" + mediator.getName() + "' " +
+						MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Value Mediator Inconsitency", "There are multiple links form the Mediator '" + mediator.getName() + "' " +
 								" to the the Value Client '" + item.getName() + "'. This is not allowed."  );
 					}
 				}
