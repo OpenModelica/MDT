@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 public class DialogMessageWithHTMLBrowser extends Dialog {
 
@@ -77,7 +78,7 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
         browser.setLayoutData(textGD);
 
 	    } catch (SWTError e) {
-          MessageBox messageBox = new MessageBox(new Shell(), SWT.ICON_ERROR | SWT.OK);
+          MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
           messageBox.setMessage("Browser cannot be initialized.");
           messageBox.setText("Exit");
           messageBox.open();
