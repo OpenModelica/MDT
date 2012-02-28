@@ -1213,7 +1213,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 						/*
 						 * For ModelicaML proxy concept the first level classes must be packages with 
 						 * no inheritance no Modelica package specific properties because  
-						 * UML Model(specialization of UML Package) as root must be created 
+						 * UML Model (specialization of UML Package) as root must be created 
 						 * to apply the ModelicaML profile to.  
 						 */
 					}

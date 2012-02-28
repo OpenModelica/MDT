@@ -282,7 +282,15 @@ public class OpenModelicaCompilerCommunication {
 	}
 	
 	public String getClassNames(String parentClassQName){
-		return executeCommand("getClassNames("+parentClassQName+")");
+		if (parentClassQName.trim().equals("")) {
+			return executeCommand("getClassNames("+parentClassQName+")");
+		}
+		else {
+			/*
+			 * fetch also protected classes
+			 */
+			return executeCommand("getClassNames("+parentClassQName+", showProtected = true)");
+		}
 	}
 	
 	public String getClassNamesRecursive(String ownerName){
