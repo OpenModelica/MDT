@@ -35,6 +35,8 @@
 package org.openmodelica.modelicaml.gen.modelica.cg.helpers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -69,6 +71,7 @@ import org.modelica.ConnectException;
 import org.modelica.OMCProxy;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLOMCMarkerSupport;
 import org.openmodelica.modelicaml.gen.modelica.postactions.PostGenerationForAutomaticBuild;
@@ -346,17 +349,22 @@ public class OMCClassValidator {
 					}
 				}
 				
+				
 				/*
 				 * Load first the code from code-sync folder
-				 * TODO: get the possible list of all contained models? 
 				 */
-				status = proxy.sendExpression("loadFile(\"" + codeSyncFolderPath + "package.mo" + "\")");
+				List<String> filesToLoad = new ArrayList<String>(); 
+				filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(codeSyncFolderPath));
+				for (String path : filesToLoad) {
+					status = proxy.sendExpression("loadFile(\"" + path + "\")");
+				}
 				
 				/*
 				 * Load code from the code-gen folder
 				 */
 				status = proxy.sendExpression("loadFile(\"" + packageMoFilePath + "\")");
 				setLog(status);
+				
 				if (status.contains("error") || status.contains("Error") || status.contains("false")) {
 					ModelicaMLOMCMarkerSupport.createOMCMarker((Model)modelElement, "error", errorString);
 					System.err.println("Cannot find the package " + packageMoFilePath + "!");
