@@ -236,7 +236,7 @@ package org.openmodelica.modelicaml.tabbedproperties.editors.sections;
 //	public void editButtonPressed(){
 //
 //
-//		Shell shell = new Shell();
+//		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //
 //		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 //		IWorkspaceRoot root = workspace.getRoot();
