@@ -113,7 +113,7 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 					
 				} catch (NotFoundException e) {
 					e.printStackTrace();
-					MessageDialog.openError(new Shell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
 				}
 			}
 			

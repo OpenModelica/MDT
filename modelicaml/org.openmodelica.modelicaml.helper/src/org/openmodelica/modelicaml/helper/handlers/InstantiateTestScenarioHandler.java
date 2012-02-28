@@ -113,7 +113,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 				// if there are selected requirements and there are no matched test scenarios for them -> ask user
 				if ( tsc.getSelectedReq()!= null &&  tsc.getSelectedReq().size() > 0 && tsc.getMatchedTS().size() == 0 ) {
 					// stop or continue based on user decision.
-					calceled = !MessageDialog.openQuestion(new Shell(), "Test scenarios search", "No test scenarios were found " +
+					calceled = !MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Test scenarios search", "No test scenarios were found " +
 							"in '" + containingClass.getModel().getName()+ "' that can be used to test all the selected requirements." +
 									"\n\nDo you want to see other test scenarios that exist in the model?" );
 				}
@@ -132,7 +132,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 					notCoveredRequirements.addAll(allRequirements);
 					
 					InstantiateVerificationScenarioDialog dialog = new InstantiateVerificationScenarioDialog(
-							new Shell(), 
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 							containingClass, 
 							tsc.getAllTS(), 
 							tsc.getMatchedTS(),
@@ -155,7 +155,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 				
 			}
 			else {
-				MessageDialog.openInformation(new Shell(), "Test scenarios search", "No test scenarios were found in '" + containingClass.getModel().getName()+ "'" );
+				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Test scenarios search", "No test scenarios were found in '" + containingClass.getModel().getName()+ "'" );
 			}
 		}
 		return null;

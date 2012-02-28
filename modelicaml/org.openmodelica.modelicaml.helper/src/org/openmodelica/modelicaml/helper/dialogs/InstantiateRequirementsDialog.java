@@ -557,7 +557,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 							// Add to list
 							selectedReqList.add((Class) selectCheckBox.getData());
 							reqExpandItem.setImage(SWTResourceManager.getImage(InstantiateRequirementsDialog.class, "/icons/button_ok.png"));
-							//MessageDialog.openInformation(new Shell(), "Added", ((Integer) select.getData()).toString());
+							//MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Added", ((Integer) select.getData()).toString());
 							numberOfInstantiations.setEnabled(true);
 						}
 						else {
@@ -571,7 +571,7 @@ public class InstantiateRequirementsDialog extends Dialog {
 							else {
 								reqExpandItem.setImage(null);
 							}
-							//MessageDialog.openInformation(new Shell(), "Removed", ((Integer) select.getData()).toString());
+							//MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Removed", ((Integer) select.getData()).toString());
 							numberOfInstantiations.setEnabled(false);
 						}
 					}

@@ -49,6 +49,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.umlutils.OpaqueBehaviorUtil;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.Property;
@@ -68,7 +69,7 @@ import org.openmodelica.modelicaml.common.services.UmlServices;
 public class VerificationVerdictElementsGenerator {
 	
 	/** The shell. */
-	private static Shell shell = new Shell();
+	private static Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 	/** The all req evaluated. */
 //	private static String allReqEvaluated = "allRequirementsEvaluated";
@@ -109,7 +110,7 @@ public class VerificationVerdictElementsGenerator {
 	 *            the selected class
 	 */
 	public VerificationVerdictElementsGenerator(final Class selectedClass) { 
-		final Shell shell = new Shell();
+		final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		Boolean go = MessageDialog.openQuestion(shell, "Create Verification Verdict Elements", 
 				"This helper will create or update the following additional elements in the class '"+ selectedClass.getName()+"': " +
 					"\n     - a nested class '"+resultsClassName+"' containing additional variables and behavior"+ 
@@ -203,7 +204,7 @@ public class VerificationVerdictElementsGenerator {
 			for (Property property : invalidReqInstances) {
 				invalidComponentNames = invalidComponentNames + "\n                - '" + property.getName() + "'";
 			}
-			Shell shell = new Shell();
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			MessageDialog.openError(shell, "Error", 
 					"The following requirements do not have the mandatory attribute '"
 					+Constants.propertyName_mStatus+ "' of type 'ModelicaInteger'." +

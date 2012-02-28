@@ -77,7 +77,7 @@ public class VerificationVerdictElementsGeneratorHandler extends AbstractHandler
 		
 		if (selectedElement instanceof Class) {
 			
-			Shell shell = new Shell();
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			Boolean go = MessageDialog.openQuestion(shell, "Please confirm ...", "This helper will create or update the following elements in the class '"+ ((Class) selectedElement).getName()+"': " +
 						"\n     - a nested class '"+VerificationVerdictElementsGenerator.resultsClassName+"' containing additional variables and behavior"+ 
 						"\n     - a component '"+VerificationVerdictElementsGenerator.resultsPropertyName+"' of type '"+VerificationVerdictElementsGenerator.resultsClassName+"'");

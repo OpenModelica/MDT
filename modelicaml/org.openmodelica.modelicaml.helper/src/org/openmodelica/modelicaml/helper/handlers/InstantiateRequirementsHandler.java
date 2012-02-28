@@ -106,7 +106,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 					selectedElement = containingClass;
 				}
 				else {
-					MessageDialog.openInformation(new Shell(), "Linked requirements search", 
+					MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Linked requirements search", 
 							"No requirements, that are referenced by the selected test scenario, are found in the model.");
 				}
 				
@@ -126,7 +126,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 		
 		if (selectedElement instanceof Class) {
 			
-			InstantiateRequirementsDialog dialog = new InstantiateRequirementsDialog(new Shell(), (Class) selectedElement, preselectedList);
+			InstantiateRequirementsDialog dialog = new InstantiateRequirementsDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), (Class) selectedElement, preselectedList);
 			dialog.open();
 			
 			if (dialog.getReturnCode() == 0) {
