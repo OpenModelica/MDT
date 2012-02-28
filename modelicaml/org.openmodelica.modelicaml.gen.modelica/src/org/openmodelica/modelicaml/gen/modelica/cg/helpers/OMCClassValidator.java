@@ -63,6 +63,7 @@ import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
@@ -219,7 +220,7 @@ public class OMCClassValidator {
 
 		}
 		else {
-			MessageDialog.openError(new Shell(), "Model Valdation with OMC", "The select element must be a UML Class! ");
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Model Valdation with OMC", "The select element must be a UML Class! ");
 		}
 	}
 	
@@ -254,7 +255,7 @@ public class OMCClassValidator {
 		// Use this to open a Shell in the UI thread
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				DialogMessage dialog = new DialogMessage(new Shell(), "Check Model in OMC", "Validation result for '"+dotPath_classToBeValidated+"': ", getLog());
+				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Check Model in OMC", "Validation result for '"+dotPath_classToBeValidated+"': ", getLog());
 		        dialog.open();
 			}
 		});
