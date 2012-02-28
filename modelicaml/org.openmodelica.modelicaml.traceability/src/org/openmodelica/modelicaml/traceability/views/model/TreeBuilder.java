@@ -166,7 +166,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 				
 			} catch (NotFoundException e) {
 				e.printStackTrace();
-				MessageDialog.openError(new Shell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
 			}
 		}
 		
@@ -536,7 +536,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			}
 		}
 		else {
-			MessageDialog.openError(new Shell(), "Data Collection Error", "Traceability trees could not be created.");
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Data Collection Error", "Traceability trees could not be created.");
 		}
 	}
 	
