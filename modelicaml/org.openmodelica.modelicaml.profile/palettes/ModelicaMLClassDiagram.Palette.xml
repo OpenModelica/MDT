@@ -1,1 +1,269 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><paletteDefinition><content><drawer iconpath="/icons/drawer.gif" id="drawer_1296650581245" name="Classes"><aspectTool description="Create new Package" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Package.gif" id="clazz.tool.package_1296650636122" name="Package" refToolId="clazz.tool.package"/><aspectTool description="Create a Modelica Class" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Class.gif" id="clazz.tool.class_1296650659919" name="Class" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::ModelicaClass"/></stereotypesToApply></postAction></aspectTool><stack id="Stack_1296650670482"><aspectTool description="Create a Modelica Model" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/model.gif" id="clazz.tool.class_1296650696826" name="Model" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Model"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Modelica Block" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/block.gif" id="clazz.tool.class_1296650702483" name="Block (Class)" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Block"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Modelica Connector" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/connector.gif" id="clazz.tool.class_1296650722593" name="Connector (Class)" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Connector"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Modelica Package" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/package.gif" id="clazz.tool.class_1296650733155" name="Modelica Package (Class)" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::ModelicaPackage"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Modelica Oparator" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/operator.gif" id="clazz.tool.class_1296650765125" name="Operator (Class)" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Operator"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Modelica Record" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/record.gif" id="clazz.tool.class_1296650773422" name="Record (Class)" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Record"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Modelica Type" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/type.gif" id="clazz.tool.primitivetype_1296650778657" name="Type (PrimitiveType)" refToolId="clazz.tool.primitivetype"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Type"/></stereotypesToApply></postAction></aspectTool></stack><aspectTool description="Create a Modelica Enumeration" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Enumeration.gif" id="clazz.tool.enumeration_1296651101274" name="Enumeration" refToolId="clazz.tool.enumeration"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::ModelicaEnumeration"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Calculation Model" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/calculationModel.gif" id="clazz.tool.class_1296651149791" name="Calculation Model" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::CalculationModel"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Requirement" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/requirement.gif" id="clazz.tool.class_1296651194527" name="Requirement" refToolId="clazz.tool.class"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaRequirementConstructs::Requirement"/></stereotypesToApply></postAction></aspectTool><separator id="Separator_1296651222684"/><stack id="Stack_1315987286948"><aspectTool description="Create an element with a stereotype" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Constraint.gif" id="clazz.tool.constraint_1296651515488" name="Assert (Constraint)" refToolId="clazz.tool.constraint"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaBehaviorConstructs::Assert"/></stereotypesToApply></postAction></aspectTool></stack></drawer><drawer iconpath="/icons/drawer.gif" id="drawer_1296651595037" name="Relations"><stack id="Stack_1296651440439"><aspectTool description="Create an Extends Relation" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Generalization.gif" id="clazz.tool.generalization_1296651320499" name="Extends Relation" refToolId="clazz.tool.generalization"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaRelationsConstructs::ExtendsRelation"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create an Extends Primitive Type Relation" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Generalization.gif" id="clazz.tool.generalization_1296651344577" name="Extends Primitive Type Relation" refToolId="clazz.tool.generalization"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaRelationsConstructs::TypeRelation"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a Redeclare Relation" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif" id="clazz.tool.dependency_1296651374844" name="Redeclare Relation" refToolId="clazz.tool.dependency"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaRelationsConstructs::RedeclareRelation"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create an ConstrainedBy Relation" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif" id="clazz.tool.dependency_1296651393641" name="ConstrainedBy Relation" refToolId="clazz.tool.dependency"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create an Partial Derivative Of Function Relation" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif" id="clazz.tool.dependency_1296651409298" name="Partial Derivative Of Function Relation" refToolId="clazz.tool.dependency"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation"/></stereotypesToApply></postAction></aspectTool></stack></drawer><drawer iconpath="/icons/drawer.gif" id="drawer_1296651628600" name="Annotation"><aspectTool description="Create an Annotation" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Comment.gif" id="clazz.tool.comment_1296651482440" name="Annotation" refToolId="clazz.tool.comment"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::ModelicaAnnotationConstructs::Annotation"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Create a comment" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Comment.gif" id="clazz.tool.comment_1296651499722" name="Comment" refToolId="clazz.tool.comment"/><aspectTool description="Creation of a link for comment" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif" id="clazz.tool.link_1315986765005" name="Comment Link" refToolId="clazz.tool.link"/></drawer><drawer iconpath="/icons/drawer.gif" id="drawer_1315987145512" name="Additional Models"><aspectTool description="Relate additional models" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif" id="clazz.tool.dependency_1317118042658" name="Requires" refToolId="clazz.tool.dependency"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::Verification::Requires"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Relate additional models" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif" id="clazz.tool.dependency_1317118051328" name="RequiredFor" refToolId="clazz.tool.dependency"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::Verification::RequiredFor"/></stereotypesToApply></postAction></aspectTool></drawer><drawer iconpath="/icons/drawer.gif" id="drawer_1315987174310" name="Verification Scenario"><aspectTool description="Create an Verification Scenario" iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/calculationModel.gif" id="clazz.tool.class_1296651149791_1317118167649" name="VerificationScenario" refToolId="clazz.tool.class_1296651149791"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::Verification::VerificationScenario"/></stereotypesToApply></postAction></aspectTool><aspectTool description="Relate Verification Scenario to Requirements" iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif" id="clazz.tool.dependency_1317118175304" name="UsedToVerify" refToolId="clazz.tool.dependency"><postAction id="org.eclipse.papyrus.applystereotypeactionprovider"><stereotypesToApply><stereotype stereotypeName="ModelicaML::Verification::UsedToVerify"/></stereotypesToApply></postAction></aspectTool></drawer></content></paletteDefinition>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<paletteDefinition>
+	<content>
+		<drawer iconpath="/icons/drawer.gif" id="drawer_1296650581245"
+			name="Classes">
+			<aspectTool description="Create new Package"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Package.gif"
+				id="clazz.tool.package_1296650636122" name="Package" refToolId="clazz.tool.package" />
+			<aspectTool description="Create a Modelica Class"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Class.gif"
+				id="clazz.tool.class_1296650659919" name="Class" refToolId="clazz.tool.class">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::ModelicaClass" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<stack id="Stack_1296650670482">
+				<aspectTool description="Create a Modelica Model"
+					iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/model.gif"
+					id="clazz.tool.class_1296650696826" name="Model" refToolId="clazz.tool.class">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Model" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+				<aspectTool description="Create a Modelica Block"
+					iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/block.gif"
+					id="clazz.tool.class_1296650702483" name="Block (Class)" refToolId="clazz.tool.class">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Block" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+				<aspectTool description="Create a Modelica Connector"
+					iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/connector.gif"
+					id="clazz.tool.class_1296650722593" name="Connector (Class)"
+					refToolId="clazz.tool.class">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Connector" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+				<aspectTool description="Create a Modelica Package"
+					iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/package.gif"
+					id="clazz.tool.class_1296650733155" name="Modelica Package (Class)"
+					refToolId="clazz.tool.class">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype
+								stereotypeName="ModelicaML::ModelicaClassConstructs::ModelicaPackage" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+				<aspectTool description="Create a Modelica Oparator"
+					iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/operator.gif"
+					id="clazz.tool.class_1296650765125" name="Operator (Class)"
+					refToolId="clazz.tool.class">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Operator" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+				<aspectTool description="Create a Modelica Record"
+					iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/record.gif"
+					id="clazz.tool.class_1296650773422" name="Record (Class)"
+					refToolId="clazz.tool.class">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Record" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+				<aspectTool description="Create a Modelica Type"
+					iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/type.gif"
+					id="clazz.tool.primitivetype_1296650778657" name="Type (PrimitiveType)"
+					refToolId="clazz.tool.primitivetype">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype stereotypeName="ModelicaML::ModelicaClassConstructs::Type" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+			</stack>
+			<aspectTool description="Create a Modelica Enumeration"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Enumeration.gif"
+				id="clazz.tool.enumeration_1296651101274" name="Enumeration"
+				refToolId="clazz.tool.enumeration">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaClassConstructs::ModelicaEnumeration" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create a Calculation Model"
+				iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/calculationModel.gif"
+				id="clazz.tool.class_1296651149791" name="Calculation Model"
+				refToolId="clazz.tool.class">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaClassConstructs::CalculationModel" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create a Requirement"
+				iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/requirement.gif"
+				id="clazz.tool.class_1296651194527" name="Requirement" refToolId="clazz.tool.class">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaRequirementConstructs::Requirement" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<separator id="Separator_1296651222684" />
+			<stack id="Stack_1315987286948">
+				<aspectTool description="Create an element with a stereotype"
+					iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Constraint.gif"
+					id="clazz.tool.constraint_1296651515488" name="Assert (Constraint)"
+					refToolId="clazz.tool.constraint">
+					<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+						<stereotypesToApply>
+							<stereotype stereotypeName="ModelicaML::ModelicaBehaviorConstructs::Assert" />
+						</stereotypesToApply>
+					</postAction>
+				</aspectTool>
+			</stack>
+		</drawer>
+		<drawer iconpath="/icons/drawer.gif" id="drawer_1296651595037"
+			name="Relations">
+			<aspectTool description="Create an Import Relation"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1296651374845" name="Import Relation"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaRelationsConstructs::Import" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create an Extends Relation"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Generalization.gif"
+				id="clazz.tool.generalization_1296651320499" name="Extends Relation"
+				refToolId="clazz.tool.generalization">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaRelationsConstructs::ExtendsRelation" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create an Extends Primitive Type Relation"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Generalization.gif"
+				id="clazz.tool.generalization_1296651344577" name="Extends Primitive Type Relation"
+				refToolId="clazz.tool.generalization">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaRelationsConstructs::TypeRelation" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create a Redeclare Relation"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1296651374844" name="Redeclare Relation"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaRelationsConstructs::RedeclareRelation" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create an ConstrainedBy Relation"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1296651393641" name="ConstrainedBy Relation"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create an Partial Derivative Of Function Relation"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1296651409298" name="Partial Derivative Of Function Relation"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype
+							stereotypeName="ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+		</drawer>
+		<drawer iconpath="/icons/drawer.gif" id="drawer_1296651628600"
+			name="Annotation">
+			<aspectTool description="Create an Annotation"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Comment.gif"
+				id="clazz.tool.comment_1296651482440" name="Annotation" refToolId="clazz.tool.comment">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype stereotypeName="ModelicaML::ModelicaAnnotationConstructs::Annotation" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Create a comment"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Comment.gif"
+				id="clazz.tool.comment_1296651499722" name="Comment" refToolId="clazz.tool.comment" />
+			<aspectTool description="Creation of a link for comment"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.link_1315986765005" name="Comment Link" refToolId="clazz.tool.link" />
+		</drawer>
+		<drawer iconpath="/icons/drawer.gif" id="drawer_1315987145512"
+			name="Additional Models">
+			<aspectTool description="Relate additional models"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1317118042658" name="Requires"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype stereotypeName="ModelicaML::Verification::Requires" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Relate additional models"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1317118051328" name="RequiredFor"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype stereotypeName="ModelicaML::Verification::RequiredFor" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+		</drawer>
+		<drawer iconpath="/icons/drawer.gif" id="drawer_1315987174310"
+			name="Verification Scenario">
+			<aspectTool description="Create an Verification Scenario"
+				iconpath="platform:/plugin/org.openmodelica.modelicaml.profile/resources/icons/icons16/calculationModel.gif"
+				id="clazz.tool.class_1296651149791_1317118167649" name="VerificationScenario"
+				refToolId="clazz.tool.class_1296651149791">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype stereotypeName="ModelicaML::Verification::VerificationScenario" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Relate Verification Scenario to Requirements"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1317118175304" name="UsedToVerify"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype stereotypeName="ModelicaML::Verification::UsedToVerify" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+		</drawer>
+	</content>
+</paletteDefinition>
