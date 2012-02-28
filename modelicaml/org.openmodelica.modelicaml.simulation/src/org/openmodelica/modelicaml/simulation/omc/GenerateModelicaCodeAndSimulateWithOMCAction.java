@@ -74,7 +74,7 @@ package org.openmodelica.modelicaml.simulation.omc;
 //	
 //	private Boolean go = true;
 //	
-//	Shell shell = new Shell();
+//	Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //
 //	
 //	IGenFilter filter = new IGenFilter() {
@@ -136,7 +136,7 @@ package org.openmodelica.modelicaml.simulation.omc;
 //			}
 //		}
 //   
-//	    Shell shell = new Shell();
+//	    Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //	    WizardDialog wizard = new WizardDialog(shell, new SimulationConfigurationWizard(modelElement));
 //	    wizard.open();
 //

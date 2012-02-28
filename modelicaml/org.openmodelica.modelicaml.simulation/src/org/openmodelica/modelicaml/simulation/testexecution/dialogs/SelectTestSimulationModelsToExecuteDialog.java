@@ -159,7 +159,7 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 //			@Override
 //			public void mouseDown(MouseEvent e) {
 //				String infoText = "Data Collection for Simulation Models Generation Log: ";
-//				DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, collectionLog);
+//				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Result", infoText, collectionLog);
 //				dialog.open();
 //			}
 //		});
@@ -347,7 +347,7 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 //			
 //			if (testSceanrio != null) {
 //				String description = createDescription(testSceanrio);
-//				DialogMessage dialog = new DialogMessage(new Shell(), "Test Simulation Model: Details", 
+//				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Test Simulation Model: Details", 
 //						"Details of the selected combination of system model and test scenario:", 
 //						description);
 //				dialog.open();

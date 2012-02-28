@@ -75,6 +75,7 @@ import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
@@ -177,7 +178,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			
 			org.eclipse.emf.common.util.URI chainURI = null;
 			
-			boolean generateCode = MessageDialog.openQuestion(new Shell(), 
+			boolean generateCode = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 					"Save Model and Generate Modelica Code?", 
 					"Save the ModelicaML model and generate Modelica code before starting the verification models execution?");
 			
@@ -240,7 +241,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 				job.schedule();	// run the chain and models execution
 			}
 			else {
-				MessageDialog.openError(new Shell(), "Error", "Could not save the model and load the generation chain...");
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not save the model and load the generation chain...");
 			}
 		}
 		
@@ -253,7 +254,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		ElementsCollector ec = new ElementsCollector();
 		ec.collectElementsFromModel(rootModel, Constants.stereotypeQName_VerificationModel);
 		
-		SelectTestSimulationModelsToExecuteDialog dialog = new SelectTestSimulationModelsToExecuteDialog(new Shell(), ec.getElements());
+		SelectTestSimulationModelsToExecuteDialog dialog = new SelectTestSimulationModelsToExecuteDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), ec.getElements());
 		dialog.open();
 		
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
@@ -293,7 +294,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
  		Display.getDefault().asyncExec(new Runnable() {
  			public void run() {
 
-// 				DialogMessageWithHTMLBrowser dialog = new DialogMessageWithHTMLBrowser(new Shell(), 
+// 				DialogMessageWithHTMLBrowser dialog = new DialogMessageWithHTMLBrowser(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 // 						"Test Execution Report " + TestExecutionServices.getTime(null), reportFileAbsolutePath);
 // 				dialog.open();
  				

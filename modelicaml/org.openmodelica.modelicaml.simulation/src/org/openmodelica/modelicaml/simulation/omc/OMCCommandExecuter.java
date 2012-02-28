@@ -162,7 +162,7 @@ public class OMCCommandExecuter {
 			if (status.contains("error") || status.contains("imulation failed")) {
 				setErrorString(status);
 				MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "Simulation of the class '"+ ((NamedElement)elt).getName() +"' failed." + "\n" + status);
-//				DialogMessage dialog = new DialogMessage(new Shell(), "Errors", "Errors occured during simulation", status);
+//				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Errors", "Errors occured during simulation", status);
 //				dialog.open();
 			}
 			else  {
@@ -179,7 +179,7 @@ public class OMCCommandExecuter {
 //				}
 			}
 			else {
-//				MessageDialog.openInformation(new Shell(), "Nothing to plot", "No variables were selected to be plotted after simulation.");
+//				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Nothing to plot", "No variables were selected to be plotted after simulation.");
 			}
 
 		} catch (ConnectException e) {

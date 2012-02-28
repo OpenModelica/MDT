@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
@@ -242,7 +243,7 @@ public class SimulationConfigurationWizardPage extends WizardPage {
 						    				  plotVarPathList.add(data.toString());
 										}
 						    			  else {
-						    				  Shell shell = new Shell();
+						    				  Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 						    				  MessageDialog.openError(shell, "Selection Validation", "This selection is not valid.\nYou can only select primitive variables (leaves of this tree).");
 						    				  ((TreeItem)event.item).setChecked(false);
 						    			  }

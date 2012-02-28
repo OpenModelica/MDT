@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction;
@@ -90,7 +91,7 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				decodedLocation = URLDecoder.decode(location, "UTF-8").trim();
 			} catch (UnsupportedEncodingException e) {
 //				e.printStackTrace();
-				MessageDialog.openError(new Shell(), "Invalid Browser Link", "It is not possible to decode the link " + location);
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid Browser Link", "It is not possible to decode the link " + location);
 			}
 			
 			if (decodedLocation != null && decodedLocation.trim().startsWith("locate")) {
@@ -142,7 +143,7 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 		});
 
 	    } catch (SWTError e) {
-          MessageBox messageBox = new MessageBox(new Shell(), SWT.ICON_ERROR | SWT.OK);
+          MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
           messageBox.setMessage("Browser cannot be initialized.");
           messageBox.setText("Exit");
           messageBox.open();

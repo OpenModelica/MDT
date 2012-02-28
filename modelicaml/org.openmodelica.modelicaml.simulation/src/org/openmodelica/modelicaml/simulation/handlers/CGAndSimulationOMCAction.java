@@ -120,7 +120,7 @@ public class CGAndSimulationOMCAction extends AbstractHandler {
 	private Boolean go = true;
 	
 	/** The shell. */
-	Shell shell = new Shell();
+	Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	
 	
 	/** The filter. */
@@ -218,7 +218,7 @@ public class CGAndSimulationOMCAction extends AbstractHandler {
 			}
 		}
 		
-		Shell shell = new Shell();
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	    WizardDialog wizard = new WizardDialog(shell, new SimulationConfigurationWizard(umlElement));
 	    wizard.open();
 

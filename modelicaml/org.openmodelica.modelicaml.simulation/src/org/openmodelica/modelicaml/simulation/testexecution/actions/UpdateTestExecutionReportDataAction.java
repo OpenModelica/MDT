@@ -71,7 +71,7 @@ public class UpdateTestExecutionReportDataAction implements
 			}
 		}
 		else {
-			MessageDialog.openError(new Shell(), "Error Occured", "Could not access the verification sessioin report files.");
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error Occured", "Could not access the verification sessioin report files.");
 		}
 	}
 

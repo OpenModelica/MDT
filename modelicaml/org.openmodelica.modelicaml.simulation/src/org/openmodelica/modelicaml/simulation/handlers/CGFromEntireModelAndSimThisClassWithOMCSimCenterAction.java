@@ -110,7 +110,7 @@
 //	private String modelName = null;
 //
 //	/** The shell. */
-//	Shell shell = new Shell();
+//	Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //	
 //	
 //	/** The filter. */

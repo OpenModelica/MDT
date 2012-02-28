@@ -269,7 +269,7 @@ public class ExecuteTestsAction implements
 						
 		}
 		else {
-			MessageDialog.openError(new Shell(), "Error", "Could not access the verification session files. ");
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not access the verification session files. ");
 		}
 	}
 
