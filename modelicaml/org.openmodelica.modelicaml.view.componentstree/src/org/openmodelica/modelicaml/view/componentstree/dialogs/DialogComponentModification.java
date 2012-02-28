@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
@@ -261,7 +262,7 @@ public class DialogComponentModification extends Dialog {
 
     	// TODO: replace this list selection dialog by a check tree that will also include the type compatibility information 
     	
-    	final ElementListSelectionDialog lsd = new ElementListSelectionDialog(new Shell(), new LabelProvider() );	    
+    	final ElementListSelectionDialog lsd = new ElementListSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), new LabelProvider() );	    
 		
     	lsd.setTitle(title + " (" + listOfDotPath.size() + ")");
 		lsd.setMessage(listOfDotPath.size() + " variables were found in this class. " + msg);

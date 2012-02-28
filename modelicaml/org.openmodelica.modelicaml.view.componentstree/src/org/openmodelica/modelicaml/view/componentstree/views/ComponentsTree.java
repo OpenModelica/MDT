@@ -688,7 +688,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						String message = "Are you sure you want to delete all modifications from the following first-level components of " + "'" + item.getName() + "'?" 
 								+ "\n\n" + childrenNameList
 								+ "\nThis action cannot be undone.";
-						Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+						Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 						
 						if (go) {
 							for (int i = 0; i < chldren.length; i++) {
@@ -714,7 +714,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								+ "\n\n"
 								+ modListString 
 								+ "\nThis action cannot be undone.";
-						Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+						Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 						if (go) {
 							ModificationManager.deleteAllComponentModifications(item.getUmlElement());
 							viewer.refresh();
@@ -764,7 +764,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					UIjob.schedule();
 				}
 				else {
-					MessageDialog.openError(new Shell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
 				}
 			}
 		};
@@ -784,7 +784,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					}
 				}
 				else {
-					MessageDialog.openError(new Shell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
 				}
 			}
 		};
@@ -894,21 +894,21 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								}
 								
 								// show results.
-								DialogMessage dialog = new DialogMessage(new Shell(), "Result", infoText, message);
+								DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Result", infoText, message);
 								dialog.open();
 								
 							} else {
 								showMessage("Result", "No updates were performed.");
 							}
 							
-							new ProgressMonitorDialog(new Shell()).run(true, true, vc);
+							new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true, vc);
 						} catch (InvocationTargetException e) {
 							e.printStackTrace();
-							MessageDialog.openError(new Shell(), "Value Bindigns Geneartion Process Error", 
+							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Value Bindigns Geneartion Process Error", 
 									"It was not possible to invoce the value bindings generation.");
 						} catch (InterruptedException e) {
 							e.printStackTrace();
-							MessageDialog.openError(new Shell(), "Value Bindigns Geneartion Process Abort", 
+							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Value Bindigns Geneartion Process Abort", 
 									"The generation of value bindings was canceled.");
 						}
 					}
@@ -1252,7 +1252,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					
 					if (modificationStringDialog.getReturnCode() == 0) { // OK button pressed
 						String string = modificationStringDialog.getValue();
-						Shell shell = new Shell();
+						Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 						
 						if ( string.trim().equals("")) {
 							// Delete modification in items firstLevelComponent
@@ -1375,7 +1375,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					String title = "Delete Reference";
 					String message = "Are you sure you want to delete the binding for " + "'" + item.getName() + "'?" +
 							"\nThis action cannot be undone.";
-					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+					Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 
 					if (go) {
 						// Delete modification
@@ -1444,7 +1444,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					String title = "Delete '" + item.getName() + "' from class '_inputs'";
 					String message = "Are you sure you want to delete " + "'" + item.getName() + "' from class '_inputs'?" +
 							"\nThis action cannot be undone.";
-					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+					Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 
 					if (go) {
 						ModificationManager.isUsedInClassInputs_removeOption(selectedClass, item.getFirstLevelComponent(), item.getProperty(), item.getDotPathWithoutFirstLevelComponent(), item.getDotPath(), true);
@@ -1490,7 +1490,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					String title = "Delete '" + item.getName() + "' from class '_outputs'";
 					String message = "Are you sure you want to delete " + "'" + item.getName() + "' from class '_outputs'?" +
 							"\nThis action cannot be undone.";
-					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+					Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 
 					if (go) {
 						ModificationManager.isUsedInClassOutputs_removeOption(selectedClass, item.getProperty(), item.getDotPath(), true);
@@ -1594,7 +1594,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						// if selected test scenarios were instantiated
 						if (tsi.instantiatedElements != null && tsi.instantiatedElements.size() > 0) {
 							
-							Boolean updateBindings = MessageDialog.openQuestion(new Shell(), 
+							Boolean updateBindings = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 									"Update bindings", "Do you want to update bindings in '" + root.getName() + "'?");
 							
 							if (updateBindings) {
@@ -1645,7 +1645,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					String title = "Delete requirements test verdict";
 					String message = "Are you sure you want to delete the requirements test verdict elements?" +
 							"\nThis action cannot be undone.";
-					Boolean go = MessageDialog.openQuestion(new Shell(), title, message);
+					Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 
 					if (go) {
 						VerificationVerdictElementsGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);

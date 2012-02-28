@@ -19,6 +19,7 @@ import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
@@ -44,7 +45,7 @@ public class ComponentModificationValidator {
 	private PropertiesSectionXtextEditorHelper editor;
 	
 	// Composite used temporary for instantiating editors that are never shown ...
-	private Composite tempComposite = new Composite(new Shell(), SWT.NONE);
+	private Composite tempComposite = new Composite(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.NONE);
 	
 	private ExtendedUmlModel umlModel;
 	private IProject iProject;
