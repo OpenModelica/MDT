@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
@@ -128,7 +129,7 @@ private EObject selectedElement = null;
 				if (useMultipleItemsDialogForCreatingNewElements) { // with dialog
 					
 					// prepare dialog settings
-					Shell parentShell = new Shell();
+					Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 					String dialogTitle = commandTitle;
 					String dialogMessage = "Define name(s) for the requirement(s) to be created.";
 					Element parentElement = (Element)selectedElement;
@@ -214,6 +215,11 @@ private EObject selectedElement = null;
 				statusAttribute.setValue(violatedAttributeStereotype, "causality", "output");
 			}
 			
+			Comment comment = statusAttribute.createOwnedComment();
+			String string = "This property indicates the violation monitoring status. The values mean the following: " +
+					"0=not evaluated, 1=evaluated and NOT violated, 2=evaluated and violated.";
+			comment.setBody(string);
+			
 //			Property violatedAttribute = element.getOwnedAttribute(Constants.propertyName_violated, booleanType, true, UMLPackage.Literals.PROPERTY, true);
 //			Stereotype violatedAttributeStereotype = violatedAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
 //			if (violatedAttribute.getAppliedStereotype(violatedAttributeStereotype.getQualifiedName()) == null) {
@@ -231,7 +237,7 @@ private EObject selectedElement = null;
 			// apply ModelicaML stereotype
 //			if (stereotype == null || evaluatedAttributeStereotype == null || violatedAttributeStereotype == null) {
 			if (stereotype == null || statusAttribute == null ) {
-				Shell shell = new Shell();
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 				MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 			}
 			else {

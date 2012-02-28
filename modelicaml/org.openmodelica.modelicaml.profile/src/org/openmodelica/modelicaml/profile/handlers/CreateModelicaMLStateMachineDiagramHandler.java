@@ -59,6 +59,7 @@ import org.eclipse.papyrus.diagram.statemachine.providers.ElementInitializers;
 import org.eclipse.papyrus.diagram.statemachine.providers.UMLElementTypes;
 import org.eclipse.papyrus.umlutils.NamedElementUtil;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.BehavioredClassifier;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Region;
@@ -179,7 +180,7 @@ public class CreateModelicaMLStateMachineDiagramHandler extends
 				stateMachine.applyStereotype(s);
 			}
 			else {
-				Shell shell = new Shell();
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 				MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype ModelicaMLStateMachine to " + stateMachine.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 
 			}

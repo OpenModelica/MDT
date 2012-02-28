@@ -135,7 +135,7 @@ private Element createdElement = null;
 				
 				// apply ModelicaML stereotype
 				if (stereotype == null) {
-					Shell shell = new Shell();
+					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 					MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + clazz.getName() + ". Please make sure that Value Bindings  Testing profile is applied to the top-level model/package.");
 				}
 				else {

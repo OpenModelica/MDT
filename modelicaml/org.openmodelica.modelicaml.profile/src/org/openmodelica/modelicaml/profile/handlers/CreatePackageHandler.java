@@ -116,7 +116,7 @@ private EObject selectedElement = null;
 					if (useMultipleItemsDialogForCreatingNewElements) {
 						
 						// prepare dialog settings
-						Shell parentShell = new Shell();
+						Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 						String dialogTitle = commandTitle;
 						//String dialogMessage = "Define name(s) for the package(s) that will be created inside the '" + ((NamedElement)selectedElement).getName() + "' " + ((NamedElement)selectedElement).eClass().getName();
 						String dialogMessage = "Define name(s) for the package(s) to be created.";

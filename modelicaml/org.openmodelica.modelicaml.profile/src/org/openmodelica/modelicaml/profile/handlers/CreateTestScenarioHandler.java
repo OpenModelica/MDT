@@ -132,7 +132,7 @@ private EObject selectedElement = null;
 				if (useMultipleItemsDialogForCreatingNewElements) { // with dialog
 					
 					// prepare dialog settings
-					Shell parentShell = new Shell();
+					Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 					String dialogTitle = commandTitle;
 					String dialogMessage = "Define name(s) for the model(s) to be created.";
 					Element parentElement = (Element)selectedElement;
@@ -212,7 +212,7 @@ private Class createElement(String name){
 			
 			// apply ModelicaML stereotype
 			if (stereotype == null || stereotype2 == null) {
-				Shell shell = new Shell();
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 				MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 			}
 			else {

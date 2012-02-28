@@ -45,6 +45,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.papyrus.diagram.activity.CreateActivityDiagramCommand;
 import org.eclipse.papyrus.umlutils.NamedElementUtil;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.BehavioredClassifier;
 import org.eclipse.uml2.uml.Package;
@@ -125,7 +126,7 @@ public class CreateModelicaMLConditionalEquationsDiagramHandler extends
 				behavior.applyStereotype(s);
 			}
 			else {
-				Shell shell = new Shell();
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 				MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype 'ConditionalEquations(Diagram)' to " + behavior.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 
 			}

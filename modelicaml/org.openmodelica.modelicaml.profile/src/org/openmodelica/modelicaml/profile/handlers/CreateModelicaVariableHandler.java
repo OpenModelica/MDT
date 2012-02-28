@@ -130,7 +130,7 @@ private EObject selectedElement = null;
 					if (useMultipleItemsDialogForCreatingNewElements) {
 						
 						// prepare dialog settings
-						Shell parentShell = new Shell();
+						Shell parentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 						String dialogTitle = commandTitle;
 						String dialogMessage = "Define name(s) for the variable(s) to be created.";
 						Element parentElement = (Element)selectedElement;
@@ -171,7 +171,7 @@ private EObject selectedElement = null;
 								stereotype = element.getApplicableStereotype(stereotypePath+"::"+stereotypeName);
 								// apply ModelicaML stereotype
 								if (stereotype == null && element != null) {
-									Shell shell = new Shell();
+									Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 									MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 								}
 								else {
@@ -190,7 +190,7 @@ private EObject selectedElement = null;
 						stereotype = element.getApplicableStereotype(stereotypePath+"::"+stereotypeName);
 						// apply ModelicaML stereotype
 						if (stereotype == null && element != null) {
-							Shell shell = new Shell();
+							Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 							MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + element.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 						}
 						else {
@@ -199,7 +199,7 @@ private EObject selectedElement = null;
 						//**************************************
 					}
 					
-//					Shell shellDialog = new Shell();
+//					Shell shellDialog = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //					shellDialog.setSize(600, 350);
 //					
 //					TwoColumnTextAndComboDialog dialog = new TwoColumnTextAndComboDialog(shellDialog, "Create Variables Dialog", "Define the names and the type of variables to be created:", "variable", null);
@@ -220,7 +220,7 @@ private EObject selectedElement = null;
 //							stereotype = p.getApplicableStereotype(stereotypePath+"::"+stereotypeName);
 //							// apply ModelicaML stereotype
 //							if (stereotype == null && p != null) {
-//								Shell shell = new Shell();
+//								Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 //								MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotypeName +" to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 //							}
 //							else {
