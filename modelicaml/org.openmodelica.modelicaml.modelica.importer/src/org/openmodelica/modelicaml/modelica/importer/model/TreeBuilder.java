@@ -1249,7 +1249,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			}
 		}
 		else {
-//			MessageDialog.openError(new Shell(), "OMC Communication Error", "Cannot access the Papyrus UML model.");
+//			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "OMC Communication Error", "Cannot access the Papyrus UML model.");
 			System.err.println("Cannot access the Papyrus UML model");
 		}
 		

@@ -30,6 +30,7 @@ import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
@@ -91,7 +92,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 		else {
 			String title = "ModelicaML Proxies Synchronization Error";
 			String message = "Could access the ModelicaML model or it its editing domain.";
-			MessageDialog.openError(new Shell(), title, message);
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 		}
 		
 		return null;
@@ -120,7 +121,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 	        				message = message + "Number of loaded components: " + loadedComponentsNumber + "\n";
 	        				message = message + "Number of loaded extends relations: " + loadedExtendsRelationsNumber + "\n";
 	        				
-	        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Model Loading Report", null, message);
+	        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Loading Report", null, message);
 	        				dialog.open();
         				}
         			}
@@ -138,7 +139,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 	private void actionLoad(){
 		final UmlModel umlModel = UmlUtils.getUmlModel();
 		if (umlModel == null) {
-			MessageDialog.openError(new Shell(), 
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 					"ModelicaML Model Editing Domain Access Error", 
 					"Cannot acceess the ModelicaML model or its editing domain. " +
 					"Please make sure that the ModelicaML model is open in the active editor.");
@@ -153,7 +154,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						
 						// ask to set options
-						SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(new Shell());
+						SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 						dialog.open();
 						int result = dialog.getReturnCode();
 						if (result == IDialogConstants.OK_ID) {
@@ -216,12 +217,12 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						}
 					}
 					else {
-						MessageDialog.openError(new Shell(), "Loading error", 
+						MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Loading error", 
 								"Could not access the Papyrus editing domain and the uml model.");
 					}
 					
 				} catch (ServiceException e) {
-					MessageDialog.openError(new Shell(), 
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 							"ModelicaML Model Editing Domain Access Error", 
 						"Cannot acceess the ModelicaML model or its editing domain. " +
 						"Please make sure that the ModelicaML model is open in the active editor.");
@@ -229,7 +230,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 					e.printStackTrace();
 				}
 			} catch (NotFoundException e) {
-				MessageDialog.openError(new Shell(), 
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 						"ModelicaML Model Access Error", 
 					"Cannot acceess the ModelicaML model. " +
 					"Please make sure that the ModelicaML model is open in the active editor.");
@@ -332,7 +333,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
         					message = message + logEntry + "\n"; 
         				}
         				
-        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Model Proxies Synchronization Report", null, message);
+        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Proxies Synchronization Report", null, message);
         				dialog.open();
         				
         				
@@ -433,7 +434,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						invalideClassesString = invalideClassesString  + "             -" + invalideClass.getQName() + "\n";
 					}
 					message = message + invalideClassesString;
-					MessageDialog.openError(new Shell(), title, message);
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 				}
 			}
 			
@@ -453,7 +454,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 			else {
 				String title = "ModelicaML Proxies Synchronization Error";
 				String message = "Could access the ModelicaML model or its editing domain.";
-				MessageDialog.openError(new Shell(), title, message);
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 			}
 		}
       
@@ -482,7 +483,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
     					treeBuilder.validateProxies(iProject);
     				}
     				else {
-    					MessageDialog.openError(new Shell(), 
+    					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
     						"ModelicaML Model Access Error", 
     						"Cannot acceess the ModelicaML model. " +
     						"Please make sure that the ModelicaML model is open in Papyrus editor.");

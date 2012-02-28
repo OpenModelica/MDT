@@ -129,7 +129,7 @@ public class DropListener extends ViewerDropAdapter {
 //				}
 //				
 //				ElementSelectionDialog dialog = new ElementSelectionDialog(
-//						new Shell(), 
+//						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 //						SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 //						title, 
 //						message, 

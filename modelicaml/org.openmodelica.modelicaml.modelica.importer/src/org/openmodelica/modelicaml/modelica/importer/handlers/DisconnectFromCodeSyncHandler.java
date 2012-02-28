@@ -43,7 +43,7 @@ public class DisconnectFromCodeSyncHandler extends AbstractHandler {
 				"\n\nYou can connect this sub-tree to code synchronization again at any time." +
 				"\n\nDo you want to proceed?";
 		
-		boolean go = MessageDialog.openQuestion(new Shell(), "Disconnect From Code Synchronization Inoformation", msg);
+		boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Disconnect From Code Synchronization Inoformation", msg);
 		if (go) {
 			selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 			
@@ -51,7 +51,7 @@ public class DisconnectFromCodeSyncHandler extends AbstractHandler {
 				unapplyProxyStereotype((NamedElement) selectedElement);
 			}
 			else {
-				MessageDialog.openError(new Shell(), "Disconnect from Code Synchronization Error", "Not a valid selection.");
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Disconnect from Code Synchronization Error", "Not a valid selection.");
 			}
 		}
 		return null;

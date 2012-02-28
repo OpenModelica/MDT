@@ -555,7 +555,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 				else {
 					addToLog("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
 //					System.err.println("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
-//					MessageDialog.openError(new Shell(), "Error", "Could not apply ModelicaML stereotype '"+treeObject.getClassRestriction()+"'. Please make sure that the ModelicaML profile is applied.");
+//					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not apply ModelicaML stereotype '"+treeObject.getClassRestriction()+"'. Please make sure that the ModelicaML profile is applied.");
 				}
 			}
 			
@@ -1769,7 +1769,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 							else {
 								addToLog("Could not apply the 'ModelicaModelProxy' stereotype. Please make sure that the ModelicaML profile is applied.");
 //								System.err.println("Could not apply the 'ModelicaModelProxy' stereotype. Please make sure that the ModelicaML profile is applied.");
-//								MessageDialog.openError(new Shell(), "Error", "Could not apply the <<ModelicaModelProxy>> stereotype. Please make sure that the ModelicaML profile is applied.");
+//								MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not apply the <<ModelicaModelProxy>> stereotype. Please make sure that the ModelicaML profile is applied.");
 							}
 						}
 					}
@@ -1786,7 +1786,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			editingDomain.getCommandStack().execute(cc);
 		}
 		else {
-//			MessageDialog.openError(new Shell(), "Error", "Cannot access the ModelicaML root element.");
+//			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Cannot access the ModelicaML root element.");
 			addToLog("Cannot access the ModelicaML root element.");
 //			System.err.println("Cannot access the ModelicaML root element.");
 

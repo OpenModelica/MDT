@@ -635,7 +635,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				
 				//******************************** Using ProgressMonitor
 //				try {
-//					new ProgressMonitorDialog(new Shell()).run(true, true, treeBuilder);
+//					new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true, treeBuilder);
 //
 //					Object[] expandedElements = viewer.getExpandedElements();
 //					TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
@@ -722,7 +722,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //					UIjob.schedule();
 //				}
 //				else {
-//					MessageDialog.openError(new Shell(), "Invocation error", "Could not load Modelica models.");
+//					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invocation error", "Could not load Modelica models.");
 //				}
 			}
 		};
@@ -1001,7 +1001,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				
 				//********** with ProgressMonitor
 //				try {
-//					new ProgressMonitorDialog(new Shell()).run(true, true,
+//					new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true,
 //							new IRunnableWithProgress() {
 //								@Override
 //								public void run(final IProgressMonitor monitor)
@@ -1067,7 +1067,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //					
 //					if (modelicaRoot instanceof Element && treeObject instanceof TreeParent) {
 //						try {
-//							new ProgressMonitorDialog(new Shell()).run(true, true, ec);
+//							new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true, ec);
 //							ec.createClasses((Element)modelicaRoot, (TreeParent)treeObject, false);
 //						} catch (InvocationTargetException e) {
 //							// TODO Auto-generated catch block
