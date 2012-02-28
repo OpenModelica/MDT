@@ -65,7 +65,7 @@ public class OMCCommandExecuter {
 	/** The elt. */
 	private Element elt;
 	
-	private List<String> foldersToLoad;
+	private List<String> filesToLoad;
 //	private String modelFilePath;
 	private String modelElementQualifiedName;
 	private String plotCommand;
@@ -88,12 +88,12 @@ public class OMCCommandExecuter {
 	 *            the sim par
 	 */
 	public OMCCommandExecuter(Element elt, 
-								List<String> foldersToLoad, 
+								List<String> filesToLoad, 
 								String modelElementQualifiedName, 
 								String plotCommand, 
 								String simPar) {
 		
-		this.foldersToLoad = foldersToLoad;
+		this.filesToLoad = filesToLoad;
 		this.modelElementQualifiedName = modelElementQualifiedName;
 		this.plotCommand = plotCommand;
 		this.simPar = simPar;
@@ -134,8 +134,8 @@ public class OMCCommandExecuter {
 				MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "No connection to OMC! ");
 			}
 			
-			for (String folderPath : foldersToLoad) {
-				status = proxy.sendExpression("loadFile(\"" + folderPath + "package.mo"+ "\")");
+			for (String path : filesToLoad) {
+				status = proxy.sendExpression("loadFile(\"" + path + "\")");
 				
 //				if (status.contains("error") || status.contains("false")) {
 //					System.err.println("Cannot find the package " + folderPath + "/package.mo"+ "!");

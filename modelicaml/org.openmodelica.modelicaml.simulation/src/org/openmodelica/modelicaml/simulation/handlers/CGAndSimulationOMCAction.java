@@ -181,7 +181,7 @@ public class CGAndSimulationOMCAction extends AbstractHandler {
 		String temp_modelElementWoSpecChar = StringUtls.replaceSpecCharExceptThis(modelElementQualifiedName, "::");
 		final String modelElementDotPath = temp_modelElementWoSpecChar.replaceAll("::", ".");
 		
-		final String packageMoFilePath = projectPath+"/code-gen/"+ StringUtls.replaceSpecChar(umlElement.getModel().getName()) + "/" +"package.mo";
+		final String packageMoFilePath = projectPath+"/"+Constants.folderName_code_gen+"/"+ StringUtls.replaceSpecChar(umlElement.getModel().getName()) + "/" +"package.mo";
 	
 		final String codeGenFolderPath = projectPath + "/" + Constants.folderName_code_gen + "/";
 		final String codeGenModelFolderPath = codeGenFolderPath + StringUtls.replaceSpecChar(umlElement.getModel().getName()) + "/";
@@ -244,11 +244,13 @@ public class CGAndSimulationOMCAction extends AbstractHandler {
 						runchain(monitor);
 					}
 					
-					List<String> foldersToLoad = new ArrayList<String>();
-					foldersToLoad.add(codeGenModelFolderPath);
-					foldersToLoad.add(codeSyncFolderPath);
+					List<String> filesToLoad = new ArrayList<String>();
+					// files from the code-sync folder
+					filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(codeSyncFolderPath));
+					// package.mo file from the code-gen folder
+					filesToLoad.add(packageMoFilePath);
 					
-					new OMCCommandExecuter(modelElement, foldersToLoad, modelElementDotPath, plotCommand, simPar);
+					new OMCCommandExecuter(modelElement, filesToLoad, modelElementDotPath, plotCommand, simPar);
 					
 					return Status.OK_STATUS;
 				}
