@@ -82,7 +82,8 @@ public class ExecuteTestsAction implements
 						monitor.beginTask("Executing verification models ...", 100);
 						{
 							TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
-							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "/tmp").replaceAll("\\\\", "/"); 
+//							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "/tmp").replaceAll("\\\\", "/"); 
+							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "tmp").replaceAll("\\\\", "/");
 							File sessionFolder = new File(pathToSession);
 							
 							/*
