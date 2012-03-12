@@ -163,18 +163,18 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		
 		// set the list of simulation models to be executed.
 		EObject rootModel = null;
-
+		boolean someModelsSelected = false;
 		try {
 			rootModel = umlModel.lookupRoot();
 			if (rootModel instanceof Model) {
-				setTestModels((Element) rootModel);
+				someModelsSelected = setTestModels((Element) rootModel);
 			}
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		if (rootModel != null && VerificationExecutionServices.verificationModels != null && VerificationExecutionServices.verificationModels.size() > 0) {
+		if (someModelsSelected && rootModel != null && VerificationExecutionServices.verificationModels != null && VerificationExecutionServices.verificationModels.size() > 0) {
 			
 			org.eclipse.emf.common.util.URI chainURI = null;
 			
@@ -243,14 +243,14 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			else {
 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not save the model and load the generation chain...");
 			}
+			CompoundCommand cc = new CompoundCommand("Verification Models Data Generation");
+			return (cc.unwrap());
 		}
-		
-		CompoundCommand cc = new CompoundCommand("Verification Models Data Generation");
-		return (cc.unwrap());
+		return null;
 	}
 
 	
-	public void setTestModels(Element rootModel){
+	public boolean setTestModels(Element rootModel){
 		ElementsCollector ec = new ElementsCollector();
 		ec.collectElementsFromModel(rootModel, Constants.stereotypeQName_VerificationModel);
 		
@@ -266,7 +266,10 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 					VerificationExecutionServices.verificationModels.add((NamedElement) element);
 				}
 			}
+			
+			return true;
 		}
+		return false;
 	}
 	
 	JobChangeAdapter jobChangeAdapter = new JobChangeAdapter() {
