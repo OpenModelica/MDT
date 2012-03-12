@@ -736,7 +736,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					int mode = Constants.MODE_ADD_CLIENT;
 					
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+							//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), // don't use this because it will block the window underneath.
+							new Shell(),
 							SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 							title, 
 							message, 
@@ -778,7 +779,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 //					String mode = "addValueProvider";
 					int mode = Constants.MODE_ADD_PROVIDER;
 					ElementSelectionDialog dialog = new ElementSelectionDialog(
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+							//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), // don't use this because it will block the window underneath.
+							new Shell(),
 							SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 							title, 
 							message, 

@@ -146,7 +146,8 @@ public class DropListener extends ViewerDropAdapter {
 				}
 				
 				ElementSelectionDialog dialog = new ElementSelectionDialog(
-						shell, 
+						//shell, // don't do this because it will block the window underneath
+						new Shell(),
 						SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectOnly.png"), 
 						title, 
 						message, 
