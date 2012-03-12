@@ -106,7 +106,7 @@ public class ExecuteSimulation {
 	}
 
 	private static String check_and_simulate(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
-
+		String result = "";
 		//Check Model
 		for(TestModel model : testSessionObj.testModels){
 			
@@ -114,27 +114,29 @@ public class ExecuteSimulation {
 				omcc.quit();
 			}
 			else {
-//				monitor.subTask("Simulating: " + model.qualifiedName); [20120127 TODO uncomment monitor]
+				monitor.subTask("Simulating: " + model.qualifiedName); 
 				omcReturnString =  omcc.checkModel(model.qualifiedName);
 				
 				if(!omcReturnString.toLowerCase().contains("successfully") || omcReturnString.toLowerCase().contains("failed")){
 					String errorString = omcc.getErrorString();
-					omcc.quit();
-					return "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
+					//omcc.quit();
+					//return "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
+					result = result + "\n" + "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
 				}
 			
-			//Simulate model
+				//Simulate model
 				omcReturnString = omcc.simulate(model.qualifiedName, model.start, model.stop, model.numberOfIntervals, model.tolerance, model.solver, model.outputFormat);
 				
 				if(omcReturnString.contains("{\"\",\"\"}") || omcReturnString.contains("Error")){
-//				System.err.println("buildModel ERROR");
+//					System.err.println("buildModel ERROR");
 					String errorString = omcc.getErrorString();
-					omcc.quit();
-					return "buildModel: " + omcReturnString  + "\nErrorString: " + errorString;
+					//omcc.quit();
+					//return "buildModel: " + omcReturnString  + "\nErrorString: " + errorString;
+					result = result + "\n" + "buildModel: " + omcReturnString  + "\nErrorString: " + errorString;
 				}
 			}
 		}
-		return "";
+		return result;
 	}
 
 //	/**

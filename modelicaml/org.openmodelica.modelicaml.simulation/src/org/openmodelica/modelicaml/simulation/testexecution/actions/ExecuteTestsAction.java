@@ -291,12 +291,19 @@ public class ExecuteTestsAction implements
  				
 				/* open log and the report afterwards 
 				 */
-				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+				DialogMessage logDialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 						"Models Execution Report", infoText, simulationReport, errorsExist);
-				dialog.open();
+				logDialog.open();
  				
  				boolean open = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Open Report?", "The simulation is completed. Do you want to see the report?");
  				if (open) {
+ 					
+ 					// close previous dialog first
+ 					if (logDialog != null) {
+ 						logDialog.close();
+					}
+ 					
+ 					// run open report action
  	            	OpenTestExecutionReportAction openReport = new OpenTestExecutionReportAction();
  	            	
  	            	openReport.setPath(pathToSession + "report-gen/report.html");
