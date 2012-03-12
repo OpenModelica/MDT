@@ -15,6 +15,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
+import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
@@ -542,6 +543,30 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 			simulationModel.setValue(sSimulation, Constants.propertyName_numberOfIntervals, numberOfIntervals);
 			Object tolerance = testScenarioModel.getValue(sTestScenario, Constants.propertyName_tolerance);
 			simulationModel.setValue(sSimulation, Constants.propertyName_tolerance, tolerance);
+			
+			Comment annotationExperimentComment = simulationModel.createOwnedComment();
+			Stereotype annotationStereotype = annotationExperimentComment.getApplicableStereotype(Constants.stereotypeQName_Annotation);
+			if (annotationStereotype != null) {
+				
+				// apply stereotype
+				annotationExperimentComment.applyStereotype(annotationStereotype);
+				
+				// Example of a Modelica annotation string: annotation(experiment(StartTime = 0.0, StopTime = 150));
+				
+				String annotationString = "experiment(";
+				
+				if (startTime!= null) {annotationString = annotationString + "StartTime=" + startTime.toString(); }
+				if (stopTime!= null) {annotationString = annotationString + ", StopTime=" + stopTime.toString(); }
+				//if (numberOfIntervals!= null) {annotationString = annotationString + ", Output=" + numberOfIntervals.toString(); }
+				if (tolerance!= null) {annotationString = annotationString + ", Tolerance=" + tolerance.toString(); }
+				
+				annotationString = annotationString + ")";
+				annotationExperimentComment.setBody(annotationString);
+				annotationExperimentComment.setValue(annotationStereotype, Constants.propertyName_fullAnnotationString, (Object)annotationString);
+			}
+			else {
+//				System.err.println("Could not access the annotation stereotype");
+			}
 		}
 	}
 	
