@@ -374,7 +374,8 @@ public class TraceabilityView extends ViewPart {
 		actionReload = new Action() {
 			public void run() {
 				ElementSelectionDialog dialog = new ElementSelectionDialog(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+						//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), // don't use this because it will block the window underneath 
+						new Shell(),
 						SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectItem.gif"), 
 						"Element Selection", 
 						"Select the design model to be analyzed", 
