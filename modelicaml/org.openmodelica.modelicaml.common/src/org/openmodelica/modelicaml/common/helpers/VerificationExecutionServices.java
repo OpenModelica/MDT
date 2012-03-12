@@ -538,7 +538,7 @@ public class VerificationExecutionServices {
 		String html = "";
 		html = 
 		"<!-- "+getComponentIndicator(treeItem)+" '" + getTreeItemTypeName(treeItem) +  "(" + getTreeItemTypeQName(treeItem) + ")" +  "' -->" + "\n" + 
-		"<div style='margin-left:10px; margin-right:10px; border:1px #aaa9a9 solid; background-color:#FFFFFF; '>" + "\n" + 
+		"<div style='margin-left:10px; margin-right:10px; border:1px #aaa9a9 solid; background-color:#F9F9F9; '>" + "\n" + 
 		"	<div style='padding:5px;'>" + "\n" + 
 			"	<span style='color:#000000; margin-left:0px;'>" + getComponentIndicator(treeItem)+": "+"\n" + 
 			
@@ -564,7 +564,7 @@ public class VerificationExecutionServices {
 		String html = "";
 		html = 
 		"<!-- "+getComponentIndicator(treeItem)+" '" + getTreeItemTypeName(treeItem) +  "(" + getTreeItemTypeQName(treeItem) + ")" +  "' -->" + "\n" + 
-		"<div style='margin-left:10px; margin-right:10px; border:1px #aaa9a9 solid; background-color:#FFFFFF; '>" + "\n" + 
+		"<div style='margin-left:10px; margin-right:10px; border:1px #aaa9a9 solid; background-color:#F9F9F9; '>" + "\n" + 
 			" <!-- Verdicts START  -->" + "\n" + 
 			
 			"	<div style='padding:5px;'>" + "\n" + 
