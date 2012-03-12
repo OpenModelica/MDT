@@ -2,6 +2,7 @@ package org.openmodelica.modelicaml.simulation.execution;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.simulation.filehandling.cp;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
@@ -17,8 +18,11 @@ public class ExecuteSimulation {
 	 *
 	 * @return the omc return string, if the string is empty there was no error otherwise the error string is included
 	 */
+	
 	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj){
 		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+	
+//		omccRef = omcc; // used to quit simulations
 		String omcReturnString = "";
 		
 		while(omcTempWorkingFolder.contains("\\")){
@@ -35,8 +39,9 @@ public class ExecuteSimulation {
 			omcc.quit();
 			return "cd: " + omcReturnString + "\nErrorString: " + errorString;
 		}
-		else
+		else {
 			omcReturnString = "";
+		}
 		
 		//Load package.mo
 		String loadResult = load(monitor, sessionFolder, omcc, testSessionObj, omcReturnString);
@@ -51,6 +56,14 @@ public class ExecuteSimulation {
 		return omcReturnString;
 	}
 	
+//	private static OpenModelicaCompilerCommunication omccRef;
+//	
+//	public static void quitSimulations(){
+//		if (omccRef != null) {
+//			omccRef.quit();	
+//		}
+//	}
+	
 	private static String load(IProgressMonitor monitor, File sessionFolder, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
 		{
 			/*
@@ -62,7 +75,6 @@ public class ExecuteSimulation {
 				codeSyncPath = codeSyncPath.replace('\\', '/');
 			}
 			omcReturnString = omcc.loadFile(codeSyncPath.replaceAll("%20", " ") + "/package.mo"); //If the file is a directory the whole contained model will be loaded
-
 			
 			/*
 			 * Load code from code-gen folder
@@ -97,23 +109,29 @@ public class ExecuteSimulation {
 
 		//Check Model
 		for(TestModel model : testSessionObj.testModels){
-//			monitor.subTask("Simulating: " + model.qualifiedName); [20120127 TODO uncomment monitor]
-			omcReturnString =  omcc.checkModel(model.qualifiedName);
 			
-			if(!omcReturnString.toLowerCase().contains("successfully") || omcReturnString.toLowerCase().contains("failed")){
-				String errorString = omcc.getErrorString();
+			if (monitor.isCanceled()){
 				omcc.quit();
-				return "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
 			}
-		
-		//Simulate model
-			omcReturnString = omcc.simulate(model.qualifiedName, model.start, model.stop, model.numberOfIntervals, model.tolerance, model.solver, model.outputFormat);
+			else {
+//				monitor.subTask("Simulating: " + model.qualifiedName); [20120127 TODO uncomment monitor]
+				omcReturnString =  omcc.checkModel(model.qualifiedName);
+				
+				if(!omcReturnString.toLowerCase().contains("successfully") || omcReturnString.toLowerCase().contains("failed")){
+					String errorString = omcc.getErrorString();
+					omcc.quit();
+					return "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
+				}
 			
-			if(omcReturnString.contains("{\"\",\"\"}") || omcReturnString.contains("Error")){
-//			System.err.println("buildModel ERROR");
-				String errorString = omcc.getErrorString();
-				omcc.quit();
-				return "buildModel: " + omcReturnString  + "\nErrorString: " + errorString;
+			//Simulate model
+				omcReturnString = omcc.simulate(model.qualifiedName, model.start, model.stop, model.numberOfIntervals, model.tolerance, model.solver, model.outputFormat);
+				
+				if(omcReturnString.contains("{\"\",\"\"}") || omcReturnString.contains("Error")){
+//				System.err.println("buildModel ERROR");
+					String errorString = omcc.getErrorString();
+					omcc.quit();
+					return "buildModel: " + omcReturnString  + "\nErrorString: " + errorString;
+				}
 			}
 		}
 		return "";
