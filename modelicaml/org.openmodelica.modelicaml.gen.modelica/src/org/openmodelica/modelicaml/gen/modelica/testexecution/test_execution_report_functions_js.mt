@@ -23,26 +23,23 @@ function writeTestPassedString(allRequirementsEvaluated_atLeastOneTimeTrue, some
 		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
 	}
 	else {
-		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
+		document.write('<font color="#FF99FF"><strong>Not executed</strong></font>');
 	}
 }
 
 
 function writeRequirementPassedString(evaluted, violated){
 	if (evaluted == "true" && violated == "true"){
-		//document.write('<font color="#FF0000"><strong>Failed</strong></font>');
 		document.write('<font color="#FF0000"><strong>Violated</strong></font>');
 	}
 	else if (evaluted == "true" && violated == "false"){
-		//document.write('<font color="#32CD32"><strong>Passed</strong></font>');
 		document.write('<font color="#32CD32"><strong>Not violated</strong></font>');
 	}
 	else if (evaluted == "false"){
-		//document.write('<font color="#FF0000"><strong>Failed</strong></font>');
 		document.write('<font color="#FF0000"><strong>Not evaluated</strong></font>');
 	}
 	else {
-		document.write('<font color="#FF0000"><strong>Status: Not executed</strong></font>');
+		document.write('<font color="#FF99FF"><strong>Not executed</strong></font>');
 	}
 }
 
