@@ -30,7 +30,7 @@ For each results file there is block starting with 'START' and ending with 'END'
 Parameter 'RESULTS_FILE_..._PATH = ###../.._res.xml/###' is a key value pair, where the value is the absolute or relative path to the results file. 
 */
 
-var testSessionFolderAbsolutePath = "<%getTestSessionFolderAbsolutePath()%>";
+<%-- var testSessionFolderAbsolutePath = "<%getTestSessionFolderAbsolutePath()%>"; --%>
 var testSessionFolderRelativePath = "../../";
 
 // statistics
