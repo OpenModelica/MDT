@@ -74,7 +74,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 		<script type='text/javascript'>
 			writeTestPassedString(
 				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>'],
-				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse%>']
+				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']
 				);
 		</script>
 	</span>
@@ -95,7 +95,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 
 <%script type="uml.Model" name="report_html_testModels"%>
 <%for (getTestModels()){%>
-<br>
+<br />
 <!-- Test Model '<%qualifiedName%>' START ***************************************************************** -->
 <a name="<%qualifiedName%>"></a> 
 <div style='position:relative;background-color:#F0F0F0; border:1px #D2B48C solid;left:20px;top:20px;width:95%;padding:5px;'>
@@ -105,7 +105,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			<script type='text/javascript'>
 			writeTestPassedString(
 				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>'],
-				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse%>']
+				data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']
 				);
 		</script>
 		</span>
@@ -143,7 +143,6 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 				<td>&nbsp;:&nbsp;</td>
 				<td>
 					<script type='text/javascript'>
-<!--					writeAtLeastOneTimeTrueString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);-->
 						writeBooleanGreenYesString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);
 					</script>
 				</td>
@@ -156,7 +155,6 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 				<td>&nbsp;:&nbsp;</td>
 				<td>
 					<script type='text/javascript'>
-<!--					writeAlwaysFalseString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROalwaysFalse()%>']);-->
 						writeBooleanRedYesString(data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>']);
 					</script>
 				</td>
@@ -169,13 +167,15 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 	<br>
 	<%getRequirementsHTML()%>
 	
-	<div style='margin-left:10px; margin-top:20px;'>
+	<div style='margin-left:10px; margin-top:10px;'>
 		<a href="#top">... back to overview</a>
 	</div>
 	
 </div>
 <!-- Test Model '<%qualifiedName%>' END ***************************************************************** -->
-
+<br />
+<br />
+<br />
 <%}%>
 
 

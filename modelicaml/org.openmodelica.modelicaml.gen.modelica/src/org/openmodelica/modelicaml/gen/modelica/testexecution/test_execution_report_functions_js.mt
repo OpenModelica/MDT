@@ -11,11 +11,15 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 <%}%>
 
 <%script type="uml.Model" name="report_js_functions" file="<%file_name_js_functions%>"%>
-function writeTestPassedString(allRequirementsEvaluated_atLeastOneTimeTrue, someRequirementsViolated_alwaysFalse){
-	if (allRequirementsEvaluated_atLeastOneTimeTrue == "true" && someRequirementsViolated_alwaysFalse == "true"){
+
+function writeTestPassedString(allRequirementsEvaluated_atLeastOneTimeTrue, someRequirementsViolated_atLeastOneTimeTrue){
+	if (allRequirementsEvaluated_atLeastOneTimeTrue == "true" && someRequirementsViolated_atLeastOneTimeTrue == "false"){
 		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
 	}
-	else if (allRequirementsEvaluated_atLeastOneTimeTrue == "false" || someRequirementsViolated_alwaysFalse == "false"){
+	else if (allRequirementsEvaluated_atLeastOneTimeTrue == "false" || someRequirementsViolated_atLeastOneTimeTrue == "true"){
+		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+	}
+	else if (allRequirementsEvaluated_atLeastOneTimeTrue == "true" && someRequirementsViolated_atLeastOneTimeTrue == "true"){
 		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
 	}
 	else {
@@ -23,46 +27,22 @@ function writeTestPassedString(allRequirementsEvaluated_atLeastOneTimeTrue, some
 	}
 }
 
-/*
-function writeTestPassedString(value){
-	if (value == "true"){
-		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
-	}
-	else if (value == "false"){
-		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
-	}
-	else {
-		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
-	}
-}
-*/
-
-/* OLD
-function writeRequirementPassedString(evaluted_atLeastOneTimeTrue, violated_alwaysFalse){
-	if (evaluted_atLeastOneTimeTrue == "true" && violated_alwaysFalse == "true"){
-		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
-	}
-	else if (evaluted_atLeastOneTimeTrue == "false" || violated_alwaysFalse == "false"){
-		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
-	}
-	else {
-		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
-	}
-}
-*/
 
 function writeRequirementPassedString(evaluted, violated){
 	if (evaluted == "true" && violated == "true"){
-		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+		//document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+		document.write('<font color="#FF0000"><strong>Violated</strong></font>');
 	}
-	else if (evaluted == "true" || violated == "false"){
-		document.write('<font color="#32CD32"><strong>Passed</strong></font>');
+	else if (evaluted == "true" && violated == "false"){
+		//document.write('<font color="#32CD32"><strong>Passed</strong></font>');
+		document.write('<font color="#32CD32"><strong>Not violated</strong></font>');
 	}
-	else if (evaluted == "false" || violated == "false"){
-		document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+	else if (evaluted == "false"){
+		//document.write('<font color="#FF0000"><strong>Failed</strong></font>');
+		document.write('<font color="#FF0000"><strong>Not evaluated</strong></font>');
 	}
 	else {
-		document.write('<font color="#FF0000"><strong>Pass/Fail: Not executed</strong></font>');
+		document.write('<font color="#FF0000"><strong>Status: Not executed</strong></font>');
 	}
 }
 

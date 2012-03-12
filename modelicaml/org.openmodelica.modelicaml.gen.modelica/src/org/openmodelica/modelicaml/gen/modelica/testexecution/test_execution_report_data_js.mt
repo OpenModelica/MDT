@@ -64,7 +64,7 @@ data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequireme
 data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>'] = '###<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>:<%getMACROatLeastOneTimeTrue()%>###';
 
 data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>'] = new Array();
-data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue%>'] = '###<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>:<%getMACROatLeastOneTimeTrue%>:###';
+data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>'] = '###<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>:<%getMACROatLeastOneTimeTrue()%>:###';
 
 // update statistics
 if (data['<%qualifiedName%>']['<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>']['<%getMACROatLeastOneTimeTrue()%>'] == "false"
