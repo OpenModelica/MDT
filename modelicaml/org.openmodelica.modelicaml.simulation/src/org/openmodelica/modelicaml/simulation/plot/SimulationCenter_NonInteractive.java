@@ -36,7 +36,6 @@ package org.openmodelica.modelicaml.simulation.plot;
 
 import java.util.Observer;
 
-import org.openmodelica.simulation.core.simulationdata.SimulationResultManager_NonInteractive;
 // TODO: Auto-generated Javadoc
 /**
  * The Simulation Center is the central management unit to run a non interactive simulation. 

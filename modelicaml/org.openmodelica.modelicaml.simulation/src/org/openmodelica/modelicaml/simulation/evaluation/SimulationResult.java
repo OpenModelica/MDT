@@ -17,4 +17,7 @@ public class SimulationResult {
 //		this.property = property;
 //		this.values = values;
 //	}
+	
+	public static void main(String[] args){
+	}
 }
