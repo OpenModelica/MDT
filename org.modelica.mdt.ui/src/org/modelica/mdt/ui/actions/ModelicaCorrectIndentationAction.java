@@ -27,8 +27,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
 import org.eclipse.ui.texteditor.ITextEditorExtension3.InsertMode;
 import org.eclipse.ui.texteditor.TextEditorAction;
-
 import org.modelica.mdt.internal.core.ErrorManager;
+import org.modelica.mdt.ui.constants.Constants;
 import org.modelica.mdt.ui.editor.ModelicaEditor;
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
@@ -58,7 +58,6 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 	private DocumentCommand documentCommand = null;
 	private int indentLength = 0;
 
-	private static final String ACTIONS_RESOURCE_BUNDLE = "org.modelica.mdt.ui.editor.ModelicaActions";
 	private static ModelicaCorrectIndentationAction instance = new ModelicaCorrectIndentationAction();
 
 	/**
@@ -66,7 +65,7 @@ public class ModelicaCorrectIndentationAction extends TextEditorAction {
 	 */
 	private ModelicaCorrectIndentationAction() {
 		/* Editor will be set later that's why we have null here */
-		super(ResourceBundle.getBundle(ACTIONS_RESOURCE_BUNDLE), "ModelicaCorrectIndentationAction.", null);
+		super(ResourceBundle.getBundle(Constants.MDT_UI_ACTIONS_RESOURCE_BUNDLE), "ModelicaCorrectIndentationAction.", null);
 
 		fIsTabAction = false;
 	}

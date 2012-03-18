@@ -21,5 +21,7 @@ public class Constants {
 	 * <extension point="org.eclipse.ui.newWizards"> 
 	 */
 	public static final String MDT_UI_MODELICA_CATEGORY = "org.modelica.mdt.ModelicaCategory";
+	
+	public static final String MDT_UI_ACTIONS_RESOURCE_BUNDLE = "org.modelica.mdt.ui.editor.ModelicaActions";
 
 }
