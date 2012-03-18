@@ -79,7 +79,7 @@ public class SelectionConverter {
 	/**
 	 * Converts the given structured selection into an array of Java elements.
 	 * An empty array is returned if one of the elements stored in the structured
-	 * selection is not of tupe <code>IModelicaElement</code>
+	 * selection is not of type <code>IModelicaElement</code>
 	 */
 	public static IModelicaElement[] getElements(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
