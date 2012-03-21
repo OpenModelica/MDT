@@ -486,7 +486,6 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
 			ModelicaEditor.this.selectionChanged();
 		}
 	}
@@ -556,6 +555,7 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 		IWorkbenchPart part= getActivePart();
 		return part != null && part.equals(this);
 	}
+
 	private boolean isModelicaContentOutlinePageActive() {
 		IWorkbenchPart part= getActivePart();
 		return part instanceof ContentOutline && ((ContentOutline)part).getCurrentPage() == fOutlinePage;
@@ -756,11 +756,10 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 
 					markInNavigationHistory();
 				}
-
 			}
-			catch (Exception x) {
+			catch (Exception e) {
+				// Empty.
 			}
-
 		}
 		else if (moveCursor) {
 			resetHighlightRange();
@@ -799,14 +798,15 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 			while (element instanceof IModelicaElement) {
 				IRegion range= getRegionFromSourceRegion(element.getLocation().getSourceRegion(), getViewer().getDocument());
 				if (offset < range.getOffset() + range.getLength() && range.getOffset() < offset + length) {
-
 					ISourceViewer viewer= getSourceViewer();
+
 					if (viewer instanceof ITextViewerExtension5) {
 						ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 						extension.exposeModelRange(new Region(range.getOffset(), range.getLength()));
 					}
 
 					setHighlightRange(range.getOffset(), range.getLength(), true);
+
 					if (fOutlinePage != null) {
 						fOutlineSelectionChangedListener.uninstall(fOutlinePage);
 						fOutlinePage.select(element);
@@ -815,9 +815,9 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 
 					return;
 				}
+
 				element= element.getParent();
 			}
-
 		}
 		catch (Exception x) {
 			// do nothing
@@ -888,6 +888,7 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 		public String getInformation(ITextViewer textViewer, IRegion subject) {
 			return fHoverInfo.toString();
 		}
+
 		/*
 		 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 		 * @since 3.2
@@ -1097,8 +1098,9 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 			ISourceViewer sourceViewer= getSourceViewer();
 			if (sourceViewer instanceof ProjectionViewer) {
 				ProjectionViewer pv= (ProjectionViewer) sourceViewer;
-				if (pv.canDoOperation(ProjectionViewer.TOGGLE))
+				if (pv.canDoOperation(ProjectionViewer.TOGGLE)) {
 					pv.doOperation(ProjectionViewer.TOGGLE);
+				}
 			}
 		}
 
@@ -1236,15 +1238,16 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 						fProjectionModelUpdater.install(this, projectionViewer);
 					}
 				}
+
 				return;
 			}
 			if (PreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
 				if (sourceViewer instanceof ProjectionViewer) {
 					new ToggleFoldingRunner().runWhenNextVisible();
 				}
+
 				return;
 			}
-
 		}
 		finally {
 			super.handlePreferenceStoreChanged(event);
@@ -1281,8 +1284,9 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 			boolean projectionMode= projectionViewer.isProjectionMode();
 			if (projectionMode) {
 				projectionViewer.disableProjection();
-				if (fProjectionModelUpdater != null)
+				if (fProjectionModelUpdater != null) {
 					fProjectionModelUpdater.uninstall();
+				}
 			}
 
 			super.performRevert();
@@ -1294,7 +1298,6 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 
 				projectionViewer.enableProjection();
 			}
-
 		}
 		finally {
 			projectionViewer.setRedraw(true);
@@ -1312,14 +1315,17 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 	 */
 	@Override
 	protected String getStatusHeader(IStatus status) {
+		String statusHeader = null;
+
 		if (fEncodingSupport != null) {
-			String message= fEncodingSupport.getStatusHeader(status);
-			if (message != null) {
-				return message;
-			}
+			statusHeader = fEncodingSupport.getStatusHeader(status);
 		}
 
-		return super.getStatusHeader(status);
+		if (statusHeader == null) {
+			statusHeader = super.getStatusHeader(status);
+		}
+
+		return statusHeader;
 	}
 
 	/*
@@ -1327,14 +1333,17 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 	 */
 	@Override
 	protected String getStatusBanner(IStatus status) {
+		String statusBanner = null;
+
 		if (fEncodingSupport != null) {
-			String message= fEncodingSupport.getStatusBanner(status);
-			if (message != null) {
-				return message;
-			}
+			statusBanner = fEncodingSupport.getStatusBanner(status);
 		}
 
-		return super.getStatusBanner(status);
+		if (statusBanner == null) {
+			statusBanner = super.getStatusBanner(status);
+		}
+
+		return statusBanner;
 	}
 
 	/*
@@ -1342,13 +1351,16 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 	 */
 	@Override
 	protected String getStatusMessage(IStatus status) {
+		String statusMessage = null;
+
 		if (fEncodingSupport != null) {
-			String message= fEncodingSupport.getStatusMessage(status);
-			if (message != null) {
-				return message;
-			}
+			statusMessage = fEncodingSupport.getStatusMessage(status);
 		}
 
-		return super.getStatusMessage(status);
+		if (statusMessage == null) {
+			statusMessage = super.getStatusMessage(status);
+		}
+
+		return statusMessage;
 	}
 }
