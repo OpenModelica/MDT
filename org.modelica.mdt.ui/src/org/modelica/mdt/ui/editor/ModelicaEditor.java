@@ -100,7 +100,6 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextEditorAction;
@@ -145,7 +144,6 @@ import org.modelica.mdt.ui.view.ModelicaContentOutlinePage;
  * @author MDT team
  */
 public class ModelicaEditor extends TextEditor implements IPropertyListener {
-	private static final String RESOURCE_BUNDLE = "org.modelica.mdt.ui.editor.ContentAssist";
 
 	private ProjectionSupport fProjectionSupport;
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
@@ -250,14 +248,6 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 		resAction= new InformationDispatchAction(ModelicaEditorMessages.getBundleForConstructedKeys(), "ShowModelicaDoc.", (TextOperationAction) resAction); //$NON-NLS-1$
 		resAction.setActionDefinitionId(IModelicaEditorActionDefinitionIds.SHOW_MODELICADOC);
 		setAction("ShowModelicaDoc", resAction); //$NON-NLS-1$
-
-		/*
-		 * create the action that activates the content assist on CTRL+SPACE
-		 */
-		IAction a = new TextOperationAction(
-				ResourceBundle.getBundle(RESOURCE_BUNDLE), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS);
-		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssistProposal", a);
 
 		fFoldingGroup= new FoldingActionGroup(this, getViewer());
 	}
