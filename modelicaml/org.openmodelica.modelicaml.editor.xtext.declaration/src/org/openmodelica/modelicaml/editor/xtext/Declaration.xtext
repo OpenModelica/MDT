@@ -1,5 +1,5 @@
 grammar org.openmodelica.modelicaml.editor.xtext.declaration.Declaration 
-	with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+	with org.openmodelica.modelicaml.editor.xtext.Modeleditor
 
 generate declaration "http://www.openmodelica.org/modelicaml/editor/xtext/declaration/Declaration"
 
