@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
+<?eclipse version="3.7"?>
 <plugin>
    <extension-point id="modelicaElementFilters" name="Modelica Element Filters" schema="schema/org.modelica.mdt.ui.modelicaElementFilters.exsd"/>
    <extension
@@ -343,6 +343,5 @@
               menubarPath="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu/group1" 
               id="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction"/>              
     </viewerContribution>
-  </extension>  
-  
+  </extension>
 </plugin>
