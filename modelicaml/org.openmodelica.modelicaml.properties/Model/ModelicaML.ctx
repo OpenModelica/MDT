@@ -116,11 +116,11 @@
     <sections name="Multiple Type" sectionFile="ui/MultipleType.xwt">
       <widget href="ui/MultipleType.xwt#/"/>
     </sections>
-    <sections name="Single Connector" sectionFile="ui/SingleConnector.xwt">
-      <widget href="ui/SingleConnector.xwt#/"/>
+    <sections name="Single ModelicaConnector" sectionFile="ui/Single ModelicaConnector.xwt">
+      <widget href="ui/Single ModelicaConnector.xwt#/"/>
     </sections>
-    <sections name="Multiple Connector" sectionFile="ui/MultipleConnector.xwt">
-      <widget href="ui/MultipleConnector.xwt#/"/>
+    <sections name="Multiple ModelicaConnector" sectionFile="ui/MultipleModelicaConnector.xwt">
+      <widget href="ui/MultipleModelicaConnector.xwt#/"/>
     </sections>
     <sections name="Single Record" sectionFile="ui/SingleRecord.xwt">
       <widget href="ui/SingleRecord.xwt#/"/>
@@ -582,7 +582,7 @@
       <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Type"/>
     </constraints>
   </views>
-  <views name="Single Connector" sections="//@tabs.0/@sections.38" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.2">
+  <views name="Single ModelicaConnector" sections="//@tabs.0/@sections.38" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.2">
     <constraints xsi:type="contexts:SimpleConstraint" name="isSingleConnector">
       <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
       <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Connector"/>
