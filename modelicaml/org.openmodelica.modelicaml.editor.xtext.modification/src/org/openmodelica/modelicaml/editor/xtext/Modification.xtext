@@ -1,5 +1,5 @@
 grammar org.openmodelica.modelicaml.editor.xtext.modification.Modification 
-	with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+	with org.openmodelica.modelicaml.editor.xtext.Modeleditor
 
 generate modification "http://www.openmodelica.org/modelicaml/editor/xtext/modification/Modification"
 
