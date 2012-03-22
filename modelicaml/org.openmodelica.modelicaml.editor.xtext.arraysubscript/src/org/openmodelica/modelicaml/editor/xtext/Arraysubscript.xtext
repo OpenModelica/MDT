@@ -1,4 +1,5 @@
-grammar org.openmodelica.modelicaml.editor.xtext.array.Arraysubscript with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+grammar org.openmodelica.modelicaml.editor.xtext.array.Arraysubscript 
+	with org.openmodelica.modelicaml.editor.xtext.Modeleditor
 
 generate arraysubscript "http://www.openmodelica.org/modelicaml/editor/xtext/array/Arraysubscript"
 
