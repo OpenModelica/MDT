@@ -19,15 +19,17 @@ import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on how to customize content assistant
  */
 public class ClientProposalProvider extends AbstractClientProposalProvider {
+	
 	@Override
 	public void complete_left_hand_component_reference(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor)
 	{
 		super.complete_component_reference(model, ruleCall, context, acceptor);
 		
 		List<String> cList = ModelicaMLContentAssist.getComponentReferenceSortedList();
+		cList.add(Constants.MACRO_clientPath);
 		
 		for (String string : cList) {
-			// replace the Value Provider component name with a specific macro
+			// replace the component name with a specific macro
 			if (string.startsWith(ModelicaMLContentAssist.getPropertyName())) {
 				string = string.replaceFirst(ModelicaMLContentAssist.getPropertyName(), Constants.MACRO_clientPath);
 			}
@@ -52,6 +54,7 @@ public class ClientProposalProvider extends AbstractClientProposalProvider {
 		super.complete_component_reference(model, ruleCall, context, acceptor);
 		
 		List<String> cList = ModelicaMLContentAssist.getComponentReferenceSortedList();
+		cList.add(Constants.MACRO_clientPath);
 		
 		for (String string : cList) {
 			// replace the Value Provider component name with a specific macro
@@ -82,6 +85,7 @@ public class ClientProposalProvider extends AbstractClientProposalProvider {
 		super.complete_name(model, ruleCall, context, acceptor);
 		
 		List<String> cList = ModelicaMLContentAssist.getComponentReferenceSortedList();
+		cList.add(Constants.MACRO_clientPath);
 		
 		for (String string : cList) {
 			// replace the Value Provider component name with a specific macro
