@@ -1,5 +1,5 @@
 grammar org.openmodelica.modelicaml.editor.xtext.state.Statetransitionguardexpression 
-	with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+	with org.openmodelica.modelicaml.editor.xtext.Modeleditor
 
 generate statetransitionguardexpression "http://www.openmodelica.org/modelicaml/editor/xtext/state/Statetransitionguardexpression"
 
