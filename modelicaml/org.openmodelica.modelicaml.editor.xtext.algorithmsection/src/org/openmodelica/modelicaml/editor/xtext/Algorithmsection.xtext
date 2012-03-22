@@ -1,5 +1,5 @@
 grammar org.openmodelica.modelicaml.editor.xtext.algorithm.Algorithmsection 
-	with org.openmodelica.modelicaml.editor.xtext.model.Modeleditor
+	with org.openmodelica.modelicaml.editor.xtext.Modeleditor
 
 generate algorithmsection "http://www.openmodelica.org/modelicaml/editor/xtext/algorithm/Algorithmsection"
 //////////////////////////////////////////Algorithm//////////////////////
