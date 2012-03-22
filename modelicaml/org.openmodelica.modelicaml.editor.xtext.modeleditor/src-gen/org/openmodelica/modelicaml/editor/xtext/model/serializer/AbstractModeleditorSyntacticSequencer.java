@@ -74,7 +74,7 @@ public class AbstractModeleditorSyntacticSequencer extends AbstractSyntacticSequ
 	
 	/**
 	 * Syntax:
-	 *     '^' | '.^'
+	 *     '.^' | '^'
 	 */
 	protected void emit_factor_CircumflexAccentKeyword_1_0_0_or_FullStopCircumflexAccentKeyword_1_0_1(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

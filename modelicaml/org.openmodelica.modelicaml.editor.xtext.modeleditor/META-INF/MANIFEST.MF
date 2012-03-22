@@ -25,7 +25,9 @@ Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtext.xtend2.lib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openmodelica.modelicaml.editor.xtext.model,
+Export-Package: org.openmodelica.modelicaml.editor.xtext,
+ org.openmodelica.modelicaml.editor.xtext.model,
+ org.openmodelica.modelicaml.editor.xtext.model.formatting,
  org.openmodelica.modelicaml.editor.xtext.model.modeleditor,
  org.openmodelica.modelicaml.editor.xtext.model.modeleditor.impl,
  org.openmodelica.modelicaml.editor.xtext.model.modeleditor.util,
