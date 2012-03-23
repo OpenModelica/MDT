@@ -41,7 +41,9 @@
 
 package org.modelica.mdt.ui.editor;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IStatus;
@@ -62,6 +64,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
@@ -69,6 +72,8 @@ import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.information.InformationPresenter;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
@@ -120,11 +125,15 @@ import org.modelica.mdt.ui.actions.IModelicaEditorActionDefinitionIds;
 import org.modelica.mdt.ui.actions.OpenAction;
 import org.modelica.mdt.ui.hover.ModelicaSourceHover;
 import org.modelica.mdt.ui.hover.SourceViewerInformationControl;
+import org.modelica.mdt.ui.state.State;
 import org.modelica.mdt.ui.text.IModelicaPartitions;
 import org.modelica.mdt.ui.text.ModelicaCodeResolver;
 import org.modelica.mdt.ui.text.ModelicaDocumentProvider;
 import org.modelica.mdt.ui.text.ModelicaFoldingStructureProvider;
+import org.modelica.mdt.ui.text.ModelicaKeywords;
 import org.modelica.mdt.ui.text.ModelicaPairMatcher;
+import org.modelica.mdt.ui.text.ModelicaWordFinder;
+import org.modelica.mdt.ui.util.AnalyzeRegion;
 import org.modelica.mdt.ui.view.ModelicaContentOutlinePage;
 
 /**
@@ -277,7 +286,9 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 		}
 
 		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
-		fEditorSelectionChangedListener.install(getSelectionProvider());
+		ISelectionProvider selProv = getSelectionProvider();
+		selProv.addSelectionChangedListener(fEditorSelectionChangedListener);
+		fEditorSelectionChangedListener.install(selProv);
 	}
 
 	@Override
@@ -471,13 +482,152 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 	 */
 	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener {
 
+		/**
+		 * @param modelicaEditor
+		 */
+		EditorSelectionChangedListener() {
+			this.documentProvider = ModelicaEditor.this.getDocumentProvider();
+		}
+
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
+			if (State.getInstance().markOccurrencesOn()) {
+				ISelection selection = event.getSelection();
+				Object source = event.getSource();
+
+				handleMarkOccurrences(selection, source);
+			}
+			else {
+				// Clear any old marks.
+				// FIXME: This should happen as soon as the option is turned off, now
+				// it happens when the selection changes.
+				IAnnotationModel model = getAnnotationModel();
+				if (model != null) {
+					removeAnnotations(model);
+				}
+			}
+
 			ModelicaEditor.this.selectionChanged();
 		}
+
+		private void handleMarkOccurrences(ISelection selection, Object source) {
+			if (selection instanceof TextSelection && source instanceof ModelicaSourceViewer) {
+				TextSelection textSelection = (TextSelection)selection;
+				ModelicaSourceViewer modelicaSourceViewer = (ModelicaSourceViewer)source;
+				IDocument document = modelicaSourceViewer.getDocument();
+
+				if (document != null) {
+					int offset = textSelection.getOffset();
+					IRegion region = ModelicaWordFinder.findWord(document, offset);
+					AnalyzeRegion wordAnalyzer = new AnalyzeRegion();
+					String hoverStr = wordAnalyzer.performAnalysis(region, document, ModelicaEditor.this);
+
+					if (hoverStr != null && wordAnalyzer.identifierFound()) {
+						String word = wordAnalyzer.getWord();
+
+						if (maybeChangeMark(word, offset)) {
+							changeMark(word, document);
+						}
+					}
+				}
+			}
+		}
+
+		private boolean maybeChangeMark(String word, int offset) {
+			if (word == null || word.length() == 0) {
+				return false;
+			}
+
+			if (word.equals(currentMark)) {
+				return false;
+			}
+
+			if (ModelicaKeywords.isKeyword(word)) {
+				return false;
+			}
+
+			final char firstChar = word.charAt(0);
+
+			if (!Character.isJavaIdentifierStart(firstChar)) {
+				return false;
+			}
+
+			return true;
+		}
+
+		private void changeMark(String word, IDocument document) {
+			IAnnotationModel model = getAnnotationModel();
+
+			if (model != null) {
+				currentMark = word;
+
+				removeAnnotations(model);
+
+				model.connect(document);
+				String text = document.get();
+				int index = 0;
+				while (index != -1) {
+					index = text.indexOf(word, index);
+					boolean isGoodIndex = isGoodIndex(index, word, text);
+					if (isGoodIndex) {
+						Position position = new Position(index, word.length());
+						// We need a new Annotation object, can't re-use.
+						Annotation annotation = new Annotation("org.eclipse.jdt.ui.occurrences", false, "Description");
+						model.addAnnotation(annotation, position);
+						markedPositions.add(annotation);
+					}
+
+					if (index != -1) {
+						index += word.length();
+					}
+				}
+			}
+		}
+
+		private boolean isGoodIndex(final int index, final String word, final String text) {
+			boolean isGoodIndex = false;
+
+			if (index != -1) {
+				// We may have a good index, but say the word we want to mark is "foo" and
+				// we found the word "foobar", the index is not good for marking after all.
+				final int indexNextToWord = index + word.length() + 1;
+
+				if (indexNextToWord >= text.length()) {
+					// Are we at the end of the document? Then we can mark.
+					isGoodIndex = true;
+				}
+				else {
+					// Check char immediately to our right
+					final char rightChar = text.charAt(indexNextToWord);
+					if (!Character.isJavaIdentifierPart(rightChar) && !Character.isDigit(rightChar)) {
+						isGoodIndex = true;
+					}
+				}
+			}
+
+			return isGoodIndex;
+		}
+
+		private IAnnotationModel getAnnotationModel() {
+			IEditorInput editorInput = ModelicaEditor.this.getEditorInput();
+			IAnnotationModel model = documentProvider.getAnnotationModel(editorInput);
+
+			return model;
+		}
+
+		private void removeAnnotations(IAnnotationModel model) {
+			for (Annotation annotation : markedPositions) {
+				model.removeAnnotation(annotation);
+			}
+		}
+
+		private final IDocumentProvider documentProvider;
+
+		private String currentMark;
+		private List<Annotation> markedPositions = new ArrayList<Annotation>();
 	}
 
 	protected void selectionChanged() {
@@ -759,10 +909,8 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 
 	public void setSelection(IModelicaElement element) {
 		if (element == null || element instanceof IModelicaFile) {
-			/*
-			 * If the element is an IModelicaFile this unit is either the input
-			 * of this editor or not being displayed.
-			 */
+			 // If the element is an IModelicaFile this unit is either the input
+			 // of this editor or not being displayed.
 			return;
 		}
 

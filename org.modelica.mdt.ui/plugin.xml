@@ -145,6 +145,12 @@
    		id="org.modelica.mdt.ui.edit.text.show.modelicadoc"
    >
    </command>
+   <command
+         defaultHandler="org.modelica.mdt.ui.actions.CommandToggleMarkOccurrences"
+         id="org.modelica.mdt.ui.actions.CommandToggleMarkOccurrencesId"
+         name="Toggle Mark Occurrences">
+         <!--<state class="org.eclipse.ui.handlers.RegistryToggleState:false" id="org.eclipse.ui.commands.toggleState"></state>-->
+   </command>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">   
@@ -343,5 +349,22 @@
               menubarPath="org.eclipse.ui.articles.action.contribution.popup.editor.subMenu/group1" 
               id="org.modelica.mdt.ui.refactoring.ui.actions.RenameFunction"/>              
     </viewerContribution>
+  </extension>
+  <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           allPopups="false"
+           locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+        <toolbar
+              id="org.modelica.mdt.ui.actions.CommandToggleMarkOccurrencesId"
+              label="Toggle Mark Occurrences">
+           <command
+                 commandId="org.modelica.mdt.ui.actions.CommandToggleMarkOccurrencesId"
+                 icon="icons/mark_occurrences.gif"
+                 label="Toggle Mark Occurrences"
+                 style="toggle">
+           </command>
+        </toolbar>
+     </menuContribution>
   </extension>
 </plugin>
