@@ -84,7 +84,8 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 		<script type='text/javascript'>writeLink('#<%qualifiedName%>', '<strong><%name%></strong>')</script>	
 	</span>
 	<script type='text/javascript'>
-		writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot');
+		<%-- writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot'); --%>
+		writePlotLink('?<%getTestModelQName()%>_res.xml',  'Plot');
 	</script>
 	<br>
 	<!--<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span><br>-->
@@ -115,7 +116,8 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			<script type='text/javascript'>writeLink('locate:<%qualifiedName%>', '<strong><%name%></strong>')</script>	
 		</span>
 		<script type='text/javascript'>
-			writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot');
+			<%-- writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot');--%>
+			writePlotLink('?<%getTestModelQName()%>_res.xml',  'Plot');
 		</script>
 		<br>
 		<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span>
