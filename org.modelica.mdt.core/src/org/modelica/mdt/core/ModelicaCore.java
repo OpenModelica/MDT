@@ -145,7 +145,7 @@ public class ModelicaCore {
 				public void run() {
 					ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
 							new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
-									"OPENMODELICALIBRARY environment variable is not set or has an invalid value.!\n" +
+									"OPENMODELICALIBRARY environment variable is not set or has an invalid value!\n" +
 											"Please exit Eclipse and set the variable properly if you want to be able " +
 											"to browse the Modelica Library", null));
 				}
