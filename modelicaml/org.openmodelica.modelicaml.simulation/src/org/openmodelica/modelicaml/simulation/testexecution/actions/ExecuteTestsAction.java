@@ -312,8 +312,7 @@ public class ExecuteTestsAction implements
  					
  					// run open report action
  	            	OpenTestExecutionReportAction openReport = new OpenTestExecutionReportAction();
- 	            	
- 	            	openReport.setPath(pathToSession + "report-gen/report.html");
+ 	            	openReport.setReportFilePath(pathToSession + "report-gen/report.html");
  	            	openReport.run(null);
 				}
  			}

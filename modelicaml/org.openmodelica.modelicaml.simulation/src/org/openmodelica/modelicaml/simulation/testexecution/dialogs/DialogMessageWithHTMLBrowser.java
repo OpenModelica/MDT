@@ -35,8 +35,13 @@
 package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -59,13 +64,14 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Message;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction;
 
 public class DialogMessageWithHTMLBrowser extends Dialog {
 
 	private String title = "";
-	private String location = "";
+	private String location = ""; // Absolute path to the html report file
 	private Browser browser;
 	
 	public DialogMessageWithHTMLBrowser(Shell parentShell,String title, String location) {
@@ -89,6 +95,9 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			
 			try {
 				decodedLocation = URLDecoder.decode(location, "UTF-8").trim();
+				String[] splitted = decodedLocation.split("\\?");
+				decodedLocation = splitted[1];
+				
 			} catch (UnsupportedEncodingException e) {
 //				e.printStackTrace();
 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid Browser Link", "It is not possible to decode the link " + location);
@@ -115,13 +124,46 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			}
 			else if (decodedLocation != null && decodedLocation.trim().endsWith("_res.xml")) {
 				event.doit = false;	// don't change the page
-				// Dialog for the plotting of variables
-				PlotTestResultsAction plotAction = new PlotTestResultsAction();
-				plotAction.setXMLFilePath(decodedLocation);
-				plotAction.run(null);
+				String sessionFolderAbsolutePath = getSessionPath();
+				if (sessionFolderAbsolutePath != null) {
+					// Dialog for the plotting of variables
+					PlotTestResultsAction plotAction = new PlotTestResultsAction();
+					plotAction.setXMLFilePath(sessionFolderAbsolutePath + "/" + decodedLocation);
+					plotAction.run(null);
+				}
+				else { // TODO: report 
+//					MessageDialog.openError(new Shell(), "Error", "Could not find the results file for " + decodedLocation);
+				}
 			}
 	    }
 	};
+	
+	
+	private String getSessionPath(){
+		IFileSystem fileSystem = EFS.getLocalFileSystem();
+//		IFileStore reportFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
+		String[] splitted = this.location.split("\\?"); // remove the URL get parameters 
+		IFileStore reportFile = fileSystem.getStore(URI.create(splitted[0]));
+		
+		IFileInfo reportFileInfo = reportFile.fetchInfo();
+		if (reportFileInfo.exists()) {
+			IFileStore reportFolder = reportFile.getParent();
+			if (reportFolder != null) {
+				IFileStore sessionFolder = reportFolder.getParent();
+				if (sessionFolder != null) {
+					String path = sessionFolder.toURI().getPath();
+					if (path.startsWith("\\") || path.startsWith("/")) {
+							return path.substring(1);
+					}
+					else {
+						return path;
+					}
+				}
+			}
+			
+		}
+		return null;
+	}
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -169,4 +211,5 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 		
 		return elements;
 	}
+
 }

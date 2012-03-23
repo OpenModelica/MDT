@@ -10,7 +10,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
@@ -63,7 +62,7 @@ public class UpdateTestExecutionReportDataAction implements
 			// open report afterwards
 			if (reportHTMLFile != null) {
 				OpenTestExecutionReportAction openReport = new OpenTestExecutionReportAction();
-				openReport.setPath(reportHTMLFile);
+				openReport.setReportFilePath(reportHTMLFile);
 				openReport.run(null);
 			}
 			else {
