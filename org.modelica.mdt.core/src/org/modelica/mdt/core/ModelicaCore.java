@@ -42,7 +42,6 @@
 package org.modelica.mdt.core;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IPathVariableManager;
@@ -96,30 +95,35 @@ public class ModelicaCore {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IPathVariableManager pathMan = workspace.getPathVariableManager();
 		String name = "OPENMODELICALIBRARY";
-		String path = null; path = System.getenv(name);
+		String path = System.getenv(name);
+
 		if (path != null) {
 			try {
-				URI value = new URI(path);
+				URI value = new java.io.File(path).toURI();
+				IStatus validNameStatus = pathMan.validateName(name);
+				IStatus validValueStatus = pathMan.validateValue(value);
 
-				if (pathMan.validateName(name).isOK() && pathMan.validateValue(value).isOK()) {
-					pathMan.setURIValue(name, value);
-				} 
-				else {
-					Display display = CorePlugin.getDisplay();
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
-									new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
-											"OPENMODELICALIBRARY environment variable is not set!\n" +
-													"Please exit Eclipse and set the variable if you want to be able " +
-													"to browse the Modelica Library", null));
-						}
-					});
+				if (validNameStatus.isOK()) {
+					// There is a bug in Eclipse versions < 3.8 where IPathVariableManager.validateValue(URI)
+					// returns null regardless of its input. We simply cannot validate the value URI
+					// in those versions.
+					if (validValueStatus == null || validValueStatus.isOK()) {
+						pathMan.setURIValue(name, value);
+					}
+					else {
+						Display display = CorePlugin.getDisplay();
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
+										new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
+												"OPENMODELICALIBRARY environment variable is not set!\n" +
+														"Please exit Eclipse and set the variable if you want to be able " +
+														"to browse the Modelica Library", null));
+							}
+						});
+					}
 				}
-			}
-			catch (URISyntaxException e) {
-				ErrorManager.logError(e);
 			}
 			catch (CoreException e) {
 				ErrorManager.logError(e);
