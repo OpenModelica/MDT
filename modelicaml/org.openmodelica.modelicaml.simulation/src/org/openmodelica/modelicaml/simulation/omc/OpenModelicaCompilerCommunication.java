@@ -121,6 +121,18 @@ public class OpenModelicaCompilerCommunication {
 		return executeCommand("cd()");
 	}
 	
+	
+	public String getTempDirectoryPath() {
+		String path = executeCommand("getTempDirectoryPath()").replaceAll("\\\\\\\\\\\\\\\\",  "/").trim();		// replace \\\\ by / and trim
+		// remove the first and the last double quote 
+		String pathCorrected = path.substring(1, path.length() - 1);
+		
+		if (pathCorrected.endsWith("/")) {
+			return pathCorrected + "OpenModelica";	
+		}
+		return pathCorrected + "/" + "OpenModelica";
+	}
+	
 	/**
 	 * Clear everything.
 	 * @return Reply from OMC
