@@ -25,6 +25,7 @@ public class ExecuteSimulation {
 //		omccRef = omcc; // used to quit simulations
 		String omcReturnString = "";
 		
+		// use this command in order to get the OpenModelica temp folder
 		while(omcTempWorkingFolder.contains("\\")){
 			omcTempWorkingFolder = omcTempWorkingFolder.replace('\\', '/');
 		}
@@ -54,6 +55,11 @@ public class ExecuteSimulation {
 
 		omcReturnString = "\n\n" + loadResult + "\n" + simulateResult + "\n"; 
 		return omcReturnString;
+	}
+	
+	public static String getOMCWorkingDir(){
+		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+		return omcc.cd();
 	}
 	
 //	private static OpenModelicaCompilerCommunication omccRef;
