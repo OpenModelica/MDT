@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
+import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.testexecution.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_generator;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
@@ -82,8 +83,13 @@ public class ExecuteTestsAction implements
 						monitor.beginTask("Executing verification models ...", 100);
 						{
 							TestSession testSessionObj = TestSessionXML_Reader.readFromXML(pathToSession + "verification_session.xml");
+							
+							// get the OMC temp folder
 //							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "/tmp").replaceAll("\\\\", "/"); 
-							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "tmp").replaceAll("\\\\", "/");
+//							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "tmp").replaceAll("\\\\", "/");
+							OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+							String omcTempWorkingFolder = omcc.getTempDirectoryPath();
+							
 							File sessionFolder = new File(pathToSession);
 							
 							/*
