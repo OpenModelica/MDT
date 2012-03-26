@@ -304,7 +304,7 @@ public class VerificationExecutionServices {
 				}
 			}
 		}
-		return "1";
+		return "500";
 	}
 	
 	public static String getOutputFormat(Element elt){
