@@ -181,7 +181,7 @@
             objectClass="org.eclipse.core.resources.IFile">
          <action
                class="org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction"
-               icon="icons/execute.png"
+               icon="icons/plot.png"
                id="org.openmodelica.modelicaml.simulation.testexecution.plot"
                label="ModelicaML: Plot Results"
                style="push">

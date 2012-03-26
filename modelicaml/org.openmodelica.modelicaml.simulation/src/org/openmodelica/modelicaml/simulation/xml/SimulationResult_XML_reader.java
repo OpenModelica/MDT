@@ -134,7 +134,8 @@ public class SimulationResult_XML_reader {
 			Element eResult = eResults.get(i);
 			
 			String name = eResult.getAttributeValue("name");
-				System.err.println("FOUND: " + name);
+//			System.err.println("FOUND: " + name);
+			
 			simulationResultsAsString.put(name, new TreeMap<String, String>());
 				int t = 0;
 				while (t < eResult.getChildElements("data").size()) {

@@ -1,7 +1,15 @@
 package org.openmodelica.modelicaml.simulation.testexecution.actions;
 
+import java.io.File;
+import java.net.URI;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -31,16 +39,55 @@ public class PlotTestResultsAction implements
 		
 		if (this.xmlFilePath != null) {
 			xmlFilePath = xmlFilePath.replaceFirst("file://", "");
-//			xmlFilePath = "C:/Projects/ModelicaML/runtime-ModelicaML/modelicaml.example.potableWaterSystem_v31/verification-gen/verification-session_20120312172819/ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.xml";
-//			System.err.println("ALLE DATEN: " + xmlFilePath);
-			Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(SimulationResult_XML_reader.getAllResultsAsStringFromXML(xmlFilePath));
-//			System.out.println(Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults());
+			if (fileExists(this.xmlFilePath)) {
+				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(SimulationResult_XML_reader.getAllResultsAsStringFromXML(xmlFilePath));
+//				System.out.println(Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults());
 
-			DialogPlot dialog = new DialogPlot(new Shell(), this.xmlFilePath);
-			dialog.open();
+				// Plot dialog
+				DialogPlot dialog = new DialogPlot(new Shell(), getTitle(xmlFilePath));
+				dialog.open();
+			}
+			else {
+				openError();
+			}
+		}
+		else {
+			openError();
 		}
 	}
 
+	
+	private void openError(){
+		MessageDialog.openError(new Shell(), "Error opening the simulation results ...", "The file does not exists: \n" + this.xmlFilePath);
+	}
+	
+	
+	private boolean fileExists(String pathAbsolute){
+//		IFileSystem fileSystem = EFS.getLocalFileSystem();
+//		IFileStore file = fileSystem.getStore(URI.create(pathAbsolute));
+//		
+//		IFileInfo reportFileInfo = file.fetchInfo();
+//		if (reportFileInfo.exists()) {
+//			return true;
+//		}
+		File file = new File(pathAbsolute);
+		return file.isFile();
+	}
+	
+	private String getTitle(String filePath){
+		String title = "";
+		File file = new File(filePath);
+		String parentFolderPath = file.getParent();
+		File sessionFolder = new File(parentFolderPath);
+		
+		if (sessionFolder.isDirectory()) {
+			title = title + sessionFolder.getName() + "/" + file.getName();
+			return title;
+		}
+		return filePath;
+	}
+	
+	
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

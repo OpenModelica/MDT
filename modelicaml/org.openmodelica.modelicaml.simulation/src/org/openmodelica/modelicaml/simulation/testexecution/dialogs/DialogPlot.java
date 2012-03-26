@@ -37,13 +37,20 @@ package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
+import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.plot.JFreeChartPlotComposite;
 import org.openmodelica.modelicaml.simulation.plot.VariableTreeComposite;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Label;
 
 public class DialogPlot extends Dialog {
 
@@ -55,7 +62,8 @@ public class DialogPlot extends Dialog {
 	public DialogPlot(Shell parentShell,String title) {
 		super(parentShell);
 		setBlockOnOpen(false);
-        setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
+        //setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
+		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
         this.title = title;
 	}
 	
@@ -63,34 +71,29 @@ public class DialogPlot extends Dialog {
         super.configureShell(shell);
    		shell.setText(this.title);
    		shell.setSize(900, 700);
+   		shell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/plot.png"));
     }
 
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
         final Composite composite = (Composite) super.createDialogArea(parent);
-
-        {
-			GridData sashForm1LData = new GridData();
-			sashForm1LData.horizontalAlignment = GridData.FILL;
-			sashForm1LData.verticalAlignment = GridData.FILL;
-			sashForm1LData.grabExcessVerticalSpace = true;
-			sashForm1LData.grabExcessHorizontalSpace = true;
-			sashForm1 = new SashForm(composite, SWT.BORDER);
-			sashForm1.setLayoutData(sashForm1LData);
-			{
-				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE);
-				GridLayout PlotLayout = new GridLayout();
-				PlotLayout.makeColumnsEqualWidth = true;
-				Plot.setLayout(PlotLayout);
-			}
-			{
-				Tree = new VariableTreeComposite(sashForm1, SWT.NONE);
-				GridLayout TreeLayout = new GridLayout();
-				TreeLayout.makeColumnsEqualWidth = true;
-				Tree.setLayout(TreeLayout);
-			}
-		}
+                composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+        
+                {
+        			sashForm1 = new SashForm(composite, SWT.BORDER);
+        			{
+        				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE);
+        				Plot.setLayout(new FillLayout(SWT.HORIZONTAL));
+        			}
+        			{
+        				Tree = new VariableTreeComposite(sashForm1, SWT.NONE);
+        				GridLayout TreeLayout = new GridLayout();
+        				TreeLayout.makeColumnsEqualWidth = true;
+        				Tree.setLayout(TreeLayout);
+        			}
+        			sashForm1.setWeights(new int[] {600, 273});
+        		}
         
         return parent;
 	}

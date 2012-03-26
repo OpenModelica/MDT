@@ -1,14 +1,13 @@
 package org.openmodelica.modelicaml.simulation.execution;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.simulation.filehandling.cp;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
-import org.openmodelica.modelicaml.simulation.xml.TestSessionXML_Reader;
 
 public class ExecuteSimulation {
 
@@ -57,60 +56,117 @@ public class ExecuteSimulation {
 		return omcReturnString;
 	}
 	
-	public static String getOMCWorkingDir(){
-		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
-		return omcc.cd();
-	}
-	
-//	private static OpenModelicaCompilerCommunication omccRef;
-//	
-//	public static void quitSimulations(){
-//		if (omccRef != null) {
-//			omccRef.quit();	
-//		}
-//	}
 	
 	private static String load(IProgressMonitor monitor, File sessionFolder, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
 		{
-			/*
-			 * Load first code from code-sync folder.
-			 * Note, if there is no such folder or a package.mo OMC will return false. This does not affect the remaining procedure.
-			 */
-			String codeSyncPath = sessionFolder + "/" + Constants.folderName_code_sync;
-			while(codeSyncPath.contains("\\")){
-				codeSyncPath = codeSyncPath.replace('\\', '/');
-			}
-			omcReturnString = omcc.loadFile(codeSyncPath.replaceAll("%20", " ") + "/package.mo"); //If the file is a directory the whole contained model will be loaded
 			
-			/*
-			 * Load code from code-gen folder
-			 */
-			String packageMO = sessionFolder + "/" + testSessionObj.packageFileRelativePath;
-//			System.out.println("packageMO: "+packageMO);
-			while(packageMO.contains("\\")){
-				packageMO = packageMO.replace('\\', '/');
+			String folderPath = sessionFolder.toString();
+			List<String> filesToLoad = new ArrayList<String>();
+			
+			// First files from the code-sync, then files from code-gen
+			filesToLoad.addAll(getFilesToLoad(folderPath + "/" + Constants.folderName_code_sync));
+			filesToLoad.addAll(getFilesToLoad(folderPath + "/" + Constants.folderName_code_gen));
+			
+			// load all files 
+			for (String string : filesToLoad) {
+				String reply = omcc.loadFile(string);
+//				omcReturnString = omcReturnString + "\n" + "Loading '" + string + "' -> " + reply;
 			}
 			
-			if(new File(packageMO).isDirectory()){
-				omcReturnString = omcc.loadFile(packageMO.replaceAll("%20", " ") + "/package.mo"); //If the file is a directory the whole contained model will be loaded
-				if(omcReturnString.toLowerCase().contains("false") || omcReturnString.toLowerCase().contains("error")){
-					String errorString = omcc.getErrorString();
-					omcc.quit();
-					return "loadFile: " + omcReturnString + "\nErrorString: " + errorString;
+//			
+//			/*
+//			 * Load first code from code-sync folder.
+//			 * Note, if there is no such folder or a package.mo OMC will return false. This does not affect the remaining procedure.
+//			 */
+//			
+//			
+//			String codeSyncPath = sessionFolder + "/" + Constants.folderName_code_sync;
+//			while(codeSyncPath.contains("\\")){
+//				codeSyncPath = codeSyncPath.replace('\\', '/');
+//			}
+//			omcReturnString = omcc.loadFile(codeSyncPath.replaceAll("%20", " ") + "/package.mo"); //If the file is a directory the whole contained model will be loaded
+//			
+//			/*
+//			 * Load code from code-gen folder
+//			 */
+//			String packageMO = sessionFolder + "/" + testSessionObj.packageFileRelativePath;
+////			System.out.println("packageMO: "+packageMO);
+//			while(packageMO.contains("\\")){
+//				packageMO = packageMO.replace('\\', '/');
+//			}
+//			
+//			if(new File(packageMO).isDirectory()){
+//				omcReturnString = omcc.loadFile(packageMO.replaceAll("%20", " ") + "/package.mo"); //If the file is a directory the whole contained model will be loaded
+//				if(omcReturnString.toLowerCase().contains("false") || omcReturnString.toLowerCase().contains("error")){
+//					String errorString = omcc.getErrorString();
+//					omcc.quit();
+//					return "loadFile: " + omcReturnString + "\nErrorString: " + errorString;
+//				}
+//			}
+//			else if(new File(packageMO).isFile()){
+//				omcReturnString = omcc.loadFile(packageMO);
+//				if(omcReturnString.toLowerCase().contains("false") || omcReturnString.toLowerCase().contains("error")){
+//					String errorString = omcc.getErrorString();
+//					omcc.quit();
+//					return "loadFile: " + omcReturnString + "\nErrorString: " + errorString;
+//				}
+//			}
+		}
+//		return omcReturnString = "";
+		return omcReturnString;
+	}
+
+	
+	private static List<String> getFilesToLoad(String folderPath){
+		List<String> list = new ArrayList<String>();
+
+		File folder = new File(folderPath);
+		
+		if (folder.exists() && folder.isDirectory()) {
+			
+			// 1.Level
+			
+			// load all .mo files that are not pacakge.mo
+			File[] files1Level = folder.listFiles();
+			for (File file : files1Level) {
+				if (file.isFile() && !file.getName().equals("package.mo")) {
+					list.add(formatPath(folderPath + "/" + file.getName()));
 				}
 			}
-			else if(new File(packageMO).isFile()){
-				omcReturnString = omcc.loadFile(packageMO);
-				if(omcReturnString.toLowerCase().contains("false") || omcReturnString.toLowerCase().contains("error")){
-					String errorString = omcc.getErrorString();
-					omcc.quit();
-					return "loadFile: " + omcReturnString + "\nErrorString: " + errorString;
+			
+			// load a package.mo at 1.level 
+			File packageMo = new File(folderPath + "/" + "pacakge.mo");
+			if ( packageMo.exists()) {
+				list.add(formatPath(folderPath + "/" + "pacakge.mo"));
+			}
+			// if there is no package.mo at 1.Level -> look into sub-folders and find package.mo files there
+			else {
+				// 2.Level
+				File[] files2Level = folder.listFiles();
+				for (File file : files2Level) {
+					if (file.isDirectory()) {
+						String subFolderPackageMoPath = folderPath + "/" + file.getName() + "/package.mo";
+						File subFolderPackageMo = new File(subFolderPackageMoPath);
+						if (subFolderPackageMo.exists()) {
+							list.add(formatPath(subFolderPackageMoPath));
+						}
+					}
 				}
 			}
 		}
-		return omcReturnString = "";
+		return list;
+	}
+	
+	
+	private static String formatPath(String path){
+		while(path.contains("\\")){
+			path = path.replace('\\', '/');
+		}
+		path = path.replaceAll("%20", " ");
+		return path;
 	}
 
+	
 	private static String check_and_simulate(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
 		String result = "";
 		//Check Model

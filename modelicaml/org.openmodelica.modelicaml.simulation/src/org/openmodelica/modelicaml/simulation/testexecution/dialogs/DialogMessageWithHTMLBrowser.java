@@ -77,7 +77,9 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 	public DialogMessageWithHTMLBrowser(Shell parentShell,String title, String location) {
 		super(parentShell);
 		setBlockOnOpen(false);
-        setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
+//      setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
+        setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
+
         this.title = title;
         this.location = location;
 	}
