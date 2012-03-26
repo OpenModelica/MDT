@@ -186,6 +186,20 @@ public class ExecuteSimulation {
 					result = result + "\n" + "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
 				}
 			
+				// set default simulation settings
+				if (model.numberOfIntervals.trim().length() == 0) {
+					model.numberOfIntervals = "500";
+				}
+				if (model.tolerance.trim().length() == 0 ) {
+					model.tolerance = "0.000001";
+				}
+				if (model.solver.trim().length() == 0 ) {
+					model.solver = "dassl";
+				}
+				if (model.outputFormat.trim().length()==0 ) {
+					model.outputFormat = "plt";
+				}
+				
 				//Simulate model
 				omcReturnString = omcc.simulate(model.qualifiedName, model.start, model.stop, model.numberOfIntervals, model.tolerance, model.solver, model.outputFormat);
 				
