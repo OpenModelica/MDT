@@ -87,8 +87,9 @@ public class ExecuteTestsAction implements
 							// get the OMC temp folder
 //							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "/tmp").replaceAll("\\\\", "/"); 
 //							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "tmp").replaceAll("\\\\", "/");
-							OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
-							String omcTempWorkingFolder = omcc.getTempDirectoryPath();
+//							OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+//							String omcTempWorkingFolder = omcc.getTempDirectoryPath();
+							String omcTempWorkingFolder = ExecuteSimulation.getOmcTempWorkingFolderPath();
 							
 							File sessionFolder = new File(pathToSession);
 							

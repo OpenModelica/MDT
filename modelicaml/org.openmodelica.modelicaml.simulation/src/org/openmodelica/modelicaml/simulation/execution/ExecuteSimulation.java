@@ -18,10 +18,12 @@ public class ExecuteSimulation {
 	 * @return the omc return string, if the string is empty there was no error otherwise the error string is included
 	 */
 	
-	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj){
-		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+	private static OpenModelicaCompilerCommunication omcc;
 	
-//		omccRef = omcc; // used to quit simulations
+	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj){
+		if (omcc == null) {
+			omcc = new OpenModelicaCompilerCommunication();
+		}
 		String omcReturnString = "";
 		
 		// use this command in order to get the OpenModelica temp folder
@@ -56,6 +58,13 @@ public class ExecuteSimulation {
 		return omcReturnString;
 	}
 	
+	
+	public static String getOmcTempWorkingFolderPath(){
+		if (omcc == null) {
+			omcc = new OpenModelicaCompilerCommunication();
+		}
+		return omcc.getTempDirectoryPath();
+	}
 	
 	private static String load(IProgressMonitor monitor, File sessionFolder, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
 		{
