@@ -4,6 +4,8 @@
 package org.openmodelica.modelicaml.editor.xtext.modification.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider;
+import org.openmodelica.modelicaml.editor.xtext.model.ui.autoedit.ModelicaMLAutoEditStrategyProvider;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -11,5 +13,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class ModificationUiModule extends org.openmodelica.modelicaml.editor.xtext.modification.ui.AbstractModificationUiModule {
 	public ModificationUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	@Override
+	public Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
+		return ModelicaMLAutoEditStrategyProvider.class;
 	}
 }

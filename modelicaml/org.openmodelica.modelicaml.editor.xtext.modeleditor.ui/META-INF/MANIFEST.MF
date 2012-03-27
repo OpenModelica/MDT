@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.openmodelica.modelicaml.editor.xtext.modeleditor.ui
 Bundle-Vendor: OpenModelica Project
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: org.openmodelica.modelicaml.editor.xtext.modeleditor.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.openmodelica.modelicaml.editor.xtext.modeleditor;visibility:=reexport,
@@ -20,7 +20,8 @@ Require-Bundle: org.openmodelica.modelicaml.editor.xtext.modeleditor;visibility:
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openmodelica.modelicaml.editor.xtext.model.ui.contentassist,
+Export-Package: org.openmodelica.modelicaml.editor.xtext.model.ui.autoedit,
+ org.openmodelica.modelicaml.editor.xtext.model.ui.contentassist,
  org.openmodelica.modelicaml.editor.xtext.model.ui.contentassist.antlr,
  org.openmodelica.modelicaml.editor.xtext.model.ui.internal
 Bundle-Activator: org.openmodelica.modelicaml.editor.xtext.model.ui.internal.ModeleditorActivator
