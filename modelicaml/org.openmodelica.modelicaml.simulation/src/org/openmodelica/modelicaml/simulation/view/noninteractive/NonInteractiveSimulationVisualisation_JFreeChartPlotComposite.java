@@ -54,7 +54,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.experimental.chart.swt.ChartComposite;
 import org.openmodelica.modelicaml.simulation.Activator;
-import org.openmodelica.simulation.core.simulationdata.SimulationResultManager_NonInteractive;
+import org.openmodelica.modelicaml.simulation.plot.SimulationResultManager_NonInteractive;
+//import org.openmodelica.simulation.core.simulationdata.SimulationResultManager_NonInteractive;
 
 // TODO: Auto-generated Javadoc
 /**

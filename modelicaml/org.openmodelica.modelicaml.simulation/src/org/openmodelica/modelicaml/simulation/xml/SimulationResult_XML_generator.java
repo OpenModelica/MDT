@@ -37,12 +37,14 @@ package org.openmodelica.modelicaml.simulation.xml;
 import java.io.FileOutputStream;
 import java.util.Map;
 
+import org.openmodelica.modelicaml.simulation.simulationresult_txt_handling.Result_TXT_reader;
+
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Serializer;
 
-import org.openmodelica.simulation.core.simulationresult_txt_handling.Result_TXT_reader;
+//import org.openmodelica.simulation.core.simulationresult_txt_handling.Result_TXT_reader;
 
 // TODO: Auto-generated Javadoc
 /**

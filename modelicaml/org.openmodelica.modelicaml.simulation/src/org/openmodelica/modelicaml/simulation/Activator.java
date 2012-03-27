@@ -36,7 +36,7 @@ package org.openmodelica.modelicaml.simulation;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openmodelica.modelicaml.simulation.plot.SimulationCenter_NonInteractive;
-import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
+//import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
 import org.osgi.framework.BundleContext;
 
 // TODO: Auto-generated Javadoc
@@ -114,10 +114,10 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @param selectedSimulationSessionConfiguration the selected simulation session configuration
 	 */
-	public synchronized static void initSimulationCenter_NonInteractive(SimulationSessionConfiguration selectedSimulationSessionConfiguration) {
-		if(simulationCenter_NonInteractive==null){
-			createSimulationCenter_NonInteractive();
-		}
-	}
+//	public synchronized static void initSimulationCenter_NonInteractive(SimulationSessionConfiguration selectedSimulationSessionConfiguration) {
+//		if(simulationCenter_NonInteractive==null){
+//			createSimulationCenter_NonInteractive();
+//		}
+//	}
 
 }

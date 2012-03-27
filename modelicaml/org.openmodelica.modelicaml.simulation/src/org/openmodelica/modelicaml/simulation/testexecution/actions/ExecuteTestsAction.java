@@ -22,20 +22,16 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
-import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
-import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.testexecution.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_generator;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
 import org.openmodelica.modelicaml.simulation.xml.TestSessionXML_Reader;
-import org.openmodelica.simulation.core.simulationresult_txt_handling.Result_TXT_reader;
 
 public class ExecuteTestsAction implements
 		IWorkbenchWindowActionDelegate {

@@ -64,7 +64,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.Message;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction;
 
@@ -97,8 +96,6 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			
 			try {
 				decodedLocation = URLDecoder.decode(location, "UTF-8").trim();
-				String[] splitted = decodedLocation.split("\\?");
-				decodedLocation = splitted[1];
 				
 			} catch (UnsupportedEncodingException e) {
 //				e.printStackTrace();
@@ -125,6 +122,10 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 
 			}
 			else if (decodedLocation != null && decodedLocation.trim().endsWith("_res.xml")) {
+				
+				String[] splitted = decodedLocation.split("\\?");
+				decodedLocation = splitted[1];
+				
 				event.doit = false;	// don't change the page
 				String sessionFolderAbsolutePath = getSessionPath();
 				if (sessionFolderAbsolutePath != null) {
