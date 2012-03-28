@@ -139,7 +139,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			<tr>
 				<td><i>verdict</i> 
 					<script type='text/javascript'>
-						writeLink('locate:<%qualifiedName%>#<%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>', '<strong><%getAllRequirementsEvaluatedPropertyName()%></strong>');
+						writeLink('locate:<%qualifiedName%>@--><%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>', '<strong><%getAllRequirementsEvaluatedPropertyName()%></strong>');
 					</script>
 				</td>
 				<td>&nbsp;:&nbsp;</td>
@@ -152,7 +152,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			<tr>
 				<td><i>verdict</i> 
 					<script type='text/javascript'>
-						writeLink('locate:<%qualifiedName%>#<%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>', '<strong><%getSomeRequirementsViolatedPropertyName()%></strong>');
+						writeLink('locate:<%qualifiedName%>@--><%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>', '<strong><%getSomeRequirementsViolatedPropertyName()%></strong>');
 					</script>	
 				<td>&nbsp;:&nbsp;</td>
 				<td>
