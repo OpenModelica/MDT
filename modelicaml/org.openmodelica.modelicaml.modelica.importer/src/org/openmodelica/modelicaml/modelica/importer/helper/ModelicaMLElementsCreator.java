@@ -743,11 +743,20 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					if (extendsRelationItem.getModifications() != null) {
 						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, extendsRelationItem.getModifications());
 					}
+					else {
+						// make sure that old data is deleted
+						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, new BasicEList<String>());
+					}
 					
 					// set array size 
-					if (appropriateStereotype.getQualifiedName().equals(Constants.stereotypeQName_TypeRelation)
-							&& extendsRelationItem.getArraySize() != null) {
-						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, extendsRelationItem.getArraySize());
+					if (appropriateStereotype.getQualifiedName().equals(Constants.stereotypeQName_TypeRelation) ) {
+						if (extendsRelationItem.getArraySize() != null) {
+							extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, extendsRelationItem.getArraySize());
+						}
+						else {
+							// make sure that old data is deleted
+							extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, new BasicEList<String>());
+						}
 					}
 				}
 				
@@ -1393,10 +1402,18 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 			if (componentItem.getModifications() != null) {
 				componentElement.setValue(componentStereotype, Constants.propertyName_modification, componentItem.getModifications());
 			}
+			else {
+				// make sure that old data is deleted
+				componentElement.setValue(componentStereotype, Constants.propertyName_modification, new BasicEList<String>());
+			}
 			
 			// set arraySize
 			if (componentItem.getArraySize() != null) {
 				componentElement.setValue(componentStereotype, Constants.propertyName_arraySize, componentItem.getArraySize());
+			}
+			else {
+				// make sure that old data is deleted
+				componentElement.setValue(componentStereotype, Constants.propertyName_arraySize, new BasicEList<String>());
 			}
 
 			// set conditionalExpression

@@ -598,7 +598,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 				String[] splited = arraySizeString.split(",");
 				for (int i = 0; i < splited.length; i++) {
 					String string = splited[i];
-					arraySize.add(string);
+					if (!string.trim().equals("")) {
+						arraySize.add(string);
+					}
 				}
 				if (arraySize.size() > 0 ) {
 					item.setArraySize(arraySize);
@@ -993,9 +995,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 				if ( arraySizeItems.length > 0 ) {
 					EList<String> arraySizeItemsList = new BasicEList<String>();
 					for (int i = 0; i < arraySizeItems.length; i++) {
-						arraySizeItemsList.add(arraySizeItems[i]);
+						if (!arraySizeItems[i].trim().equals("")) {
+							arraySizeItemsList.add(arraySizeItems[i]);
+						}
 					}
-					data.arraySize = arraySizeItemsList;
+					if (arraySizeItemsList.size() > 0) {
+						data.arraySize = arraySizeItemsList;
+					}
 				}
 				
 				list.add(data);
