@@ -99,7 +99,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.openmodelica.modelicaml.simulation.handlers.CGAndSimulationOMCAction"
+            class="org.openmodelica.modelicaml.simulation.handlers.SimulationOMCAction"
             commandId="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMC">
          <activeWhen>
             <with

@@ -56,6 +56,8 @@ public class SimulationResultManager_NonInteractive extends Observable{
 	/** All selected properties to plot on a view The corresponding data is stored in the SimulationResultManager_NonInteractive. */
 	private Set<String> selectedProperties;
 	
+	private String simulationModelName;
+	
 	/**
 	 * Instantiates a new simulation result manager_ non interactive.
 	 */
@@ -78,8 +80,9 @@ public class SimulationResultManager_NonInteractive extends Observable{
 	 * This method will clear the map and set new results to the simulationResultsAsString Map.
 	 *
 	 * @param results the results
+	 * @return 
 	 */
-	public  synchronized void setResults(Map<String, Map<String, String>> results){
+	public synchronized void setResults(Map<String, Map<String, String>> results){
 		selectedProperties.clear();
 		simulationResultsAsString.clear();
 		simulationResultsAsString.putAll(results);
@@ -92,7 +95,7 @@ public class SimulationResultManager_NonInteractive extends Observable{
 	 *
 	 * @return a copy of the results map
 	 */
-	public  synchronized Map<String, Map<String, String>> getResults(){
+	public synchronized Map<String, Map<String, String>> getResults(){
 		
 		Map<String, Map<String, String>> simulationResultsAsStringCopy = new TreeMap<String, Map<String, String>>();
 		simulationResultsAsStringCopy.putAll(simulationResultsAsString);
@@ -133,5 +136,13 @@ public class SimulationResultManager_NonInteractive extends Observable{
 		setChanged();
 		notifyObservers(property);
 		
+	}
+
+	public String getSimulationModelName() {
+		return simulationModelName;
+	}
+
+	public void setSimulationModelName(String simulationModelName) {
+		this.simulationModelName = simulationModelName;
 	}
 }

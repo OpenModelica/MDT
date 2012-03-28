@@ -76,8 +76,8 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 	public DialogMessageWithHTMLBrowser(Shell parentShell,String title, String location) {
 		super(parentShell);
 		setBlockOnOpen(false);
-//      setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
-        setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
+//		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
+		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
 
         this.title = title;
         this.location = location;
@@ -96,7 +96,6 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			
 			try {
 				decodedLocation = URLDecoder.decode(location, "UTF-8").trim();
-				
 			} catch (UnsupportedEncodingException e) {
 //				e.printStackTrace();
 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid Browser Link", "It is not possible to decode the link " + location);
@@ -105,7 +104,8 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			if (decodedLocation != null && decodedLocation.trim().startsWith("locate")) {
 				event.doit = false;	// don't change the page
 				
-				String[] splitted = decodedLocation.replaceFirst("locate:", "").split("#");
+				//String[] splitted = decodedLocation.replaceFirst("locate:", "").split("#");
+				String[] splitted = decodedLocation.replaceFirst("locate:", "").split("@-->");
 				
 				String elementQName = splitted[0];
 				if (elementQName != null) {
@@ -206,10 +206,13 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				ElementFinder ef = new ElementFinder(rootModel, qName);
 				elements = ef.getElements();
 			}
+			if (elements == null) { // no element was found
+				MessageDialog.openError(getParentShell(), "Error Locating Element", "The element '" + qName + "' was not found.");
+			}
 			
 		} catch (NotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
+			MessageDialog.openError(getParentShell(), "Error Locating Element", "Could not access the UML model. Please make sure that the Papyrus UML model is open and the editor is active.");
 		}
 		
 		return elements;

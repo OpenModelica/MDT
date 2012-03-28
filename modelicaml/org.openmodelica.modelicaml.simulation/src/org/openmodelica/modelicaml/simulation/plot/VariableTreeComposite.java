@@ -154,7 +154,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 						treeModelLData.grabExcessHorizontalSpace = true;
 						treeModelLData.verticalAlignment = GridData.FILL;
 						treeModelLData.grabExcessVerticalSpace = true;
-						treeModel = new Tree(compositeModelTree, SWT.CHECK);
+						treeModel = new Tree(compositeModelTree, SWT.BORDER | SWT.CHECK);
 						treeModel.setLayoutData(treeModelLData);
 						buildTreeModel(properties);
 						treeModel.addListener(SWT.Selection, new Listener() {
@@ -189,8 +189,6 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 					compositeSearch.setLayout(compositeSearchLayout);
 					{
 						labelsearch = new Label(compositeSearch, SWT.NONE);
-						GridData labelsearchLData = new GridData();
-						labelsearch.setLayoutData(labelsearchLData);
 						labelsearch.setText("Find:");
 						labelsearch.setToolTipText("Enter a string to be searched for in all full qualified names. This search is not case sensitive.");
 					}
@@ -211,8 +209,6 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 					}
 					{
 						buttonSearch = new Button(compositeSearch, SWT.PUSH | SWT.CENTER);
-						GridData buttonSearchLData = new GridData();
-						buttonSearch.setLayoutData(buttonSearchLData);
 						buttonSearch.setText("Search");
 						buttonSearch.addSelectionListener(new SelectionAdapter() {
 							
@@ -286,8 +282,10 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 	private void buildTreeModel(Set<String> properties) {
 		if(properties != null && !properties.isEmpty()){
 			TreeItem rootItem = new TreeItem(treeModel, SWT.NULL);
-			rootItem.setText("Model-Name");//TODO 20120129 change to dynamic name
-					
+//			rootItem.setText("Model-Name");//TODO 20120129 change to dynamic name
+			rootItem.setText(Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getSimulationModelName());
+			
+			
 			for (String fullQualifiedName : properties) {
 				if(!fullQualifiedName.startsWith("der("))
 					createModelElement(rootItem, fullQualifiedName, fullQualifiedName);

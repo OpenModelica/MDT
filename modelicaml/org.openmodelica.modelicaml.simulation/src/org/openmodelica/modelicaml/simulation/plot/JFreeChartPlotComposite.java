@@ -99,13 +99,15 @@ public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite i
 		dataset.setAutoWidth(true);
 		dataSetSelectionChanged(selectedProperties);
 		createSeriesMap(resultsMap);
-		chart = ChartFactory.createXYLineChart("Simulation Results", "Time (s)", "Value (?)",
+		chart = ChartFactory.createXYLineChart("", "time", "",
 				dataset, PlotOrientation.VERTICAL, true, false, false);
 
 		plot = chart.getXYPlot();
 		plot.getDomainAxis().setAutoRange(true);
 		plot.getDomainAxis().setLowerMargin(0.0);
 		plot.getDomainAxis().setUpperMargin(0.0);
+		plot.setWeight(1);
+		
 		@SuppressWarnings("unused")
 		final ChartComposite frame = new ChartComposite(parent, SWT.NONE,
 				chart, true);

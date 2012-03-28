@@ -2,7 +2,6 @@ package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 

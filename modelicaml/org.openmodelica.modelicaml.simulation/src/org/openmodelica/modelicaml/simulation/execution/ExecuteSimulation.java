@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
@@ -20,7 +21,7 @@ public class ExecuteSimulation {
 	
 	private static OpenModelicaCompilerCommunication omcc;
 	
-	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj){
+	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj, boolean loadMSL){
 		if (omcc == null) {
 			omcc = new OpenModelicaCompilerCommunication();
 		}
@@ -33,6 +34,10 @@ public class ExecuteSimulation {
 		
 		//Clear Workspace
 		omcc.clear();
+		
+		if (loadMSL) {
+			omcc.loadModel("Modelica");
+		}
 		
 		//OMC is working in the eclipse project folder, therefore the folder must been changed to the OM installation folder where a tmp folder can be created.
 		omcReturnString = omcc.cd(omcTempWorkingFolder);		
@@ -59,11 +64,15 @@ public class ExecuteSimulation {
 	}
 	
 	
-	public static String getOmcTempWorkingFolderPath(){
+	public static String getTempDirectoryPath(){
 		if (omcc == null) {
 			omcc = new OpenModelicaCompilerCommunication();
 		}
 		return omcc.getTempDirectoryPath();
+	}
+	
+	public static void loadMSL(){
+		omcc.loadModel("Modelica");
 	}
 	
 	private static String load(IProgressMonitor monitor, File sessionFolder, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
@@ -73,8 +82,8 @@ public class ExecuteSimulation {
 			List<String> filesToLoad = new ArrayList<String>();
 			
 			// First files from the code-sync, then files from code-gen
-			filesToLoad.addAll(getFilesToLoad(folderPath + "/" + Constants.folderName_code_sync));
-			filesToLoad.addAll(getFilesToLoad(folderPath + "/" + Constants.folderName_code_gen));
+			filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(folderPath + "/" + Constants.folderName_code_sync));
+			filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(folderPath + "/" + Constants.folderName_code_gen));
 			
 			// load all files 
 			for (String string : filesToLoad) {
@@ -126,54 +135,54 @@ public class ExecuteSimulation {
 	}
 
 	
-	private static List<String> getFilesToLoad(String folderPath){
-		List<String> list = new ArrayList<String>();
-
-		File folder = new File(folderPath);
-		
-		if (folder.exists() && folder.isDirectory()) {
-			
-			// 1.Level
-			
-			// load all .mo files that are not pacakge.mo
-			File[] files1Level = folder.listFiles();
-			for (File file : files1Level) {
-				if (file.isFile() && !file.getName().equals("package.mo")) {
-					list.add(formatPath(folderPath + "/" + file.getName()));
-				}
-			}
-			
-			// load a package.mo at 1.level 
-			File packageMo = new File(folderPath + "/" + "pacakge.mo");
-			if ( packageMo.exists()) {
-				list.add(formatPath(folderPath + "/" + "pacakge.mo"));
-			}
-			// if there is no package.mo at 1.Level -> look into sub-folders and find package.mo files there
-			else {
-				// 2.Level
-				File[] files2Level = folder.listFiles();
-				for (File file : files2Level) {
-					if (file.isDirectory()) {
-						String subFolderPackageMoPath = folderPath + "/" + file.getName() + "/package.mo";
-						File subFolderPackageMo = new File(subFolderPackageMoPath);
-						if (subFolderPackageMo.exists()) {
-							list.add(formatPath(subFolderPackageMoPath));
-						}
-					}
-				}
-			}
-		}
-		return list;
-	}
+//	private static List<String> getFilesToLoad(String folderPath){
+//		List<String> list = new ArrayList<String>();
+//
+//		File folder = new File(folderPath);
+//		
+//		if (folder.exists() && folder.isDirectory()) {
+//			
+//			// 1.Level
+//			
+//			// load all .mo files that are not pacakge.mo
+//			File[] files1Level = folder.listFiles();
+//			for (File file : files1Level) {
+//				if (file.isFile() && !file.getName().equals("package.mo")) {
+//					list.add(formatPath(folderPath + "/" + file.getName()));
+//				}
+//			}
+//			
+//			// load a package.mo at 1.level 
+//			File packageMo = new File(folderPath + "/" + "pacakge.mo");
+//			if ( packageMo.exists()) {
+//				list.add(formatPath(folderPath + "/" + "pacakge.mo"));
+//			}
+//			// if there is no package.mo at 1.Level -> look into sub-folders and find package.mo files there
+//			else {
+//				// 2.Level
+//				File[] files2Level = folder.listFiles();
+//				for (File file : files2Level) {
+//					if (file.isDirectory()) {
+//						String subFolderPackageMoPath = folderPath + "/" + file.getName() + "/package.mo";
+//						File subFolderPackageMo = new File(subFolderPackageMoPath);
+//						if (subFolderPackageMo.exists()) {
+//							list.add(formatPath(subFolderPackageMoPath));
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return list;
+//	}
 	
 	
-	private static String formatPath(String path){
-		while(path.contains("\\")){
-			path = path.replace('\\', '/');
-		}
-		path = path.replaceAll("%20", " ");
-		return path;
-	}
+//	private static String formatPath(String path){
+//		while(path.contains("\\")){
+//			path = path.replace('\\', '/');
+//		}
+//		path = path.replaceAll("%20", " ");
+//		return path;
+//	}
 
 	
 	private static String check_and_simulate(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {

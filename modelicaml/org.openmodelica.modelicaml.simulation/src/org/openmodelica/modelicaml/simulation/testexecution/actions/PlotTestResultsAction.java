@@ -1,21 +1,22 @@
 package org.openmodelica.modelicaml.simulation.testexecution.actions;
 
 import java.io.File;
-import java.net.URI;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.testexecution.dialogs.DialogPlot;
 import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_reader;
@@ -24,6 +25,7 @@ public class PlotTestResultsAction implements
 		IWorkbenchWindowActionDelegate {
 
 	private String xmlFilePath = null;
+	private boolean canceled = false;
 	
 	@Override
 	public void run(IAction action) {
@@ -40,12 +42,57 @@ public class PlotTestResultsAction implements
 		if (this.xmlFilePath != null) {
 			xmlFilePath = xmlFilePath.replaceFirst("file://", "");
 			if (fileExists(this.xmlFilePath)) {
-				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(SimulationResult_XML_reader.getAllResultsAsStringFromXML(xmlFilePath));
-//				System.out.println(Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults());
+				
+				IWorkbench wb = PlatformUI.getWorkbench();
+				IProgressService ps = wb.getProgressService();
+				try {
+					ps.busyCursorWhile(new IRunnableWithProgress() {
+				      public void run(IProgressMonitor pm) {
+				    	  try
+				    		{
+//					    	  pm.setTaskName("Reading simulation results file ...");
+					    	  pm.beginTask("Reading simulation results file ...", 2);
+				    		
+					    	  Map<String, Map<String, String>> results = SimulationResult_XML_reader.getAllResultsAsStringFromXML(xmlFilePath);
+					    	  pm.worked(1);
+					    	  
+					    	  if (!pm.isCanceled()) {
+						    	  canceled = false;
+//						    	  pm.beginTask("Populating simulation results ...", 1);
+						    	  pm.setTaskName("Reading simulation results file ...");
+						    	  Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(results);
+						    	  pm.worked(1);
+					    	  }
+					    	  else {
+					    		  canceled = true;
+					    		  pm.done();
+					    	  }
+				    		}
+				    	finally
+				    		{
+				    		pm.done();
+				    		}
+				    	  
+				      }
+					});
+		    	  
+					if (!canceled) {
+						String simulationModelName = getSimulationModelName(xmlFilePath);
+				    	Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setSimulationModelName(simulationModelName);
+							
+				    	// Plot dialog
+				    	DialogPlot dialog = new DialogPlot(new Shell(), getTitle(xmlFilePath));
+				    	dialog.open();
+					}
+			    	  
+				} catch (InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
-				// Plot dialog
-				DialogPlot dialog = new DialogPlot(new Shell(), getTitle(xmlFilePath));
-				dialog.open();
 			}
 			else {
 				openError();
@@ -87,6 +134,19 @@ public class PlotTestResultsAction implements
 		return filePath;
 	}
 	
+	private String getSimulationModelName(String filePath){
+		String name = "";
+		if (filePath != null && filePath.length() != 0) {
+			String[] splitted = filePath.split("/");
+			name = splitted[splitted.length - 1];
+			name = name.replaceFirst("_res.xml", "");
+
+			String[] dotSplitted = name.split("\\.");
+			name = dotSplitted[dotSplitted.length - 1];
+			
+		}
+		return name;
+	}
 	
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {

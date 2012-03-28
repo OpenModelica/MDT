@@ -37,20 +37,15 @@ package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.plot.JFreeChartPlotComposite;
 import org.openmodelica.modelicaml.simulation.plot.VariableTreeComposite;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Label;
 
 public class DialogPlot extends Dialog {
 
@@ -74,26 +69,32 @@ public class DialogPlot extends Dialog {
    		shell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/plot.png"));
     }
 
+	@Override
+	protected Control createButtonBar(Composite parent) {
+		// do not create OK and CANCEL buttons.
+		return null;
+	}
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
         final Composite composite = (Composite) super.createDialogArea(parent);
-                composite.setLayout(new FillLayout(SWT.HORIZONTAL));
         
-                {
-        			sashForm1 = new SashForm(composite, SWT.BORDER);
-        			{
-        				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE);
-        				Plot.setLayout(new FillLayout(SWT.HORIZONTAL));
-        			}
-        			{
-        				Tree = new VariableTreeComposite(sashForm1, SWT.NONE);
-        				GridLayout TreeLayout = new GridLayout();
-        				TreeLayout.makeColumnsEqualWidth = true;
-        				Tree.setLayout(TreeLayout);
-        			}
-        			sashForm1.setWeights(new int[] {600, 273});
-        		}
+        composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+
+        {
+			sashForm1 = new SashForm(composite, SWT.BORDER | SWT.SMOOTH);
+			{
+				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE);
+				Plot.setLayout(new FillLayout(SWT.HORIZONTAL));
+			}
+			{
+				Tree = new VariableTreeComposite(sashForm1, SWT.NONE);
+				GridLayout TreeLayout = new GridLayout();
+				TreeLayout.makeColumnsEqualWidth = true;
+				Tree.setLayout(TreeLayout);
+			}
+			sashForm1.setWeights(new int[] {600, 273});
+		}
         
         return parent;
 	}

@@ -124,24 +124,24 @@ public class SimulationResult_XML_generator {
 		f.close();
 	}
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args) {
-
-		String pathToProj = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
-		String model1 = "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.plt";
-		String model2 = "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s2_Fill_tank_res.plt";
-		String model3 = "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s3_Drain_tank_res.plt";
-		
-		try {
-			createXML(pathToProj + model1, pathToProj + "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.xml");
-			createXML(pathToProj + model2, pathToProj + "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s2_Fill_tank_res.xml");
-			createXML(pathToProj + model3, pathToProj + "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s3_Drain_tank_res.xml");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	/**
+//	 * The main method.
+//	 *
+//	 * @param args the arguments
+//	 */
+//	public static void main(String[] args) {
+//
+//		String pathToProj = "C:/Projects/ModelicaML/runtime-New_configuration/modelicaml.example.potableWaterSystem_v30/verification-gen/verification-session_20120124110026\\";
+//		String model1 = "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.plt";
+//		String model2 = "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s2_Fill_tank_res.plt";
+//		String model3 = "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s3_Drain_tank_res.plt";
+//		
+//		try {
+//			createXML(pathToProj + model1, pathToProj + "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s1_Fill_and_Drain_Tank_res.xml");
+//			createXML(pathToProj + model2, pathToProj + "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s2_Fill_tank_res.xml");
+//			createXML(pathToProj + model3, pathToProj + "ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s3_Drain_tank_res.xml");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

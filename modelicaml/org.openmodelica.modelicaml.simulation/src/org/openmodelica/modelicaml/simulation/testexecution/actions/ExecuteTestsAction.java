@@ -10,6 +10,8 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
 import org.openmodelica.modelicaml.simulation.testexecution.dialogs.DialogMessage;
@@ -85,7 +88,7 @@ public class ExecuteTestsAction implements
 //							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "tmp").replaceAll("\\\\", "/");
 //							OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 //							String omcTempWorkingFolder = omcc.getTempDirectoryPath();
-							String omcTempWorkingFolder = ExecuteSimulation.getOmcTempWorkingFolderPath();
+							String omcTempWorkingFolder = ExecuteSimulation.getTempDirectoryPath();
 							
 							File sessionFolder = new File(pathToSession);
 							
@@ -97,22 +100,25 @@ public class ExecuteTestsAction implements
 							IFileSystem fileSystem = EFS.getLocalFileSystem();
 							
 							for(TestModel model : testSessionObj.testModels){
+								
 								if (monitor.isCanceled()){
 									return Status.CANCEL_STATUS;
 								}
 								
-								monitor.subTask("Deleting files from OMC tmp folder for '" + model.qualifiedName + "'");
-								IFileStore oldExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
-								IFileStore oldXMLInitFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml"));
-								IFileStore oldPltFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
-								try {
-									oldExeFile.delete(EFS.NONE, monitor);
-									oldXMLInitFile.delete(EFS.NONE, monitor);
-									oldPltFile.delete(EFS.NONE, monitor);
-								} catch (CoreException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+								ModelicaMLServices.deleteOldSimulationFiles(model.qualifiedName, omcTempWorkingFolder, monitor);
+								
+//								monitor.subTask("Deleting files from OMC tmp folder for '" + model.qualifiedName + "'");
+//								IFileStore oldExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
+//								IFileStore oldXMLInitFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml"));
+//								IFileStore oldPltFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
+//								try {
+//									oldExeFile.delete(EFS.NONE, monitor);
+//									oldXMLInitFile.delete(EFS.NONE, monitor);
+//									oldPltFile.delete(EFS.NONE, monitor);
+//								} catch (CoreException e) {
+//									// TODO Auto-generated catch block
+//									e.printStackTrace();
+//								}
 							}
 							
 							/*
@@ -122,7 +128,8 @@ public class ExecuteTestsAction implements
 							 */
 							omcLog = "";
 							monitor.subTask("Executing models ...");
-							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, sessionFolder, omcTempWorkingFolder, testSessionObj);
+							boolean loadMSL = true; // by default load the Modelica Standard Library for the case if there are models that use it.
+							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, sessionFolder, omcTempWorkingFolder, testSessionObj, loadMSL);
 							omcLog = omcMessage;
 									
 //							if(!omcMessage.isEmpty()){
@@ -178,7 +185,12 @@ public class ExecuteTestsAction implements
 									 */
 									try {
 										SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
+										
+										// refresh the project browser
+										ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+										
 //										[TODO 20120317] Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(Result_TXT_reader.readResult(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
+
 									} catch (Exception e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
