@@ -233,6 +233,9 @@ public class Constants {
 	public final static String folderName_code_gen = "code-gen";
 	public final static String folderName_code_sync = "code-sync";
 	public final static String folderName_req_sync = "req-sync";
+	
+	// simulation
+	public final static String folderName_sim_gen = "sim-gen";
 
 	
 	// Test Execution

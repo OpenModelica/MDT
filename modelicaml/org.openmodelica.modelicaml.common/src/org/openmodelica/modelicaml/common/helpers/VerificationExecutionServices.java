@@ -543,7 +543,7 @@ public class VerificationExecutionServices {
 			"	<span style='color:#000000; margin-left:0px;'>" + getComponentIndicator(treeItem)+": "+"\n" + 
 			
 			"		<script type='text/javascript'>" + "\n" +
-			"			writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "', '<strong>" + getTreeItemTypeName(treeItem) + "</strong>');" + "\n" + 
+			"			writeLink('locate:"+testModel.getQualifiedName()+"@-->" +treeItem.getDotPath()+ "', '<strong>" + getTreeItemTypeName(treeItem) + "</strong>');" + "\n" + 
 			"		</script>" + "\n" + 
 					
 			"	</span> <br>" + "\n" + 
@@ -584,7 +584,7 @@ public class VerificationExecutionServices {
 				"	<span style='color:#000000; margin-left:10px;'>" + getComponentIndicator(treeItem)+": "+"\n" + 
 				
 				"		<script type='text/javascript'>" + "\n" +
-				"			writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "', '<strong>"+getTreeItemTypeName(treeItem)+" (ID "+getRequirementID(treeItem)+")</strong>');" + "\n" + 
+				"			writeLink('locate:"+testModel.getQualifiedName()+"@-->" +treeItem.getDotPath()+ "', '<strong>"+getTreeItemTypeName(treeItem)+" (ID "+getRequirementID(treeItem)+")</strong>');" + "\n" + 
 				"		</script>" + "\n" + 
 						
 				"	</span> <br>" + "\n" + 
@@ -609,7 +609,7 @@ public class VerificationExecutionServices {
 //				"				</script>" + "\n" +
 				
 				"				<script type='text/javascript'>" + "\n" + 
-				"					writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"', '<strong>"+Constants.propertyName_evaluated+"</strong>');" + "\n" + 
+				"					writeLink('locate:"+testModel.getQualifiedName()+"@-->" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"', '<strong>"+Constants.propertyName_evaluated+"</strong>');" + "\n" + 
 				"				</script>" + "\n" +
 				
 				"				<td>&nbsp;:&nbsp;</td>" + "\n" + 
@@ -636,7 +636,7 @@ public class VerificationExecutionServices {
 	//				"			</script>" + "\n" + 
 					
 					"			<script type='text/javascript'>" + "\n" + 
-					"				writeLink('locate:"+testModel.getQualifiedName()+"#" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"', '<strong>"+Constants.propertyName_violated+"</strong>');" + "\n" + 
+					"				writeLink('locate:"+testModel.getQualifiedName()+"@-->" +treeItem.getDotPath()+ "."+Constants.propertyName_mStatus+"', '<strong>"+Constants.propertyName_violated+"</strong>');" + "\n" + 
 					"			</script>" + "\n" + 
 					
 					"			</td>" + "\n" +  "\n" + 
@@ -671,7 +671,7 @@ public class VerificationExecutionServices {
 		for (TreeObject treeObject : requiredClients) {
 			html = html + 
 			"	<div style='border: position:relative; margin-left:5px;'><i>madantory client</i>: " + "\n" + 
-			"		<strong><script type='text/javascript'>writeLink('locate:"+testModel.getQualifiedName()+"#"+treeObject.getDotPath()+"', '"+treeObject.getDotPath()+"');</script></strong>" + "\n" + 
+			"		<strong><script type='text/javascript'>writeLink('locate:"+testModel.getQualifiedName()+"@-->"+treeObject.getDotPath()+"', '"+treeObject.getDotPath()+"');</script></strong>" + "\n" + 
 			"		" + "\n" + 
 			"		(<script type='text/javascript'>" + "\n" + 
 			"			writeChangedItsValueString(data['"+testModel.getQualifiedName()+"']['"+treeObject.getDotPath()+"']['"+Constants.MACRO_changedItsValue+"']);" + "\n" + 

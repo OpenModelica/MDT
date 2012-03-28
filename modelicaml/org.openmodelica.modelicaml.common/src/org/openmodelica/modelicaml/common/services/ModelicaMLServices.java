@@ -13,6 +13,9 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
@@ -157,49 +160,129 @@ public class ModelicaMLServices {
 	}
 	
 	
-	public static List<String> getFilesToLoad(String folderAbsolutePath){
-		
-		// list of files to be loaded
+//	public static List<String> getFilesToLoad(String folderAbsolutePath){
+//		
+//		// list of files to be loaded
+//		List<String> list = new ArrayList<String>();
+//
+//		// add "/" at the end if there is none
+//		if (!folderAbsolutePath.trim().endsWith("/")) {
+//			folderAbsolutePath = folderAbsolutePath + "/";
+//		}
+//		
+//		File folder = new File(folderAbsolutePath);
+//		if (folder.isDirectory()) {
+//			/*
+//			 * - get all .mo files add these to the list
+//			 * - get all sub.folders and add sub-folder-name/package.mo to the list
+//			 */
+//			IFileSystem fileSystem = EFS.getLocalFileSystem();
+//			IFileStore folderStore = fileSystem.getStore(URI.create(folderAbsolutePath));
+//			
+//			String[] children;
+//			try {
+//				children = folderStore.childNames(EFS.NONE, null);
+//				for (int i = 0; i < children.length; i++) {
+//					String child = children[i];
+//					
+//					File checkChild = new File(folderAbsolutePath + child);
+//					
+//					if (child.endsWith(".mo")) { // if it is a .mo file
+//						list.add(folderAbsolutePath + child);
+//					}
+//					else if (checkChild.isDirectory()) { // if it is a folder
+//						list.add(folderAbsolutePath + child + "/package.mo");
+//					}
+//					else { // any other files 
+//						
+//					}
+//				}
+//			} catch (CoreException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		return list;
+//	}
+	
+	
+	public static List<String> getFilesToLoad(String folderPath){
 		List<String> list = new ArrayList<String>();
 
-		// add "/" at the end if there is none
-		if (!folderAbsolutePath.trim().endsWith("/")) {
-			folderAbsolutePath = folderAbsolutePath + "/";
-		}
+		File folder = new File(folderPath);
 		
-		File folder = new File(folderAbsolutePath);
-		if (folder.isDirectory()) {
-			/*
-			 * - get all .mo files add these to the list
-			 * - get all sub.folders and add sub-folder-name/package.mo to the list
-			 */
-			IFileSystem fileSystem = EFS.getLocalFileSystem();
-			IFileStore folderStore = fileSystem.getStore(URI.create(folderAbsolutePath));
+		if (folder.exists() && folder.isDirectory()) {
 			
-			String[] children;
-			try {
-				children = folderStore.childNames(EFS.NONE, null);
-				for (int i = 0; i < children.length; i++) {
-					String child = children[i];
-					
-					File checkChild = new File(folderAbsolutePath + child);
-					
-					if (child.endsWith(".mo")) { // if it is a .mo file
-						list.add(folderAbsolutePath + child);
-					}
-					else if (checkChild.isDirectory()) { // if it is a folder
-						list.add(folderAbsolutePath + child + "/package.mo");
-					}
-					else { // any other files 
-						
+			// 1.Level
+			
+			// load all .mo files that are not pacakge.mo
+			File[] files1Level = folder.listFiles();
+			for (File file : files1Level) {
+				if (file.isFile() && !file.getName().equals("package.mo")) {
+					list.add(formatPath(folderPath + "/" + file.getName()));
+				}
+			}
+			
+			// load a package.mo at 1.level 
+			File packageMo = new File(folderPath + "/" + "pacakge.mo");
+			if ( packageMo.exists()) {
+				list.add(formatPath(folderPath + "/" + "pacakge.mo"));
+			}
+			
+			// if there is no package.mo at 1.Level -> look into sub-folders and find package.mo files there
+			else {
+				// 2.Level
+				File[] files2Level = folder.listFiles();
+				for (File file : files2Level) {
+					if (file.isDirectory()) {
+						String subFolderPackageMoPath = folderPath + "/" + file.getName() + "/package.mo";
+						File subFolderPackageMo = new File(subFolderPackageMoPath);
+						if (subFolderPackageMo.exists()) {
+							list.add(formatPath(subFolderPackageMoPath));
+						}
 					}
 				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 		return list;
+	}
+	
+	
+	private static String formatPath(String path){
+		while(path.contains("\\")){
+			path = path.replace('\\', '/');
+		}
+		path = path.replaceAll("%20", " ");
+		return path;
+	}
+	
+	
+	
+	public static IStatus deleteOldSimulationFiles(String modelQName, String directory, IProgressMonitor monitor){
+		
+		if (monitor.isCanceled()){
+			return Status.CANCEL_STATUS;
+		}
+		
+		IFileSystem fileSystem = EFS.getLocalFileSystem();
+		monitor.subTask("Deleting files from OMC tmp folder for '" + modelQName + "'");
+		IFileStore oldExeFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + ".exe"));
+		IFileStore oldXMLInitFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_init.xml"));
+		IFileStore oldPltFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.plt"));
+		IFileStore oldPltXMLFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.xml"));
+		
+		try {
+			oldExeFile.delete(EFS.NONE, monitor);
+			oldXMLInitFile.delete(EFS.NONE, monitor);
+			oldPltFile.delete(EFS.NONE, monitor);
+			oldPltXMLFile.delete(EFS.NONE, monitor);
+			
+			return Status.OK_STATUS;
+			
+		} catch (CoreException e) {
+//			e.printStackTrace();
+			return null;
+		}
 	}
 	
 }
