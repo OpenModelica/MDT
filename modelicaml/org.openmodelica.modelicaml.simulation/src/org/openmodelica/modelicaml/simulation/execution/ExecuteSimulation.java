@@ -19,12 +19,11 @@ public class ExecuteSimulation {
 	 * @return the omc return string, if the string is empty there was no error otherwise the error string is included
 	 */
 	
-	private static OpenModelicaCompilerCommunication omcc;
+//	private static OpenModelicaCompilerCommunication omcc;
+	private static String omcTempDirectoryPath;
 	
 	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj, boolean loadMSL){
-		if (omcc == null) {
-			omcc = new OpenModelicaCompilerCommunication();
-		}
+		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 		String omcReturnString = "";
 		
 		// use this command in order to get the OpenModelica temp folder
@@ -65,15 +64,13 @@ public class ExecuteSimulation {
 	
 	
 	public static String getTempDirectoryPath(){
-		if (omcc == null) {
-			omcc = new OpenModelicaCompilerCommunication();
+		if (omcTempDirectoryPath == null) {
+			OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+			omcTempDirectoryPath = omcc.getTempDirectoryPath();
 		}
-		return omcc.getTempDirectoryPath();
+		return omcTempDirectoryPath;
 	}
-	
-	public static void loadMSL(){
-		omcc.loadModel("Modelica");
-	}
+
 	
 	private static String load(IProgressMonitor monitor, File sessionFolder, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
 		{

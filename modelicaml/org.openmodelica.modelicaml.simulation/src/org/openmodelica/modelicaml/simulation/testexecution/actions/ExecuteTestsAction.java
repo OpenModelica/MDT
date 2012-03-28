@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
@@ -307,9 +308,9 @@ public class ExecuteTestsAction implements
  				
 				/* open log and the report afterwards 
 				 */
-				DialogMessage logDialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-						"Models Execution Report", infoText, simulationReport, errorsExist);
-				logDialog.open();
+//				DialogMessage logDialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Models Execution Report", infoText, simulationReport, errorsExist);
+				DialogMessage logDialog = new DialogMessage(new Shell(), "Models Execution Report", infoText, simulationReport, errorsExist);
+ 				logDialog.open();
  				
  				boolean open = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Open Report?", "The simulation is completed. Do you want to see the report?");
  				if (open) {

@@ -53,9 +53,13 @@ public class DialogMessage extends Dialog {
 	private String infoText = "";
 	private boolean isError = false;
 	
-	public DialogMessage(Shell parentShell,String title, String infoText, String message, boolean isError) {
+	public DialogMessage(Shell parentShell, String title, String infoText, String message, boolean isError) {
 		super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE | SWT.APPLICATION_MODAL);
+		setBlockOnOpen(false);
+
+//      setShellStyle(getShellStyle() | SWT.RESIZE | SWT.APPLICATION_MODAL);
+		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
+		
         this.title = title;
         this.infoText = infoText;
         this.message = message;
@@ -91,7 +95,7 @@ public class DialogMessage extends Dialog {
     		lblMessage.setText(this.infoText);
 		}
 
-		text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		text = new StyledText(composite, SWT.BORDER);
 		text.setLayout(new GridLayout());
         GridData textGD = new GridData(SWT.FILL, SWT.FILL, true, true);
         textGD.heightHint = convertHorizontalDLUsToPixels(130);

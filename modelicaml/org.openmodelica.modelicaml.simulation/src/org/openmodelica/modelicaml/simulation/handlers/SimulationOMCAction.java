@@ -365,8 +365,9 @@ public class SimulationOMCAction extends AbstractHandler {
 				
 				
 				if (errorsExist) { // open error dialog
-					DialogMessage logDialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-							"Models Execution Report", infoText, simulationReport, errorsExist);
+//					DialogMessage logDialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Models Execution Report", infoText, simulationReport, errorsExist);
+					DialogMessage logDialog = new DialogMessage(new Shell(), "Models Execution Report", infoText, simulationReport, errorsExist);
+
 					logDialog.open();
 				}
 				else { // open plot window
