@@ -110,7 +110,6 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
-import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.OMCClassValidator;
@@ -118,8 +117,7 @@ import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandle
 import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
 import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
-import org.openmodelica.modelicaml.simulation.handlers.CGAndSimulationOMCAction;
-import org.openmodelica.modelicaml.simulation.handlers.SimulationOMCAction;
+import org.openmodelica.modelicaml.simulation.handlers.SimulationOMCAction2;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
@@ -798,8 +796,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		actionSimulate = new Action("actionSimulate") {
 			public void run() {
-				SimulationOMCAction action = new SimulationOMCAction();
+				SimulationOMCAction2 action = new SimulationOMCAction2();
 				action.setUmlElement((NamedElement) root.getSelectedClass());
+				
 				try {
 					action.execute(null);
 				} catch (ExecutionException e) {
