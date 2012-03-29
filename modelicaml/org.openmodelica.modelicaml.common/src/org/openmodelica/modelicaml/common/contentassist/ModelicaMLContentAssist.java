@@ -280,15 +280,16 @@ public class ModelicaMLContentAssist {
 		
 		// add the rest (predefined properties) in order to support the validation
 		
-		// TODO: here a concurrent modification error occurres somtimes 
+		// TODO: here a concurrent modification error occurs sometimes 
 		sortedList.addAll(predefinedVariablePropertiesList);
 		sortedList.addAll(predefinedFunctionsList);
 		sortedList.addAll(predefinedStatePropertiesList);
 		
 		// if it is a component modification then add all possible sub components of the component being modified
-		if (propertyName != null) {
-			sortedList.addAll(getFullModifiedComponentReferenceSortedList());
-		}
+//		if (propertyName != null) {
+			// !!!!!!!! This causes concurrent modification of the predefinedVariablePropertiesList
+//			sortedList.addAll(getFullModifiedComponentReferenceSortedList());
+//		}
 		
 		Collections.sort(sortedList, String.CASE_INSENSITIVE_ORDER);
 		return sortedList;
@@ -399,7 +400,9 @@ public class ModelicaMLContentAssist {
 				}
 			}
 			// collect the predefined properties
-			for (String reference : predefinedVariablePropertiesList) {
+			HashSet<String> predefinedVarListProp = new HashSet<String>();
+			predefinedVarListProp.addAll(predefinedVariablePropertiesList);
+			for (String reference : predefinedVarListProp) {
 				if (reference.startsWith(propertyName)) {
 					//sortedList.add(reference); // IMPORTANT: this is used for component tree in order to enable modifications that are stored in first level components.
 					sortedList.add(reference.replaceFirst(propertyName + ".", ""));
