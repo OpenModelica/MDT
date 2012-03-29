@@ -78,11 +78,10 @@ public class DialogMessage extends Dialog {
    		}
     }
 	
-//	@Override
-//	protected void okPressed() {
-//		super.okPressed();
-//	}
-
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+	}
+	
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -95,14 +94,18 @@ public class DialogMessage extends Dialog {
     		lblMessage.setText(this.infoText);
 		}
 
-		text = new StyledText(composite, SWT.BORDER);
+		text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.WRAP);
+		text.setRightMargin(5);
+		text.setTopMargin(5);
+		text.setLeftMargin(5);
+		text.setWrapIndent(10);
 		text.setLayout(new GridLayout());
         GridData textGD = new GridData(SWT.FILL, SWT.FILL, true, true);
         textGD.heightHint = convertHorizontalDLUsToPixels(130);
         textGD.widthHint = convertHorizontalDLUsToPixels(400);
         text.setLayoutData(textGD);
         
-		text.setText(this.message + "\n\n");	
+		text.setText("asdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lk asdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lkasdlfkj ads\u00F6flk jasdf aslkfj ja\u00F6dlskfj a\u00F6dslkfj a\u00F6sldkfj a\u00F6lskdfj asl\u00F6kdf a\u00F6slkdf a\u00F6slkdfj a\u00F6lskdj f\u00F6alskdjf \u00F6alskdjf \u00F6alskdjf lk");	
         text.setEditable(false);
         
         return parent;
