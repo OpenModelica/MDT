@@ -54,11 +54,19 @@ public class DialogMessage extends Dialog {
 	
 	public DialogMessage(Shell parentShell,String title, String infoText, String message) {
 		super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE | SWT.APPLICATION_MODAL);
+		setBlockOnOpen(false);
+		
+//      setShellStyle(getShellStyle() | SWT.RESIZE | SWT.APPLICATION_MODAL);
+		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
         this.title = title;
         this.infoText = infoText;
         this.message = message;
 	}
+	
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+	}
+	
 	
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -67,11 +75,6 @@ public class DialogMessage extends Dialog {
 //    	shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_ERROR));
     }
 	
-//	@Override
-//	protected void okPressed() {
-//		super.okPressed();
-//	}
-
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -84,7 +87,11 @@ public class DialogMessage extends Dialog {
     		lblMessage.setText(this.infoText);
 		}
 
-		text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		text = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP);
+		text.setWrapIndent(10);
+		text.setTopMargin(5);
+		text.setRightMargin(5);
+		text.setLeftMargin(5);
 		text.setLayout(new GridLayout());
         GridData textGD = new GridData(SWT.FILL, SWT.FILL, true, true);
         textGD.heightHint = convertHorizontalDLUsToPixels(130);
