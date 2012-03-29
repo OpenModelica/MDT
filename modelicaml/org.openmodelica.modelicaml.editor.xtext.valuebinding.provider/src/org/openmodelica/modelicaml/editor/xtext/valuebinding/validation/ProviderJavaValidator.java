@@ -14,6 +14,9 @@ public class ProviderJavaValidator extends AbstractProviderJavaValidator {
 	@Check
 	public void checkComponent_reference(component_reference cr) {
 		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
+		// this is added in order to avoid concurrent modifications. TODO: test it!
+		cList.addAll(ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList()); 
+		
 		List<String> cListCopy = new ArrayList<String>();
 		cListCopy.addAll(cList);
 		for (String string : cListCopy) {
@@ -44,6 +47,10 @@ public class ProviderJavaValidator extends AbstractProviderJavaValidator {
 	@Check
 	public void checkname(name cr) {
 		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
+		// this is added in order to avoid concurrent modifications. TODO: test it!
+		cList.addAll(ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList()); 
+
+		
 		List<String> cListCopy = new ArrayList<String>();
 		cListCopy.addAll(cList);
 		for (String string : cListCopy) {

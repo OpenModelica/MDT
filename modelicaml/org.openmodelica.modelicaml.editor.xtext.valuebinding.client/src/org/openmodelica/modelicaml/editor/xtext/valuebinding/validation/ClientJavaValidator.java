@@ -18,6 +18,8 @@ public class ClientJavaValidator extends ModeleditorJavaValidator {
 	public void checkLeft_hand_component_reference(left_hand_component_reference cr) 
 	{
 		List<String> cList = ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList();
+		
+		
 		List<String> cListCopy = new ArrayList<String>();
 		cListCopy.addAll(cList);
 		for (String string : cListCopy) {
@@ -45,6 +47,9 @@ public class ClientJavaValidator extends ModeleditorJavaValidator {
 	public void checkComponent_reference(component_reference cr) 
 	{
 		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
+		// this is added in order to avoid concurrent modifications. TODO: test it!
+		cList.addAll(ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList()); 
+
 		List<String> cListCopy = new ArrayList<String>();
 		cListCopy.addAll(cList);
 		for (String string : cListCopy) {
@@ -73,6 +78,9 @@ public class ClientJavaValidator extends ModeleditorJavaValidator {
 	public void checkname(name cr) 
 	{
 		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
+		// this is added in order to avoid concurrent modifications. TODO: test it!
+		cList.addAll(ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList()); 
+
 		List<String> cListCopy = new ArrayList<String>();
 		cListCopy.addAll(cList);
 		for (String string : cListCopy) {

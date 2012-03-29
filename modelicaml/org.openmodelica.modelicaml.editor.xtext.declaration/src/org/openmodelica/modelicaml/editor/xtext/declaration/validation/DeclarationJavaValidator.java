@@ -16,7 +16,10 @@ public class DeclarationJavaValidator extends ModeleditorJavaValidator {
 	@Check
 	public void checkComponent_reference(component_reference cr) 
 	{
-		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
+		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();		
+		// this is added in order to avoid concurrent modifications. TODO: test it!
+		cList.addAll(ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList()); 
+
 
 		String dotPath = cr.getRef();
 		String ref1DotPath = ""; 
@@ -37,6 +40,8 @@ public class DeclarationJavaValidator extends ModeleditorJavaValidator {
 	public void checkname(name cr) 
 	{
 		List<String> cList = ModelicaMLContentAssist.getFullComponentReferenceSortedList();
+		// this is added in order to avoid concurrent modifications. TODO: test it!
+		cList.addAll(ModelicaMLContentAssist.getFullModifiedComponentReferenceSortedList()); 
 		
 		cList.addAll(ModelicaMLContentAssist.getTypeSpecifierSortedList()); // use for redeclare in modifications ...
 		
