@@ -28,11 +28,22 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.openmodelica.modelicaml.simulation.Activator;
 
 public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite implements Observer{
 	private Composite mainComposite;
 
+	
+	private String simulationModelName;
+	
+	public String getSimulationModelName() {
+		return simulationModelName;
+	}
+
+	public void setSimulationModelName(String simulationModelName) {
+		this.simulationModelName = simulationModelName;
+	}
+
+	private JFreeChartPlotComposite chart;
 	
 	/** The composite model tree. */
 	private Composite compositeModelTree;
@@ -108,10 +119,27 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 		foundTreeItem = new ArrayList<TreeItem>();
 		count = 0;
 		
-		Set<String> properties = Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults().keySet();
+//		Set<String> properties = Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults().keySet();
 		this.properties.addAll(properties);
 		
-		Activator.getSimulationCenter_NonInteractive().addPlot(this);
+//		Activator.getSimulationCenter_NonInteractive().addPlot(this);
+		initGUI();
+	}
+	
+	
+	public VariableTreeComposite(org.eclipse.swt.widgets.Composite parent, int style,  Set<String> properties, String simulationModelName) {
+		super(parent, style);
+//		properties = new HashSet<String>();
+		foundPosition = 0;
+		foundTreeItem = new ArrayList<TreeItem>();
+		count = 0;
+		this.setSimulationModelName(simulationModelName);
+		
+//		Set<String> properties = Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults().keySet();
+//		this.properties.addAll(properties);
+		this.properties = properties;
+		
+//		Activator.getSimulationCenter_NonInteractive().addPlot(this);
 		initGUI();
 	}
 
@@ -210,6 +238,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 					{
 						buttonSearch = new Button(compositeSearch, SWT.PUSH | SWT.CENTER);
 						buttonSearch.setText("Search");
+						buttonSearch.setFocus();
 						buttonSearch.addSelectionListener(new SelectionAdapter() {
 							
 							@Override
@@ -238,12 +267,14 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 	 * Show the next search result, if the last found result has already been displayed start from beginning.
 	 */
 	private void showNextSearchResult(){
-		treeModel.select(foundTreeItem.get(foundPosition));
-		treeModel.showSelection();
-		if(foundTreeItem.size()-1<=foundPosition){
-			foundPosition = 0; //Search from begining
-		}else{
-			foundPosition++;
+		if (foundTreeItem.size() > 0) {
+			treeModel.select(foundTreeItem.get(foundPosition));
+			treeModel.showSelection();
+			if(foundTreeItem.size()-1<=foundPosition){
+				foundPosition = 0; //Search from begining
+			}else{
+				foundPosition++;
+			}
 		}
 	}
 	
@@ -283,16 +314,21 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 		if(properties != null && !properties.isEmpty()){
 			TreeItem rootItem = new TreeItem(treeModel, SWT.NULL);
 //			rootItem.setText("Model-Name");//TODO 20120129 change to dynamic name
-			rootItem.setText(Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getSimulationModelName());
-			
+//			rootItem.setText(Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getSimulationModelName());
+			rootItem.setText(getSimulationModelName());
 			
 			for (String fullQualifiedName : properties) {
-				if(!fullQualifiedName.startsWith("der("))
-					createModelElement(rootItem, fullQualifiedName, fullQualifiedName);
-				else{
+				
+				if(fullQualifiedName.startsWith("der(")) {
 					String derName = fullQualifiedName.replace("der(", "");
 					derName = derName.replace(")", "");
 					createModelElementForDerivative(rootItem, derName, fullQualifiedName);
+				}
+				else if (fullQualifiedName.startsWith("time")) {
+					// don't create a node for time. this is pointless.
+				}
+				else {
+					createModelElement(rootItem, fullQualifiedName, fullQualifiedName);
 				}
 			}
 		}
@@ -489,16 +525,21 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 		item.setChecked(checked);
 		if(item.getData()!=null){
 			if(checked){
-				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertySelected((String)item.getData());
+				if (getChart() != null) {
+					chart.addValues((String)item.getData());
+				}
+//				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertySelected((String)item.getData());
 			}else{
-				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertyUnselection((String)item.getData());
+				// TODO: test it! what happens if we deselect?
+				if (getChart() != null) {
+					chart.removeValues((String)item.getData());
+				}
+//				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertyUnselection((String)item.getData());
 			}
 		}
 
 		item.setGrayed(grayed);
-
 		checkPath(item.getParentItem(), checked, grayed);
-
 	}
 
 
@@ -517,9 +558,16 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 		
 		if(item.getData()!=null){
 			if(checked){
-				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertySelected((String)item.getData());
+				if (getChart() != null) {
+					chart.addValues((String)item.getData());
+				}
+//				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertySelected((String)item.getData());
 			}else{
-				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertyUnselection((String)item.getData());
+				// TODO: test it!
+				if (getChart() != null) {
+					chart.removeValues((String)item.getData());
+				}
+//				Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().propertyUnselection((String)item.getData());
 			}
 		}
 
@@ -541,7 +589,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 		foundTreeItem = new ArrayList<TreeItem>();
 		count = 0;
 		textFind.setText("");
-		Set<String> properties = Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults().keySet();
+//		Set<String> properties = Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults().keySet();
 		this.properties.addAll(properties);
 		treeModel.removeAll();
 		buildTreeModel(properties);
@@ -559,6 +607,14 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 				}
 			});
 		}
+	}
+
+	public JFreeChartPlotComposite getChart() {
+		return chart;
+	}
+
+	public void setChart(JFreeChartPlotComposite chart) {
+		this.chart = chart;
 	}
 
 }

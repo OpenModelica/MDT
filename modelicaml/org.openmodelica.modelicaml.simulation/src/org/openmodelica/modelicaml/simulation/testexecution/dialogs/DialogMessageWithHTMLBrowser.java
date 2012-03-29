@@ -121,10 +121,10 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				}
 
 			}
-			else if (decodedLocation != null && decodedLocation.trim().endsWith("_res.xml")) {
+			else if (decodedLocation != null &&  decodedLocation.trim().startsWith("plot")) {
 				
-				String[] splitted = decodedLocation.split("\\?");
-				decodedLocation = splitted[1];
+//				String[] splitted = decodedLocation.split("\\?");
+				decodedLocation = decodedLocation.replaceFirst("plot:", "").trim();
 				
 				event.doit = false;	// don't change the page
 				String sessionFolderAbsolutePath = getSessionPath();

@@ -2,6 +2,7 @@ package org.openmodelica.modelicaml.simulation.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -11,6 +12,8 @@ import nu.xom.Element;
 import nu.xom.Elements;
 import nu.xom.ParsingException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.openmodelica.modelicaml.simulation.evaluation.SimulationResult;
 
 /**
@@ -18,7 +21,7 @@ import org.openmodelica.modelicaml.simulation.evaluation.SimulationResult;
  *
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  */
-public class SimulationResult_XML_reader {
+public class SimulationResult_XML_reader implements IRunnableWithProgress {
 
 	/**
 	 * Reads a XML file, creates a ModelicaModel object and initializes it.
@@ -108,7 +111,7 @@ public class SimulationResult_XML_reader {
 //			String qualifiedName = eTestModel.getChildElements("qualifiedName").get(0).getValue();
 //			
 //			Elements eSimulationData = eTestModel.getChildElements("simulationData");
-//				String start = eSimulationData.get(0).getChildElements("start").get(0).getValue();
+//			String start = eSimulationData.get(0).getChildElements("start").get(0).getValue();
 			++i;
 		}
 	}
@@ -120,16 +123,18 @@ public class SimulationResult_XML_reader {
 	 * @param xmlFile the xml file
 	 */
 	private static void readResults(Map<String, Map<String, String>> simulationResultsAsString, File xmlFile) {
-		
 		Document resultsXML = parseXML_File(xmlFile);
 		Element root = resultsXML.getRootElement();	
 		Element eDataset = root.getChildElements("datasets").get(0);
 		addResults(simulationResultsAsString, eDataset);
 	}
 
+	
+	
 	private static void addResults(Map<String, Map<String, String>> simulationResultsAsString, Element eDataset) {
 		int i = 0;
 		Elements eResults = eDataset.getChildElements();
+		
 		while (i < eResults.size()) {
 			Element eResult = eResults.get(i);
 			
@@ -147,6 +152,9 @@ public class SimulationResult_XML_reader {
 				}
 				++i;
 			}
+		
+		
+		
 //			Elements eSimulationData = eTestModel.getChildElements("simulationData");
 //				String start = eSimulationData.get(0).getChildElements("start").get(0).getValue();
 	}
@@ -175,23 +183,49 @@ public class SimulationResult_XML_reader {
 		return null;
 	}
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args) {
-//		File f = new File("");
-//		String p = f.getAbsolutePath();
-//		p = p.substring(0, p.lastIndexOf(System.getProperty("file.separator")));
-//		File f2 = new File(p + "\\org.openmodelica.simulation.projects\\");
-//		System.out.println(f2.list()[0]);
+//	/**
+//	 * The main method.
+//	 *
+//	 * @param args the arguments
+//	 */
+//	public static void main(String[] args) {
+////		File f = new File("");
+////		String p = f.getAbsolutePath();
+////		p = p.substring(0, p.lastIndexOf(System.getProperty("file.separator")));
+////		File f2 = new File(p + "\\org.openmodelica.simulation.projects\\");
+////		System.out.println(f2.list()[0]);
+//		
+//		String projectPath = "C:/Projects/ModelicaML/runtime-ModelicaML/modelicaml.example.potableWaterSystem_v31/verification-gen/verification-session_20120312172819/ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s3_Drain_tank_res.xml";
+//		
+//		System.out.println(getAllResultsAsStringFromXML(projectPath));
+////		System.out.println(sr.property);
+////		System.out.println(sr.values.values());
+//	}
+
+
+	// The total sleep time
+	private static final int TOTAL_TIME = 10000;
+	// The increment sleep time
+	private static final int INCREMENT = 500;
+	private boolean indeterminate;
+	  
+	@Override
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			
+		monitor.beginTask("Running long running operation",
+	    indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
+	    
+		for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
+	      Thread.sleep(INCREMENT);
+	      monitor.worked(INCREMENT);
+	      if (total == TOTAL_TIME / 2) monitor.subTask("Doing second half");
+	    }
 		
-		String projectPath = "C:/Projects/ModelicaML/runtime-ModelicaML/modelicaml.example.potableWaterSystem_v31/verification-gen/verification-session_20120312172819/ModelicaMLModel.GenVeMs_for__SPWS_Environment_1.VeM_for__s3_Drain_tank_res.xml";
-		
-		System.out.println(getAllResultsAsStringFromXML(projectPath));
-//		System.out.println(sr.property);
-//		System.out.println(sr.values.values());
+	    monitor.done();
+	    
+	    if (monitor.isCanceled())
+	        throw new InterruptedException("The long running operation was cancelled");
+	  
 	}
 
 }

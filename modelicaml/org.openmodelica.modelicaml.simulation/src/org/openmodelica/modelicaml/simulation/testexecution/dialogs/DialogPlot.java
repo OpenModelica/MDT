@@ -34,6 +34,9 @@
  */
 package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
 
+import java.io.File;
+import java.util.Map;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -53,14 +56,27 @@ public class DialogPlot extends Dialog {
 	private SashForm sashForm1;
 	private Composite Tree;
 	private Composite Plot;
+
+	private String resultsFilePath;
 	
-	public DialogPlot(Shell parentShell,String title) {
+	/** Contains a number of simulation results Key: fully qualified name <Key: time, Value: value>. */
+	private Map<String, Map<String, String>> simulationResultsAsString;
+
+	
+	public DialogPlot(Shell parentShell, String resultsFilePath) {
 		super(parentShell);
 		setBlockOnOpen(false);
         //setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
 		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
-        this.title = title;
+        this.resultsFilePath = resultsFilePath;
+        this.title = getTitle(resultsFilePath);
 	}
+	 
+	
+	public synchronized void setResults(Map<String, Map<String, String>> results){
+		simulationResultsAsString = results;
+	}
+	
 	
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -77,18 +93,22 @@ public class DialogPlot extends Dialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		
         final Composite composite = (Composite) super.createDialogArea(parent);
-        
+
         composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         {
 			sashForm1 = new SashForm(composite, SWT.BORDER | SWT.SMOOTH);
 			{
-				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE);
+				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE, simulationResultsAsString);
 				Plot.setLayout(new FillLayout(SWT.HORIZONTAL));
 			}
 			{
-				Tree = new VariableTreeComposite(sashForm1, SWT.NONE);
+				Tree = new VariableTreeComposite(sashForm1, SWT.NONE, simulationResultsAsString.keySet(), getSimulationModelName(this.resultsFilePath));
+				
+				((VariableTreeComposite)Tree).setChart((JFreeChartPlotComposite)Plot);
+				
 				GridLayout TreeLayout = new GridLayout();
 				TreeLayout.makeColumnsEqualWidth = true;
 				Tree.setLayout(TreeLayout);
@@ -98,5 +118,30 @@ public class DialogPlot extends Dialog {
         
         return parent;
 	}
+
+	private String getSimulationModelName(String filePath){
+		String name = filePath;
+		if (filePath != null && filePath.length() != 0) {
+			String[] splitted = filePath.split("/");
+			name = splitted[splitted.length - 1];
+			name = name.replaceFirst("_res.xml", "");
+
+			String[] dotSplitted = name.split("\\.");
+			name = dotSplitted[dotSplitted.length - 1];
+		}
+		return name;
+	}
 	
+	private String getTitle(String filePath){
+		String title = "";
+		File file = new File(filePath);
+		String parentFolderPath = file.getParent();
+		File sessionFolder = new File(parentFolderPath);
+		
+		if (sessionFolder.isDirectory()) {
+			title = title + sessionFolder.getName() + "/" + file.getName();
+			return title;
+		}
+		return filePath;
+	}
 }

@@ -106,11 +106,11 @@ import fr.obeo.acceleo.gen.template.eval.LaunchManager;
  */
 public class SimulationOMCAction extends AbstractHandler {
 
-	private String projectName;
-	private String projectPath;
-	private NamedElement umlElement = null;
+	protected String projectName;
+	protected String projectPath;
+	protected NamedElement umlElement = null;
 	private CChain cgChain = null;
-	private String umlModelFileURI = null;
+	protected String umlModelFileURI = null;
 	private String omcLog = "";
 	
 	private String resultsXMLAbsolutePath = null;
@@ -235,6 +235,9 @@ public class SimulationOMCAction extends AbstractHandler {
 							// If copy files option was selected -> copy files to 'sim-gen' folder (created it if it does not exist yet)
 							if (isCopyFilesChecked) {
 								
+								resultsXMLAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
+								ModelicaMLServices.deleteFile(resultsXMLAbsolutePath, monitor);
+								
 								monitor.subTask("Copying files into '"+Constants.folderName_sim_gen+"' for: " + model.qualifiedName);
 
 								// check if the sim-gen folder exists. If not create it.
@@ -251,7 +254,7 @@ public class SimulationOMCAction extends AbstractHandler {
 									monitor.subTask("Creating xml results file for '"+Constants.folderName_sim_gen+"' for: " + model.qualifiedName);
 
 									//Create _res.xml based on _res.plt
-									resultsXMLAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
+//									resultsXMLAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
 									SimulationResult_XML_generator.createXML(omcTempDirectory + "/" + model.qualifiedName + "_res.plt",  resultsXMLAbsolutePath);
 									
 									// Refresh the project browser
@@ -385,19 +388,23 @@ public class SimulationOMCAction extends AbstractHandler {
 		this.umlElement = umlElement;
 	}
 
-	private void setUpProjectAndModelData(){
+	
+	protected void setUmlElement(){
 		
-		if (umlElement == null) { // if it was not set from outside
-
-			// get the selected UML element that was selected last in one of the views (e.g. Model Explorer)
-			IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
-			Object input = ((IStructuredSelection) selection).getFirstElement();
-			
-	        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
-	        if (selectedElement instanceof NamedElement) {
-	        	umlElement = (NamedElement)selectedElement;
-			}
+		// get the selected UML element that was selected last in one of the views (e.g. Model Explorer)
+		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
+		Object input = ((IStructuredSelection) selection).getFirstElement();
+		
+        EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
+        if (selectedElement instanceof NamedElement) {
+        	umlElement = (NamedElement)selectedElement;
 		}
+	}
+	
+
+	protected void setUpProjectAndModelData(){
+		
+		setUmlElement();
 		
 		// get UML model data
 		UmlModel umlModel = UmlUtils.getUmlModel();
@@ -412,6 +419,8 @@ public class SimulationOMCAction extends AbstractHandler {
 		
 		projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
 	}
+	
+	
 	
 	private void setUpCGChain(){
 		

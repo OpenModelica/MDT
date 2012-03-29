@@ -48,7 +48,7 @@ import java.util.TreeMap;
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
-public class SimulationResultManager_NonInteractive extends Observable{
+public class OBSOLETE_SimulationResultManager_NonInteractive extends Observable{
 	
 	/** Contains a number of simulation results Key: fullqualifiedname <Key: Time, Value: value>. */
 	private Map<String, Map<String, String>> simulationResultsAsString;
@@ -61,7 +61,7 @@ public class SimulationResultManager_NonInteractive extends Observable{
 	/**
 	 * Instantiates a new simulation result manager_ non interactive.
 	 */
-	public SimulationResultManager_NonInteractive(){
+	public OBSOLETE_SimulationResultManager_NonInteractive(){
 		simulationResultsAsString = new TreeMap<String, Map<String, String>>();
 		selectedProperties = new HashSet<String>();
 	}

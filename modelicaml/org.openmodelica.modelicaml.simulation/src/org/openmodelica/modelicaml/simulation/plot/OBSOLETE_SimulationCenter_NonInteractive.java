@@ -44,7 +44,7 @@ import java.util.Observer;
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  *
  */
-public class SimulationCenter_NonInteractive{
+public class OBSOLETE_SimulationCenter_NonInteractive{
 	
 //    /** Path to the _res.xml file which is the result of a test simulation */
 //	private String xmlResultFile;
@@ -58,13 +58,13 @@ public class SimulationCenter_NonInteractive{
 	/**
 	 * Result manager for a non interactive simulation
 	 */
-	private SimulationResultManager_NonInteractive simulationResultManager;
+	private OBSOLETE_SimulationResultManager_NonInteractive simulationResultManager;
 	
 	/**
 	 * Instantiates a new simulation center_ non interactive.
 	 */
-	public SimulationCenter_NonInteractive(){
-			simulationResultManager = new SimulationResultManager_NonInteractive();
+	public OBSOLETE_SimulationCenter_NonInteractive(){
+			simulationResultManager = new OBSOLETE_SimulationResultManager_NonInteractive();
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class SimulationCenter_NonInteractive{
 	 * @return a SimulationResultManager
 	 * @see #simulationResultManager
 	 */
-	public SimulationResultManager_NonInteractive getSimulationResultManager() {
+	public OBSOLETE_SimulationResultManager_NonInteractive getSimulationResultManager() {
 		return simulationResultManager;
 	}
 

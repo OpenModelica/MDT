@@ -3,8 +3,6 @@ package org.openmodelica.modelicaml.simulation.plot;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -19,9 +17,10 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.experimental.chart.swt.ChartComposite;
-import org.openmodelica.modelicaml.simulation.Activator;
 
-public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite implements Observer{
+//public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite implements Observer{
+
+public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite {
 
 	/** Contains all available (plotable) results (redundancy to the result manager data but maybe high-performance). */
 	Map<String, XYSeries> propMap; //FullQualifiedName, Series
@@ -58,13 +57,18 @@ public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite i
 	* org.eclipse.swt.widgets.Composite inside a new Shell.
 	*/
 	
-	public JFreeChartPlotComposite(org.eclipse.swt.widgets.Composite parent, int style) {
+//	public JFreeChartPlotComposite(org.eclipse.swt.widgets.Composite parent, int style) {
+//		super(parent, style);
+//		Map<String, Map<String, String>> resultsMap;
+//		
+////		resultsMap = Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults();
+//
+////		Activator.getSimulationCenter_NonInteractive().addPlot(this);
+//		initGUI(resultsMap, new HashSet<String>());
+//	}
+	
+	public JFreeChartPlotComposite(org.eclipse.swt.widgets.Composite parent, int style, Map<String, Map<String, String>> resultsMap) {
 		super(parent, style);
-		Map<String, Map<String, String>> resultsMap;
-		
-		resultsMap = Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getResults();
-
-		Activator.getSimulationCenter_NonInteractive().addPlot(this);
 		initGUI(resultsMap, new HashSet<String>());
 	}
 
@@ -135,18 +139,18 @@ public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite i
 		}
 	}
 
-	/**
-	 * Use this method if a new systems as been simulated.
-	 *
-	 * @param simulationResultsAsString the simulation results as string
-	 * @param selectedProperties the selected properties
-	 */
-	private void newSimulation(Map<String, Map<String, String>> simulationResultsAsString, Set<String> selectedProperties){
-		propMap.clear();
-		dataSetSelectionChanged(selectedProperties);
-		createSeriesMap(simulationResultsAsString);
-		chart.setTitle("Simulation Results");
-	}
+//	/**
+//	 * Use this method if a new systems as been simulated.
+//	 *
+//	 * @param simulationResultsAsString the simulation results as string
+//	 * @param selectedProperties the selected properties
+//	 */
+//	private void newSimulation(Map<String, Map<String, String>> simulationResultsAsString, Set<String> selectedProperties){
+//		propMap.clear();
+//		dataSetSelectionChanged(selectedProperties);
+//		createSeriesMap(simulationResultsAsString);
+//		chart.setTitle("Simulation Results");
+//	}
 	
 	/**
 	 * Add all selected properties to the visualization view
@@ -162,31 +166,60 @@ public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite i
 			dataset.addSeries(propMap.get(selected));
 	}
 
-	/**
-	 * use the argument "newsimulation" to signal that a new systems as been simulated
-	 * use and empty string otherwise.
-	 *
-	 * @param arg0 the arg0
-	 * @param arg1 the arg1
-	 */
-	@Override
-	public void update(final Observable arg0, final Object arg1) {
-		if(((String) arg1).equals("newsimulation")){
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					newSimulation(((SimulationResultManager_NonInteractive) arg0)
-							.getResults(), ((SimulationResultManager_NonInteractive) arg0)
-							.getSelectedProperties());
-				}
-			});
-		}else{
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					dataSetSelectionChanged(((SimulationResultManager_NonInteractive) arg0)
-							.getSelectedProperties());
-				}
-			});
-		}
+	
+	private void dataSetSelectionChanged(String selected) {
+//		dataset.removeAllSeries();
+		dataset.addSeries(propMap.get(selected));
+	}
+
+	private void removeSeries(String selected) {
+		dataset.removeSeries(propMap.get(selected));
+	}
+
+	
+	
+//	/**
+//	 * use the argument "newsimulation" to signal that a new systems as been simulated
+//	 * use and empty string otherwise.
+//	 *
+//	 * @param arg0 the arg0
+//	 * @param arg1 the arg1
+//	 */
+//	@Override
+//	public void update(final Observable arg0, final Object arg1) {
+//		if(((String) arg1).equals("newsimulation")){
+//			Display.getDefault().asyncExec(new Runnable() {
+//				public void run() {
+//					newSimulation(((SimulationResultManager_NonInteractive) arg0)
+//							.getResults(), ((SimulationResultManager_NonInteractive) arg0)
+//							.getSelectedProperties());
+//				}
+//			});
+//		}else{
+//			Display.getDefault().asyncExec(new Runnable() {
+//				public void run() {
+//					dataSetSelectionChanged(((SimulationResultManager_NonInteractive) arg0)
+//							.getSelectedProperties());
+//				}
+//			});
+//		}
+//	}
+	
+	
+	public void addValues(final String path) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				dataSetSelectionChanged(path);
+			}
+		});
+	}
+	
+	public void removeValues(final String path) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				removeSeries(path);
+			}
+		});
 	}
 
 }

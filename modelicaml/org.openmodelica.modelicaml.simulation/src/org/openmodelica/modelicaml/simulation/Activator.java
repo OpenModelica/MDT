@@ -35,8 +35,6 @@
 package org.openmodelica.modelicaml.simulation;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.openmodelica.modelicaml.simulation.plot.SimulationCenter_NonInteractive;
-//import org.openmodelica.simulation.core.models.simulation.SimulationSessionConfiguration;
 import org.osgi.framework.BundleContext;
 
 // TODO: Auto-generated Javadoc
@@ -45,8 +43,8 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin {
 
-	/** The simulation center_ non interactive. {@link SimulationCenter_NonInteractive} */
-	private static SimulationCenter_NonInteractive simulationCenter_NonInteractive = null;
+//	/** The simulation center_ non interactive. {@link SimulationCenter_NonInteractive} */
+//	private static SimulationCenter_NonInteractive simulationCenter_NonInteractive = null;
 	
 	// The plug-in ID
 	/** The Constant PLUGIN_ID. */
@@ -94,19 +92,19 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @return the used SimulationCenter_NonInteractive;
 	 */
-	public synchronized static SimulationCenter_NonInteractive getSimulationCenter_NonInteractive() {
-		if(simulationCenter_NonInteractive==null)
-			createSimulationCenter_NonInteractive();
-		
-		return simulationCenter_NonInteractive;
-	}
+//	public synchronized static SimulationCenter_NonInteractive getSimulationCenter_NonInteractive() {
+//		if(simulationCenter_NonInteractive==null)
+//			createSimulationCenter_NonInteractive();
+//		
+//		return simulationCenter_NonInteractive;
+//	}
 	
-	/**
-	 * Some view/editor needs a SimulationCenter_Interactive at eclipse startup.
-	 */
-	private static void createSimulationCenter_NonInteractive(){
-		simulationCenter_NonInteractive = new SimulationCenter_NonInteractive();
-	}
+//	/**
+//	 * Some view/editor needs a SimulationCenter_Interactive at eclipse startup.
+//	 */
+//	private static void createSimulationCenter_NonInteractive(){
+//		simulationCenter_NonInteractive = new SimulationCenter_NonInteractive();
+//	}
 	
 	/**
 	 * It is not recommended to initialize this Object at eclipse start up
