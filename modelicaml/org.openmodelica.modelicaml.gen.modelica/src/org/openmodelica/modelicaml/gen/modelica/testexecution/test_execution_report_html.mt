@@ -85,7 +85,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 	</span>
 	<script type='text/javascript'>
 		<%-- writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot'); --%>
-		writePlotLink('?<%getTestModelQName()%>_res.xml',  'Plot');
+		writePlotLink('plot:<%getTestModelQName()%>_res.xml',  'Plot');
 	</script>
 	<br>
 	<!--<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span><br>-->
@@ -117,7 +117,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 		</span>
 		<script type='text/javascript'>
 			<%-- writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot');--%>
-			writePlotLink('?<%getTestModelQName()%>_res.xml',  'Plot');
+			writePlotLink('plot:<%getTestModelQName()%>_res.xml',  'Plot');
 		</script>
 		<br>
 		<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span>
@@ -139,7 +139,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			<tr>
 				<td><i>verdict</i> 
 					<script type='text/javascript'>
-						writeLink('locate:<%qualifiedName%>@--><%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>', '<strong><%getAllRequirementsEvaluatedPropertyName()%></strong>');
+						writeLink('locate:<%qualifiedName%><%getLinkDelimiterString()%><%getReqTestVerdictPropertyName()%>.<%getAllRequirementsEvaluatedPropertyName()%>', '<strong><%getAllRequirementsEvaluatedPropertyName()%></strong>');
 					</script>
 				</td>
 				<td>&nbsp;:&nbsp;</td>
@@ -152,7 +152,7 @@ import  org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServic
 			<tr>
 				<td><i>verdict</i> 
 					<script type='text/javascript'>
-						writeLink('locate:<%qualifiedName%>@--><%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>', '<strong><%getSomeRequirementsViolatedPropertyName()%></strong>');
+						writeLink('locate:<%qualifiedName%><%getLinkDelimiterString()%><%getReqTestVerdictPropertyName()%>.<%getSomeRequirementsViolatedPropertyName()%>', '<strong><%getSomeRequirementsViolatedPropertyName()%></strong>');
 					</script>	
 				<td>&nbsp;:&nbsp;</td>
 				<td>
