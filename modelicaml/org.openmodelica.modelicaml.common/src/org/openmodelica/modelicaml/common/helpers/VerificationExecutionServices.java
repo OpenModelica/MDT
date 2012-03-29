@@ -40,7 +40,7 @@ public class VerificationExecutionServices {
 	public static HashSet<Element> verificationModels = new HashSet<Element>();
 	
 	// used to separate the qualified name of UML element and the component path in a locate html link 
-	public static final String linkDelimiter = "@-->";
+	public static String linkDelimiter = "@-->";
 	
 	
 	/*
@@ -122,6 +122,9 @@ public class VerificationExecutionServices {
 	}
 	
 
+	public static String getLinkDelimiterString(Element elt) {
+		return VerificationExecutionServices.linkDelimiter;
+	}
 	
 	
 	
@@ -770,9 +773,7 @@ public class VerificationExecutionServices {
 	
 	
 	
-	public static String getLinkDelimiterString(){
-		return linkDelimiter;
-	}
+
 	
 	
 	
