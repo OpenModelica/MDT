@@ -45,7 +45,10 @@ import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
@@ -362,7 +365,38 @@ public class PropertiesSectionXtextEditorHelper implements FocusListener, Dispos
 	 *
 	 * @return boolean
 	 */
+//	public boolean isDocumentHasErrors() {
+//		IXtextDocument xtextDocument = sourceViewerHandle.getDocument();
+//		return (xtextDocument.readOnly(new IUnitOfWork<Boolean, XtextResource>() {
+//			public Boolean exec(XtextResource state) throws Exception {
+//				IParseResult parseResult = state.getParseResult();
+//				return !state.getErrors().isEmpty() || parseResult == null;
+//			}
+//		}));
+//	}
+//	
+
+	/**
+	 * Checks if is document has errors.
+	 *
+	 * @return boolean
+	 */
 	public boolean isDocumentHasErrors() {
+//		partialEditor.createResource(getText());
+		if (getXtextResource().getContents() != null && getXtextResource().getContents().size() > 0) {
+			EObject myModel = getXtextResource().getContents().get(0);
+			Diagnostic diagnostic = Diagnostician.INSTANCE.validate(myModel);
+			switch (diagnostic.getSeverity()) {
+			  case Diagnostic.ERROR: {
+				  return true;
+//				System.err.println("Model has errors: ",diagnostic);
+			  }
+			  case Diagnostic.WARNING:
+				  return false;
+//			    System.err.println("Model has warnings: ",diagnostic);
+			}
+		}
+		
 		IXtextDocument xtextDocument = sourceViewerHandle.getDocument();
 		return (xtextDocument.readOnly(new IUnitOfWork<Boolean, XtextResource>() {
 			public Boolean exec(XtextResource state) throws Exception {
@@ -370,7 +404,13 @@ public class PropertiesSectionXtextEditorHelper implements FocusListener, Dispos
 				return !state.getErrors().isEmpty() || parseResult == null;
 			}
 		}));
+		
 	}
+
+	
+
+
+
 	
 	
 	/**
