@@ -285,4 +285,25 @@ public class ModelicaMLServices {
 		}
 	}
 	
+	public static IStatus deleteFile(String path, IProgressMonitor monitor){
+		
+		if (monitor.isCanceled()){
+			return Status.CANCEL_STATUS;
+		}
+		
+		IFileSystem fileSystem = EFS.getLocalFileSystem();
+		monitor.subTask("Deleting file '" + path + "'");
+		IFileStore existingFile = fileSystem.getStore(java.net.URI.create("file:/" + path));
+		
+		try {
+			existingFile.delete(EFS.NONE, monitor);
+			return Status.OK_STATUS;
+			
+		} catch (CoreException e) {
+//			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
 }
