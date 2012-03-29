@@ -772,15 +772,17 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			else {
 				imageToBeUsed = SWTResourceManager.getImage(Activator.class, imagePath);	
 			}
+
+			if (hasErrorsInItemOperationCode((TreeObject) element)) {
+				return new DecorationOverlayIcon(imageToBeUsed, 
+						errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+			}
 			
 			if ( ((TreeObject) element).isValueClient_required()) {
 				return new DecorationOverlayIcon(imageToBeUsed, 
 						infoImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
 			}
-			if (hasErrorsInItemOperationCode((TreeObject) element)) {
-				return new DecorationOverlayIcon(imageToBeUsed, 
-						errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
-			}
+
 			if (hasEmptyProvidersMediator((TreeParent)element)) {
 				return new DecorationOverlayIcon(imageToBeUsed, 
 						errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
