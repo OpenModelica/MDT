@@ -2,7 +2,6 @@ package org.openmodelica.modelicaml.editor.xtext.valuebinding.validation;
 
 import java.util.List;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.ModeleditorPackage;
@@ -10,6 +9,8 @@ import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.component_refe
 import org.openmodelica.modelicaml.editor.xtext.model.modeleditor.name;
 
 public class MediatorJavaValidator extends AbstractMediatorJavaValidator {
+	
+	// TODO: Is this needed? Mediators do not have structure...
 	
 	@Check
 	public void checkComponent_reference(component_reference cr) 
@@ -26,7 +27,7 @@ public class MediatorJavaValidator extends AbstractMediatorJavaValidator {
 			dotPath = dotPath + ref1DotPath;
 		}
 		if ( !cList.contains(dotPath) ) {
-			error("component_reference '" + dotPath + "' cannot be resolved to a class component", (EStructuralFeature) cr, ModeleditorPackage.COMPONENT_REFERENCE);
+			error("component_reference '" + dotPath + "' cannot be resolved to a class component", null, ModeleditorPackage.COMPONENT_REFERENCE);
 		}
 	}
 	
@@ -39,7 +40,7 @@ public class MediatorJavaValidator extends AbstractMediatorJavaValidator {
 		cList.addAll(ModelicaMLContentAssist.getTypeSpecifierSortedList()); // use for redeclare in modifications ...
 		
 		if ( !cList.contains(cr.getName_ID()) ) {
-			error("name '" + cr.getName_ID() + "' cannot be resolved", (EStructuralFeature) cr, ModeleditorPackage.NAME__NAME_ID);
+			error("name '" + cr.getName_ID() + "' cannot be resolved", null, ModeleditorPackage.NAME__NAME_ID);
 		}
 	}
 

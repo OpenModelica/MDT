@@ -1,13 +1,8 @@
 package org.openmodelica.modelicaml.editor.xtext.array.validation;
+
+import org.openmodelica.modelicaml.editor.xtext.model.validation.ModeleditorJavaValidator;
  
+public class ArraysubscriptJavaValidator extends ModeleditorJavaValidator {
 
-public class ArraysubscriptJavaValidator extends AbstractArraysubscriptJavaValidator {
-
-//	@Check
-//	public void checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.getName().charAt(0))) {
-//			warning("Name should start with a capital", MyDslPackage.Literals.GREETING__NAME);
-//		}
-//	}
 
 }

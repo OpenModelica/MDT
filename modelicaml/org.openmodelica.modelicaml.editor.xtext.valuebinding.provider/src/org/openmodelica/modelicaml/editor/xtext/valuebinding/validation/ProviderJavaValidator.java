@@ -2,7 +2,6 @@ package org.openmodelica.modelicaml.editor.xtext.valuebinding.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
@@ -37,7 +36,7 @@ public class ProviderJavaValidator extends AbstractProviderJavaValidator {
 			dotPath = dotPath + ref1DotPath;
 		}
 		if ( !cList.contains(dotPath) ) {
-			error("component_reference '" + dotPath + "' cannot be resolved to a class component", (EStructuralFeature) cr, ModeleditorPackage.COMPONENT_REFERENCE);
+			error("component_reference '" + dotPath + "' cannot be resolved to a class component", null, ModeleditorPackage.COMPONENT_REFERENCE);
 		}
 	}
 	
@@ -60,7 +59,7 @@ public class ProviderJavaValidator extends AbstractProviderJavaValidator {
 		cList.addAll(ModelicaMLContentAssist.getTypeSpecifierSortedList()); // used for redeclare in modifications ...
 		
 		if ( !cList.contains(cr.getName_ID()) ) {
-			error("name '" + cr.getName_ID() + "' cannot be resolved", (EStructuralFeature) cr, ModeleditorPackage.NAME__NAME_ID);
+			error("name '" + cr.getName_ID() + "' cannot be resolved", null, ModeleditorPackage.NAME__NAME_ID);
 		}
 	}
 

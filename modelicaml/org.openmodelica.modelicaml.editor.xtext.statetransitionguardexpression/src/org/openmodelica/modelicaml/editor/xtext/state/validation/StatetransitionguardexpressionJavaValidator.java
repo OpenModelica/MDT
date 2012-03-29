@@ -1,13 +1,9 @@
 package org.openmodelica.modelicaml.editor.xtext.state.validation;
+
+import org.openmodelica.modelicaml.editor.xtext.model.validation.ModeleditorJavaValidator;
  
 
-public class StatetransitionguardexpressionJavaValidator extends AbstractStatetransitionguardexpressionJavaValidator {
+public class StatetransitionguardexpressionJavaValidator extends ModeleditorJavaValidator {
 
-//	@Check
-//	public void checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.getName().charAt(0))) {
-//			warning("Name should start with a capital", MyDslPackage.Literals.GREETING__NAME);
-//		}
-//	}
 
 }
