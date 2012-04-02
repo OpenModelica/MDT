@@ -412,6 +412,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
+		manager.add(new Separator());
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
 //		manager.add(new Separator());
@@ -609,7 +610,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		};
 		actionReload.setText("(Re)load and validate");
 		actionReload.setToolTipText("(Re)load and validate");
-		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
+		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/refresh.gif"));
 		
 		
 		actionValidate = new Action("actionValidate") { //obviously a check box style

@@ -370,7 +370,8 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 //				cell.setImage(SWTResourceManager.getImage(ViewLabelProvider.class, "/icons/addValueProviders.png"));
 			}
 			else {
-				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/reload.png"));
+//				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/reload.png"));
+				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/refresh.gif"));
 			}
 		}
 		else {
