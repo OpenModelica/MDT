@@ -18,14 +18,13 @@ import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist2;
+import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -103,12 +102,11 @@ public class ComponentModificationValidator {
 						// Code completion support
 						// for modification: this is used to obtain the list of the modified component attributes.
 						if (treeObject.getFirstLevelComponent() instanceof Property) {
-							ModelicaMLContentAssist2 codeAssist = new ModelicaMLContentAssist2();
-							codeAssist.setPropertyName( StringUtls.replaceSpecChar( ((Property)treeObject.getFirstLevelComponent()).getName()) );
+							ModelicaMLContentAssist.setPropertyName( StringUtls.replaceSpecChar( ((Property)treeObject.getFirstLevelComponent()).getName()) );
 
 							Element owningClass = treeObject.getFirstLevelComponent().getOwner(); 
 							if (owningClass instanceof Class) { // components of the owner of the property being modified
-								codeAssist.createComponentReferencelist((Class)owningClass);
+								ModelicaMLContentAssist.createComponentReferencelist((Class)owningClass);
 							}
 						}
 						

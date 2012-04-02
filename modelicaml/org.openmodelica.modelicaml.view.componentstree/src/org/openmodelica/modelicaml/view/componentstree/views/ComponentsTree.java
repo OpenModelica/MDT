@@ -739,7 +739,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		};
 		actionReload.setText("(Re)load and validate");
 		actionReload.setToolTipText("(Re)load and validate");
-		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
+		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
 		actionReload.setEnabled(false);
 		
 		actionValidateComponentModifications = new Action("actionValidateComponentModifications") { //obviously a check box style
