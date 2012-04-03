@@ -209,6 +209,10 @@ public class ModelicaMLServices {
 	public static List<String> getFilesToLoad(String folderPath){
 		List<String> list = new ArrayList<String>();
 
+		if (folderPath.trim().endsWith("/")) {
+			folderPath = folderPath.substring(0, folderPath.length() - 1);
+		}
+		
 		File folder = new File(folderPath);
 		
 		if (folder.exists() && folder.isDirectory()) {
@@ -257,53 +261,77 @@ public class ModelicaMLServices {
 	}
 	
 	
-	
-	public static IStatus deleteOldSimulationFiles(String modelQName, String directory, IProgressMonitor monitor){
+	public static IStatus deleteFiles(List<String> filesToBeDeleted, IProgressMonitor monitor){
 		
 		if (monitor.isCanceled()){
 			return Status.CANCEL_STATUS;
 		}
-		
+
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
-		monitor.subTask("Deleting files from OMC tmp folder for '" + modelQName + "'");
-		IFileStore oldExeFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + ".exe"));
-		IFileStore oldXMLInitFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_init.xml"));
-		IFileStore oldPltFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.plt"));
-		IFileStore oldPltXMLFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.xml"));
-		
-		try {
-			oldExeFile.delete(EFS.NONE, monitor);
-			oldXMLInitFile.delete(EFS.NONE, monitor);
-			oldPltFile.delete(EFS.NONE, monitor);
-			oldPltXMLFile.delete(EFS.NONE, monitor);
+		for (String filePath : filesToBeDeleted) {
+			monitor.subTask("Deleting file " + filePath );
+			IFileStore fileToBeDeleted = fileSystem.getStore(java.net.URI.create("file:/"  + filePath ));
+			try {
+				fileToBeDeleted.delete(EFS.NONE, monitor);
+			} catch (CoreException e) {
+//				e.printStackTrace();
+			}
 			
-			return Status.OK_STATUS;
+			if (monitor.isCanceled()){
+				return Status.CANCEL_STATUS;
+			}
 			
-		} catch (CoreException e) {
-//			e.printStackTrace();
-			return null;
 		}
+		return Status.OK_STATUS;
 	}
 	
-	public static IStatus deleteFile(String path, IProgressMonitor monitor){
-		
-		if (monitor.isCanceled()){
-			return Status.CANCEL_STATUS;
-		}
-		
-		IFileSystem fileSystem = EFS.getLocalFileSystem();
-		monitor.subTask("Deleting file '" + path + "'");
-		IFileStore existingFile = fileSystem.getStore(java.net.URI.create("file:/" + path));
-		
-		try {
-			existingFile.delete(EFS.NONE, monitor);
-			return Status.OK_STATUS;
-			
-		} catch (CoreException e) {
-//			e.printStackTrace();
-			return null;
-		}
-	}
+	
+//	public static IStatus deleteOldSimulationFiles(String modelQName, String directory, IProgressMonitor monitor){
+//		
+//		if (monitor.isCanceled()){
+//			return Status.CANCEL_STATUS;
+//		}
+//		
+//		IFileSystem fileSystem = EFS.getLocalFileSystem();
+//		monitor.subTask("Deleting files from OMC tmp folder for '" + modelQName + "'");
+//		IFileStore oldExeFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + ".exe"));
+//		IFileStore oldXMLInitFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_init.xml"));
+//		IFileStore oldPltFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.plt"));
+//		IFileStore oldPltXMLFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.xml"));
+//		
+//		try {
+//			oldExeFile.delete(EFS.NONE, monitor);
+//			oldXMLInitFile.delete(EFS.NONE, monitor);
+//			oldPltFile.delete(EFS.NONE, monitor);
+//			oldPltXMLFile.delete(EFS.NONE, monitor);
+//			
+//			return Status.OK_STATUS;
+//			
+//		} catch (CoreException e) {
+////			e.printStackTrace();
+//			return null;
+//		}
+//	}
+//	
+//	public static IStatus deleteFile(String path, IProgressMonitor monitor){
+//		
+//		if (monitor.isCanceled()){
+//			return Status.CANCEL_STATUS;
+//		}
+//		
+//		IFileSystem fileSystem = EFS.getLocalFileSystem();
+//		monitor.subTask("Deleting file '" + path + "'");
+//		IFileStore existingFile = fileSystem.getStore(java.net.URI.create("file:/" + path));
+//		
+//		try {
+//			existingFile.delete(EFS.NONE, monitor);
+//			return Status.OK_STATUS;
+//			
+//		} catch (CoreException e) {
+////			e.printStackTrace();
+//			return null;
+//		}
+//	}
 	
 	
 }

@@ -694,11 +694,17 @@ public class ClassInstantiation {
 		}
 		else {
 			papyrusModel = UmlUtils.getUmlModel();
-			try {
-				valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
-			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (papyrusModel != null) {
+				try {
+					valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
+				} catch (NotFoundException e) {
+					// TODO Auto-generated catch block
+//					e.printStackTrace();
+					System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
+				}
+			}
+			else {
+//				System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
 			}
 		}
 

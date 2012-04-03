@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
@@ -52,6 +53,7 @@ import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
+import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.Vertex;
 import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
@@ -85,6 +87,28 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 				}
 			}
 			return list;
+		}
+	
+		
+		public static HashSet<Element> getAllTreeItemsClasses(TreeParent treeParent){
+			HashSet<Element> allTreeItems = new HashSet<Element>();
+			
+			// If it is the root then add the root class
+			if (treeParent.isRoot() && treeParent.getSelectedClass() != null) {
+				allTreeItems.add(treeParent.getSelectedClass());
+			}
+			
+			// add all classes used in children
+			TreeObject[] children = treeParent.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].getUmlElement() instanceof TypedElement && ((TypedElement)children[i].getUmlElement()).getType() instanceof Classifier) {
+					allTreeItems.add(((TypedElement)children[i].getUmlElement()).getType());
+				}
+				if (children[i] instanceof TreeParent) {
+					allTreeItems.addAll(getAllTreeItemsClasses((TreeParent)children[i]));
+				}
+			}
+			return allTreeItems;
 		}
 		
 	
