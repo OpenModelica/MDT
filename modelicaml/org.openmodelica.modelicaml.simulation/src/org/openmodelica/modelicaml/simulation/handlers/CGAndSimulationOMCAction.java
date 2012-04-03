@@ -69,6 +69,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.modelica.mdt.core.compiler.ConnectException;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
@@ -250,7 +251,12 @@ public class CGAndSimulationOMCAction extends AbstractHandler {
 					// package.mo file from the code-gen folder
 					filesToLoad.add(packageMoFilePath);
 					
-					new OMCCommandExecuter(modelElement, filesToLoad, modelElementDotPath, plotCommand, simPar);
+					try {
+						new OMCCommandExecuter(modelElement, filesToLoad, modelElementDotPath, plotCommand, simPar);
+					} catch (ConnectException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					return Status.OK_STATUS;
 				}

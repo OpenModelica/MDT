@@ -2,11 +2,10 @@ package org.openmodelica.modelicaml.modelica.importer.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.modelica.mdt.core.ICompilerResult;
+import org.modelica.mdt.omc.OMCProxy;
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
-import org.openmodelica.modelicaml.modelica.importer.omc.corba.OMCProxy;
 
 
 public class OpenModelicaCompilerCommunication {
@@ -15,7 +14,7 @@ public class OpenModelicaCompilerCommunication {
 	private ArrayList<String> history;
 	
 	public OpenModelicaCompilerCommunication(){
-		super();
+//		super();
 		this.omc = new OMCProxy();
 		history = new ArrayList<String>();
 	}
@@ -67,26 +66,38 @@ public class OpenModelicaCompilerCommunication {
 	 * @return the string
 	 */
 	private String executeCommand(String command) {
-//		System.err.println("Expression:" + command);
-
-		/**
-		 * Reply from OMC
-		 */
-		String reply = "no reply";
-
+		// initial reply (negative)
+		String replyString = "Error: No reply from OMC ...";
+		
 		if (command != null && command.length() > 0) {
 			history.add(command);
+			
 			try {
-				reply = omc.sendExpression(command);
+				ICompilerResult reply = omc.sendExpression(command, true);
+
+				// find the next not empty positive result. 
+				replyString = "";
+				String[] results = reply.getResult();
+				for (String string : results) {
+					if (string.trim().length() > 0) {
+						if (replyString.equals("")) {
+							replyString = string;		
+						}
+					}
+				}
+				
+				// catch the error string
+				String errorString = reply.getError(); 
+				if (errorString != null && errorString.trim().length() > 0) {
+					replyString = errorString.trim();
+				}
+				
 			} catch (Exception ex) {
-				reply = "\nError while sending expression: " + command + "\n"
-						+ ex.getMessage();
+				replyString = "\nError while sending expression: " + command + "\n" + ex.getMessage();
 			}
-		} else {
-			reply = ("\nNo expression sent because is empty");
 		}
 
-		return reply;
+		return replyString;
 	}
 	
 	/**
@@ -243,20 +254,12 @@ public class OpenModelicaCompilerCommunication {
 	}
 	
 	
-	/**
-	 * Leave OpenModelica and kill the process.
-	 * 
-	 * @return Reply from OMC
-	 */
+
 	public String quit() {
 		return executeCommand("quit()");
 	}
+
 	
-	/**
-	 * Get a possible error String from omc after executing a command.
-	 *
-	 * @return error string as reply from omc
-	 */
 	public String getErrorString(){
 		return executeCommand("getErrorString()");
 	}
@@ -309,10 +312,6 @@ public class OpenModelicaCompilerCommunication {
 		return executeCommand("isConnector(" + className + ")");
 	}
 	
-//	public String getInheritanceCount(String className){
-//		return executeCommand("getInheritanceCount(" + className + ")");
-//	}
-	
 	public String getNthInheritedClass(String className, String n){
 		return executeCommand("getNthInheritedClass(" + className+ "," + n + ")");
 	}
@@ -332,7 +331,6 @@ public class OpenModelicaCompilerCommunication {
 	public String getDocumentationAnnotation(String className){
 		return executeCommand("getDocumentationAnnotation(" + className + ")");
 	}
-	
 	
 	
 //	getTempDirectoryPath()
@@ -436,9 +434,6 @@ public class OpenModelicaCompilerCommunication {
 		return executeCommand("isReplaceable(" + className +", " + nestedClassName + ")");
 	}
 	
-//	public String getAnnotationCount(String className){
-//		return executeCommand("getAnnotationCount(" + className + ")");
-//	}
 	
 	public Integer getAnnotationCount(String className){
 		String reply = executeCommand("getAnnotationCount(" + className + ")");
@@ -498,9 +493,6 @@ public class OpenModelicaCompilerCommunication {
 	
 	
 	
-//	public String getInitialAlgorithmCount(String className){
-//		return executeCommand("getInitialAlgorithmCount(" + className + ")");
-//	}
 	public Integer getInitialAlgorithmCount(String className){
 		String reply = executeCommand("getInitialAlgorithmCount(" + className + ")");
 		if (reply != null && !reply.trim().equals("") && !reply.contains("rror") ) {
@@ -526,7 +518,6 @@ public class OpenModelicaCompilerCommunication {
 			for (int i = 1; i <= count; i++) {
 				String reply = getNthInitialAlgorithm(className, String.valueOf(i)).trim();
 				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
-//					initialAlgorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
 					String string = StringHandler.removeFirstLastDoubleQuotes(reply.trim());
 					initialAlgorithms.add(replaceSpecChars(string));
 				}
@@ -534,11 +525,7 @@ public class OpenModelicaCompilerCommunication {
 		}
 		return initialAlgorithms;
 	}
-	
-		
-//	public String getAlgorithmCount(String className){
-//		return executeCommand("getAlgorithmCount(" + className + ")");
-//	}
+
 	
 	public Integer getAlgorithmCount(String className){
 		String reply = executeCommand("getAlgorithmCount(" + className + ")");
@@ -565,7 +552,6 @@ public class OpenModelicaCompilerCommunication {
 			for (int i = 1; i <= count; i++) {
 				String reply = getNthAlgorithm(className, String.valueOf(i)).trim();
 				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
-//					algorithms.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
 					String string = StringHandler.removeFirstLastDoubleQuotes(reply.trim());
 					algorithms.add(replaceSpecChars(string));
 				}
@@ -576,12 +562,6 @@ public class OpenModelicaCompilerCommunication {
 	
 	
 
-	
-//	public String getInitialEquationCount(String className){
-//		return executeCommand("getInitialEquationCount(" + className + ")");
-//	}
-	
-	
 	public Integer getInitialEquationCount(String className){
 		String reply = executeCommand("getInitialEquationCount(" + className + ")");
 		if (reply != null && !reply.trim().equals("") && !reply.contains("rror")) {
@@ -607,7 +587,6 @@ public class OpenModelicaCompilerCommunication {
 			for (int i = 1; i <= count; i++) {
 				String reply = getNthInitialEquation(className, String.valueOf(i)).trim();
 				if (!reply.equals("") && !reply.equals("Error") && !reply.equals("false")) {
-//					initialEquations.add(StringHandler.removeFirstLastDoubleQuotes(reply.trim()));
 					String string = StringHandler.removeFirstLastDoubleQuotes(reply.trim());
 					initialEquations.add(replaceSpecChars(string));
 
@@ -618,11 +597,7 @@ public class OpenModelicaCompilerCommunication {
 	}
 	
 
-		
-//	public String getEquationCount(String className){
-//		return executeCommand("getEquationCount(" + className + ")");
-//	}
-	
+
 	public Integer getEquationCount(String className){
 		String reply = executeCommand("getEquationCount(" + className + ")");
 		if (reply != null && !reply.trim().equals("") && !reply.contains("rror") ) {
@@ -663,7 +638,6 @@ public class OpenModelicaCompilerCommunication {
 	}
 	
 	
-	
 	/**
 	 * Gets the command history.
 	 *
@@ -676,4 +650,5 @@ public class OpenModelicaCompilerCommunication {
 //		return tempHistory;
 		return this.history;
 	}
+	
 }

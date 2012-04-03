@@ -43,9 +43,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -75,6 +72,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.modelica.importer.helper.ModelicaModelProxiesCollector;
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
@@ -87,8 +85,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private UmlModel ModelicaMLModel = null;
 	private EObject ModelicaMLRoot = null;
 
-	private String OMCWorkingDirectoryAbsoplutePath = null;
-	private OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+	private OpenModelicaCompilerCommunication omcc;
 	
 	private HashSet<Element> proxies = new HashSet<Element>();
 	
@@ -118,11 +115,17 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 	}
 
+	public TreeBuilder(){
+		// create a new omc proxy object
+		omcc = new OpenModelicaCompilerCommunication();
+	}
+	
 	public void buildTree(TreeParent treeRoot, ArrayList<String> excludeModels){
-		
-		OMCWorkingDirectoryAbsoplutePath = omcc.cd();
-		
+
 		clearAll();
+		
+//		// create a new omc proxy object
+//		omcc = new OpenModelicaCompilerCommunication();
 		
 		loadModels();
 		
@@ -308,10 +311,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 						item.setSource(getTypeElement(classQName));
 						item.setSourceQname(classQName);
 						item.setTarget(getTypeElement(inheritedClassQName));
-//						System.err.println();
-//						System.err.println(inheritedClassQName);
-//						System.err.println("getTypeElement(inheritedClassQName): " + getTypeElement(inheritedClassQName));
-//						System.err.println(); 
 						item.setTargetQname(inheritedClassQName);
 						
 						// Note, UML Generalization is not a NamedElement. It is not possible to set
@@ -586,7 +585,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			TreeParent parent = item.getParent();
 			if (parent instanceof ClassItem) {
 				String isReplaceableReply = omcc.isReplaceable(parent.getQName(), classQName);
-				if (isReplaceableReply.trim().contains("true")) {
+				if (isReplaceableReply != null && isReplaceableReply.length() > 0 && isReplaceableReply.trim().contains("true")) {
 					item.setIsReplaceable(true);
 				}
 			}
@@ -652,267 +651,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 	}
 	
-	
-	// BACKUP
-//	private void setClassProperties(ClassItem item, String classQName){
-//		/*
-//		 * 	>> getClassInformation(ModelicaMLModel.Modelica.Fluid.Utilities)
-//			<< {"package",
-//			"",
-//			"D:/__PROJECTS/2008_PhD/tools/eclipse_3_6_modeling/runtime-New_configuration/modelicaml.example.potableWaterSystem_v26_TEST/code-sync/ModelicaMLModel/../ModelicaMLModel/Modelica/Fluid/Utilities/package.mo",
-//			{false,false,false},
-//			{"writable",3,1,8,14},
-//			{}}
-//		 *	
-//		 *	Explanation: 
-//		 *		-> Restriction, 
-//		 *		-> comment,
-//		 *		-> filename,
-//		 *		-> {partial,final,encapsulated}
-//		 * 		? {"writable",3,1,8,14},
-//		 * 		? {}
-//		 */
-//		
-//		
-//		String classInfo = omcc.getClassInformation(classQName);
-//		
-//		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
-//
-//			// set class restriction
-//			String[] splitted = classInfo.split(",");
-//			if (splitted.length > 0) {
-//				item.setClassRestriction(splitted[0].replaceAll("\\{", "").replace("\"", ""));
-//			}
-//
-//			boolean isPartial = false;
-//			boolean isFinal = false;
-//			boolean isEncapsulated = false;
-//
-//			// get the boolean items (i.e. true or false)
-//			Pattern patternBooleanItems = Pattern.compile("(true|false)");
-//			Matcher matcherBooleanItems = patternBooleanItems.matcher(classInfo);
-//			List<String> booleanItems = new ArrayList<String>();
-//			while (matcherBooleanItems.find()) {
-//				booleanItems.add(matcherBooleanItems.group());
-//			}
-//			
-//			if (booleanItems.size() > 2) {
-//				if (booleanItems.get(0).trim().equals("true")) {
-//					isPartial = true;
-//				}
-//				if (booleanItems.get(1).trim().equals("true")) {
-//					isFinal = true;
-//				}
-//				if (booleanItems.get(2).trim().equals("true")) {
-//					isEncapsulated = true;
-//				}
-//			}
-//			
-//			
-//			// set the tree item data
-//			item.setFinal(isFinal);
-//			item.setPartial(isPartial);
-//			item.setEncapsulated(isEncapsulated);
-//		}
-//		
-//		if (classInfo.equals("Error") ) {
-//			// TODO: collect errors
-//			String errorString = omcc.getErrorString();	
-//			String msg = extractErrorMessage(errorString);
-//			
-//			// generate markers
-//			createOMCMarker(item, "error", msg);
-//		}
-//	}
-	
-	//BACKUP
-//	private List<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
-//			
-//			/*
-//			 * 	>> getComponents(Modelica.StateGraph.Examples.Utilities.CompositeStep2)
-//				<< {{Modelica.StateGraph.Transition,
-//				transition,
-//				"", 
-//				"public", 
-//				false, 
-//				false, 
-//				false, 
-//				false, 
-//				"unspecified", 
-//				"none", 
-//				"unspecified",
-//				{}}
-//			 * 
-//			 	-	item[0] = type qualified name
-//				-	item[1] = component name
-//				-	item[2] = comment
-//				-	item[3] = visibility (public/protected)
-//				-	item[4] = Final (true/false)
-//				-	item[5] = Flow (true/false)
-//				-	item[6] = Stream (true/false)
-//				-	item[7] = Replaceable (true/false)
-//				-	item[8] = variability (constant/discrete/parameter/unspecified)
-//				-	item[9] = inner/outer/innerouter/none
-//				-	item[10] = causality (input/output/unspecified)
-//				-	item[11] = bit unsure about this value but perhaps its length of array 
-//			 */
-//			
-//			List<ModelicaComponentData> list = new ArrayList<TreeBuilder.ModelicaComponentData>();
-//			String checkString = string.replaceAll("\"", "").replaceAll("\\{", "").replaceAll("\\}", "").trim();
-//			
-//			if (!checkString.equals("Error") && !checkString.equals("false") && !checkString.equals("")) {
-//				
-//				String string2 = string.trim();
-//				// remove outter braces from the entire OMC CORBA reply
-//				if (string.trim().length() > 4 
-//						&& string.trim().substring(string.trim().length()-3, string.trim().length()).equals("}}}")) {
-//					string2 = string.trim().substring(1, string.trim().length()-1);
-//				}
-//				
-//				// get entries
-//				String[] entries = string2.split("},");
-//				if (entries.length > 0) {
-//					for (int i = 0; i < entries.length; i++) {
-//						String entry = entries[i].replaceFirst("\\{", "");
-//						
-//						String entry2 = entry.trim();
-//						// remove outter braces from the individual component items
-//						if (entry.trim().length() > 2 && entry.trim().substring(entry.trim().length()-1, entry.trim().length()).equals(",")) {
-//							entry2 = entry.trim().substring(1, entry.trim().length()-1);
-//						}
-//						
-//						// default values
-//						String comment = ""; 
-//						String visibility = "public";
-//						String variability = "unspecified";
-//						String innerouter = "none";
-//						String causality = "unspecified";
-//						
-//						Pattern patternComment = Pattern.compile("\".*\",");
-//						Matcher matcherComment = patternComment.matcher(entry2);
-//						while ( matcherComment.find() ) {
-//							comment = matcherComment.group(0);
-//						}
-//						Pattern patternVisibility = Pattern.compile("\"(public|protected)\"");
-//						Matcher matcherVisibility = patternVisibility.matcher(entry2);
-//						while (matcherVisibility.find()) {
-//							visibility = matcherVisibility.group(0).replaceAll("\"", "");
-//						}
-//						Pattern patternVariability = Pattern.compile("\"(constant|discrete|parameter)\"");
-//						Matcher matcherVariability = patternVariability.matcher(entry2);
-//						while (matcherVariability.find()) {
-//							variability = matcherVariability.group(0).trim().replaceAll("\"", "");
-//						}
-//						Pattern patternInnerouter = Pattern.compile("\"(inner|outer|innerouter)\"");
-//						Matcher matcherInnerouter = patternInnerouter.matcher(entry2);
-//						while (matcherInnerouter.find()) {
-//							innerouter = matcherInnerouter.group(0).trim().replaceAll("\"", "");
-//						}
-//						Pattern patternCausality = Pattern.compile("\"(input|output)\"");
-//						Matcher matcherCausality = patternCausality.matcher(entry2);
-//						while (matcherCausality.find()) {
-//							causality = matcherCausality.group(0).trim().replaceAll("\"", "");;
-//						}
-//						
-//						// get the boolean items (i.e. true or false)
-//						Pattern patternBooleanItems = Pattern.compile("(true|false)");
-//						Matcher matcherBooleanItems = patternBooleanItems.matcher(entry2);
-//						List<String> booleanItems = new ArrayList<String>();
-//						while (matcherBooleanItems.find()) {
-//							booleanItems.add(matcherBooleanItems.group());
-//						}
-//						// default values
-//						boolean isFinal = false;
-//						boolean isFlow = false;
-//						boolean isStream = false;
-//						boolean isReplaceable= false;
-//						
-//						if (booleanItems.size() > 3) {
-//							if (booleanItems.get(0).trim().equals("true")) {
-//								isFinal = true;
-//							}
-//							if (booleanItems.get(1).trim().equals("true")) {
-//								isFlow = true;
-//							}
-//							if (booleanItems.get(2).trim().equals("true")) {
-//								isStream = true;
-//							}
-//							if (booleanItems.get(3).trim().equals("true")) {
-//								isReplaceable = true;
-//							}
-//						}
-//						
-//						// get string items within {}
-//						Pattern patternBracesItems = Pattern.compile("\\{.*\\}");
-//						Matcher matcherBracesItems = patternBracesItems.matcher(entry2);
-//						List<String> bracesItems = new ArrayList<String>();
-//						while (matcherBracesItems.find()) {
-//							bracesItems.add(matcherBracesItems.group(0).replaceAll("\\{", "").replaceAll("\\}", ""));
-//						}
-//						// default values
-//						String arraySizeString = "";
-//						EList<String> arraySize = new BasicEList<String>();
-//						if (bracesItems.size() > 0 ) {
-//							arraySizeString = bracesItems.get(0);
-//						}
-//						String[] splittedArraySizeString = arraySizeString.trim().split(",");
-//						if (splittedArraySizeString.length > 0) {
-//							for (int j = 0; j < splittedArraySizeString.length; j++) {
-//								String arraySizeItem = splittedArraySizeString[j];
-//								if (!arraySizeItem.trim().equals("")) {
-//									arraySize.add(arraySizeItem);
-//								}
-//							}
-//						}
-//						
-//						/*
-//						 * Note: the following split code works only for the first 2 items because the 3rd (Modelica comment) 
-//						 * can also contain "," so that split(",") will not work for the rest.
-//						 */
-//						
-//						// set data
-//						String[] items = entry2.split(",");
-//						if (items.length > 2 ) {
-//							ModelicaComponentData data = new ModelicaComponentData();
-//	
-//							data.typeQName = items[0].trim();
-//	//						data.type = getTypeElement(data.typeQName, owningClass);
-//							data.type = getTypeElement(data.typeQName);
-//							data.name = items[1].trim();
-//							
-//							data.comment = comment;
-//							data.visibility = visibility;
-//							data.isFinal = isFinal;
-//							data.isFlow = isFlow;
-//							data.isStream = isStream;
-//							data.isReplaceable = isReplaceable;
-//							data.variability = variability;
-//							data.innerouter = innerouter;
-//							data.causality = causality;
-//							data.arraySize = arraySize;
-//							
-//							list.add(data);
-//							
-//	//						System.err.println("typeQName: " + data.typeQName);
-//	//						System.err.println("name: " + data.name);
-//	//						System.err.println("comment: " + data.comment);
-//	//						System.err.println("visibility: " + data.visibility);
-//	//						System.err.println("isFinal: " + data.isFinal);
-//	//						System.err.println("arraySize: " + data.arraySize);
-//						}
-//					}
-//				}
-//			}
-//			if (checkString.equals("Error")) {
-//				// TODO: collect errors
-//				String errorString = omcc.getErrorString();	
-//				String msg = extractErrorMessage(errorString);
-//	
-//				// generate markers
-//				createOMCMarker(classItem, "error", msg);
-//			}
-//			return list;
-//		}
 
 	
 	private ArrayList<ModelicaComponentData> getComponentData(ClassItem classItem, String string, Element owningClass){
@@ -1023,7 +761,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	private String getComponentDeclarationEquation(ComponentItem component, String classQName){
 		String declaration = null;
-		if (!classQName.equals("")) {
+		if (!classQName.equals("") && component != null) {
 			String declarationString = omcc.getComponentModifierValue(classQName, component.getName()).trim();
 			if (!declarationString.equals("Error") && !declarationString.equals("false") && !declarationString.equals("")) {
 				declaration = "= " + declarationString; 
@@ -1117,7 +855,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private List<String> getItems(String string){
 		List<String> items = new ArrayList<String>();
 		
-		if (!string.trim().equals("Error") && !string.trim().equals("false")) {
+		if (string != null && string.trim().length() > 0 && !string.trim().equals("Error") && !string.trim().equals("false")) {
 			String[] splitted = string.trim().substring(1, string.length() - 2).split(",");
 			if (splitted.length > 0 ) {
 				for (int i = 0; i < splitted.length; i++) {
@@ -1184,9 +922,10 @@ public class TreeBuilder implements IRunnableWithProgress{
 	public void loadModels(){
 //		UmlModel umlModel = UmlUtils.getUmlModel();
 		UmlModel umlModel = ModelicaMLModel;
+		
+		// clear the omc first
+		omcc.clear();
 
-//		String modelFileURI = umlModel.getResourceURI().toPlatformString(true);
-//		String modelName = umlModel.getResourceURI().lastSegment();
 		if (umlModel != null && umlModel.getResource() != null) {
 			String projectName = umlModel.getResource().getURI().segment(1);
 			
@@ -1196,66 +935,31 @@ public class TreeBuilder implements IRunnableWithProgress{
 			IProject iProject = root.getProject(projectName);
 			String projectAbsolutePath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
 			String codeIncAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_code_sync + "/";
-			
-//			IFolder codeIncFlder = iProject.getFolder("code-inc/");
-			
-			IFileSystem fileSystem = EFS.getLocalFileSystem();
-			IFileStore codeIncFolder = fileSystem.getStore(java.net.URI.create(projectAbsolutePath + "/" + Constants.folderName_code_sync));
-			
-			// clear first ...
-			omcc.clear();
-			
-			// try to load .mo files
-			try {
-				String[] children = codeIncFolder.childNames(EFS.NONE, null);
-				for (int i = 0; i < children.length; i++) {
-					String child = children[i];
-					
-					String reply = "";
-					String filePath = "";
-					if (child.endsWith(".mo")) { // if it is a .mo file
-						filePath = codeIncAbsolutePath + child;
-						reply = omcc.loadFile(filePath);
-						/*
-						 * For ModelicaML proxy concept the first level classes must be packages with 
-						 * no inheritance no Modelica package specific properties because  
-						 * UML Model (specialization of UML Package) as root must be created 
-						 * to apply the ModelicaML profile to.  
-						 */
-					}
-					else if (!child.endsWith(".mo")) { // if it is a folder
-//						System.err.println("file: " + iProject.getFile(codeIncAbsolutePath + "/" + child + "/package.mo"));
-//						System.err.println("file does not exist: " + iProject.getFile(codeIncAbsolutePath + "/" + child + "/package.mo") == null);					iProject.get
-						filePath = codeIncAbsolutePath + child + "/package.mo";
-						reply = omcc.loadFile(filePath);
-					}
-					else { // any other files 
-						
-					}
-					
-					if (reply.trim().equals("Error")) {
-						String errorString = omcc.getErrorString();	
-						String msg = extractErrorMessage(errorString);
 
-						// generate markers
-						createOMCMarker(null, "error", msg);
-					}
-					else if (reply.trim().equals("false")) {
-						String errorString = omcc.getErrorString();	
-						String msg = extractErrorMessage(errorString);
-						
-						// generate markers
-						createOMCMarker(null, "error", msg);
-					}
+			List<String> filesToLoad = ModelicaMLServices.getFilesToLoad(codeIncAbsolutePath);
+			for (String fileToLoad : filesToLoad) {
+				
+				String reply = "";
+				reply = omcc.loadFile(fileToLoad);
+				
+				if (reply.trim().equals("Error")) {
+					String errorString = omcc.getErrorString();	
+					String msg = extractErrorMessage(errorString);
+
+					// generate markers
+					createOMCMarker(null, "error", msg);
 				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.err.println("Cannot read the file system.");
+				else if (reply.trim().equals("false")) {
+					String errorString = omcc.getErrorString();	
+					String msg = extractErrorMessage(errorString);
+					
+					// generate markers
+					createOMCMarker(null, "error", msg);
+				}
+				
 			}
 		}
 		else {
-//			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "OMC Communication Error", "Cannot access the Papyrus UML model.");
 			System.err.println("Cannot access the Papyrus UML model");
 		}
 		

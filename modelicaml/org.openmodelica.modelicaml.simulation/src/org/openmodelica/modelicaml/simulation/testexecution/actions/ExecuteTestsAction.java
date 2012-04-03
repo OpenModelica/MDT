@@ -106,7 +106,15 @@ public class ExecuteTestsAction implements
 									return Status.CANCEL_STATUS;
 								}
 								
-								ModelicaMLServices.deleteOldSimulationFiles(model.qualifiedName, omcTempWorkingFolder, monitor);
+								List<String> filesToBeDeleted = new ArrayList<String>();
+								filesToBeDeleted.add(model.qualifiedName + ".exe");
+								filesToBeDeleted.add(model.qualifiedName + "_init.xml");
+								filesToBeDeleted.add(model.qualifiedName + "_res.plt");
+								filesToBeDeleted.add(model.qualifiedName + "_res.mat");
+								filesToBeDeleted.add(model.qualifiedName + "_res.xml");
+
+//								ModelicaMLServices.deleteOldSimulationFiles(model.qualifiedName, omcTempWorkingFolder, monitor);
+								ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor);
 								
 //								monitor.subTask("Deleting files from OMC tmp folder for '" + model.qualifiedName + "'");
 //								IFileStore oldExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));

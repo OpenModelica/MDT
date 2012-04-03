@@ -42,7 +42,7 @@ public class ExecuteSimulation {
 		omcReturnString = omcc.cd(omcTempWorkingFolder);		
 		if(omcReturnString.contains("Error")){
 			String errorString = omcc.getErrorString();
-			omcc.quit();
+//			omcc.quit();
 			return "cd: " + omcReturnString + "\nErrorString: " + errorString;
 		}
 		else {
@@ -54,9 +54,7 @@ public class ExecuteSimulation {
 		
 		String simulateResult = check_and_simulate(monitor, omcc, testSessionObj, omcReturnString);
 		
-		omcc.quit();
-		
-//		System.err.println("NO ERROR");
+//		omcc.quit();
 
 		omcReturnString = "\n\n" + loadResult + "\n" + simulateResult + "\n"; 
 		return omcReturnString;
@@ -188,7 +186,7 @@ public class ExecuteSimulation {
 		for(TestModel model : testSessionObj.testModels){
 			
 			if (monitor.isCanceled()){
-				omcc.quit();
+//				omcc.quit();
 			}
 			else {
 				monitor.subTask("Simulating: " + model.qualifiedName); 

@@ -36,6 +36,7 @@ package org.openmodelica.modelicaml.simulation.handlers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -74,9 +75,14 @@ import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Class;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
@@ -148,6 +154,39 @@ public class SimulationOMCAction extends AbstractHandler {
 		
 		// open dialog for simulation settings
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		
+		// instantiate in order to see of MSL is used
+		boolean isMSLUsed = false;
+		if (umlElement instanceof Class) {
+			ClassInstantiation ci = new ClassInstantiation((Class) umlElement, true);
+			ci.createTree();
+			TreeParent treeRoot = ci.getTreeRoot();
+			HashSet<Element> allTypes = TreeUtls.getAllTreeItemsClasses(treeRoot);
+			
+			for (Element element : allTypes) {
+				if (element instanceof NamedElement) {
+					String qName = ((NamedElement)element).getQualifiedName();
+					if (qName.startsWith("Modelica::")) {
+						isMSLUsed = true;
+					}
+				}
+			}
+		}
+		
+		// get files to load in order to see if only files from code-sync folder are need so no code generation is required.
+		List<String> filesToLoad = new ArrayList<String>();
+		// First files from the code-sync, then files from code-gen
+		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_sync));
+		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_gen));
+		
+		boolean areFilesFromCGFolderToBeLoaded = false;
+		for (String string : filesToLoad) {
+			if (string.contains(projectPath + "/" + Constants.folderName_code_gen)) {
+				areFilesFromCGFolderToBeLoaded = true;
+			}
+		}
+
+		// open dialog with preset settings
 		DialogSimulationSettings dialog = new DialogSimulationSettings(shell, 
 				"Simulation Settings", 
 				umlElement, 
@@ -157,7 +196,13 @@ public class SimulationOMCAction extends AbstractHandler {
 				VerificationExecutionServices.getSolver(umlElement), 
 				VerificationExecutionServices.getTolerance(umlElement), 
 				VerificationExecutionServices.getOutputFormat(umlElement));
+		
+		dialog.setLoadModelicaLibChecked(isMSLUsed);
+		if (!areFilesFromCGFolderToBeLoaded) {
+			dialog.setGenerateModelicaCodeChecked(false);
+		}
 		dialog.open();
+		
 		
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) { // OK button clicked
 	    	
@@ -189,7 +234,7 @@ public class SimulationOMCAction extends AbstractHandler {
 					}
 					
 					String omcTempDirectory = ExecuteSimulation.getTempDirectoryPath();
-					String modelQName = StringUtls.replaceSpecCharExceptThis(umlElement.getQualifiedName(), "::");
+					String modelQName = StringUtls.replaceSpecCharExceptThis(umlElement.getQualifiedName(), "::").replaceAll("::", ".");
 					
 					/*
 					 * First delete old files from the tmp directory.
@@ -197,7 +242,18 @@ public class SimulationOMCAction extends AbstractHandler {
 					 * Old files needs to be deleted so that the simulation results will not get confused with older simulations.
 					 */
 					monitor.beginTask("Deleting old files for '" + modelQName + "'", 100);
-					ModelicaMLServices.deleteOldSimulationFiles(modelQName, omcTempDirectory, monitor);
+					List<String> filesToBeDeleted = new ArrayList<String>();
+					filesToBeDeleted.add(modelQName + ".exe");
+					filesToBeDeleted.add(modelQName + "_init.xml");
+					filesToBeDeleted.add(modelQName + "_res.plt");
+					filesToBeDeleted.add(modelQName + "_res.mat");
+					filesToBeDeleted.add(modelQName + "_res.xml");
+					
+//					IStatus status = ModelicaMLServices.deleteOldSimulationFiles(modelQName, omcTempDirectory, monitor);
+					IStatus status = ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor);
+//					if (status != null) {
+//						System.err.println("Deleted: " + modelQName + "_init.xml, _res.plt, _res.xml, .exe");
+//					}
 					
 					/*
 					 * Simulate
@@ -236,7 +292,11 @@ public class SimulationOMCAction extends AbstractHandler {
 							if (isCopyFilesChecked) {
 								
 								resultsXMLAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
-								ModelicaMLServices.deleteFile(resultsXMLAbsolutePath, monitor);
+								
+								List<String> fileToBeDeleted = new ArrayList<String>();
+								filesToBeDeleted.add(resultsXMLAbsolutePath);
+//								ModelicaMLServices.deleteFile(resultsXMLAbsolutePath, monitor);
+								ModelicaMLServices.deleteFiles(fileToBeDeleted, monitor);
 								
 								monitor.subTask("Copying files into '"+Constants.folderName_sim_gen+"' for: " + model.qualifiedName);
 

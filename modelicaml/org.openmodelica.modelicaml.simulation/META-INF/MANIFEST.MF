@@ -22,7 +22,10 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.icu,
  org.eclipse.emf.databinding,
  org.eclipse.core.filesystem;bundle-version="1.3.1",
- org.eclipse.uml2.uml;bundle-version="3.2.100"
+ org.eclipse.uml2.uml;bundle-version="3.2.100",
+ org.modelica.mdt.core;bundle-version="0.7.23",
+ org.modelica.mdt.omc;bundle-version="0.7.23"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openmodelica.modelicaml.simulation.handlers
+Import-Package: org.modelica.mdt.omc

@@ -1413,8 +1413,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					 * - configure the tree builder 
 					 * - clear compiler, load models
 					 * * TODO: check if it is safe to rely on the fact that the ModelicaML model is set or not set in the tree builder?!  
+					 * TODO: now if the root node is expanded we clear and load omc each time ... how to make it better? 
 					 */
-					if (treeBuilder.getModelicaMLModel() == null) {
+					if (treeBuilder.getModelicaMLModel() == null || obj == treeRoot) {
 						
 						// Set all project- and model-related data
 						configureTreeBuilder();

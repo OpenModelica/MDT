@@ -34,7 +34,13 @@
  */
 package org.openmodelica.modelicaml.simulation;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchListener;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.modelica.mdt.core.CompilerProxy;
 import org.osgi.framework.BundleContext;
 
 // TODO: Auto-generated Javadoc
@@ -48,7 +54,7 @@ public class Activator extends AbstractUIPlugin {
 	
 	// The plug-in ID
 	/** The Constant PLUGIN_ID. */
-	public static final String PLUGIN_ID = "com.eadsiw.modelicaml.simulation"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.openmodelica.modelicaml.simulation"; //$NON-NLS-1$
 
 	// The shared instance
 	/** The plugin. */
@@ -60,6 +66,53 @@ public class Activator extends AbstractUIPlugin {
 	public Activator() {
 	}
 
+	
+	//TODO: does not work yet ...
+	IWorkbenchListener onExitListener = new IWorkbenchListener()
+	{
+
+		@Override
+		public void postShutdown(IWorkbench workbench) {
+			/* do nothing */
+		}
+
+		@Override
+		public boolean preShutdown(IWorkbench workbench, boolean forced) {
+			try {
+				if (!CompilerProxy.isRunning()) return true;
+			}
+			catch (Exception e) { }
+			
+			boolean choice = 
+				MessageDialog.openConfirm(
+					getShell(), 
+					"Modelica Development Tooling", 
+					"The OpenModelica compiler is running in the background.\n " +
+					"Should we stop it? If you have other clients connected choose 'Cancel'.");
+			try {
+				if (choice) CompilerProxy.sendExpression("quit()", true);
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+			}
+			return true;
+		}
+	};
+	
+	
+	public static Shell getShell()
+	{
+		IWorkbench workbench = getDefault().getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			
+		if (window == null)
+		{
+			return null;
+		}
+
+		return window.getShell();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
@@ -67,6 +120,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		getWorkbench().addWorkbenchListener(onExitListener);
 	}
 
 	/*
@@ -76,6 +130,7 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		getWorkbench().removeWorkbenchListener(onExitListener);	
 	}
 
 	/**
@@ -86,6 +141,16 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Synchronized method.

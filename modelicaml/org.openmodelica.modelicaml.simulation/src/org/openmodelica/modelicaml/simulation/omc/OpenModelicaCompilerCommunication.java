@@ -3,17 +3,9 @@ package org.openmodelica.modelicaml.simulation.omc;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.openmodelica.modelicaml.simulation.omc.corba.OMCProxy;
+import org.modelica.mdt.core.ICompilerResult;
+import org.modelica.mdt.omc.OMCProxy;
 
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class OpenModelicaCompilerCommunication.
- *
- * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
- * 
- * Direct communication with the OM Compiler using a Java and CORBA implementation of the OM developers
- */
 public class OpenModelicaCompilerCommunication {
 
 	/** The omc. */
@@ -84,21 +76,24 @@ public class OpenModelicaCompilerCommunication {
 		/**
 		 * Reply from OMC
 		 */
-		String reply = "no reply";
+		ICompilerResult reply;
+		String replyString = "Error: No reply from OMC ...";
 
 		if (command != null && command.length() > 0) {
 			history.add(command);
 			try {
-				reply = omc.sendExpression(command);
+				reply = omc.sendExpression(command, true);
+				replyString = reply.getFirstResult();
+				
 			} catch (Exception ex) {
-				reply = "\nError while sending expression: " + command + "\n"
+				replyString = "\nError while sending expression: " + command + "\n"
 						+ ex.getMessage();
 			}
 		} else {
-			reply = ("\nNo expression sent because is empty");
+			replyString = ("\nNo expression sent because it is empty");
 		}
 
-		return reply;
+		return replyString;
 	}
 	
 	/**
@@ -297,17 +292,17 @@ public class OpenModelicaCompilerCommunication {
 		return tempHistory;
 	}
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args){
-		OpenModelicaCompilerCommunication i = new OpenModelicaCompilerCommunication();
-		i.cd("D:/OpenModelica1.5.0/tmp/");
-		i.loadModel("TwoTanks");
-		i.buildModel("TwoTanks.TanksConnectedPI", "plt");
-		i.quit();
-	}
+//	/**
+//	 * The main method.
+//	 *
+//	 * @param args the arguments
+//	 */
+//	public static void main(String[] args){
+//		OpenModelicaCompilerCommunication i = new OpenModelicaCompilerCommunication();
+//		i.cd("D:/OpenModelica1.5.0/tmp/");
+//		i.loadModel("TwoTanks");
+//		i.buildModel("TwoTanks.TanksConnectedPI", "plt");
+//		i.quit();
+//	}
 	
 }

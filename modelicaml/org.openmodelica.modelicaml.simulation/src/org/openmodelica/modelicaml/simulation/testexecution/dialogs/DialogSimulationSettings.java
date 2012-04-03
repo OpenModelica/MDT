@@ -70,7 +70,8 @@ public class DialogSimulationSettings extends Dialog {
 	private Button btnGenerateModelicaCode;
 	private Combo comboFormat;
 	
-	private boolean isGenerateModelicaCodeChecked, isCopyFilesChecked, isLoadModelicaLibChecked;
+	private boolean isGenerateModelicaCodeChecked = true, isCopyFilesChecked = false, isLoadModelicaLibChecked = false;
+	private String isLoadModelicaLibCheckedAddString = "";
 	
 	public DialogSimulationSettings(Shell 
 			parentShell, 
@@ -106,6 +107,8 @@ public class DialogSimulationSettings extends Dialog {
 		isGenerateModelicaCodeChecked = RegenerateCodeBeforeEachSimulation;
 	}
 	
+
+
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
    		shell.setText(this.title);
@@ -237,7 +240,7 @@ public class DialogSimulationSettings extends Dialog {
         });
         btnCopySimulationFiles.setToolTipText("If this option is activated then the simulation files such as _init.xml, .exe and the simulation result file will be copies into the 'sim-gen' folder inside the active project.");
         btnCopySimulationFiles.setBounds(10, 73, 477, 16);
-        btnCopySimulationFiles.setText("Copy result files in my project 'sim-gen' folder after simulation");
+        btnCopySimulationFiles.setText("Copy result files in my project 'sim-gen' folder after simulation (overwrite)");
         
         btnLoadModelicaLib = new Button(grpOptions, SWT.CHECK);
         btnLoadModelicaLib.addSelectionListener(new SelectionAdapter() {
@@ -247,8 +250,9 @@ public class DialogSimulationSettings extends Dialog {
         	}
         });
         btnLoadModelicaLib.setToolTipText("If this option is activated then the Modelica library will be loaded in advance.");
-        btnLoadModelicaLib.setText("Load Modelica library");
+        btnLoadModelicaLib.setText("Load Modelica Standard Library (MSL) " + isLoadModelicaLibCheckedAddString);
         btnLoadModelicaLib.setBounds(10, 51, 477, 16);
+        btnLoadModelicaLib.setSelection(isLoadModelicaLibChecked);
         
         btnGenerateModelicaCode = new Button(grpOptions, SWT.CHECK);
         btnGenerateModelicaCode.addSelectionListener(new SelectionAdapter() {
@@ -297,6 +301,20 @@ public class DialogSimulationSettings extends Dialog {
 		return format;
 	}
 	
+	
+	public void setLoadModelicaLibChecked(boolean isLoadModelicaLibChecked) {
+		this.isLoadModelicaLibChecked = isLoadModelicaLibChecked;
+		if (isLoadModelicaLibChecked) {
+			this.isLoadModelicaLibCheckedAddString = "(beacuse some components of this class use it)";
+		}
+		else {
+			this.isLoadModelicaLibCheckedAddString = "";
+		}
+	}
+
+	public void setGenerateModelicaCodeChecked(boolean isGenerateModelicaCodeChecked) {
+		this.isGenerateModelicaCodeChecked = isGenerateModelicaCodeChecked;
+	}
 	
 	
 	// options
