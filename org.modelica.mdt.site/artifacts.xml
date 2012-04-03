@@ -2,7 +2,7 @@
 <?artifactRepository version='1.1.0'?>
 <repository name='Exported Repository' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1327967881275'/>
+    <property name='p2.timestamp' value='1333447882174'/>
     <property name='p2.compressed' value='true'/>
   </properties>
   <mappings size='3'>
@@ -10,7 +10,7 @@
     <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
     <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
   </mappings>
-  <artifacts size='111'>
+  <artifacts size='118'>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.omc' version='0.7.21'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
@@ -53,6 +53,12 @@
         <property name='download.size' value='833805'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.ui' version='0.7.23'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='89527'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.21'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
@@ -65,16 +71,16 @@
         <property name='download.size' value='6715'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.modelica.mdt.breakpoint' version='0.7.17'>
-      <properties size='2'>
-        <property name='artifact.size' value='4096'/>
-        <property name='download.size' value='6716'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.omc' version='0.7.8'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
         <property name='download.size' value='30830'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.breakpoint' version='0.7.17'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='6716'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.core' version='0.7.13'>
@@ -107,10 +113,22 @@
         <property name='download.size' value='247506'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.breakpoint' version='0.7.23'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='6731'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.ui' version='0.7.13'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
         <property name='download.size' value='89225'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.23'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='251334'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.19'>
@@ -179,6 +197,12 @@
         <property name='download.size' value='120483'/>
       </properties>
     </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.23'>
+      <properties size='2'>
+        <property name='download.contentType' value='application/zip'/>
+        <property name='download.size' value='1652'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.ui' version='0.7.8'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
@@ -189,6 +213,12 @@
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
         <property name='download.size' value='121726'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.core' version='0.7.23'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='121844'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.ui' version='0.7.17'>
@@ -203,22 +233,28 @@
         <property name='download.size' value='6716'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.omc' version='0.7.23'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='30919'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.ui' version='0.7.11'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
         <property name='download.size' value='89224'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.modelica.mdt.core' version='0.7.9'>
-      <properties size='2'>
-        <property name='artifact.size' value='4096'/>
-        <property name='download.size' value='120505'/>
-      </properties>
-    </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.21'>
       <properties size='2'>
         <property name='download.contentType' value='application/zip'/>
         <property name='download.size' value='1652'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.core' version='0.7.9'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='120505'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.16'>
@@ -263,13 +299,19 @@
         <property name='download.size' value='1652'/>
       </properties>
     </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.16'>
+      <properties size='2'>
+        <property name='download.contentType' value='application/zip'/>
+        <property name='download.size' value='1652'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.breakpoint' version='0.7.11'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
         <property name='download.size' value='6716'/>
       </properties>
     </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.16'>
+    <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.13'>
       <properties size='2'>
         <property name='download.contentType' value='application/zip'/>
         <property name='download.size' value='1652'/>
@@ -279,12 +321,6 @@
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
         <property name='download.size' value='120503'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.modelica.mdt' version='0.7.13'>
-      <properties size='2'>
-        <property name='download.contentType' value='application/zip'/>
-        <property name='download.size' value='1652'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.ui' version='0.7.22'>
@@ -599,6 +635,12 @@
         <property name='download.size' value='243755'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.ui' version='0.7.23'>
+      <properties size='2'>
+        <property name='artifact.size' value='8192'/>
+        <property name='download.size' value='838736'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.9'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
@@ -635,16 +677,16 @@
         <property name='download.size' value='6716'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.22'>
-      <properties size='2'>
-        <property name='artifact.size' value='4096'/>
-        <property name='download.size' value='249522'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.ui' version='0.7.16'>
       <properties size='2'>
         <property name='artifact.size' value='4096'/>
         <property name='download.size' value='89337'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.modelica.mdt.debug.core' version='0.7.22'>
+      <properties size='2'>
+        <property name='artifact.size' value='4096'/>
+        <property name='download.size' value='249522'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.modelica.mdt.omc' version='0.7.14'>
