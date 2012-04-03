@@ -10,5 +10,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.modelica.mdt.ui,
  org.eclipse.jface.text,
  org.eclipse.ui
-Export-Package: org.modelica.mdt.omc.internal;x-friends:="org.modelica.mdt.test"
+Export-Package: org.modelica.mdt.omc,
+ org.modelica.mdt.omc.internal;x-friends:="org.modelica.mdt.test"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
