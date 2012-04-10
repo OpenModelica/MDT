@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Breakpoint
 Bundle-SymbolicName: org.modelica.mdt.breakpoint; singleton:=true
-Bundle-Version: 0.7.23
+Bundle-Version: 0.7.24
 Bundle-Vendor: Adeel Asghar [adeel.asghar@liu.se] @ PELAB, Linkoping University
 Bundle-Activator: org.modelica.mdt.breakpoint.Activator
 Require-Bundle: org.eclipse.core.resources,
