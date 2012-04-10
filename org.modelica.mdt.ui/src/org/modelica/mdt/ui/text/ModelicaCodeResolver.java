@@ -80,6 +80,7 @@ public class ModelicaCodeResolver {
 				while (Character.isJavaIdentifierPart(ch) || ch == '.') {
 					word = String.valueOf(ch) + word;
 					++offs;
+					ch = document.getChar(regionOffset - offs);
 				}
 			}
 		} 
