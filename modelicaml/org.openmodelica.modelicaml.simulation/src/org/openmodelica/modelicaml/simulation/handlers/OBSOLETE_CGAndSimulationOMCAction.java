@@ -74,9 +74,9 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.simulation.omc.OMCCommandExecuter;
-import org.openmodelica.modelicaml.simulation.omc.OMCSimulationDataStorage;
-import org.openmodelica.modelicaml.simulation.omc.SimulationConfigurationWizard;
+import org.openmodelica.modelicaml.simulation.omc.OBSOLETE_OMCCommandExecuter;
+import org.openmodelica.modelicaml.simulation.omc.OBSOLETE_OMCSimulationDataStorage;
+import org.openmodelica.modelicaml.simulation.omc.OBSOLETE_SimulationConfigurationWizard;
 
 import fr.obeo.acceleo.chain.File;
 import fr.obeo.acceleo.chain.impl.spec.CChain;
@@ -94,7 +94,7 @@ import fr.obeo.acceleo.gen.template.eval.LaunchManager;
  * 
  * @author rmwscham
  */
-public class CGAndSimulationOMCAction extends AbstractHandler {
+public class OBSOLETE_CGAndSimulationOMCAction extends AbstractHandler {
 
 	// private ModelManager modelManager = null;
 	/** The project. */
@@ -220,22 +220,22 @@ public class CGAndSimulationOMCAction extends AbstractHandler {
 		}
 		
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	    WizardDialog wizard = new WizardDialog(shell, new SimulationConfigurationWizard(umlElement));
+	    WizardDialog wizard = new WizardDialog(shell, new OBSOLETE_SimulationConfigurationWizard(umlElement));
 	    wizard.open();
 
 	    setGo(wizard.getReturnCode());
 		
 	    if (go) {
-			simPar = " startTime=" + OMCSimulationDataStorage.startTime
-			+ ", stopTime=" + OMCSimulationDataStorage.stopTime
-			+ ", tolerance=" + OMCSimulationDataStorage.tolerance
-			+ ", method=" + OMCSimulationDataStorage.Solver;
+			simPar = " startTime=" + OBSOLETE_OMCSimulationDataStorage.startTime
+			+ ", stopTime=" + OBSOLETE_OMCSimulationDataStorage.stopTime
+			+ ", tolerance=" + OBSOLETE_OMCSimulationDataStorage.tolerance
+			+ ", method=" + OBSOLETE_OMCSimulationDataStorage.Solver;
 
 			String vars = "";
 			plotCommand = null;
 			
-			if (OMCSimulationDataStorage.selectedVarPathList.size() > 0) {
-				vars = OMCSimulationDataStorage.selectedVarPathList.toString().substring(1, OMCSimulationDataStorage.selectedVarPathList.toString().length() - 1);
+			if (OBSOLETE_OMCSimulationDataStorage.selectedVarPathList.size() > 0) {
+				vars = OBSOLETE_OMCSimulationDataStorage.selectedVarPathList.toString().substring(1, OBSOLETE_OMCSimulationDataStorage.selectedVarPathList.toString().length() - 1);
 				plotCommand = "plot({" + vars + "})";
 			}
 			Job job = new Job("Modelica Simulation with OMC") {
@@ -252,7 +252,7 @@ public class CGAndSimulationOMCAction extends AbstractHandler {
 					filesToLoad.add(packageMoFilePath);
 					
 					try {
-						new OMCCommandExecuter(modelElement, filesToLoad, modelElementDotPath, plotCommand, simPar);
+						new OBSOLETE_OMCCommandExecuter(modelElement, filesToLoad, modelElementDotPath, plotCommand, simPar);
 					} catch (ConnectException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

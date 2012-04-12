@@ -34,54 +34,29 @@
  */
 package org.openmodelica.modelicaml.simulation.omc;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.uml2.uml.Element;
-
+import java.util.ArrayList;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class MoldelicaMLSimulationMarkterCreator.
+ * The Class OMCSimulationDataStorage.
  */
-public class MoldelicaMLSimulationMarkterCreator {
+public final class OBSOLETE_OMCSimulationDataStorage {
+
+	/** The start time. */
+	public static String startTime; 
 	
-	/**
-	 * Modelica ml simulation alert.
-	 * 
-	 * @param elt
-	 *            the elt
-	 * @param criticality
-	 *            the criticality
-	 * @param msg
-	 *            the msg
-	 */
-	public static void modelicaMLSimulationAlert (Element elt, String criticality, String msg){
-		IResource r1 = null;
-		URI eUri = elt.eResource().getURI();
-		
-		if (eUri.isPlatformResource()) {
-			String platformString = eUri.toPlatformString(true);
-			r1 = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
-		}
-			
-		try {
-			IMarker marker = r1.createMarker("com.eadsiw.modelicaml.simulation.modelicamlMarker");
-			
-			marker.setAttribute(IMarker.MESSAGE, msg);
-			
-			Integer crit = null;
-			if ( criticality.equals("error") ) 	{ crit = IMarker.SEVERITY_ERROR;	}
-			else 							{ crit = IMarker.SEVERITY_INFO; }
-			
-			marker.setAttribute(IMarker.SEVERITY, crit);
-		
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	/** The stop time. */
+	public static String stopTime; 
+	
+	/** The selected var path list. */
+	public static ArrayList<String> selectedVarPathList = new ArrayList<String>();
+	
+	/** The tolerance. */
+	public static String tolerance;
+	
+	/** The Output interval. */
+	public static String OutputInterval;
+	
+	/** The Solver. */
+	public static String Solver;
 }

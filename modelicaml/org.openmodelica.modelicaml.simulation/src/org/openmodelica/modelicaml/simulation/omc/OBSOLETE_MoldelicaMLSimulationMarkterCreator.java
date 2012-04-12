@@ -34,29 +34,54 @@
  */
 package org.openmodelica.modelicaml.simulation.omc;
 
-import java.util.ArrayList;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.uml2.uml.Element;
+
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class OMCSimulationDataStorage.
+ * The Class MoldelicaMLSimulationMarkterCreator.
  */
-public final class OMCSimulationDataStorage {
-
-	/** The start time. */
-	public static String startTime; 
+public class OBSOLETE_MoldelicaMLSimulationMarkterCreator {
 	
-	/** The stop time. */
-	public static String stopTime; 
-	
-	/** The selected var path list. */
-	public static ArrayList<String> selectedVarPathList = new ArrayList<String>();
-	
-	/** The tolerance. */
-	public static String tolerance;
-	
-	/** The Output interval. */
-	public static String OutputInterval;
-	
-	/** The Solver. */
-	public static String Solver;
+	/**
+	 * Modelica ml simulation alert.
+	 * 
+	 * @param elt
+	 *            the elt
+	 * @param criticality
+	 *            the criticality
+	 * @param msg
+	 *            the msg
+	 */
+	public static void modelicaMLSimulationAlert (Element elt, String criticality, String msg){
+		IResource r1 = null;
+		URI eUri = elt.eResource().getURI();
+		
+		if (eUri.isPlatformResource()) {
+			String platformString = eUri.toPlatformString(true);
+			r1 = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+		}
+			
+		try {
+			IMarker marker = r1.createMarker("com.eadsiw.modelicaml.simulation.modelicamlMarker");
+			
+			marker.setAttribute(IMarker.MESSAGE, msg);
+			
+			Integer crit = null;
+			if ( criticality.equals("error") ) 	{ crit = IMarker.SEVERITY_ERROR;	}
+			else 							{ crit = IMarker.SEVERITY_INFO; }
+			
+			marker.setAttribute(IMarker.SEVERITY, crit);
+		
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }

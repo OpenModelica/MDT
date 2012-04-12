@@ -34,13 +34,13 @@
  */
 package org.openmodelica.modelicaml.simulation;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.omc.OMCProxy;
 import org.osgi.framework.BundleContext;
 
 // TODO: Auto-generated Javadoc
@@ -60,6 +60,8 @@ public class Activator extends AbstractUIPlugin {
 	/** The plugin. */
 	private static Activator plugin;
 	
+	private static OMCProxy omcProxy;
+	
 	/**
 	 * The constructor.
 	 */
@@ -67,7 +69,6 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	
-	//TODO: does not work yet ...
 	IWorkbenchListener onExitListener = new IWorkbenchListener()
 	{
 
@@ -78,23 +79,24 @@ public class Activator extends AbstractUIPlugin {
 
 		@Override
 		public boolean preShutdown(IWorkbench workbench, boolean forced) {
-			try {
-				if (!CompilerProxy.isRunning()) return true;
-			}
-			catch (Exception e) { }
 			
-			boolean choice = 
-				MessageDialog.openConfirm(
-					getShell(), 
-					"Modelica Development Tooling", 
-					"The OpenModelica compiler is running in the background.\n " +
-					"Should we stop it? If you have other clients connected choose 'Cancel'.");
-			try {
-				if (choice) CompilerProxy.sendExpression("quit()", true);
+			if (getOmcProxy() != null) {
+				try {
+					boolean isOMCRunning = omcProxy.isRunning();
+					if (isOMCRunning) {
+						
+						// TODO: should the user be asked before shutting down the OMC process?
+//						boolean choice = MessageDialog.openConfirm( getShell(), 
+//									"Modelica Development Tooling", 
+//									"The OpenModelica compiler is running in the background.\n " +
+//									"Should we stop it? If you have other clients connected choose 'Cancel'.");
+						
+						omcProxy.sendExpression("quit()", true);
+						
+					}
+				} catch (ConnectException e) {}
 			}
-			catch (Exception e) {
-				// TODO: handle exception
-			}
+			
 			return true;
 		}
 	};
@@ -140,6 +142,14 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+
+	public static OMCProxy getOmcProxy() {
+		return omcProxy;
+	}
+
+	public static void setOmcProxy(OMCProxy omcProxy) {
+		Activator.omcProxy = omcProxy;
 	}
 	
 	

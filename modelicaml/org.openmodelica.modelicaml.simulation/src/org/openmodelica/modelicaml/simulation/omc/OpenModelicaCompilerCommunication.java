@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.omc.OMCProxy;
+import org.openmodelica.modelicaml.simulation.Activator;
 
 public class OpenModelicaCompilerCommunication {
 
@@ -20,7 +21,12 @@ public class OpenModelicaCompilerCommunication {
 	 */
 	public OpenModelicaCompilerCommunication(){
 		super();
+		
 		this.omc = new OMCProxy();
+		
+		// set the Activator proxy as reference in order to enable the shut down of OMC when Eclipse is closed 
+		Activator.setOmcProxy(omc);
+		
 		history = new ArrayList<String>();
 	}
 	

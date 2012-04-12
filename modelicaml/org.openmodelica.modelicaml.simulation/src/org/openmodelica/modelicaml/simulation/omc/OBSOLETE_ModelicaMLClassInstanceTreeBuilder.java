@@ -61,7 +61,7 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 /**
  * The Class ModelicaMLClassInstanceTreeBuilder.
  */
-public class ModelicaMLClassInstanceTreeBuilder {
+public class OBSOLETE_ModelicaMLClassInstanceTreeBuilder {
 	
 	/** The uml model element. */
 	private Element umlModelElement;
@@ -80,7 +80,7 @@ public class ModelicaMLClassInstanceTreeBuilder {
 	 * @param tree
 	 *            the tree
 	 */
-	public ModelicaMLClassInstanceTreeBuilder(Element umlElement, Tree tree) {
+	public OBSOLETE_ModelicaMLClassInstanceTreeBuilder(Element umlElement, Tree tree) {
 		this.umlModelElement = umlElement;
 		this.instanceTree = tree;
 		

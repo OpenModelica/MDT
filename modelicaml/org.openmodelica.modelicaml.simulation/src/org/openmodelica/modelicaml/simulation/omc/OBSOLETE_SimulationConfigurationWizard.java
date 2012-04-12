@@ -43,10 +43,10 @@ import org.eclipse.uml2.uml.Element;
 /**
  * The Class SimulationConfigurationWizard.
  */
-public class SimulationConfigurationWizard extends Wizard{
+public class OBSOLETE_SimulationConfigurationWizard extends Wizard{
 
 	/** The one. */
-	private SimulationConfigurationWizardPage one;
+	private OBSOLETE_SimulationConfigurationWizardPage one;
 	
 	/**
 	 * Instantiates a new simulation configuration wizard.
@@ -54,7 +54,7 @@ public class SimulationConfigurationWizard extends Wizard{
 	 * @param modelElement
 	 *            the model element
 	 */
-	public SimulationConfigurationWizard(Element modelElement) {
+	public OBSOLETE_SimulationConfigurationWizard(Element modelElement) {
 		super();
 		setWindowTitle("ModelicaML Simulation using OpenModelica Compiler (OMC)");
 		addPages(modelElement);
@@ -69,7 +69,7 @@ public class SimulationConfigurationWizard extends Wizard{
 	 *            the model element
 	 */
 	public void addPages(Element modelElement) {
-		one = new SimulationConfigurationWizardPage("Simulation Configuration: Simulatoins Parameters and Plot Settings", modelElement);
+		one = new OBSOLETE_SimulationConfigurationWizardPage("Simulation Configuration: Simulatoins Parameters and Plot Settings", modelElement);
 		addPage(one);
 	}
 
@@ -79,11 +79,11 @@ public class SimulationConfigurationWizard extends Wizard{
 	@Override
 	public boolean performFinish() {
 		
-		OMCSimulationDataStorage.startTime = one.textStartTime.getText();
-		OMCSimulationDataStorage.stopTime = one.textStopTime.getText();
-		OMCSimulationDataStorage.tolerance = one.textTolerance.getText();
-		OMCSimulationDataStorage.selectedVarPathList = one.plotVarPathList;
-		OMCSimulationDataStorage.Solver = "\"" + one.comboSolver.getText() +"\"";
+		OBSOLETE_OMCSimulationDataStorage.startTime = one.textStartTime.getText();
+		OBSOLETE_OMCSimulationDataStorage.stopTime = one.textStopTime.getText();
+		OBSOLETE_OMCSimulationDataStorage.tolerance = one.textTolerance.getText();
+		OBSOLETE_OMCSimulationDataStorage.selectedVarPathList = one.plotVarPathList;
+		OBSOLETE_OMCSimulationDataStorage.Solver = "\"" + one.comboSolver.getText() +"\"";
 		
 //		try {
 //			new ProgressMonitorDialog(getContainer().getShell()).run(true, true,

@@ -40,12 +40,13 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.omc.OMCProxy;
+import org.openmodelica.modelicaml.simulation.Activator;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class OMCCommandExecuter.
  */
-public class OMCCommandExecuter {
+public class OBSOLETE_OMCCommandExecuter {
 	
 	/** The status. */
 	private ICompilerResult status;
@@ -88,7 +89,7 @@ public class OMCCommandExecuter {
 	 *            the sim par
 	 * @throws org.modelica.mdt.core.compiler.ConnectException 
 	 */
-	public OMCCommandExecuter(Element elt, 
+	public OBSOLETE_OMCCommandExecuter(Element elt, 
 								List<String> filesToLoad, 
 								String modelElementQualifiedName, 
 								String plotCommand, 
@@ -100,7 +101,11 @@ public class OMCCommandExecuter {
 		this.simPar = simPar;
 		
 		this.elt = elt;
+
+		Activator.setOmcProxy(proxy);
+		
 		loadAndSimulate();
+		
 	}
 
 	/**
@@ -131,7 +136,7 @@ public class OMCCommandExecuter {
 		
 		if (status == null) {
 			System.err.println("No connection to OMC! ");
-			MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "No connection to OMC! ");
+			OBSOLETE_MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "No connection to OMC! ");
 		}
 		
 		for (String path : filesToLoad) {
@@ -161,7 +166,7 @@ public class OMCCommandExecuter {
 		
 		if (status.getResult().toString().contains("error") || status.getResult().toString().contains("failed")) {
 			setErrorString(status.getResult().toString());
-			MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "Simulation of the class '"+ ((NamedElement)elt).getName() +"' failed." + "\n" + status);
+			OBSOLETE_MoldelicaMLSimulationMarkterCreator.modelicaMLSimulationAlert(elt, "error", "Simulation of the class '"+ ((NamedElement)elt).getName() +"' failed." + "\n" + status);
 //				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Errors", "Errors occured during simulation", status);
 //				dialog.open();
 		}

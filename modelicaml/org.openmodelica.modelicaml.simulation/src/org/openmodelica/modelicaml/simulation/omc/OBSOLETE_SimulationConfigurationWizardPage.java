@@ -67,7 +67,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 /**
  * The Class SimulationConfigurationWizardPage.
  */
-public class SimulationConfigurationWizardPage extends WizardPage {
+public class OBSOLETE_SimulationConfigurationWizardPage extends WizardPage {
 
 	/** The composite1. */
 	private Composite composite1;
@@ -155,7 +155,7 @@ public class SimulationConfigurationWizardPage extends WizardPage {
 	 * @param modelElement
 	 *            the model element
 	 */
-	protected SimulationConfigurationWizardPage(String pageName, Element modelElement) {
+	protected OBSOLETE_SimulationConfigurationWizardPage(String pageName, Element modelElement) {
 		super(pageName);
 		setTitle("OMC Simulation Configuration");
         setMessage("Specify simulation parameters and select variables to be plotted." +
@@ -255,7 +255,7 @@ public class SimulationConfigurationWizardPage extends WizardPage {
 						    	  }
 						      }
 						    });
-						new ModelicaMLClassInstanceTreeBuilder(modelElement, treeModel);
+						new OBSOLETE_ModelicaMLClassInstanceTreeBuilder(modelElement, treeModel);
 						
 					}
 				}
