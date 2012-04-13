@@ -7,8 +7,8 @@ public class ModelicaMLAutoEditStrategyProvider extends
 
 	@Override
 	protected void configure(IEditStrategyAcceptor acceptor) {
-		configureIndentationEditStrategy(acceptor);
-		configureStringLiteral(acceptor);
+		//configureIndentationEditStrategy(acceptor);
+		//configureStringLiteral(acceptor);
 		
 		/*
 		 * The auto-editing (e.g. automatic closing) of parenthesis, brackets and braces is 
@@ -18,7 +18,9 @@ public class ModelicaMLAutoEditStrategyProvider extends
 		//configureParenthesis(acceptor);
 		//configureSquareBrackets(acceptor);
 		//configureCurlyBracesBlock(acceptor);
-		configureMultilineComments(acceptor);
+		
+		//configureMultilineComments(acceptor);
+		
 		//configureCompoundBracesBlocks(acceptor);
 	}
 	
