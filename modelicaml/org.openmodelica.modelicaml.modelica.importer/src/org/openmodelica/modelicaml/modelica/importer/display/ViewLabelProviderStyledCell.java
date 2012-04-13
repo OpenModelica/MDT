@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.modelica.importer.display;
 
+import java.io.File;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IMarker;
@@ -73,8 +74,8 @@ import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 
 
 public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
-	
-	private String projectName = "";
+	private static final String unknownProjectName = "? Project name is unknown";
+	private String projectName = unknownProjectName;
 	
 	private boolean decorateItem = false;
 	
@@ -114,6 +115,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	
 	@Override
 	public void update(ViewerCell cell) {
+		
 		String treeItemText = "";
 		Object obj = cell.getElement();
 		
@@ -162,8 +164,14 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			
 			// for the root (folder) add the project name
 			if (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) ) {
-				styledString.append(" - " + getProjectName(), stylerGrey);
-				treeItemText = treeItemText + " - " + getProjectName();
+				if (codeSyncFolderExists()) {
+					styledString.append(" - " + getProjectName(), stylerGrey);
+					treeItemText = treeItemText + " - " + getProjectName();
+				}
+				else {
+					styledString.append(" - Folder does not exist in " + getProjectName(), stylerRed);
+					treeItemText = treeItemText + " - Folder does not exist in " + getProjectName();
+				}
 			}
 			
 		}
@@ -184,7 +192,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		else {
 			cell.setText(treeItemText);
 		}
-		
 		
 		
 		
@@ -293,14 +300,42 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 	}
 	
+	
+	private boolean codeSyncFolderExists(){
+		if (!getProjectName().equals(unknownProjectName)) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(getProjectName());
+			String projectAbsolutePath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+			String codeIncAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_code_sync + "/";
+
+			File codeSyncFolder = new File(codeIncAbsolutePath);
+			boolean exists = codeSyncFolder.exists();
+			
+			return exists;
+		}
+		
+		// in case the project is not known yet -> do not display an error.
+		return true;
+	}
+	
 	private void setImage(TreeObject treeObject){
 		
 		//root node - the code-sync folder
 		if ( treeObject.getName().equals(Constants.folderName_code_sync)) {
 //			overlayIconImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			overlayIconImage = ResourceManager.decorateImage(
-					PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER), 
-					ResourceManager.getImage(Activator.class, "/icons/sync_ovr.gif"));
+			
+			if (codeSyncFolderExists()) {
+				overlayIconImage = ResourceManager.decorateImage(
+						PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER), 
+						ResourceManager.getImage(Activator.class, "/icons/sync_ovr.gif"));
+			}
+			else {
+				// decorate with error
+				overlayIconImage = ResourceManager.decorateImage(
+						PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER), 
+						PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+			}
 		}
 		
 		// components
