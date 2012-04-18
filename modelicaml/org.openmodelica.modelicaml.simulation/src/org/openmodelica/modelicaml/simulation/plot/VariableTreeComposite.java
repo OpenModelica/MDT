@@ -247,7 +247,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 								if(foundTreeItem.isEmpty() && !textFind.getText().isEmpty()){ //Is a new search
 									search(textFind.getText());
 									buttonSearch.setText("Next");
-									System.out.println(foundTreeItem);
+//									System.out.println(foundTreeItem);
 									showNextSearchResult();
 								} else{//Go to next found element
 									showNextSearchResult();

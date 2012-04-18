@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.omc.OMCProxy;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.simulation.Activator;
 
 public class OpenModelicaCompilerCommunication {
@@ -201,6 +202,8 @@ public class OpenModelicaCompilerCommunication {
 	 */
 	public String loadFile(String strFile) {
 		return executeCommand("loadFile(\"" + strFile + "\")");
+		// TODO: this is a workaround. remove the encoding after Acceleo will encode the files with UTF-8
+//		return executeCommand("loadFile(\"" + strFile + "\", encoding=\""+Constants.fileEncoding+"\")"); 
 	}
 
 	/**

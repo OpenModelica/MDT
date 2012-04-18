@@ -129,12 +129,8 @@ public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite {
 		for (String result : resultsMap.keySet()) {
 			XYSeries series = new XYSeries(result);
 			for (String time : resultsMap.get(result).keySet()) {
-				series.add(new Double(time), new Double(resultsMap.get(result)
-						.get(time)));
+				series.add(new Double(time), new Double(resultsMap.get(result).get(time)));
 			}
-//			if(result.equals("tank1.h") || result.equals("der(piContinuous1.x)")){
-//				dataset.addSeries(series);
-//			}
 			propMap.put(result, series);
 		}
 	}

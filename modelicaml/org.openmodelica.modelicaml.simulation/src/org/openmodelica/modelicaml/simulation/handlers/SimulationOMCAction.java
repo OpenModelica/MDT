@@ -524,6 +524,10 @@ public class SimulationOMCAction extends AbstractHandler {
 	public void runchain(IProgressMonitor monitor) {
 		try {
 			cgChain.launch(filter, monitor, LaunchManager.create("run", true));
+			
+			// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+			ModelicaMLServices.generatePackageEncodingFile(projectName);
+
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

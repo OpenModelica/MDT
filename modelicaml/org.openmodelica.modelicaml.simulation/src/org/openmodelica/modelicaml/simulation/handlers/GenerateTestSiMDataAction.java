@@ -82,6 +82,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.ExecuteTestsAction;
 import org.openmodelica.modelicaml.simulation.testexecution.dialogs.SelectTestSimulationModelsToExecuteDialog;
 
@@ -107,6 +108,8 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 	
 	/** The model name. */
 	private String modelName = null;
+	
+	private boolean generateCode = false;
 
 	/** The filter. */
 	IGenFilter filter = new IGenFilter() {
@@ -178,7 +181,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			
 			org.eclipse.emf.common.util.URI chainURI = null;
 			
-			boolean generateCode = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+			generateCode = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 					"Save Model and Generate Modelica Code?", 
 					"Save the ModelicaML model and generate Modelica code before starting the verification models execution?");
 			
@@ -311,6 +314,11 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 	public void runchain(IProgressMonitor monitor) {
 		try {
 			myChain.launch(filter, monitor, LaunchManager.create("run", true));
+			
+			if (generateCode) {
+				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+				ModelicaMLServices.generatePackageEncodingFile(projectName);
+			}
 			
 			// TODO: Here the call for the tests execution
 			testSessionXMLFileToReadAbsolutePath = testSessionFolderAbsolutePath + "/verification_session.xml";
