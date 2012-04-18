@@ -1,3 +1,4 @@
+<%--encoding=utf-8--%>
 <%
 metamodel http://www.eclipse.org/uml2/3.0.0/UML
 import org.openmodelica.modelicaml.common.services.StringUtls

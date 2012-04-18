@@ -1,3 +1,4 @@
+<%--encoding=utf-8--%>
 <%
 metamodel http://www.eclipse.org/uml2/3.0.0/UML
 import org.openmodelica.modelicaml.common.services.StringUtls
@@ -16,7 +17,6 @@ import  org.openmodelica.modelicaml.gen.modelica.cg.helpers.CGConfigurationManag
 
 <%script type="uml.Package" name="file_name" post="trim()"%>
 <%if (getCGNameSpace() != null){%><%if (qualifiedName.startsWith(getCGNameSpace())){%><%file_name_string%><%}%><%}else{%><%file_name_string%><%}%>
-
 
 
 <%script type="uml.Package" name="file_name_string" post="trim()"%>

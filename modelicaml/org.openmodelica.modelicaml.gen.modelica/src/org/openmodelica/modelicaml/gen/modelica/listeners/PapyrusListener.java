@@ -72,6 +72,8 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.resource.UMLResource;
 import org.modelica.ConnectException;
 import org.modelica.OMCProxy;
+import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLOMCMarkerSupport;
 import org.openmodelica.modelicaml.gen.modelica.postactions.PostGenerationForAutomaticBuild;
@@ -557,7 +559,7 @@ private String project = null;
 //			System.err.println("papyrusEditor.isDirty(): " + papyrusEditor.isDirty());
 			if (papyrusEditor != null && !papyrusEditor.isDirty()) {
 //			if (umlModelResource != null && !umlModelResource.isModified()) { 
-			// run validation chain
+				// run validation chain
 				validationChain.launch(filter, monitor, LaunchManager.create("run", true));
 			}
 			else {
@@ -580,8 +582,12 @@ private String project = null;
 		try {
 			if (papyrusEditor != null && !papyrusEditor.isDirty()) { // strange, the isDirty() method gives true after the model is saved and false if the model has changes ...
 //			if (umlModelResource != null && !umlModelResource.isModified()) {	
-				// run validation chain
+				// run code generation  chain
 				codeGenerationChain.launch(filter, monitor, LaunchManager.create("run", true));
+				
+				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+				ModelicaMLServices.generatePackageEncodingFile(project);
+
 			}
 			else {
 				//System.err.println("Did not launch the (code generation) chain. Waiting until the uml model is saved.");

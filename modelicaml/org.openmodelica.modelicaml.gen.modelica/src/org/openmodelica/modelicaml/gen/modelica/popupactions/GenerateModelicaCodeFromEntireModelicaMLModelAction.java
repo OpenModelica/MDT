@@ -57,6 +57,8 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 import fr.obeo.acceleo.chain.File;
 import fr.obeo.acceleo.chain.impl.spec.CChain;
@@ -139,7 +141,7 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 		myChain = (CChain) r.getContents().get(0);
 
 		String modelFilePath = modelFileURI.replace("platform:/resource/", "");
-		String outputFolderPath = project;
+		final String outputFolderPath = project;
 		String logPath = project + "/errors.log";
 
 		// Don't create Parameter Files... simply set the correct path into them
@@ -157,6 +159,7 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 		Job job = new Job("Modelica Code Generation") {
 			protected IStatus run(IProgressMonitor monitor) {
 				runchain(monitor);
+
 				return Status.OK_STATUS;
 			}
 		};
@@ -177,6 +180,10 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	public void runchain(IProgressMonitor monitor) {
 		try {
 			myChain.launch(filter, monitor, LaunchManager.create("run", true));
+			
+			// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+			ModelicaMLServices.generatePackageEncodingFile(project);
+
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

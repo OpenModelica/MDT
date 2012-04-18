@@ -1,3 +1,4 @@
+<%--encoding=utf-8--%>
 <%
 metamodel http://www.eclipse.org/uml2/2.1.0/UML
 import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServices

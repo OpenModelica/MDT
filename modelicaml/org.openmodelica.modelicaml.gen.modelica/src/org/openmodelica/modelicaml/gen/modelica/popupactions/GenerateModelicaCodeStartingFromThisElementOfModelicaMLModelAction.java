@@ -63,6 +63,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.State;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.CGConfigurationManager;
@@ -180,7 +181,7 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 		myChain = (CChain) r.getContents().get(0);
 
 		String modelFilePath = modelFileURI.replace("platform:/resource/", "");
-		String outputFolderPath = project;
+		final String outputFolderPath = project;
 		String logPath = project + "/errors.log";
 
 		// Don't create Parameter Files... simply set the correct path into them
@@ -198,6 +199,7 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 		Job job = new Job("Modelica Code Generation (starting from " + ((NamedElement)umlElement).getName() + ")") {
 			protected IStatus run(IProgressMonitor monitor) {
 				runchain(monitor);
+				
 				// reset the qualified name of element that code should be generated for (i.e. cg name space)
 	        	CGConfigurationManager.setCGNameSpace(null); 
 				return Status.OK_STATUS;
@@ -220,6 +222,10 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 	public void runchain(IProgressMonitor monitor) {
 		try {
 			myChain.launch(filter, monitor, LaunchManager.create("run", true));
+
+			// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+			ModelicaMLServices.generatePackageEncodingFile(project);
+
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

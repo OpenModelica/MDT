@@ -175,6 +175,10 @@ public class OMCClassValidator {
 			//launch code generation
 			try {
 				codeGenerationChain.launch(filter, monitor, LaunchManager.create("run", true));
+
+				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+				ModelicaMLServices.generatePackageEncodingFile(project);
+
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -358,12 +362,14 @@ public class OMCClassValidator {
 				filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(codeSyncFolderPath));
 				for (String path : filesToLoad) {
 					status = proxy.sendExpression("loadFile(\"" + path + "\")");
+//					status = proxy.sendExpression("loadFile(\"" + path + "\", encoding=\""+Constants.fileEncoding+"\")");
 				}
 				
 				/*
 				 * Load code from the code-gen folder
 				 */
 				status = proxy.sendExpression("loadFile(\"" + packageMoFilePath + "\")");
+//				status = proxy.sendExpression("loadFile(\"" + packageMoFilePath + "\", encoding=\""+Constants.fileEncoding+"\")");
 				setLog(status);
 				
 				if (status.contains("error") || status.contains("Error") || status.contains("false")) {
