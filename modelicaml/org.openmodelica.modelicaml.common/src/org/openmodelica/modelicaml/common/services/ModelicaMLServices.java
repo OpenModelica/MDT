@@ -1,6 +1,13 @@
 package org.openmodelica.modelicaml.common.services;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +18,10 @@ import java.util.List;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +30,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
@@ -333,5 +346,72 @@ public class ModelicaMLServices {
 //		}
 //	}
 	
+	
+	/*
+	 * TODO: This is a workaround for not encoding the generated code files in UTF-8
+	 * Remove this when new Acceleo framework and file encoding is used.
+	 * 
+	 */
+	
+	public static void generatePackageEncodingFile(String projectName){
+		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject iProject = root.getProject(projectName);
+		
+		String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+		String codeGenFiolderPath = projectPath + "/" + Constants.folderName_code_gen;
+		
+		File folder = new File(codeGenFiolderPath);
+		
+		if (folder.exists()) {
+		
+			// find the top-level pacakge.mo and get its parent (folder) 
+			String folderPath = getFolderOfFirstPackageMOfile(codeGenFiolderPath);
+			
+			if (folderPath != null) {
+				String filePath = folderPath + "/" + Constants.encodingPackageFileNameAndExtension;
+//				File file = new File(filePath);
+				try {
+//					BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"UTF-8"));
+//					out.write(Constants.fileEncoding);
+//					out.close();
+					
+					FileOutputStream fos = new FileOutputStream(filePath); 
+					OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+					out.write(Constants.fileEncoding);
+					out.close();
+					
+				} catch (UnsupportedEncodingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	
+	public static String getFolderOfFirstPackageMOfile(String folderAbsolutePath){
+		
+		File folder = new File(folderAbsolutePath);
+		File[] files = folder.listFiles();
+		for (File file : files) {
+			if (file.getName().equals("package.mo")) {
+				return folderAbsolutePath;
+			}
+		}
+		for (File file : files) {
+			if (file.isDirectory()) {
+				return getFolderOfFirstPackageMOfile(file.getAbsolutePath());
+			}
+		}
+		return null;
+	}
 	
 }

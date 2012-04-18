@@ -267,6 +267,13 @@ public class Constants {
 	public final static String MODELICAML_PROFILE_URI = "pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"; //$NON-NLS-1$
 	
 	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.modelexplorer.modelexplorer";
+	
+	/*
+	 * Encoding format for generated files
+	 */
+//	public final static String fileEncoding = "Windows-1252";
+	public final static String fileEncoding = "Cp1252";
+	public static final String encodingPackageFileNameAndExtension = "package.encoding";
 
 }
 
