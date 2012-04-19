@@ -156,7 +156,7 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 										 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
 
 							DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
-									"Data collecation and models generation log entries:", msg + smg.getLog().trim());
+									"Data collecation and models generation log entries:", msg + smg.getLog().trim(), false);
 							dialog.open();
 						}
 

@@ -228,7 +228,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 			@Override
 			public void mouseDown(MouseEvent e) {
 				String infoText = "Data Collection for Simulation Models Generation Log: ";
-				DialogMessage dialog = new DialogMessage( getCurrentShell(), "Result", infoText, collectionLog);
+				DialogMessage dialog = new DialogMessage( getCurrentShell(), "Result", infoText, collectionLog, false);
 				dialog.open();
 			}
 		});
@@ -499,7 +499,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 				String description = createDescription(testSceanrio);
 				DialogMessage dialog = new DialogMessage( getCurrentShell(), "Verification Model: Details", 
 						"Details of the selected combination of system model and scenario:", 
-						description);
+						description, false);
 				dialog.open();
 			}
 		}
