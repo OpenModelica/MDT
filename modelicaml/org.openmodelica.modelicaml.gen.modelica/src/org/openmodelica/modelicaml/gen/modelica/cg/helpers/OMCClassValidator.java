@@ -259,7 +259,11 @@ public class OMCClassValidator {
 		// Use this to open a Shell in the UI thread
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Check Model in OMC", "Validation result for '"+dotPath_classToBeValidated+"': ", getLog());
+				boolean isError = getLog().contains("rror") | getLog().contains("ailed");   
+				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+						"Check Model in OMC", "Validation result for '" + dotPath_classToBeValidated + "': ", 
+						getLog(), 
+						isError);
 		        dialog.open();
 			}
 		});
