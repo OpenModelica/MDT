@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class DialogMessage extends Dialog {
+public class OBSOLETE_DialogMessage extends Dialog {
 
 	private StyledText text;
 	private Label lblMessage;
@@ -53,7 +53,7 @@ public class DialogMessage extends Dialog {
 	private String infoText = "";
 	private boolean isError = false;
 	
-	public DialogMessage(Shell parentShell, String title, String infoText, String message, boolean isError) {
+	public OBSOLETE_DialogMessage(Shell parentShell, String title, String infoText, String message, boolean isError) {
 		super(parentShell);
 		setBlockOnOpen(false);
 
