@@ -882,7 +882,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								}
 								
 								// show results.
-								DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Result", infoText, message);
+								DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Result", infoText, message, false);
 								dialog.open();
 								
 							} else {
