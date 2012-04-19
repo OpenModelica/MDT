@@ -121,7 +121,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 	        				message = message + "Number of loaded components: " + loadedComponentsNumber + "\n";
 	        				message = message + "Number of loaded extends relations: " + loadedExtendsRelationsNumber + "\n";
 	        				
-	        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Loading Report", null, message);
+	        				boolean isError = loadedClassesNumber == 0;
+	        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Loading Report", null, message, isError);
 	        				dialog.open();
         				}
         			}
@@ -333,7 +334,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
         					message = message + logEntry + "\n"; 
         				}
         				
-        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Proxies Synchronization Report", null, message);
+        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Proxies Synchronization Report", null, message, false);
         				dialog.open();
         				
         				

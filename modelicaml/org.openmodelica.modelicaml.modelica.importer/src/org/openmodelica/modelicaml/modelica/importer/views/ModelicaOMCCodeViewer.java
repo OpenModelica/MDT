@@ -522,7 +522,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		        				message = message + "Number of loaded components: " + loadedComponentsNumber + "\n";
 		        				message = message + "Number of loaded extends relations: " + loadedExtendsRelationsNumber + "\n";
 		        				
-		        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Loading Report", null, message);
+		        				boolean isError = loadedClassesNumber == 0;
+		        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Loading Report", null, message, isError);
 		        				dialog.open();
 	        				}
 	        			}
@@ -942,7 +943,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	        					message = message + logEntry + "\n"; 
 	        				}
 	        				
-	        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Proxies Synchronization Report", null, message);
+	        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Proxies Synchronization Report", null, message, false);
 	        				dialog.open();
 	        			}
 	        		});
