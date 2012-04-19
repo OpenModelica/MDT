@@ -43,6 +43,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.openmodelica.modelicaml.common.Activator;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
 
 public class DialogMessage extends Dialog {
 
@@ -76,10 +78,12 @@ public class DialogMessage extends Dialog {
    		shell.setText(this.title);
    		
         if (this.isError) {
-   	    	shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_ERROR));
+//   	    shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_ERROR));
+        	shell.setImage(ResourceManager.getImage(Activator.class, "/icons/icons16/error_log.gif"));
 		}
    		else {
-   			shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_INFORMATION));
+//   		shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_INFORMATION));
+   			shell.setImage(ResourceManager.getImage(Activator.class, "/icons/icons16/testok.gif"));
    		}
     }
 	
