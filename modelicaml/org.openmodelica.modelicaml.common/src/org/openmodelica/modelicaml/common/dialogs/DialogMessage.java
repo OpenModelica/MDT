@@ -51,8 +51,9 @@ public class DialogMessage extends Dialog {
 	private String title = "";
 	private String message = "";
 	private String infoText = "";
+	private boolean isError = false;
 	
-	public DialogMessage(Shell parentShell,String title, String infoText, String message) {
+	public DialogMessage(Shell parentShell, String title, String infoText, String message, boolean isError) {
 		super(parentShell);
 		setBlockOnOpen(false);
 		
@@ -61,6 +62,8 @@ public class DialogMessage extends Dialog {
         this.title = title;
         this.infoText = infoText;
         this.message = message;
+        this.isError = isError;
+
 	}
 	
 	@Override
@@ -72,7 +75,12 @@ public class DialogMessage extends Dialog {
         super.configureShell(shell);
    		shell.setText(this.title);
    		
-//    	shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_ERROR));
+        if (this.isError) {
+   	    	shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_ERROR));
+		}
+   		else {
+   			shell.setImage(shell.getDisplay().getSystemImage(SWT.ICON_INFORMATION));
+   		}
     }
 	
 	
