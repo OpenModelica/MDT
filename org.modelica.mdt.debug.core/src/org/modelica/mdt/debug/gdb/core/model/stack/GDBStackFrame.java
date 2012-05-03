@@ -181,8 +181,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		 */
 		displayName = miArg.getName().substring(1, miArg.getName().length());
 		// based on the modelica type create the specific variable.
-		VariableHelper.createVariable(this, miArg.getName(), displayName, miArg.getType(), referenceType,
-				null, null, fGDBVariables);
+		VariableHelper.createVariable(this, miArg.getName(), displayName, miArg.getType(), referenceType, null, null, fGDBVariables);
 	}
 
 	/**

@@ -30,6 +30,8 @@
  */
 package org.modelica.mdt.debug.gdb.helper;
 
+import java.util.ArrayList;
+
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
@@ -209,7 +211,7 @@ public class ValueHelper {
 			// TODO: handle exception
 		}
 		return 0;
-	}	
+	}
 
 	/**
 	 * Creates and sends the "-data-evaluate-expression arrayGet(void*,element)" command.
@@ -289,6 +291,93 @@ public class ValueHelper {
 			// TODO: handle exception
 		}
 		return "";
-	}	
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to get the array dimensions
+	 * by sending command array.ndims
+	 * @param variableName 
+	 * @param gdbStackFrame
+	 * @return
+	 * @throws MIException 
+	 */
+	public static int getModelicaArrayDimensions(String variableName, GDBStackFrame gdbStackFrame) {
+		// TODO Auto-generated method stub
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			variableName += ".ndims";
+			MIDataEvaluateExpression getArrayDimensionsCmd = factory.createMIGetModelicaArrayDimensions(variableName);
+			getArrayDimensionsCmd.setQuiet(true);
+			miSession.postCommand(getArrayDimensionsCmd, gdbStackFrame);
+			MIDataEvaluateExpressionInfo getArrayDimensionsInfo = getArrayDimensionsCmd.getMIDataEvaluateExpressionInfo();
+			return Integer.parseInt(getArrayDimensionsInfo.getExpression());
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to get the array dimension size
+	 * by sending command array.dim_size[0/1/2...]
+	 * @param variableName
+	 * @param dimension  
+	 * @param gdbStackFrame
+	 * @return
+	 * @throws MIException 
+	 */
+	public static int getModelicaArrayDimensionSize(String variableName, int dimension, GDBStackFrame gdbStackFrame) {
+		// TODO Auto-generated method stub
+		try {
+			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
+			MISession miSession = gdbDebugTarget.getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			variableName += ".dim_size[" + (dimension - 1)  + "]";
+			MIDataEvaluateExpression getArrayDimensionSizeCmd = factory.createMIGetModelicaArrayDimensionSize(variableName);
+			getArrayDimensionSizeCmd.setQuiet(true);
+			miSession.postCommand(getArrayDimensionSizeCmd, gdbStackFrame);
+			MIDataEvaluateExpressionInfo getArrayDimensionSizeInfo = getArrayDimensionSizeCmd.getMIDataEvaluateExpressionInfo();
+			return Integer.parseInt(getArrayDimensionSizeInfo.getExpression());
+		} catch (MIException e) {
+			MDTDebugCorePlugin.log(null, e);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+	/**
+	 * Calculates the correct index number for the Modelica Array.
+	 * @param itemName 
+	 * @param numberOfDimensions
+	 * @param dimension
+	 * @param gdbStackFrame 
+	 * @return
+	 */
+	public static Integer getArrayIndex(String itemName, ArrayList<Integer> arrayIndexes, GDBStackFrame gdbStackFrame) {
+		// TODO Auto-generated method stub
+		if (arrayIndexes.size() == 1)
+			arrayIndexes.get(0);
+		
+		int index = 0;
+		for(int i = 0 ; i < arrayIndexes.size() - 1 ; i++)
+		{
+			index += getArrayIndexHelper(itemName, i, arrayIndexes, gdbStackFrame);
+		}
+		index += arrayIndexes.get(arrayIndexes.size() - 1);
+		return index;
+	}
+	
+	protected static Integer getArrayIndexHelper(String itemName, int startIndex, ArrayList<Integer> arrayIndexes, GDBStackFrame gdbStackFrame) {
+		int index = arrayIndexes.get(startIndex);
+		for (int i = startIndex + 1 ; i < arrayIndexes.size() ; i++) {
+			index *= getModelicaArrayDimensionSize(itemName, i + 1, gdbStackFrame);
+		}
+		return index;
+	}
 	
 }

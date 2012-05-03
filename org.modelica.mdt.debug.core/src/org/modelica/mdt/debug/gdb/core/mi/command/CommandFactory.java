@@ -351,6 +351,27 @@ public class CommandFactory {
 		// TODO Auto-generated method stub
 		return new MIDataEvaluateExpression("(int)isOptionNone(" + expression + ")");
 	}
+	
+	/* Standard Modelica Array Commands */
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to get the array dimensions  
+	 * by sending command array.ndims
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetModelicaArrayDimensions(String expression) {
+		return new MIDataEvaluateExpression("(int)" + expression);
+	}
+	
+	/**
+	 * Creates the -data-evaluate-expression EXPR command to get the array dimension size
+	 * by sending command array.dim_size[0/1/2...]
+	 * @param expression
+	 * @return MIDataEvaluateExpression
+	 */
+	public MIDataEvaluateExpression createMIGetModelicaArrayDimensionSize(String expression) {
+		return new MIDataEvaluateExpression("(int)" + expression);
+	}
 
 	/**
 	 * Creates the ptype command

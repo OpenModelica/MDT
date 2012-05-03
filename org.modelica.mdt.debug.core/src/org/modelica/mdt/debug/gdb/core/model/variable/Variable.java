@@ -30,6 +30,8 @@
  */
 package org.modelica.mdt.debug.gdb.core.model.variable;
 
+import java.util.ArrayList;
+
 /**
  * A helper class to temporary store variables retrieved from GDB
  * @author Adeel Asghar
@@ -40,6 +42,7 @@ public class Variable {
 	private String fName;
 	private String fDisplayName;
 	private String fVoidPointer;
+	private ArrayList<Integer> fArrayIndexes;
 	
 	/**
 	 * 
@@ -49,6 +52,17 @@ public class Variable {
 		setName(name);
 		setDisplayName(displayName);
 		setVoidPointer(voidPointer);
+	}
+	
+	/**
+	 * 
+	 */
+	public Variable(String name, String displayName, String voidPointer, ArrayList<Integer> arrayIndexes) {
+		// TODO Auto-generated constructor stub
+		setName(name);
+		setDisplayName(displayName);
+		setVoidPointer(voidPointer);
+		setArrayIndexes(arrayIndexes);
 	}
 	
 	/**
@@ -91,6 +105,20 @@ public class Variable {
 	 */
 	public String getVoidPointer() {
 		return fVoidPointer;
+	}
+
+	/**
+	 * @return the fArrayIndex
+	 */
+	public ArrayList<Integer> getArrayIndexes() {
+		return fArrayIndexes;
+	}
+
+	/**
+	 * @param arrayIndexes the fArrayIndex to set
+	 */
+	public void setArrayIndexes(ArrayList<Integer> arrayIndexes) {
+		this.fArrayIndexes = arrayIndexes;
 	}
 	
 }

@@ -48,20 +48,24 @@ public class GDBHelper {
 	public static String MODELICA_BOOLEAN = "modelica_boolean";
 	public static String MODELICA_INETGER = "modelica_integer";
 	public static String MODELICA_REAL = "modelica_real";
-	/* Modelica Types */
-	public static String STRING = "String";
-	public static String BOOLEAN = "Boolean";
-	public static String INTEGER = "Integer";
-	public static String REAL = "Real";
 	public static String REPLACEABLE_TYPE_ANY = "replaceable type Any";
 	public static String LIST = "list";
 	public static String RECORD = "record";
 	public static String TUPLE = "tuple";
 	public static String OPTION = "Option";
 	public static String ARRAY = "Array";
-	
 	public static String NONE = "NONE()";
 	public static String SOME = "SOME()";
+	/* Modelica Types */
+	public static String STRING = "String";
+	public static String BOOLEAN = "Boolean";
+	public static String INTEGER = "Integer";
+	public static String REAL = "Real";
+	/* Standard Modelica Arrays */
+	public static String MODELICA_INTEGER_ARRAY = "integer_array";
+	public static String MODELICA_REAL_ARRAY = "real_array";
+	public static String MODELICA_BOOLEAN_ARRAY = "boolean_array";
+	public static String MODELICA_STRING_ARRAY = "string_array";
 	/* Signals */
 	public static String SIGINT = "SIGINT";
 	public static String SIGTRAP = "SIGTRAP";

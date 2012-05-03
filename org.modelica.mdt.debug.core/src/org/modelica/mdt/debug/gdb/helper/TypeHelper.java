@@ -54,6 +54,8 @@ public class TypeHelper {
 			return GDBHelper.INTEGER;
 		} else if (variableType.equals(GDBHelper.MODELICA_REAL)) {
 			return GDBHelper.REAL;
+		} else if (variableType.equals(GDBHelper.MODELICA_INTEGER_ARRAY)) {
+			return GDBHelper.MODELICA_INTEGER_ARRAY;
 		}
 		return variableType;
 	}
