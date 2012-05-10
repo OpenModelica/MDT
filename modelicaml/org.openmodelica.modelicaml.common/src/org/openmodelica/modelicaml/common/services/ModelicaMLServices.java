@@ -219,6 +219,18 @@ public class ModelicaMLServices {
 //	}
 	
 	
+	public static boolean containsOMCErrorMessage(String msg){
+		if (	msg.contains("Error: ")
+				|| msg.contains("rror occured")) {
+			// TODO: create a full list of possible OMC error messages
+			return true;
+		}
+		if (msg.trim().equals("false")) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static List<String> getFilesToLoad(String folderPath){
 		List<String> list = new ArrayList<String>();
 
@@ -373,13 +385,22 @@ public class ModelicaMLServices {
 				String filePath = folderPath + "/" + Constants.encodingPackageFileNameAndExtension;
 //				File file = new File(filePath);
 				try {
-//					BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"UTF-8"));
-//					out.write(Constants.fileEncoding);
-//					out.close();
-					
-					FileOutputStream fos = new FileOutputStream(filePath); 
-					OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+
+					/*
+					 * http://docs.oracle.com/javase/1.4.2/docs/api/java/io/BufferedWriter.html
+					 * "In general, a Writer sends its output immediately to the underlying character or byte stream. Unless prompt output is required, it is advisable 
+					 *  to wrap a BufferedWriter around any Writer whose write() operations may be costly, 
+					 *  such as FileWriters and OutputStreamWriters."
+					 *  
+					 *  Use: new BufferedWriter(new FileWriter("foo.out"));
+					 */
+					BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath),"UTF-8"));
 					out.write(Constants.fileEncoding);
+					out.close();
+					
+//					FileOutputStream fos = new FileOutputStream(filePath); 
+//					OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+//					out.write(Constants.fileEncoding);
 					out.close();
 					
 				} catch (UnsupportedEncodingException e1) {

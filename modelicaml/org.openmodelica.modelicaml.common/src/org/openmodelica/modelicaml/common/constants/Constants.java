@@ -36,7 +36,8 @@ package org.openmodelica.modelicaml.common.constants;
 
 public class Constants {
 	
-	public static final String actionLanguage 	= "Modelica";
+	public static final String actionLanguage 						= "Modelica";
+	public static final String ModelicaStandardLibraryModelName 	= "Modelica";
 	
 	// class constructs
 	public static final String stereotypeQName_ModelicaPackage 	= "ModelicaML::ModelicaClassConstructs::ModelicaPackage";
