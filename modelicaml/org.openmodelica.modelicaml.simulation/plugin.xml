@@ -168,9 +168,9 @@
             objectClass="org.eclipse.core.resources.IFile">
          <action
                class="org.openmodelica.modelicaml.simulation.testexecution.actions.ExecuteTestsAction"
-               icon="icons/execute.png"
+               icon="icons/tscriptrun.gif"
                id="org.openmodelica.modelicaml.simulation.testexecution.execute"
-               label="ModelicaML: Execute Tests"
+               label="ModelicaML: Run Design Verification Models"
                style="push">
          </action>
       </objectContribution>
@@ -194,9 +194,9 @@
             objectClass="org.eclipse.core.resources.IFile">
          <action
                class="org.openmodelica.modelicaml.simulation.testexecution.actions.UpdateTestExecutionReportDataAction"
-               icon="icons/execute.png"
+               icon="icons/new_report.gif"
                id="org.openmodelica.modelicaml.simulation.testexecution.updatereport"
-               label="ModelicaML: Update report"
+               label="ModelicaML: Update Verification Report"
                style="push">
          </action>
       </objectContribution>
@@ -207,9 +207,9 @@
             objectClass="org.eclipse.core.resources.IFile">
          <action
                class="org.openmodelica.modelicaml.simulation.testexecution.actions.OpenTestExecutionReportAction"
-               icon="icons/execute.png"
+               icon="icons/report.gif"
                id="org.openmodelica.modelicaml.simulation.testexecution.openreport"
-               label="ModelicaML: Open report"
+               label="ModelicaML: Open Verification Report"
                style="push">
          </action>
       </objectContribution>
