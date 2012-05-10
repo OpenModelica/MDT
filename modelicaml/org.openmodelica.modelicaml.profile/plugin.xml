@@ -348,7 +348,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
          <menu
-               icon="resources/icons/icons16/Add.png"
+               icon="resources/icons/icons16/new.gif"
                label="ModelicaML: New Element">
             <command
                   commandId="org.openmodelica.modelicaml.commands.CreatePackageCommand"
@@ -1240,7 +1240,7 @@
             </visibleWhen>
          </menu>
          <menu
-               icon="resources/icons/icons16/Window_new.png"
+               icon="resources/icons/icons16/newDiagram.gif"
                label="ModelicaML: New Diagram">
             <command
                   commandId="org.openmodelica.modelicaml.commands.CreateClassDiagram"
