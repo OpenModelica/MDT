@@ -86,7 +86,7 @@ public class LabelProviderDetails implements ILabelProvider {
 	    		return SWTResourceManager.getImage(Activator.class, "/icons/Class.gif");
 			}
 	    	if (item.getUmlElement() instanceof Port) {
-	    		return SWTResourceManager.getImage(Activator.class, "/icons/Port.gif");
+	    		return SWTResourceManager.getImage(Activator.class, "/icons/port.gif");
 			}
 	    	if (item.getUmlElement() instanceof Property) {
 	    		return SWTResourceManager.getImage(Activator.class, "/icons/Property.gif");
