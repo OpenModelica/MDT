@@ -253,6 +253,8 @@ public class MIParser {
 			return true;
 		} else if (buffer.toString().startsWith(MIAsyncRecord.LIBRARY_LOADED)) {
 			return true;
+		} else if (buffer.toString().startsWith(MIAsyncRecord.LIBRARY_UNLOADED)) {
+			return true;
 		} else if (buffer.toString().startsWith(MIAsyncRecord.THREAD_EXITED)) {
 			return true;
 		} else if (buffer.toString().startsWith(MIAsyncRecord.THREAD_GROUP_EXITED)) {

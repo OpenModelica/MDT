@@ -732,7 +732,7 @@ public class MISession extends Observable {
 		argList.add(Integer.toString(getGDBInferior().getInferiorPID()));
 
 		String[] args = (String[])argList.toArray(new String[argList.size()]);
-		if (MDTDebugCorePlugin.DEBUG) getLogFileWriter().write("Trying to interrupt GDB with : " + argList);getLogFileWriter().flush();
+		if (MDTDebugCorePlugin.DEBUG) getLogFileWriter().write("Trying to interrupt GDB with : " + argList + "\n");getLogFileWriter().flush();
 		Process breakProcess = DebugPlugin.exec(args, null);
 		return breakProcess.waitFor();
 	}
