@@ -114,7 +114,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
          <menu
-               icon="resources/icons/icons16/launcher.gif"
+               icon="resources/icons/icons16/generate_code.gif"
                label="ModelicaML: Validation and Code Generation">
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel"
@@ -147,9 +147,9 @@
             </command>
             <command
                   commandId="org.eclipse.papyrus.modelexplorer.ValidateDelMarkersFromSubtreeCommand"
-                  icon="resources/icons/list-remove.png"
+                  icon="resources/icons/icons16/errorwarning_tab.gif"
                   id="org.eclipse.papyrus.modelexplorer.DelMarkersFromSubtree"
-                  label="Remove markers from sub-tree"
+                  label="Remove markers"
                   tooltip="Remove markers from sub-tree">
                <visibleWhen
                      checkEnabled="true">
@@ -168,7 +168,7 @@
             </command>
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCodeFromThisElement"
-                  icon="resources/icons/icons16/launcher.gif"
+                  icon="resources/icons/icons16/generate_code.gif"
                   label="Generate Modelica code (from sub-tree)"
                   style="push"
                   tooltip="Generate Modelica code (from sub-tree)">
@@ -214,7 +214,7 @@
                label="ModelicaML">
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCode"
-                  icon="resources/icons/icons16/launcher.gif"
+                  icon="resources/icons/icons16/generate_code.gif"
                   label="Generate Modelica Code (from entire model)"
                   style="push"
                   tooltip="Generate Modelica Code (from entire ModelicaML model)">
@@ -256,7 +256,7 @@
             </separator>
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
-                  icon="resources/icons/icons16/execute.png"
+                  icon="resources/icons/icons16/tscriptrun.gif"
                   label="Run Design Verification Models"
                   style="push"
                   tooltip="Run Design Verification Models">
@@ -278,7 +278,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
          <menu
-               icon="resources/icons/plugin_go.png"
+               icon="resources/icons/icons16/invocation.gif"
                id="modelicaml.helpers"
                label="ModelicaML: Helper">
             <!--
@@ -316,7 +316,7 @@
             </separator>
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
-                  icon="resources/icons/icons16/generateSimMopdels.png"
+                  icon="resources/icons/icons16/new_testsuite.gif"
                   label="Generate Design Verification Models"
                   style="push"
                   tooltip="Generate Design Verification Models">
@@ -330,7 +330,7 @@
             </separator>
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
-                  icon="resources/icons/icons16/execute.png"
+                  icon="resources/icons/icons16/tscriptrun.gif"
                   label="Run Design Verification Models"
                   style="push"
                   tooltip="Run Design Verification Models">
