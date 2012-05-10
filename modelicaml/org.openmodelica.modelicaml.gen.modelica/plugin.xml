@@ -93,6 +93,9 @@
                id="org.eclipse.ui.ide.markerType"
                visible="true">
          </markerFieldReference>
+         <markerTypeReference
+               id="org.eclipse.emf.validation.problem">
+         </markerTypeReference>
       </markerContentGenerator>
    </extension>
    <!--<extension
