@@ -407,7 +407,7 @@ public class TraceabilityView extends ViewPart {
 							serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 							TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 
-							CompoundCommand cc = new CompoundCommand("Add value mediator reference");
+							CompoundCommand cc = new CompoundCommand("actionCreateVerificationModel");
 							Command command = new RecordingCommand(editingDomain) {
 								@Override
 								protected void doExecute() {
