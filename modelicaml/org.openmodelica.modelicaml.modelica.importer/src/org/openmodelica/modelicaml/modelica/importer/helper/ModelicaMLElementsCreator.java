@@ -1721,10 +1721,12 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		if (restriction.equals("package")) 	{ return Constants.stereotypeQName_ModelicaPackage;}
 		if (restriction.equals("block")) 	{ return Constants.stereotypeQName_Block;}
 		if (restriction.equals("record")) 	{ return Constants.stereotypeQName_Record;}
-		if (restriction.equals("connector")){ return Constants.stereotypeQName_Connector;}
 		if (restriction.equals("type")) 	{ return Constants.stereotypeQName_Type;}
 		if (restriction.equals("function")) { return Constants.stereotypeQName_Function;}
-		
+
+		// in order to capture "expandable connector" use contains ...
+		if (restriction.contains("connector")){ return Constants.stereotypeQName_Connector;}
+		// in order to capture "operator function" use contains ...
 		if (restriction.contains("operator")) { return Constants.stereotypeQName_Operator;}
 
 		return "";

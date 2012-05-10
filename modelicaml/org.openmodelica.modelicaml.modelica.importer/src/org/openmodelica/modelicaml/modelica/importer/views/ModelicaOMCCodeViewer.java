@@ -1459,7 +1459,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					configureTreeBuilder();
 					
 					// expand or collapse node
-					if (!viewer.getExpandedState(obj) && obj instanceof TreeParent) {
+					if (viewer != null && !viewer.getExpandedState(obj) && obj instanceof TreeParent) {
 						final TreeParent parent = (TreeParent) obj;
 						
 						// If there are no children yet -> create children

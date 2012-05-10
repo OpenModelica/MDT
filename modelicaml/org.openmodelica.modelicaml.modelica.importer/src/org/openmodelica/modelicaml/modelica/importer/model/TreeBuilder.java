@@ -98,6 +98,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private boolean validateProxies = false;
 	private boolean fullImport = false; // indicates of annotations, equations and imports should be included in synchronization
 	
+	private String MSLModelName = Constants.ModelicaStandardLibraryModelName; 
+	private boolean loadMSL = true;
+	
 	class ModelicaComponentData {
 		private String typeQName;
 		private Element type;
@@ -926,6 +929,12 @@ public class TreeBuilder implements IRunnableWithProgress{
 		// clear the omc first
 		omcc.clear();
 
+		//TODO: ask user if Modelica, with specific version, should be loaded ...
+		if (isLoadMSL()) {
+			// Load MSL
+			omcc.loadModel(getMSLModelName());
+		}
+		
 		if (umlModel != null && umlModel.getResource() != null) {
 			String projectName = umlModel.getResource().getURI().segment(1);
 			
@@ -1464,6 +1473,22 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 	public boolean isFullImport() {
 		return fullImport;
+	}
+
+	public String getMSLModelName() {
+		return MSLModelName;
+	}
+
+	public void setMSLModelName(String mSLModelName) {
+		MSLModelName = mSLModelName;
+	}
+
+	public boolean isLoadMSL() {
+		return loadMSL;
+	}
+
+	public void setLoadMSL(boolean loadMSL) {
+		this.loadMSL = loadMSL;
 	}
 }
 

@@ -6,6 +6,7 @@ import java.util.List;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.omc.OMCProxy;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 
@@ -75,7 +76,8 @@ public class OpenModelicaCompilerCommunication {
 		// initial reply (negative)
 		String replyString = "Error: No reply from OMC ...";
 		
-		if (command != null && command.length() > 0) {
+		// TODO: observe the containsOMCErrorMessage. It should prevent executing commands with error string as parameters
+		if (command != null && command.length() > 0 && !ModelicaMLServices.containsOMCErrorMessage(command)) {
 			history.add(command);
 			
 			try {
