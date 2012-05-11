@@ -74,13 +74,16 @@ public class TreeObject implements IAdaptable {
 //		}
 //		return name;
 		
-		if ( !this.name.equals("") ) {
+		if ( this.name != null && !this.name.equals("") ) {
 			return this.name;	
 		}
-		else if (getUmlElement() instanceof NamedElement) {
+		else if (getUmlElement() instanceof NamedElement && ((NamedElement)getUmlElement()).getName() != null) {
 			return ((NamedElement)getUmlElement()).getName();
 		}
-		return this.name;
+		else {
+			return "unnamed";
+		}
+//		return this.name;
 	}
 	
 	public void setName(String name){
@@ -198,7 +201,10 @@ public class TreeObject implements IAdaptable {
 			Element umlElement = this.getUmlElement();
 			
 //			if (objUmlElement != null && umlElement != null) {
-			if (objUmlElement instanceof NamedElement && umlElement instanceof NamedElement ) {
+			if (objUmlElement instanceof NamedElement && umlElement instanceof NamedElement 
+					&& ((NamedElement)objUmlElement).getQualifiedName() != null
+					&&  ((NamedElement)umlElement).getQualifiedName() != null ) {
+				
 				String objUmlElementQName = ((NamedElement)objUmlElement).getQualifiedName();
 				String umlElementQName = ((NamedElement)umlElement).getQualifiedName();
 				
@@ -271,7 +277,7 @@ public class TreeObject implements IAdaptable {
 		result = result + this.getName().hashCode();
 		
 		// get the qualified name of the uml element
-		if (this.getUmlElement() instanceof NamedElement) {
+		if (this.getUmlElement() instanceof NamedElement && ((NamedElement)this.getUmlElement()).getQualifiedName() != null) {
 			result = result +  ((NamedElement)this.getUmlElement()).getQualifiedName().hashCode();
 		}
 		
@@ -280,7 +286,7 @@ public class TreeObject implements IAdaptable {
 			result = result +  this.getParent().getName().hashCode();
 			
 			// get the qualified name of the parent uml element
-			if (this.getParent().getUmlElement() instanceof NamedElement) {
+			if (this.getParent().getUmlElement() instanceof NamedElement && ((NamedElement)this.getParent().getUmlElement()).getQualifiedName() != null) {
 				result = result + ((NamedElement)this.getParent().getUmlElement()).getQualifiedName().hashCode();
 			}
 		}

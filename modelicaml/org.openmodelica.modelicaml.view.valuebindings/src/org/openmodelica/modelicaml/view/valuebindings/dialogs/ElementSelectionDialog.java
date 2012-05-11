@@ -57,8 +57,10 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
@@ -196,7 +198,24 @@ public class ElementSelectionDialog extends Dialog {
 	};
 	   
 	public void validate(){
-		if (	selectedElement instanceof Property
+		
+		/*
+		 * NOT allowed: It is not allowed to use properties of connectors as clients or providers. 
+		 * The reason is that if the connector (owner of the property is used in different classes multiple times) 
+		 * then this will be "wrong" number to be used for determining the number of instantiated requirements and clients/providers.
+		 * Instead the user shall use Port and then use client/provider operations to point to a particular property.  
+		 */
+		if ( selectedElement instanceof Property && isConnectorProperty((Element) selectedElement) ) {
+			// reset  
+			seIcon.setImage(errorIcon);
+			String text = "Properties of Interface (Connector) are not allowed!";
+			seName.setText(text);
+			// disable the OK button
+			bttOK.setEnabled(false);
+		}
+		
+		// allowed cases
+		else if (	selectedElement instanceof Property
 				&& ((Property)selectedElement).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) == null
 				&& selectedElement != valueMediatorTreeItem.getUmlElement()
 				) {
@@ -217,7 +236,9 @@ public class ElementSelectionDialog extends Dialog {
 			// enable the OK button
 			bttOK.setEnabled(true);
 			
-		} else {
+		} 
+		// NOT allowed cases
+		else {
 			// reset  
 			seName.setText("");
 			seIcon.setImage(errorIcon);
@@ -243,6 +264,20 @@ public class ElementSelectionDialog extends Dialog {
 			// disable the OK button
 			bttOK.setEnabled(false);
 		}
+	}
+	
+	
+	private boolean isConnectorProperty(Element element) {
+		if (element instanceof Property) {
+			Element owner = element.getOwner();
+			if (owner instanceof Class) {
+				Stereotype s_connector = ((Class)owner).getAppliedStereotype(Constants.stereotypeQName_Connector);
+				if (s_connector != null) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**
