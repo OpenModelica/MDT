@@ -148,7 +148,7 @@ private EList<Element> createdElements = new BasicEList<Element>();
 						EList<Element> existingElements = parentElement.getOwnedElements();
 						Integer postfix = 1;
 						for (Element existingElement : existingElements) {
-							if (existingElement instanceof NamedElement) {
+							if (existingElement instanceof NamedElement && ((NamedElement)existingElement).getName() != null && ((NamedElement)existingElement).getName().length() > 0) {
 								if ( ((NamedElement)existingElement).getName().startsWith(defaultName) ) {
 									postfix ++;
 								}
