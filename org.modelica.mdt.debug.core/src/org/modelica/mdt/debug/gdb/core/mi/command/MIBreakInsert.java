@@ -77,12 +77,22 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIOutput;
  */
 public class MIBreakInsert extends MICommand {
 	public MIBreakInsert(String func) {
-		this(false, false, null, 0, func, 0);
-		setOptions(new String[]{"-f"});
+		this(false, false, null, 0, true, false, func, 0);
 	}
-
-	public MIBreakInsert(boolean isTemporary, boolean isHardware,
-			 String condition, int ignoreCount, String line, int tid) {
+	
+	/**
+	 * Creates the -break-insert command with params
+	 * @param isTemporary
+	 * @param isHardware
+	 * @param condition
+	 * @param ignoreCount
+	 * @param pending - creates a pending breakpoint
+	 * @param disabled - creates a disable breakpoint
+	 * @param line e.g model.mo:101
+	 * @param tid is the thread id
+	 * @return MIBreakInsert
+	 */
+	public MIBreakInsert(boolean isTemporary, boolean isHardware, String condition, int ignoreCount, boolean pending, boolean disabled, String line, int tid) {
 		super("-break-insert");
 
 		int i = 0;
@@ -90,6 +100,12 @@ public class MIBreakInsert extends MICommand {
 			i++;
 		}
 		if (isHardware) {
+			i++;
+		}
+		if (pending) {
+			i++;
+		}
+		if (disabled) {
 			i++;
 		}
 		if (condition != null && condition.length() > 0) {
@@ -104,12 +120,21 @@ public class MIBreakInsert extends MICommand {
 		String[] opts = new String[i];
 		
 		i = 0;
+		
 		if (isTemporary) {
 			opts[i] = "-t";
 			i++;
 		} 
 		if (isHardware) {
 			opts[i] = "-h";
+			i++;
+		}
+		if (pending) {
+			opts[i] = "-f";
+			i++;
+		}
+		if (disabled) {
+			opts[i] = "-d";
 			i++;
 		}
 		if (condition != null && condition.length() > 0) {

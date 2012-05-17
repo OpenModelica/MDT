@@ -463,7 +463,7 @@ public class MISession extends Observable {
 		if (timeout < 0) {
 			return;
 		}
-		// Wait for the response or timedout
+		// Wait for the response or timeout
 		synchronized (cmd) {
 			// RxThread will set the MIOutput on the cmd
 			// when the response arrive.

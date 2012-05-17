@@ -385,6 +385,8 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 				MDTLineBreakpoint mdtBreakpoint = (MDTLineBreakpoint)breakpoint;
 				if (breakpoint.isEnabled() && getBreakpointManager().isEnabled()) {
 					mdtBreakpoint.enableBreakpoint(this);
+					mdtBreakpoint.hitCountBreakpoint(this);
+					mdtBreakpoint.timeConditionBreakpoint(this);
 				} else {
 					mdtBreakpoint.disableBreakpoint(this);
 				}
@@ -636,8 +638,8 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 				// get the stack frames from GDB
 				MIFrame[] frames = ((GDBThread)getThread()).getStackFrames(0, depth - 1);
 				frames = ((GDBThread)getThread()).removeCStackFrames(frames);
-				fMISession.writeLog("MIFunctionFinishedEvent frames.length:" + frames.length);
-				fMISession.writeLog("MIFunctionFinishedEvent fGDBStackFrames.size():" + ((GDBThread)getThread()).fGDBStackFrames.size());
+				if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIFunctionFinishedEvent frames.length:" + frames.length);
+				if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MIFunctionFinishedEvent fGDBStackFrames.size():" + ((GDBThread)getThread()).fGDBStackFrames.size());
 				if (frames.length > ((GDBThread)getThread()).fGDBStackFrames.size()) {
 					CommandFactory factory = getGDBDebugTarget().getMISession().getCommandFactory();
 					MIExecFinish execFinishCmd = factory.createMIExecFinish();
@@ -669,13 +671,13 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	private void handleSteppingEvent(MIEvent miEvent) throws CoreException, MIException, IOException {
 		// TODO Auto-generated method stub
 		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("MISteppingRangeEvent caught in gdb debug target");
-		((GDBThread)getThread()).deleteCatchOMCBreakpoint();
+		((GDBThread)getThread()).disableCatchOMCBreakpoint();
 		if (skipSteppedInFrames(miEvent)) {
 			/* When we step over we put a breakpoint at Catch.omc:1.
 			 * It is possible that it will get hit, if it does the debugger will step into the function.
 			 * We must take the debugger out of that function since user has actually performed step over.
 			 * In order to do this we check stack frames. If stack frames list is greater than the 
-			 * last stack frames list we must do -exec-finish and then -exec-next to show move user to next line.
+			 * last stack frames list we must do -exec-finish and then -exec-next to move user to next line.
 			 */
 			// get the stack depth
 			if (((GDBThread)getThread()).getExecuteCommand() == ExecuteCommand.EXECNEXT) {
@@ -717,7 +719,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		MIBreakpointHitEvent breakpointHitEvent = (MIBreakpointHitEvent)miEvent;
 		// if we stop at Catch.omc then we remove the breakpoint from there
 		if (breakpointHitEvent.getMIFrame().getFile().equals("Catch.omc")) {
-			((GDBThread)getThread()).deleteCatchOMCBreakpoint();
+			((GDBThread)getThread()).disableCatchOMCBreakpoint();
 			/* since we reached inside the Catch.omc::mmc_catch_dummy_fn() function we should move out from there
 			 * send -exec-finish command to return back to actual function.
 			 */
@@ -831,7 +833,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			 * Adeel 2012-01-27 15:23 Before doing a step we should add a breakpoint 
 			 * at Catch.omc:1 to handle MMC_THROW()
 			 */
-			((GDBThread)getThread()).insertCatchOMCBreakpoint();
+			((GDBThread)getThread()).enableCatchOMCBreakpoint();
 			MICommand execCmd = null;
 			if (((GDBThread)getThread()).getExecuteCommand() == ExecuteCommand.EXECNEXT) {
 				execCmd = factory.createMIExecNext();

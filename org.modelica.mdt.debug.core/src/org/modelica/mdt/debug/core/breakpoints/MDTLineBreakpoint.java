@@ -20,6 +20,8 @@ import org.modelica.mdt.debug.core.model.MDTThread;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakAfter;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakCondition;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDelete;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDisable;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakEnable;
@@ -46,6 +48,10 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 	// GDB Debug Target
 	private GDBDebugTarget fGDBTarget;
 	private int fBreakPointNumber;
+	public static final String MDT_LINE_BREAKPOINT = "org.modelica.mdt.debug.core.markerType.lineBreakpoint";
+	public static final String HIT_COUNT = "org.modelica.mdt.debug.core.lineBreakpoint.hitcount";
+	public static final String TIME_VALUE = "org.modelica.mdt.debug.core.lineBreakpoint.timevalue";
+	public static final String TIME_CONDITION = "org.modelica.mdt.debug.core.lineBreakpoint.timecondition";
 	
 	/**
 	 * Default constructor is required for the breakpoint manager
@@ -69,13 +75,15 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 	public MDTLineBreakpoint(final IResource resource, final int lineNumber) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.modelica.mdt.debug.core.markerType.lineBreakpoint");
+				IMarker marker = resource.createMarker(MDT_LINE_BREAKPOINT);
+				marker.setAttribute(HIT_COUNT, 0);
+				marker.setAttribute(TIME_VALUE, "-1");
+				marker.setAttribute(TIME_CONDITION, 0);
 				marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 				marker.setAttribute(IBreakpoint.ID, getModelIdentifier());
 				marker.setAttribute(IMarker.MESSAGE, "Line Breakpoint: " + resource.getName() + " [line: " + lineNumber + "]");
 				setMarker(marker);
-				setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
 				setRegistered(true);
 			}
 		};
@@ -126,7 +134,9 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
     	getGDBDebugTarget().getMISession().addObserver(this);
     	// insert the break point in gdb now.
     	String lineBreakpoint = getMarker().getResource().getName() + ":" + getLineNumber();
-	    MIBreakInsert breakInsertCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIBreakInsert(lineBreakpoint);
+    	String timeConditon = createBreakpointConditionString();
+	    MIBreakInsert breakInsertCmd = getGDBDebugTarget().getMISession().getCommandFactory().createMIBreakInsert(false, false, timeConditon,
+	    		getMarker().getAttribute(HIT_COUNT, 0), true, !getMarker().getAttribute(IBreakpoint.ENABLED, Boolean.FALSE), lineBreakpoint, 0);
 	    getGDBDebugTarget().getMISession().postCommand(breakInsertCmd, null);
 	    MIBreakInsertInfo breakInsertinfo = breakInsertCmd.getMIBreakInsertInfo();
 		if (breakInsertinfo == null) {
@@ -228,6 +238,74 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakEnable breakEnableCmd = factory.createMIBreakEnable(new int[]{getBreakPointNumber()});
 		miSession.postCommand(breakEnableCmd, -1, null);
+	}
+	
+	/**
+     * 
+     * Set hit count for the breakpoint in gdb. 
+     * Sends the -break-after command to gdb.
+     * 
+	 * @param gdbDebugTarget
+     * @throws MIException 
+     * @throws CoreException 
+	 */
+	public void hitCountBreakpoint(GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakAfter breakAfterCmd = factory.createMIBreakAfter(getBreakPointNumber(), getHitCount());
+		miSession.postCommand(breakAfterCmd, -1, null);
+	}
+	
+	/**
+     * 
+     * Sets the condition on the breakpoint in gdb. 
+     * Sends the -break-condition command to gdb.
+     * 
+	 * @param gdbDebugTarget
+     * @throws MIException 
+     * @throws CoreException 
+	 */
+	public void timeConditionBreakpoint(GDBDebugTarget gdbDebugTarget) throws MIException {
+		// TODO Auto-generated method stub
+		String timeCondition = createBreakpointConditionString();
+		if (timeCondition.isEmpty())
+			return;
+		// now set the condition on the breakpoint
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakCondition breakConditionCmd = factory.createMIBreakCondition(getBreakPointNumber(), timeCondition);
+		miSession.postCommand(breakConditionCmd, -1, null);
+	}
+	
+	private String createBreakpointConditionString() {
+		// create the condition
+		String timeValue = getTimeValue();
+		if (timeValue.equals("-1"))
+			return "";
+		int timeCondition = getTimeCondition();
+		String timeConditionSymbol = "==";
+		switch (timeCondition) {
+		case 0:
+			timeConditionSymbol = "==";
+			break;
+		case 1:
+			timeConditionSymbol = ">";
+			break;
+		case 2:
+			timeConditionSymbol = ">=";
+			break;
+		case 3:
+			timeConditionSymbol = "<";
+			break;
+		case 4:
+			timeConditionSymbol = "<=";
+			break;
+		default:
+			timeConditionSymbol = "==";
+			break;
+		}
+		return "data->localData[0]->timeValue" + timeConditionSymbol + timeValue;
 	}
 	
 	/**
@@ -379,5 +457,62 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 	 */
 	public int getBreakPointNumber() {
 		return fBreakPointNumber;
-	}	
+	}
+
+	/**
+	 * @return the fHitCount
+	 */
+	public int getHitCount() {
+		return getMarker().getAttribute(HIT_COUNT, 0);
+	}
+
+	/**
+	 * @param hitCount
+	 */
+	public void setHitCount(int hitCount) {
+		try {
+			getMarker().setAttribute(HIT_COUNT, hitCount);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		}
+	}
+	
+	/**
+	 * @return the timeValue
+	 */
+	public String getTimeValue() {
+		return getMarker().getAttribute(TIME_VALUE, "-1");
+	}
+
+	/**
+	 * @param timeValue
+	 */
+	public void setTimeValue(String timeValue) {
+		try {
+			getMarker().setAttribute(TIME_VALUE, timeValue);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		}
+	}
+	
+	/**
+	 * @return the timeCondition
+	 */
+	public int getTimeCondition() {
+		return getMarker().getAttribute(TIME_CONDITION, 0);
+	}
+
+	/**
+	 * @param timeCondition
+	 */
+	public void setTimeCondition(int timeCondition) {
+		try {
+			getMarker().setAttribute(TIME_CONDITION, timeCondition);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		}
+	}
 }

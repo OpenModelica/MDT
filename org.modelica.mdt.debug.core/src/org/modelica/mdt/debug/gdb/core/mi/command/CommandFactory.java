@@ -160,13 +160,15 @@ public class CommandFactory {
 	 * @param isHardware
 	 * @param condition
 	 * @param ignoreCount
+	 * @param isPending
+	 * @param isDisabled
 	 * @param line
 	 * @param tid
 	 * @return MIBreakInsert
 	 */
-	public MIBreakInsert createMIBreakInsert(boolean isTemporary, boolean isHardware,
-			 String condition, int ignoreCount, String line, int tid) {
-		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line, tid);
+	public MIBreakInsert createMIBreakInsert(boolean isTemporary, boolean isHardware, String condition, int ignoreCount, boolean isPending, boolean isDisabled,
+			String line, int tid) {
+		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, isPending, isDisabled, line, tid);
 	}
 	
 	/**
@@ -197,6 +199,26 @@ public class CommandFactory {
 	public MIBreakDisable createMIBreakDisable(int[] breakPointNumbers) {
 		// TODO Auto-generated method stub
 		return new MIBreakDisable(breakPointNumbers);
+	}
+	
+	/**
+	 * Creates the -break-after command
+	 * @param breakPointNumber
+	 * * @param hitCount
+	 * @return MIBreakAfter
+	 */
+	public MIBreakAfter createMIBreakAfter(int breakPointNumber, int hitCount) {
+		return new MIBreakAfter(breakPointNumber, hitCount);
+	}
+
+	/**
+	 * Creates the -break-condition command
+	 * @param breakPointNumber
+	 * * @param condition
+	 * @return MIBreakCondition
+	 */
+	public MIBreakCondition createMIBreakCondition(int breakPointNumber, String condition) {
+		return new MIBreakCondition(breakPointNumber, condition);
 	}
 	
 	/* Stack Manipulation Commands */

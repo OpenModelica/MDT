@@ -169,9 +169,20 @@
                class="org.modelica.mdt.debug.ui.editor.PopFrameActionDelegate"
                id="mdt.dropToFrame"
                label="Pop Frame"/>
-      </objectContribution> 
+      </objectContribution>
+      <objectContribution
+            objectClass="org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint"
+            id="org.modelica.mdt.debug.MDTLineBreakpointActions">
+         <action
+               class="org.modelica.mdt.debug.ui.actions.MDTLineBreakpointPropertiesAction"
+               enablesFor="1"
+               helpContextId="breakpoint_properties_action_context"
+               id="org.modelica.mdt.debug.ui.actions.MDTLineBreakpointProperties"
+               label="Breakpoint Properties..."
+               menubarPath="additions">
+         </action>
+      </objectContribution>
    </extension>
-   
       
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -225,6 +236,21 @@
                </instanceof>
                <adapt
                      type="org.modelica.mdt.debug.core.IMDTFailureBreakpoint">
+               </adapt>
+            </or>
+         </enabledWhen>
+      </page>
+      <page
+            name="Breakpoint Properties"
+            class="org.modelica.mdt.debug.ui.propertypages.MDTLineBreakpointPage"
+            id="org.eclipse.jdt.debug.ui.propertypages.LineBreakpoints">
+         <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint">
+               </instanceof>
+               <adapt
+                     type="org.modelica.mdt.debug.core.breakpoints.MDTLineBreakpoint">
                </adapt>
             </or>
          </enabledWhen>

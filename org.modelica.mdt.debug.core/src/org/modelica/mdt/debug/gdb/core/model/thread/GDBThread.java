@@ -50,6 +50,8 @@ import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDelete;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDisable;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakEnable;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakInsert;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecContinue;
@@ -539,6 +541,8 @@ public class GDBThread extends GDBDebugElement implements IThread {
 				MIDataEvaluateExpression changeStdStreamBufferCmd = factory.createMIChangeStdStreamBuffer();
 				// we don't care about the time and output of this command
 				miSession.postCommand(changeStdStreamBufferCmd, -1, null);
+				// Insert a breakpoint to catch longjmp/MMC_THROW
+				insertCatchOMCBreakpoint();
 			} catch (MIException e) {
 				// TODO Auto-generated catch block
 				MDTDebugCorePlugin.log(e.getMessage() + e.getLogMessage(), e);
@@ -619,7 +623,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 				 * Adeel 2012-01-27 15:23 Before doing a step we should add a breakpoint 
 				 * at Catch.omc:1 to handle MMC_THROW()
 				 */
-				insertCatchOMCBreakpoint();
+				enableCatchOMCBreakpoint();
 				miSession.postCommand(execStepCommand, null);
 				setExecuteCommand(ExecuteCommand.EXECSTEP);
 				MIInfo info = execStepCommand.getMIInfo();
@@ -632,6 +636,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
@@ -654,7 +659,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 				 * Adeel 2012-01-27 15:23 Before doing a step we should add a breakpoint 
 				 * at Catch.omc:1 to handle MMC_THROW()
 				 */
-				insertCatchOMCBreakpoint();
+				enableCatchOMCBreakpoint();
 				getGDBDebugTarget().getMISession().postCommand(execNextCmd, null);
 				setExecuteCommand(ExecuteCommand.EXECNEXT);
 				MIInfo info = execNextCmd.getMIInfo();
@@ -889,6 +894,8 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		// TODO Auto-generated method stub
 		// Need the GDB/MI view of level which is the reverse, i.e. the highest level is 0
 		// See comment in GDBStackFrame constructor.
+		if (fCurrentGDBStackFrame == gdbStackFrame)
+			return;
 		int miFrameLevel = getLastStackDepth() - gdbStackFrame.getIdentifier();
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
@@ -923,11 +930,10 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * @throws MIException
 	 * @throws CoreException
 	 */
-	
 	public void insertCatchOMCBreakpoint() throws MIException, CoreException {
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIBreakInsert breakInsertCmd = factory.createMIBreakInsert("Catch.omc:1");
+		MIBreakInsert breakInsertCmd = factory.createMIBreakInsert(false, false, "", 0, true, true, "Catch.omc:1", 0);
 		breakInsertCmd.setQuiet(true);
 		miSession.postCommand(breakInsertCmd, null);
 		MIBreakInsertInfo breakInsertinfo = breakInsertCmd.getMIBreakInsertInfo();
@@ -941,6 +947,38 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			MIBreakpoint breakPoint = breakInsertinfo.getMIBreakpoints()[0]; 
 			fCatchOMCBreakpoint = breakPoint.getNumber();
 		}
+	}
+	
+	/**
+	 * Enables the breakpoint at Catch.omc:1 to handle MMC_THROW()
+	 * @throws MIException
+	 * @throws CoreException
+	 */
+	public void enableCatchOMCBreakpoint() throws MIException {
+		// TODO Auto-generated method stub
+		if (fCatchOMCBreakpoint == 0)
+			return;
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakEnable breakEnableCmd = factory.createMIBreakEnable(new int[]{fCatchOMCBreakpoint});
+		breakEnableCmd.setQuiet(true);
+		miSession.postCommand(breakEnableCmd, null);
+	}
+	
+	/**
+	 * Disables the breakpoint at Catch.omc:1 to handle MMC_THROW()
+	 * @throws MIException
+	 * @throws CoreException
+	 */
+	public void disableCatchOMCBreakpoint() throws MIException {
+		// TODO Auto-generated method stub
+		if (fCatchOMCBreakpoint == 0)
+			return;
+		MISession miSession = getGDBDebugTarget().getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIBreakDisable breakDisableCmd = factory.createMIBreakDisable(new int[]{fCatchOMCBreakpoint});
+		breakDisableCmd.setQuiet(true);
+		miSession.postCommand(breakDisableCmd, null);
 	}
 	
 	/**

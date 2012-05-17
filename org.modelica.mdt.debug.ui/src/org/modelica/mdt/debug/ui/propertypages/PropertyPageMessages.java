@@ -13,7 +13,7 @@ package org.modelica.mdt.debug.ui.propertypages;
 import org.eclipse.osgi.util.NLS;
 
 public class PropertyPageMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.modelica.mdt.internal.debug.ui.propertypages.PropertyPageMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.modelica.mdt.debug.ui.propertypages.PropertyPageMessages";//$NON-NLS-1$
 
 	public static String BreakpointConditionEditor_1;
 	public static String ExceptionFilterEditor_5;
@@ -33,29 +33,30 @@ public class PropertyPageMessages extends NLS {
 	public static String ExceptionFilterEditor_20;
 	public static String ExceptionFilterEditor_22;
 	public static String JavaBreakpointPage_0;
-	public static String JavaBreakpointPage_10;
-
-	public static String JavaBreakpointPage_11;
 	public static String JavaBreakpointPage_3;
 	public static String JavaBreakpointPage_4;
+	public static String JavaBreakpointPage_4_1;
 	public static String JavaBreakpointPage_5;
 	public static String JavaBreakpointPage_6;
 	public static String JavaBreakpointPage_7;
 	public static String JavaBreakpointPage_8;
 	public static String JavaBreakpointPage_9;
+	public static String JavaBreakpointPage_10;
+	public static String JavaBreakpointPage_11;
+	public static String JavaBreakpointPage_12;
+	public static String JavaBreakpointPage_13;
+	public static String JavaBreakpointPage_14;
+	public static String JavaBreakpointPage_15;
+	public static String JavaBreakpointPage_16;
+	public static String JavaBreakpointPage_17;
+	public static String JavaBreakpointPage_18;
 	public static String JavaExceptionBreakpointPage_0;
 	public static String JavaExceptionBreakpointPage_1;
 
 	public static String JavaExceptionBreakpointPage_5;
 	public static String JavaLineBreakpointPage_0;
 	public static String JavaLineBreakpointPage_1;
-
-	public static String JavaLineBreakpointPage_18;
-
-	public static String JavaLineBreakpointPage_19;
 	public static String JavaLineBreakpointPage_2;
-
-	public static String JavaLineBreakpointPage_20;
 	public static String JavaLineBreakpointPage_3;
 	public static String JavaLineBreakpointPage_4;
 	public static String JavaLineBreakpointPage_5;
@@ -70,6 +71,10 @@ public class PropertyPageMessages extends NLS {
 	public static String JavaLineBreakpointPage_15;
 	public static String JavaLineBreakpointPage_16;
 	public static String JavaLineBreakpointPage_17;
+	public static String JavaLineBreakpointPage_18;
+	public static String JavaLineBreakpointPage_19;
+	public static String JavaLineBreakpointPage_20;
+	public static String JavaLineBreakpointPage_21;
 	public static String ThreadFilterEditor_1;
 	public static String ThreadFilterEditor_2;
 	public static String InstanceFilterEditor_0;

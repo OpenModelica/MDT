@@ -257,13 +257,13 @@ public class RxThread extends Thread {
 				} else if ("connected".equals(state)) {
 					session.getGDBInferior().setConnected();
 				} else if ("error".equals(state)) {
-					if (session.getGDBInferior().isRunning()) {
-						session.getGDBInferior().setSuspended();
+					//if (session.getGDBInferior().isRunning()) {
+						//session.getGDBInferior().setSuspended();
 						MIEvent event = new MIErrorEvent(session, rr, streamRecords);
 						if (cmd != null && cmd.isQuiet())
-							event.setPropagate(false); 
+							event.setPropagate(false);
 						list.add(event);
-					}
+					//}
 				} else if ("done".equals(state)) {
 					// "done" usually mean that gdb returns after some CLI command
 					// The result record may contains informaton specific to oob.
@@ -398,11 +398,15 @@ public class RxThread extends Thread {
 				// Process the console stream too.
 				setPrompt(str);
 				if (str != null && isEnableConsole()) {
-					try {
-						console.write(str.getBytes());
-						console.flush();
-					} catch (IOException e) {
-					}
+					/*
+					 * Adeel 2012-05-17 01:40 The simulation executable spits a lot of data for console stream which hangs the debugger. 
+					 * We are not using the GDB output anywhere, we are only interested in MITargetStreamOutput.
+					 */
+//					try {
+//						console.write(str.getBytes());
+//						console.flush();
+//					} catch (IOException e) {
+//					}
 				}
 			}
 			// Accumulate the Console Stream Output response for parsing.
