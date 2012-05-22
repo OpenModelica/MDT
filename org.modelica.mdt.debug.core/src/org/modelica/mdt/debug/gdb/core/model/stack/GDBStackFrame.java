@@ -119,7 +119,11 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 		if (GDBHelper.isCFile(fFrame.getFile())) {
 			fName = fFrame.getFunction();
 		} else {
-			fName = fFrame.getFunction().substring(1);
+			// only remove first letter if its underscore.
+			if (fFrame.getFunction().startsWith("_"))
+				fName = fFrame.getFunction().substring(1);
+			else
+				fName = fFrame.getFunction();
 			// if the names are converted to hex values
 			if (fName.startsWith("_omcQuot_")) {
 				fName = GDBHelper.omcHexToString(fName);
