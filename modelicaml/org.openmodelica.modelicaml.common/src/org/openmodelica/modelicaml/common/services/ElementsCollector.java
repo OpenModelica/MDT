@@ -40,9 +40,9 @@ import java.util.Iterator;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Namespace;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageableElement;
 
 public class ElementsCollector {
@@ -73,19 +73,29 @@ public class ElementsCollector {
 		if (umlRootElement instanceof Namespace) {
 			
 			Namespace element = (Namespace)umlRootElement;
-			EList<PackageableElement> importedElements = getImportedMembers(element);
-			if (importedElements != null && importedElements.size() > 0) {
-				for (PackageableElement packageableElement : importedElements) {
-					
-					// check if the imported member is an element
-					if (packageableElement instanceof Element) {
-						collectElements(packageableElement, true);
-					}
-					
-					// go to the contents of the imported member
-					collectFromImportedMember(packageableElement);
-				}
+			
+			// collect imported packages
+			for (Package importedPackage : element.getImportedPackages()) {
+				collectElement(importedPackage, true);
+				
+				// go to the contents of the imported package
+				collectFromImportedMember(importedPackage);
 			}
+			
+//			EList<PackageableElement> importedElements = getImportedMembers(element);
+//			if (importedElements != null && importedElements.size() > 0) {
+//				for (PackageableElement packageableElement : importedElements) {
+//					
+//					// check if the imported member is an element
+//					if (packageableElement instanceof Element) {
+//						collectElements(packageableElement, true);
+//					}
+//					
+//					// go to the contents of the imported member
+//					collectFromImportedMember(packageableElement);
+//				}
+//			}
+			
 		}
 		else {
 //				System.err.println("Cannot access the root ModelicaML model for searching for value binding containers.");
@@ -101,13 +111,23 @@ public class ElementsCollector {
 			// collect all imported elements 
 			if (object instanceof Namespace) {
 				
-				EList<PackageableElement> importedElements = getImportedMembers((Namespace)object);
+				Namespace element = (Namespace)object;
+				
+				// collect imported packages
+				for (Package importedPackage : element.getImportedPackages()) {
+					collectElement(importedPackage, true);
+					
+					// go to the contents of the imported package
+					collectFromImportedMember(importedPackage);
+				}
+				
+				EList<PackageableElement> importedElements = getImportedMembers(element);
 				if (importedElements != null && importedElements.size() > 0) {
 					for (PackageableElement packageableElement2 : importedElements) {
 						
 						// check if the imported member is an element
 						if (packageableElement2 instanceof Element) {
-							collectElements(packageableElement2, true);
+							collectElement(packageableElement2, true);
 						}
 						
 						// go to the contents of the imported member
@@ -118,85 +138,24 @@ public class ElementsCollector {
 			
 			// collect elements.
 			if (object instanceof Element) {
-				collectElements((Element)object, false);
+				collectElement((Element)object, false);
 			}
 		}
 	}
-	
-	
-	
-	
-//	public void collectElementsFromModel(EObject umlRootElement, String stereotypeQName){
-//		
-//		//set the stereotype
-//		this.stereotypeQName = stereotypeQName;
-//		
-//		// clear lists in order to enable the call of the this method multiple times using the same object.
-//		importedMembers.clear();
-//		importedElements.clear();
-//		elements.clear();
-//		
-//		if (umlRootElement != null) {
-//			// collect elements that are imported by the selected root element
-//			if (umlRootElement instanceof Namespace) {
-//				
-//				Namespace element = (Namespace)umlRootElement;
-//				EList<PackageableElement> importedElements = getImportedMembers(element);
-//				if (importedElements != null && importedElements.size() > 0) {
-//					for (PackageableElement packageableElement : importedElements) {
-//						
-//						// check if the imported member is an element
-//						if (packageableElement instanceof Element) {
-//							collectElements(packageableElement, true);
-//						}
-//						
-//						// go to the contents of the imported member
-//						collectFromImportedMember(packageableElement);
-//					}
-//				}
-//			}
-//			
-//			// get all direct contents of the selected root element 
-//			Iterator<EObject> i = umlRootElement.eAllContents();
-//
-//			while (i.hasNext()) {
-//				EObject object = i.next() ;
-//				
-//				// collect all imported elements 
-//				if (object instanceof Namespace) {
-//					
-//					EList<PackageableElement> importedElements = getImportedMembers((Namespace)object);
-//					if (importedElements != null && importedElements.size() > 0) {
-//						for (PackageableElement packageableElement2 : importedElements) {
-//							
-//							// check if the imported member is an element
-//							if (packageableElement2 instanceof Element) {
-//								collectElements(packageableElement2, true);
-//							}
-//							
-//							// go to the contents of the imported member
-//							collectFromImportedMember(packageableElement2);
-//						}
-//					}
-//				}
-//				
-//				// collect elements.
-//				if (object instanceof Element) {
-//					collectElements((Element)object, false);
-//				}
-//			}
-//		}
-//		else {
-////			System.err.println("Cannot access the root ModelicaML model for searching for value binding containers.");
-//		}
-//	}
 	
 	
 	private void collectFromImportedMember(EObject importedMember) {
 		
 		// get imported members from itself
  		if (importedMember instanceof Namespace) {
+ 			
 			Namespace element = (Namespace) importedMember;
+			
+			// collect imported packages
+			for (Package importedPackage : element.getImportedPackages()) {
+				collectElement(importedPackage, true);
+			}
+			
 			EList<PackageableElement> importedElements = getImportedMembers(element);
 			
 			if (importedElements != null && importedElements.size() > 0) {
@@ -204,9 +163,10 @@ public class ElementsCollector {
 				// add to imported members in order enable recognizing cyclic runs.  
 				importedMembers.addAll(importedElements);
 				for (PackageableElement packageableElement : importedElements) {
+					
 					// collect elements
 					if (packageableElement instanceof Element) {
-						collectElements((Element)packageableElement, true);
+						collectElement((Element)packageableElement, true);
 					}
 					// not yet considered -> recursively call
 					if (!importedMembers.contains(packageableElement)) {
@@ -218,15 +178,16 @@ public class ElementsCollector {
 			}
 		}
 
-		// iterate over all contained elements, collect requirements, and recursively collect requirements from all imported members
+		// iterate over all contained elements
 		Iterator<EObject> i = importedMember.eAllContents();
 		while (i.hasNext()) {
 			EObject object = i.next() ;
 			
 			// collect elements
 			if (object instanceof Element) {
-				collectElements((Element)object, true);
+				collectElement((Element)object, true);
 			}
+			
 			// not yet considered -> recursively call
 			if (!importedMembers.contains(object)) {
 				if (object instanceof Namespace) {
@@ -240,11 +201,11 @@ public class ElementsCollector {
 	/*
 	 *  This method can be overridden for specific collections
 	 */
-	protected void collectElements(Element element, boolean isImported){
+	protected void collectElement(Element element, boolean isImported){
 		// collect elements
 		// avoid duplicates that can occur due to the multiple imports of the same elements
 		
-		if (element instanceof Class 
+		if (element instanceof Element 
 				&& ((Element)element).getAppliedStereotype(this.stereotypeQName) != null
 				&& !elements.contains(element)) {
 			
@@ -257,6 +218,7 @@ public class ElementsCollector {
 		}
 	}
 	
+
 	private EList<PackageableElement> getImportedMembers(Namespace element){
 		if (element != null) {
 			return element.getImportedMembers();
