@@ -75,7 +75,7 @@
             <command
                   commandId="org.openmodelica.modelicaml.modelica.commands.synchronizemodelicamodelproxies"
                   icon="icons/code.png"
-                  label="Synchronize Modelica Model Proxies"
+                  label="Synchronize Imported Modelica Models"
                   style="push"
                   tooltip="Synchronize Modelica Model Proxies">
                <visibleWhen>
@@ -103,7 +103,7 @@
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
          <menu
                icon="icons/code2.png"
-               label="ModeicaML: Code Synchronization">
+               label="ModelicaML: Code Synchronization">
             <command
                   commandId="org.openmodelica.modelicaml.modelica.commands.disconnectfromcodesync"
                   icon="icons/launch_disconnect.gif"
