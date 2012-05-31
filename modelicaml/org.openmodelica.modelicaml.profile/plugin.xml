@@ -215,9 +215,9 @@
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCode"
                   icon="resources/icons/icons16/generate_code.gif"
-                  label="Generate Modelica Code (from entire model)"
+                  label="Generate Modelica Code"
                   style="push"
-                  tooltip="Generate Modelica Code (from entire ModelicaML model)">
+                  tooltip="Generate Modelica Code">
                <visibleWhen>
                   <with
                         variable="activeEditorId">
@@ -330,6 +330,7 @@
                   name="org.openmodelica.modelicaml.helper.separator2"
                   visible="true">
             </separator>
+            <!--
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
                   icon="resources/icons/icons16/tscriptrun.gif"
@@ -340,6 +341,7 @@
                      checkEnabled="true">
                </visibleWhen>
             </command>
+            -->
          </menu>
       </menuContribution>
    </extension>
