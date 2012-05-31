@@ -19,7 +19,7 @@ public class ElementFinder extends ElementsCollector {
 	}
 	
 	@Override
-	protected void collectElements(Element element, boolean isImported) {
+	protected void collectElement(Element element, boolean isImported) {
 		
 		// collect elements
 		if (element instanceof NamedElement 
