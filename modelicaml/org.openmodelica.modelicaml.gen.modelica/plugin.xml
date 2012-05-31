@@ -36,7 +36,7 @@
             class="org.openmodelica.modelicaml.gen.modelica.validation.view.ModelicaMLValidationView"
             icon="icons/validate.gif"
             id="org.openmodelica.modelicaml.gen.modelica.validation"
-            name="ModelicaML Validation"
+            name="(DEPRECATED) ModelicaML Validation"
             restorable="true">
          <description>
             This view displays the validation errors and messages detected by the ModelicaML validator.
