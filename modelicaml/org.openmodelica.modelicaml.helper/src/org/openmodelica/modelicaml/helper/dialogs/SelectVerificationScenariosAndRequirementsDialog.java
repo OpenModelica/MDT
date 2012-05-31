@@ -75,7 +75,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	
 	private static final int DECORATION_WARNING = 0 ;
 	private static final int DECORATION_ERROR = 1 ;
-	private static final String testScenarioNamePrefix = "ts: ";
+	private static final String testScenarioNamePrefix = "vs: ";
 	private static final String requirementNamePrefix = "req: ";
 	private static final String discardedPrefix = "(DISCARDED) ";
 	
@@ -112,8 +112,8 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/generateSimMopdels.png"));
-		newShell.setText("Test Simulation Models Generation");
+		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/new_testsuite.gif"));
+		newShell.setText("Simulation Models Generation");
 	}
 	
 	/**
@@ -124,9 +124,9 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		setTitleImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/generateSimMopdels.png"));
-		setMessage("Select test scenarios and requirements for which simulation models should be generated.");
+		setMessage("Select scenarios and requirements for which simulation models should be generated.");
 //		setTitle("Test Scenarios and Requirements Selection");
-		setTitle("System Under Test: " + ((NamedElement)systemModel).getName());
+		setTitle("System Model: " + ((NamedElement)systemModel).getName());
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
@@ -139,7 +139,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		TabItem tbtmPreSelectedTestScenarios = new TabItem(tabFolder, SWT.NONE);
 //		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
 		String metricPreSelected = "("+selectedTestScenarios.size()+" of " + tsc.getAllTS().size() + ")";
-		tbtmPreSelectedTestScenarios.setText("Preselected Test Scenarios " + metricPreSelected);
+		tbtmPreSelectedTestScenarios.setText("Preselected Scenarios " + metricPreSelected);
 		
 		final Tree treePreSelectedTestScenarios = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treePreSelectedTestScenarios, false);
@@ -162,7 +162,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		TabItem tbtmDiscardedTestScenarios = new TabItem(tabFolder, SWT.NONE);
 //		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
 		String metricDiscarded  = "("+discardedTestScenarios.size()+" of " + tsc.getAllTS().size() + ")";
-		tbtmDiscardedTestScenarios.setText("Discarded Test Scenarios " + metricDiscarded);
+		tbtmDiscardedTestScenarios.setText("Discarded Scenarios " + metricDiscarded);
 		
 		final Tree treeDiscardedTestScenarios = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treeDiscardedTestScenarios, true);
