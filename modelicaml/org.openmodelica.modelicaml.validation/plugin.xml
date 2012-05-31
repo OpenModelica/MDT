@@ -48,7 +48,7 @@
             <command
                   commandId="org.openmodelica.modelicaml.validation.entiremodel"
                   icon="icons/validate.gif"
-                  label="ModelicaML Validation"
+                  label="Validate ModelicaML Model"
                   style="push"
                   tooltip="ModelicaML Validation">
                <visibleWhen>
