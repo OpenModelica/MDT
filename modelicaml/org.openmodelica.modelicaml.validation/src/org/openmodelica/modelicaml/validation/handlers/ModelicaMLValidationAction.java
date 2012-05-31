@@ -22,8 +22,14 @@ import org.eclipse.emf.validation.model.EvaluationMode;
 import org.eclipse.emf.validation.model.IConstraintStatus;
 import org.eclipse.emf.validation.service.IBatchValidator;
 import org.eclipse.emf.validation.service.ModelValidationService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.papyrus.resource.NotFoundException;
+import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.validation.Activator;
@@ -46,9 +52,36 @@ public class ModelicaMLValidationAction implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
+		// first check the user selection 
 		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
-		final Object selectedElement = ((IStructuredSelection) selection).getFirstElement();
-	
+		Object selectedElement = null;
+		if (selection != null) {
+			selectedElement = ((IStructuredSelection) selection).getFirstElement();
+		}
+		
+		// if user selection is empty then get the model from Papyrus
+		EObject topLevelElement = null;
+		if (! (ModelicaMLServices.adaptSelectedElement(selectedElement) instanceof Element) ) {
+			UmlModel umlModel = UmlUtils.getUmlModel();
+			try {
+				topLevelElement = umlModel.lookupRoot();
+			} catch (NotFoundException e) {
+//				e.printStackTrace();
+				MessageDialog.openError(new Shell(), "ModelicaML Validation Error", "Could not access the top-level element in Papyrus.");
+			}
+		}
+		
+		// select the object
+		Object finalElementSelection = null;
+		if (selectedElement != null) {
+			finalElementSelection = selectedElement;
+		}
+		else {
+			finalElementSelection = topLevelElement;
+		}
+		
+		// object to be validated
+		final Object objToBeValidated = finalElementSelection;
 		
 		Job job = new Job("ModelicaML Model Validation") {
 			protected IStatus run(IProgressMonitor monitor) {
@@ -60,7 +93,7 @@ public class ModelicaMLValidationAction implements IHandler {
 				// track the validated resources for accurate problem-marker updates
 				validator.setOption(IBatchValidator.OPTION_TRACK_RESOURCES, true);
 				
-				EObject adoptedElement = ModelicaMLServices.adaptSelectedElement(selectedElement);
+				EObject adoptedElement = ModelicaMLServices.adaptSelectedElement(objToBeValidated);
 				List<EObject> list = new ArrayList<EObject>();
 				list.add(adoptedElement);
 				
@@ -100,7 +133,12 @@ public class ModelicaMLValidationAction implements IHandler {
 		            }
 		         });
 		
-		job.schedule();
+		if (objToBeValidated != null) {
+			job.schedule();
+		}
+		else {
+			MessageDialog.openError(new Shell(), "ModelicaML Validation Error", "No elements could be selected for validation.");
+		}
 		
 	return null;
 	}

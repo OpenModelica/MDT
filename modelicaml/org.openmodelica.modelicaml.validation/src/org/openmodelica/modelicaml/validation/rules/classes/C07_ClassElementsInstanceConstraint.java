@@ -23,6 +23,7 @@ import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.StateMachine;
 import org.openmodelica.modelicaml.validation.util.Utility;
 
@@ -45,6 +46,7 @@ import org.openmodelica.modelicaml.validation.util.Utility;
  *				- UML Constraint
  *				- UML Generalization 
  *				- UML Dependency
+ * 				- UML Region
  * 
  * 	Severity : WARNING
  * 
@@ -107,6 +109,10 @@ AbstractModelConstraint {
 					// NOP
 				}
 				else if((element instanceof Enumeration) || (element instanceof Class))
+				{
+					// NOP
+				}
+				else if((element instanceof Region))
 				{
 					// NOP
 				}

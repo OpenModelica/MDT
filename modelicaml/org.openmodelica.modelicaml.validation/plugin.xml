@@ -2,20 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            id="org.openmodelica.modelicaml.validation.subtree"
-            name="Validate ModelicaML subtree">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
-            commandId="org.openmodelica.modelicaml.validation.subtree">
-      </handler>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
@@ -23,7 +9,7 @@
          <command
                commandId="org.openmodelica.modelicaml.validation.subtree"
                icon="icons/validate.gif"
-               label="NEW Validate ModelicaML"
+               label="ModelicaML: Validate"
                style="push"
                tooltip="Validate ModelicaML model (entire model)">
             <visibleWhen
@@ -50,6 +36,82 @@
             </visibleWhen>
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="org.openmodelica.modelicaml.toolbar.validation"
+               label="ModelicaML Validation">
+            <command
+                  commandId="org.openmodelica.modelicaml.validation.entiremodel"
+                  icon="icons/validate.gif"
+                  label="ModelicaML Validation"
+                  style="push"
+                  tooltip="ModelicaML Validation">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.openmodelica.modelicaml.validation.views.category1"
+            name="ModelicaML Validation">
+      </category>
+      <view
+            allowMultiple="false"
+            category="org.openmodelica.modelicaml.validation.views.category1"
+            class="org.openmodelica.modelicaml.validation.views.ModelicaMLValidationView"
+            icon="icons/validate.gif"
+            id="org.openmodelica.modelicaml.validation.view"
+            name="ModelicaML Validation"
+            restorable="true">
+         <description>
+            This view displays the validation errors and messages detected by the ModelicaML validator.
+         </description>
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
+            commandId="org.openmodelica.modelicaml.validation.subtree">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
+            commandId="org.openmodelica.modelicaml.validation.entiremodel">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.openmodelica.modelicaml.validation.subtree"
+            name="Validate ModelicaML subtree">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.validation.entiremodel"
+            name="Validate ModelicaML Entire Model">
+      </command>
    </extension>
    <extension
          point="org.eclipse.emf.validation.constraintProviders">
@@ -668,32 +730,14 @@
       </binding>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <category
-            id="org.openmodelica.modelicaml.validation.views.category1"
-            name="ModelicaML">
-      </category>
-      <view
-            allowMultiple="false"
-            category="org.openmodelica.modelicaml.validation.views.category1"
-            class="org.openmodelica.modelicaml.validation.views.ModelicaMLValidationView"
-            icon="icons/validate.gif"
-            id="org.openmodelica.modelicaml.validation.view"
-            name="ModelicaML (EMF) Validation"
-            restorable="true">
-         <description>
-            This view displays the validation errors and messages detected by the ModelicaML validator.
-         </description>
-      </view>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="toolbar:org.openmodelica.modelicaml.validation.view">
          <command
                commandId="org.eclipse.ui.edit.selectAll"
-               label="Select All Markers"
+               icon="icons/selectall.gif"
+               label="Select all"
                style="push">
          </command>
       </menuContribution>
