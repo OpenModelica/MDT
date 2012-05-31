@@ -127,9 +127,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 		clearAll();
 		
-//		// create a new omc proxy object
-//		omcc = new OpenModelicaCompilerCommunication();
-		
 		loadModels();
 		
 		// look for model proxies in the current ModelicaML model.
@@ -138,7 +135,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 		// models/libraries to be excluded
 		if (excludeModels != null) {
 			modelsToBeExcluded.addAll(excludeModels);
-			
 		}
 		
 		// create class nodes
@@ -249,7 +245,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 							
 							item.setQName(qName);
 							item.setModelicaMLProxy(proxyQNameToElement.get(qName));
-							
+						
 							// update class node
 							updateClassNode(item);
 							

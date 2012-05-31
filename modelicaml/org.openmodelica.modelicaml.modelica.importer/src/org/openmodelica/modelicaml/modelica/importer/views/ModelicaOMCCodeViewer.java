@@ -1905,6 +1905,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						HashSet<String> modelsToBeExcluded = new HashSet<String>();
 						modelsToBeExcluded.add("Modelica.Fluid");
 						modelsToBeExcluded.add("Modelica.UsersGuide");
+						modelsToBeExcluded.add("ModelicaServices");
+						
 						treeBuilder.setModelsToBeExcluded(modelsToBeExcluded);
 						
 //						IWorkspace workspace = ResourcesPlugin.getWorkspace();
