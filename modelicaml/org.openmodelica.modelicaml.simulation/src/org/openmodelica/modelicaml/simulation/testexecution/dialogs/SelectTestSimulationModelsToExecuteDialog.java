@@ -30,7 +30,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 
@@ -50,8 +49,8 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	 */
 	private List<TreeItem> treeItems = new ArrayList<TreeItem>();
 
-	private static final int DECORATION_WARNING = 0 ;
-	private static final int DECORATION_ERROR = 1 ;
+//	private static final int DECORATION_WARNING = 0 ;
+//	private static final int DECORATION_ERROR = 1 ;
 	
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
@@ -73,7 +72,7 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/execute.png"));
-		newShell.setText("Test Simulation Models Selection for Execution");
+		newShell.setText("Simulation Models Selection");
 	}
 	
 	/**
@@ -83,10 +82,10 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		setTitleImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/generateSimMopdels.png"));
+		setTitleImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/tscriptrun.gif"));
 		setMessage("Note: you can select all models that are in a package by selecting the package.");
 //		setTitle("Test Scenarios and Requirements Selection");
-		setTitle("Select test simulation models that should be executed.");
+		setTitle("Select simulation models that should be executed.");
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
@@ -99,7 +98,7 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 		TabItem tbtmPreSelectedTestSimulationModels = new TabItem(tabFolder, SWT.NONE);
 //		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
 		String metricPreSelected = "("+selectedTestSimulationModels.size() + ")";
-		tbtmPreSelectedTestSimulationModels.setText("Preselected Test Scenarios " + metricPreSelected);
+		tbtmPreSelectedTestSimulationModels.setText("Preselected Scenarios " + metricPreSelected);
 		
 		final Tree treePreSelectedTestSimulationModels = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treePreSelectedTestSimulationModels);
@@ -297,149 +296,6 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 		
 	}
 	
-//	private void createRequirementTreeItem(TreeItem parentItem, Element req, Element testScenario, boolean isDiscarded){
-//		String prefix = requirementNamePrefix;
-//		TreeItem reqItem = new TreeItem(parentItem, 0);
-//		treeItems.add(reqItem);
-//		TreeItemData reqData = new TreeItemData();
-//		reqData.setIsRequirement(true);
-//		reqData.setRequirementElement(req);
-//		reqData.setTestSimulationModelElement(testScenario);
-//		
-//		// if this is a requirement for which not all required clients are satisfied:
-//		if (this.discardedRequirements.contains(req)) {
-//			// DO NOT preselect 
-//			reqItem.setChecked(false);
-//			reqData.setIsDiscarded(true);
-//			reqItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif")));
-//			// propagate error to all parents
-//			propagateDecoration(reqItem, DECORATION_ERROR);
-//		}
-//		else {
-//			reqData.setIsDiscarded(false);
-//			reqItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif"));
-//			
-//			// if the discarded tree is being built then do not preselect requirements and add them to the initial map.
-//			if (!isDiscarded) {
-//				// initially add to map
-//				addToTestScenarioToRequirementsMap(testScenario, req);
-//				// preselect
-//				reqItem.setChecked(true);
-//			}
-//		}
-//		
-//		prefix = prefix + ModelicaMLServices.getRequirementID(req) + " - ";
-//
-//		reqItem.setText(prefix + ((NamedElement)req).getName()  + "  ("+((NamedElement)req.getOwner()).getQualifiedName()+")");
-//		reqItem.setData(reqData);
-//	}
-
-	// Tree Item Description Handling ************************************************************************ 
-	
-//	private void openDescription(TreeItem item){
-//		Object data = item.getData();
-//    	if (data instanceof TreeItemData) {
-//			Element testSceanrio = null;
-//			if ( ((TreeItemData)data).isTestSimulationModel) {
-//				// get the test scenario and create a description of the combination
-//				testSceanrio = ((TreeItemData)data).getTestSimulationModelElement();
-//			}
-//			
-//			if (testSceanrio != null) {
-//				String description = createDescription(testSceanrio);
-//				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Test Simulation Model: Details", 
-//						"Details of the selected combination of system model and test scenario:", 
-//						description);
-//				dialog.open();
-//			}
-//		}
-//	}
-//	
-//	private String createDescription(Element testScenario){
-//		String description = "";
-//		TestSimulationModelCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
-//		if (tsmc != null) {
-//			Element systemModel = tsmc.getSystemModel();
-//			description = description +
-//					lineDelimiterString + 
-//					"\nSystem Model: '"+((NamedElement)systemModel).getName()+"' ("+((NamedElement)systemModel).getQualifiedName()+")" +
-//					getAdditionalModelsString(tsmc.getRequiredModels_systemModel(), tsmc, systemModel) + 
-//					
-//					lineDelimiterString + 
-//					"\nTest Scenario: '"+((NamedElement)testScenario).getName()+"'("+((NamedElement)testScenario).getQualifiedName()+")" +
-//					getAdditionalModelsString(tsmc.getRequiredModels_testScenario(), tsmc, testScenario) 
-//					;
-//			
-//				description = description + getRequirementsString("", tsmc.getRequirements(), tsmc);
-//		}
-//		return description.trim();
-//	}
-//	
-//	private static final String lineDelimiterString = "\n";
-////		"\n------------------------------------------------------------------------------ \n";
-//
-//	
-//	private String getAdditionalModelsString(HashSet<Element> set, TestSimulationModelCombination tsmc, Element model){
-//		String string = "";
-//		if (set != null && set.size() > 0) {
-//			string = "\n    - models required in addition: \n";
-//			string = string + getAdditionalModelsStringParts(set, "         ", tsmc)
-//			 + getUnsatisfiedClients("    ", model, tsmc);
-//		}
-//		
-//		return string;
-//	}
-//	
-//	private String getRequirementsString(String prefix, HashSet<Class> set, TestSimulationModelCombination tsmc){
-//		String string  = "";
-//		HashSet<Element> tempSet = new HashSet<Element>();
-//		for (Element element : set) {
-//			tempSet.add(element);
-//		}
-//		
-//		List<Element> sortedList = ModelicaMLServices.getSortedByName(tempSet);
-//		for (Element requirement : sortedList) {
-//			if (requirement instanceof NamedElement) {
-//				string = string + lineDelimiterString;
-//				string = string + prefix +"Requirement: '" + ((NamedElement)requirement).getName() 
-//						+ "' ("+((NamedElement)requirement).getQualifiedName()+")";
-//				string = string + getAdditionalModelsString(tsmc.getRequiredModels_requirements().get(requirement), tsmc, requirement) + "\n";
-//				string = string + getUnsatisfiedClients("    ", requirement, tsmc);
-//			}
-//		}
-//		return string;
-//	}
-//	
-//	private String getAdditionalModelsStringParts(HashSet<Element> set, String prefix, TestSimulationModelCombination tsmc){
-//		String string  = "";
-//		List<Element> sortedList = ModelicaMLServices.getSortedByName(set);
-//		for (Element element : sortedList) {
-//			if (element instanceof NamedElement) {
-//				string = string + prefix + "- " + getAlwaysIncludeString(element, tsmc) + ((NamedElement)element).getName() 
-//				+ " ("+((NamedElement)element).getQualifiedName()+")\n";
-//			}
-//		}
-//		return string;
-//	}
-//	
-//	private String getAlwaysIncludeString(Element model, TestSimulationModelCombination tsmc){
-//		String string = "";
-//		if (tsmc.getAlwaysInclude().contains(model)) {
-//			return "(always) ";
-//		}
-//		
-//		return string;
-//	}
-//	
-//	private String getUnsatisfiedClients(String prefix, Element element, TestSimulationModelCombination tsmc){
-//		String string = "";
-//		String unsatisfiedClientsString = tsmc.getClientsDotPathAsString(tsmc.getUnsatisfiedRequiredClients(element));
-//		if (!unsatisfiedClientsString.trim().equals("")) {
-//			string = prefix + "- unsatisfied required clients: " + "\n";
-//			string = string + prefix + "         " + unsatisfiedClientsString;
-//		}
-//		return string;
-//	}
 	
 	// Utls ************************************************************************ 
 
@@ -451,21 +307,21 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	
 	// Image handling ************************************************************************
 
-	private void propagateDecoration(TreeItem item, int decoration){
-		Image image = item.getImage();
-		if (image != null) {
-			if (decoration == DECORATION_ERROR) {
-				item.setImage(decorateError(image));
-			}
-			else if (decoration == DECORATION_WARNING) {
-				item.setImage(decorateError(image));
-			}
-		}
-		
-		if (item.getParentItem() != null) {
-			propagateDecoration(item.getParentItem(), decoration);
-		}
-	}
+//	private void propagateDecoration(TreeItem item, int decoration){
+//		Image image = item.getImage();
+//		if (image != null) {
+//			if (decoration == DECORATION_ERROR) {
+//				item.setImage(decorateError(image));
+//			}
+//			else if (decoration == DECORATION_WARNING) {
+//				item.setImage(decorateError(image));
+//			}
+//		}
+//		
+//		if (item.getParentItem() != null) {
+//			propagateDecoration(item.getParentItem(), decoration);
+//		}
+//	}
 
 	public Image decorateWarning(Image image) {
 		return new DecorationOverlayIcon(image, warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
@@ -474,11 +330,7 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	public Image decorateError(Image image) {
 		return new DecorationOverlayIcon(image, errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
 	}
-	
-//	public Image decorateDiscarded(Image image) {
-//		return new DecorationOverlayIcon(image, warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
-//	}
-	
+
 	
 	// Listener ************************************************************************
 	
