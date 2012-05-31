@@ -37,7 +37,7 @@ public class VerificationScenariosDataCollector extends ElementsCollector {
 	}
 	
 	@Override
-	protected void collectElements(Element element, boolean isImported) {
+	protected void collectElement(Element element, boolean isImported) {
 		
 		// collect elements
 		// avoid duplicates that can occur due to the multiple imports of the same elements
