@@ -50,7 +50,7 @@
                   icon="icons/validate.gif"
                   label="Validate ModelicaML Model"
                   style="push"
-                  tooltip="ModelicaML Validation">
+                  tooltip="Validate ModelicaML Model">
                <visibleWhen>
                   <with
                         variable="activeEditorId">
