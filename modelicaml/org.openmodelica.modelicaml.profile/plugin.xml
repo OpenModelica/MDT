@@ -119,7 +119,7 @@
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel"
                   icon="resources/icons/icons16/validate.gif"
-                  label="Validate ModelicaML model (entire model)"
+                  label="(DEPRECATED) Validate ModelicaML Model"
                   style="push"
                   tooltip="Validate ModelicaML model (entire model)">
                <visibleWhen
@@ -227,10 +227,11 @@
                   </with>
                </visibleWhen>
             </command>
+            <!--
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel"
                   icon="resources/icons/icons16/validate.gif"
-                  label="Validate (entire model)"
+                  label="(DEPRECATED) Validate ModelicaML Model"
                   style="push"
                   tooltip="Validate ModelicaML Model (entire model)">
                <visibleWhen>
@@ -242,6 +243,7 @@
                   </with>
                </visibleWhen>
             </command>
+            -->
             <visibleWhen
                   checkEnabled="false">
                <with
