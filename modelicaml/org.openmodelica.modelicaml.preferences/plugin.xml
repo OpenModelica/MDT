@@ -14,6 +14,12 @@
             id="org.openmodelica.modelicaml.preferences.ModelicaMLPreferencePage"
             name="ModelicaML OpenModelica Compiler Settings">
       </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLModelicaModelsSynchronization"
+            id="org.openmodelica.modelicaml.preferences.ModelicaMLModelicaModelsSynchronization"
+            name="ModelicaML Modelica Model Synchronization Settings">
+      </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

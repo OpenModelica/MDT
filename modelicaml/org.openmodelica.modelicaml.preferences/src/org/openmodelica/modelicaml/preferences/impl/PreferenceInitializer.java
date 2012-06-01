@@ -67,7 +67,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		//store.setDefault("GenCodeProjectFolder", "code-gen");
 		
 		store.setDefault("linkClassComponentsTreeWithModelExplorer", true);
-
+		
+		store.setDefault("loadMSLBeforeSynchronizing", true);
+		
+		store.setDefault("modelsToExcludeFromLoadingWhenSynchronizing", "Modelica.UsersGuide, ModelicaServices, Modelica.Fluid");
 //		store.setDefault(PreferenceConstants.P_BOOLEAN, true);
 //		store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
 //		store.setDefault(PreferenceConstants.P_STRING,
