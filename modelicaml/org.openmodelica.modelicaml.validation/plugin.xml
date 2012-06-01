@@ -749,6 +749,9 @@
       <super
             type="org.eclipse.emf.ecore.diagnostic">
       </super>
+      <persistent
+            value="true">
+      </persistent>
    </extension>
    <extension
          point="org.eclipse.ui.ide.markerSupport">
@@ -757,6 +760,24 @@
             name="ModelicaML marker generator">
          <markerTypeReference
                id="org.openmodelica.modelicaml.validation.problem">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.validation">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.modelicaloading">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.modelicamlMarker.omc">
          </markerTypeReference>
          <markerFieldReference
                id="org.eclipse.ui.ide.severityAndDescriptionField"
