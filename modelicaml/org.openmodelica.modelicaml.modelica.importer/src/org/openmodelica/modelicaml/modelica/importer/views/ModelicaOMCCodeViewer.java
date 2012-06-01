@@ -135,6 +135,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	private Action actionValidateProxies;
 	private Action actionDecorateTreeItems;
 
+	private Action actionReloadView;
+	
 	// Default values for sync. options
 	private boolean createProxiesAfterLoadingModelicaClasses = false;
 	private boolean applyProxyStereotype = true;
@@ -180,7 +182,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		}
 	};
 
-	private Action actionReloadView;
 
 
 	
@@ -616,7 +617,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								IWorkspaceRoot root = workspace.getRoot();
 								IProject iProject = root.getProject(projectName);
 
-								treeBuilder.deleteOMCMarkers(iProject);
+//								treeBuilder.deleteOMCLoadingMarkers(iProject);
+								org.openmodelica.modelicaml.modelica.importer.model.Utilities.deleteOMCLoadingMarkers(iProject);
 
 								// build tree
 								treeBuilder.buildTree(treeRoot, null);
@@ -807,6 +809,14 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				// Set project- and model-related data in case the active Papyrus model changed
 				setTreeRootProjectName();
 				
+				// delete OMC markers
+				String projectName = umlModel.getResource().getURI().segment(1);
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				IProject iProject = root.getProject(projectName);
+
+//				treeBuilder.deleteOMCLoadingMarkers(iProject);
+				org.openmodelica.modelicaml.modelica.importer.model.Utilities.deleteOMCLoadingMarkers(iProject);
 				// collapse the tree root and refresh
 				viewer.setExpandedState(treeRoot, false);
 				viewer.refresh();
@@ -1636,7 +1646,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					
 					ec.deleteInvalidProxyElements(treeObject.getQName());
 					
-					treeBuilder.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
+//					treeBuilder.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
+					org.openmodelica.modelicaml.modelica.importer.model.Utilities.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
 				}
 				
 				/*
@@ -1903,9 +1914,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						 * The main purpose is to avoid loading libraries that are not yet supported.  
 						 */
 						HashSet<String> modelsToBeExcluded = new HashSet<String>();
-						modelsToBeExcluded.add("Modelica.Fluid");
-						modelsToBeExcluded.add("Modelica.UsersGuide");
-						modelsToBeExcluded.add("ModelicaServices");
+//						modelsToBeExcluded.add("Modelica.Fluid");
+//						modelsToBeExcluded.add("Modelica.UsersGuide");
+//						modelsToBeExcluded.add("ModelicaServices");
 						
 						treeBuilder.setModelsToBeExcluded(modelsToBeExcluded);
 						

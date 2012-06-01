@@ -12,13 +12,19 @@ public class TreeParent extends TreeObject {
 	}
 	
 	public void addChild(TreeObject child) {
+		
 		// avoid creating nodes that are actually error messages from OMC
 		if (!ModelicaMLServices.containsOMCErrorMessage(child.getName())) {
 			children.add(child);
 			child.setParent(this);
 		}
 		else {
-			System.err.println("Teh following tree item was not created beucase it is an OMC error string: " + child.getName());
+			String errorString = Utilities.extractErrorMessage(child.getName());
+			String msg = "OMC loading error for '"+getName()+"': " + errorString;
+			Utilities.createOMCMarker(this, "error", msg);
+			
+			//TODO: for debug only, remove it.
+			System.err.println(msg);
 		}
 	}
 	
@@ -26,10 +32,12 @@ public class TreeParent extends TreeObject {
 		children.remove(child);
 		child.setParent(null);
 	}
+	
 	public TreeObject [] getChildren() {
 		return (TreeObject [])children.toArray(new TreeObject[children.size()]);
 	}
+	
 	public boolean hasChildren() {
-		return children.size()>0;
+		return children.size() > 0;
 	}
 }

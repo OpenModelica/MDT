@@ -51,6 +51,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -99,7 +100,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private boolean fullImport = false; // indicates of annotations, equations and imports should be included in synchronization
 	
 	private String MSLModelName = Constants.ModelicaStandardLibraryModelName; 
-	private boolean loadMSL = true;
+	
+	// by default this is null until it is set by the setter
+	private Boolean loadMSL = null;
 	
 	class ModelicaComponentData {
 		private String typeQName;
@@ -131,7 +134,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 		// look for model proxies in the current ModelicaML model.
 		collectModelicaModelProxies();
-		
+
 		// models/libraries to be excluded
 		if (excludeModels != null) {
 			modelsToBeExcluded.addAll(excludeModels);
@@ -235,7 +238,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 							qName = classQName + "." + className;
 						}
 
-						if ( !modelsToBeExcluded.contains(qName) ) { // take into account that some models should not be loaded
+						if ( !getModelsToBeExcluded().contains(qName) ) { // take into account that some models should not be loaded
 
 							// create tree item
 							ClassItem item = new ClassItem(className);
@@ -282,7 +285,10 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	
 	public ArrayList<TreeObject> createClassElementNodes(TreeParent treeParent, boolean recursive){
-
+		
+		// forward the model to the utilities class.
+		Utilities.ModelicaMLModel = getModelicaMLModel();
+		
 		ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
 		String classQName = treeParent.getQName();
 		
@@ -640,13 +646,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 			item.setEncapsulated(isEncapsulated);
 		}
 		
-		if (classInfo.equals("Error") ) {
+//		if (classInfo.equals("Error") ) {
+		if (ModelicaMLServices.containsOMCErrorMessage(classInfo)) {
 			// TODO: collect errors
 			String errorString = omcc.getErrorString();	
-			String msg = extractErrorMessage(errorString);
+			String msg = Utilities.extractErrorMessage(errorString);
 			
 			// generate markers
-			createOMCMarker(item, "error", msg);
+			Utilities.createOMCMarker(item, "error", msg);
 		}
 	}
 	
@@ -745,13 +752,15 @@ public class TreeBuilder implements IRunnableWithProgress{
 			}
 		}
 
-		if (string.equals("Error")) {
+//		if (string.equals("Error")) {
+		if (ModelicaMLServices.containsOMCErrorMessage(string)) {
+			
 			// TODO: collect errors
 			String errorString = omcc.getErrorString();	
-			String msg = extractErrorMessage(errorString);
+			String msg = Utilities.extractErrorMessage(errorString);
 
 			// generate markers
-			createOMCMarker(classItem, "error", msg);
+			Utilities.createOMCMarker(classItem, "error", msg);
 		}
 		
 		return list;
@@ -765,13 +774,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 			if (!declarationString.equals("Error") && !declarationString.equals("false") && !declarationString.equals("")) {
 				declaration = "= " + declarationString; 
 			}
-			if (declarationString.equals("Error")) {
+//			if (declarationString.equals("Error")) {
+			if (ModelicaMLServices.containsOMCErrorMessage(declarationString)) {
 				// TODO: collect errors
 				String errorString = omcc.getErrorString();	
-				String msg = extractErrorMessage(errorString);
+				String msg = Utilities.extractErrorMessage(errorString);
 
 				// generate markers
-				createOMCMarker(component, "error", msg);
+				Utilities.createOMCMarker(component, "error", msg);
 
 			}
 		}
@@ -947,20 +957,22 @@ public class TreeBuilder implements IRunnableWithProgress{
 				String reply = "";
 				reply = omcc.loadFile(fileToLoad);
 				
-				if (reply.trim().equals("Error")) {
+//				if (reply.trim().equals("Error")) {
+				if (ModelicaMLServices.containsOMCErrorMessage(reply.trim())) {
 					String errorString = omcc.getErrorString();	
-					String msg = extractErrorMessage(errorString);
+					String msg = Utilities.extractErrorMessage(errorString);
 
 					// generate markers
-					createOMCMarker(null, "error", msg);
+					Utilities.createOMCMarker(null, "error", msg);
 				}
-				else if (reply.trim().equals("false")) {
-					String errorString = omcc.getErrorString();	
-					String msg = extractErrorMessage(errorString);
-					
-					// generate markers
-					createOMCMarker(null, "error", msg);
-				}
+				
+//				else if (reply.trim().equals("false")) {
+//					String errorString = omcc.getErrorString();	
+//					String msg = extractErrorMessage(errorString);
+//					
+//					// generate markers
+//					createOMCMarker(null, "error", msg);
+//				}
 				
 			}
 		}
@@ -974,7 +986,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		if (isValidateProxies()) {
 			
 			// Delete all old markers
-			deleteProxyValidationMarkers(iProject);
+			Utilities.deleteProxyValidationMarkers(iProject);
 			
 			// Get proxies
 			HashSet<Element> collectedProxies = new HashSet<Element>();
@@ -1004,14 +1016,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 						
 						// check the proxy exists
 						if (!modelicaModelQNames.contains(qName)) {
-							createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()
+							Utilities.createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()
 									+"' does not exist in the loaded Modelica models.");
 						}
 						
 						// check if a property has type defined
 						if (element instanceof Property) {
 							if ( ((Property)element).getType() == null ) {
-								createMarker(element, 
+								Utilities.createMarker(element, 
 										((NamedElement)element).getQualifiedName(), 
 										"error", "No type is defined for '"+((NamedElement)element).getQualifiedName()+"'.");
 							}
@@ -1030,7 +1042,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 								}
 								else {
 	//									createMarker(element, ((NamedElement)element).getQualifiedName(), 
-									createMarker(generalization, ((NamedElement)element).getQualifiedName(),
+									Utilities.createMarker(generalization, ((NamedElement)element).getQualifiedName(),
 											"error", 
 											"NOT VALID: No target in the extends relation of the class '"+((NamedElement)element).getQualifiedName()+"' has no target.");
 								}
@@ -1046,7 +1058,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			
 		// delete all old markers
 		if (treeItem.getModelicaMLProxy() instanceof NamedElement) {
-			deleteProxyValidationMarkers(iProject, ((NamedElement)treeItem.getModelicaMLProxy()).getQualifiedName());
+			Utilities.deleteProxyValidationMarkers(iProject, ((NamedElement)treeItem.getModelicaMLProxy()).getQualifiedName());
 		}
 		// ´Collect proxies 
 		HashSet<Element> proxies = new HashSet<Element>();
@@ -1244,6 +1256,16 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 
 	public HashSet<String> getModelsToBeExcluded() {
+		
+		String modelsToExclude = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", "modelsToExcludeFromLoadingWhenSynchronizing", "", null);
+		String[] splitted = modelsToExclude.split(",");
+
+		if (splitted.length > 0) {
+			for (int i = 0; i < splitted.length; i++) {
+				String string = splitted[i].trim();
+				modelsToBeExcluded.add(string);
+			}
+		}
 		return modelsToBeExcluded;
 	}
 
@@ -1276,152 +1298,152 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	// Marker *****************************************
 	
-	private String markerType = Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES;
-	
-	public IMarker createMarker(Element elt, String sourceID, String criticality, String msg){
-		if (elt != null) {
-			IResource r = null;
-			URI eUri = elt.eResource().getURI();
-			
-			if (eUri.isPlatformResource()) {
-				String platformString = eUri.toPlatformString(true);
-				r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
-//				r = ResourcesPlugin.getWorkspace().getRoot().findMember(umlModel.getResource().getURI().toPlatformString(true));
-			}
-			try {
-				
-				IMarker marker = r.createMarker(markerType);
-				marker.setAttribute(IMarker.MESSAGE, msg);
-				if ( criticality.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
-				else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
-				marker.setAttribute(IMarker.SOURCE_ID, sourceID);
-				
-				if (elt instanceof NamedElement) {
-					marker.setAttribute(IMarker.LOCATION, ((NamedElement)elt).getQualifiedName());	
-				}
-				else{
-					marker.setAttribute(IMarker.LOCATION, elt.toString());
-				}
-				marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(elt).toString());//elt.eResource().getURI().toString());
-
-				return marker;
-				
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-	
-	private String extractErrorMessage(String fullString){
-		String errorString = "";
-		Pattern patternVisibility = Pattern.compile("Error:.*");
-		Matcher matcherVisibility = patternVisibility.matcher(fullString);
-		while (matcherVisibility.find()) {
-			errorString = matcherVisibility.group(0).replaceFirst("Error:", "").trim();
-		}
-		return errorString;
-	}
-	
-	
-	public IMarker createOMCMarker(TreeObject treeObject, String criticality, String msg){
-		if (isCreateOMCMarker() && !msg.trim().equals("") ) {
-			String markerType = Constants.MARKERTYPE_MODELICA_MODELS_LOADING;
-			
-			if ( ModelicaMLModel != null ) {
-				IResource r = null;
-				URI eUri = ModelicaMLModel.getResource().getURI();
-				try {
-					ModelicaMLRoot = ModelicaMLModel.lookupRoot();
-				} catch (NotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				if (eUri.isPlatformResource()) {
-					String platformString = eUri.toPlatformString(true);
-					r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
-				}
-				try {
-					IMarker marker = r.createMarker(markerType);
-					marker.setAttribute(IMarker.MESSAGE, msg);
-					
-					if ( criticality.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
-					else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
-					
-					if ( treeObject != null) {
-						marker.setAttribute(IMarker.SOURCE_ID, treeObject.getQName());
-						marker.setAttribute(IMarker.LOCATION, treeObject.getQName());	
-					}
-					return marker;
-					
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
-	}
-
-
-	public void deleteProxyValidationMarkers(IProject iProject, String namespace) {
-		IMarker[] markers = null;
-		try {
-			if (iProject != null) {
-				List<String> markerTypes = new ArrayList<String>();
-				markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
-				
-				for (String markerType : markerTypes) {
-					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-					for (IMarker marker : markers) {
-						if ( namespace!= null && !namespace.trim().equals("") && marker.getAttribute(IMarker.LOCATION, "").startsWith(namespace) ) {
-							marker.delete();
-						}
-					}
-				}
-			}
-		} catch (CoreException e) {
-			//e.printStackTrace();
-		}
-	}
-	
-	public void deleteProxyValidationMarkers(IProject iProject) {
-		IMarker[] markers = null;
-		try {
-			if (iProject != null) {
-				List<String> markerTypes = new ArrayList<String>();
-				markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
-				
-				for (String markerType : markerTypes) {
-					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-					for (IMarker marker : markers) {
-						marker.delete();
-					}
-				}
-			}
-		} catch (CoreException e) {
-			//e.printStackTrace();
-		}
-	}
-	
-	public void deleteOMCMarkers(IProject iProject) {
-		IMarker[] markers = null;
-		try {
-			if (iProject != null) {
-				List<String> markerTypes = new ArrayList<String>();
-				markerTypes.add(Constants.MARKERTYPE_MODELICA_MODELS_LOADING);
-				
-				for (String markerType : markerTypes) {
-					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-					for (IMarker marker : markers) {
-						marker.delete();
-					}
-				}
-			}
-		} catch (CoreException e) {
-			//e.printStackTrace();
-		}
-	}
+//	private String markerType = Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES;
+//	
+//	public IMarker createMarker(Element elt, String sourceID, String criticality, String msg){
+//		if (elt != null) {
+//			IResource r = null;
+//			URI eUri = elt.eResource().getURI();
+//			
+//			if (eUri.isPlatformResource()) {
+//				String platformString = eUri.toPlatformString(true);
+//				r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+////				r = ResourcesPlugin.getWorkspace().getRoot().findMember(umlModel.getResource().getURI().toPlatformString(true));
+//			}
+//			try {
+//				
+//				IMarker marker = r.createMarker(markerType);
+//				marker.setAttribute(IMarker.MESSAGE, msg);
+//				if ( criticality.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
+//				else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
+//				marker.setAttribute(IMarker.SOURCE_ID, sourceID);
+//				
+//				if (elt instanceof NamedElement) {
+//					marker.setAttribute(IMarker.LOCATION, ((NamedElement)elt).getQualifiedName());	
+//				}
+//				else{
+//					marker.setAttribute(IMarker.LOCATION, elt.toString());
+//				}
+//				marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(elt).toString());//elt.eResource().getURI().toString());
+//
+//				return marker;
+//				
+//			} catch (CoreException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return null;
+//	}
+//	
+//	private String extractErrorMessage(String fullString){
+//		String errorString = "";
+//		Pattern patternVisibility = Pattern.compile("Error:.*");
+//		Matcher matcherVisibility = patternVisibility.matcher(fullString);
+//		while (matcherVisibility.find()) {
+//			errorString = matcherVisibility.group(0).replaceFirst("Error:", "").trim();
+//		}
+//		return errorString;
+//	}
+//	
+//	
+//	public IMarker createOMCMarker(TreeObject treeObject, String criticality, String msg){
+//		if (isCreateOMCMarker() && !msg.trim().equals("") ) {
+//			String markerType = Constants.MARKERTYPE_MODELICA_MODELS_LOADING;
+//			
+//			if ( ModelicaMLModel != null ) {
+//				IResource r = null;
+//				URI eUri = ModelicaMLModel.getResource().getURI();
+//				try {
+//					ModelicaMLRoot = ModelicaMLModel.lookupRoot();
+//				} catch (NotFoundException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//				
+//				if (eUri.isPlatformResource()) {
+//					String platformString = eUri.toPlatformString(true);
+//					r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+//				}
+//				try {
+//					IMarker marker = r.createMarker(markerType);
+//					marker.setAttribute(IMarker.MESSAGE, msg);
+//					
+//					if ( criticality.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
+//					else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
+//					
+//					if ( treeObject != null) {
+//						marker.setAttribute(IMarker.SOURCE_ID, treeObject.getQName());
+//						marker.setAttribute(IMarker.LOCATION, treeObject.getQName());	
+//					}
+//					return marker;
+//					
+//				} catch (CoreException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		return null;
+//	}
+//
+//
+//	public void deleteProxyValidationMarkers(IProject iProject, String namespace) {
+//		IMarker[] markers = null;
+//		try {
+//			if (iProject != null) {
+//				List<String> markerTypes = new ArrayList<String>();
+//				markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
+//				
+//				for (String markerType : markerTypes) {
+//					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+//					for (IMarker marker : markers) {
+//						if ( namespace!= null && !namespace.trim().equals("") && marker.getAttribute(IMarker.LOCATION, "").startsWith(namespace) ) {
+//							marker.delete();
+//						}
+//					}
+//				}
+//			}
+//		} catch (CoreException e) {
+//			//e.printStackTrace();
+//		}
+//	}
+//	
+//	public void deleteProxyValidationMarkers(IProject iProject) {
+//		IMarker[] markers = null;
+//		try {
+//			if (iProject != null) {
+//				List<String> markerTypes = new ArrayList<String>();
+//				markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
+//				
+//				for (String markerType : markerTypes) {
+//					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+//					for (IMarker marker : markers) {
+//						marker.delete();
+//					}
+//				}
+//			}
+//		} catch (CoreException e) {
+//			//e.printStackTrace();
+//		}
+//	}
+//	
+//	public void deleteOMCLoadingMarkers(IProject iProject) {
+//		IMarker[] markers = null;
+//		try {
+//			if (iProject != null) {
+//				List<String> markerTypes = new ArrayList<String>();
+//				markerTypes.add(Constants.MARKERTYPE_MODELICA_MODELS_LOADING);
+//				
+//				for (String markerType : markerTypes) {
+//					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+//					for (IMarker marker : markers) {
+//						marker.delete();
+//					}
+//				}
+//			}
+//		} catch (CoreException e) {
+//			//e.printStackTrace();
+//		}
+//	}
 
 
 	
@@ -1480,6 +1502,11 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 
 	public boolean isLoadMSL() {
+		if (loadMSL == null) {
+			// get the preferences
+			Boolean loadMSLBeforeSynchronizing = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "loadMSLBeforeSynchronizing", true, null);
+			return loadMSLBeforeSynchronizing;
+		}
 		return loadMSL;
 	}
 

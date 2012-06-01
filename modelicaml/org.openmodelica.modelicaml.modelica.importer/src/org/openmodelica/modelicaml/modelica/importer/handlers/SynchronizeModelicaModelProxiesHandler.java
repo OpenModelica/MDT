@@ -42,6 +42,7 @@ import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
+import org.openmodelica.modelicaml.modelica.importer.model.Utilities;
 
 public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 
@@ -200,7 +201,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 									IWorkspaceRoot root = workspace.getRoot();
 									IProject iProject = root.getProject(projectName);
 
-									treeBuilder.deleteOMCMarkers(iProject);
+//									treeBuilder.deleteOMCLoadingMarkers(iProject);
+									Utilities.deleteOMCLoadingMarkers(iProject);
 
 									// build tree
 									// TODO: libraries to be excluded should be selected by the user
