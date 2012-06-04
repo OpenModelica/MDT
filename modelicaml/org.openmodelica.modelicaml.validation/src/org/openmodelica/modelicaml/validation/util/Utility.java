@@ -35,25 +35,4 @@ public class Utility {
 		return false;
 	}
 	
-	/**
-	 * 
-	 * get Status objects of Live Validation to populate the markers
-	 * 
-	 */
-	public static List<IStatus> getStatusObjectsForLive()
-	{
-		return statusList;
-		
-	}
-	
-	/**
-	 * 
-	 * set Status Object for Live Validation
-	 * 
-	 */
-	public static void setStatusObjectForLive(IStatus status)
-	{
-		statusList.add(status);
-	}
-	
 }
