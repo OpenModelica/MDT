@@ -121,7 +121,7 @@ public class ModelicaMLValidationAction implements IHandler {
 										}
 										else
 										{
-											marker.setAttribute(IMarker.LOCATION, status.getTarget());
+											marker.setAttribute(IMarker.LOCATION, status.getTarget().toString());
 										}
 
 									}
