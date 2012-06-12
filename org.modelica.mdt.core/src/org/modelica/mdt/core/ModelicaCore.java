@@ -96,8 +96,9 @@ public class ModelicaCore {
 		IPathVariableManager pathMan = workspace.getPathVariableManager();
 		String name = "OPENMODELICALIBRARY";
 		String path = System.getenv(name);
+		
 		boolean error = false;
-
+		
 		if (path != null) {
 			java.io.File openModelicaLib = new java.io.File(path);
 
@@ -137,8 +138,10 @@ public class ModelicaCore {
 			// if path == null
 			error = true;
 		}
-
+		
+		/* do not display the error, just log it.
 		if (error) {
+			
 			Display display = CorePlugin.getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
@@ -151,6 +154,7 @@ public class ModelicaCore {
 				}
 			});
 		}
+		*/
 
 		modelicaRoot = new ModelicaRoot();
 		modelicaRoot.start();

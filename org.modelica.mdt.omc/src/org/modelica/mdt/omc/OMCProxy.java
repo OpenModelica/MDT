@@ -60,8 +60,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
@@ -252,7 +255,7 @@ public class OMCProxy implements IModelicaCompiler
 	 * plugin user preferences, where the first matching
 	 * binary found and the weather outside. 
 	 * 
-	 * @return full path to the omc binary  
+	 * @return full path to the omc binary and the working folder  
 	 * @throws ConnectException if the path could not be determined
 	 */
 	private  File[] getOmcBinaryPaths() throws ConnectException
@@ -266,6 +269,7 @@ public class OMCProxy implements IModelicaCompiler
 
 		File omcBinary = null;
 		File omcWorkingDirectory = null;
+		File openModelicaHomeDirectory = null;
 		if (PreferenceManager.getUseStandardOmcPath())
 		{
 			/*
@@ -277,26 +281,36 @@ public class OMCProxy implements IModelicaCompiler
 
 			/* 
 			 * Standard path to omc (or omc.exe) binary is encoded in OPENMODELICAHOME
-			 * variable. 
+			 * variable. If we don't find it just search the path!
 			 */
 			String openModelicaHome = System.getenv("OPENMODELICAHOME");
 			if(openModelicaHome == null)
 			{
-				final String m = "Environment variable OPENMODELICAHOME not set";
-				logOMCStatus("Environment variable OPENMODELICAHOME not set,"+
-						" don't know how to start OMC from standard path.", true);
-				throw new ConnectException(m);
+				logOMCStatus("OPENMODELICAHOME environment variable is NULL, trying the PATH variable", true);
+				File omc = findExecutableOnPath(binaryName);
+				if (omc != null)
+				{
+					logOMCStatus("Found omc executable in the path here: " + omc.getAbsolutePath(), true);
+					openModelicaHome = omc.getParentFile().getParentFile().getAbsolutePath();
+				}
+				else
+				{					
+					final String m = "Environment variable OPENMODELICAHOME is not set and we could not find: " + binaryName + " in the PATH";
+					logOMCStatus(m, true);
+					throw new ConnectException(m);
+				}
 			}
 
-			omcWorkingDirectory = new File(openModelicaHome);
+			openModelicaHomeDirectory = new File(openModelicaHome);
 
 			/* the subdirectories where omc binary may be located, hurray for standards! */
-			String[] subdirs = { "", "bin", "Compiler" };
+			// adrpo 2012-06-12 do not support the old ways! "/omc" and "Compiler/omc"
+			String[] subdirs = { "bin" };
 
 			for (String subdir : subdirs)
 			{
 
-				String path = omcWorkingDirectory.getAbsolutePath() + File.separator;
+				String path = openModelicaHomeDirectory.getAbsolutePath() + File.separator;
 				path += subdir.equals("") ? binaryName :  subdir + File.separator + binaryName;
 
 				File file = new File(path); 
@@ -315,7 +329,7 @@ public class OMCProxy implements IModelicaCompiler
 
 			if (omcBinary == null)
 			{
-				logOMCStatus("Could not find omc-binary on the OPENMODELICAHOME path", true);
+				logOMCStatus("Could not find omc-binary on the OPENMODELICAHOME path or in the PATH variable", true);
 				throw new ConnectException("Unable to start the OpenModelica Compiler, binary not found");
 			}
 		}
@@ -333,51 +347,13 @@ public class OMCProxy implements IModelicaCompiler
 			}
 
 			/*
-			 * take an educated guess at where the user wants the binary to be
-			 * started. The guessing heuristics are as follows:
-			 * 
-			 * If binary is inside the 'bin' or 'compiler' directory, use the
-			 * above directory as working directory.
-			 * 
-			 * Otherwise use the directory where binary is located as working 
-			 * directory.
-			 * 
-			 * e.g. binary path /foo/bar/bin/omc      => working directory /foo/bar/work
-			 *      binary path /foo/bar/compiler/omc => working directory /foo/bar/work
-			 *      binary path /foo/bar/omc          => working directory /foo/bar
+			 * always start in /tmp
 			 */
-			File parent = omcBinary.getParentFile();
-
-			if (parent.getName().equalsIgnoreCase("bin") || 
-					parent.getName().equalsIgnoreCase("compiler"))
-			{
-				omcWorkingDirectory = parent.getParentFile();
-				File work = new File(omcWorkingDirectory.getAbsolutePath()+File.pathSeparator+"tmp");
-				if (work.exists()) 
-				{
-					omcWorkingDirectory = work;
-				}
-				else
-				{
-					work = new File(omcWorkingDirectory.getAbsolutePath()+File.pathSeparator+"work");
-					if (work.exists()) 
-					{
-						omcWorkingDirectory = work;
-					}
-					else
-					{
-						// start in tmp.
-					}
-				}				
-			}
-			else
-			{
-				// start in tmp
-				omcWorkingDirectory = parent;
-			}
-
 		}
-
+		// set the working directory to temp/OpenModelica
+		omcWorkingDirectory = new File(System.getProperty("java.io.tmpdir"));
+		logOMCStatus("Using working directory '" + omcWorkingDirectory.getAbsolutePath() + "'", true);
+		
 		return new File[] {omcBinary, omcWorkingDirectory};
 	}
 
@@ -1331,8 +1307,33 @@ public class OMCProxy implements IModelicaCompiler
 			logOMCStatus("Setting working directory to: " + workingDirectory.getAbsolutePath(), true);				
 			try
 			{
+				String[] env = null;
 				// prepare buffers for process output and error streams
-				proc=Runtime.getRuntime().exec(cmd, null, workingDirectory);
+				if (System.getenv("OPENMODELICAHOME") == null)
+				{
+					Map<String, String> envMap = System.getenv();
+					Set<Entry<String, String>> entrySet = envMap.entrySet();
+					Collection<String> lst = new ArrayList<String>();
+					String x = "OPENMODELICAHOME=" + omcBinary.getParentFile().getParentFile().getAbsolutePath();
+				    lst.add(x);
+					
+				    if (System.getenv("OPENMODELICALIBRARY") == null)
+					{
+					  String y = "OPENMODELICALIBRARY=" + 
+					    omcBinary.getParentFile().getParentFile().getAbsolutePath() + 
+					    "/lib/omlibrary";
+					  lst.add(y);
+					}
+					
+					Iterator<Entry<String, String>> i = entrySet.iterator();
+					while (i.hasNext())
+					{
+						Entry<String,String> z = i.next();
+						lst.add(z.getKey() + "=" + z.getValue());
+					}
+					env = lst.toArray(new String[lst.size()]);
+				}
+				proc=Runtime.getRuntime().exec(cmd, env, workingDirectory);
 				//create thread for reading inputStream (process' stdout)
 				outThread= new StreamReaderThread(proc.getInputStream(),System.out);
 				//create thread for reading errorStream (process' stderr)
@@ -1412,4 +1413,25 @@ public class OMCProxy implements IModelicaCompiler
 		return false;
 	}
 
+    private File findExecutableOnPath(String executableName)
+    {
+        String systemPath = System.getenv("PATH");
+        if (systemPath == null) // try with small letters
+        	systemPath = System.getenv("path");
+        String[] pathDirs = systemPath.split(File.pathSeparator);
+ 
+        File fullyQualifiedExecutable = null;
+        for (String pathDir : pathDirs)
+        {
+            File file = new File(pathDir, executableName);
+            if (file.isFile())
+            {
+                fullyQualifiedExecutable = file;
+                break;
+            }
+        }
+        return fullyQualifiedExecutable;
+    }
+	
+	
 }
