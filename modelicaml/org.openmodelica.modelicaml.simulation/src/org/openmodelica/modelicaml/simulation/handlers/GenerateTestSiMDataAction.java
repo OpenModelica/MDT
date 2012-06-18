@@ -359,11 +359,13 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			codeGenDir.copy(testSessionCodeGenDir, EFS.NONE, null);
 
 			/*
-			 * copy also the code-sync folder
+			 * copy also the code-sync folder if it exists
 			 */
 			IFileStore codeSyncDir = fileSystem.getStore(URI.create(VerificationExecutionServices.projectAbsolutePath + "/" + Constants.folderName_code_sync));
 			IFileStore testSessionCodeSyncDir = fileSystem.getStore(URI.create(VerificationExecutionServices.verificationSessionFolderAbsolutePath + "/" + Constants.folderName_code_sync));
-			codeSyncDir.copy(testSessionCodeSyncDir, EFS.NONE, null);
+			if (codeSyncDir.fetchInfo().exists()) {
+				codeSyncDir.copy(testSessionCodeSyncDir, EFS.NONE, null);
+			}
 			
 			// refresh the project browser
 			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
