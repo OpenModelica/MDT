@@ -63,8 +63,8 @@
       </propertySections>
    </extension>
    <extension
-         id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification"
-         name="ModelicaML Value Bindings Operations Validation"
+         id="org.openmodelica.modelicaml.marker.actionCode.componentmodification"
+         name="ModelicaML Component Modifications Validation"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.emf.ecore.diagnostic">
