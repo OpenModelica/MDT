@@ -31,7 +31,7 @@
       </contexts>
    </extension>
    <extension
-         id="org.openmodelica.modelicaml.modelicamlMarker.modelicamlproxies"
+         id="org.openmodelica.modelicaml.marker.modelicamlproxies"
          name="Modelica Model Proxies Synchronization"
          point="org.eclipse.core.resources.markers">
       <super
@@ -48,7 +48,7 @@
       </attribute>
    </extension>
    <extension
-         id="org.openmodelica.modelicaml.modelicamlMarker.modelicaloading"
+         id="org.openmodelica.modelicaml.marker.modelicaloading"
          name="OMC Modelica Models Loading"
          point="org.eclipse.core.resources.markers">
       <super

@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.modelica.importer.model;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
@@ -936,7 +938,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		omcc.clear();
 
 		//TODO: ask user if Modelica, with specific version, should be loaded ...
-		if (isLoadMSL()) {
+		if (isLoadMSL() && codeSyncFolderExists()) {
 			// Load MSL
 			omcc.loadModel(getMSLModelName());
 		}
@@ -1512,6 +1514,26 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 	public void setLoadMSL(boolean loadMSL) {
 		this.loadMSL = loadMSL;
+	}
+	
+	private boolean codeSyncFolderExists(){
+		UmlModel umlModel = UmlUtils.getUmlModel();
+		if (umlModel != null && umlModel.getResource() != null) {
+			String projectName = umlModel.getResource().getURI().segment(1);
+			if (projectName != null) {
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				IProject iProject = root.getProject(projectName);
+				String projectAbsolutePath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+				String codeIncAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_code_sync + "/";
+
+				File codeSyncFolder = new File(codeIncAbsolutePath);
+				boolean exists = codeSyncFolder.exists();
+				
+				return exists;
+			}
+		}
+		return false;
 	}
 }
 

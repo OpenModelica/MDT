@@ -991,7 +991,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
 					 */
 					if (element instanceof FunctionBehavior ) {
-						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguageName);
 					}
 					else {
 						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
@@ -1001,7 +1001,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 							behavior.setValue(stereotype, Constants.propertyName_initial, true);
 						}
 						
-						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguageName);
 					}
 				}
 			}
@@ -1018,7 +1018,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
 					 */
 					if (element instanceof FunctionBehavior ) {
-						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguageName);
 					}
 					else {
 						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("initial equations " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
@@ -1027,7 +1027,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 							behavior.applyStereotype(stereotype);
 							behavior.setValue(stereotype, Constants.propertyName_initial, true);
 						}
-						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguageName);
 					}
 				}
 			}
@@ -1044,7 +1044,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
 					 */
 					if (element instanceof FunctionBehavior ) {
-						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguageName);
 					}
 					else {
 						OpaqueBehavior behavior = (OpaqueBehavior) ((Class)element).createOwnedBehavior("algorithm " + i,  UMLPackage.Literals.OPAQUE_BEHAVIOR);
@@ -1052,7 +1052,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						if (stereotype != null) {
 							behavior.applyStereotype(stereotype);
 						}
-						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguageName);
 					}
 				}
 			}
@@ -1080,7 +1080,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 					 * 	-> add the body to UML::FunctionBehavior, else create a new UML::OpaqueBehavor
 					 */
 					if (element instanceof FunctionBehavior ) {
-						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody((FunctionBehavior) element, string, Constants.actionLanguageName);
 					}
 					else {
 
@@ -1093,7 +1093,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 							behavior.applyStereotype(stereotype);
 						}
 						
-						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguage);
+						OpaqueBehaviorUtil.setBody(behavior, string, Constants.actionLanguageName);
 					}
 				}
 			}
