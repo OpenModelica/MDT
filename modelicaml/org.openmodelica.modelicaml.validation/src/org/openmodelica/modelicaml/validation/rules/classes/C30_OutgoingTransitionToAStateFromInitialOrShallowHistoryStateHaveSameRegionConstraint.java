@@ -11,6 +11,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.PseudostateKind;
 import org.eclipse.uml2.uml.Transition;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -24,14 +25,10 @@ import org.eclipse.uml2.uml.Transition;
  *	Mode : Live
  */
 
-public class C30_OutgoingTransitionToAStateFromInitialOrShallowHistoryStateHaveSameRegionConstraint
-		extends AbstractModelConstraint {
+public class C30_OutgoingTransitionToAStateFromInitialOrShallowHistoryStateHaveSameRegionConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
+
 	public C30_OutgoingTransitionToAStateFromInitialOrShallowHistoryStateHaveSameRegionConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -39,31 +36,26 @@ public class C30_OutgoingTransitionToAStateFromInitialOrShallowHistoryStateHaveS
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		
-		
-			if(eObj instanceof Transition)
-			{
-				Transition transition = (Transition) eObj;
+		if(eObj instanceof Transition){
+			
+			Transition transition = (Transition) eObj;
+			
+			if(transition.getSource() instanceof Pseudostate) {
+				Pseudostate pseudoState = (Pseudostate) transition.getSource();
 				
-				if(transition.getSource() instanceof Pseudostate)
-				{
-					Pseudostate pseudoState = (Pseudostate) transition.getSource();
+				if(pseudoState.getKind().getValue() == PseudostateKind.INITIAL || pseudoState.getKind().getValue() == PseudostateKind.SHALLOW_HISTORY) {
+					NamedElement targetElement = transition.getTarget();
 					
-					if(pseudoState.getKind().getValue() == PseudostateKind.INITIAL || pseudoState.getKind().getValue() == PseudostateKind.SHALLOW_HISTORY)
-					{
-						NamedElement targetElement = transition.getTarget();
-						
-						if(!(targetElement.getOwner().equals(pseudoState.getOwner())))
-						{
-							return ctx.createFailureStatus(new Object[] {transition.getName()+" Outgoing transition from the Inital or ShallowHistory State must point to a state in the same Region."});
-						}
+					if(!(targetElement.getOwner().equals(pseudoState.getOwner()))){
+						return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID +": Outgoing transition '" 
+								+ transition.getName()+"' from the inital or shallow history state must point to a state in the same region."});
 					}
 				}
 			}
-		
+		}
 		
 		return ctx.createSuccessStatus();
 	}

@@ -86,28 +86,28 @@ public class C01_C02_NonSimilarNamesConstraint extends AbstractModelConstraint {
 					for (Element element2 : elementList) {
 						
 						// Check packages, Classes with StateMachines except Behavior for similar names
-						if((element2 instanceof NamedElement) && (element2 instanceof NamedElement) && (element instanceof Package || ((element instanceof Class && !(element instanceof Behavior)) || element instanceof StateMachine)) && (element instanceof Package || ((element2 instanceof Class && !(element2 instanceof Behavior)) || element2 instanceof StateMachine)))
+						if((element2 instanceof NamedElement) && (element2 instanceof NamedElement) 
+								&& (element instanceof Package || ((element instanceof Class && !(element instanceof Behavior)) || element instanceof StateMachine)) 
+								&& (element instanceof Package || ((element2 instanceof Class && !(element2 instanceof Behavior)) || element2 instanceof StateMachine)))
 						{
-							if(((NamedElement) element2).getName().equalsIgnoreCase(((NamedElement)element).getName()) && !(element2.equals(element)))
+//							if(((NamedElement) element2).getName().equalsIgnoreCase(((NamedElement)element).getName()) && !(element2.equals(element)))
+							if(((NamedElement) element2).getName().equals(((NamedElement)element).getName()) && !(element2.equals(element)))
 							{
 								
-								return ctx.createFailureStatus(new Object[]{root_element.getName()+" Contains Packages/Classes with same name "+((NamedElement)element).getName()});
+								return ctx.createFailureStatus(new Object[]{"'" + root_element.getName() + "' contains packages or classes with same name '"+((NamedElement)element).getName() + "'"});
 							}
-							
 						}
-						
 					}
-					
 					
 					// Check packages, Classes with StateMachines except Behavior for Modelica keywords
 					if(element instanceof NamedElement)
 					{
 						for (String keyword : modelicaKeywordList) 
 						{
-							
-							if(keyword.equalsIgnoreCase(((NamedElement) element).getName()))
+//							if(keyword.equalsIgnoreCase(((NamedElement) element).getName()))
+							if(keyword.equals(((NamedElement) element).getName()))
 							{
-								return ctx.createFailureStatus(new Object[]{root_element.getName()+" Contains Packages/Classes with name as Modelica Keyword "+((NamedElement)element).getName()});
+								return ctx.createFailureStatus(new Object[]{root_element.getName()+" contains packages or classes with name as Modelica keyword '"+((NamedElement)element).getName() +"'"});
 							}
 						}
 					}

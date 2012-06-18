@@ -10,6 +10,7 @@ import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.PseudostateKind;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -23,14 +24,9 @@ import org.eclipse.uml2.uml.PseudostateKind;
  *	Mode : Batch
  */
  
-public class C31_ChoiceOrjunctionStateHaveOnlyOneIncomingAndAtLeastOneOutgoingTransitionConstraint
-		extends AbstractModelConstraint {
+public class C31_ChoiceOrjunctionStateHaveOnlyOneIncomingAndAtLeastOneOutgoingTransitionConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C31_ChoiceOrjunctionStateHaveOnlyOneIncomingAndAtLeastOneOutgoingTransitionConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -38,24 +34,20 @@ public class C31_ChoiceOrjunctionStateHaveOnlyOneIncomingAndAtLeastOneOutgoingTr
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL) {
 			
-			if(eObj instanceof Pseudostate)
-			{
+			if(eObj instanceof Pseudostate) {
 				Pseudostate pseudoState = (Pseudostate) eObj;
 				
-				if(pseudoState.getKind().getValue() == PseudostateKind.CHOICE || pseudoState.getKind().getValue() == PseudostateKind.JUNCTION)
-				{
-					if(pseudoState.getIncomings().size() > 1 || pseudoState.getOutgoings().size() < 1)
-					{
-						return ctx.createFailureStatus(new Object[]{ pseudoState.getName()+" state should have atmost one incoming and atleast one outgoing transition."});
+				if(pseudoState.getKind().getValue() == PseudostateKind.CHOICE || pseudoState.getKind().getValue() == PseudostateKind.JUNCTION) {
+					if(pseudoState.getIncomings().size() > 1 || pseudoState.getOutgoings().size() < 1) {
+						return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": '" 
+								+ pseudoState.getName()+"' state should have atmost one incoming and at least one outgoing transition."});
 					}
 				}
 			}

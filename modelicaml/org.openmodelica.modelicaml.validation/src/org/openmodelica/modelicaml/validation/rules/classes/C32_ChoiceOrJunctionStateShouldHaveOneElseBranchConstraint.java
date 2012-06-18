@@ -15,6 +15,7 @@ import org.eclipse.uml2.uml.OpaqueExpression;
 import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.PseudostateKind;
 import org.eclipse.uml2.uml.Transition;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -27,14 +28,9 @@ import org.eclipse.uml2.uml.Transition;
  *	Mode : Batch
  */
 
-public class C32_ChoiceOrJunctionStateShouldHaveOneElseBranchConstraint extends
-		AbstractModelConstraint {
+public class C32_ChoiceOrJunctionStateShouldHaveOneElseBranchConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C32_ChoiceOrJunctionStateShouldHaveOneElseBranchConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -42,21 +38,17 @@ public class C32_ChoiceOrJunctionStateShouldHaveOneElseBranchConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		 
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL) {
 			
-			if(eObj instanceof Pseudostate)
-			{
+			if(eObj instanceof Pseudostate) {
 				Pseudostate pseudoState = (Pseudostate) eObj;
 				
-				if(pseudoState.getKind().getValue() == PseudostateKind.CHOICE || pseudoState.getKind().getValue() == PseudostateKind.JUNCTION)
-				{
+				if(pseudoState.getKind().getValue() == PseudostateKind.CHOICE || pseudoState.getKind().getValue() == PseudostateKind.JUNCTION) {
 					List<Transition> outgoingTransitionList = pseudoState.getOutgoings();
 					
 					boolean isElseExpressionExists = false;
@@ -65,25 +57,22 @@ public class C32_ChoiceOrJunctionStateShouldHaveOneElseBranchConstraint extends
 						
 						Constraint constraint = transition.getGuard();
 						
-						if(constraint != null && constraint.getSpecification() != null && constraint.getSpecification() instanceof OpaqueExpression)
-						{
+						if(constraint != null && constraint.getSpecification() != null && constraint.getSpecification() instanceof OpaqueExpression) {
 							OpaqueExpression expression = (OpaqueExpression) constraint.getSpecification();
 							
 							List<String> expressionBody = expression.getBodies();
 							
-							if(expressionBody != null)
-							{
-								if(isElseExpressionExists == false && expressionBody.contains("else"))
-								{
+							if(expressionBody != null) {
+								if(isElseExpressionExists == false && expressionBody.contains("else")) {
 									isElseExpressionExists = true;
 								}
 							}
 						}
 					}
 					
-					if(isElseExpressionExists == false)
-					{
-						return ctx.createFailureStatus(new Object[]{pseudoState.getName()+" State should have one else branch"});
+					if(isElseExpressionExists == false) {
+						return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID 
+								+ ": State '" + pseudoState.getName()+"' should have one else branch."});
 					}
 				}
 			}

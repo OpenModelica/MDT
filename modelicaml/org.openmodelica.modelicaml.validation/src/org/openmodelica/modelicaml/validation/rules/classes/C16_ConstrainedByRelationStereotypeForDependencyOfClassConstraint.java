@@ -12,6 +12,7 @@ import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Dependency;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**
  * C16:
@@ -26,11 +27,7 @@ import org.eclipse.uml2.uml.Dependency;
 public class C16_ConstrainedByRelationStereotypeForDependencyOfClassConstraint
 		extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C16_ConstrainedByRelationStereotypeForDependencyOfClassConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -38,40 +35,37 @@ public class C16_ConstrainedByRelationStereotypeForDependencyOfClassConstraint
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL) {
+			
 			C03_ClassWithModelicaMLStereotypeConstraint classWithModelicaMLStereotypeConstraint = new C03_ClassWithModelicaMLStereotypeConstraint();
-			if((eObj instanceof Class) && (classWithModelicaMLStereotypeConstraint.validate(ctx).isOK()))
-			{
+			
+			if((eObj instanceof Class) && (classWithModelicaMLStereotypeConstraint.validate(ctx).isOK())) {
+			
 				Class clas = (Class) eObj;
 				List<Dependency> classDependencies = clas.getClientDependencies();
 				boolean havingOnlyOneConstrainedByRelationStereotype = false;
 				
 				for (Dependency dependency : classDependencies) {
 					
-					if(dependency.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation") != null)
-					{ 
+					if(dependency.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation") != null) { 
 						
-						if(havingOnlyOneConstrainedByRelationStereotype == true)
-						{
+						if(havingOnlyOneConstrainedByRelationStereotype == true) {
 							havingOnlyOneConstrainedByRelationStereotype = false;
-							return ctx.createFailureStatus(new Object[] {" Class "+clas.getName()+" can have only one UML Dependency with 'ConstrainedByRelation' Stereotype"} );
+							return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + ":  '"
+									+clas.getName()+"' can have only one UML::Dependency with <<ConstrainedByRelation>> stereotype applied."} );
 						}
 						else{
 							havingOnlyOneConstrainedByRelationStereotype = true;
 						}
 					}
 				}
-				
-				
 			}
 		}
-		
 		return ctx.createSuccessStatus();
 	}
 

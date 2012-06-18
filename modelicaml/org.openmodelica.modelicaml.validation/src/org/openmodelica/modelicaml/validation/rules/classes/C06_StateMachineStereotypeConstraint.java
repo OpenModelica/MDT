@@ -11,6 +11,7 @@ import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.StateMachine;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.validation.util.Utility;
 
 /**
@@ -26,11 +27,7 @@ import org.openmodelica.modelicaml.validation.util.Utility;
 public class C06_StateMachineStereotypeConstraint extends
 		AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C06_StateMachineStereotypeConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -38,28 +35,22 @@ public class C06_StateMachineStereotypeConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL){
 			
-			if( eObj instanceof StateMachine )
-			{
+			if( eObj instanceof StateMachine ){
 
 				Element element = ((StateMachine) eObj).getOwner();
-				if( element instanceof Class ) 
-				{
-					if(Utility.isElementHaveModelicaMLStereotypeApplied(element))
-					{
-						if( ((StateMachine) eObj).getAppliedStereotype("ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine") == null )
-						{
-							return ctx.createFailureStatus(new Object[] { "StateMachine "+((StateMachine) eObj).getName()+" Owned by Class "+((Class) element).getName()+" must have 'ModelicaMLStateMachine' Stereotype" });
+				if( element instanceof Class ){
+					if(Utility.isElementHaveModelicaMLStereotypeApplied(element)){
+						if( ((StateMachine) eObj).getAppliedStereotype(Constants.stereotypeQName_ModelicaMLStateMachine) == null ){
+							return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_MISSING + ": Stereotype for StateMachine "
+						+((StateMachine) eObj).getName()+" owned by '"+((Class) element).getName()+"'." });
 						}
 					}
-					
 				}
 			}
 		}

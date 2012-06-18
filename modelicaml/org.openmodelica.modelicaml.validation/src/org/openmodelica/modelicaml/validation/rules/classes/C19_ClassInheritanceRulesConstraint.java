@@ -27,14 +27,9 @@ import org.openmodelica.modelicaml.common.constants.Constants;
  *	Mode : Batch
  */
 
-public class C19_ClassInheritanceRulesConstraint extends
-AbstractModelConstraint {
+public class C19_ClassInheritanceRulesConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C19_ClassInheritanceRulesConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -42,24 +37,21 @@ AbstractModelConstraint {
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 
 		// In Both Live and Batch Mode
-
-		if(eType != EMFEventType.NULL)
-		{
-			if(eObj instanceof Generalization)
-			{
+		if(eType != EMFEventType.NULL) {
+			if(eObj instanceof Generalization) {
 				eObj = ((Generalization) eObj).getSources().get(0);
 			}
 		}
-		if( eObj instanceof Class)
-		{
+		
+		if( eObj instanceof Class) {
 
-			if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null))
-			{
+			if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null)) {
+				
 				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
 
 				for (Generalization generalization : generalizationList) {
@@ -68,17 +60,15 @@ AbstractModelConstraint {
 
 					for (Element element : elementList) {
 
-						if( !(element instanceof Class && element.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null))
-						{
-							return ctx.createFailureStatus(new Object[] {"ModelicaPackage "+((NamedElement) eObj).getName()+ " can have only ModelicaPackages as base class"});
+						if( !(element instanceof Class && element.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null)) {
+							return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + ": Modelica package ('"+((NamedElement) eObj).getName()
+									+ "') can only extend a Modelica packages."});
 						}
 					}
 				}
-
 			}
 
-			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Operator) != null))
-			{
+			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Operator) != null)) {
 
 				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
 
@@ -88,9 +78,9 @@ AbstractModelConstraint {
 
 					for (Element element : elementList) {
 
-						if( !( element instanceof Class && element.getAppliedStereotype(Constants.stereotypeQName_Operator) != null))
-						{
-							return ctx.createFailureStatus(new Object[] {"Operator "+((NamedElement) eObj).getName()+ " can have only Operators as base class"});
+						if( !( element instanceof Class && element.getAppliedStereotype(Constants.stereotypeQName_Operator) != null)){
+							return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": Operator '"
+									+((NamedElement) eObj).getName()+ "' can only extend Modelica operators. "});
 						}
 					}
 
@@ -98,8 +88,8 @@ AbstractModelConstraint {
 
 
 			}
-			else if( eObj instanceof FunctionBehavior && (((FunctionBehavior) eObj).getAppliedStereotype(Constants.stereotypeQName_Function) != null))
-			{
+			else if( eObj instanceof FunctionBehavior && (((FunctionBehavior) eObj).getAppliedStereotype(Constants.stereotypeQName_Function) != null)){
+				
 				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
 
 				for (Generalization generalization : generalizationList) {
@@ -108,18 +98,67 @@ AbstractModelConstraint {
 
 					for (Element element : elementList) {
 
-						if(!( element instanceof FunctionBehavior && element.getAppliedStereotype(Constants.stereotypeQName_Function) != null))
-						{
-							return ctx.createFailureStatus(new Object[] {"Function "+((NamedElement) eObj).getName()+ " can have only Functions as base class"});
+						if(!( element instanceof FunctionBehavior && element.getAppliedStereotype(Constants.stereotypeQName_Function) != null)){
+							return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": Function '"
+									+((NamedElement) eObj).getName()+ "' can only extend Modelica functions."});
 						}
 					}
-
 				}
+			}
+			else if(eObj instanceof PrimitiveType && ((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Type) != null) {
+				
+				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
 
+				for (Generalization generalization : generalizationList) {
+					List<Element> elementList = generalization.getTargets();
+
+					for (Element element : elementList) {
+
+						if( !(element instanceof PrimitiveType && element.getAppliedStereotype(Constants.stereotypeQName_Type) != null)){
+							return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": Type '"
+									+((NamedElement) eObj).getName()+"' can only extend Modelica type."});
+						}
+					}
+				}
+			}
+			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Record) != null)) {
+				
+				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
+
+				for (Generalization generalization : generalizationList) {
+					List<Element> elementList = generalization.getTargets();
+
+					for (Element element : elementList) {
+
+						if( !( element instanceof Class && element.getAppliedStereotype(Constants.stereotypeQName_Record) != null)){
+							return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": Record '"
+									+((NamedElement) eObj).getName()+ "' can only extend Modelica records."});
+						}
+					}
+				}
+			}
+			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Connector) != null)){
+				
+				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
+
+				for (Generalization generalization : generalizationList) {
+					List<Element> elementList = generalization.getTargets();
+
+					for (Element element : elementList) {
+
+						if( !(( element instanceof Class && ((element.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) 
+									|| element.getAppliedStereotype(Constants.stereotypeQName_Record) != null )) 
+									|| element instanceof PrimitiveType && element.getAppliedStereotype(Constants.stereotypeQName_Type) != null )){
+							
+							return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": Connector '"
+									+((NamedElement) eObj).getName()+ "' can only extend Modelica connectors."});
+						}
+					}
+				}
 
 			}
-			else if(eObj instanceof PrimitiveType && ((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Type) != null)
-			{
+			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Block) != null)) {
+				
 				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
 
 				for (Generalization generalization : generalizationList) {
@@ -127,87 +166,34 @@ AbstractModelConstraint {
 
 					for (Element element : elementList) {
 
-						if( !(element instanceof PrimitiveType && element.getAppliedStereotype(Constants.stereotypeQName_Type) != null))
-						{
-							return ctx.createFailureStatus(new Object[]{"Type "+((NamedElement) eObj).getName()+" can have only Type as base class"});
+						if( !( element instanceof Class && (element.getAppliedStereotype(Constants.stereotypeQName_Block) != null 
+								|| element.getAppliedStereotype(Constants.stereotypeQName_Record) != null ))){
+							
+							return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": Block '"
+									+ ((NamedElement) eObj).getName() + " can only extend Modelica blocks."});
 						}
 					}
 				}
-
-
 			}
-			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Record) != null))
-			{
+			else if( eObj instanceof Class && ((((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Model) != null 
+					|| ((Class)eObj).getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null))){
+				
 				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
 
 				for (Generalization generalization : generalizationList) {
 					List<Element> elementList = generalization.getTargets();
 
 					for (Element element : elementList) {
-
-						if( !( element instanceof Class && element.getAppliedStereotype(Constants.stereotypeQName_Record) != null))
-						{
-							return ctx.createFailureStatus(new Object[] {"Record "+((NamedElement) eObj).getName()+ " can have only Record as base class"});
-						}
-					}
-
-				}
-
-
-			}
-			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Connector) != null))
-			{
-				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
-
-				for (Generalization generalization : generalizationList) {
-					List<Element> elementList = generalization.getTargets();
-
-					for (Element element : elementList) {
-
-						if( !(( element instanceof Class && ((element.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) || element.getAppliedStereotype(Constants.stereotypeQName_Record) != null )) || element instanceof PrimitiveType && element.getAppliedStereotype(Constants.stereotypeQName_Type) != null ))
-						{
-							return ctx.createFailureStatus(new Object[] {"Connector "+((NamedElement) eObj).getName()+ " can have only Connector or Type or Record  as base class"});
+						if( !( element instanceof Class && (element.getAppliedStereotype(Constants.stereotypeQName_Model) != null 
+								|| element.getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null 
+								|| element.getAppliedStereotype(Constants.stereotypeQName_Block) != null 
+								|| element.getAppliedStereotype(Constants.stereotypeQName_Record) != null ))) {
+							
+							return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + ": Model '"
+									+((NamedElement) eObj).getName()+ "' can only extend Modelica models, classes, records or blocks."});
 						}
 					}
 				}
-
-
-			}
-			else if( eObj instanceof Class && (((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Block) != null))
-			{
-				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
-
-				for (Generalization generalization : generalizationList) {
-					List<Element> elementList = generalization.getTargets();
-
-					for (Element element : elementList) {
-
-						if( !( element instanceof Class && (element.getAppliedStereotype(Constants.stereotypeQName_Block) != null || element.getAppliedStereotype(Constants.stereotypeQName_Record) != null )))
-						{
-							return ctx.createFailureStatus(new Object[] {"Block "+((NamedElement) eObj).getName()+ " can have only Block or Record as base class"});
-						}
-					}
-				}
-
-
-			}
-			else if( eObj instanceof Class && ((((Class) eObj).getAppliedStereotype(Constants.stereotypeQName_Model) != null || ((Class)eObj).getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null)))
-			{
-				List<Generalization> generalizationList = ((Class) eObj).getGeneralizations();
-
-				for (Generalization generalization : generalizationList) {
-					List<Element> elementList = generalization.getTargets();
-
-					for (Element element : elementList) {
-
-						if( !( element instanceof Class && (element.getAppliedStereotype(Constants.stereotypeQName_Model) != null || element.getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null || element.getAppliedStereotype(Constants.stereotypeQName_Block) != null || element.getAppliedStereotype(Constants.stereotypeQName_Record) != null )))
-						{
-							return ctx.createFailureStatus(new Object[] {"Model "+((NamedElement) eObj).getName()+ " can have only Model/Class or Record or Block as base class"});
-						}
-					}
-				}
-
-
 			}
 		}
 

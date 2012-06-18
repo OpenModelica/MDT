@@ -15,6 +15,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**
  * C9:
@@ -28,11 +29,8 @@ import org.eclipse.uml2.uml.StateMachine;
 public class C09_NonCircularStatemachineReferencesConstraint extends
 AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
+
 	public C09_NonCircularStatemachineReferencesConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -41,77 +39,63 @@ AbstractModelConstraint {
 	@SuppressWarnings("unchecked")
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 
 		// In Batch mode
-		if(eType == EMFEventType.NULL)
-		{
-			if(eObj instanceof StateMachine)
-			{
+		if(eType == EMFEventType.NULL){
+			
+			if(eObj instanceof StateMachine){
 
 				List<StateMachine> statemachineList = null;
 				
-				if(ctx.getCurrentConstraintData() == null)
-				{
+				if(ctx.getCurrentConstraintData() == null){
 					statemachineList = new ArrayList<StateMachine>();
 				}
-				else if(ctx.getCurrentConstraintData() instanceof List)
-				{
+				else if(ctx.getCurrentConstraintData() instanceof List){
 					statemachineList = ((List<StateMachine>)ctx.getCurrentConstraintData());
 				}
-
 
 				List<Region> regionList = ((StateMachine) eObj).getRegions();
 
 				for (Region region : regionList) {
 					
 					List<Element> regionElementList = region.getOwnedElements();
-					
+
 					for (Element element : regionElementList) {
 
-						if(element instanceof State)
-						{
+						if(element instanceof State){
 							StateMachine referencedStateMachine = ((State) element).getSubmachine();
 							
-							if(statemachineList.contains(referencedStateMachine))
-							{
-								return ctx.createFailureStatus(new Object[]{"StateMachine "+((StateMachine) eObj).getName()+" and sub-StateMachine Reference to "+referencedStateMachine.getName()+" forming a loop"});
+							if(statemachineList.contains(referencedStateMachine)){
+								return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": State machines reference loop detected for '"
+										+((StateMachine) eObj).getName()+"' and its reference to '"+referencedStateMachine.getName()+"'."});
 							}
-							else
-							{
+							else {
 								statemachineList.add(((StateMachine) eObj));
-
 								ctx.putCurrentConstraintData(statemachineList);
 							}
 						}
 					}
-
-
 				}
-
-
 			}
 		}
 		else // In Live Mode
 		{
-			if(ctx.getFeatureNewValue() instanceof StateMachine)
-			{
+			if(ctx.getFeatureNewValue() instanceof StateMachine){
 				List<StateMachine> stateMachineList = new ArrayList<StateMachine>();
-				if(checkStateMachineLoop(stateMachineList,(StateMachine)ctx.getFeatureNewValue()))
-				{
-					return ctx.createFailureStatus(new Object[]{"StateMachine "+((StateMachine) ctx.getFeatureNewValue()).getName()+" and sub-StateMachine Reference to  forming a loop"});
-
+				if(checkStateMachineLoop(stateMachineList,(StateMachine)ctx.getFeatureNewValue())){
+					return ctx.createFailureStatus(new Object[]{Constants.validationKeyWord_NOT_VALID 
+							+ ": State machines reference loop detected for '"+((StateMachine) ctx.getFeatureNewValue()).getName()+"'."});
 				}
 			}	
 		}
 		return ctx.createSuccessStatus();
 	}
 
-	private boolean checkStateMachineLoop(List<StateMachine> stateMachineList,
-			StateMachine eObj) {
-		// TODO Auto-generated method stub
+	private boolean checkStateMachineLoop(List<StateMachine> stateMachineList, StateMachine eObj) {
+
 		stateMachineList.add(eObj);
 		List<Region> regionList = eObj.getRegions();
 		for (Region region : regionList) {
@@ -123,24 +107,19 @@ AbstractModelConstraint {
 				{
 					StateMachine subStateMachine = ((State) element).getSubmachine();
 					
-					if(subStateMachine == null)
-					{
+					if(subStateMachine == null){
 						//return false;
 					}
-					else
-					{
-						if(stateMachineList.contains(subStateMachine))
-						{
+					else{
+						if(stateMachineList.contains(subStateMachine)){
 							return true;
 						}
-						else
-						{
+						else{
 							return checkStateMachineLoop(stateMachineList, subStateMachine);
 						}
 					}
 				}
 			}
-			
 		}
 		return false;
 	}

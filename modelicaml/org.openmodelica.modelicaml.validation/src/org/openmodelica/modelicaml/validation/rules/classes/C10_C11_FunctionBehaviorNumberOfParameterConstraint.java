@@ -40,11 +40,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 public class C10_C11_FunctionBehaviorNumberOfParameterConstraint extends
 		AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C10_C11_FunctionBehaviorNumberOfParameterConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -52,65 +48,54 @@ public class C10_C11_FunctionBehaviorNumberOfParameterConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
-		
-		
-		
-			if(eType != EMFEventType.NULL) // In Live Mode
-			{
-				if(eObj instanceof Parameter)
-				{
-					eObj = ((Parameter) eObj).getOwner();
-				}
-				else
-				{
-					return ctx.createSuccessStatus();
-				}
+		// In Live Mode
+		if(eType != EMFEventType.NULL) {
+			if(eObj instanceof Parameter) {
+				eObj = ((Parameter) eObj).getOwner();
 			}
-			
-			if((eObj instanceof FunctionBehavior) && ((((FunctionBehavior)eObj).getAppliedStereotype(Constants.stereotypeQName_Function)) != null))
-			{
-				FunctionBehavior functionBehavior = (FunctionBehavior) eObj;
-				List<Element> functionBehaviorElements = functionBehavior.allOwnedElements();
-				boolean atleastOneInput = false;
-				boolean atMostOneOutput = false;
-				for (Element element : functionBehaviorElements) {
+			else {
+				return ctx.createSuccessStatus();
+			}
+		}
+		
+		if((eObj instanceof FunctionBehavior) && ((((FunctionBehavior)eObj).getAppliedStereotype(Constants.stereotypeQName_Function)) != null)){
+			FunctionBehavior functionBehavior = (FunctionBehavior) eObj;
+			List<Element> functionBehaviorElements = functionBehavior.allOwnedElements();
+			boolean atleastOneInput = false;
+			boolean atMostOneOutput = false;
+			for (Element element : functionBehaviorElements) {
+				
+				if(element instanceof Parameter && (element.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument) != null)){
+					Stereotype parameterStereotype = element.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument);
+					String causalityValue = ((EnumerationLiteral)element.getValue(parameterStereotype, Constants.propertyName_causality)).getName();
 					
-					if(element instanceof Parameter && (element.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument) != null))
-					{
-						Stereotype parameterStereotype = element.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument);
-						String causalityValue = ((EnumerationLiteral)element.getValue(parameterStereotype, Constants.propertyName_causality)).getName();
-						
-						if(causalityValue.equalsIgnoreCase("input"))
-						{
-							atleastOneInput = true;
-						}
-						else if(causalityValue.equalsIgnoreCase("output"))
-						{
-							if(atMostOneOutput == true)
-							{
-								return ctx.createFailureStatus(new Object[]{ "Function "+ ((FunctionBehavior)eObj).getName() +" have more than one Parameter's causality set to 'output'"});
-							}
-							else if(atMostOneOutput == false)
-							{
-								atMostOneOutput = true;
-							}
-						}
-						else
-						{
-							return ctx.createFailureStatus(new Object[]{ "Parameter "+ ((Parameter)element).getName() +" must have its causality set to 'input' or 'output'"});
-						}
-						
+					if(causalityValue.equalsIgnoreCase("input")){
+						atleastOneInput = true;
 					}
-				}
-				if(atleastOneInput == false)
-				{
-					return ctx.createFailureStatus(new Object[]{  "Function "+ ((FunctionBehavior)eObj).getName() +" should have atleast one Parameter's causality set to 'input'"});
+					else if(causalityValue.equalsIgnoreCase("output")){
+						if(atMostOneOutput == true){
+							return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": Function '"
+									+ ((FunctionBehavior)eObj).getName() +"' has more than one variables with causality set to 'output'."});
+						}
+						else if(atMostOneOutput == false){
+							atMostOneOutput = true;
+						}
+					}
+					else {
+						return ctx.createFailureStatus(new Object[]{ "Parameter "+ ((Parameter)element).getName() +" must have its causality set to 'input' or 'output'"});
+					}
+					
 				}
 			}
+			if(atleastOneInput == false)
+			{
+				return ctx.createFailureStatus(new Object[]{  "Function "+ ((FunctionBehavior)eObj).getName() +" should have atleast one Parameter's causality set to 'input'"});
+			}
+		}
 	
 		return ctx.createSuccessStatus();
 	}

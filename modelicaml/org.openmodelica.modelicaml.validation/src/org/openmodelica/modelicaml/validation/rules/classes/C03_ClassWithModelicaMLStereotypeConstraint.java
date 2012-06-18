@@ -11,6 +11,7 @@ import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.validation.util.Utility;
 
 /**
@@ -25,11 +26,7 @@ import org.openmodelica.modelicaml.validation.util.Utility;
 public class C03_ClassWithModelicaMLStereotypeConstraint extends
 		AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C03_ClassWithModelicaMLStereotypeConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -37,7 +34,6 @@ public class C03_ClassWithModelicaMLStereotypeConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
@@ -49,11 +45,9 @@ public class C03_ClassWithModelicaMLStereotypeConstraint extends
 				
 				NamedElement element = (NamedElement) eObj;
 				
-				if(!Utility.isElementHaveModelicaMLStereotypeApplied(element))
-				{
-					return ctx.createFailureStatus(new Object[]{ "Class "+((Class)eObj).getName()+" has not applied a ModelicaML Stereotype."});
+				if(!Utility.isElementHaveModelicaMLStereotypeApplied(element)){
+					return ctx.createFailureStatus(new Object[]{  Constants.validationKeyWord_MISSING  + ": ModelicaML stereotype for '"+((Class)eObj).getName()+"'."});
 				}
-				
 			}
 		}
 		return ctx.createSuccessStatus();

@@ -31,7 +31,6 @@ public class C05_OpaqueBehaviorStereotypeConstraint extends
 	 * 
 	 */
 	public C05_OpaqueBehaviorStereotypeConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -39,30 +38,25 @@ public class C05_OpaqueBehaviorStereotypeConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL){
 			
-			if( eObj instanceof OpaqueBehavior )
-			{
+			if( eObj instanceof OpaqueBehavior ){
 
 				Element element = ((OpaqueBehavior) eObj).getOwner();
-				if( element instanceof Class ) 
-				{
-					if(Utility.isElementHaveModelicaMLStereotypeApplied(element))
-					{
-						if( (((OpaqueBehavior) eObj).getAppliedStereotype(Constants.stereotypeQName_Equations) == null) && (((OpaqueBehavior)eObj).getAppliedStereotype(Constants.stereotypeQName_Algorithm) == null) )
-						{
-							return ctx.createFailureStatus(new Object[] { "OpaqueBehavior "+((OpaqueBehavior) eObj).getName()+" owned by Class "+((Class) element).getName()+" must apply either 'Equation' or 'Algorithm' Stereotype" });
+				if( element instanceof Class ) {
+					if(Utility.isElementHaveModelicaMLStereotypeApplied(element)){
+						if( (((OpaqueBehavior) eObj).getAppliedStereotype(Constants.stereotypeQName_Equations) == null) 
+								&& (((OpaqueBehavior)eObj).getAppliedStereotype(Constants.stereotypeQName_Algorithm) == null) ) {
+							
+							return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_MISSING + ": Stereotype (<<Equation>> or <<Algorithm>>) for OpaqueBehavior '"
+								+((OpaqueBehavior) eObj).getName()+"' owned by '"+((Class) element).getName()+"'." });
 						}
 					}
-					
-					
 				}
 			}
 		}

@@ -9,6 +9,7 @@ import org.eclipse.emf.validation.AbstractModelConstraint;
 import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.ConnectionPointReference;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -21,14 +22,9 @@ import org.eclipse.uml2.uml.ConnectionPointReference;
  *	Mode : Batch
  */
 
-public class C40_ConnectionPointReferenceHaveOnlyOneEntryPointReferenceConstriant
-		extends AbstractModelConstraint {
+public class C40_ConnectionPointReferenceHaveOnlyOneEntryPointReferenceConstriant extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C40_ConnectionPointReferenceHaveOnlyOneEntryPointReferenceConstriant() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -36,21 +32,18 @@ public class C40_ConnectionPointReferenceHaveOnlyOneEntryPointReferenceConstrian
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
-			if(eObj instanceof ConnectionPointReference)
-			{
+		if(eType == EMFEventType.NULL) {
+			if(eObj instanceof ConnectionPointReference){
 				ConnectionPointReference reference  = (ConnectionPointReference) eObj;
 				
-				if(reference.getEntries().size() > 1)
-				{
-					return ctx.createFailureStatus(new Object[]{"ConnectionPointReference "+reference.getName()+" may only reference one entryPoint"});
+				if(reference.getEntries().size() > 1){
+					return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + 
+							": ConnectionPointReference '"+reference.getName()+"' may only reference one entryPoint. "});
 				}
 			}
 		}

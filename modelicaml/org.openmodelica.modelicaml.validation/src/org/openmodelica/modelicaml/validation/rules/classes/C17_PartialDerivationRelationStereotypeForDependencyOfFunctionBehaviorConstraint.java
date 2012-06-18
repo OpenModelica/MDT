@@ -31,11 +31,7 @@ import org.openmodelica.modelicaml.validation.util.Utility;
 public class C17_PartialDerivationRelationStereotypeForDependencyOfFunctionBehaviorConstraint
 		extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C17_PartialDerivationRelationStereotypeForDependencyOfFunctionBehaviorConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -43,57 +39,48 @@ public class C17_PartialDerivationRelationStereotypeForDependencyOfFunctionBehav
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
-			if(eObj instanceof FunctionBehavior)
-			{
+		if(eType == EMFEventType.NULL) {
+			if(eObj instanceof FunctionBehavior) {
 				
 				FunctionBehavior functionBehavior = (FunctionBehavior) eObj;
 				
-				if(Utility.isElementHaveModelicaMLStereotypeApplied(functionBehavior))
-				{
+				if(Utility.isElementHaveModelicaMLStereotypeApplied(functionBehavior)) {
+					
 					List<Dependency> dependenciesList = functionBehavior.getClientDependencies();
 					boolean havingPartialDerivativeRelationDependency = false;
-
 					
 					for (Dependency dependency : dependenciesList) {
 						
-						if(dependency.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation") != null)
-						{
+						if(dependency.getAppliedStereotype(Constants.stereotypeQName_PartialDerivativeOfFunctionRelation) != null){ 
 							
-							
-							if(havingPartialDerivativeRelationDependency == true)
-							{
-								return ctx.createFailureStatus(new Object[] {"FunctionBehavior have more than one UML dependency with PartialDerivativeRelation Stereotype"});
+							if(havingPartialDerivativeRelationDependency == true){
+								return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + 
+										": FunctionBehavior has more than one UML::Dependency with <<PartialDerivativeRelation>> stereotype applied."});
 							}
-							else
-							{
+							else {
 								havingPartialDerivativeRelationDependency = true;
 								
 								List<Element> elementList = dependency.getTargets();
 								
 								for (Element element : elementList) {
 									
-									if(element instanceof FunctionBehavior && (element.getAppliedStereotype(Constants.stereotypeQName_Function) == null))
-									{
-										return ctx.createFailureStatus(new Object[] {"FunctionBehavior having UML dependency with PartialDerivativeRelation Stereotype must point to FunctionBehavior with Function Stereotype"});
+									if(element instanceof FunctionBehavior && (element.getAppliedStereotype(Constants.stereotypeQName_Function) == null)){
+										return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + 
+												": FunctionBehavior having UML::Dependency with <<PartialDerivativeRelation>> stereotype applied " +
+												"must point to a FunctionBehavior with <<Function>> stereotype applied."});
 									}
 								}
 							}
-							
 						}
 					}
 				}
-				
 			}
 		}
-		
 		return ctx.createSuccessStatus();
 	}
 

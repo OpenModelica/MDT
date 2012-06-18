@@ -23,14 +23,13 @@ import org.eclipse.emf.validation.model.IConstraintStatus;
 import org.eclipse.emf.validation.service.IBatchValidator;
 import org.eclipse.emf.validation.service.ModelValidationService;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.validation.Activator;
 
@@ -48,20 +47,11 @@ public class ModelicaMLValidationAction implements IHandler {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		// first check the user selection 
-		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
-		Object selectedElement = null;
-		if (selection != null) {
-			selectedElement = ((IStructuredSelection) selection).getFirstElement();
-		}
-		
-		// if user selection is empty then get the model from Papyrus
+	
+	
+	protected EObject getElementToValidate(){
+		// Get the top level model from Papyrus
 		EObject topLevelElement = null;
-		if (! (ModelicaMLServices.adaptSelectedElement(selectedElement) instanceof Element) ) {
 			UmlModel umlModel = UmlUtils.getUmlModel();
 			try {
 				topLevelElement = umlModel.lookupRoot();
@@ -69,19 +59,45 @@ public class ModelicaMLValidationAction implements IHandler {
 //				e.printStackTrace();
 				MessageDialog.openError(new Shell(), "ModelicaML Validation Error", "Could not access the top-level element in Papyrus.");
 			}
-		}
+
+		return topLevelElement;
+	}
+
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		Object selectedElement = null;
 		
-		// select the object
-		Object finalElementSelection = null;
-		if (selectedElement != null) {
-			finalElementSelection = selectedElement;
-		}
-		else {
-			finalElementSelection = topLevelElement;
-		}
+//		// first check the user selection 
+//		IStructuredSelection selection = (IStructuredSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();		
+//		if (selection != null) {
+//			selectedElement = ((IStructuredSelection) selection).getFirstElement();
+//		}
+//		
+//		// if user selection is empty then get the model from Papyrus
+//		EObject topLevelElement = null;
+//		if (! (ModelicaMLServices.adaptSelectedElement(selectedElement) instanceof Element) ) {
+//			UmlModel umlModel = UmlUtils.getUmlModel();
+//			try {
+//				topLevelElement = umlModel.lookupRoot();
+//			} catch (NotFoundException e) {
+////				e.printStackTrace();
+//				MessageDialog.openError(new Shell(), "ModelicaML Validation Error", "Could not access the top-level element in Papyrus.");
+//			}
+//		}
+		
+		selectedElement = getElementToValidate();
+		
+//		// select the object
+//		Object finalElementSelection = null;
+//		if (selectedElement != null) {
+//			finalElementSelection = selectedElement;
+//		}
+//		else {
+//			finalElementSelection = topLevelElement;
+//		}
 		
 		// object to be validated
-		final Object objToBeValidated = finalElementSelection;
+		final Object objToBeValidated = selectedElement;
 		
 		Job job = new Job("ModelicaML Model Validation") {
 			protected IStatus run(IProgressMonitor monitor) {
@@ -109,18 +125,19 @@ public class ModelicaMLValidationAction implements IHandler {
 				public void done(IJobChangeEvent event) {
 		            if (event.getResult().isOK()) {
 			        		try {
-			        			MarkerUtil.updateMarkers(status, "org.openmodelica.modelicaml.validation.problem", new IMarkerConfigurator() {
+			        			MarkerUtil.updateMarkers(status, Constants.MARKERTYPE_VALIDATION_PROBLEM, new IMarkerConfigurator() {
 									
 									@Override
 									public void appendMarkerConfiguration(IMarker marker,
 											IConstraintStatus status) throws CoreException {
 										
-										if(status.getTarget() instanceof NamedElement)
-										{
+										if(status.getTarget() instanceof NamedElement){
 											marker.setAttribute(IMarker.LOCATION, ((NamedElement) status.getTarget()).getName());
 										}
-										else
-										{
+										else if (status.getTarget() instanceof Element &&  ((Element) status.getTarget()).getOwner() instanceof NamedElement ){
+											marker.setAttribute(IMarker.LOCATION, ((NamedElement)((Element) status.getTarget()).getOwner()).getName() );
+										}
+										else{
 											marker.setAttribute(IMarker.LOCATION, status.getTarget().toString());
 										}
 

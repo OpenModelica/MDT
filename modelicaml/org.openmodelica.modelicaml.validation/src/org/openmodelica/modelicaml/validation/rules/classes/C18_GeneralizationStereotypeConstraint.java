@@ -31,11 +31,7 @@ import org.openmodelica.modelicaml.validation.util.Utility;
 public class C18_GeneralizationStereotypeConstraint extends
 		AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C18_GeneralizationStereotypeConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -43,36 +39,31 @@ public class C18_GeneralizationStereotypeConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		 
 		EObject eObj  = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch mode
-		if(eType == EMFEventType.NULL)
-		{
-			if( eObj instanceof Generalization)
-			{
+		if(eType == EMFEventType.NULL){
+			if( eObj instanceof Generalization){
 				Element ownerClass = ((Generalization) eObj).getOwner();
 				
-				if(ownerClass instanceof Class) // Check whether Owner element is a UML Class
-				{
-					if(Utility.isElementHaveModelicaMLStereotypeApplied(ownerClass))  // Check the Owner Class with ModelicaML stereotype
-					{
+				// Check whether Owner element is a UML Class
+				if(ownerClass instanceof Class) {
+					// Check the Owner Class with ModelicaML stereotype
+					if(Utility.isElementHaveModelicaMLStereotypeApplied(ownerClass)) {
 						List<Element> targetList = ((Generalization) eObj).getTargets();
 						
 						for (Element element : targetList) {
 							
-							if(element instanceof PrimitiveType)
-							{
-								if((((Generalization) eObj).getAppliedStereotype(Constants.stereotypeQName_TypeRelation) == null))
-								{
-									return ctx.createFailureStatus(new Object[] {"UML Generalization of a Class pointing to PrimitiveType must extend Stereotype TypeRelation"});
+							if(element instanceof PrimitiveType){
+								if((((Generalization) eObj).getAppliedStereotype(Constants.stereotypeQName_TypeRelation) == null)){
+									return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + 
+											": UML::Generalization of a class pointing to a primitive type must have stereotype <<TypeRelation>> applied."});
 								}
 							}
-							else if(((Generalization) eObj).getAppliedStereotype(Constants.stereotypeQName_ExtendsRelation) == null)
-							{
-								return ctx.createFailureStatus(new Object[] {"UML Generalization of a Class must extend Stereotype ExtendsRelation"});
+							else if(((Generalization) eObj).getAppliedStereotype(Constants.stereotypeQName_ExtendsRelation) == null){
+								return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + ": UML::Generalization of a class must have <<ExtendsRelation>> stereotype applied."});
 							}
 						}
 					}

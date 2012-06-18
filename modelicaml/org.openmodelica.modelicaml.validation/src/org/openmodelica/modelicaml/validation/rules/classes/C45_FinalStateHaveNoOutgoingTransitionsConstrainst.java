@@ -9,6 +9,7 @@ import org.eclipse.emf.validation.AbstractModelConstraint;
 import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.FinalState;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -21,14 +22,9 @@ import org.eclipse.uml2.uml.FinalState;
  *	Mode : Batch
  */
 
-public class C45_FinalStateHaveNoOutgoingTransitionsConstrainst extends
-		AbstractModelConstraint {
+public class C45_FinalStateHaveNoOutgoingTransitionsConstrainst extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C45_FinalStateHaveNoOutgoingTransitionsConstrainst() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -36,21 +32,18 @@ public class C45_FinalStateHaveNoOutgoingTransitionsConstrainst extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
-			if(eObj instanceof FinalState)
-			{
+		if(eType == EMFEventType.NULL) {
+			if(eObj instanceof FinalState){
 				FinalState finalState  = (FinalState) eObj;
 				
-				if(finalState.getOutgoings().size() > 0)
-				{
-					return ctx.createFailureStatus(new Object[] {"Final State may not have outgoing transitions"});
+				if(finalState.getOutgoings().size() > 0){
+					return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID 
+							+ ": Final state may not have outgoing transitions"});
 				}
 			}
 		}

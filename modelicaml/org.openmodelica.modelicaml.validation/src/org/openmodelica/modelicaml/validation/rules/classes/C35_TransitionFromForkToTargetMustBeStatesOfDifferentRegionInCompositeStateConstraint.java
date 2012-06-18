@@ -16,6 +16,7 @@ import org.eclipse.uml2.uml.PseudostateKind;
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.Transition;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -29,14 +30,9 @@ import org.eclipse.uml2.uml.Transition;
  *	Mode : Live
  */
 
-public class C35_TransitionFromForkToTargetMustBeStatesOfDifferentRegionInCompositeStateConstraint
-		extends AbstractModelConstraint {
+public class C35_TransitionFromForkToTargetMustBeStatesOfDifferentRegionInCompositeStateConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C35_TransitionFromForkToTargetMustBeStatesOfDifferentRegionInCompositeStateConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -44,68 +40,65 @@ public class C35_TransitionFromForkToTargetMustBeStatesOfDifferentRegionInCompos
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) { // Blaming Fork instead of transition
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		
-			if(eType != EMFEventType.NULL)
+		if(eType != EMFEventType.NULL)
+		{
+			if(eObj instanceof Transition && ((Transition) eObj).getSource() instanceof Pseudostate)
 			{
-				if(eObj instanceof Transition && ((Transition) eObj).getSource() instanceof Pseudostate)
-				{
-					eObj = ((Transition) eObj).getSource();	
-				}
-				else
-				{
-					return ctx.createSuccessStatus();
-				}
+				eObj = ((Transition) eObj).getSource();	
 			}
-			if(eObj instanceof Pseudostate)
+			else
 			{
-				Pseudostate pseudoState = (Pseudostate) eObj;
+				return ctx.createSuccessStatus();
+			}
+		}
+		if(eObj instanceof Pseudostate) {
+			Pseudostate pseudoState = (Pseudostate) eObj;
+			
+			if(pseudoState.getKind().getValue() == PseudostateKind.FORK) {
 				
-				if(pseudoState.getKind().getValue() == PseudostateKind.FORK)
-				{
-					List<Transition> outgoingTransitionList = pseudoState.getOutgoings();
-					State compositeState = null;
-					List<Region> foundRegionsList = new ArrayList<Region>();
+				List<Transition> outgoingTransitionList = pseudoState.getOutgoings();
+				State compositeState = null;
+				List<Region> foundRegionsList = new ArrayList<Region>();
+				
+				for (Transition transition : outgoingTransitionList) {
 					
-					for (Transition transition : outgoingTransitionList) {
+					if(transition.getTarget() != null && transition.getTarget() instanceof State) {
 						
-						if(transition.getTarget() != null && transition.getTarget() instanceof State)
-						{
-							State target_state = (State) transition.getTarget();
+						State target_state = (State) transition.getTarget();
+						
+						if(target_state.getOwner() != null && target_state.getOwner() instanceof Region) {
 							
-							if(target_state.getOwner() != null && target_state.getOwner() instanceof Region)
-							{
-								Region region = (Region) target_state.getOwner();
+							Region region = (Region) target_state.getOwner();
+							
+							if(region.getOwner() != null && region.getOwner() instanceof State) {
 								
-								if(region.getOwner() != null && region.getOwner() instanceof State)
-								{
-									if(compositeState == null)
-									{
-										compositeState = (State) region.getOwner();
-										foundRegionsList.add(region);
-									}
-									else if(compositeState.equals((State)region.getOwner()) && !foundRegionsList.contains(region))
-									{
-										foundRegionsList.add(region);
-									}
-									else
-									{
-										return ctx.createFailureStatus(new Object[]{ transition.getName()+" Transition from Fork State must lead to States that are all in different regions of a composite state."});
-									}
+								if(compositeState == null) {
+									
+									compositeState = (State) region.getOwner();
+									foundRegionsList.add(region);
 								}
-								else
-								{
-									return ctx.createFailureStatus(new Object[]{ transition.getName()+" Transition from Fork State must lead to States that are all in different regions of a composite state."});
+								else if(compositeState.equals((State)region.getOwner()) && !foundRegionsList.contains(region)){
+									foundRegionsList.add(region);
 								}
+								else {
+									return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": Transition '" 
+											+ transition.getName()+"' from fork must lead to states that are all in different regions of a composite state."});
+								}
+							}
+							else
+							{
+								return ctx.createFailureStatus(new Object[]{ transition.getName()+" Transition from Fork State must lead to States that are all in different regions of a composite state."});
 							}
 						}
 					}
 				}
 			}
+		}
 		
 		return ctx.createSuccessStatus();
 	}

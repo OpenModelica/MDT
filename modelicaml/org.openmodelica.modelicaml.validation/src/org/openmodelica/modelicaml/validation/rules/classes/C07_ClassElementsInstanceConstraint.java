@@ -52,14 +52,9 @@ import org.openmodelica.modelicaml.validation.util.Utility;
  * 
  *	Mode : Live
  */
-public class C07_ClassElementsInstanceConstraint extends
-AbstractModelConstraint {
+	public class C07_ClassElementsInstanceConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C07_ClassElementsInstanceConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -67,14 +62,11 @@ AbstractModelConstraint {
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 
-
 		// Live and Batch Mode
-		
-		if(eObj instanceof Element && ((Element)eObj).getOwner() instanceof NamedElement)
-		{
+		if(eObj instanceof Element && ((Element)eObj).getOwner() instanceof NamedElement){
 			Element element = (Element) eObj;
 			NamedElement elementOwner = (NamedElement) element.getOwner();
 
@@ -118,7 +110,7 @@ AbstractModelConstraint {
 				}
 				else
 				{
-					return ctx.createFailureStatus(new Object[] {"Element "+((NamedElement)element).getName()+" cannot be a part of UML Class with any ModelicaML Stereotype."  } );
+					return ctx.createFailureStatus(new Object[] {"'"+element.eClass().getName()+"(s)' ('"+((NamedElement)element).getName()+"') is not supported."  } );
 				}
 			}
 		}

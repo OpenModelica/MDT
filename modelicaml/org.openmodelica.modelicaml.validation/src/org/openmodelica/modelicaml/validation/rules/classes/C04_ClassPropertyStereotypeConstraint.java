@@ -31,14 +31,9 @@ import org.openmodelica.modelicaml.validation.util.Utility;
  *	Mode : Batch
  */
 
-public class C04_ClassPropertyStereotypeConstraint extends
-		AbstractModelConstraint {
+public class C04_ClassPropertyStereotypeConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C04_ClassPropertyStereotypeConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -46,19 +41,16 @@ public class C04_ClassPropertyStereotypeConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL){
 			
-			if(eObj instanceof Property && ((Property) eObj).getOwner() instanceof Class)
-			{
+			if(eObj instanceof Property && ((Property) eObj).getOwner() instanceof Class){
 				Class clas = (Class) ((Property) eObj).getOwner();
-				if(Utility.isElementHaveModelicaMLStereotypeApplied(clas))
-				{
+				if(Utility.isElementHaveModelicaMLStereotypeApplied(clas)){
 					Property property = (Property) eObj;
 					Type propertyType = property.getType();
 					
@@ -72,53 +64,47 @@ public class C04_ClassPropertyStereotypeConstraint extends
 					/*
 					 * Check if type is defined
 					 */
-					if(propertyType == null)
-					{
-						return ctx.createFailureStatus(new Object[] { "Property '"+((NamedElement)eObj).getName()+"' must have type defined." });
+					if(propertyType == null){
+						return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_MISSING + ": Type for '" +((NamedElement)eObj).getName()+"'." });
 					}
 					
 					/*
 					 * Check the type stereotype compliance
 					 */
-					if((propertyType != null) && (propertyType.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null))
-					{
-						if(property.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance) == null)
-						{
-							return ctx.createFailureStatus(new Object[] { "Property '"+((NamedElement)eObj).getName()+"' of type with <<Requirement>> stereotype must have <<RequirementInstance>> stereotype applied." });
+					if((propertyType != null) && (propertyType.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null)){
+						if(property.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance) == null){
+							return ctx.createFailureStatus(new Object[] { "Property '"
+									+((NamedElement)eObj).getName()+"' of type with <<Requirement>> stereotype must have <<RequirementInstance>> stereotype applied." });
 						}
 					}
-					else if((propertyType != null) && (propertyType.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null))
-					{
+					else if((propertyType != null) && (propertyType.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null)){
 						/*
 						 * TODO: remove the property.getAppliedStereotype(Constants.stereotypeQName_Model) ... It should only be property.getAppliedStereotype(Constants.stereotypeQName_Model)
 						 */
-						if(!(property.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) != null || property.getAppliedStereotype(Constants.stereotypeQName_Model) != null) )
-						{
-							return ctx.createFailureStatus(new Object[]{ "Property '"+((NamedElement)eObj).getName()+"' of type with <<CalculationModel>> or <<Model>> stereotype must have <<CalculatedProperty>> or <<Component>> stereotype applied." });
+						if(!(property.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) != null || property.getAppliedStereotype(Constants.stereotypeQName_Model) != null) ){
+							return ctx.createFailureStatus(new Object[]{ "Property '"
+									+((NamedElement)eObj).getName()+"' of type with <<CalculationModel>> or <<Model>> stereotype must have " +
+											"<<CalculatedProperty>> or <<Component>> stereotype applied." });
 						}
 					}
-					else if(propertyType instanceof PrimitiveType)
-					{
-						if(property.getAppliedStereotype(Constants.stereotypeQName_Variable) == null)
-						{
-							return ctx.createFailureStatus(new Object[]{ "Property '"+((NamedElement)eObj).getName()+"' of type which is instance of UML PrimitiveType must have <<variable>> stereotype applied." });	
+					else if(propertyType instanceof PrimitiveType){
+						if(property.getAppliedStereotype(Constants.stereotypeQName_Variable) == null){
+							return ctx.createFailureStatus(new Object[]{ "Property '"
+									+((NamedElement)eObj).getName()+"' of type which is instance of UML PrimitiveType must have <<Variable>> stereotype applied." });	
 						}
 					}
-					else if(propertyType instanceof PrimitiveType)
-					{
-						if(property.getAppliedStereotype(Constants.stereotypeQName_Variable) == null)
-						{
-							return ctx.createFailureStatus(new Object[]{ "Property '"+((NamedElement)eObj).getName()+"' of type which is instance of UML PrimitiveType must have <<variable>> stereotype applied." });	
+					else if(propertyType instanceof PrimitiveType){
+						if(property.getAppliedStereotype(Constants.stereotypeQName_Variable) == null){
+							return ctx.createFailureStatus(new Object[]{ "Property '"
+									+((NamedElement)eObj).getName()+"' of type which is instance of UML PrimitiveType must have <<Variable>> stereotype applied." });	
 						}
 					}
 					else if (!Utility.isElementHaveModelicaMLStereotypeApplied(property)) {
-						return ctx.createFailureStatus(new Object[]{ "Property '"+((NamedElement)eObj).getName()+"' must have a ModelicaML stereotype applied." });	
+						return ctx.createFailureStatus(new Object[]{ "Property '"
+								+((NamedElement)eObj).getName()+"' must have a ModelicaML stereotype applied." });	
 					}
-					
 				}
-				
 			}
-			
 		}
 		
 		return ctx.createSuccessStatus();

@@ -13,6 +13,7 @@ import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.PseudostateKind;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.Transition;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -26,14 +27,9 @@ import org.eclipse.uml2.uml.Transition;
  *	Mode : Batch
  */
 
-public class C36_JoinOutgoingTransitionToStateOrFinalStateConstraint extends
-		AbstractModelConstraint {
+public class C36_JoinOutgoingTransitionToStateOrFinalStateConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C36_JoinOutgoingTransitionToStateOrFinalStateConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -41,29 +37,25 @@ public class C36_JoinOutgoingTransitionToStateOrFinalStateConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
-		
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType =  ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL) {
 
-			if(eObj instanceof Transition)
-			{
-				if(((Transition) eObj).getSource() instanceof Pseudostate && ((Pseudostate) ((Transition) eObj).getSource()).getKind().getValue() == PseudostateKind.JOIN)
-				{
+			if(eObj instanceof Transition) {
+				if(((Transition) eObj).getSource() instanceof Pseudostate 
+						&& ((Pseudostate) ((Transition) eObj).getSource()).getKind().getValue() == PseudostateKind.JOIN) {
+					
 					Transition transition = (Transition) eObj;
 					
-					if((transition.getTarget() instanceof State) || (transition.getTarget() instanceof FinalState))
-					{
+					if((transition.getTarget() instanceof State) || (transition.getTarget() instanceof FinalState)){
 						// NOP
-						
 					}
-					else
-					{
-						return ctx.createFailureStatus(new Object[] {"Transition "+transition.getName()+" from join must have target as State or FinalState"});
+					else{
+						return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": Transition " + 
+								transition.getName()+" from join must lead to a state or a final state."});
 					}
 				}
 			}

@@ -16,6 +16,7 @@ import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.PseudostateKind;
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.StateMachine;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.validation.util.Utility;
 
 /**	
@@ -30,14 +31,9 @@ import org.openmodelica.modelicaml.validation.util.Utility;
  *	Mode : Live
  */
 
-public class C25_ModelicaMLStateMachineHaveOnlyOneInitialStateConstraint extends
-		AbstractModelConstraint {
+public class C25_ModelicaMLStateMachineHaveOnlyOneInitialStateConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C25_ModelicaMLStateMachineHaveOnlyOneInitialStateConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -45,59 +41,48 @@ public class C25_ModelicaMLStateMachineHaveOnlyOneInitialStateConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 		
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
-		
-			if(eType != EMFEventType.NULL)
-			{
-				if(eObj instanceof Pseudostate && ((Pseudostate)eObj).getKind().getValue() ==  PseudostateKind.INITIAL)
-				{
-					
-					
-					Region region = (Region) ((Pseudostate) eObj).getOwner();
-					
-					eObj = region.getStateMachine();
-				}
-				else
-				{
-					return ctx.createSuccessStatus();
-				}
+		if(eType != EMFEventType.NULL) {
+			if(eObj instanceof Pseudostate && ((Pseudostate)eObj).getKind().getValue() ==  PseudostateKind.INITIAL) {
+
+				Region region = (Region) ((Pseudostate) eObj).getOwner();
+				eObj = region.getStateMachine();
 			}
-			if(eObj instanceof StateMachine && Utility.isElementHaveModelicaMLStereotypeApplied((Element)eObj))
-			{
-				StateMachine stateMachine = (StateMachine) eObj;
+			else {
+				return ctx.createSuccessStatus();
+			}
+		}
+		
+		if(eObj instanceof StateMachine && Utility.isElementHaveModelicaMLStereotypeApplied((Element)eObj)) {
+			StateMachine stateMachine = (StateMachine) eObj;
+			
+			List<Region> regionList = stateMachine.getRegions();
+			
+			int noOfInitialStates = 0;
+			
+			for (Region region : regionList) {
 				
-				List<Region> regionList = stateMachine.getRegions();
+				List <Element> elementList = region.getOwnedElements();
 				
-				int noOfInitialStates = 0;
-				
-				for (Region region : regionList) {
+				for (Element element : elementList) {
 					
-					List <Element> elementList = region.getOwnedElements();
-					
-					for (Element element : elementList) {
-						
-						if( element instanceof Pseudostate)
-						{
-							if(((Pseudostate)element).getKind().getValue() ==  PseudostateKind.INITIAL)
+					if( element instanceof Pseudostate){
+						if(((Pseudostate)element).getKind().getValue() ==  PseudostateKind.INITIAL){
+							noOfInitialStates++;
+							
+							if(noOfInitialStates > 1)
 							{
-								noOfInitialStates++;
-								
-								if(noOfInitialStates > 1)
-								{
-									return ctx.createFailureStatus(new Object[]{((NamedElement)eObj).getName()+" ModelicaML StateMachine can contian at most one Initial State."});
-								}
+								return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": '" 
+										+ ((NamedElement)eObj).getName() + "' StateMachine can contian at most one initial state."});
 							}
 						}
-						
 					}
 				}
 			}
-		
-		
+		}
 		
 		return ctx.createSuccessStatus();
 	}

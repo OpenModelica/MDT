@@ -9,6 +9,7 @@ import org.eclipse.emf.validation.AbstractModelConstraint;
 import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.ConnectionPointReference;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**	
  * State Machines
@@ -22,14 +23,9 @@ import org.eclipse.uml2.uml.ConnectionPointReference;
  *	Mode : Batch
  */
 
-public class C43_ConncectionPointReferenceToExitPointHaveNoIncomingTransitionConstraint
-		extends AbstractModelConstraint {
+public class C43_ConncectionPointReferenceToExitPointHaveNoIncomingTransitionConstraint extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C43_ConncectionPointReferenceToExitPointHaveNoIncomingTransitionConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -37,23 +33,19 @@ public class C43_ConncectionPointReferenceToExitPointHaveNoIncomingTransitionCon
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
 
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
-			if(eObj instanceof ConnectionPointReference)
-			{
+		if(eType == EMFEventType.NULL){
+			if(eObj instanceof ConnectionPointReference){
 				ConnectionPointReference reference = (ConnectionPointReference) eObj;
 				
-				if(reference.getExits() != null && reference.getExits().size() <= 1)
-				{
-					if(reference.getIncomings() != null && reference.getIncomings().size() > 0)
-					{
-						return ctx.createFailureStatus(new Object[] {"ConnectionPoint "+reference.getName()+" referencing an exit point may not have incoming transition"});
+				if(reference.getExits() != null && reference.getExits().size() <= 1){
+					if(reference.getIncomings() != null && reference.getIncomings().size() > 0){
+						return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + 
+								": ConnectionPoint '"+reference.getName()+"' referencing an exit point may not have incoming transition."});
 					}
 				}
 			}

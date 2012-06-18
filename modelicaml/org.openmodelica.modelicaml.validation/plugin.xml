@@ -6,6 +6,7 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
+         <!--
          <command
                commandId="org.openmodelica.modelicaml.validation.subtree"
                icon="icons/validate.gif"
@@ -35,6 +36,7 @@
                </with>
             </visibleWhen>
          </command>
+         -->
       </menuContribution>
    </extension>
    <extension
@@ -93,10 +95,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
+      <!--
       <handler
-            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
+            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationSubTreeAction"
             commandId="org.openmodelica.modelicaml.validation.subtree">
       </handler>
+      -->
       <handler
             class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
             commandId="org.openmodelica.modelicaml.validation.entiremodel">
@@ -104,10 +108,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <!--
       <command
             id="org.openmodelica.modelicaml.validation.subtree"
             name="Validate ModelicaML subtree">
       </command>
+      -->
       <command
             id="org.openmodelica.modelicaml.validation.entiremodel"
             name="Validate ModelicaML Entire Model">
@@ -140,7 +146,7 @@
                   severity="WARNING"
                   statusCode="1">
                <message>
-                  C3 : {0}
+                  C3 {0}
                </message>
             </constraint>
             <constraint
@@ -153,7 +159,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C4 : {0}
+                  C4 {0}
                </message>
             </constraint>
             <constraint
@@ -166,7 +172,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C5 : {0}
+                  C5 {0}
                </message>
             </constraint>
             <constraint
@@ -179,7 +185,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C6 : {0}
+                  C6 {0}
                </message>
             </constraint>
             <constraint
@@ -192,7 +198,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C10-C11: {0}
+                  C10-C11 {0}
                </message>
             </constraint>
             <constraint
@@ -205,7 +211,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C12 : {0}
+                  C12 {0}
                </message>
             </constraint>
             <constraint
@@ -218,7 +224,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C13 : {0}
+                  C13 {0}
                </message>
             </constraint>
             <constraint
@@ -231,7 +237,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C14 : {0}
+                  C14 {0}
                </message>
             </constraint>
             <constraint
@@ -244,7 +250,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C15 : {0}
+                  C15 {0}
                </message>
             </constraint>
             <constraint
@@ -257,7 +263,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C16 : {0}
+                  C16 {0}
                </message>
             </constraint>
             <constraint
@@ -270,7 +276,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C17 : {0}
+                  C17 {0}
                </message>
             </constraint>
             <constraint
@@ -283,7 +289,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C18 : {0}
+                  C18 {0}
                </message>
             </constraint>
             <constraint
@@ -296,7 +302,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C19 : {0}
+                  C19 {0}
                </message>
             </constraint>
             <constraint
@@ -309,7 +315,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C31 : {0}
+                  C31 {0}
                </message>
             </constraint>
             <constraint
@@ -322,7 +328,7 @@
                   severity="WARNING"
                   statusCode="1">
                <message>
-                  C32 : {0}
+                  C32 {0}
                </message>
             </constraint>
             <constraint
@@ -335,7 +341,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C34 : {0}
+                  C34 {0}
                </message>
             </constraint>
             <constraint
@@ -348,7 +354,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C36 : {0}
+                  C36 {0}
                </message>
             </constraint>
             <constraint
@@ -361,7 +367,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C37 : {0}
+                  C37 {0}
                </message>
             </constraint>
             <constraint
@@ -374,7 +380,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C38 : {0}
+                  C38 {0}
                </message>
             </constraint>
             <constraint
@@ -387,7 +393,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C39 : {0}
+                  C39 {0}
                </message>
             </constraint>
             <constraint
@@ -400,7 +406,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C40 : {0}
+                  C40 {0}
                </message>
             </constraint>
             <constraint
@@ -413,7 +419,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C41 : {0}
+                  C41 {0}
                </message>
             </constraint>
             <constraint
@@ -426,7 +432,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C42 : {0}
+                  C42 {0}
                </message>
             </constraint>
             <constraint
@@ -439,7 +445,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C43 : {0}
+                  C43 {0}
                </message>
             </constraint>
             <constraint
@@ -452,7 +458,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C44 : {0}
+                  C44 {0}
                </message>
             </constraint>
             <constraint
@@ -465,7 +471,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C45 : {0}
+                  C45 {0}
                </message>
             </constraint>
             <constraint
@@ -478,7 +484,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C46 : {0}
+                  C46 {0}
                </message>
             </constraint>
          </constraints>
@@ -494,7 +500,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C1 : {0}
+                  C1 {0}
                </message>
                <target
                      class="NamedElement">
@@ -522,7 +528,7 @@
                   severity="WARNING"
                   statusCode="1">
                <message>
-                  C7 : {0}
+                  C7 {0}
                </message>
             </constraint>
             <constraint
@@ -535,7 +541,7 @@
                   severity="WARNING"
                   statusCode="1">
                <message>
-                  C8 : {0}
+                  C8 {0}
                </message>
             </constraint>
             <constraint
@@ -548,7 +554,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C9 : {0}
+                  C9 {0}
                </message>
             </constraint>
             <constraint
@@ -561,7 +567,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C21 : {0}
+                  C21 {0}
                </message>
             </constraint>
             <constraint
@@ -574,7 +580,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C22 : {0}
+                  C22 {0}
                </message>
             </constraint>
             <constraint
@@ -587,7 +593,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C23 : {0}
+                  C23 {0}
                </message>
             </constraint>
             <constraint
@@ -600,7 +606,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C24 : {0}
+                  C24 {0}
                </message>
             </constraint>
             <constraint
@@ -613,7 +619,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C25 : {0}
+                  C25 {0}
                </message>
             </constraint>
             <constraint
@@ -626,7 +632,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C26 : {0}
+                  C26 {0}
                </message>
             </constraint>
             <constraint
@@ -639,7 +645,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C27 : {0}
+                  C27 {0}
                </message>
             </constraint>
             <constraint
@@ -652,7 +658,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C28 : {0}
+                  C28 {0}
                </message>
             </constraint>
             <constraint
@@ -665,7 +671,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C29 : {0}
+                  C29 {0}
                </message>
             </constraint>
             <constraint
@@ -678,7 +684,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C30 : {0}
+                  C30 {0}
                </message>
             </constraint>
             <constraint
@@ -691,7 +697,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C33 : {0}
+                  C33 {0}
                </message>
             </constraint>
             <constraint
@@ -704,7 +710,7 @@
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  C35 : {0}
+                  C35 {0}
                </message>
             </constraint>
          </constraints>
@@ -743,8 +749,8 @@
       </menuContribution>
    </extension>
    <extension
-         id="org.openmodelica.modelicaml.validation.problem"
-         name="New Validation Marker Type"
+         id="org.openmodelica.modelicaml.marker.validation.problem"
+         name="ModelicaML Model Validation"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.emf.ecore.diagnostic">
@@ -759,25 +765,25 @@
             id="org.openmodelica.modelicaml.markerContentGenerator"
             name="ModelicaML marker generator">
          <markerTypeReference
-               id="org.openmodelica.modelicaml.validation.problem">
+               id="org.openmodelica.modelicaml.marker.validation.problem">
          </markerTypeReference>
          <markerTypeReference
-               id="org.openmodelica.modelicaml.modelicamlMarker.validation">
+               id="org.openmodelica.modelicaml.marker.validation">
          </markerTypeReference>
          <markerTypeReference
-               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings">
+               id="org.openmodelica.modelicaml.marker.bindings">
          </markerTypeReference>
          <markerTypeReference
-               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification">
+               id="org.openmodelica.modelicaml.marker.actionCode.componentmodification">
          </markerTypeReference>
          <markerTypeReference
-               id="org.openmodelica.modelicaml.modelicamlMarker.actionCode">
+               id="org.openmodelica.modelicaml.marker.actionCode">
          </markerTypeReference>
          <markerTypeReference
-               id="org.openmodelica.modelicaml.modelicamlMarker.modelicaloading">
+               id="org.openmodelica.modelicaml.marker.modelicaloading">
          </markerTypeReference>
          <markerTypeReference
-               id="org.openmodelica.modelicaml.modelicamlMarker.omc">
+               id="org.openmodelica.modelicaml.marker.omc">
          </markerTypeReference>
          <markerFieldReference
                id="org.eclipse.ui.ide.severityAndDescriptionField"

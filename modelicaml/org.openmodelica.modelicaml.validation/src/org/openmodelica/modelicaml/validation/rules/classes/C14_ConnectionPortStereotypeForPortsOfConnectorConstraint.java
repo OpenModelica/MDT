@@ -29,11 +29,7 @@ import org.openmodelica.modelicaml.validation.util.Utility;
 public class C14_ConnectionPortStereotypeForPortsOfConnectorConstraint extends
 AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C14_ConnectionPortStereotypeForPortsOfConnectorConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -41,31 +37,27 @@ AbstractModelConstraint {
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
-			if(eObj instanceof Connector)
-			{
+		if(eType == EMFEventType.NULL){
+			if(eObj instanceof Connector){
 				Connector connector = (Connector) eObj;
 
-				if(Utility.isElementHaveModelicaMLStereotypeApplied(connector))
-				{
+				if(Utility.isElementHaveModelicaMLStereotypeApplied(connector)){
 					// List of ConnectorEnds for connector
 					List<ConnectorEnd> connector_connectorEnds = connector.getEnds();
 
 					for (ConnectorEnd connectorEnd : connector_connectorEnds) {
 
-						if((connectorEnd.getRole() instanceof Port) && (((Port)connectorEnd.getRole()).getAppliedStereotype(Constants.stereotypeQName_ConnectionPort)) == null)
-						{
-							return ctx.createFailureStatus(new Object[]{"Connector "+connector.getName()+" with any ModelicaML Stereotype applied can only connect to UML Ports with <<ConnectionPort>> Stereotype Applied"});
+						if((connectorEnd.getRole() instanceof Port) && (((Port)connectorEnd.getRole()).getAppliedStereotype(Constants.stereotypeQName_ConnectionPort)) == null){
+							return ctx.createFailureStatus(new Object[]{Constants.validationKeyWord_NOT_VALID + ": A ModelicaML connector '"
+									+connector.getName()+"' can only connect to ports with <<ConnectionPort>> stereotype applied."});
 						}
 					}
 				}
-
 			}
 		}
 		return ctx.createSuccessStatus();

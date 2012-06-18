@@ -12,6 +12,7 @@ import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Dependency;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**
  * C15:
@@ -26,11 +27,7 @@ import org.eclipse.uml2.uml.Dependency;
 public class C15_RedeclareRelationStereotypeForDependencyOfClassConstraint
 		extends AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
 	public C15_RedeclareRelationStereotypeForDependencyOfClassConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -38,36 +35,33 @@ public class C15_RedeclareRelationStereotypeForDependencyOfClassConstraint
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 		EMFEventType eType = ctx.getEventType();
 		
 		// In Batch Mode
-		if(eType == EMFEventType.NULL)
-		{
+		if(eType == EMFEventType.NULL) {
+			
 			C03_ClassWithModelicaMLStereotypeConstraint classWithModelicaMLStereotypeConstraint = new C03_ClassWithModelicaMLStereotypeConstraint();
-			if((eObj instanceof Class) && (classWithModelicaMLStereotypeConstraint.validate(ctx).isOK()))
-			{
+			if((eObj instanceof Class) && (classWithModelicaMLStereotypeConstraint.validate(ctx).isOK())){
+				
 				Class clas = (Class) eObj;
 				List<Dependency> classDependencies = clas.getClientDependencies();
 				boolean havingOnlyOneRedeclareRelationStereotype = false;
 				
 				for (Dependency dependency : classDependencies) {
 					
-					if(dependency.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::RedeclareRelation") != null)
-					{ 
-						if(havingOnlyOneRedeclareRelationStereotype == true)
-						{
+					if(dependency.getAppliedStereotype(Constants.stereotypeQName_RedeclareRelation) != null){ 
+						if(havingOnlyOneRedeclareRelationStereotype == true) {
 							havingOnlyOneRedeclareRelationStereotype = false;
-							return ctx.createFailureStatus(new Object[] {clas.getName()+" can have only one UML Dependency with RedeclareRelation Stereotype"});
+							return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + ": '" 
+									+ clas.getName()+"' can have only one UM::Dependency with <<RedeclareRelation>> stereotype applied."});
 						}
 						else{
 							havingOnlyOneRedeclareRelationStereotype = true;
 						}
 					}
 				}
-				
-				
 			}
 		}
 		

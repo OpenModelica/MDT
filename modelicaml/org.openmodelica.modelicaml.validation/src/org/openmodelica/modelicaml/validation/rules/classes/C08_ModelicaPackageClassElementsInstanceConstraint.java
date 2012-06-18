@@ -43,11 +43,8 @@ import org.openmodelica.modelicaml.validation.util.Utility;
 public class C08_ModelicaPackageClassElementsInstanceConstraint extends
 AbstractModelConstraint {
 
-	/**
-	 * 
-	 */
+
 	public C08_ModelicaPackageClassElementsInstanceConstraint() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -59,49 +56,41 @@ AbstractModelConstraint {
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
+
 		EObject eObj = ctx.getTarget();
 
-
 		// Both In Live and Batch mode
-		
-		if(eObj instanceof Element)
-		{
+		if(eObj instanceof Element){
 			Element elementOwner = ((Element) eObj).getOwner();
 
-			if(elementOwner instanceof Class && elementOwner.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null)
-			{
+			if(elementOwner instanceof Class && elementOwner.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null){
 				Element element = (Element) eObj;
 
-				if((element instanceof Dependency) || (element instanceof Comment) || (element instanceof Enumeration) || (element instanceof PrimitiveType))
-				{
+				if((element instanceof Dependency) || (element instanceof Comment) || (element instanceof Enumeration) || (element instanceof PrimitiveType)){
 
 				}
-				else if(element instanceof Generalization || element instanceof FunctionBehavior || element instanceof Class)
-				{
-					if(Utility.isElementHaveModelicaMLStereotypeApplied(element))
-					{
+				else if(element instanceof Generalization || element instanceof FunctionBehavior || element instanceof Class){
+					if(Utility.isElementHaveModelicaMLStereotypeApplied(element)){
 						return ctx.createSuccessStatus();
 					}
 
-					return ctx.createFailureStatus(new Object[] { "Element "+((NamedElement)element).getName()+" cannot be a part of ModelicaPackage." });
+					return ctx.createFailureStatus(new Object[] { "'"+element.eClass().getName()+"(s)' ('"+((NamedElement)element).getName()+"') cannot be a part of a Modelica package." });
 				}
-				else if((element instanceof Property) && (element.getAppliedStereotype(Constants.stereotypeQName_Variable) != null))
-				{
+				else if((element instanceof Property) && (element.getAppliedStereotype(Constants.stereotypeQName_Variable) != null)){
+					
 					Stereotype property_variable_stereotype = ((Property)element).getAppliedStereotype(Constants.stereotypeQName_Variable);
 
 					Object constant_variable = element.getValue(property_variable_stereotype, Constants.propertyName_variability);
-					if(!(((EnumerationLiteral)constant_variable).getName().equals("constant")))
-					{
-						return ctx.createFailureStatus(new Object[] { "Variable Property "+((NamedElement)element).getName()+" must have variability set to 'constant'" });
+					
+					if(!(((EnumerationLiteral)constant_variable).getName().equals("constant"))){
+						return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": '"+((NamedElement)element).getName()+"' must have variability set to 'constant'." });
 					}
 				}
-				else if(element instanceof Property)
-				{
-					return ctx.createFailureStatus(new Object[]{" Property in ModelicaPackage must have <<Variable>> Stereotype applied"});
+				else if(element instanceof Property){
+					return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": variable in a Modelica package must have <<Variable>> stereotype applied."});
 				}
 				else {
-					return ctx.createFailureStatus(new Object[] {"Element "+((NamedElement)element).getName()+" cannot be a part of ModelicaPackage."  });
+					return ctx.createFailureStatus(new Object[] { "'"+element.eClass().getName()+"(s)' ('"+((NamedElement)element).getName()+"') cannot be a part of a Modelica package." });
 				}
 			}
 		}
