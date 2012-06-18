@@ -15,8 +15,13 @@ public class VerificationScenariosDataCollector extends ElementsCollector {
 
 	// stereotypes qualified names
 	private static final String scenarioStereotypeQName = Constants.stereotypeQName_VerificationScenario;
+	private static final String requirementStereotypeQName = Constants.stereotypeQName_Requirement;
+
 	private static final String requiresStereotypeQName = Constants.stereotypeQName_Requires;
 	private static final String requiredForStereotypeQName = Constants.stereotypeQName_RequiredFor;
+
+	// all requirements found
+	private HashSet<Element> allRequirements = new HashSet<Element>();
 	
 	// all scenarios found.
 	private HashSet<Element> allScenarios = new HashSet<Element>();
@@ -41,11 +46,15 @@ public class VerificationScenariosDataCollector extends ElementsCollector {
 		
 		// collect elements
 		// avoid duplicates that can occur due to the multiple imports of the same elements
-		if (element instanceof Class 
-				&& ((Element)element).getAppliedStereotype(scenarioStereotypeQName) != null
-				&& !elements.contains(element)) {
+		if (element instanceof Class ) {
 			
-			elements.add(element) ;
+			if ( !elements.contains(element) && ((Element)element).getAppliedStereotype(scenarioStereotypeQName) != null ) {
+//				elements.add(element);
+				allScenarios.add(element);
+			}
+			else if (!elements.contains(element) && ((Element)element).getAppliedStereotype(requirementStereotypeQName) != null) {
+				allRequirements.add(element);
+			}
 			
 			if (isImported) {
 				importedElements.add(element);
@@ -129,6 +138,10 @@ public class VerificationScenariosDataCollector extends ElementsCollector {
 	}
 	public HashMap<Element, HashSet<Element>> getModelToItsRequiredModels() {
 		return modelToItsRequiredModels;
+	}
+	
+	public HashSet<Element> getAllRequirements() {
+		return allRequirements;
 	}
 	
 }

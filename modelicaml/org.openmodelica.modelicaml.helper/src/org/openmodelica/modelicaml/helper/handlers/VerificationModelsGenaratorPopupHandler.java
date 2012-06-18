@@ -67,103 +67,136 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
+import org.openmodelica.modelicaml.helper.dialogs.VerificationModelsGenerationOptionsDialog;
 import org.openmodelica.modelicaml.helper.impl.VerificationModelsGenerator;
 
-public class VerificationModelsGenaratorHandler extends AbstractHandler {
+public class VerificationModelsGenaratorPopupHandler extends AbstractHandler {
 
 	private EObject selectedElement = null;
-	private HashSet<Element> sourceModels; 
+//	private HashSet<Element> sourceModels; 
 	private Element targetPackage;
 	private Element requirementsPackage; 
 	private Element testScenariosPackage; 
 	private Element valueMediatorsPackage;
 	private VerificationModelsGenerator smg;
 	
-
+	// default requirements selection options
+	boolean includeRequirementsWithPositiveRelations = true;
+	boolean includeRequirementsWithNegativeRelations = false;
+	boolean includeRequirementsWitnUnknownRelations = false;
+	
+	
+	protected void setSelectedSystemModel(){
+		selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 		
-		if (selectedElement instanceof Class) {
-			
-			/* TODO: let the user select the target package, requirements package, test scenarios package and the value mediators package.
-			 * preselect all to the root UML Model from which the user selected the models to generate the simulation models for.
-			 */
-			
-			sourceModels = new HashSet<Element>();
-			sourceModels.add((Class)selectedElement);
+		/*
+		 * If action was performed on an element from model explorer 
+		 * then get the selection otherwise set it to null.
+		 */
+		setSelectedSystemModel();
+		
+//		if (selectedElement instanceof Class) {
+//			
+//			/* TODO: let the user select the target package, requirements package, test scenarios package and the value mediators package.
+//			 * preselect all to the root UML Model from which the user selected the models to generate the simulation models for.
+//			 */
+//			
+//			sourceModels = new HashSet<Element>();
+//			sourceModels.add((Class)selectedElement);
+//		}
 			
 			// get the uml model that is open in Papyrus.
 			UmlModel papyrusModel = UmlUtils.getUmlModel();
 			if (papyrusModel != null ) {
 				try {
-					targetPackage = (Element) papyrusModel.lookupRoot();
-					requirementsPackage = (Element) papyrusModel.lookupRoot();
-					testScenariosPackage = (Element) papyrusModel.lookupRoot();
-					valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
 
-//					targetPackage = ((Class)selectedElement).getModel();
-//					requirementsPackage = ((Class)selectedElement).getModel(); 
-//					testScenariosPackage = ((Class)selectedElement).getModel(); 
-//					valueMediatorsPackage = ((Class)selectedElement).getModel();
+					// get the top levelPapyrus UML::Model
+					Element topLevelModel = (Element) papyrusModel.lookupRoot();
+					
+					// preset the packages to search in
+					targetPackage = topLevelModel;
+					requirementsPackage = topLevelModel;
+					testScenariosPackage = topLevelModel;
+					valueMediatorsPackage = topLevelModel;
+
+//							targetPackage = ((Class)selectedElement).getModel();
+//							requirementsPackage = ((Class)selectedElement).getModel(); 
+//							testScenariosPackage = ((Class)selectedElement).getModel(); 
+//							valueMediatorsPackage = ((Class)selectedElement).getModel();
 					
 				} catch (NotFoundException e) {
 					e.printStackTrace();
 					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
 				}
-			}
-			
+		
 			boolean allPackagesAreSet = targetPackage != null && requirementsPackage != null && testScenariosPackage != null && valueMediatorsPackage != null;
 			
 			if (allPackagesAreSet) {
 				
-				boolean go = MessageDialog.openQuestion(getShell(), "Please confirm ...", "This helper will create a package " +
-						"that will contain multiple verification models each including the selected system model, one scenario and all requirements "+ 
-						"that can be verified using this scenario." +
-						"\n\nNote, only verification models that have scenarios and requirements with appropriate value bindings will be collected." +
-						"\n\n" +
-						
-						"   - Selected system model: '" + ((Class)selectedElement).getName() + "'\n" + 
-						"   - Package to store generated Ver. Models in: '" + ((NamedElement)targetPackage).getName() + "'\n" + 
-						"   - Package for Requirements search: '" + ((NamedElement)requirementsPackage).getName() + "'\n" +
-						"   - Package for Scenarios search: '" + ((NamedElement)testScenariosPackage).getName() + "'\n" +
-						"   - Package for Value Mediators search: '" + ((NamedElement)valueMediatorsPackage).getName() + "'\n"
-						);
+				// TODO: set requirements selection options via user dialog
 				
-				if (go && allPackagesAreSet) {
-					try {
-						ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-						TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-						
-						smg = new VerificationModelsGenerator(
-								sourceModels, 
-								targetPackage,  
+				VerificationModelsGenerationOptionsDialog dialog = new VerificationModelsGenerationOptionsDialog(
+								new Shell(), 
+								(Element) selectedElement, 
+								targetPackage, 
 								requirementsPackage, 
 								testScenariosPackage, 
 								valueMediatorsPackage);
-						
-						if (!smg.isTestSimulationModelGenerationCanceled()) {
-							// execute 
-							editingDomain.getCommandStack().execute(getCommand(editingDomain));
-						}
-						if (!smg.isTestSimulationModelGenerationCanceled()) {
-							// show log
-							String msg = "Generation of Verification Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
-										 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
-
-							DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
-									"Data collecation and models generation log entries:", msg + smg.getLog().trim(), false);
-							dialog.open();
-						}
-
-					} catch (ServiceException e) {
-						e.printStackTrace();
-					}
-				}
+				dialog.open();
+				
+//				boolean go = MessageDialog.openQuestion(getShell(), "Please confirm ...", "This helper will create a package " +
+//						"that will contain multiple verification models each including the selected system model, one scenario and all requirements "+ 
+//						"that can be verified using this scenario." +
+//						"\n\nNote, only verification models that have scenarios and requirements with appropriate value bindings will be collected." +
+//						"\n\n" +
+//						
+//						"   - Selected system model: '" + ((Class)selectedElement).getName() + "'\n" + 
+//						"   - Package to store generated Ver. Models in: '" + ((NamedElement)targetPackage).getName() + "'\n" + 
+//						"   - Package for Requirements search: '" + ((NamedElement)requirementsPackage).getName() + "'\n" +
+//						"   - Package for Scenarios search: '" + ((NamedElement)testScenariosPackage).getName() + "'\n" +
+//						"   - Package for Value Mediators search: '" + ((NamedElement)valueMediatorsPackage).getName() + "'\n"
+//						);
+//				
+//				if (go && allPackagesAreSet) {
+//					try {
+//						ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//						TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//						
+//						smg = new VerificationModelsGenerator(
+//								sourceModels, 
+//								targetPackage,  
+//								requirementsPackage, 
+//								testScenariosPackage, 
+//								valueMediatorsPackage,
+//								includeRequirementsWithPositiveRelations,
+//								includeRequirementsWithNegativeRelations,
+//								includeRequirementsWitnUnknownRelations);
+//						
+//						if (!smg.isTestSimulationModelGenerationCanceled()) {
+//							// execute 
+//							editingDomain.getCommandStack().execute(getCommand(editingDomain));
+//						}
+//						if (!smg.isTestSimulationModelGenerationCanceled()) {
+//							// show log
+//							String msg = "Generation of Verification Models for '" + ((NamedElement)selectedElement).getName() + "'\n" +
+//										 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
+//
+//							DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
+//									"Data collecation and models generation log entries:", msg + smg.getLog().trim(), false);
+//							dialog.open();
+//						}
+//
+//					} catch (ServiceException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}
 			else {
 				MessageDialog.openError(getShell(), "Packages Selection for Verification Models Generation",
@@ -173,26 +206,26 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 		return null;
 	}
 
-	protected Command getCommand(TransactionalEditingDomain editingDomain) {
-		CompoundCommand cc = new CompoundCommand("Generating simulation models for '" + ((Class)selectedElement).getQualifiedName() + "'");
-		Command command = new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				try {
-					smg.generate();
-					new ProgressMonitorDialog(getShell()).run(true, true, smg);
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					MessageDialog.openError(getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
-				}
-			}
-		};
-		cc.append(command);
-		return (cc.unwrap());
-	}
+//	protected Command getCommand(TransactionalEditingDomain editingDomain) {
+//		CompoundCommand cc = new CompoundCommand("Generating simulation models for '" + ((Class)selectedElement).getQualifiedName() + "'");
+//		Command command = new RecordingCommand(editingDomain) {
+//			@Override
+//			protected void doExecute() {
+//				try {
+//					smg.generate();
+//					new ProgressMonitorDialog(getShell()).run(true, true, smg);
+//				} catch (InvocationTargetException e) {
+//					e.printStackTrace();
+//					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//					MessageDialog.openError(getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
+//				}
+//			}
+//		};
+//		cc.append(command);
+//		return (cc.unwrap());
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
@@ -212,11 +245,11 @@ public class VerificationModelsGenaratorHandler extends AbstractHandler {
 
 	
 	/**
- * Gets the current selections.
- * 
- * @return the current selections
- */
-private List<Object> getCurrentSelections() {
+	 * Gets the current selections.
+	 * 
+	 * @return the current selections
+	 */
+	private List<Object> getCurrentSelections() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if(selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;

@@ -28,6 +28,10 @@
             id="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
             name="Generate Verification Models">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels"
+            name="Generate Verification Models">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -120,7 +124,7 @@
       </handler>
       -->
       <handler
-            class="org.openmodelica.modelicaml.helper.handlers.VerificationModelsGenaratorHandler"
+            class="org.openmodelica.modelicaml.helper.handlers.VerificationModelsGenaratorPopupHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels">
          <activeWhen>
             <with
@@ -161,6 +165,10 @@
                </iterate>
             </with>
          </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.VerificationModelsGenaratorToobarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels">
       </handler>
    </extension>
 

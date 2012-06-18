@@ -19,9 +19,12 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 
 public class VerificationScenariosCollector {
 	
-	// all test scenarios that are found in the top-level model
+	// all scenarios that are found in the top-level model
 	private HashSet<Element> allTS = new HashSet<Element>();
 
+	// all requirements that are found
+	private HashSet<Element> allRequirements = new HashSet<Element>();
+	
 	// test scenarios that can be used to test selected requirements
 	private HashSet<Element> matchedTS = new HashSet<Element>();
 
@@ -57,18 +60,18 @@ public class VerificationScenariosCollector {
 	public boolean collectScenariosFromModel(Boolean sortData){
 		// clear the list in order to enable multiple calls of this method in the the same object
 		this.allTS.clear();
+		this.allRequirements.clear();
 		this.alwaysInclude.clear();
 		this.modelToItsRequiredModels.clear();
 		
 		if ( umlRoolModel != null ) {
-//			ElementsCollector ec = new ElementsCollector();
-//			ec.collectElementsFromModel(umlRoolModel, Constants.stereotypeQName_TestScenario);
 			VerificationScenariosDataCollector ec = new VerificationScenariosDataCollector(umlRoolModel);
 			
-//			this.allTS.addAll(ec.getElements());
 			this.allTS.addAll(ec.getAllScenarios());
 			this.alwaysInclude.addAll(ec.getAlwaysInclude());
 			this.modelToItsRequiredModels.putAll(ec.getModelToItsRequiredModels());
+			
+			this.allRequirements.addAll(ec.getAllRequirements());
 			
 			// sort data (i.e. fill other sets and maps)
 			if (sortData) { sortData();}
@@ -159,7 +162,8 @@ public class VerificationScenariosCollector {
 
 		if (testCase instanceof NamedElement) {
 			
-			// collect from stereotype
+			// DEPRECATED
+			// collect from stereotype property
 			Stereotype s_ts = ((NamedElement)testCase).getAppliedStereotype(Constants.stereotypeQName_VerificationScenario); 
 			HashSet<Element> itemsFoundThroughStereotypeProperty = new HashSet<Element>();
 			if ( s_ts != null ) {
@@ -195,23 +199,29 @@ public class VerificationScenariosCollector {
 			EList<Dependency> depList = ((NamedElement)testCase).getClientDependencies();
 			HashSet<Element> itemsFoundThroughDependencies = new HashSet<Element>();
 			for (Dependency dependency : depList) {
-				// TODO: should we check if the dependency has a stereotype <<UsedToVerify>>?
-				for (Element target : dependency.getTargets()) {
-					if (target instanceof Class && target.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
-						itemsFoundThroughDependencies.add( (Class) target);
-					}
-					// collect requirements from referenced elements
-					// NOTE: no deep search is performed, only the directly linked requirements are collected.
-					else {
-						if (target instanceof NamedElement) {
-							for (Dependency targetDependency : ((NamedElement)target).getClientDependencies()) {
-								for (Element targetDependencyTarget : targetDependency.getTargets()) {
-									if (targetDependencyTarget.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
-										itemsFoundThroughDependencies.add( targetDependencyTarget);
-									}
-								}
-							}
+				
+				// Check if the dependency has a stereotype <<UsedToVerify>>
+				if (dependency.getAppliedStereotype(Constants.stereotypeQName_UsedToVerify) != null) {
+				
+					for (Element target : dependency.getTargets()) {
+						if (target instanceof Class && target.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+							itemsFoundThroughDependencies.add( (Class) target);
 						}
+						
+//						// TODO: what is that (see below) for?
+//						// collect requirements from referenced elements
+//						// NOTE: no deep search is performed, only the directly linked requirements are collected.
+//						else {
+//							if (target instanceof NamedElement) {
+//								for (Dependency targetDependency : ((NamedElement)target).getClientDependencies()) {
+//									for (Element targetDependencyTarget : targetDependency.getTargets()) {
+//										if (targetDependencyTarget.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+//											itemsFoundThroughDependencies.add( targetDependencyTarget);
+//										}
+//									}
+//								}
+//							}
+//						}
 					}
 				}
 			}
@@ -289,17 +299,10 @@ public class VerificationScenariosCollector {
 		return linkedTS;
 	}
 
-//	public void setTsToReq(HashMap<Element,HashSet<Element>> tsToReq) {
-//		this.tsToReq = tsToReq;
-//	}
-
 	public HashMap<Element,HashSet<Element>> getTsToReq() {
 		return tsToReq;
 	}
 
-//	public void setReqToTS(HashMap<Element,HashSet<Element>> reqToTS) {
-//		this.reqToTS = reqToTS;
-//	}
 
 	public HashMap<Element,HashSet<Element>> getReqToTS() {
 		return reqToTS;
@@ -329,5 +332,8 @@ public class VerificationScenariosCollector {
 		return modelToItsRequiredModels;
 	}
 
+	public HashSet<Element> getAllRequirements() {
+		return allRequirements;
+	}
 	
 }

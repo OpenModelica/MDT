@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -16,7 +17,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageableElement;
@@ -26,6 +29,7 @@ import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
+import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.dialogs.SelectVerificationScenariosAndRequirementsDialog;
@@ -37,7 +41,12 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 			Element targetPackage, 
 			Element requirementsPackage,
 			Element testScenariosPackage, 
-			Element valueMediatorsPackage) {
+			Element valueMediatorsPackage,
+			Element superClass,
+			boolean includeRequirementsWithPositiveRelations,
+			boolean includeRequirementsWithNegativeRelations,
+			boolean includeRequirementsWitnUnknownRelations
+			) {
 		
 		super();
 		
@@ -46,6 +55,12 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		this.requirementsPackage = requirementsPackage;
 		this.testScenariosPackage = testScenariosPackage;
 		this.valueBindingsPackage = valueMediatorsPackage;
+		this.superClass = superClass;
+		
+		// options
+		this.includeRequirementsWithPositiveRelations = includeRequirementsWithPositiveRelations;
+		this.includeRequirementsWithNegativeRelations = includeRequirementsWithNegativeRelations;
+		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
 	}
 	
 
@@ -54,7 +69,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	}
 	
 	/*
-	 * Possible combinations, each containing an initial set (1 system model, 1 test scenario  and n requirements) and 
+	 * Possible combinations, each containing an initial set (1 system model, 1 scenario and n requirements) and 
 	 * all additional model that are required by any of the initial set models. 
 	 */
 	private HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination = new HashMap<Element, VerificationModelComponentsCombination>();
@@ -71,6 +86,9 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	private Element testScenariosPackage = null;
 	// the package to containing the value mediators to be used
 	private Element valueBindingsPackage = null;
+	
+	// super class that each generated model should inherit from
+	private Element superClass = null;
 	
 	private VerificationScenariosCollector vsc;
 
@@ -103,6 +121,15 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	private boolean canceled = false;
 	
 	
+	// requirements selection options - default settings
+	// include requirements that are referenced by scenarios relations stereotyped with <<UsedToVerify>>
+	boolean includeRequirementsWithPositiveRelations = true;
+	// include requirements that are referenced by scenarios relations stereotyped with <<DoNotUseToVerify>>
+	boolean includeRequirementsWithNegativeRelations = false;
+	// include all requirements that are not referenced by scenarios at all
+	boolean includeRequirementsWitnUnknownRelations = false;
+	
+	
 	public void generate(){
 		
 		if (sourceModels != null) {
@@ -110,9 +137,9 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 			/* Collect all requirements in order to be able to determine 
 			 * which are not covered by simulation models.
 			 */
-//			ElementsCollector ec = new ElementsCollector();
-//			ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
-//			allRequirements.addAll(ec.getElements());
+			ElementsCollector ec = new ElementsCollector();
+			ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
+			allRequirements.addAll(ec.getElements());
 			
 			/* For each of the selected system models create a package containing classes that 
 			 * instantiate all possible combinations of test scenarios and requirements that 
@@ -186,44 +213,101 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				for (Element testScenario : vsc.getAllTS() ) {
 					if (testScenario instanceof Class) {
 						
-						Class testScenarioToBeUsed = (Class) testScenario;
+						Class scenarioToBeUsed = (Class) testScenario;
 
-						// get requirements
-						HashSet<Element> reqList = vsc.getTsToReq().get(testScenarioToBeUsed);
-						HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
+						// get requirements according to the requirements selection options settings
+						// TODO: use the vsc.getTsToReq().get(scenarioToBeUsed) instead?
+						HashSet<Class> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UsedToVerify);
+						HashSet<Class> reqWithNegativeRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_DoNotUseToVerify);
+						HashSet<Element> reqAll = vsc.getAllRequirements();
+
+						HashSet<Element> reqCollection = new HashSet<Element>();
+						/*
+						 * All requirements that were found, 
+						 * i.e. requirements that do not have references from scenarios indicating if this 
+						 * a scenario should or should not be used to verify this requirements
+						 */
+						if (includeRequirementsWitnUnknownRelations) {
+							reqCollection.addAll(reqAll);
+							
+							// removed requirements with known relations if the options are selected 
+							if (!includeRequirementsWithNegativeRelations) {
+								reqCollection.removeAll(reqWithNegativeRelations);
+							}
+							if (!includeRequirementsWithPositiveRelations) {
+								reqCollection.removeAll(reqWithPositiveRelations);
+							}
+						}
+						else {
+							/*
+							 * Only requirements with positive or negative relations, 
+							 * i.e. relations from scenarios to requirements indicating that 
+							 * a scenario should or should not not be used to verify this requirements.
+							 */
+							if (includeRequirementsWithPositiveRelations) {
+								reqCollection.addAll(reqWithPositiveRelations);
+							}
+							if (includeRequirementsWithNegativeRelations) {
+								reqCollection.addAll(reqWithNegativeRelations);
+							}
+						}
 						
-						if (reqList != null) {
-							 for (Element req : reqList) {
+						
+						// TODO: sort requirements so that they appear in alphabetic order?
+						HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
+						if (reqCollection != null && reqCollection.size() > 0) {
+							 for (Element req : reqCollection) {
 								if (req instanceof Class) {
 									requirementsToBeUsed.add((Class) req);
 								}
 								else {
-									String message = "NOT VALID: Requirement '" + req.toString() + "' is not a class";
+									String message = "NOT VALID: Requirement '" + req.toString() + "' is not a UML::Class";
 									addToLog(message);
 								}
 							}
 						}
 						else {
-							String message = "INFO: No requirements are found for the test scenario '" + testScenarioToBeUsed.getQualifiedName() + "'";
+							String message = "INFO: No requirements are found for the test scenario '" + scenarioToBeUsed.getQualifiedName() + "'";
 							addToLog(message);
 						}
 						
+						
+						// OBSOLETE
+//						HashSet<Element> reqList = vsc.getTsToReq().get(scenarioToBeUsed);
+//						HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
+//						
+//						if (reqList != null) {
+//							 for (Element req : reqList) {
+//								if (req instanceof Class) {
+//									requirementsToBeUsed.add((Class) req);
+//								}
+//								else {
+//									String message = "NOT VALID: Requirement '" + req.toString() + "' is not a UML::Class";
+//									addToLog(message);
+//								}
+//							}
+//						}
+//						else {
+//							String message = "INFO: No requirements are found for the test scenario '" + scenarioToBeUsed.getQualifiedName() + "'";
+//							addToLog(message);
+//						}
+						
 						VerificationModelComponentsCombination tsmc = new VerificationModelComponentsCombination(systemModel, 
-								testScenarioToBeUsed, 
+								scenarioToBeUsed, 
 								requirementsToBeUsed,
 								(Package) valueBindingsPackage,
 								vsc.getAlwaysInclude(),
 								vsc.getModelToItsRequiredModels());
 						
 						// add to map
-						scenarioToVerificationModelCombination.put(testScenarioToBeUsed, tsmc);
+						scenarioToVerificationModelCombination.put(scenarioToBeUsed, tsmc);
 						
 						// add to selected or discarded test scenarios
 						if (!tsmc.isDiscarded()) {
-							testScenariosToBeInstantiated.add(testScenarioToBeUsed);
+							testScenariosToBeInstantiated.add(scenarioToBeUsed);
 						}
 						else {
-							testScenariosDiscarded.add(testScenarioToBeUsed);
+							testScenariosDiscarded.add(scenarioToBeUsed);
 						}
 						
 						// add to selected or discarded requirements
@@ -331,6 +415,17 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						// create the verification (simulation) model class
 						String simulationModelName = Constants.simModelsNamePrefix + ((NamedElement)testScenario).getName();
 						Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
+						
+						// create extends relation if specified
+						if (superClass instanceof Class) {
+							Generalization extendsRelation = simulationModel.createGeneralization((Classifier) superClass);
+							if (extendsRelation != null) {
+								Stereotype stereotypeExtends = extendsRelation.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation);
+								if (stereotypeExtends != null) {
+									extendsRelation.applyStereotype(stereotypeExtends);
+								}
+							}
+						}
 						
 						/*
 						 *  Copy the simulation settings 
@@ -569,6 +664,30 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 			}
 		}
 	}
+	
+	private HashSet<Class> getRequirements(Element scenario, String stereotypeQName){
+		HashSet<Class> requirements = new HashSet<Class>();
+		
+		// collect from dependencies
+		EList<Dependency> depList = ((NamedElement)scenario).getClientDependencies();
+		for (Dependency dependency : depList) {
+			
+			// Check if the dependency has the specified stereotype
+			if (dependency.getAppliedStereotype(stereotypeQName) != null) {
+			
+				for (Element target : dependency.getTargets()) {
+					// check if this is a requirement
+					if (target instanceof Class && target.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+						requirements.add( (Class) target);
+					}
+				}
+			}
+		}
+		return requirements;
+	}
+
+	
+	
 	
 	private void addToLog(String msg){
 //		this.log = this.log + "\n" + msg;

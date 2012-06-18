@@ -61,13 +61,13 @@ public class VerificationModelComponentsCombination {
 	// log messages
 	private String log = "";
 
-	//Set of models that constitutes the combination to be analyzed
+	// Set of models that constitutes the combination to be analyzed
 	private HashSet<Element> initialSetOfModels = new HashSet<Element>();
 
 	// All models that was found by required additional models search
 	private HashSet<Element> allCollectedAdditionalModels = new HashSet<Element>();
 
-	//Models that are found by the additional models search and that should always be instantiated.
+	// Models that are found by the additional models search and that should always be instantiated.
 	private HashSet<Element> alwaysInclude = new HashSet<Element>();
 
 	//Any model that was considered for the required models search
@@ -304,7 +304,7 @@ public class VerificationModelComponentsCombination {
 				
 				setDiscarded(true);
 				String message = "DISCARDED(03): The combination " +
-						"\n   - Test Scneario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
+						"\n   - Scenario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
 						"\n   - System Model: '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
 						"\nis discarded because none of the scenario providers is used to stimulate the model. ";
 				addToLog(message);

@@ -21,3 +21,5 @@ Bundle-Vendor: OpenModelica Project
 Export-Package: org.openmodelica.modelicaml.helper.dialogs,
  org.openmodelica.modelicaml.helper.handlers,
  org.openmodelica.modelicaml.helper.impl
+Bundle-ClassPath: .,
+ swt-grouplayout.jar

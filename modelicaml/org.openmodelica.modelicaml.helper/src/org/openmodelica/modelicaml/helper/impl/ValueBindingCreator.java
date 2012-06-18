@@ -217,7 +217,7 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 					if (code == null) {
 						if ( !onlySimulate ) {
 							// Generate marker 
-							String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
+							String message = "No binding code could be generated for the mandatory client '"+ item.getDotPath() + "'."; 
 							// delete the marker if there was one from previous actions.
 							ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
 							// generate new marker
@@ -262,7 +262,7 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 					
 					if (!onlySimulate) {
 						// Generate marker 
-						String message = "No binding code could be automatically generated for '"+ item.getDotPath() + "'. User decision is required."; 
+						String message = "User decision is required. No binding code could be generated for '"+ item.getDotPath() + "'."; 
 						// delete the marker if there was one from previous actions.
 						ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
 						// generate new marker
