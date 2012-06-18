@@ -47,7 +47,7 @@ import java.io.OutputStream;
  * @author EADS Innovation Works, Parham Vasaiely, Parham.Vasaiely@eads.com
  * 
  */
-public class cp {
+public class OBSOLETE_cp {
 	
 	/**
 	 * Copy.

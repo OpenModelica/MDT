@@ -210,7 +210,8 @@ public class ExecuteSimulation {
 					model.solver = "dassl";
 				}
 				if (model.outputFormat.trim().length()==0 ) {
-					model.outputFormat = "plt";
+//					model.outputFormat = "plt";
+					model.outputFormat = "mat";
 				}
 				
 				//Simulate model

@@ -32,7 +32,7 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
-package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
+package org.openmodelica.modelicaml.simulation.dialogs;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
@@ -72,6 +72,8 @@ public class DialogSimulationSettings extends Dialog {
 	
 	private boolean isGenerateModelicaCodeChecked = true, isCopyFilesChecked = false, isLoadModelicaLibChecked = false;
 	private String isLoadModelicaLibCheckedAddString = "";
+	private String[] methods = new String[] {"dassl", "dassl2", "euler", "rungekutta"};
+	private String[] outputFormat = new String[] {"mat"};
 	
 	public DialogSimulationSettings(Shell 
 			parentShell, 
@@ -184,7 +186,7 @@ public class DialogSimulationSettings extends Dialog {
         lblMethod.setText("method:");
         lblMethod.setBounds(10, 114, 60, 21);
         
-        String[] itemsMethod = new String[] {"dassl", "dassl2", "euler", "rungekutta"};
+        String[] itemsMethod = methods;
         comboMethod = new Combo(grpSimulationParameters, SWT.NONE);
         comboMethod.addModifyListener(new ModifyListener() {
         	public void modifyText(ModifyEvent e) {
@@ -212,7 +214,8 @@ public class DialogSimulationSettings extends Dialog {
         lblFormat.setText("format:");
         lblFormat.setBounds(10, 168, 60, 21);
         
-        String[] itemsFormat = new String[] {"plt"};
+//        String[] itemsFormat = new String[] {"plt"};
+        String[] itemsFormat = outputFormat;
         comboFormat = new Combo(grpSimulationParameters, SWT.NONE);
         comboFormat.addModifyListener(new ModifyListener() {
         	public void modifyText(ModifyEvent e) {
@@ -274,7 +277,6 @@ public class DialogSimulationSettings extends Dialog {
 	}
 	
 	
-	
 	// params
 	public String getStartTime(){
 		return startTime;
@@ -295,7 +297,6 @@ public class DialogSimulationSettings extends Dialog {
 	public String getTolerance(){
 		return tolerance;
 	}
-	
 	
 	public String getFormat(){
 		return format;

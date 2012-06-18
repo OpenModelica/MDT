@@ -57,7 +57,12 @@ public class UpdateTestExecutionReportDataAction implements
 		if (this.path != null) {
 			// Find the report_data.js_template in the folder "/includes/", 
 			// replace all place holders and save(overwrite) the report_data.js 
-			ParseJavaScript.parseJSTemp_generateJSFile(this.path);
+			try {
+				ParseJavaScript.parseJSTemp_generateJSFile(this.path);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			// open report afterwards
 			if (reportHTMLFile != null) {

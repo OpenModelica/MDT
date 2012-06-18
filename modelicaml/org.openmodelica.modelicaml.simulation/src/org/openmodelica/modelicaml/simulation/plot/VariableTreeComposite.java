@@ -1,12 +1,10 @@
 package org.openmodelica.modelicaml.simulation.plot;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -43,7 +41,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 		this.simulationModelName = simulationModelName;
 	}
 
-	private JFreeChartPlotComposite chart;
+	private PlotComposite chart;
 	
 	/** The composite model tree. */
 	private Composite compositeModelTree;
@@ -64,7 +62,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 	private Label labelsearch;
 	
 	/** Containing all available properties. */
-	Set<String> properties;
+	List<String> properties;
 	
 	/** Last position in the foundTreeItem list. */
 	private int foundPosition;
@@ -114,7 +112,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 
 	public VariableTreeComposite(org.eclipse.swt.widgets.Composite parent, int style) {
 		super(parent, style);
-		properties = new HashSet<String>();
+		properties = new ArrayList<String>();
 		foundPosition = 0;
 		foundTreeItem = new ArrayList<TreeItem>();
 		count = 0;
@@ -127,7 +125,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 	}
 	
 	
-	public VariableTreeComposite(org.eclipse.swt.widgets.Composite parent, int style,  Set<String> properties, String simulationModelName) {
+	public VariableTreeComposite(org.eclipse.swt.widgets.Composite parent, int style,  List<String> properties, String simulationModelName) {
 		super(parent, style);
 //		properties = new HashSet<String>();
 		foundPosition = 0;
@@ -271,7 +269,7 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 			treeModel.select(foundTreeItem.get(foundPosition));
 			treeModel.showSelection();
 			if(foundTreeItem.size()-1<=foundPosition){
-				foundPosition = 0; //Search from begining
+				foundPosition = 0; //Search from beginning
 			}else{
 				foundPosition++;
 			}
@@ -310,11 +308,9 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 	 *
 	 * @param properties the properties
 	 */
-	private void buildTreeModel(Set<String> properties) {
+	private void buildTreeModel(List<String> properties) {
 		if(properties != null && !properties.isEmpty()){
 			TreeItem rootItem = new TreeItem(treeModel, SWT.NULL);
-//			rootItem.setText("Model-Name");//TODO 20120129 change to dynamic name
-//			rootItem.setText(Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().getSimulationModelName());
 			rootItem.setText(getSimulationModelName());
 			
 			for (String fullQualifiedName : properties) {
@@ -426,8 +422,6 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 					} else {
 						newChildItem.setText("der(" + name + ")");
 						newChildItem.setData(fullQualifiedName);
-						
-						//newChildItem.setText(newChildItem.getText());
 					}
 				}
 			} else {
@@ -440,9 +434,6 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 				} else {
 					newChildItem.setText("der(" + name + ")");
 					newChildItem.setData(fullQualifiedName);
-
-//						newChildItem.setText(newChildItem.getText());
-					
 				}
 			}
 		}
@@ -609,11 +600,15 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 		}
 	}
 
-	public JFreeChartPlotComposite getChart() {
+	public PlotComposite getChart() {
 		return chart;
 	}
 
-	public void setChart(JFreeChartPlotComposite chart) {
+//	public void setChart(JFreeChartPlotComposite chart) {
+//		this.chart = chart;
+//	}
+	
+	public void setChart(PlotComposite chart) {
 		this.chart = chart;
 	}
 

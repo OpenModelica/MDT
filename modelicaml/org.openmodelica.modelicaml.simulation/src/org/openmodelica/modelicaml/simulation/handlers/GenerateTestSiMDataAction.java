@@ -84,7 +84,7 @@ import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.ExecuteTestsAction;
-import org.openmodelica.modelicaml.simulation.testexecution.dialogs.SelectTestSimulationModelsToExecuteDialog;
+import org.openmodelica.modelicaml.simulation.testexecution.dialogs.SelectSimulationModelsToExecuteDialog;
 
 import fr.obeo.acceleo.chain.File;
 import fr.obeo.acceleo.chain.impl.spec.CChain;
@@ -257,7 +257,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		ElementsCollector ec = new ElementsCollector();
 		ec.collectElementsFromModel(rootModel, Constants.stereotypeQName_VerificationModel);
 		
-		SelectTestSimulationModelsToExecuteDialog dialog = new SelectTestSimulationModelsToExecuteDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), ec.getElements());
+		SelectSimulationModelsToExecuteDialog dialog = new SelectSimulationModelsToExecuteDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), ec.getElements());
 		dialog.open();
 		
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) {

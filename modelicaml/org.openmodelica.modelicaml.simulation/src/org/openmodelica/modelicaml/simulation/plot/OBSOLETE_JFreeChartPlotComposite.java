@@ -20,7 +20,7 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 
 //public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite implements Observer{
 
-public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite {
+public class OBSOLETE_JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite {
 
 	/** Contains all available (plotable) results (redundancy to the result manager data but maybe high-performance). */
 	Map<String, XYSeries> propMap; //FullQualifiedName, Series
@@ -67,7 +67,7 @@ public class JFreeChartPlotComposite extends org.eclipse.swt.widgets.Composite {
 //		initGUI(resultsMap, new HashSet<String>());
 //	}
 	
-	public JFreeChartPlotComposite(org.eclipse.swt.widgets.Composite parent, int style, Map<String, Map<String, String>> resultsMap) {
+	public OBSOLETE_JFreeChartPlotComposite(org.eclipse.swt.widgets.Composite parent, int style, Map<String, Map<String, String>> resultsMap) {
 		super(parent, style);
 		initGUI(resultsMap, new HashSet<String>());
 	}

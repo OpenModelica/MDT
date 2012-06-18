@@ -8,8 +8,9 @@ import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.util.Scanner;
 
+import org.openmodelica.modelicaml.simulation.simresults.IResultsReader;
+
 public class ParseJavaScript {
-	
 	
 //	/**
 //	 * @param args
@@ -24,8 +25,9 @@ public class ParseJavaScript {
 /**
  * Parses the JavaScript template file to generate a new JavaScript file including the evaluated results
  * @param pathToSession, path to the verification session folder
+ * @throws Exception 
  */
-	public static void parseJSTemp_generateJSFile(String pathToSession){
+	public static void parseJSTemp_generateJSFile(String pathToSession) throws Exception{
 		/** The raf. */
 		RandomAccessFile raf;
 		File initFile = new File(pathToSession + "/report-gen/includes/report_data.js");
@@ -53,12 +55,12 @@ public class ParseJavaScript {
 					if(line != null){
 						fw.append(line); // add /*RESULTS_FILE_RELATIVE_PATH=...
 						fw.append( System.getProperty("line.separator") );
-						String result_xml_file;
+						String resultFilePath;
 						Scanner sc = new Scanner(line);
 						sc.useDelimiter("###");
 						sc.next(); //first part which is "RESULTS_FILE_RELATIVE_PATH="
-						result_xml_file = sc.next(); // Second part which is the XML result file
-						line = startIteration(fw, raf, pathToSession + "/" + result_xml_file);
+						resultFilePath = sc.next(); // Second part which is the XML result file
+						line = startIteration(fw, raf, pathToSession + "/" + resultFilePath);
 					}
 				}
 					fw.append(line);
@@ -70,6 +72,13 @@ public class ParseJavaScript {
 					
 			}
 			raf.close();
+			
+			// release the simulation results file after parsing
+			IResultsReader reader = SimResultsEvalution.reader;
+			if (reader != null) {
+				reader.releaseFile();
+			}
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -87,11 +96,11 @@ public class ParseJavaScript {
 	 * One iteration block covers the evaluation of one single simulation model and it's result file. In the JavaScript file it starts with {$START} and ends with {$END}
 	 * @param fw is the report_data.js
 	 * @param raf is the "report_data.js_template"
-	 * @param result_xml_file Result XML file which needs to be evaluated
+	 * @param resultFilePath Result XML file which needs to be evaluated
 	 * @return a String containing the last line of an iteration "{$END}" or ERROR if the iteration block is not marked by "{$END}"
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	private static String startIteration(Writer fw, RandomAccessFile raf, String result_xml_file) throws IOException{
+	private static String startIteration(Writer fw, RandomAccessFile raf, String resultFilePath) throws Exception{
 		boolean hasDataSet = true;
 		while(hasDataSet){
 			String line = raf.readLine();
@@ -103,7 +112,7 @@ public class ParseJavaScript {
 					return line;
 				}
 				if(line.contains("###")){
-					line = startEvaluation(line, result_xml_file);
+					line = startEvaluation(line, resultFilePath);
 //					System.err.println("New Line: " + line);
 				}
 				fw.append(line);
@@ -115,31 +124,30 @@ public class ParseJavaScript {
 		}
 		return "ERROR"; // this line should never been reached since the end of an iteration (start-end) should marked by {$END}
 	}
-	
-	/**
-	 * This methods parses an line from the iteration block which needs to be evaluated!
-	 * @param line Line in an iteration block which needs to be evaluated.
-	 * @param result_xml_file Result XML file which needs to be evaluated.
-	 * @return String which contains the full evaluated line.
-	 */
-	private static String startEvaluation(String line, String result_xml_file) {
+
+	private static String startEvaluation(String line, String resultFilePath) throws Exception {
+		
 		String evaluatedLine;
+		
 		Scanner sc = new Scanner(line);
 		sc.useDelimiter("###");
 		String firstPart = sc.next(); //first part starting with data[...
 		String evaluationLine = "";
 		evaluationLine = sc.next(); //attribute + check mode
+		
 		Scanner sc2 = new Scanner(evaluationLine);
 		sc2.useDelimiter(":");
 		String property = sc2.next();
 		String checkMode = sc2.next();
+		
 		String endPart = sc.next(); //first part starting with data[...
-//		System.out.println(property + ", " + checkMode + " XML: " + result_xml_file);
-		//_reqTestVerdict.testPassed:atLeastOneTimeTrue
-		String evaluatedResult = EvaluateResultXML.evaluateProperty(property, checkMode, result_xml_file);
+
+//		String evaluatedResult = EvaluateResultXML.evaluateProperty(property, checkMode, resultFilePath);
+		String evaluatedResult = SimResultsEvalution.evaluateProperty(property, checkMode, resultFilePath);
 		evaluatedLine = firstPart + evaluatedResult + endPart;
 //		System.out.println(property + ", checkMode: " + checkMode + ", Result: " + evaluatedResult);
 //		System.err.println("evaluatedLine: " + evaluatedLine);
+		
 		return evaluatedLine;
 	}
 }

@@ -177,10 +177,10 @@
       <objectContribution
             adaptable="false"
             id="org.openmodelica.modelicaml.simulation.popup.testresultsxml.object"
-            nameFilter="*_res.xml"
+            nameFilter="*.mat"
             objectClass="org.eclipse.core.resources.IFile">
          <action
-               class="org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction"
+               class="org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsFileAction"
                icon="icons/plot.png"
                id="org.openmodelica.modelicaml.simulation.testexecution.plot"
                label="ModelicaML: Plot Results"

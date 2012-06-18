@@ -32,14 +32,17 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
-package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
+package org.openmodelica.modelicaml.simulation.dialogs;
 
 import java.io.File;
-import java.util.Map;
+import java.io.IOException;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -47,8 +50,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.simulation.Activator;
-import org.openmodelica.modelicaml.simulation.plot.JFreeChartPlotComposite;
+import org.openmodelica.modelicaml.simulation.plot.PlotComposite;
 import org.openmodelica.modelicaml.simulation.plot.VariableTreeComposite;
+import org.openmodelica.modelicaml.simulation.simresults.ReadMatlab4;
 
 public class DialogPlot extends Dialog {
 
@@ -56,11 +60,11 @@ public class DialogPlot extends Dialog {
 	private SashForm sashForm1;
 	private Composite Tree;
 	private Composite Plot;
-
+	private ReadMatlab4 reader;
 	private String resultsFilePath;
 	
 	/** Contains a number of simulation results Key: fully qualified name <Key: time, Value: value>. */
-	private Map<String, Map<String, String>> simulationResultsAsString;
+//	private Map<String, Map<String, String>> simulationResultsAsString;
 
 	
 	public DialogPlot(Shell parentShell, String resultsFilePath) {
@@ -70,12 +74,19 @@ public class DialogPlot extends Dialog {
 		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
         this.resultsFilePath = resultsFilePath;
         this.title = getTitle(resultsFilePath);
+
+        try {
+			reader = new ReadMatlab4(resultsFilePath);
+		} catch (Exception e) {
+			e.printStackTrace();
+			MessageDialog.openError(getParentShell(), "Simulation Results Plot Error", "Could not open the file '"+resultsFilePath+"'");
+		}
 	}
 	 
 	
-	public synchronized void setResults(Map<String, Map<String, String>> results){
-		simulationResultsAsString = results;
-	}
+//	public synchronized void setResults(Map<String, Map<String, String>> results){
+//		simulationResultsAsString = results;
+//	}
 	
 	
 	protected void configureShell(Shell shell) {
@@ -83,6 +94,20 @@ public class DialogPlot extends Dialog {
    		shell.setText(this.title);
    		shell.setSize(900, 700);
    		shell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/plot.png"));
+   		
+   		// release the file after closing the plot dialog
+   		shell.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				try {
+					reader.releaseFile();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
     }
 
 	@Override
@@ -96,26 +121,28 @@ public class DialogPlot extends Dialog {
 		
         final Composite composite = (Composite) super.createDialogArea(parent);
 
-        composite.setLayout(new FillLayout(SWT.HORIZONTAL));
-
-        {
-			sashForm1 = new SashForm(composite, SWT.BORDER | SWT.SMOOTH);
-			{
-				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE, simulationResultsAsString);
-				Plot.setLayout(new FillLayout(SWT.HORIZONTAL));
-			}
-			{
-				Tree = new VariableTreeComposite(sashForm1, SWT.NONE, simulationResultsAsString.keySet(), getSimulationModelName(this.resultsFilePath));
-				
-				((VariableTreeComposite)Tree).setChart((JFreeChartPlotComposite)Plot);
-				
-				GridLayout TreeLayout = new GridLayout();
-				TreeLayout.makeColumnsEqualWidth = true;
-				Tree.setLayout(TreeLayout);
-			}
-			sashForm1.setWeights(new int[] {600, 273});
+        if (reader != null) {
+            composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+            {
+    			sashForm1 = new SashForm(composite, SWT.BORDER | SWT.SMOOTH);
+    			{
+//    				Plot = new JFreeChartPlotComposite(sashForm1, SWT.NONE, simulationResultsAsString);
+    				Plot = new PlotComposite(sashForm1, SWT.NONE, reader);
+    				Plot.setLayout(new FillLayout(SWT.HORIZONTAL));
+    			}
+    			{
+//    				Tree = new VariableTreeComposite(sashForm1, SWT.NONE, simulationResultsAsString.keySet(), getSimulationModelName(this.resultsFilePath));
+    				Tree = new VariableTreeComposite(sashForm1, SWT.NONE, reader.getNames(), getSimulationModelName(this.resultsFilePath));
+    				
+    				((VariableTreeComposite)Tree).setChart((PlotComposite)Plot);
+    				
+    				GridLayout TreeLayout = new GridLayout();
+    				TreeLayout.makeColumnsEqualWidth = true;
+    				Tree.setLayout(TreeLayout);
+    			}
+    			sashForm1.setWeights(new int[] {600, 273});
+    		}
 		}
-        
         return parent;
 	}
 
@@ -124,7 +151,11 @@ public class DialogPlot extends Dialog {
 		if (filePath != null && filePath.length() != 0) {
 			String[] splitted = filePath.split("/");
 			name = splitted[splitted.length - 1];
+			
+			// if it is .xml file 
 			name = name.replaceFirst("_res.xml", "");
+			// if it is .mat file 
+			name = name.replaceFirst("_res.mat", "");
 
 			String[] dotSplitted = name.split("\\.");
 			name = dotSplitted[dotSplitted.length - 1];
@@ -144,4 +175,6 @@ public class DialogPlot extends Dialog {
 		}
 		return filePath;
 	}
+	
+	
 }

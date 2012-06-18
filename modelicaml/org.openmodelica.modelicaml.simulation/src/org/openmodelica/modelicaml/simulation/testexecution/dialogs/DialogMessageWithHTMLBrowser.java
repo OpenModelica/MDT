@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
-import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction;
+import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsAction;
 
 public class DialogMessageWithHTMLBrowser extends Dialog {
 
@@ -130,8 +130,8 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				String sessionFolderAbsolutePath = getSessionPath();
 				if (sessionFolderAbsolutePath != null) {
 					// Dialog for the plotting of variables
-					PlotTestResultsAction plotAction = new PlotTestResultsAction();
-					plotAction.setXMLFilePath(sessionFolderAbsolutePath + "/" + decodedLocation);
+					PlotResultsAction plotAction = new PlotResultsAction();
+					plotAction.setFilePath(sessionFolderAbsolutePath + "/" + decodedLocation);
 					plotAction.run(null);
 				}
 				else { // TODO: report 

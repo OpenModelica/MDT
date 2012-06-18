@@ -24,6 +24,7 @@ public class EvaluateResultXML {
 	
 	
 	private static String checkAtLeastOneTimeTrue(String propertyName, File xml_file){
+
 		if(!xml_file.exists())
 			return fileNotFound;
 		
@@ -56,6 +57,7 @@ public class EvaluateResultXML {
 	 * @param result xml file
 	 */
 	private static String checkAtLeastOneTimeFalse(String propertyName, File xml_file){
+		
 		if(!xml_file.exists())
 			return fileNotFound;
 		
@@ -278,7 +280,7 @@ public class EvaluateResultXML {
 		}
 		
 		if(checkMode.equals(Constants.MACRO_atLeastOneTimeTrue))
-			return checkAtLeastOneTimeTrue(propertyName, xmlResultFile);		
+			return checkAtLeastOneTimeTrue(propertyName, new File(result_xml_file));		
 		
 		if(checkMode.equals(Constants.MACRO_atLeastOneTimeFalse))
 			return checkAtLeastOneTimeFalse(propertyName, new File(result_xml_file));

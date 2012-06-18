@@ -10,8 +10,6 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -32,7 +30,6 @@ import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
-import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_generator;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
 import org.openmodelica.modelicaml.simulation.xml.TestSessionXML_Reader;
@@ -46,7 +43,6 @@ public class ExecuteTestsAction implements
 	private List<String> simulationFailedList;
 	private List<String> simulationSuccededList;
 	private String omcLog = "";
-
 	
 	@Override
 	public void run(IAction action) {
@@ -111,10 +107,10 @@ public class ExecuteTestsAction implements
 								filesToBeDeleted.add(model.qualifiedName + "_init.xml");
 								filesToBeDeleted.add(model.qualifiedName + "_res.plt");
 								filesToBeDeleted.add(model.qualifiedName + "_res.mat");
-								filesToBeDeleted.add(model.qualifiedName + "_res.xml");
+//								filesToBeDeleted.add(model.qualifiedName + "_res.xml");
 
 //								ModelicaMLServices.deleteOldSimulationFiles(model.qualifiedName, omcTempWorkingFolder, monitor);
-								ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor);
+								ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
 								
 //								monitor.subTask("Deleting files from OMC tmp folder for '" + model.qualifiedName + "'");
 //								IFileStore oldExeFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
@@ -161,10 +157,12 @@ public class ExecuteTestsAction implements
 								IFileInfo newExeFileInfo = newExeFile.fetchInfo();
 								IFileStore newXMLInitFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml"));
 								IFileInfo newXMLInitFileInfo = newXMLInitFile.fetchInfo();
-								IFileStore newPltFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
-								IFileInfo newPltFileInfo = newPltFile.fetchInfo();
+//								IFileStore newPltFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
+//								IFileInfo newPltFileInfo = newPltFile.fetchInfo();
+								IFileStore newMatFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + "_res.mat"));
+								IFileInfo newMatFileInfo = newMatFile.fetchInfo();
 
-								if (newExeFileInfo.exists() && newXMLInitFileInfo.exists() && newPltFileInfo.exists()) {
+								if (newExeFileInfo.exists() && newXMLInitFileInfo.exists() && newMatFileInfo.exists()) {
 									
 									/*
 									 * Indicate that OMc generated files -> simulation was ok
@@ -176,10 +174,12 @@ public class ExecuteTestsAction implements
 									 */
 									IFileStore newExeFileCopy = fileSystem.getStore(URI.create("file:/" + pathToSession + "/" + model.qualifiedName + ".exe"));
 									IFileStore newXMLInitFileCopy = fileSystem.getStore(URI.create("file:/" + pathToSession + "/" + model.qualifiedName + "_init.xml"));
-									
+									IFileStore newMatFileCopy = fileSystem.getStore(java.net.URI.create("file:/" + pathToSession + "/" + model.qualifiedName + "_res.mat"));
+
 									try {
 										newExeFile.copy(newExeFileCopy, EFS.OVERWRITE, monitor);
 										newXMLInitFile.copy(newXMLInitFileCopy, EFS.OVERWRITE, monitor);
+										newMatFile.copy(newMatFileCopy, EFS.OVERWRITE, monitor);
 									} catch (CoreException e1) {
 										// TODO Auto-generated catch block
 										e1.printStackTrace();
@@ -189,21 +189,21 @@ public class ExecuteTestsAction implements
 //									cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_init.xml", sessionFolder + "/" + model.qualifiedName + "_init.xml");
 //									cp.copyFile(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", tempSimulationFolder + "/" + model.qualifiedName + "_res.plt");
 									
-									/*
-									 * Create the _res.xml based on the _res.plt
-									 */
-									try {
-										SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
-										
-										// refresh the project browser
-										ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-										
-//										[TODO 20120317] Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(Result_TXT_reader.readResult(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
-
-									} catch (Exception e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+//									/*
+//									 * Create the _res.xml based on the _res.plt
+//									 */
+//									try {
+//										SimulationResult_XML_generator.createXML(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt", sessionFolder + "/" + model.qualifiedName + "_res.xml");
+//										
+//										// refresh the project browser
+//										ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+//										
+////										[TODO 20120317] Activator.getSimulationCenter_NonInteractive().getSimulationResultManager().setResults(Result_TXT_reader.readResult(omcTempWorkingFolder + "/" + model.qualifiedName + "_res.plt"));
+//
+//									} catch (Exception e) {
+//										// TODO Auto-generated catch block
+//										e.printStackTrace();
+//									}
 								}
 								else {
 									simulationFailedList.add(model.qualifiedName);
@@ -284,7 +284,12 @@ public class ExecuteTestsAction implements
 
 						monitor.beginTask("Evaluating Simulation Results", 100);
 						{
-							ParseJavaScript.parseJSTemp_generateJSFile(pathToSession);
+							try {
+								ParseJavaScript.parseJSTemp_generateJSFile(pathToSession);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						monitor.done();
 						return Status.OK_STATUS;

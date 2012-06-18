@@ -75,9 +75,9 @@ import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Class;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
@@ -87,10 +87,9 @@ import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
+import org.openmodelica.modelicaml.simulation.dialogs.DialogSimulationSettings;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
-import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotTestResultsAction;
-import org.openmodelica.modelicaml.simulation.testexecution.dialogs.DialogSimulationSettings;
-import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_generator;
+import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsAction;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
 
@@ -119,7 +118,7 @@ public class SimulationOMCAction extends AbstractHandler {
 	protected String umlModelFileURI = null;
 	private String omcLog = "";
 	
-	private String resultsXMLAbsolutePath = null;
+	private String resultsFileAbsolutePath = null;
 	
 	private List<String> simulationFailedList;
 	private List<String> simulationSuccededList;
@@ -198,6 +197,7 @@ public class SimulationOMCAction extends AbstractHandler {
 				VerificationExecutionServices.getOutputFormat(umlElement));
 		
 		dialog.setLoadModelicaLibChecked(isMSLUsed);
+		
 		if (!areFilesFromCGFolderToBeLoaded) {
 			dialog.setGenerateModelicaCodeChecked(false);
 		}
@@ -246,11 +246,11 @@ public class SimulationOMCAction extends AbstractHandler {
 					filesToBeDeleted.add(modelQName + ".exe");
 					filesToBeDeleted.add(modelQName + "_init.xml");
 					filesToBeDeleted.add(modelQName + "_res.plt");
+					filesToBeDeleted.add(modelQName + "_csv.plt");
 					filesToBeDeleted.add(modelQName + "_res.mat");
-					filesToBeDeleted.add(modelQName + "_res.xml");
+//					filesToBeDeleted.add(modelQName + "_res.xml");
 					
-//					IStatus status = ModelicaMLServices.deleteOldSimulationFiles(modelQName, omcTempDirectory, monitor);
-					IStatus status = ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor);
+					IStatus status = ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
 //					if (status != null) {
 //						System.err.println("Deleted: " + modelQName + "_init.xml, _res.plt, _res.xml, .exe");
 //					}
@@ -266,7 +266,7 @@ public class SimulationOMCAction extends AbstractHandler {
 					simulationSuccededList = new ArrayList<String>();
 					
 					// rest it in order to make sure that no old results are used.
-					resultsXMLAbsolutePath = null;
+					resultsFileAbsolutePath = null;
 					
 					for(TestModel model : testSession.testModels){
 						
@@ -280,10 +280,12 @@ public class SimulationOMCAction extends AbstractHandler {
 						IFileInfo newExeFileInfo = newExeFile.fetchInfo();
 						IFileStore newXMLInitFile = fileSystem.getStore(java.net.URI.create("file:/" + omcTempDirectory + "/" + model.qualifiedName + "_init.xml"));
 						IFileInfo newXMLInitFileInfo = newXMLInitFile.fetchInfo();
-						IFileStore newPltFile = fileSystem.getStore(java.net.URI.create("file:/" + omcTempDirectory + "/" + model.qualifiedName + "_res.plt"));
-						IFileInfo newPltFileInfo = newPltFile.fetchInfo();
+//						IFileStore newPltFile = fileSystem.getStore(java.net.URI.create("file:/" + omcTempDirectory + "/" + model.qualifiedName + "_res.plt"));
+//						IFileInfo newPltFileInfo = newPltFile.fetchInfo();
+						IFileStore newMatFile = fileSystem.getStore(java.net.URI.create("file:/" + omcTempDirectory + "/" + model.qualifiedName + "_res.mat"));
+						IFileInfo newMatFileInfo = newMatFile.fetchInfo();
 						
-						if (newExeFileInfo.exists() && newXMLInitFileInfo.exists() && newPltFileInfo.exists()) {
+						if (newExeFileInfo.exists() && newXMLInitFileInfo.exists() && newMatFileInfo.exists()) {
 							
 							//Indicate that OMC generated the files, i.e. the simulation was ok
 							simulationSuccededList.add(model.qualifiedName);
@@ -291,31 +293,34 @@ public class SimulationOMCAction extends AbstractHandler {
 							// If copy files option was selected -> copy files to 'sim-gen' folder (created it if it does not exist yet)
 							if (isCopyFilesChecked) {
 								
-								resultsXMLAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
+//								resultsFileAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
+								resultsFileAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.mat";
 								
 								List<String> fileToBeDeleted = new ArrayList<String>();
-								filesToBeDeleted.add(resultsXMLAbsolutePath);
-//								ModelicaMLServices.deleteFile(resultsXMLAbsolutePath, monitor);
-								ModelicaMLServices.deleteFiles(fileToBeDeleted, monitor);
+								filesToBeDeleted.add(resultsFileAbsolutePath);
+								ModelicaMLServices.deleteFiles(fileToBeDeleted, monitor, "Deleting old file: ");
 								
 								monitor.subTask("Copying files into '"+Constants.folderName_sim_gen+"' for: " + model.qualifiedName);
 
 								// check if the sim-gen folder exists. If not create it.
 								createSimGendir(fileSystem, monitor);
 								
-								// Copy the .exe and the _init.xml files into the sim-gen directory
+								// Copy the .exe, the _init.xml and _res.mat files into the sim-gen directory
 								IFileStore newExeFileCopy = fileSystem.getStore(java.net.URI.create("file:/" + projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + ".exe"));
 								IFileStore newXMLInitFileCopy = fileSystem.getStore(java.net.URI.create("file:/" + projectPath + "/" + Constants.folderName_sim_gen + "/"+ model.qualifiedName + "_init.xml"));
+								IFileStore newMatFileCopy = fileSystem.getStore(java.net.URI.create("file:/" + projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.mat"));
 								
 								try {
 									newExeFile.copy(newExeFileCopy, EFS.OVERWRITE, monitor);
 									newXMLInitFile.copy(newXMLInitFileCopy, EFS.OVERWRITE, monitor);
+									newMatFile.copy(newMatFileCopy, EFS.OVERWRITE, monitor);
+									monitor.subTask("Copying files into folder '"+Constants.folderName_sim_gen+"' for: " + model.qualifiedName);
 
-									monitor.subTask("Creating xml results file for '"+Constants.folderName_sim_gen+"' for: " + model.qualifiedName);
-
-									//Create _res.xml based on _res.plt
-//									resultsXMLAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
-									SimulationResult_XML_generator.createXML(omcTempDirectory + "/" + model.qualifiedName + "_res.plt",  resultsXMLAbsolutePath);
+//									monitor.subTask("Creating xml results file for '"+Constants.folderName_sim_gen+"' for: " + model.qualifiedName);
+//
+//									//Create _res.xml based on _res.plt
+////								resultsXMLAbsolutePath = projectPath + "/" + Constants.folderName_sim_gen + "/" + model.qualifiedName + "_res.xml";
+//									SimulationResult_XML_generator.createXML(omcTempDirectory + "/" + model.qualifiedName + "_res.plt",  resultsXMLAbsolutePath);
 									
 									// Refresh the project browser
 									ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -326,16 +331,18 @@ public class SimulationOMCAction extends AbstractHandler {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-								
 							}
-							else { // Create results xml file int he omc temp folder
-								try {
-									 //Create the _res.xml based on the _res.plt
-									resultsXMLAbsolutePath = omcTempDirectory + "/" + model.qualifiedName + "_res.xml";
-									SimulationResult_XML_generator.createXML(omcTempDirectory + "/" + model.qualifiedName + "_res.plt", resultsXMLAbsolutePath);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+							else { // Results file is in the omc temp folder
+								
+								resultsFileAbsolutePath = omcTempDirectory + "/" + model.qualifiedName + "_res.mat";
+//	
+//								try {
+//									 //Create the _res.xml based on the _res.plt
+//									resultsXMLAbsolutePath = omcTempDirectory + "/" + model.qualifiedName + "_res.xml";
+//									SimulationResult_XML_generator.createXML(omcTempDirectory + "/" + model.qualifiedName + "_res.plt", resultsXMLAbsolutePath);
+//								} catch (Exception e) {
+//									e.printStackTrace();
+//								}
 							}
 						}
 						else {
@@ -425,8 +432,6 @@ public class SimulationOMCAction extends AbstractHandler {
 					simulationReport = simulationReport + "************************** LOG ************************\n" + omcLog.trim();
 				}
 				
-				
-				
 				if (errorsExist) { // open error dialog
 //					DialogMessage logDialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Models Execution Report", infoText, simulationReport, errorsExist);
 					DialogMessage logDialog = new DialogMessage(new Shell(), "Models Execution Report", infoText, simulationReport, errorsExist);
@@ -434,8 +439,8 @@ public class SimulationOMCAction extends AbstractHandler {
 					logDialog.open();
 				}
 				else { // open plot window
-					PlotTestResultsAction plotAction = new PlotTestResultsAction();
-					plotAction.setXMLFilePath(resultsXMLAbsolutePath);
+					PlotResultsAction plotAction = new PlotResultsAction();
+					plotAction.setFilePath(resultsFileAbsolutePath);
 					plotAction.run(null);
 				}
 				

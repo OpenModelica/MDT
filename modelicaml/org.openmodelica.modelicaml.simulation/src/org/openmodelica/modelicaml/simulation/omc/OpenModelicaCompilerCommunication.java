@@ -253,7 +253,7 @@ public class OpenModelicaCompilerCommunication {
 	 * Translates a model and simulates it automatically.
 	 *
 	 * @param MainClass name of the main class
-	 * @param outputFormat for the results. For now just the "plt" format will be supported.
+	 * @param outputFormat for the results.
 	 * @return Reply from OMC
 	 */
 	public String simulate(String MainClass, String startTime, String stopTime, String numberOfIntervals, String tolerance, String method, String outputFormat){

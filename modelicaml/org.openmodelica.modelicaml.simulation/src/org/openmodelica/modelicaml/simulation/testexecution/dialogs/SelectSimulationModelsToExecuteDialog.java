@@ -33,7 +33,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 
-public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
+public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 
 	// test scenarios that are appropriate for the system model
 	private EList<Element> selectedTestSimulationModels;
@@ -60,7 +60,7 @@ public class SelectTestSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	 * 
 	 * @param parentShell
 	 */
-	public SelectTestSimulationModelsToExecuteDialog(Shell parentShell,
+	public SelectSimulationModelsToExecuteDialog(Shell parentShell,
 			EList<Element> selectedTestSimulationModels) {
 		
 		super(parentShell);
