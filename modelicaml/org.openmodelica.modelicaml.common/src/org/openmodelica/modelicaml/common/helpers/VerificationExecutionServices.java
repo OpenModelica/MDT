@@ -312,7 +312,8 @@ public class VerificationExecutionServices {
 	}
 	
 	public static String getOutputFormat(Element elt){
-		return "plt";
+//		return "plt";
+		return "mat";
 	}
 	
 	public static String getSolver(Element elt){

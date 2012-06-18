@@ -35,8 +35,8 @@
 package org.openmodelica.modelicaml.common.constants;
 
 public class Constants {
-	
-	public static final String actionLanguage 						= "Modelica";
+	public static final String modelingLanguageName 				= "ModelicaML";
+	public static final String actionLanguageName 					= "Modelica";
 	public static final String ModelicaStandardLibraryModelName 	= "Modelica";
 	
 	// class constructs
@@ -52,6 +52,8 @@ public class Constants {
 	public static final String stereotypeQName_Algorithm 		= "ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)";
 	public static final String stereotypeQName_Equations		= "ModelicaML::ModelicaBehaviorConstructs::Equations(Code)";
 	public static final String propertyName_initial				= "initial";
+	
+	public static final String stereotypeQName_ModelicaMLStateMachine 		= "ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine";
 
 	
 	public static final String stereotypeQName_Annotation 			= "ModelicaML::ModelicaAnnotationConstructs::Annotation";
@@ -75,7 +77,10 @@ public class Constants {
 	
 	public static final String stereotypeQName_VerificationScenario 		= "ModelicaML::Verification::VerificationScenario";
 	public static final String stereotypeQName_VerificationModel 			= "ModelicaML::Verification::VerificationModel";
-	public static final String propertyName_usedToVerify 					= "usedToVerify";
+	public static final String stereotypeQName_UsedToVerify 				= "ModelicaML::Verification::UsedToVerify";
+	public static final String propertyName_usedToVerify 					= "usedToVerify"; // DEPRECATED
+	public static final String stereotypeQName_DoNotUseToVerify 			= "ModelicaML::Verification::DoNotUseToVerify";
+	
 	
 	// used for verification models generation
 	public static final String stereotypeQName_Requires 			= "ModelicaML::Verification::Requires";
@@ -103,7 +108,10 @@ public class Constants {
 	public static final String stereotypeQName_ExtendsRelation 	= "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
 	public static final String stereotypeQName_TypeRelation 	= "ModelicaML::ModelicaRelationsConstructs::TypeRelation";
 	public static final String stereotypeQName_ImportRelation	= "ModelicaML::ModelicaRelationsConstructs::Import";
-
+	public static final String stereotypeQName_RedeclareRelation= "ModelicaML::ModelicaRelationsConstructs::RedeclareRelation";
+	public static final String stereotypeQName_PartialDerivativeOfFunctionRelation = "ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation";
+	
+	
 	public static final String propertyName_alias				= "alias";
 	
 	
@@ -117,10 +125,10 @@ public class Constants {
 																			 	*/
 	
 	public static final String propertyName_encapsulated 		= "encapsulated";
-	public static final String propertyName_expandable 		= "expandable";
+	public static final String propertyName_expandable 			= "expandable";
 	
 	
-	public static final String propertyName_partial 		= "partial";
+	public static final String propertyName_partial 			= "partial";
 	
 	public static final String propertyName_modification 		= "modification";
 	public static final String propertyName_causality 			= "causality";
@@ -170,7 +178,6 @@ public class Constants {
 	public static final String outputsClassName 			= "_Outputs";
 	
 	// used by value binding provider xtext editor
-//	public static final String MACRO_ownPath 				= "ownPath"; // OBSOLETE
 	public static final String MACRO_clientPath 			= "clientPath";
 	public static final String MACRO_providerPath 			= "providerPath";
 	
@@ -202,10 +209,16 @@ public class Constants {
 	public final static String verificationScenarioPropertyNamePrefix = "vs_";
 	public final static String reqirementPropertyNamePrefix = "req_";
 	
-	public final static String MARKERTYPE_VALUEBINDINGS = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.valueBindings";
-	public final static String MARKERTYPE_COMPONENT_MODIFICATION = "org.openmodelica.modelicaml.modelicamlMarker.actionCode.componentmodification";
-	public final static String MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES = "org.openmodelica.modelicaml.modelicamlMarker.modelicamlproxies";
-	public final static String MARKERTYPE_MODELICA_MODELS_LOADING = "org.openmodelica.modelicaml.modelicamlMarker.modelicaloading";
+	
+	// Markers
+	public final static String MARKERTYPE_VALUEBINDINGS 					= "org.openmodelica.modelicaml.marker.bindings";
+	public final static String MARKERTYPE_COMPONENT_MODIFICATION 			= "org.openmodelica.modelicaml.marker.actionCode.componentmodification";
+	public final static String MARKERTYPE_ACTION_CODE 						= "org.openmodelica.modelicaml.marker.actionCode";
+	public final static String MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES = "org.openmodelica.modelicaml.marker.modelicamlproxies";
+	public final static String MARKERTYPE_MODELICA_MODELS_LOADING 			= "org.openmodelica.modelicaml.marker.modelicaloading";
+	public final static String MARKERTYPE_VALIDATION_PROBLEM 				= "org.openmodelica.modelicaml.marker.validation.problem";
+//	public final static String MARKERTYPE_VALIDATION 						= "org.openmodelica.modelicaml.marker.validation";
+	
 	
 	
 	// verification execution report
@@ -276,5 +289,9 @@ public class Constants {
 	public final static String fileEncoding = "Cp1252";
 	public static final String encodingPackageFileNameAndExtension = "package.encoding";
 
+	
+	public static final String validationKeyWord_MISSING 		= "MISSING";
+	public static final String validationKeyWord_NOT_VALID 		= "NOT VALID";
+	
 }
 

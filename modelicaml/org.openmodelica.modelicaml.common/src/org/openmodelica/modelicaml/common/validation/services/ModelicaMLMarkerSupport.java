@@ -49,6 +49,7 @@ import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -76,7 +77,7 @@ public class ModelicaMLMarkerSupport {
 	public static IProject project;
 	
 	/** The Constant markerTypeName. */
-	private final static String markerTypeName = "org.openmodelica.modelicaml.modelicamlMarker.actionCode";
+	private final static String markerTypeName = Constants.MARKERTYPE_ACTION_CODE;
 	
 	/**
 	 * Generate marker.
@@ -173,8 +174,7 @@ public class ModelicaMLMarkerSupport {
 					Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
 					Object markerMessage = marker.getAttribute(IMarker.MESSAGE);
 					if (qualifiedName != null && markerMessage != null) {
-						if (qualifiedName.equals( ((NamedElement)sourceElement).getQualifiedName())
-								&& markerMessage.equals(message)) {
+						if (qualifiedName.equals( ((NamedElement)sourceElement).getQualifiedName()) && markerMessage.equals(message)) {
 							marker.delete();
 						}
 					}

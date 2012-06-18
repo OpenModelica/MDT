@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="org.openmodelica.modelicaml.modelicamlMarker.actionCode"
+         id="org.openmodelica.modelicaml.marker.actionCode"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.emf.ecore.diagnostic">
@@ -18,7 +18,7 @@
       </attribute>
    </extension>
    <extension
-         id="org.openmodelica.modelicaml.modelicamlMarker.omc"
+         id="org.openmodelica.modelicaml.marker.omc"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.emf.ecore.diagnostic">

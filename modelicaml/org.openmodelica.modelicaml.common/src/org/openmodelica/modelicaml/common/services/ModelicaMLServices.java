@@ -286,7 +286,7 @@ public class ModelicaMLServices {
 	}
 	
 	
-	public static IStatus deleteFiles(List<String> filesToBeDeleted, IProgressMonitor monitor){
+	public static IStatus deleteFiles(List<String> filesToBeDeleted, IProgressMonitor monitor, String message){
 		
 		if (monitor.isCanceled()){
 			return Status.CANCEL_STATUS;
@@ -294,7 +294,9 @@ public class ModelicaMLServices {
 
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		for (String filePath : filesToBeDeleted) {
-			monitor.subTask("Deleting file " + filePath );
+			
+			monitor.subTask(message + filePath );
+			
 			IFileStore fileToBeDeleted = fileSystem.getStore(java.net.URI.create("file:/"  + filePath ));
 			try {
 				fileToBeDeleted.delete(EFS.NONE, monitor);
