@@ -52,7 +52,8 @@ var data = new Array();
 /* ~~~~~ Test Model <%qualifiedName%>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /*{$START}*/
-/*RESULTS_FILE_RELATIVE_PATH = ###<%getTestModelQName()%>_res.xml###*/
+<%-- /*RESULTS_FILE_RELATIVE_PATH = ###<%getTestModelQName()%>_res.xml###*/ --%>
+/*RESULTS_FILE_RELATIVE_PATH = ###<%getTestModelQName()%>_res.mat###*/
 
 data['<%qualifiedName%>'] = new Array();
 

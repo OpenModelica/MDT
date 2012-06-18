@@ -86,7 +86,8 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlService
 	</span>
 	<script type='text/javascript'>
 		<%-- writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot'); --%>
-		writePlotLink('plot:<%getTestModelQName()%>_res.xml',  'Plot');
+		<%--  writePlotLink('plot:<%getTestModelQName()%>_res.xml',  'Plot');--%>
+		writePlotLink('plot:<%getTestModelQName()%>_res.mat',  'Plot');
 	</script>
 	<br>
 	<!--<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span><br>-->
@@ -118,7 +119,8 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlService
 		</span>
 		<script type='text/javascript'>
 			<%-- writePlotLink(testSessionFolderRelativePath + '<%getTestModelQName()%>_res.xml',  'Plot');--%>
-			writePlotLink('plot:<%getTestModelQName()%>_res.xml',  'Plot');
+			<%-- writePlotLink('plot:<%getTestModelQName()%>_res.xml',  'Plot');--%>			
+			writePlotLink('plot:<%getTestModelQName()%>_res.mat',  'Plot');
 		</script>
 		<br>
 		<span style='color:#000000; font-size:10px;'>(<%qualifiedName%>)</span>

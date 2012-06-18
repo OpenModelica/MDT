@@ -30,6 +30,7 @@
             id="org.openmodelica.modelicaml.gen.modelica.category1"
             name="ModelicaML">
       </category>
+      <!--
       <view
             allowMultiple="false"
             category="org.openmodelica.modelicaml.gen.modelica.category1"
@@ -42,8 +43,9 @@
             This view displays the validation errors and messages detected by the ModelicaML validator.
          </description>
       </view>
+      -->
    </extension>
-<extension id="org.openmodelica.modelicaml.modelicamlMarker.validation" point="org.eclipse.core.resources.markers" name="ModelicaML Validation">
+<extension id="org.openmodelica.modelicaml.marker.validation" point="org.eclipse.core.resources.markers" name="ModelicaML Validation">
   <super  type="org.eclipse.emf.ecore.diagnostic"/>
   <super type="org.eclipse.core.resources.marker"/>
   <persistent value="true"/>
