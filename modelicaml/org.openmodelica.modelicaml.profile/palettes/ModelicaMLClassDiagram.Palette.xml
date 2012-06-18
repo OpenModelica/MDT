@@ -254,13 +254,23 @@
 					</stereotypesToApply>
 				</postAction>
 			</aspectTool>
-			<aspectTool description="Relate Verification Scenario to Requirements"
+			<aspectTool description="Relate Scenario to Requirements"
 				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
-				id="clazz.tool.dependency_1317118175304" name="UsedToVerify"
+				id="clazz.tool.dependency_1317118175304" name="Used To Verify"
 				refToolId="clazz.tool.dependency">
 				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
 					<stereotypesToApply>
 						<stereotype stereotypeName="ModelicaML::Verification::UsedToVerify" />
+					</stereotypesToApply>
+				</postAction>
+			</aspectTool>
+			<aspectTool description="Relate Scenario to Requirements"
+				iconpath="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Dependency.gif"
+				id="clazz.tool.dependency_1317118175304" name="Do Not Use to Verify"
+				refToolId="clazz.tool.dependency">
+				<postAction id="org.eclipse.papyrus.applystereotypeactionprovider">
+					<stereotypesToApply>
+						<stereotype stereotypeName="ModelicaML::Verification::DoNotUseToVerify" />
 					</stereotypesToApply>
 				</postAction>
 			</aspectTool>
