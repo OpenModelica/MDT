@@ -9,6 +9,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 /**
  * @author Goutham Gatla
@@ -28,7 +29,7 @@ public class Utility {
 
 		for (Stereotype stereotype : classStereotypeList) {
 
-			if (stereotype.getQualifiedName().startsWith("ModelicaML::")) {
+			if (stereotype.getQualifiedName().startsWith(Constants.modelingLanguageName + "::")) {
 				return true;
 			}
 		}

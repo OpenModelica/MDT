@@ -88,34 +88,29 @@ public class C01_C02_NonSimilarNamesConstraint extends AbstractModelConstraint {
 						// Check packages, Classes with StateMachines except Behavior for similar names
 						if((element2 instanceof NamedElement) && (element2 instanceof NamedElement) 
 								&& (element instanceof Package || ((element instanceof Class && !(element instanceof Behavior)) || element instanceof StateMachine)) 
-								&& (element instanceof Package || ((element2 instanceof Class && !(element2 instanceof Behavior)) || element2 instanceof StateMachine)))
-						{
+								&& (element instanceof Package || ((element2 instanceof Class && !(element2 instanceof Behavior)) || element2 instanceof StateMachine))){
 //							if(((NamedElement) element2).getName().equalsIgnoreCase(((NamedElement)element).getName()) && !(element2.equals(element)))
-							if(((NamedElement) element2).getName().equals(((NamedElement)element).getName()) && !(element2.equals(element)))
-							{
-								
-								return ctx.createFailureStatus(new Object[]{"'" + root_element.getName() + "' contains packages or classes with same name '"+((NamedElement)element).getName() + "'"});
+							if(((NamedElement) element2).getName().equals(((NamedElement)element).getName()) && !(element2.equals(element))){
+								return ctx.createFailureStatus(new Object[]{"'" + root_element.getName() 
+										+ "' contains packages or classes with same name '"+((NamedElement)element).getName() + "'"});
 							}
 						}
 					}
 					
 					// Check packages, Classes with StateMachines except Behavior for Modelica keywords
-					if(element instanceof NamedElement)
-					{
-						for (String keyword : modelicaKeywordList) 
-						{
+					if(element instanceof Package || element instanceof Class){
+						for (String keyword : modelicaKeywordList) {
 //							if(keyword.equalsIgnoreCase(((NamedElement) element).getName()))
-							if(keyword.equals(((NamedElement) element).getName()))
-							{
-								return ctx.createFailureStatus(new Object[]{root_element.getName()+" contains packages or classes with name as Modelica keyword '"+((NamedElement)element).getName() +"'"});
+							if(keyword.equals(((NamedElement) element).getName())){
+								return ctx.createFailureStatus(new Object[]{root_element.getName()
+										+" contains packages or classes with name like Modelica keyword '"+((NamedElement)element).getName() +"'"});
 							}
 						}
 					}
 				}
 				
 				// Check properties of class for similar names
-				if(root_element instanceof Class && ! (root_element instanceof Behavior) || root_element instanceof StateMachine)
-				{
+				if(root_element instanceof Class && ! (root_element instanceof Behavior) || root_element instanceof StateMachine){
 					List <Property> propertyList = ((Class) root_element).getOwnedAttributes();
 										
 					for (Property property : propertyList) {
@@ -123,27 +118,20 @@ public class C01_C02_NonSimilarNamesConstraint extends AbstractModelConstraint {
 						String propertyName = property.getName();
 						
 						for (Property property2 : propertyList) {
-						
-							if(!(property2.equals(property)) && (property2.getName().equalsIgnoreCase(propertyName)))
-							{
-								
-								return ctx.createFailureStatus(new Object[] {((Class)root_element).getName()+" Contains Properties with same name "+propertyName});
+							if(!(property2.equals(property)) && (property2.getName().equalsIgnoreCase(propertyName))){
+								return ctx.createFailureStatus(new Object[] {((Class)root_element).getName()+" contains properties with same name "+propertyName});
 							}
 						}
 						
 						// Check properties of class for Modelica Keywords
-						for (String keyword : modelicaKeywordList) 
-						{
-							
-							if(keyword.equalsIgnoreCase(property.getName()))
-							{
-								return ctx.createFailureStatus(new Object[]{((Class)root_element).getName()+" Contains Properties with name as Modelica Keyword "+propertyName});
+						for (String keyword : modelicaKeywordList) {
+							if(keyword.equals(property.getName())){
+								return ctx.createFailureStatus(new Object[]{((Class)root_element).getName()+" contains elements with name like Modelica keyword "+propertyName});
 							}
 						}
 					}
 				}
 			}
-	
 			
 		return ctx.createSuccessStatus();
 	}
