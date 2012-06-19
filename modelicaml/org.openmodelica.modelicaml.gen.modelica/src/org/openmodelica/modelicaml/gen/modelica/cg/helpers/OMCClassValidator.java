@@ -174,7 +174,17 @@ public class OMCClassValidator {
 			
 			//launch code generation
 			try {
-				codeGenerationChain.launch(filter, monitor, LaunchManager.create("run", true));
+				if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
+					
+					// stamp before generating code 
+					Long timeStamp = System.currentTimeMillis();
+					ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
+					
+					// same the model in order to make sure that the code is generated from the latest version
+					ModelicaMLServices.saveModel(umlModel);
+					
+					codeGenerationChain.launch(filter, monitor, LaunchManager.create("run", true));
+				}
 
 				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
 				ModelicaMLServices.generatePackageEncodingFile(project);

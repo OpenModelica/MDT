@@ -539,36 +539,32 @@ private String project = null;
 	 *            the monitor
 	 */
 	public void runValidationChain(IProgressMonitor monitor) {
-		try {
-			// delete validation markers
-			if (iProject != null) {
-				IMarker[] markers = null;
-				try {
-					markers = iProject.findMarkers(null, true,IResource.DEPTH_INFINITE);
-
-					for (IMarker marker : markers) {
-						if (marker.getType().equals("org.openmodelica.modelicaml.modelicamlMarker.validation")) {
-							marker.delete();
-						}
-					}
-				} catch (CoreException e) {
-					//e.printStackTrace();
-				}
-			}
-			
+		// delete validation markers
+//		if (iProject != null) {
+//			IMarker[] markers = null;
+//			try {
+//				markers = iProject.findMarkers(null, true,IResource.DEPTH_INFINITE);
+//
+//				for (IMarker marker : markers) {
+//					if (marker.getType().equals("org.openmodelica.modelicaml.modelicamlMarker.validation")) {
+//						marker.delete();
+//					}
+//				}
+//			} catch (CoreException e) {
+//				//e.printStackTrace();
+//			}
+//		}
+		
 //			System.err.println("papyrusEditor.isDirty(): " + papyrusEditor.isDirty());
-			if (papyrusEditor != null && !papyrusEditor.isDirty()) {
+		if (papyrusEditor != null && !papyrusEditor.isDirty()) {
 //			if (umlModelResource != null && !umlModelResource.isModified()) { 
-				// run validation chain
-				validationChain.launch(filter, monitor, LaunchManager.create("run", true));
-			}
-			else {
-				//System.err.println("Did not launch the (validation) chain. Waiting until the uml model is saved.");
-			}
 			
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			// OBSOLETE: validation is replaced by EMF Validation. Remove this code.
+			// run validation chain
+//				validationChain.launch(filter, monitor, LaunchManager.create("run", true));
+		}
+		else {
+			//System.err.println("Did not launch the (validation) chain. Waiting until the uml model is saved.");
 		}
 	}
 	
@@ -582,11 +578,22 @@ private String project = null;
 		try {
 			if (papyrusEditor != null && !papyrusEditor.isDirty()) { // strange, the isDirty() method gives true after the model is saved and false if the model has changes ...
 //			if (umlModelResource != null && !umlModelResource.isModified()) {	
-				// run code generation  chain
-				codeGenerationChain.launch(filter, monitor, LaunchManager.create("run", true));
 				
-				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
-				ModelicaMLServices.generatePackageEncodingFile(project);
+				if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
+					
+					// stamp before generating code 
+					Long timeStamp = System.currentTimeMillis();
+					ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
+
+					// same the model in order to make sure that the code is generated from the latest version
+					ModelicaMLServices.saveModel(umlModel);
+
+					// run code generation  chain
+					codeGenerationChain.launch(filter, monitor, LaunchManager.create("run", true));
+					
+					// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+					ModelicaMLServices.generatePackageEncodingFile(project);
+				}
 
 			}
 			else {

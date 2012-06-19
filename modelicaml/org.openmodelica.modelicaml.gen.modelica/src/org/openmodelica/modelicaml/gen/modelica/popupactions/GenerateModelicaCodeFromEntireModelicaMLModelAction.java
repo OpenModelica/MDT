@@ -88,6 +88,8 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	
 	/** The model name. */
 	private String modelName = null;
+	
+	private UmlModel umlModel;
 
 	// NullProgressMonitor monitor = null;
 
@@ -118,7 +120,7 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	 */
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 
-		UmlModel umlModel = UmlUtils.getUmlModel();
+		umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
 
 		modelName = umlModel.getResourceURI().lastSegment();
@@ -179,10 +181,20 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	 */
 	public void runchain(IProgressMonitor monitor) {
 		try {
-			myChain.launch(filter, monitor, LaunchManager.create("run", true));
-			
-			// TODO: remove this when file encoding for generated code files is enforced to UTF-8
-			ModelicaMLServices.generatePackageEncodingFile(project);
+			if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
+				
+				// stamp before generating code 
+				Long timeStamp = System.currentTimeMillis();
+				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
+				
+				// same the model in order to make sure that the code is generated from the latest version
+				ModelicaMLServices.saveModel(umlModel);
+
+				myChain.launch(filter, monitor, LaunchManager.create("run", true));
+				
+				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+				ModelicaMLServices.generatePackageEncodingFile(project);
+			}
 
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

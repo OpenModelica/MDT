@@ -96,7 +96,9 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 	
 	/** The model name. */
 	private String modelName = null;
-
+	
+	private UmlModel umlModel;
+	
 	// NullProgressMonitor monitor = null;
 
 	/** The filter. */
@@ -158,7 +160,7 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 		}
 		
 		
-		UmlModel umlModel = UmlUtils.getUmlModel();
+		umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
 
 		modelName = umlModel.getResourceURI().lastSegment();
@@ -221,10 +223,20 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 	 */
 	public void runchain(IProgressMonitor monitor) {
 		try {
-			myChain.launch(filter, monitor, LaunchManager.create("run", true));
+			if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
+				
+				// stamp before generating code 
+				Long timeStamp = System.currentTimeMillis();
+				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
 
-			// TODO: remove this when file encoding for generated code files is enforced to UTF-8
-			ModelicaMLServices.generatePackageEncodingFile(project);
+				// same the model in order to make sure that the code is generated from the latest version
+				ModelicaMLServices.saveModel(umlModel);
+
+				myChain.launch(filter, monitor, LaunchManager.create("run", true));
+
+				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+				ModelicaMLServices.generatePackageEncodingFile(project);
+			}
 
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
