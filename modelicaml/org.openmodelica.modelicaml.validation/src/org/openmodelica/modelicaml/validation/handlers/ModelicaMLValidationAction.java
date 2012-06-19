@@ -47,8 +47,7 @@ public class ModelicaMLValidationAction implements IHandler {
 		// TODO Auto-generated method stub
 
 	}
-	
-	
+
 	protected EObject getElementToValidate(){
 		// Get the top level model from Papyrus
 		EObject topLevelElement = null;
