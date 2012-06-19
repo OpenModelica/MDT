@@ -341,8 +341,20 @@ public class ReadMatlab4 implements IResultsReader {
 	}
 	
 	public double[] read_vals(String name) throws Exception {
-		return read_vals(find_var(name));
+		ModelicaMatVariable key = new ModelicaMatVariable();
+		key.name = name;
+		int allInfoIndex=Arrays.binarySearch(allInfo, key);
+		if (allInfo[allInfoIndex].isParam) {
+			double ret[] = new double[nrows];
+			for(int i=0;i<ret.length;i++){
+				ret[i]=params[Math.abs(allInfo[allInfoIndex].index)-1];
+			}
+			return ret;
+		}else{
+			return read_vals(find_var(name));
+		}
 	}
+
 	private double[] read_vals(int varIndex) throws Exception {
 		int absVarIndex = Math.abs(varIndex);
 		assert (absVarIndex > 0 && absVarIndex <= nvar);
@@ -369,15 +381,15 @@ public class ReadMatlab4 implements IResultsReader {
 		if (binTrans == 0) {
 			int i;
 			if (doublepresision == 1) {
+				this.beraf.seek(var_offset + Double.SIZE / 8 * (absVarIndex - 1));
 				for (i = 0; i < nrows; i++) {
-					this.beraf.seek(var_offset + Double.SIZE / 8 * (absVarIndex - 1));
 					ret[i] = this.beraf.readBEDouble();
 					if (varIndex < 0)
 						ret[i] = -ret[i];
 				}
 			} else {
+				this.beraf.seek(var_offset + Float.SIZE / 8 * (absVarIndex - 1));
 				for (i = 0; i < nrows; i++) {
-					this.beraf.seek(var_offset + Float.SIZE / 8 * (absVarIndex - 1));
 					ret[i] = this.beraf.readBEFloat();
 					if (varIndex < 0)
 						ret[i] = -ret[i];
@@ -422,20 +434,27 @@ public class ReadMatlab4 implements IResultsReader {
 		ReadMatlab4 input;
 		try {
 //			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__TanksConnectedPI_1.VeM_for__Scenario__Change_of_input_flow_res.mat");
-			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__SystemEnvironment_2.VeM_for__Change_of_input_flow_res.mat");
+			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__SystemEnvironment_1.VeM_for__Change_of_input_flow_res.mat");
 
-			input.print_all_vars();
-			ArrayList<String> namen=input.getNames();
-			System.out.println("namen.size()="+namen.size());
-			for(String n:namen){
-				double erg[]=input.read_vals(n);
-				System.out.println(n+" -> "+Arrays.toString(erg));
-			}
-			double erg[]=input.read_vals("time");
-			System.out.println("time -> "+Arrays.toString(erg));
+//			input.print_all_vars();
+//			ArrayList<String> namen=input.getNames();
+//			System.out.println("namen.size()="+namen.size());
+//			for(String n:namen){
+//				double erg[]=input.read_vals(n);
+//				System.out.println(n+" -> "+Arrays.toString(erg));
+//			}
+//			double erg[]=input.read_vals("time");
+//			System.out.println("time -> "+Arrays.toString(erg));
 			
+			double erg[]=input.read_vals("req_003_0_max_level_of_liquid_in_tank.tankHeight");
+			System.out.println("req_003_0_max_level_of_liquid_in_tank.tankHeight -> "+Arrays.toString(erg));
 			
-			System.out.println("start: "+input.startTime()+" stop: " + input.stopTime());
+			double erg2[]=input.read_vals("req_003_1_max_level_of_liquid_in_tank.tankHeight");
+			System.out.println("req_003_1_max_level_of_liquid_in_tank.tankHeight -> "+Arrays.toString(erg2));
+
+			System.err.println("Both should be 2 all the time..!");
+			
+//			System.out.println("start: "+input.startTime()+" stop: " + input.stopTime());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

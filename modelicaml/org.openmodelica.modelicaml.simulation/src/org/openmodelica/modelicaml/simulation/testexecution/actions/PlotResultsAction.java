@@ -3,20 +3,23 @@ package org.openmodelica.modelicaml.simulation.testexecution.actions;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.openmodelica.modelicaml.simulation.dialogs.DialogPlot;
 
 public class PlotResultsAction implements IWorkbenchWindowActionDelegate {
 
-	private String filePath = null;
+	protected String filePath = null;
 //	private DialogPlot dialog;
 	boolean canceled = false;
 	
@@ -38,9 +41,17 @@ public class PlotResultsAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 	
+	/*
+	 *  To be used by sub classes to set the file path based on user selection
+	 */
+	protected void setSelectedFilePath(){
+	}
+	
 	
 	@Override
 	public void run(IAction action) {
+		
+		setSelectedFilePath();
 		
 		if (this.filePath != null) {
 			filePath = filePath.replaceFirst("file://", "");

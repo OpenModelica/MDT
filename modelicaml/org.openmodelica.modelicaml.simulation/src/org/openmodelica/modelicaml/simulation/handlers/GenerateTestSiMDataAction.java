@@ -109,6 +109,8 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 	/** The model name. */
 	private String modelName = null;
 	
+	private UmlModel umlModel;
+	
 	private boolean generateCode = false;
 
 	/** The filter. */
@@ -144,7 +146,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 //		if (selectedElement instanceof Element) {
 //		}
 		
-		UmlModel umlModel = UmlUtils.getUmlModel();
+		umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
 
 		modelName = umlModel.getResourceURI().lastSegment();
@@ -181,26 +183,25 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			
 			org.eclipse.emf.common.util.URI chainURI = null;
 			
-			generateCode = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-					"Save Model and Generate Modelica Code?", 
-					"Save the ModelicaML model and generate Modelica code before starting the verification models execution?");
+			// if the code should not be re-generated -> skip asking this question
+			if ( ModelicaMLServices.regenerateCode(umlModel.getResource()) ) {
+//				generateCode = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+//						"Save Model and Generate Modelica Code?", 
+//						"Save the ModelicaML model and generate Modelica code before starting the verification models execution?");
+				generateCode = true;
+			}
 			
 			if (generateCode) {
-				try {
-					// TODO: find the right Papyrus API to save the model in editor and not only the uml file! 
-					umlModel.saveModel();
-					chainURI = org.eclipse.emf.common.util.URI.createPlatformPluginURI(
-							"/org.openmodelica.modelicaml.gen.modelica/bin/verification_models_data_generation_with_cg.chain",
-							true);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				// TODO: find the right Papyrus API to save the model in editor and not only the uml file! 
+//					umlModel.saveModel();
+				chainURI = org.eclipse.emf.common.util.URI.createPlatformPluginURI(
+						"/org.openmodelica.modelicaml.gen.modelica/bin/verification_models_data_generation_with_cg.chain",
+						true);
 			}
 			else {
 				chainURI = org.eclipse.emf.common.util.URI.createPlatformPluginURI(
-				"/org.openmodelica.modelicaml.gen.modelica/bin/verification_models_data_generation.chain",
-				true);
+						"/org.openmodelica.modelicaml.gen.modelica/bin/verification_models_data_generation.chain",
+						true);
 			}
 
 			if (chainURI != null) {
@@ -313,6 +314,14 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
          
 	public void runchain(IProgressMonitor monitor) {
 		try {
+			
+			// stamp before generating code 
+			Long timeStamp = System.currentTimeMillis();
+			ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
+			
+			// same the model in order to make sure that the code is generated from the latest version
+			ModelicaMLServices.saveModel(umlModel);
+
 			myChain.launch(filter, monitor, LaunchManager.create("run", true));
 			
 			if (generateCode) {

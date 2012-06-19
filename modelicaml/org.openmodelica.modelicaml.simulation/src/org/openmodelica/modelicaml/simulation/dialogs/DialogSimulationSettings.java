@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.simulation.Activator;
 import org.eclipse.swt.events.ModifyListener;
@@ -265,9 +266,13 @@ public class DialogSimulationSettings extends Dialog {
         	}
         });
         btnGenerateModelicaCode.setSelection(isGenerateModelicaCodeChecked);
+//        btnGenerateModelicaCode.setSelection(ModelicaMLServices.regenerateCode(umlElement.getModel().eResource()));
         btnGenerateModelicaCode.setToolTipText("If this option is activated then Modelica code will be generated before simulation.");
-        btnGenerateModelicaCode.setText("Generate Modelica code before simulating");
+        btnGenerateModelicaCode.setText("(Re)generate Modelica code before simulating");
         btnGenerateModelicaCode.setBounds(10, 29, 477, 16);
+        
+    	// if there is no need to regenerate the code -> disable this option.
+        btnGenerateModelicaCode.setEnabled(ModelicaMLServices.regenerateCode(umlElement.getModel().eResource()));
         
         Label lblMessage = new Label(composite, SWT.NONE);
         lblMessage.setBounds(15, 388, 474, 15);

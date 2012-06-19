@@ -123,6 +123,8 @@ public class SimulationOMCAction extends AbstractHandler {
 	private List<String> simulationFailedList;
 	private List<String> simulationSuccededList;
 	
+	private UmlModel umlModel;
+	
 	IGenFilter filter = new IGenFilter() {
 		public boolean filter(java.io.File script, IFile targetFile,
 				EObject object) throws CoreException {
@@ -472,7 +474,7 @@ public class SimulationOMCAction extends AbstractHandler {
 		setUmlElement();
 		
 		// get UML model data
-		UmlModel umlModel = UmlUtils.getUmlModel();
+		umlModel = UmlUtils.getUmlModel();
 		umlModelFileURI = umlModel.getResourceURI().toString();
 
 		// get project data
@@ -528,10 +530,20 @@ public class SimulationOMCAction extends AbstractHandler {
 	 */
 	public void runchain(IProgressMonitor monitor) {
 		try {
-			cgChain.launch(filter, monitor, LaunchManager.create("run", true));
-			
-			// TODO: remove this when file encoding for generated code files is enforced to UTF-8
-			ModelicaMLServices.generatePackageEncodingFile(projectName);
+			if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
+				
+				// stamp before generating code 
+				Long timeStamp = System.currentTimeMillis();
+				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
+				
+				// same the model in order to make sure that the code is generated from the latest version
+				ModelicaMLServices.saveModel(umlModel);
+
+				cgChain.launch(filter, monitor, LaunchManager.create("run", true));
+				
+				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+				ModelicaMLServices.generatePackageEncodingFile(projectName);
+			}
 
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
