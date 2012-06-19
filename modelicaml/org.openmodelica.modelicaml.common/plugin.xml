@@ -33,5 +33,12 @@
             name="generatedBy">
       </attribute>
    </extension>
+   <extension
+         point="org.eclipse.papyrus.core.modelListener">
+      <listener
+            name="org.openmodelica.modelicaml.listeners.umlModelChanged"
+            realization="org.openmodelica.modelicaml.common.listeners.PapyrusListener">
+      </listener>
+   </extension>
 
 </plugin>

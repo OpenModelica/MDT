@@ -4,14 +4,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -29,9 +28,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
@@ -40,8 +39,54 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 
 public class ModelicaMLServices {
 
+	/*
+	 * Regeneration of  code
+	 */
+	public static HashMap<Resource,Long> modelModificationStamp = new HashMap<Resource,Long>();
+	public static HashMap<Resource,Long> codeGenerationStamp = new HashMap<Resource,Long>();
 	
+	public static boolean regenerateCode(Resource resource){
+		
+		// TODO: check if the code-gen folder exists in the project
+		
+		Long modifiedModelTimeStamp = modelModificationStamp.get(resource);
+		Long generatedCodeTimeStamp = codeGenerationStamp.get(resource);
+		
+//		System.err.println("Checking if it is neccesary to regenerate code for: "+  resource);
+//		System.err.println("modifiedModelTimeStamp: " + modifiedModelTimeStamp);
+//		System.err.println("generatedCodeTimeStamp: " + generatedCodeTimeStamp);
+//		if (generatedCodeTimeStamp != null && modifiedModelTimeStamp != null) {			
+//			System.err.println("modifiedModelTimeStamp < generatedCodeTimeStamp: " + (modifiedModelTimeStamp < generatedCodeTimeStamp));
+//		}
+		
+		if (generatedCodeTimeStamp != null && modifiedModelTimeStamp != null) {
+			// if code was generated after the model modification -> no need for regenerating code
+			if (modifiedModelTimeStamp < generatedCodeTimeStamp) {
+				System.err.println("Skipping code generation ... ");
+				return false;
+				
+			}
+		}
+		return true;
+	}
+	
+	
+	public static boolean saveModel(UmlModel umlModel){
+		try {
+			umlModel.saveModel();
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/*
+	 * Element adoption
+	 */
 	public static EObject adaptSelectedElement( Object selection) {
+		
 		EObject eObject = null;
 		if(selection != null) {
 			// from any adaptable
@@ -57,6 +102,10 @@ public class ModelicaMLServices {
 		return eObject;
 	}
 	
+	
+	/*
+	 * Requirements data
+	 */
 	public static String getRequirementID(Element req){
 		if (req instanceof NamedElement) {
 			Stereotype s = ((NamedElement)req).getAppliedStereotype(Constants.stereotypeQName_Requirement);
@@ -80,6 +129,9 @@ public class ModelicaMLServices {
 	}
 
 	
+	/*
+	 * Utilities
+	 */
 	public static List<TreeObject> getSortedByDotPath(HashSet<TreeObject> set){
 		if (set == null) { return null; }
 
@@ -218,7 +270,9 @@ public class ModelicaMLServices {
 //		return list;
 //	}
 	
-	
+	/*
+	 * OMC handling
+	 */
 	public static boolean containsOMCErrorMessage(String msg){
 		if (	msg.contains("Error: ")
 				|| msg.contains("rror occured")) {
@@ -286,6 +340,9 @@ public class ModelicaMLServices {
 	}
 	
 	
+	/*
+	 * Files handling
+	 */
 	public static IStatus deleteFiles(List<String> filesToBeDeleted, IProgressMonitor monitor, String message){
 		
 		if (monitor.isCanceled()){
