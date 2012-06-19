@@ -1517,9 +1517,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	private boolean codeSyncFolderExists(){
-		UmlModel umlModel = UmlUtils.getUmlModel();
-		if (umlModel != null && umlModel.getResource() != null) {
-			String projectName = umlModel.getResource().getURI().segment(1);
+		if (ModelicaMLModel != null && ModelicaMLModel.getResource() != null) {
+			String projectName = ModelicaMLModel.getResource().getURI().segment(1);
 			if (projectName != null) {
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IWorkspaceRoot root = workspace.getRoot();
