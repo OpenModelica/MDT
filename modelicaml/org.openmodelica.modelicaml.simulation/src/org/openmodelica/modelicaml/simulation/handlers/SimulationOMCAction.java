@@ -180,12 +180,12 @@ public class SimulationOMCAction extends AbstractHandler {
 		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_sync));
 		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_gen));
 		
-		boolean areFilesFromCGFolderToBeLoaded = false;
-		for (String string : filesToLoad) {
-			if (string.contains(projectPath + "/" + Constants.folderName_code_gen)) {
-				areFilesFromCGFolderToBeLoaded = true;
-			}
-		}
+//		boolean areFilesFromCGFolderToBeLoaded = false;
+//		for (String string : filesToLoad) {
+//			if (string.contains(projectPath + "/" + Constants.folderName_code_gen)) {
+//				areFilesFromCGFolderToBeLoaded = true;
+//			}
+//		}
 
 		// open dialog with preset settings
 		DialogSimulationSettings dialog = new DialogSimulationSettings(shell, 
@@ -200,9 +200,13 @@ public class SimulationOMCAction extends AbstractHandler {
 		
 		dialog.setLoadModelicaLibChecked(isMSLUsed);
 		
-		if (!areFilesFromCGFolderToBeLoaded) {
-			dialog.setGenerateModelicaCodeChecked(false);
-		}
+		/*
+		 * Note, do not preset this option because it may happen 
+		 * then code-gen folder was deleted by the user
+		 */
+//		if (!areFilesFromCGFolderToBeLoaded) {
+//			dialog.setGenerateModelicaCodeChecked(false);
+//		}
 		dialog.open();
 		
 		
