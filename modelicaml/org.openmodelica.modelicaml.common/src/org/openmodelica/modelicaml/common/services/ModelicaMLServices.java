@@ -47,8 +47,6 @@ public class ModelicaMLServices {
 	
 	public static boolean regenerateCode(Resource resource){
 		
-		// TODO: check if the code-gen folder exists in the project
-		
 		Long modifiedModelTimeStamp = modelModificationStamp.get(resource);
 		Long generatedCodeTimeStamp = codeGenerationStamp.get(resource);
 		
@@ -62,9 +60,22 @@ public class ModelicaMLServices {
 		if (generatedCodeTimeStamp != null && modifiedModelTimeStamp != null) {
 			// if code was generated after the model modification -> no need for regenerating code
 			if (modifiedModelTimeStamp < generatedCodeTimeStamp) {
-				System.err.println("Skipping code generation ... ");
-				return false;
 				
+				// Check if the code-gen folder exists in the project
+				String projectName = resource.getURI().segment(1);
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				IProject iProject = root.getProject(projectName);
+				
+				String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+				String codeSynch = projectPath + "/" + Constants.folderName_code_gen;
+				File folder = new File(codeSynch);
+				// if the folder exists -> then skip the cg
+				boolean codeGenDirExists = folder.isDirectory();
+				if (codeGenDirExists) {
+					System.err.println("Skipping code generation ... ");
+					return false;
+				}
 			}
 		}
 		return true;
