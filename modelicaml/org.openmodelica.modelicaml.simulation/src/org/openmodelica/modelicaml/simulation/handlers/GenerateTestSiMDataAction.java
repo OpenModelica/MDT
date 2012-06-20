@@ -142,9 +142,6 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 	}
 
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
-//		EObject selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
-//		if (selectedElement instanceof Element) {
-//		}
 		
 		umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
@@ -181,7 +178,11 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		
 		if (someModelsSelected && rootModel != null && VerificationExecutionServices.verificationModels != null && VerificationExecutionServices.verificationModels.size() > 0) {
 			
+			// prepare the chain
 			org.eclipse.emf.common.util.URI chainURI = null;
+			
+			// reset the code generation flag from last time
+			generateCode = false;
 			
 			// if the code should not be re-generated -> skip asking this question
 			if ( ModelicaMLServices.regenerateCode(umlModel.getResource()) ) {
@@ -191,9 +192,8 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 				generateCode = true;
 			}
 			
+			// select the right cg chain based on the need to regenerate code
 			if (generateCode) {
-				// TODO: find the right Papyrus API to save the model in editor and not only the uml file! 
-//					umlModel.saveModel();
 				chainURI = org.eclipse.emf.common.util.URI.createPlatformPluginURI(
 						"/org.openmodelica.modelicaml.gen.modelica/bin/verification_models_data_generation_with_cg.chain",
 						true);
@@ -204,6 +204,8 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 						true);
 			}
 
+			
+			// create chain
 			if (chainURI != null) {
 				ResourceSet rs = new ResourceSetImpl();
 				Resource r = (Resource) rs.createResource(chainURI);
@@ -245,7 +247,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 				job.schedule();	// run the chain and models execution
 			}
 			else {
-				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not save the model and load the generation chain...");
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not load the generation chain...");
 			}
 			CompoundCommand cc = new CompoundCommand("Verification Models Data Generation");
 			return (cc.unwrap());
