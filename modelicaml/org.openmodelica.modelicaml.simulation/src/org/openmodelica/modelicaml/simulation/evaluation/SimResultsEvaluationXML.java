@@ -10,7 +10,7 @@ import org.openmodelica.modelicaml.simulation.xml.SimulationResult_XML_reader;
  * @author parham.vasaiely
  *
  */
-public class EvaluateResultXML {
+public class SimResultsEvaluationXML {
 	
 	/**
 	 * Evaluate the values of a property to be at least one time true

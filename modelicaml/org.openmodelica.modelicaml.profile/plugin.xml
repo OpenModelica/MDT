@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="org.openmodelica.modelicaml.marker"
-         name="ModelicaML Simulation"
+         name="ModelicaML"
          point="org.eclipse.core.resources.markers">
       <persistent
             value="false">
@@ -257,6 +257,25 @@
             </visibleWhen>
             <separator
                   name="org.openmodelica.modelicaml.profile.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations"
+                  icon="resources/icons/icons16/correlationset.gif"
+                  label="Discover Relations Between Scenarios and Requirements"
+                  style="push"
+                  tooltip="Discover Relations Between Scenarios and Requirements">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator2"
                   visible="true">
             </separator>
             <command

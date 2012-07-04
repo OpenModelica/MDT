@@ -15,6 +15,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -39,7 +40,10 @@ import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
-import org.openmodelica.modelicaml.helper.impl.VerificationModelComponentsCombination;
+import org.openmodelica.modelicaml.helper.impl.VeMScenarioReqCombinationsCreator;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Label;
 
 public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaDialog {
 
@@ -71,7 +75,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	 */
 	private List<TreeItem> treeItems = new ArrayList<TreeItem>();
 
-	private HashMap<Element, VerificationModelComponentsCombination> tsToTestSimulationModelCombination;
+	private HashMap<Element, VeMScenarioReqCombinationsCreator> tsToTestSimulationModelCombination;
 	
 	private static final int DECORATION_WARNING = 0 ;
 	private static final int DECORATION_ERROR = 1 ;
@@ -95,9 +99,10 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 			Element systemModel,
 			VerificationScenariosCollector tsc,
 			String collectionLog,
-			HashMap<Element, VerificationModelComponentsCombination> tsToTestSimulationModelCombination) {
+			HashMap<Element, VeMScenarioReqCombinationsCreator> tsToTestSimulationModelCombination) {
 		
 		super(parentShell);
+		setShellStyle(SWT.SHELL_TRIM | SWT.BORDER);
 		
 		this.selectedTestScenarios = selectedTestScenarios;
 		this.discardedTestScenarios = discardedTestScenarios;
@@ -123,17 +128,24 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		setTitleImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/generateSimMopdels.png"));
+//		setTitleImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/generateSimMopdels.png"));
 		setMessage("Select scenarios and requirements for which simulation models should be generated.");
 //		setTitle("Test Scenarios and Requirements Selection");
 		setTitle("System Model: " + ((NamedElement)systemModel).getName());
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		container.setLayout(new GridLayout(1, false));
+		GridData gd_container = new GridData(GridData.FILL_BOTH);
+		gd_container.widthHint = 500;
+		gd_container.heightHint = 400;
+		container.setLayoutData(gd_container);
 
 		TabFolder tabFolder = new TabFolder(container, SWT.NONE);
-		tabFolder.setBounds(10, 10, 616, 315);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_tabFolder.heightHint = 284;
+		gd_tabFolder.widthHint = 711;
+		tabFolder.setLayoutData(gd_tabFolder);
 
 		// TAB: Pre-selected test scenarios
 		TabItem tbtmPreSelectedTestScenarios = new TabItem(tabFolder, SWT.NONE);
@@ -146,16 +158,30 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		
 		// Add listeners
 		treePreSelectedTestScenarios.addSelectionListener(new CheckboxTreeSelectionListener());
-		treePreSelectedTestScenarios.addListener(SWT.MouseDoubleClick, new Listener() {
-		      public void handleEvent(Event event) {
-		        Point point = new Point(event.x, event.y);
-		        TreeItem item = treePreSelectedTestScenarios.getItem(point);
-		        if (item != null) {
-		        	openDescription(item);
-		        }
-		      }
-		    });
+//		treePreSelectedTestScenarios.addListener(SWT.MouseDoubleClick, new Listener() {
+//		      public void handleEvent(Event event) {
+//		        Point point = new Point(event.x, event.y);
+//		        TreeItem item = treePreSelectedTestScenarios.getItem(point);
+//		        if (item != null) {
+//		        	openDescription(item);
+//		        }
+//		      }
+//		    });
 	
+		treePreSelectedTestScenarios.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDescriptionText(treePreSelectedTestScenarios.getSelection()[0]);
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		tbtmPreSelectedTestScenarios.setControl(treePreSelectedTestScenarios);
 		
 		// TAB: Discarded test scenarios
@@ -169,19 +195,49 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		
 		// Add listeners
 		treeDiscardedTestScenarios.addSelectionListener(new CheckboxTreeSelectionListener());
-		treeDiscardedTestScenarios.addListener(SWT.MouseDoubleClick, new Listener() {
-		      public void handleEvent(Event event) {
-		        Point point = new Point(event.x, event.y);
-		        TreeItem item = treeDiscardedTestScenarios.getItem(point);
-		        if (item != null) {
-		        	openDescription(item);
-		        }
-		      }
-		    });
+//		treeDiscardedTestScenarios.addListener(SWT.MouseDoubleClick, new Listener() {
+//		      public void handleEvent(Event event) {
+//		        Point point = new Point(event.x, event.y);
+//		        TreeItem item = treeDiscardedTestScenarios.getItem(point);
+//		        if (item != null) {
+//		        	openDescription(item);
+//		        }
+//		      }
+//		    });
+		treeDiscardedTestScenarios.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDescriptionText(treeDiscardedTestScenarios.getSelection()[0]);
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		tbtmDiscardedTestScenarios.setControl(treeDiscardedTestScenarios);
 		
+		descriptionText = new StyledText(container, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		GridData gd_descriptionText = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_descriptionText.heightHint = 98;
+		descriptionText.setLayoutData(gd_descriptionText);
+		descriptionText.setBottomMargin(3);
+		descriptionText.setTopMargin(3);
+		descriptionText.setRightMargin(3);
+		descriptionText.setLeftMargin(3);
+		
+		Composite buttonsBar = new Composite(container, SWT.NONE);
+		GridData gd_buttonsBar = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_buttonsBar.widthHint = 338;
+		buttonsBar.setLayoutData(gd_buttonsBar);
+		buttonsBar.setBounds(0, 0, 64, 64);
+		
 
-		Button btnSelectAll = new Button(container, SWT.NONE);
+		Button btnSelectAll = new Button(buttonsBar, SWT.NONE);
+		btnSelectAll.setBounds(0, 0, 60, 25);
 		btnSelectAll.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -198,64 +254,68 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 				}
 			}
 		});
-		btnSelectAll.setBounds(10, 331, 68, 23);
 		btnSelectAll.setText("Select All");
-
-		Button btnDeselectAll = new Button(container, SWT.NONE);
-		btnDeselectAll.setEnabled(true);
-		btnDeselectAll.setBounds(84, 331, 68, 23);
-		btnDeselectAll.setText("Deselect All");
-		btnDeselectAll.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				for (TreeItem treeItem : treeItems) {
-					
-					treeItem.setChecked(false);
-					// remove from to maps.
-					TreeItemData data = (TreeItemData) treeItem.getData();
-					if (data.isRequirement && data.getTestScenarioElement() != null) {
-						removeFromTestScenarioToRequirementsMap(data.getTestScenarioElement(), data.getRequirementElement());
-					}
-					else if (data.isTestScenario) {
-						selectedTestScenariosWithRequirements.remove(data.getTestScenarioElement());
-					}
-				}
-			}
-		});
 		
-		Button btnSeeLog = new Button(container, SWT.NONE);
-		btnSeeLog.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				String infoText = "Data Collection for Simulation Models Generation Log: ";
-				DialogMessage dialog = new DialogMessage( getCurrentShell(), "Result", infoText, collectionLog, false);
-				dialog.open();
-			}
-		});
-		btnSeeLog.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/log.png"));
-		btnSeeLog.setBounds(558, 331, 68, 23);
-		btnSeeLog.setText("Log");
-		
-		Button btnRestore = new Button(container, SWT.NONE);
-		btnRestore.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				treePreSelectedTestScenarios.removeAll();
-				treeDiscardedTestScenarios.removeAll();
+				Button btnDeselectAll = new Button(buttonsBar, SWT.NONE);
+				btnDeselectAll.setBounds(69, 0, 73, 25);
+				btnDeselectAll.setEnabled(true);
+				btnDeselectAll.setText("Deselect All");
 				
-				clearAllLists();
+				Button btnRestore = new Button(buttonsBar, SWT.NONE);
+				btnRestore.setBounds(150, -1, 75, 26);
+				btnRestore.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseDown(MouseEvent e) {
+						treePreSelectedTestScenarios.removeAll();
+						treeDiscardedTestScenarios.removeAll();
+						
+						clearAllLists();
+						
+						buildTree(treePreSelectedTestScenarios, false);
+						buildTree(treeDiscardedTestScenarios, true);
+					}
+				});
+				btnRestore.setImage(ResourceManager.getPluginImage("org.eclipse.emf.common.ui", "/org/eclipse/emf/common/ui/Restore.gif"));
+				btnRestore.setText("Restore");
 				
-				buildTree(treePreSelectedTestScenarios, false);
-				buildTree(treeDiscardedTestScenarios, true);
-			}
-		});
-		btnRestore.setImage(ResourceManager.getPluginImage("org.eclipse.emf.common.ui", "/org/eclipse/emf/common/ui/Restore.gif"));
-		btnRestore.setBounds(484, 331, 68, 23);
-		btnRestore.setText("Restore");
+				Button btnSeeLog = new Button(buttonsBar, SWT.NONE);
+				btnSeeLog.setBounds(231, -1, 56, 26);
+				btnSeeLog.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseDown(MouseEvent e) {
+						String infoText = "Data Collection for Simulation Models Generation Log: ";
+						DialogMessage dialog = new DialogMessage( getCurrentShell(), "Result", infoText, collectionLog, false);
+						dialog.open();
+					}
+				});
+				btnSeeLog.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/log.png"));
+				btnSeeLog.setText("Log");
+				btnDeselectAll.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseDown(MouseEvent e) {
+						for (TreeItem treeItem : treeItems) {
+							
+							treeItem.setChecked(false);
+							// remove from to maps.
+							TreeItemData data = (TreeItemData) treeItem.getData();
+							if (data.isRequirement && data.getTestScenarioElement() != null) {
+								removeFromTestScenarioToRequirementsMap(data.getTestScenarioElement(), data.getRequirementElement());
+							}
+							else if (data.isTestScenario) {
+								selectedTestScenariosWithRequirements.remove(data.getTestScenarioElement());
+							}
+						}
+					}
+				});
 
 		return area;
 	}
 
+	
+	private void setDescriptionText(TreeItem item){
+		descriptionText.setText(getDescription(item, false));
+//		getDescription(item, false);
+	}
 	
 	private Shell getCurrentShell(){
 		Shell shell = null;
@@ -290,7 +350,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(642, 509);
+		return new Point(738, 617);
 	}
 
 	
@@ -505,9 +565,50 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		}
 	}
 	
+	
+	private String getDescription(TreeItem item, boolean openInSeparateDialog){
+		String description = "";
+		Object data = item.getData();
+    	if (data instanceof TreeItemData) {
+			Element scenario = null;
+			Element requirement = null;
+    		if ( ((TreeItemData)data).isRequirement) {
+				// get the test scenario and create a description of the combination
+				scenario = ((TreeItemData)data).getTestScenarioElement();
+				requirement = ((TreeItemData)data).getRequirementElement();
+			}
+			if ( ((TreeItemData)data).isTestScenario) {
+				// get the test scenario and create a description of the combination
+				scenario = ((TreeItemData)data).getTestScenarioElement();
+			}
+			
+			if (scenario != null) {
+				// for a requirement only return the requirement id and text
+				if (((TreeItemData)data).isRequirement) {
+					VeMScenarioReqCombinationsCreator tsmc = tsToTestSimulationModelCombination.get(scenario);
+					if (tsmc != null) {
+						description = description + getRequirementsString("", requirement, tsmc);
+						return description;
+					}
+				}
+				// for a scenario create a summary
+				description = createDescription(scenario);
+			}
+		}
+    	
+    	if (openInSeparateDialog) {
+    		DialogMessage dialog = new DialogMessage( getCurrentShell(), "Verification Model: Details", 
+					"Details of the selected combination of system model and scenario:", 
+					description, false);
+			dialog.open();
+		}
+    	
+    	return description;
+	}
+	
 	private String createDescription(Element testScenario){
 		String description = "";
-		VerificationModelComponentsCombination tsmc = tsToTestSimulationModelCombination.get(testScenario);
+		VeMScenarioReqCombinationsCreator tsmc = tsToTestSimulationModelCombination.get(testScenario);
 		if (tsmc != null) {
 			Element systemModel = tsmc.getSystemModel();
 			description = description +
@@ -526,10 +627,11 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	}
 	
 	private static final String lineDelimiterString = "\n";
+	private StyledText descriptionText;
 //		"\n------------------------------------------------------------------------------ \n";
 
 	
-	private String getAdditionalModelsString(HashSet<Element> set, VerificationModelComponentsCombination tsmc, Element model){
+	private String getAdditionalModelsString(HashSet<Element> set, VeMScenarioReqCombinationsCreator tsmc, Element model){
 		String string = "";
 		if (set != null && set.size() > 0) {
 			string = "\n    - models required in addition: \n";
@@ -540,7 +642,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		return string;
 	}
 	
-	private String getRequirementsString(String prefix, HashSet<Class> set, VerificationModelComponentsCombination tsmc){
+	private String getRequirementsString(String prefix, HashSet<Class> set, VeMScenarioReqCombinationsCreator tsmc){
 		String string  = "";
 		HashSet<Element> tempSet = new HashSet<Element>();
 		for (Element element : set) {
@@ -560,7 +662,23 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		return string;
 	}
 	
-	private String getAdditionalModelsStringParts(HashSet<Element> set, String prefix, VerificationModelComponentsCombination tsmc){
+	private String getRequirementsString(String prefix, Element requirement, VeMScenarioReqCombinationsCreator tsmc){
+		String string  = "";
+
+		if (requirement instanceof NamedElement) {
+//			string = string + lineDelimiterString;
+			String id = ModelicaMLServices.getRequirementID(requirement);
+			String text = ModelicaMLServices.getRequirementText(requirement);
+					
+			string = string + prefix +"Requirement '" + ((NamedElement)requirement).getName() + "' ("+((NamedElement)requirement).getQualifiedName()+")\n\n";
+			string = string + id + ": " + text + "\n\n";
+			string = string + getAdditionalModelsString(tsmc.getRequiredModels_requirements().get(requirement), tsmc, requirement) + "\n";
+			string = string + getUnsatisfiedClients("    ", requirement, tsmc);
+		}
+		return string;
+	}
+	
+	private String getAdditionalModelsStringParts(HashSet<Element> set, String prefix, VeMScenarioReqCombinationsCreator tsmc){
 		String string  = "";
 		List<Element> sortedList = ModelicaMLServices.getSortedByName(set);
 		for (Element element : sortedList) {
@@ -572,7 +690,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		return string;
 	}
 	
-	private String getAlwaysIncludeString(Element model, VerificationModelComponentsCombination tsmc){
+	private String getAlwaysIncludeString(Element model, VeMScenarioReqCombinationsCreator tsmc){
 		String string = "";
 		if (tsmc.getAlwaysInclude().contains(model)) {
 			return "(always) ";
@@ -581,7 +699,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 		return string;
 	}
 	
-	private String getUnsatisfiedClients(String prefix, Element element, VerificationModelComponentsCombination tsmc){
+	private String getUnsatisfiedClients(String prefix, Element element, VeMScenarioReqCombinationsCreator tsmc){
 		String string = "";
 		String unsatisfiedClientsString = tsmc.getClientsDotPathAsString(tsmc.getUnsatisfiedRequiredClients(element));
 		if (!unsatisfiedClientsString.trim().equals("")) {
@@ -818,6 +936,5 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	public HashMap<Element, HashSet<Element>> getSelectedTestScenariosWithRequirements() {
 		return selectedTestScenariosWithRequirements;
 	}
-	
 }
 

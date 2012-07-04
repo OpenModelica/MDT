@@ -586,7 +586,7 @@ private String project = null;
 					ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
 
 					// same the model in order to make sure that the code is generated from the latest version
-					ModelicaMLServices.saveModel(umlModel);
+//					ModelicaMLServices.saveModel(umlModel);
 
 					// run code generation  chain
 					codeGenerationChain.launch(filter, monitor, LaunchManager.create("run", true));

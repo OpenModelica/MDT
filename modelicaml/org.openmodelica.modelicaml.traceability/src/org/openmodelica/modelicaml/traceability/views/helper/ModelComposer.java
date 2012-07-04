@@ -16,7 +16,7 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
-import org.openmodelica.modelicaml.helper.impl.VerificationScenariosDataCollector;
+import org.openmodelica.modelicaml.helper.impl.VerificationDataCollector;
 
 public class ModelComposer {
 	
@@ -50,7 +50,7 @@ public class ModelComposer {
 	// All models that were found in the defined root model/package that should always be instantiated
 	private HashSet<Element> allAlwaysIncludeFound = new HashSet<Element>();
 	
-	private VerificationScenariosDataCollector ec;
+	private VerificationDataCollector ec;
 
 	// All instantiated models
 	private HashSet<TreeParent> allModelInstantiations = new HashSet<TreeParent>();
@@ -102,7 +102,7 @@ public class ModelComposer {
 		this.initialSetOfModels.addAll(this.modelsToBeInstantiated); 
 		this.initialSetOfModels.add(systemModel);
 		
-		this.ec = new VerificationScenariosDataCollector(umlRoolModel);
+		this.ec = new VerificationDataCollector(umlRoolModel);
 		
 		// virtual instantiation root 
 		virtualInstantiationTreeRoot = new TreeParent("Virtual Instantiation", null, null, "", false, true, null, null, true);

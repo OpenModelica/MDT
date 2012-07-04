@@ -1,9 +1,11 @@
 package org.openmodelica.modelicaml.helper.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Observable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
@@ -29,14 +31,15 @@ import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.dialogs.SelectVerificationScenariosAndRequirementsDialog;
 
-public class VerificationModelsGenerator implements IRunnableWithProgress {
+public class VeMGeneratorScenariosBased extends Observable implements IRunnableWithProgress {
 	
-	public VerificationModelsGenerator(
+	public VeMGeneratorScenariosBased(
 			HashSet<Element> sourceModels,
 			Element targetPackage, 
 			Element requirementsPackage,
@@ -64,7 +67,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	}
 	
 
-	public VerificationModelsGenerator() {
+	public VeMGeneratorScenariosBased() {
 		super();
 	}
 	
@@ -72,7 +75,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	 * Possible combinations, each containing an initial set (1 system model, 1 scenario and n requirements) and 
 	 * all additional model that are required by any of the initial set models. 
 	 */
-	private HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination = new HashMap<Element, VerificationModelComponentsCombination>();
+	private HashMap<Element, VeMScenarioReqCombinationsCreator> scenarioToVerificationModelCombination = new HashMap<Element, VeMScenarioReqCombinationsCreator>();
 
 	// the selected model to generate the simulation models for
 	private HashSet<Element> sourceModels = null;
@@ -86,6 +89,11 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	private Element testScenariosPackage = null;
 	// the package to containing the value mediators to be used
 	private Element valueBindingsPackage = null;
+	
+	// all created packages that contain generated models
+	private HashSet<Element> generatedPackages = new HashSet<Element>();
+	// all generated models
+//	private List<Element> generatedModels = new ArrayList<Element>();
 	
 	// super class that each generated model should inherit from
 	private Element superClass = null;
@@ -123,11 +131,17 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 	
 	// requirements selection options - default settings
 	// include requirements that are referenced by scenarios relations stereotyped with <<UsedToVerify>>
-	boolean includeRequirementsWithPositiveRelations = true;
+	private boolean includeRequirementsWithPositiveRelations = true;
 	// include requirements that are referenced by scenarios relations stereotyped with <<DoNotUseToVerify>>
-	boolean includeRequirementsWithNegativeRelations = false;
+	private boolean includeRequirementsWithNegativeRelations = false;
 	// include all requirements that are not referenced by scenarios at all
-	boolean includeRequirementsWitnUnknownRelations = false;
+	private boolean includeRequirementsWitnUnknownRelations = false;
+	
+	// indicates if there was at at least one model for which bindings could not be generated 
+	private boolean bindingErrorsDetected = false;
+	private HashSet<Element> modelsWithBindingErrors = new HashSet<Element>();
+	
+	
 	
 	
 	public void generate(){
@@ -166,6 +180,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				
 				// generate simulation models for the source model 
 				generateSimulationModels(sourceModel);
+
 			}
 		}
 	}
@@ -190,9 +205,11 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		testScenariosDiscarded.clear();
 		requirementsToBeInstantiated.clear();
 		requirementsDiscarded.clear();
+		
+		modelsWithBindingErrors.clear();
 	}
 	
-	public void createCombinationsForSimulationModels(){
+	private void createCombinationsForSimulationModels(){
 		monitorText1 = "Collecting data ...";
 		monitorText2 = "Analyzing combinations ...";
 		
@@ -221,6 +238,14 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						HashSet<Class> reqWithNegativeRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_DoNotUseToVerify);
 						HashSet<Element> reqAll = vsc.getAllRequirements();
 
+						/*
+						 * NOTE: <<DoNotUseToVerify>> has higher priority, i.e. if there are <<UsedToVerify>> (positive) 
+						 * and <<DoNotUseToVerify>> (negative) to the same requirement 
+						 * then this requirement is excluded from the <<UseToVerify>> (positive) list
+						 */
+						reqWithPositiveRelations.removeAll(reqWithNegativeRelations);
+						
+						
 						HashSet<Element> reqCollection = new HashSet<Element>();
 						/*
 						 * All requirements that were found, 
@@ -292,7 +317,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 //							addToLog(message);
 //						}
 						
-						VerificationModelComponentsCombination tsmc = new VerificationModelComponentsCombination(systemModel, 
+						VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator(systemModel, 
 								scenarioToBeUsed, 
 								requirementsToBeUsed,
 								(Package) valueBindingsPackage,
@@ -389,7 +414,6 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		else {
 			// Get the selected test scenarios and requirements from the dialog.  
 			HashMap<Element,HashSet<Element>> userSelectedTestScenariosAndRequirements = dialog.getSelectedTestScenariosWithRequirements();
-//			HashSet<Element> userSelectedTestScenarios = new HashSet<Element>();
 			userSelectedTestScenarios.addAll(userSelectedTestScenariosAndRequirements.keySet());
 			
 			if (userSelectedTestScenarios.size() > 0) {
@@ -404,11 +428,20 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 				String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
 				PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 			
+				generatedPackages.add(simulationModelsPackage);
+				
 				/*
 				 * NOTE: only scenarios from user selection are taken into account.
 				 * Any other combination that was prepared in advance is discarded.
 				 */
 				List<Element> userSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(userSelectedTestScenarios);
+				
+				// reset the indication of if bindings could not be generated
+				setBindingErrorsDetected(false);
+				
+				/*
+				 * iterate over scenarios and generate for each valid combination a model
+				 */
 				for (Element testScenario : userSelectedTestScenariosSorted) {
 					if (testScenario instanceof Classifier) {
 						
@@ -450,7 +483,7 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 
 						//************************************************************************************
 						// Get and adopt the data from the test scenario simulation model combination object
-						VerificationModelComponentsCombination tsmc = scenarioToVerificationModelCombination.get(testScenario);
+						VeMScenarioReqCombinationsCreator tsmc = scenarioToVerificationModelCombination.get(testScenario);
 						
 						//************************************************************************************
 						// Remove requirements that were unselected
@@ -582,9 +615,21 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 						vbc.updateAllBindings((Package)valueBindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
 						
 						/*
-						 * Create test verdict code
+						 * Determine if there were models for which no correct bindings could be generated
+						 */
+						HashSet<TreeObject> allMandClients = vbc.getAllRequiredClientsFound();
+						HashSet<TreeObject> allMandClientsWithPossibleBindins = vbc.getAllClientsWithPossibleBindingCodeDerivation();
+						
+						if (!allMandClientsWithPossibleBindins.containsAll(allMandClients)) {
+							setBindingErrorsDetected(true);
+							modelsWithBindingErrors.add(simulationModel);
+						}
+						
+						/*
+						 * Create verdict code
 						 */
 						VerificationVerdictElementsGenerator.createVerificationVerdictElements(simulationModel);
+						
 					}
 				}
 			}
@@ -782,12 +827,12 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		this.targetPackage = targetPackage;
 	}
 	
-	public HashMap<Element, VerificationModelComponentsCombination> getScenarioToVerificationModelCombination() {
+	public HashMap<Element, VeMScenarioReqCombinationsCreator> getScenarioToVerificationModelCombination() {
 		return scenarioToVerificationModelCombination;
 	}
 
 	public void setScenarioToVerificationModelCombination(
-			HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination) {
+			HashMap<Element, VeMScenarioReqCombinationsCreator> scenarioToVerificationModelCombination) {
 		this.scenarioToVerificationModelCombination = scenarioToVerificationModelCombination;
 	}
 	
@@ -824,4 +869,25 @@ public class VerificationModelsGenerator implements IRunnableWithProgress {
 		    }   
 		}
 	}
+
+
+	public boolean isBindingErrorsDetected() {
+		return bindingErrorsDetected;
+	}
+
+
+	public void setBindingErrorsDetected(boolean bindingErrorsDetected) {
+		this.bindingErrorsDetected = bindingErrorsDetected;
+	}
+
+
+	public HashSet<Element> getGeneratedPackages() {
+		return generatedPackages;
+	}
+
+
+	public HashSet<Element> getModelsWithBindingErrors() {
+		return modelsWithBindingErrors;
+	}
+
 }

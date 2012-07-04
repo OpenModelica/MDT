@@ -58,6 +58,7 @@ import org.eclipse.uml2.uml.Constraint;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
@@ -279,10 +280,10 @@ public class AssertCodeSection extends AbstractPropertySection  {
 								+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Modelica code.";
 
 			if (editor.isDocumentHasErrors()) {
-				ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement);
+				ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement, Constants.MARKERTYPE_ACTION_CODE);
 			}
 			else {
-				ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement);
+				ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement, Constants.MARKERTYPE_ACTION_CODE);
 			}
 		}
 	}

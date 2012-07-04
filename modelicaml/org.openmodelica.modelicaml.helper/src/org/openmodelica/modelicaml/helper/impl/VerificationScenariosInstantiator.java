@@ -39,7 +39,6 @@ import java.util.HashSet;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;

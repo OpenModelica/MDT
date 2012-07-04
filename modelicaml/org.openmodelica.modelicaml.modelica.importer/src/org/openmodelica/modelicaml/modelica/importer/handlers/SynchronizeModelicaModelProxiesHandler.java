@@ -410,7 +410,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 			 * WORAROUND: before creating elements set Papyrus Model Explorer Selection to 
 			 * an element that will not be modified, e.g. the ModelicaML root. 
 			 */
-			PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+//			PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+			PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 			
     	  // As a job
 			TreeObject[] children = treeRoot.getChildren();

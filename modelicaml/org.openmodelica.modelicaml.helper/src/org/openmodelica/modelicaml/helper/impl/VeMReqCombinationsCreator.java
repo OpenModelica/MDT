@@ -16,7 +16,7 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 
-public class VerificationModelComponentsCombination {
+public class VeMReqCombinationsCreator {
 	/* 
 	 * Package were to search for value mediators  
 	 */
@@ -24,8 +24,8 @@ public class VerificationModelComponentsCombination {
 	
 	/* 
 	 * Selected system model to generate a simulation model.
-	 * The generated simulation model will include one verification scenario, 
-	 * all requirements that can be verified using this verification scenario,
+	 * The generated simulation model will include NO verification scenario, 
+	 * all requirements that can be verified,
 	 * all models that are required in addition. 
 	 */
 	private Element systemModel;
@@ -36,13 +36,6 @@ public class VerificationModelComponentsCombination {
 	 */
 	private HashSet<Element> requiredModels_systemModel = new HashSet<Element>();
 
-	/* 
-	 * verification scenario that is used to stimulate the system model
-	 */
-	private Element testScenario;
-
-
-
 	/*
 	 * All required models that are referenced (directly or indirectly) by the verification scenario model 
 	 */
@@ -52,6 +45,7 @@ public class VerificationModelComponentsCombination {
 	 * A set of requirements to be verified
 	 */
 	private HashSet<Class> requirements = new HashSet<Class>();
+	
 
 	/*
 	 * All models that are required in addition based on the given set of requirements to be verified.
@@ -90,7 +84,6 @@ public class VerificationModelComponentsCombination {
 	// contains tree objects (instantiation roots of models) with all mandatory clients that are NOT satisfied.
 	private HashMap<TreeParent, HashSet<TreeObject>> requiredClients_unsatisfied = new HashMap<TreeParent, HashSet<TreeObject>>();
 
-
 	/*
 	 *  Indicates if this combination is discarded.
 	 *  The combination should be discarded if not all mandatory clients of the system model are satisfied
@@ -103,15 +96,14 @@ public class VerificationModelComponentsCombination {
 	 */
 	private boolean isError = false;
 	
-	public VerificationModelComponentsCombination(Class systemModel, 
-			Class testScenario, 
+	public VeMReqCombinationsCreator(Class systemModel, 
+//			Class testScenario, 
 			HashSet<Class> requirements,
 			Package valueMediatorsPackage,
 			HashSet<Element> allAlwaysIncludeFound,
 			HashMap<Element, HashSet<Element>> allModelsAndTheirRequiredModelsFound){
 		
 		this.systemModel = systemModel;
-		this.testScenario = testScenario;
 		this.requirements = requirements;
 		this.valueMediatorsPackage = valueMediatorsPackage;
 		
@@ -126,12 +118,10 @@ public class VerificationModelComponentsCombination {
 		 *  This is used to indicate that these models should not be considered as additional models.   
 		 */
 		initialSetOfModels.add(systemModel);
-		initialSetOfModels.add(testScenario);
 		initialSetOfModels.addAll(requirements);
 		
 		// collect all models that are required in addition (deep search)
 		requiredModels_systemModel.addAll(findAdditionModels(systemModel));
-		requiredModels_testScenario.addAll(findAdditionModels(testScenario));
 		
 		for (Class requirement : requirements) {
 			requiredModels_requirements.put(requirement, findAdditionModels(requirement));
@@ -145,10 +135,7 @@ public class VerificationModelComponentsCombination {
 		allModels.addAll(initialSetOfModels);
 		allModels.addAll(allCollectedAdditionalModels);
 		instantiateAll(allModels);
-		
-		// validate this combination (checks only the system model and the verification scenario)
-		validateCombination();
-		
+
 		// validate requirements 
 		validateRequirementsConsistency();
 	}
@@ -204,40 +191,6 @@ public class VerificationModelComponentsCombination {
 							}
 						}
 					}
-					
-//					for (Element dep : ((NamedElement)element).getClientDependencies()) {
-//						Stereotype s = dep.getAppliedStereotype(Constants.stereotypeQName_Requires);
-//						if (s != null) {
-////							Object list = dep.getValue(s, Constants.propertyName_onlyIncombinationWith);
-//							Object isAlways = dep.getValue(s, Constants.propertyName_always);
-//
-//							Element modelFound = ((Dependency)dep).getTargets().get(0);
-//							
-//							// check if this model should be discarded.
-//							if (initialSetOfModels.contains(modelFound)) {
-//								if (modelFound instanceof NamedElement) {
-//									
-//									String message = "DISCARDED (01): " +
-//											"The additional model search found '"+((NamedElement)modelFound).getQualifiedName()
-//											+ "'\n referenced by '"+((NamedElement)element).getQualifiedName()+"'.\n"
-//											+ "This model was already found once. This reference is discarded.";
-//									
-//									addToLog(message);
-//								}
-//							}
-//							else {
-//								// add to the collected additional models 
-//								collectedAdditionalModels.add(modelFound );
-//								
-//								// add to the overall list of collected additional models
-//								allCollectedAdditionalModels.add( modelFound );
-//								
-//								if (isAlways instanceof Boolean && (Boolean)isAlways) {
-//									alwaysInclude.add(modelFound);
-//								}
-//							}
-//						}
-//					}
 				}
 			}
 			
@@ -283,42 +236,6 @@ public class VerificationModelComponentsCombination {
 		}
 	}
 	
-	private void validateCombination(){
-		// Note, isDiscarded is false by default. There is no need to set it to false.
-		
-		TreeParent systemModelInstantiationTreeRoot = modelToItsInstantiation.get(this.systemModel);
-		TreeParent testScenarioInstantiationTreeRoot = modelToItsInstantiation.get(this.testScenario);
-		
-		if (systemModelInstantiationTreeRoot != null && testScenarioInstantiationTreeRoot != null) {
-			if (!areAllRequiredClientsSatisfied(virtualInstantiationTreeRoot, systemModelInstantiationTreeRoot)) {
-
-				setDiscarded(true);
-				String message = "DISCARDED(02): The combination " +
-						"\n   - Scenario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
-						"\n   - System Model: '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
-						"\nis discarded because the following mandatory clients of the system model are not satisfied: " +
-						"\n" + getClientsDotPathAsString(requiredClients_unsatisfied.get(systemModelInstantiationTreeRoot));
-				addToLog(message);
-			}
-			if (!isAtLeastOneProviderUsed(virtualInstantiationTreeRoot, testScenarioInstantiationTreeRoot)) {
-				
-				setDiscarded(true);
-				String message = "DISCARDED(03): The combination " +
-						"\n   - Scenario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
-						"\n   - System Model: '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
-						"\nis discarded because none of the scenario providers is used to stimulate the model. ";
-				addToLog(message);
-			}
-		}
-		else {
-
-			String message = "NOT VALID(04): The system model or the scenario are not found.";
-			addToLog(message);
-			
-			setDiscarded(true);
-			setError(true);
-		}
-	}
 	
 	private void validateRequirementsConsistency(){
 		for (Element requirement : requirements) {
@@ -338,6 +255,42 @@ public class VerificationModelComponentsCombination {
 			}
 		}
 	}
+	
+	
+	/*
+	 * Valid requirements, i.e., all requirements for which bindings for
+	 * mandatory clients could be find
+	 */
+	public HashSet<Element> getValidRequirements(){
+		
+		HashSet<Element> validRequirements = new HashSet<Element>();
+		
+		for (Element requirement : requirements) {
+			TreeParent requirementInstantiationTreeRootItem = modelToItsInstantiation.get(requirement);
+			if (requirementInstantiationTreeRootItem != null) {
+				// this method validates and collects the unsatisfied mandatory clients at the same time.
+				areAllRequiredClientsSatisfied(virtualInstantiationTreeRoot, requirementInstantiationTreeRootItem);
+				
+				// add unsatisfied mandatory clients to log
+				if (getUnsatisfiedRequiredClients(requirement) != null) {
+					String message = "PROBLEM(05): Requirement " + ((NamedElement)requirement).getQualifiedName() + "'" +
+					"\n has the following mandatory clients which are not satisfied: " +
+					"\n" +getClientsDotPathAsString(getUnsatisfiedRequiredClients(requirement));
+					
+					addToLog(message);
+				}
+				else {
+					// correct -> add it to valid requirements list
+					validRequirements.add(requirement);
+				}
+			}
+		}
+		
+		return validRequirements;
+	}
+	
+	
+	
 	
 	private boolean isAtLeastOneProviderUsed(TreeParent virtualInstantiationTreeRoot, TreeParent treeParentToStartTheCheckOn){
 		
@@ -399,7 +352,7 @@ public class VerificationModelComponentsCombination {
 	}
 	
 	
-	public void removeNotUsedRequirements(HashSet<Element> newRequirementsSubSet){
+	public void removeRequirements(HashSet<Element> newRequirementsSubSet){
 		
 		HashSet<Element> notUsedRequirements = new HashSet<Element>();
 		// add all requirements
@@ -443,29 +396,7 @@ public class VerificationModelComponentsCombination {
 		
 		return additionalModels;
 	}
-	
-	public HashSet<Element> getAdditionalTestScenarioModels(boolean prune){
-		if (!prune) {
-			return this.requiredModels_testScenario;
-		}
-		HashSet<Element> additionalModels = new HashSet<Element>();
-		for (Element additionalModel : this.requiredModels_testScenario) {
-			TreeParent additionalModelInstantiation = this.modelToItsInstantiation.get(additionalModel);
-			if (additionalModelInstantiation != null) {
-				if (alwaysInclude.contains(additionalModel) 
-						|| isAtLeastOneProviderUsed(virtualInstantiationTreeRoot, additionalModelInstantiation)) {
-					additionalModels.add(additionalModel);
-				}
-				else { // -> prune this model
-					String message = "REMOVED(08): Additional Model '" + ((NamedElement)additionalModel).getQualifiedName() + "'" +
-					"\nwas removed because none of its providers is used.";
-					addToLog(message);
-				}
-			}
-		}
-		
-		return additionalModels;
-	}
+
 	
 	public HashSet<Element> getAdditionalRequirementModels(Element requirement, boolean prune){
 		if (!prune) {
@@ -581,7 +512,6 @@ public class VerificationModelComponentsCombination {
 		"---------------------------------------------------" +
 		"--------------------------------------------------- \n" +
 		"Log for the combination:" +
-			"\n   - Scenario '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
 			"\n   - System Model '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
 			"\n";
 	}
@@ -596,10 +526,7 @@ public class VerificationModelComponentsCombination {
 		return systemModel;
 	}
 	
-	public Element getTestScenario() {
-		return testScenario;
-	}
-	
+
 	public String getLog() {
 		return log;
 	}
@@ -644,23 +571,19 @@ public class VerificationModelComponentsCombination {
 	public boolean isError() {
 		return isError;
 	}
-	
 
 	public HashMap<TreeParent, HashSet<TreeObject>> getRequiredClients_unsatisfied() {
 		return requiredClients_unsatisfied;
 	}
 
-
 	public HashSet<Class> getRequirements() {
 		return requirements;
 	}
-
 
 	public void setRequirements(HashSet<Class> requirements) {
 		this.requirements = requirements;
 	}
 	
-
 	public HashMap<Element, TreeParent> getModelToItsInstantiation() {
 		return modelToItsInstantiation;
 	}
@@ -668,4 +591,5 @@ public class VerificationModelComponentsCombination {
 	public HashSet<Element> getAlwaysInclude() {
 		return alwaysInclude;
 	}
+
 }

@@ -77,7 +77,7 @@ public class ModelicaMLMarkerSupport {
 	public static IProject project;
 	
 	/** The Constant markerTypeName. */
-	private final static String markerTypeName = Constants.MARKERTYPE_ACTION_CODE;
+//	private final static String markerTypeName = Constants.MARKERTYPE_ACTION_CODE;
 	
 	/**
 	 * Generate marker.
@@ -86,7 +86,7 @@ public class ModelicaMLMarkerSupport {
 	 * @param severity the severity
 	 * @param sourceElement the source element
 	 */
-	public static void generateMarker(String message, String severity, Element sourceElement ){
+	public static void generateMarker(String message, String severity, Element sourceElement, String markerTypeName){
 		
 		// set the current Papyrus project 
 		setProject();
@@ -95,15 +95,15 @@ public class ModelicaMLMarkerSupport {
 		if (sourceElement != null) {
 			if (sourceElement instanceof Generalization) {
 				if (((Generalization)sourceElement).getSpecific() instanceof NamedElement) {
-					if (!markerExist(message, ((Generalization)sourceElement).getSpecific() ) ) {
-						ModelicaMLMarkerSupport.createMarker(((Generalization)sourceElement).getSpecific(), severity, message);	
+					if (!markerExist(message, ((Generalization)sourceElement).getSpecific(), markerTypeName) ) {
+						ModelicaMLMarkerSupport.createMarker(((Generalization)sourceElement).getSpecific(), severity, message, markerTypeName);	
 					}
 				}
 			}
 			else if (sourceElement instanceof NamedElement){
-				if (!markerExist(message, sourceElement) ) {
+				if (!markerExist(message, sourceElement, markerTypeName) ) {
 					//ModelicaMLMarkerSupport.createMarker(ModelicaMLContentAssist.getSelectedSourceElement(), severity, message); 
-					ModelicaMLMarkerSupport.createMarker(sourceElement, severity, message);// TODO: is that correct? test it in comparison with the line above!
+					ModelicaMLMarkerSupport.createMarker(sourceElement, severity, message, markerTypeName);// TODO: is that correct? test it in comparison with the line above!
 				}
 			}
 		}
@@ -132,7 +132,7 @@ public class ModelicaMLMarkerSupport {
 	 * @param sourceElement the source element
 	 * @return true, if successful
 	 */
-	private static boolean markerExist(String message, Element sourceElement) {
+	private static boolean markerExist(String message, Element sourceElement, String markerTypeName) {
 		
 		if (sourceElement instanceof NamedElement && project != null) {
 			IMarker[] markers = null;
@@ -141,9 +141,13 @@ public class ModelicaMLMarkerSupport {
 				for (IMarker marker : markers) {
 					Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
 					Object markerMessage = marker.getAttribute(IMarker.MESSAGE);
+					String martkerType = marker.getType();
+					
 					if (qualifiedName != null && markerMessage != null) {
 						if (qualifiedName.equals(((NamedElement)sourceElement).getQualifiedName())
-								&& markerMessage.equals(message)) {
+								&& markerMessage.equals(message)
+								&& martkerType.equals(markerTypeName)) {
+							
 							return true;
 						}
 					}
@@ -161,7 +165,7 @@ public class ModelicaMLMarkerSupport {
 	 * @param message the message
 	 * @param sourceElement the source element
 	 */
-	public static void deleteMarker(String message, Element sourceElement) {
+	public static void deleteMarker(String message, Element sourceElement, String markerTypeName) {
 		if (sourceElement instanceof NamedElement && project != null) {
 			setProject();
 			
@@ -173,8 +177,13 @@ public class ModelicaMLMarkerSupport {
 				for (IMarker marker : markers) {
 					Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
 					Object markerMessage = marker.getAttribute(IMarker.MESSAGE);
+					String martkerType = marker.getType();
+					
 					if (qualifiedName != null && markerMessage != null) {
-						if (qualifiedName.equals( ((NamedElement)sourceElement).getQualifiedName()) && markerMessage.equals(message)) {
+						if (qualifiedName.equals( ((NamedElement)sourceElement).getQualifiedName()) 
+								&& markerMessage.equals(message)
+								&& martkerType.equals(markerTypeName)) {
+							
 							marker.delete();
 						}
 					}
@@ -190,6 +199,73 @@ public class ModelicaMLMarkerSupport {
 	
 	
 	
+	/**
+	 * Delete marker.
+	 *
+	 * @param message the message
+	 * @param sourceElement the source element
+	 */
+	public static void deleteMarker(Element sourceElement, String markerTypeName) {
+		if (sourceElement instanceof NamedElement && project != null) {
+			setProject();
+			
+			IMarker[] markers = null;
+			try {
+				markers = project.findMarkers(null, true,
+						IResource.DEPTH_INFINITE);
+
+				for (IMarker marker : markers) {
+					Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
+					String martkerType = marker.getType();
+					
+					if (qualifiedName != null) {
+						if (qualifiedName.equals( ((NamedElement)sourceElement).getQualifiedName()) 
+								&& martkerType.equals(markerTypeName)) {
+							
+							marker.delete();
+						}
+					}
+				}
+
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void deleteMarker(Element sourceElement, String containsString, String markerTypeName) {
+		if (sourceElement instanceof NamedElement && project != null) {
+			setProject();
+			
+			IMarker[] markers = null;
+			try {
+				markers = project.findMarkers(null, true,
+						IResource.DEPTH_INFINITE);
+
+				for (IMarker marker : markers) {
+					Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
+					String markerMessage = (String) marker.getAttribute(IMarker.MESSAGE);
+					String martkerType = marker.getType();
+					
+					if (qualifiedName != null) {
+						if (qualifiedName.equals( ((NamedElement)sourceElement).getQualifiedName()) 
+								&& martkerType.equals(markerTypeName)
+								&& markerMessage.contains(containsString)) {
+							
+							marker.delete();
+						}
+					}
+				}
+
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+	}
+	
+	
 	
 	/**
 	 * Creates the marker.
@@ -199,7 +275,7 @@ public class ModelicaMLMarkerSupport {
 	 * @param msg the msg
 	 * @return the i marker
 	 */
-	public static IMarker createMarker(Element elt, String criticality, String msg){
+	public static IMarker createMarker(Element elt, String criticality, String msg, String markerTypeName){
 		if (elt instanceof NamedElement) { 
 			IResource r = null;
 			if (elt.eResource() != null) { // TODO: somtimes it is null, why?

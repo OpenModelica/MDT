@@ -69,7 +69,7 @@ import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.helper.impl.VerificationModelComponentsCombination;
+import org.openmodelica.modelicaml.helper.impl.VeMScenarioReqCombinationsCreator;
 import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.traceability.views.helper.ModelComposer;
 
@@ -96,9 +96,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	 * Possible combinations, each containing an initial set (1 system model, 1 test scenario  and n requirements) and 
 	 * all additional model that are required by any of the initial set models. 
 	 */
-	private HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination = new HashMap<Element, VerificationModelComponentsCombination>();
+	private HashMap<Element, VeMScenarioReqCombinationsCreator> scenarioToVerificationModelCombination = new HashMap<Element, VeMScenarioReqCombinationsCreator>();
 	
-	public HashMap<Element, VerificationModelComponentsCombination> getScenarioToVerificationModelCombination() {
+	public HashMap<Element, VeMScenarioReqCombinationsCreator> getScenarioToVerificationModelCombination() {
 		return scenarioToVerificationModelCombination;
 	}
 
@@ -246,7 +246,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 					addToLog(message);
 				}
 				
-				VerificationModelComponentsCombination tsmc = new VerificationModelComponentsCombination((Class) selectedElement, 
+				VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator((Class) selectedElement, 
 						scenarioToBeUsed, 
 						requirementsToBeUsed,
 						(Package) valueMediatorsPackage,
@@ -326,7 +326,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	private void addRequirements(ScenarioItem scenarioItem){
 		// add requirements
-		VerificationModelComponentsCombination combination = scenarioToVerificationModelCombination.get(scenarioItem.getUmlElement());
+		VeMScenarioReqCombinationsCreator combination = scenarioToVerificationModelCombination.get(scenarioItem.getUmlElement());
 		HashSet<Class> requirements = combination.getRequirements();
 		
 		if (requirements != null && requirements.size() > 0) {
@@ -499,7 +499,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			for (Element scenario : relatedScenarios) {
 				
 				// get the combination data
-				VerificationModelComponentsCombination combination = scenarioToVerificationModelCombination.get(scenario);
+				VeMScenarioReqCombinationsCreator combination = scenarioToVerificationModelCombination.get(scenario);
 				if (combination != null) {
 					
 					// get unsatisfied clients

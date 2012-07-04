@@ -65,7 +65,7 @@ public class VerificationScenariosCollector {
 		this.modelToItsRequiredModels.clear();
 		
 		if ( umlRoolModel != null ) {
-			VerificationScenariosDataCollector ec = new VerificationScenariosDataCollector(umlRoolModel);
+			VerificationDataCollector ec = new VerificationDataCollector(umlRoolModel);
 			
 			this.allTS.addAll(ec.getAllScenarios());
 			this.alwaysInclude.addAll(ec.getAlwaysInclude());
@@ -89,14 +89,13 @@ public class VerificationScenariosCollector {
 		this.modelToItsRequiredModels.clear();
 
 		if ( rootPackage != null ) {
-//			ElementsCollector ec = new ElementsCollector();
-//			ec.collectElementsFromModel((EObject) rootPackage, Constants.stereotypeQName_TestScenario);
-			VerificationScenariosDataCollector ec = new VerificationScenariosDataCollector((EObject) rootPackage);
+			VerificationDataCollector ec = new VerificationDataCollector((EObject) rootPackage);
 
-//			this.allTS.addAll(ec.getElements());
 			this.allTS.addAll(ec.getAllScenarios());
 			this.alwaysInclude.addAll(ec.getAlwaysInclude());
 			this.modelToItsRequiredModels.putAll(ec.getModelToItsRequiredModels());
+			
+			this.allRequirements.addAll(ec.getAllRequirements());
 			
 			// sort data (i.e. fill other sets and maps)
 			if (sortData) { sortData();}

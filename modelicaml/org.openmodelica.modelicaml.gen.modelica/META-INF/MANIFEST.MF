@@ -23,5 +23,6 @@ Import-Package: org.eclipse.core.resources,
 Bundle-Vendor: OpenModelica Project
 Eclipse-AutoStart: false
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Provide-Package: org.openmodelica.modelicaml.gen.modelica.cg.helpers
+Provide-Package: org.openmodelica.modelicaml.gen.modelica.cg.helpers,
+ org.openmodelica.modelicaml.gen.modelica.popupactions
 Export-Package: org.openmodelica.modelicaml.gen.modelica.services

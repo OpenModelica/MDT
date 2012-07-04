@@ -27,5 +27,8 @@ Require-Bundle: org.eclipse.ui,
  org.modelica.mdt.omc;bundle-version="0.7.23"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.openmodelica.modelicaml.simulation.handlers
-Import-Package: org.modelica.mdt.omc
+Export-Package: org.openmodelica.modelicaml.simulation.handlers,
+ org.openmodelica.modelicaml.simulation.omc,
+ org.openmodelica.modelicaml.simulation.simresults
+Import-Package: org.eclipse.papyrus.editor,
+ org.modelica.mdt.omc

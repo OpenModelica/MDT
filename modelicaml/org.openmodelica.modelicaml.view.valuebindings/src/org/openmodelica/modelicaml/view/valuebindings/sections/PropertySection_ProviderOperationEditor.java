@@ -316,10 +316,10 @@ public class PropertySection_ProviderOperationEditor extends AbstractPropertySec
 							+ " '" + ((NamedElement)storeLocation).getName() + "' has errors in its Value Provider operation code.";
 		
 		if (editor.isDocumentHasErrors()) {
-			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)storeLocation);
+			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)storeLocation, Constants.MARKERTYPE_ACTION_CODE);
 		}
 		else {
-			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)storeLocation);
+			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)storeLocation, Constants.MARKERTYPE_ACTION_CODE);
 		}
 	}
 	

@@ -52,6 +52,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
@@ -223,10 +224,10 @@ public class EditorDialog extends Dialog {
 									+ " '" + ((NamedElement)element).getName() + "' has errors in its '" + stereotypePropertyName + "' Modelica code in item " + itemNumber;
 				
 				if (editor.isDocumentHasErrors()) {
-					ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)element);
+					ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)element, Constants.MARKERTYPE_ACTION_CODE);
 				}
 				else {
-					ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)element);
+					ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)element, Constants.MARKERTYPE_ACTION_CODE);
 				}
 			}
 			else if (element instanceof Generalization) {
@@ -235,10 +236,10 @@ public class EditorDialog extends Dialog {
 									+ " '" + (((Generalization)element).getSpecific()).getName() + "' has errors in its '" + stereotypePropertyName + "' Modelica code in item " + itemNumber;
 				
 				if (editor.isDocumentHasErrors()) {
-					ModelicaMLMarkerSupport.generateMarker(message, "error", ((Generalization)element).getSpecific() );
+					ModelicaMLMarkerSupport.generateMarker(message, "error", ((Generalization)element).getSpecific(), Constants.MARKERTYPE_ACTION_CODE);
 				}
 				else {
-					ModelicaMLMarkerSupport.deleteMarker( message, ((Generalization)element).getSpecific() );
+					ModelicaMLMarkerSupport.deleteMarker( message, ((Generalization)element).getSpecific(), Constants.MARKERTYPE_ACTION_CODE);
 				}
 			}
 		}

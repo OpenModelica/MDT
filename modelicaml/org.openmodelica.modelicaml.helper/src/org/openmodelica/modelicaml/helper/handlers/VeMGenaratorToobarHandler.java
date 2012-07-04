@@ -1,7 +1,7 @@
 package org.openmodelica.modelicaml.helper.handlers;
 
-public class VerificationModelsGenaratorToobarHandler extends
-		VerificationModelsGenaratorPopupHandler {
+public class VeMGenaratorToobarHandler extends
+		VeMGenaratorPopupHandler {
 
 	@Override
 	protected void setSelectedSystemModel() {

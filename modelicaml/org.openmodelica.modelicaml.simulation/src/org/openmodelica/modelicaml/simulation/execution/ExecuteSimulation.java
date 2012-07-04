@@ -215,7 +215,17 @@ public class ExecuteSimulation {
 				}
 				
 				//Simulate model
-				omcReturnString = omcc.simulate(model.qualifiedName, model.start, model.stop, model.numberOfIntervals, model.tolerance, model.solver, model.outputFormat);
+				String variableFilter = null; // no filter, i.e., all variables should be recorded.
+				omcReturnString = omcc.simulate(
+							model.qualifiedName, 
+							model.start, 
+							model.stop, 
+							model.numberOfIntervals, 
+							model.tolerance, 
+							model.solver, 
+							model.outputFormat,
+							variableFilter
+							);
 				
 				if(omcReturnString.contains("{\"\",\"\"}") || omcReturnString.contains("Error")){
 //					System.err.println("buildModel ERROR");

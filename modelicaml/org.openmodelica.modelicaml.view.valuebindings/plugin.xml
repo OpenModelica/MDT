@@ -3,7 +3,7 @@
 <plugin>
 	<extension
        id="org.openmodelica.modelicaml.marker.bindings"
-       name="ModelicaML Value Bindings Validation"
+       name="ModelicaML Value Bindings"
        point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.emf.ecore.diagnostic">

@@ -316,10 +316,10 @@ public class PropertySection_ClientOperationEditor extends AbstractPropertySecti
 							+ " '" + ((NamedElement)storeLocation).getName() + "' has errors in its Value Client operation code.";
 		
 		if (editor.isDocumentHasErrors()) {
-			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)storeLocation);
+			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)storeLocation, Constants.MARKERTYPE_ACTION_CODE);
 		}
 		else {
-			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)storeLocation);
+			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)storeLocation, Constants.MARKERTYPE_ACTION_CODE);
 		}
 	}
 	

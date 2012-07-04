@@ -49,7 +49,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
@@ -57,12 +56,6 @@ import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
 
 
-
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class InstantiateRequirementsHandler.
- */
 public class VerificationVerdictElementsGeneratorHandler extends AbstractHandler {
 
 	/** The selected element. */
@@ -161,11 +154,6 @@ private List<Object> getCurrentSelections() {
 		}
 		return eObject;
 	}
-	
-	
-	
-
-	
 	
 	
 }

@@ -84,8 +84,21 @@ public class ModelicaMLServices {
 	
 	public static boolean saveModel(UmlModel umlModel){
 		try {
-			umlModel.saveModel();
-			return true;
+//			// get the Papyrus model in order to make sure that the model is not being saved, hence is not dirty anymore.
+//			if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() != null) {
+//				IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+//				PapyrusMultiDiagramEditor papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
+//				
+//				boolean isDirty = papyrusEditor.isDirty();
+//				
+//			}
+			
+			if (umlModel!=null && umlModel.getResource().isModified()) {
+				umlModel.saveModel();
+				
+//				System.err.println("Saving "+ umlModel.getResource().getURI());
+				return true;
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

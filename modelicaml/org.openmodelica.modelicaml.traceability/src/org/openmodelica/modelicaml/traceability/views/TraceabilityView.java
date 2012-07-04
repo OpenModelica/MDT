@@ -57,10 +57,11 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
-import org.openmodelica.modelicaml.helper.impl.VerificationModelsGenerator;
+import org.openmodelica.modelicaml.helper.impl.VeMGeneratorScenariosBased;
 import org.openmodelica.modelicaml.traceability.Activator;
 import org.openmodelica.modelicaml.traceability.views.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.traceability.views.display.ViewLabelProviderStyledCell;
@@ -411,7 +412,7 @@ public class TraceabilityView extends ViewPart {
 							Command command = new RecordingCommand(editingDomain) {
 								@Override
 								protected void doExecute() {
-									VerificationModelsGenerator mg = new VerificationModelsGenerator();
+									VeMGeneratorScenariosBased mg = new VeMGeneratorScenariosBased();
 									
 									mg.setRequirementsDiscarded(treeBuilder.getRequirementsWithUnsatisfiedClients());
 									mg.setRequirementsToBeInstantiated(treeBuilder.getRequirementsValid());
@@ -445,21 +446,18 @@ public class TraceabilityView extends ViewPart {
 					
 					// create a model that only contains the system design model, the selected requirements and all additional models
 					final TreeParent treeItem = (TreeParent) obj;
-					boolean go = MessageDialog.openQuestion(getSite().getShell(), "Model Creation Confirmation", "This helper will now create" +
+					boolean go = MessageDialog.openQuestion(getSite().getShell(), "Model Creation Confirmation", "This helper will create " +
 							"a model that will instantiate the following models: " +
-							"\n                 - '" + treeBuilder.getSelectedElement().getName() + "'," +
-							"\n                 - Requirement '" + treeItem.getName()+ "'," +
-							"\n                 - all models that are required in addition." +
+							"\n                 - System model: '" + treeBuilder.getSelectedElement().getName() + "'," +
+							"\n                 - Requirement: '" + treeItem.getName()+ "'," +
+							"\n                 - and all additional models that are required." +
 							"\n\nDo you want to proceed? ");
 					
 					if (go && treeItem.getUmlElement() != null && treeBuilder.getSelectedElement() != null) {
 						
-						ServicesRegistry serviceRegistry;
-						try {
-							
-							serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-							TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-
+						TransactionalEditingDomain  editingDomain = PapyrusServices.getPapyrusEditingDomain();
+						
+						if (editingDomain != null) {
 							List<Element> elementsToBeInstantiated = new ArrayList<Element>();
 							elementsToBeInstantiated.add(treeItem.getUmlElement());
 							
@@ -469,26 +467,43 @@ public class TraceabilityView extends ViewPart {
 									(Package) treeBuilder.getTargetPackage(), 
 									treeBuilder.getTargetPackage());
 							
-							CompoundCommand cc = new CompoundCommand("Add value mediator reference");
+							CompoundCommand cc = new CompoundCommand("Model Creation From Traceability View");
 							Command command = new RecordingCommand(editingDomain) {
 								@Override
 								protected void doExecute() {
 									EObject createdModel = mc.createModel();
-									PapyrusServices.locateWithReselection(createdModel);
+//									PapyrusServices.locateWithReselection(createdModel);
+									PapyrusServices.locateInModelExplorer(createdModel, true);
 								}
 							};
 							cc.append(command);
 							editingDomain.getCommandStack().execute(cc);
-						} catch (ServiceException e) {
-							e.printStackTrace();
+							
 						}
+						else {
+							MessageDialog.openError(new Shell(), "Error in Model Creation From Traceability View", "Could not access the Papyrus editing domain");
+						}
+						
+						
+//						ServicesRegistry serviceRegistry;
+//						try {
+//							
+////							serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+////							TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//
+//							
+//						} catch (ServiceException e) {
+//							e.printStackTrace();
+//						}
 					}
 				}
 			}
 		};
 		actionCreateVerificationModel.setText("Create Verification Model");
 		actionCreateVerificationModel.setToolTipText("Create Verification Model");
-		actionCreateVerificationModel.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/generateSimMopdels.png"));
+//		actionCreateVerificationModel.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/generateSimMopdels.png"));
+		actionCreateVerificationModel.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "/resources/icons/icons16/new_testsuite.gif")));
+		
 
 		
 		

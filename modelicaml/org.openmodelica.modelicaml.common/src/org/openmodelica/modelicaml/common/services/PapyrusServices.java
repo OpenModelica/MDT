@@ -66,29 +66,33 @@ public class PapyrusServices {
 		return false;
 	}
 	
-	public static void locate(Object object){
-		if (object instanceof EObject) {
-			
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
-
-			ModelExplorerPageBookView modelExplorerPageBookView = null;
-			if (view instanceof ModelExplorerPageBookView) {
-				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
-			}
-			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-			List<Object> items = new ArrayList<Object>();
-			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-			
-			// set focus
-			modelExplorerView.getControl().setFocus();
-
-			// set new selection
-			modelExplorerView.setSelection(new StructuredSelection(items), true);
-			
-     	}
-	}
+//	@Deprecated
+//	/*
+//	 * use locateInModelExplorer(Object object, boolean reselectFirst) instead
+//	 */
+//	public static void locate(Object object){
+//		if (object instanceof EObject) {
+//			
+//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+//
+//			ModelExplorerPageBookView modelExplorerPageBookView = null;
+//			if (view instanceof ModelExplorerPageBookView) {
+//				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+//			}
+//			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+//			List<Object> items = new ArrayList<Object>();
+//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+//			
+//			// set focus
+//			modelExplorerView.getControl().setFocus();
+//
+//			// set new selection
+//			modelExplorerView.setSelection(new StructuredSelection(items), true);
+//			
+//     	}
+//	}
 	
-	public static void locateWithReselection(Object object){
+	public static void locateInModelExplorer(Object object, boolean reselectFirst){
 		if (object instanceof EObject) {
 			
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
@@ -104,13 +108,44 @@ public class PapyrusServices {
 			// set focus
 			modelExplorerView.getControl().setFocus();
 			
-			// reset the selection so that the components tree can instantiate the selected class again
-			modelExplorerView.setSelection(new StructuredSelection(), true);
+			if (reselectFirst) {
+				// reset the selection so that the components tree can instantiate the selected class again
+				modelExplorerView.setSelection(new StructuredSelection(), true);
+			}
 			
 			// set new selection
 			modelExplorerView.setSelection(new StructuredSelection(items), true);
       	}
 	}
+	
+	
+//	@Deprecated
+//	/*
+//	 * use locateInModelExplorer(Object object, boolean reselectFirst) instead
+//	 */
+//	public static void locateWithReselection(Object object){
+//		if (object instanceof EObject) {
+//			
+//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+//
+//			ModelExplorerPageBookView modelExplorerPageBookView = null;
+//			if (view instanceof ModelExplorerPageBookView) {
+//				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+//			}
+//			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+//			List<Object> items = new ArrayList<Object>();
+//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+//
+//			// set focus
+//			modelExplorerView.getControl().setFocus();
+//			
+//			// reset the selection so that the components tree can instantiate the selected class again
+//			modelExplorerView.setSelection(new StructuredSelection(), true);
+//			
+//			// set new selection
+//			modelExplorerView.setSelection(new StructuredSelection(items), true);
+//      	}
+//	}
 	
 	
 	public static void locateInComponentsTreeView(Object object){

@@ -110,7 +110,8 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				String elementQName = splitted[0];
 				if (elementQName != null) {
 					for (Element  element : findElement(elementQName)) {
-						PapyrusServices.locateWithReselection(element);
+//						PapyrusServices.locateWithReselection(element);
+						PapyrusServices.locateInModelExplorer(element, true);
 					}
 				}
 				

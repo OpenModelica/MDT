@@ -54,11 +54,14 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.papyrus.editor.PapyrusMultiDiagramEditor;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
-import org.openmodelica.modelicaml.common.constants.Constants;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 
 import fr.obeo.acceleo.chain.File;
 import fr.obeo.acceleo.chain.impl.spec.CChain;
@@ -90,7 +93,10 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	private String modelName = null;
 	
 	private UmlModel umlModel;
-
+	
+	
+	private Job job;
+	
 	// NullProgressMonitor monitor = null;
 
 	/** The filter. */
@@ -105,8 +111,7 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils
-				.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}
@@ -157,17 +162,27 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 				file.setPath(logPath);
 			}
 		}
-
-		Job job = new Job("Modelica Code Generation") {
+		
+		// check if the model is dirty and, if it is, save it in order to make sure that code is generated from an up to date version
+		IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		final PapyrusMultiDiagramEditor papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
+				
+		job = new Job("Modelica Code Generation") {
 			protected IStatus run(IProgressMonitor monitor) {
-				runchain(monitor);
 
+				if (papyrusEditor.isDirty()) {
+					papyrusEditor.doSave(monitor);
+				}
+				
+				runchain(monitor);
+				
 				return Status.OK_STATUS;
 			}
 		};
+		
+		
 		job.setUser(true);
 		job.schedule();
-		// run the chain
 
 		CompoundCommand cc = new CompoundCommand("Modelica Code Generation");
 		return (cc.unwrap());
@@ -181,14 +196,15 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	 */
 	public void runchain(IProgressMonitor monitor) {
 		try {
+			
 			if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
 				
 				// stamp before generating code 
 				Long timeStamp = System.currentTimeMillis();
 				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
 				
-				// same the model in order to make sure that the code is generated from the latest version
-				ModelicaMLServices.saveModel(umlModel);
+//				// same the model in order to make sure that the code is generated from the latest version
+//				ModelicaMLServices.saveModel(umlModel);
 
 				myChain.launch(filter, monitor, LaunchManager.create("run", true));
 				
@@ -219,6 +235,14 @@ public class GenerateModelicaCodeFromEntireModelicaMLModelAction extends Abstrac
 	 */
 	public boolean isVisible() {
 		return true;
+	}
+
+	public Job getJob() {
+		return job;
+	}
+
+	public void setJob(Job job) {
+		this.job = job;
 	}
 
 }

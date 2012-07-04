@@ -47,9 +47,11 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
-import org.openmodelica.modelicaml.helper.impl.VerificationModelsGenerator;
+import org.openmodelica.modelicaml.helper.impl.VeMGeneratorRequirementsBased;
+import org.openmodelica.modelicaml.helper.impl.VeMGeneratorScenariosBased;
+import org.eclipse.swt.graphics.Point;
 
-public class VerificationModelsGenerationOptionsDialog extends Dialog {
+public class VeMGenerationOptionsDialog extends Dialog {
 
 	private Element systemModel;
 	private Element targetPackage;
@@ -68,9 +70,9 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 	private String superClassNamePrefix = "Each generated model shall inherit from: ";
 	
 	private String systemModelSelectionMessage = "Click on an element in the model explorer " +
-			"\r\nto select the system model to verify.";
+			"\r\nto select the system model.";
 	private String targetPackgeSelectionMessage = "Click on an element in the model explorer " +
-			"\r\nto select the target package to store model in.";
+			"\r\nto select the target package to store models in.";
 	private String requirementsPackageSelectionMessage = "Click on an element in the model explorer " +
 			"\r\nto select the requirements package.";
 	private String scenariosPackageSelectionMessage = "Click on an element in the model explorer " +
@@ -79,6 +81,33 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 			"\r\nto select the bindings package.";
 	private String superClassSelectionMessage = "Click on an element in the model explorer " +
 			"\r\nto select the super class that shall be inherited by any generated model.";
+	
+	/*
+	 * Indicates that there was at least one model for which no correct bindings could be generated.
+	 */
+	private boolean bindingErrorsDetected = false;
+	
+	
+	/*
+	 * The mode indicates if this dialog is used for verification models generation or scenarios to requirements <<UsedToVerify>> relations discovery
+	 */
+	public final static int MODE_VEM_GENERATION = 0;
+	public final static int MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY = 1;
+	private int mode;
+	
+	
+	
+	private String messageVemGen = "This helper will create a package that will contain verification models composed of the selected system model, " +
+			"\r\nscenario (if selected) and requirements that can be verified. " +
+			"Note, the composition of the verification models \r\nis based on value bindings which must to be defined correctly.";
+
+	private String messageScenarioToReqRelationDiscovery = 
+			"This helper will create a package with models composed of the selected system model, scenario and requirements " +
+			"\r\nthat can be verified, then simulate them, and then analize results in order to determine relations between scenarios " +
+			"\r\nand requirements. Note, the composition of the verification models is based on value bindings which must to be defined correctly.";
+
+	
+	private String dialogMessage = "";
 	
 	private HashSet<Button> buttons = new HashSet<Button>();
 	private HashMap<Button,Label> maptButtonsToLabels = new HashMap<Button,Label>();
@@ -102,7 +131,10 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 	private boolean considerAllUnknownRequirementsRelations = false;
 
 	// scenario based models generator
-	private VerificationModelsGenerator smg;
+	private VeMGeneratorScenariosBased smg;
+
+	// scenario based models generator
+	private VeMGeneratorRequirementsBased rmg;
 	
 	
 	private static final String defaultNegativeString = "Not specified ... ";
@@ -118,12 +150,13 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 //	}
 
 	
-	public VerificationModelsGenerationOptionsDialog(Shell parentShell,
+	public VeMGenerationOptionsDialog(Shell parentShell,
 			Element systemModel,
 			Element targetPackage,
 			Element requirementsPackage,
 			Element scenariosPackage,
-			Element bindingsPackage) {
+			Element bindingsPackage,
+			int mode) {
 
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP );
@@ -134,15 +167,38 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		this.scenariosPackage = scenariosPackage;
 		this.bindingsPackage = bindingsPackage;
 		
+		this.mode = mode;
+		
+		// set the mode the dialog message and preset options
+		if (getMode()== MODE_VEM_GENERATION) {
+			dialogMessage = messageVemGen;
+			
+			considerPositiveRequirementsRelations = true;
+			considerNegativeRequirementsRelations = false;
+			considerAllUnknownRequirementsRelations = false;
+		}
+		else if (getMode() == MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY){
+			dialogMessage = messageScenarioToReqRelationDiscovery;
+			
+			considerPositiveRequirementsRelations = true;
+			considerNegativeRequirementsRelations = true;
+			considerAllUnknownRequirementsRelations = true;
+		}
+		
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
 	}
 
+	@Override
+	public Shell getShell() {
+		return getParentShell();
+	}
+	
 	@Override
 	protected Control createContents(Composite parent) {
 		
 		Control control = super.createContents(parent);
 		
-		// pre settings: If no system model is selected then activate the button
+		// pre-settings: If no system model is selected then activate the button
 		if (getSystemModel() == null) {
 			btnSystemModel.setSelection(true);
 			updateButton(btnSystemModel);
@@ -165,15 +221,13 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		CLabel lblInfo = new CLabel(container, SWT.NONE);
 		lblInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
 		GridData gd_lblInfo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_lblInfo.widthHint = 622;
+		gd_lblInfo.widthHint = 720;
 		lblInfo.setLayoutData(gd_lblInfo);
 		lblInfo.setTopMargin(5);
 		lblInfo.setBottomMargin(5);
 		lblInfo.setRightMargin(5);
 		lblInfo.setLeftMargin(5);
-		lblInfo.setText("This helper will create a package that will contain verification models composed of the selected system model, " +
-				"\r\nscenario (if selected) and requirements that can be verified. " +
-				"Note, the composition of the verification models \r\nis based on value bindings which must to be defined correctly.");
+		lblInfo.setText(dialogMessage);
 		
 		Group grpSources = new Group(container, SWT.SHADOW_ETCHED_IN);
 		GridData gd_grpSources = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
@@ -305,7 +359,7 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		updateButton(btnBindingsPackage);
 		
 		Label sep2 = new Label(grpSources, SWT.SEPARATOR | SWT.HORIZONTAL);
-		sep2.setBounds(10, 177, 634, 2);
+		sep2.setBounds(10, 177, 694, 2);
 		
 		
 		/*
@@ -331,7 +385,7 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		updateButton(btnSuperClass);
 		
 		Label sep1 = new Label(grpSources, SWT.SEPARATOR | SWT.HORIZONTAL);
-		sep1.setBounds(10, 47, 634, 2);
+		sep1.setBounds(10, 47, 694, 2);
 		
 		
 		
@@ -341,6 +395,8 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		gd_grpOptions.heightHint = 135;
 		grpOptions.setLayoutData(gd_grpOptions);
 		grpOptions.setText("Options");
+		
+		
 		
 		final Button btnScenariosBased = new Button(grpOptions, SWT.RADIO);
 		btnScenariosBased.addSelectionListener(new SelectionAdapter() {
@@ -356,10 +412,11 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		});
 		btnScenariosBased.setSelection(true);
 		btnScenariosBased.setBounds(10, 26, 625, 16);
-		btnScenariosBased.setText("Create models based on combinations of scenarios and requirements");
+		btnScenariosBased.setText("Create models based on valid combinations of scenarios and requirements");
+		
+		
 		
 		final Button btnRequirementsBased = new Button(grpOptions, SWT.RADIO);
-		btnRequirementsBased.setEnabled(false); // TODO: remove after this feature is implemented
 		btnRequirementsBased.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -372,7 +429,12 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 			}
 		});
 		btnRequirementsBased.setBounds(10, 119, 625, 16);
-		btnRequirementsBased.setText("Create only one model that contains all requirements without any scenario");
+		btnRequirementsBased.setText("Create only one model containing the selected model and all possible requirements that can be verified");
+		if (mode == MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+			btnRequirementsBased.setEnabled(false); 
+		}
+		
+		
 		
 		final Button btnConsiderPositiveRelations = new Button(grpOptions, SWT.CHECK);
 		btnConsiderPositiveRelations.addSelectionListener(new SelectionAdapter() {
@@ -386,9 +448,11 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 				}
 			}
 		});
-		btnConsiderPositiveRelations.setSelection(true);
+		btnConsiderPositiveRelations.setSelection(considerPositiveRequirementsRelations);
 		btnConsiderPositiveRelations.setBounds(20, 46, 615, 16);
 		btnConsiderPositiveRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_UsedToVerify, "::")+">> relation");
+		
+		
 		
 		final Button btnConsiderNegativeRelations = new Button(grpOptions, SWT.CHECK);
 		btnConsiderNegativeRelations.addSelectionListener(new SelectionAdapter() {
@@ -404,6 +468,9 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		});
 		btnConsiderNegativeRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_DoNotUseToVerify, "::")+">> relation");
 		btnConsiderNegativeRelations.setBounds(20, 68, 615, 16);
+		btnConsiderNegativeRelations.setSelection(considerNegativeRequirementsRelations);
+		
+		
 		
 		final Button btnConsiderAllRequirements = new Button(grpOptions, SWT.CHECK);
 		btnConsiderAllRequirements.addSelectionListener(new SelectionAdapter() {
@@ -419,6 +486,7 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		});
 		btnConsiderAllRequirements.setText("Consider all requirements with unknown relations to scenarios");
 		btnConsiderAllRequirements.setBounds(20, 90, 615, 16);
+		btnConsiderAllRequirements.setSelection(considerAllUnknownRequirementsRelations);
 		
 		// set images for all buttons
 		updateButtonImages();
@@ -429,6 +497,7 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 	
 	@Override
 	protected void configureShell(Shell newShell) {
+		newShell.setMinimumSize(new Point(700, 500));
 		super.configureShell(newShell);
 //		super.configureShell(new Shell(getParentShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM));
 		
@@ -441,13 +510,16 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 	@Override
 	protected void okPressed() {
 
-//		lblError.setVisible(false);
-
 		if (isValidSelection()) {
 
-			super.okPressed();
-			getParentShell().dispose();
+			// remove listener
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(selectionListener);
 
+			super.okPressed();
+			
+			/*
+			 * Generate models based on valid combinations of the selected system model, scenarios and requirements that can be verified
+			 */
 			if (isScenariosBasedGeneration()) {
 				
 				HashSet<Element> systemModels = new HashSet<Element>();
@@ -457,7 +529,7 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					
-					smg = new VerificationModelsGenerator(
+					smg = new VeMGeneratorScenariosBased(
 							systemModels, 
 							getTargetPackge(), 
 							getRequirementsPackage(), 
@@ -470,10 +542,10 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 							);
 					
 					if (!smg.isTestSimulationModelGenerationCanceled()) {
+
 						// execute 
 						editingDomain.getCommandStack().execute(getCommand(editingDomain));
-					}
-					if (!smg.isTestSimulationModelGenerationCanceled()) {
+
 						// show log
 						String msg = "Generation of Verification Models for '" + ((NamedElement)getSystemModel()).getName() + "'\n" +
 									 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
@@ -487,26 +559,82 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 					e.printStackTrace();
 				}
 			}
+			/*
+			 * Generate only one model that contains the 
+			 * the selected system model (i.e. a "self-running" system model that does not require a scenario), 
+			 * NO scenario BUT all requirements that can be verified
+			 */
 			else if (isRequirementsBasedGeneration()) {
-				MessageDialog.openInformation(new Shell(), "Simulation Models Generation ", "This feature is not implemented yet.");
+				HashSet<Element> systemModels = new HashSet<Element>();
+				systemModels.add(getSystemModel());
+				
+				try {
+					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+					
+					rmg = new VeMGeneratorRequirementsBased(
+							systemModels, 
+							getTargetPackge(), 
+							getRequirementsPackage(), 
+							getScenariosPackage(), 
+							getBindingsPackage(), 
+							getSuperClass(),
+							isConsiderPositiveRequirementsRelations(), 
+							isConsiderNegativeRequirementsRelations(), 
+							isConsiderAllUnknownRequirementsRelations()
+							);
+					
+					if (!rmg.isTestSimulationModelGenerationCanceled()) {
+
+						// execute 
+						editingDomain.getCommandStack().execute(getCommand(editingDomain));
+
+						// show log
+						String msg = "Generation of Verification Models for '" + ((NamedElement)getSystemModel()).getName() + "'\n" +
+									 "Number of created models: 1\n\n";
+
+						DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
+								"Data collecation and models generation log entries:", msg + rmg.getLog().trim(), false);
+						dialog.open();
+					}
+
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
 			} 
-		}
-		else {
-//			lblError.setVisible(true);
-//			MessageDialog.openError(new Shell(), "Simulation Models Generation Error", "The selection of elements is not valid.");
+			
+			// dispose the shell
+			getParentShell().dispose();
+
 		}
 	}
 	
-	
-	
+
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 		CompoundCommand cc = new CompoundCommand("Generating simulation models for '" + ((Class)getSystemModel()).getQualifiedName() + "'");
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
 				try {
-					smg.generate();
-					new ProgressMonitorDialog(getShell()).run(true, true, smg);
+					if (isScenariosBasedGeneration()) {
+						
+						// generate models
+						smg.generate();
+						new ProgressMonitorDialog(getShell()).run(true, true, smg);
+						
+						smg.notifyObservers();
+						// set the indication of there were errors during bindings generation
+//						setBindingErrorsDetected(smg.isBindingErrorsDetected());
+					}
+					else if (isRequirementsBasedGeneration()) {
+						rmg.generate();
+						new ProgressMonitorDialog(getShell()).run(true, true, rmg);
+						
+						rmg.notifyObservers();
+						// set the indication of there were errors during bindings generation
+//						setBindingErrorsDetected(rmg.isBindingErrorsDetected());
+					}
+					
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
@@ -523,7 +651,7 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 	
 	protected ISelectionListener selectionListener = new ISelectionListener() {
         public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-        if (sourcepart != VerificationModelsGenerationOptionsDialog.this && selection instanceof IStructuredSelection) {
+        if (sourcepart != VeMGenerationOptionsDialog.this && selection instanceof IStructuredSelection) {
 
         	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
         		EObject selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
@@ -605,6 +733,12 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
     }
 	};
 	
+	
+	
+	/* ************************************************************************************************ */
+	
+	// Utilities
+
 	@SuppressWarnings("unchecked")
 	private List<Object> getCurrentSelections() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
@@ -634,10 +768,6 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 		return eObject;
 	}
 	
-	/* ************************************************************************************************ */
-	
-	// Utilities
-
 	private boolean hasModelicaMLStereotype(Element element){
 		EList<Stereotype> sList = element.getAppliedStereotypes();
 		for (Stereotype stereotype : sList) {
@@ -711,7 +841,7 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 	private Button getActiveButton(){
 		Button activeButton = null;
 		for (Button button : buttons) {
-			if (button.getSelection()) {
+			if (button!= null && !button.isDisposed() && button.getSelection()) {
 				return button;
 			}
 		}
@@ -990,5 +1120,25 @@ public class VerificationModelsGenerationOptionsDialog extends Dialog {
 	public void setConsiderAllUnknownRequirementsRelations(
 			boolean considerAllUnknownRequirementsRelations) {
 		this.considerAllUnknownRequirementsRelations = considerAllUnknownRequirementsRelations;
+	}
+	
+	public int getMode() {
+		return mode;
+	}
+
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+	
+//	public boolean isBindingErrorsDetected() {
+//		return bindingErrorsDetected;
+//	}
+//
+//	public void setBindingErrorsDetected(boolean bindingErrorsDetected) {
+//		this.bindingErrorsDetected = bindingErrorsDetected;
+//	}
+	
+	public VeMGeneratorScenariosBased getSmg() {
+		return smg;
 	}
 }

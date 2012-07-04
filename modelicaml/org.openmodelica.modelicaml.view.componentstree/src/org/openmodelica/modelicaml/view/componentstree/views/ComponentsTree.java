@@ -112,6 +112,7 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.OMCClassValidator;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
@@ -1232,8 +1233,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					}
 					
 					String fullModificationString = item.getDotPathWithoutFirstLevelComponent() + " = " + modificationString;
-					
-					//modificationStringDialog = new DialogModificationStringInput(shell, "Edit Component Modification", item.getDothPath() + " = ", modificationString, item, null, root);
 					modificationStringDialog = new DialogComponentModification(shell, "Edit Component Modification", item.getDotPath(), fullModificationString, item, null, root);
 					
 					modificationStringDialog.open();
@@ -1243,7 +1242,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 						
 						if ( string.trim().equals("")) {
-							// Delete modification in items firstLevelComponent
+
 							// Delete modification
 							Element modificationStoreLocation = item.getModificationStoreLocation();
 							String componentPath = "";
@@ -1255,13 +1254,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 							}
 							ModificationManager.deleteComponentModificationBasedOnLeftHandValue(modificationStoreLocation, componentPath);
 
-							// Delete modification in item list.
-							//item.deleteFromModificationListBasedOnLeftRightHandValue(item.getDothPath(), modificationString);
-
-							item.setFinalModificationRightHand(null); // TODO: verify against the line above
+							item.setFinalModificationRightHand(null); 
 							item.setFinalModificationSource(null);
-//							viewer.update(item, null);
-//							updateItem(item);
+							
 						}
 						else {
 							Boolean hasOutterBraces = string.trim().startsWith("(");
@@ -1287,17 +1282,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								//item.deleteFromModificationList(item.getFirstLevelComponent().getName()+ "." + deletedModification);
 								item.setFinalModificationRightHand(null); // verify against the line above
 								item.setFinalModificationSource(null);
-//								viewer.update(item, null);
-//								updateItem(item);
 
 							}
 
 							
 							// Add the new value to firstLevelComponent and to the component modifications list.
-							//ModificationManager.addComponentModification(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent(), modificationStringDialog.getValue(), true);
 							String[] parts = modStringWithoutBraces.split("=");
 							if (parts.length > 0) {
-//								String leftHandPart = parts[0];
 								
 								// TODO: test it!
 								String leftHandPart = "";
@@ -1311,23 +1302,20 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								if (parts.length > 1) {
 									String rightHandPart = parts[1];
 									//System.err.println("rightHandPart " + rightHandPart);
-									ModificationManager.addComponentModification(item.getModificationStoreLocation(), leftHandPart, rightHandPart, true);
-									//ModificationManager.addComponentModification(item.getFirstLevelComponent(), item.getDotPathWithoutFirstLevelComponent(), modificationStringDialog.getValue(), true); // OLD
 									
-//									// Add to the modification in item list.
-//									//item.addToModificationList(item.getDothPath() + " = " + modificationStringDialog.getValue()); // OLD
-//									String storeString = "";
-//									if (hasOutterBraces) {
-//										storeString = "(" + StringUtls.replaceSpecChar(item.getFirstLevelComponent().getName()) + "." + modStringWithoutBraces + ")";
-//									}
-//									else {
-//										storeString = StringUtls.replaceSpecChar(item.getFirstLevelComponent().getName()) + "." + modStringWithoutBraces ;
-//									}
-									//item.addToModificationList(storeString); // Store with braces if there are any!
+									ModificationManager.addComponentModification(item.getModificationStoreLocation(), leftHandPart, rightHandPart, true);
+
 									item.setFinalModificationRightHand(rightHandPart); // verify this against the line above!
 									item.setFinalModificationSource(item.getFirstLevelComponent()); // TODO: this is wrong if the modification source is Generalization! 
-//									viewer.update(item, null);
-//									updateItem(item);
+									
+									/*
+									 * In case there were markers that were for not successful value bindings: 
+									 * -> Delete those markers that have the first level component as source 
+									 * and the marker message contains the item dot path.
+									 */
+//									ModelicaMLMarkerSupport.deleteMarker(item.getFirstLevelComponent(), Constants.MARKERTYPE_VALUEBINDINGS);
+									ModelicaMLMarkerSupport.deleteMarker(item.getFirstLevelComponent(), item.getDotPath(), Constants.MARKERTYPE_VALUEBINDINGS);
+									
 								}
 								else {
 									//System.err.println("ModelicaML modifications parsing error ComponentsTree.class 03, no right hand part found: " + string);
@@ -1338,11 +1326,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								//System.err.println("ModelicaML modifications parsing error ComponentsTree.class 04: Not well-formed modification string (missing closing brace): " + string);
 								MessageDialog.openError(shell, "ModelicaML modifications parsing error (ComponentsTree.java 04)", "The modification string '"+string+"' does not contain an equality lign ('='). It will not be stored.");
 							}
-							//viewer.update(item, null);
 						}
-						//viewer.update(item, null);
 					}
-//					viewer.update(item, null);
 					updateItem(item);
 				}
 			}

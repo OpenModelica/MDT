@@ -26,11 +26,15 @@
       -->
       <command
             id="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
-            name="Generate Verification Models">
+            name="Generate Verification Models Popup">
       </command>
       <command
             id="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels"
-            name="Generate Verification Models">
+            name="Generate Verification Models Toolbar">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations"
+            name="Discover Scenarios to Requirements Relations Toolbar">
       </command>
    </extension>
    <extension
@@ -124,7 +128,7 @@
       </handler>
       -->
       <handler
-            class="org.openmodelica.modelicaml.helper.handlers.VerificationModelsGenaratorPopupHandler"
+            class="org.openmodelica.modelicaml.helper.handlers.VeMGenaratorPopupHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels">
          <activeWhen>
             <with
@@ -167,8 +171,12 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.openmodelica.modelicaml.helper.handlers.VerificationModelsGenaratorToobarHandler"
+            class="org.openmodelica.modelicaml.helper.handlers.VeMGenaratorToobarHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.ScenariosToRequirementsRelationsDiscoveryToolbarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations">
       </handler>
    </extension>
 

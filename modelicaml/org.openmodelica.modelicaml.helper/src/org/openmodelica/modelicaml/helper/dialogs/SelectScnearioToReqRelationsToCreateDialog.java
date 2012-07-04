@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
+package org.openmodelica.modelicaml.helper.dialogs;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,8 +33,9 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Label;
 
-public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
+public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog {
 
 	// test scenarios that are appropriate for the system model
 	private EList<Element> selectedTestSimulationModels;
@@ -61,7 +62,7 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	 * 
 	 * @param parentShell
 	 */
-	public SelectSimulationModelsToExecuteDialog(Shell parentShell,
+	public SelectScnearioToReqRelationsToCreateDialog(Shell parentShell,
 			EList<Element> selectedTestSimulationModels) {
 		
 		super(parentShell);
@@ -73,7 +74,6 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-//		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/execute.png"));
 		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/tscriptrun.gif"));
 		newShell.setText("Simulation Models Selection");
 	}
@@ -86,17 +86,16 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 //		setTitleImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/tscriptrun.gif"));
-		setMessage("Note: you can select all models that are in a package by selecting the package.");
-//		setTitle("Test Scenarios and Requirements Selection");
-		setTitle("Select simulation models that should be executed.");
+		setMessage("Note: you can select all children by selecting the parent item.");
+		setTitle("Select relations that should created between scenarios and requirements.");
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
-		container.setLayout(new GridLayout(3, false));
+		container.setLayout(new GridLayout(5, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		TabFolder tabFolder = new TabFolder(container, SWT.NONE);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1);
 		gd_tabFolder.widthHint = 626;
 		tabFolder.setLayoutData(gd_tabFolder);
 
@@ -104,7 +103,7 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 		TabItem tbtmPreSelectedTestSimulationModels = new TabItem(tabFolder, SWT.NONE);
 //		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
 		String metricPreSelected = "("+selectedTestSimulationModels.size() + ")";
-		tbtmPreSelectedTestSimulationModels.setText("Preselected Scenarios " + metricPreSelected);
+		tbtmPreSelectedTestSimulationModels.setText("New Positive Relations (0)");
 		
 		final Tree treePreSelectedTestSimulationModels = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treePreSelectedTestSimulationModels);
@@ -123,6 +122,12 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	
 		tbtmPreSelectedTestSimulationModels.setControl(treePreSelectedTestSimulationModels);
 		
+		TabItem tbtmNewNegativeRelations = new TabItem(tabFolder, SWT.NONE);
+		tbtmNewNegativeRelations.setText("New Negative Relations (0)");
+		
+		TabItem tbtmNotSimulated = new TabItem(tabFolder, SWT.NONE);
+		tbtmNotSimulated.setText("Not Simulated (0)");
+		
 		Button btnSelectAll = new Button(container, SWT.NONE);
 		btnSelectAll.addMouseListener(new MouseAdapter() {
 			@Override
@@ -138,24 +143,24 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 			}
 		});
 		btnSelectAll.setText("Select All");
-
-		Button btnDeselectAll = new Button(container, SWT.NONE);
-		btnDeselectAll.setEnabled(true);
-		btnDeselectAll.setText("Deselect All");
-		btnDeselectAll.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				for (TreeItem treeItem : treeItems) {
-					
-					treeItem.setChecked(false);
-					// remove
-					TreeItemData data = (TreeItemData) treeItem.getData();
-					if (data.isTestSimulationModel) {
-						userSelectedTestSimulationModels.remove(data.getTestSimulationModelElement());
+		
+				Button btnDeselectAll = new Button(container, SWT.NONE);
+				btnDeselectAll.setEnabled(true);
+				btnDeselectAll.setText("Deselect All");
+				btnDeselectAll.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseDown(MouseEvent e) {
+						for (TreeItem treeItem : treeItems) {
+							
+							treeItem.setChecked(false);
+							// remove
+							TreeItemData data = (TreeItemData) treeItem.getData();
+							if (data.isTestSimulationModel) {
+								userSelectedTestSimulationModels.remove(data.getTestSimulationModelElement());
+							}
+						}
 					}
-				}
-			}
-		});
+				});
 		
 //		Button btnSeeLog = new Button(container, SWT.NONE);
 //		btnSeeLog.addMouseListener(new MouseAdapter() {
@@ -181,10 +186,28 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 		});
 		btnRestore.setImage(ResourceManager.getPluginImage("org.eclipse.emf.common.ui", "/org/eclipse/emf/common/ui/Restore.gif"));
 		btnRestore.setText("Restore");
+		
+		Composite composite = new Composite(container, SWT.NONE);
+		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_composite.widthHint = 39;
+		gd_composite.heightHint = 20;
+		composite.setLayoutData(gd_composite);
+		
+		Button btnSave = new Button(container, SWT.NONE);
+		btnSave.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		btnSave.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				// save relations
+			}
+		});
+		btnSave.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/saveall_edit.gif"));
+		btnSave.setText("Save all");
 
 		return area;
 	}
 
+	
 	/**
 	 * Create contents of the button bar.
 	 * 
@@ -192,10 +215,10 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-				true);
-		createButton(parent, IDialogConstants.CANCEL_ID,
-				IDialogConstants.CANCEL_LABEL, false);
+//		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+//				true);
+//		createButton(parent, IDialogConstants.CANCEL_ID,
+//				IDialogConstants.CANCEL_LABEL, false);
 	}
 
 	/**
@@ -203,7 +226,7 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(642, 509);
+		return new Point(797, 509);
 	}
 
 	

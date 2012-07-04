@@ -507,7 +507,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								 * WORKAROUND: before creating elements set Papyrus Model Explorer Selection to 
 								 * an element that will not be modified, e.g. the ModelicaML root. 
 								 */
-								PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+//								PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+								PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 
 								// run the synch action after loading
 	        					actionSynchronize.run();
@@ -1112,7 +1113,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				 * WORAROUND: before creating elements set Papyrus Model Explorer Selection to 
 				 * an element that will not be modified, e.g. the ModelicaML root. 
 				 */
-				PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+//				PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+				PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 				
 				// As a job
 				TreeObject[] children = treeRoot.getChildren();
@@ -1755,7 +1757,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		 * WORKAROUND: before creating elements set Papyrus Model Explorer Selection to 
 		 * an element that will not be modified, e.g. the ModelicaML root. 
 		 */
-		PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+//		PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
+		PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 		
 		// start sync
 		if (umlModel != null) {

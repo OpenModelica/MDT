@@ -46,6 +46,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -219,9 +220,9 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 							// Generate marker 
 							String message = "No binding code could be generated for the mandatory client '"+ item.getDotPath() + "'."; 
 							// delete the marker if there was one from previous actions.
-							ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+							ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent(), Constants.MARKERTYPE_VALUEBINDINGS);
 							// generate new marker
-							ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+							ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent(), Constants.MARKERTYPE_VALUEBINDINGS);
 						}
 					}
 				}
@@ -264,9 +265,9 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 						// Generate marker 
 						String message = "User decision is required. No binding code could be generated for '"+ item.getDotPath() + "'."; 
 						// delete the marker if there was one from previous actions.
-						ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
+						ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent(), Constants.MARKERTYPE_VALUEBINDINGS);
 						// generate new marker
-						ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
+						ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent(), Constants.MARKERTYPE_VALUEBINDINGS);
 					}
 				}
 				

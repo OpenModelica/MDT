@@ -70,10 +70,12 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.papyrus.editor.PapyrusMultiDiagramEditor;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
@@ -229,6 +231,10 @@ public class SimulationOMCAction extends AbstractHandler {
 		    
 			testSession.testModels.add(tm);
 	    	
+			// check if the model is dirty and, if it is, save it in order to make sure that code is generated from an up to date version
+			IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+			final PapyrusMultiDiagramEditor papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
+			
 			// execution job
 			Job job = new Job("Simulating using OMC ...") {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -236,6 +242,11 @@ public class SimulationOMCAction extends AbstractHandler {
 					// Generate Modelica code if that was desired 
 					if (isGenerateModelicaCodeChecked) {
 						setUpCGChain();
+						
+						if (papyrusEditor.isDirty()) {
+							papyrusEditor.doSave(monitor);
+						}
+						
 						runchain(monitor);
 					}
 					
@@ -541,7 +552,7 @@ public class SimulationOMCAction extends AbstractHandler {
 				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
 				
 				// same the model in order to make sure that the code is generated from the latest version
-				ModelicaMLServices.saveModel(umlModel);
+//				ModelicaMLServices.saveModel(umlModel);
 
 				cgChain.launch(filter, monitor, LaunchManager.create("run", true));
 				

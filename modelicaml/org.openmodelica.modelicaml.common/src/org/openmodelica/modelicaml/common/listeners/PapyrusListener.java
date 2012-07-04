@@ -34,6 +34,8 @@
  */
 package org.openmodelica.modelicaml.common.listeners;
 
+import java.util.HashMap;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.papyrus.core.listenerservice.IPapyrusListener;
@@ -120,7 +122,6 @@ public class PapyrusListener implements IPapyrusListener {
 					// remember the model resource and time of modification
 					Long timeStamp = System.currentTimeMillis();
 					ModelicaMLServices.modelModificationStamp.put(umlModel.getResource(), timeStamp);
-					
 //					System.err.println("model modificaiton stamp: " + timeStamp);
 				}
 			}

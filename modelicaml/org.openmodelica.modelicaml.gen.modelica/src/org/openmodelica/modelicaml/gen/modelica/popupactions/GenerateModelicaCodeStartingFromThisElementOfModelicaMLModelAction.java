@@ -57,8 +57,10 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.core.utils.EditorUtils;
 import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
+import org.eclipse.papyrus.editor.PapyrusMultiDiagramEditor;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
@@ -198,12 +200,22 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 			}
 		}
 
+		// check if the model is dirty and, if it is, save it in order to make sure that code is generated from an up to date version
+		IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		final PapyrusMultiDiagramEditor papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
+				
 		Job job = new Job("Modelica Code Generation (starting from " + ((NamedElement)umlElement).getName() + ")") {
 			protected IStatus run(IProgressMonitor monitor) {
+				
+				if (papyrusEditor.isDirty()) {
+					papyrusEditor.doSave(monitor);
+				}
+				
 				runchain(monitor);
 				
 				// reset the qualified name of element that code should be generated for (i.e. cg name space)
 	        	CGConfigurationManager.setCGNameSpace(null); 
+	        	
 				return Status.OK_STATUS;
 			}
 		};
@@ -230,7 +242,7 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
 
 				// same the model in order to make sure that the code is generated from the latest version
-				ModelicaMLServices.saveModel(umlModel);
+//				ModelicaMLServices.saveModel(umlModel);
 
 				myChain.launch(filter, monitor, LaunchManager.create("run", true));
 

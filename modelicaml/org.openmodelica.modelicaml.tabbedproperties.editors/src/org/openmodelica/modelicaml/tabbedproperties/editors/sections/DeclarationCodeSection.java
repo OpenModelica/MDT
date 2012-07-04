@@ -296,10 +296,10 @@ public class DeclarationCodeSection extends AbstractPropertySection  {
 							+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Modelica 'declaration' code.";
 		
 		if (editor.isDocumentHasErrors()) {
-			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement);
+			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement, Constants.MARKERTYPE_ACTION_CODE);
 		}
 		else {
-			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement);
+			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement, Constants.MARKERTYPE_ACTION_CODE);
 		}
 	}
 

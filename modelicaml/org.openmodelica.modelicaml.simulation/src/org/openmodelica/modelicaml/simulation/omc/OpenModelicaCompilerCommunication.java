@@ -255,9 +255,68 @@ public class OpenModelicaCompilerCommunication {
 	 * @param MainClass name of the main class
 	 * @param outputFormat for the results.
 	 * @return Reply from OMC
+	 * example for variables filter: simulate(... , variableFilter="x|y|z")
 	 */
-	public String simulate(String MainClass, String startTime, String stopTime, String numberOfIntervals, String tolerance, String method, String outputFormat){
-		return executeCommand("simulate("+MainClass+ ", startTime=" +startTime+ ", stopTime=" +stopTime+ ", numberOfIntervals="+numberOfIntervals+ ", tolerance="+tolerance+ ", method=\""+method + "\", outputFormat=\"" + outputFormat +"\")");
+	public String simulate(	String MainClass, 
+							String startTime, 
+							String stopTime, 
+							String numberOfIntervals, 
+							String tolerance, 
+							String method, 
+							String outputFormat,
+							String variableFilter){
+		
+		
+		String _mainClass = "";
+		String _startTime = ""; 
+		String _stopTime = ""; 
+		String _numberOfIntervals = "";  
+		String _tolerance = ""; 
+		String _method = ""; 
+		String _outputFormat = ""; 
+		String _variableFilter  = ""; 
+
+		if (MainClass != null && !MainClass.trim().equals("")) {
+			_mainClass = MainClass.trim() + ",";
+		}
+		if (startTime != null && !startTime.trim().equals("")) {
+			_startTime = "startTime=" + startTime.trim() + ",";
+		}
+		if (stopTime != null && !stopTime.trim().equals("")) {
+			_stopTime = "stopTime=" + stopTime.trim() + ",";
+		}
+		if (numberOfIntervals != null && !numberOfIntervals.trim().equals("")) {
+			_numberOfIntervals = "numberOfIntervals=" + numberOfIntervals.trim() + ",";
+		}
+		if (_tolerance != null && !_tolerance.trim().equals("")) {
+			_tolerance = "tolerance=" + tolerance.trim() + ",";
+		}
+		if (method != null && !method.trim().equals("")) {
+			_method = "method=\"" + method.trim() + "\",";
+		}
+		if (outputFormat != null && !outputFormat.trim().equals("")) {
+			_outputFormat = "outputFormat=\"" + outputFormat.trim() +"\",";
+		}
+		if (variableFilter != null && !variableFilter.trim().equals("")) {
+			_variableFilter = "variableFilter=\""+variableFilter.trim() + "\",";
+		}
+		
+		String params = _mainClass + _startTime + _stopTime + _numberOfIntervals + _tolerance + _method + _outputFormat + _variableFilter;
+		if (params.trim().endsWith(",")) {
+			params = params.trim().substring(0, params.length() - 1);
+		}
+		
+		return executeCommand("simulate(" + params + ")");
+		
+//		return executeCommand("simulate("+MainClass+ "," +
+//				" startTime=" +startTime+ "," +
+//				" stopTime=" +stopTime+ "," +
+//				" numberOfIntervals="+numberOfIntervals+ "," +
+//				" tolerance="+tolerance+ ", " +
+//				"method=\""+method + "\", " +
+//				"outputFormat=\"" + outputFormat +"\"," +
+//				_variableFilter +
+//				")");
 	}
 	
 	/**

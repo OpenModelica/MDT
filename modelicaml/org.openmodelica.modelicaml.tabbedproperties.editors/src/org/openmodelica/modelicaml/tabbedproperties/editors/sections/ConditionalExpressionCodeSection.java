@@ -63,6 +63,7 @@ import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
@@ -346,10 +347,10 @@ textToEdit =  "";
 							+ " '" + ((NamedElement)selectedUmlElement).getName() + "' has errors in its Modelica 'conditional expression' code.";
 		
 		if (editor.isDocumentHasErrors()) {
-			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement);
+			ModelicaMLMarkerSupport.generateMarker(message, "error", (NamedElement)selectedUmlElement, Constants.MARKERTYPE_ACTION_CODE);
 		}
 		else {
-			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement);
+			ModelicaMLMarkerSupport.deleteMarker( message, (NamedElement)selectedUmlElement, Constants.MARKERTYPE_ACTION_CODE);
 		}
 	}
 
