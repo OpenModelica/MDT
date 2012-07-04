@@ -146,7 +146,9 @@ public class ModelicaMLServices {
 			Stereotype s = ((NamedElement)req).getAppliedStereotype(Constants.stereotypeQName_Requirement);
 			if (s != null) {
 				Object o =((NamedElement)req).getValue(s, Constants.propertyName_text);
-				return o.toString();
+				if (o != null) {
+					return o.toString();
+				}
 			}
 		}
 		return "";
