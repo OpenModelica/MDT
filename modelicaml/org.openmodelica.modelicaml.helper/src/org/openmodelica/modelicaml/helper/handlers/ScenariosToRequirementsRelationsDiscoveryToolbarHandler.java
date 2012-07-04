@@ -37,6 +37,7 @@ import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.gen.modelica.popupactions.GenerateModelicaCodeFromEntireModelicaMLModelAction;
+import org.openmodelica.modelicaml.helper.dialogs.SelectScnearioToReqRelationsToCreateDialog;
 import org.openmodelica.modelicaml.helper.dialogs.VeMGenerationOptionsDialog;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.simresults.IResultsReader;
@@ -84,6 +85,8 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
  		Display.getDefault().asyncExec(new Runnable() {
  			public void run() {
 				// open dialog for displaying discovered relations
+ 				SelectScnearioToReqRelationsToCreateDialog dialog = new SelectScnearioToReqRelationsToCreateDialog(getShell(), gmd.getNewPositiveRelations(), gmd.getNewNegativeRelations());
+ 				dialog.open();
  			}
  		});
  	}

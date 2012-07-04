@@ -243,7 +243,9 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 						 * and <<DoNotUseToVerify>> (negative) to the same requirement 
 						 * then this requirement is excluded from the <<UseToVerify>> (positive) list
 						 */
-						reqWithPositiveRelations.removeAll(reqWithNegativeRelations);
+						if (!includeRequirementsWithNegativeRelations) {
+//							reqWithPositiveRelations.removeAll(reqWithNegativeRelations);
+						}
 						
 						
 						HashSet<Element> reqCollection = new HashSet<Element>();
@@ -404,7 +406,8 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				sourceModel,
 				vsc,
 				getLog(),
-				scenarioToVerificationModelCombination);
+				scenarioToVerificationModelCombination,
+				includeRequirementsWitnUnknownRelations);
 		
 		dialog.open();
 		

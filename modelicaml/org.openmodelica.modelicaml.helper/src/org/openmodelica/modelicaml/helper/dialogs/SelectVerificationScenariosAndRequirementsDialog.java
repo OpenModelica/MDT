@@ -53,7 +53,7 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	private HashSet<Element> discardedTestScenarios;
 	
 //	// requirements that are referenced by the test scenarios and for which all clients are satisfied 
-//	private HashSet<Element> selectedRequirements;
+	private HashSet<Element> selectedRequirements;
 
 	// requirements that are referenced by the test scenarios and for which NOT all clients are satisfied 
 	private HashSet<Element> discardedRequirements;
@@ -85,6 +85,10 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 	
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+	private boolean includeRequirementsWitnUnknownRelations;
+	
+//	private final static int MODE_DISCOVER_SCENARIOS_TO_REQUIREMENTS_RELATIONS = 0;
+//	private final static int MODE_GENERATE_VEM = 0;
 
 	/**
 	 * Create the dialog.
@@ -99,19 +103,21 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 			Element systemModel,
 			VerificationScenariosCollector tsc,
 			String collectionLog,
-			HashMap<Element, VeMScenarioReqCombinationsCreator> tsToTestSimulationModelCombination) {
+			HashMap<Element, VeMScenarioReqCombinationsCreator> tsToTestSimulationModelCombination,
+			boolean includeRequirementsWitnUnknownRelations) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM | SWT.BORDER);
 		
 		this.selectedTestScenarios = selectedTestScenarios;
 		this.discardedTestScenarios = discardedTestScenarios;
-//		this.selectedRequirements = selectedRequirements;
+		this.selectedRequirements = selectedRequirements;
 		this.discardedRequirements = discardedRequirements;
 		this.systemModel = systemModel;
 		this.tsc = tsc;
 		this.collectionLog = collectionLog;
 		this.tsToTestSimulationModelCombination = tsToTestSimulationModelCombination;
+		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
 	}
 
 	@Override
@@ -474,32 +480,26 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 			testScenarioItem.setChecked(false);
 		}
 
-//		testScenarioItem.setText(testScenarioNamePrefix + discardedPrefixString + ((NamedElement)testScenario).getName() + "  ("+((NamedElement)testScenario).getQualifiedName()+")");
 		testScenarioItem.setText(testScenarioNamePrefix + discardedPrefixString + ((NamedElement)testScenario).getName());
 		
-		// sort requirements by requirement id
-		List<Element> associatedRequirements = ModelicaMLServices.getSortedByRequirementId(tsc.getTsToReq().get(testScenario));
-		if (associatedRequirements != null) {
-			
-//			// create info item
-//			TreeItem testScenarioReqInfoNodeItem = new TreeItem(testScenarioItem, 0);
-////			treeItems.add(testScenarioReqInfoNodeItem); // there is no need to know info items.
-//			String infoNodeTitle = "";
-//			if (isDiscarded) {
-//				infoNodeTitle = "Linked requirements:";
-//			}
-//			else {
-//				infoNodeTitle = "Can be used to verify '" + ((NamedElement)systemModel).getName() + "' against the following requirements: ";
-//			}
-//			testScenarioReqInfoNodeItem.setText(infoNodeTitle);
-//			testScenarioReqInfoNodeItem.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/obj16/info_tsk.gif"));
-//			testScenarioReqInfoNodeItem.setGrayed(true);
-			
-			// create requirement items
-			for (Element req : associatedRequirements) {
-//				createRequirementTreeItem(testScenarioReqInfoNodeItem, req, testScenario, isDiscarded);
-				createRequirementTreeItem(testScenarioItem, req, testScenario, isDiscarded);
-			}
+		// get requirements and sort requirements by requirement id
+		List<Element> associatedRequirements = new ArrayList<Element>();
+		
+		/*
+		 * if we are going to discover relations then get all requirements
+		 * else only requirements that are referenced by the scenario with a <<UseToVerify>> relation 
+		 */
+		if (includeRequirementsWitnUnknownRelations) {
+			associatedRequirements.addAll(discardedRequirements);
+			associatedRequirements.addAll(selectedRequirements);
+		}
+		else {
+			associatedRequirements = ModelicaMLServices.getSortedByRequirementId(tsc.getTsToReq().get(testScenario));
+		}
+
+		// create requirement items
+		for (Element req : associatedRequirements) {
+			createRequirementTreeItem(testScenarioItem, req, testScenario, isDiscarded);
 		}
 	}
 	
@@ -655,7 +655,10 @@ public class SelectVerificationScenariosAndRequirementsDialog extends TitleAreaD
 				string = string + lineDelimiterString;
 				string = string + prefix +"Requirement: '" + ((NamedElement)requirement).getName() 
 						+ "' ("+((NamedElement)requirement).getQualifiedName()+")";
-				string = string + getAdditionalModelsString(tsmc.getRequiredModels_requirements().get(requirement), tsmc, requirement) + "\n";
+				String addModelsString = getAdditionalModelsString(tsmc.getRequiredModels_requirements().get(requirement), tsmc, requirement);
+				if (addModelsString.trim().equals("")) {
+					string = string + getAdditionalModelsString(tsmc.getRequiredModels_requirements().get(requirement), tsmc, requirement) + "\n";
+				}
 				string = string + getUnsatisfiedClients("    ", requirement, tsmc);
 			}
 		}

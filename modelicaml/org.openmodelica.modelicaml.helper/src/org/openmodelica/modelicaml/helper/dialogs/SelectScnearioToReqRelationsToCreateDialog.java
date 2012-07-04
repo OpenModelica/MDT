@@ -1,11 +1,12 @@
 package org.openmodelica.modelicaml.helper.dialogs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
@@ -18,6 +19,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,29 +32,33 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
 
 public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog {
 
-	// test scenarios that are appropriate for the system model
-	private EList<Element> selectedTestSimulationModels;
+	
+	// positive scenario to requirements relations, i.e., scenario was used to stimulate the system mode and lead to an evaluation of the requirements
+	private HashMap<TreeObject, HashSet<TreeObject>> newPositiveRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
+
+	// negative scenario to requirements relations, i.e., scenario was used to stimulate the system mode and did NOT lead to an evaluation of the requirements
+	private HashMap<TreeObject, HashSet<TreeObject>> newNegativeRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
+	
+	// positive scenario to requirements relations, i.e., scenario was used to stimulate the system mode and lead to an evaluation of the requirements
+	private HashMap<TreeObject, HashSet<TreeObject>> userSelectedNewPositiveRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
+
+	// negative scenario to requirements relations, i.e., scenario was used to stimulate the system mode and did NOT lead to an evaluation of the requirements
+	private HashMap<TreeObject, HashSet<TreeObject>> userSelectedNewNegativeRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
+
 	
 	// the final selection done by user
 	private HashSet<Element> userSelectedTestSimulationModels = new HashSet<Element>();
 	
-//	// the result of the collection
-//	private String collectionLog;
-	
 	/*  All tree items to iterate over when required.
-	 *  Note, this should be an ordered list in order to enable a simple run trough when "SelectAll"/"DeselectAll" is clicked 
+	 *  Note, this should be an ordered list in order to enable a simple run through when "SelectAll"/"DeselectAll" is clicked 
 	 */
 	private List<TreeItem> treeItems = new ArrayList<TreeItem>();
-
-//	private static final int DECORATION_WARNING = 0 ;
-//	private static final int DECORATION_ERROR = 1 ;
 	
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
@@ -63,19 +69,21 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	 * @param parentShell
 	 */
 	public SelectScnearioToReqRelationsToCreateDialog(Shell parentShell,
-			EList<Element> selectedTestSimulationModels) {
+			HashMap<TreeObject, HashSet<TreeObject>> newPositiveRelations,
+			HashMap<TreeObject, HashSet<TreeObject>> newNegativeRelations) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
-		
-		this.selectedTestSimulationModels = selectedTestSimulationModels;
+
+		this.newPositiveRelations = newPositiveRelations;
+		this.newNegativeRelations = newNegativeRelations;
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/tscriptrun.gif"));
-		newShell.setText("Simulation Models Selection");
+		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/correlationset.gif"));
+		newShell.setText("New Relations from Scenarios to Requirements");
 	}
 	
 	/**
@@ -85,8 +93,7 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-//		setTitleImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/tscriptrun.gif"));
-		setMessage("Note: you can select all children by selecting the parent item.");
+		setMessage("Note that you can select all children by selecting the parent item.");
 		setTitle("Select relations that should created between scenarios and requirements.");
 		
 		Composite area = (Composite) super.createDialogArea(parent);
@@ -99,34 +106,23 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		gd_tabFolder.widthHint = 626;
 		tabFolder.setLayoutData(gd_tabFolder);
 
-		// TAB: Pre-selected test scenarios
-		TabItem tbtmPreSelectedTestSimulationModels = new TabItem(tabFolder, SWT.NONE);
-//		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
-		String metricPreSelected = "("+selectedTestSimulationModels.size() + ")";
-		tbtmPreSelectedTestSimulationModels.setText("New Positive Relations (0)");
+		// TAB: Pre-selected positive relations
+		TabItem tbtmnewPositiveRelations = new TabItem(tabFolder, SWT.NONE);
+		String metricPreSelected = "("+getMapSize(this.newPositiveRelations) + ")";
+		tbtmnewPositiveRelations.setText("New Positive Relations (0)");
 		
-		final Tree treePreSelectedTestSimulationModels = new Tree(tabFolder, SWT.CHECK);
-		buildTree(treePreSelectedTestSimulationModels);
+		final Tree treePreSelectedNewPositiveRelations = new Tree(tabFolder, SWT.CHECK);
+		buildTree(treePreSelectedNewPositiveRelations);
 		
 		// Add listeners
-		treePreSelectedTestSimulationModels.addSelectionListener(new CheckboxTreeSelectionListener());
-//		treePreSelectedTestSimulationModels.addListener(SWT.MouseDoubleClick, new Listener() {
-//		      public void handleEvent(Event event) {
-//		        Point point = new Point(event.x, event.y);
-//		        TreeItem item = treePreSelectedTestSimulationModels.getItem(point);
-//		        if (item != null) {
-//		        	openDescription(item);
-//		        }
-//		      }
-//		    });
-	
-		tbtmPreSelectedTestSimulationModels.setControl(treePreSelectedTestSimulationModels);
+		treePreSelectedNewPositiveRelations.addSelectionListener(new CheckboxTreeSelectionListener());
+		tbtmnewPositiveRelations.setControl(treePreSelectedNewPositiveRelations);
 		
 		TabItem tbtmNewNegativeRelations = new TabItem(tabFolder, SWT.NONE);
 		tbtmNewNegativeRelations.setText("New Negative Relations (0)");
 		
 		TabItem tbtmNotSimulated = new TabItem(tabFolder, SWT.NONE);
-		tbtmNotSimulated.setText("Not Simulated (0)");
+		tbtmNotSimulated.setText("Errors (0)");
 		
 		Button btnSelectAll = new Button(container, SWT.NONE);
 		btnSelectAll.addMouseListener(new MouseAdapter() {
@@ -136,8 +132,8 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 					treeItem.setChecked(true);
 					// add to maps.
 					TreeItemData data = (TreeItemData) treeItem.getData();
-					if (data.isTestSimulationModel) {
-						userSelectedTestSimulationModels.add(data.getTestSimulationModelElement());
+					if (data.isScenario) {
+						userSelectedTestSimulationModels.add(data.getScenarioElement());
 					}
 				}
 			}
@@ -155,8 +151,8 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 							treeItem.setChecked(false);
 							// remove
 							TreeItemData data = (TreeItemData) treeItem.getData();
-							if (data.isTestSimulationModel) {
-								userSelectedTestSimulationModels.remove(data.getTestSimulationModelElement());
+							if (data.isScenario) {
+								userSelectedTestSimulationModels.remove(data.getScenarioElement());
 							}
 						}
 					}
@@ -179,9 +175,9 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		btnRestore.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				treePreSelectedTestSimulationModels.removeAll();
+				treePreSelectedNewPositiveRelations.removeAll();
 				clearAllLists();
-				buildTree(treePreSelectedTestSimulationModels);
+				buildTree(treePreSelectedNewPositiveRelations);
 			}
 		});
 		btnRestore.setImage(ResourceManager.getPluginImage("org.eclipse.emf.common.ui", "/org/eclipse/emf/common/ui/Restore.gif"));
@@ -233,10 +229,10 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	private void buildTree(Tree treeRoot){
 		
 		HashSet<Element> testSimulationModels = new HashSet<Element>();
-		if (this.selectedTestSimulationModels!= null ) {
-			testSimulationModels.addAll(this.selectedTestSimulationModels);
-		}
-		
+//		if (this.selectedTestSimulationModels!= null ) {
+//			testSimulationModels.addAll(this.selectedTestSimulationModels);
+//		}
+//		
 		List<Element> packagesOfTheSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(getTestSimulationModelsPackages(testSimulationModels));
 		createPkgTreeItems(treeRoot, packagesOfTheSelectedTestScenariosSorted, true);
 		
@@ -288,7 +284,7 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		TreeItem[] pkgItems = treeRoot.getItems();
 		for (TreeItem treeItem : pkgItems) {
 			TreeItemData data = (TreeItemData) treeItem.getData();
-			if (data.isPackage && !data.isDiscarded && data.getPackageElement().equals(testSimulationModel.getOwner())) {
+			if (data.isPackage && data.getPackageElement().equals(testSimulationModel.getOwner())) {
 				return treeItem; 
 			}
 		}
@@ -309,8 +305,8 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		treeItems.add(testSimulationModelItem);
 		
 		TreeItemData data = new TreeItemData();
-		data.setIsTestSimulationModel(true);
-		data.setTestSimulationModelElement(testSimulationModel);
+		data.setScenario(true);
+		data.setScenarioElement(testSimulationModel);
 		
 		testSimulationModelItem.setData(data);
 		
@@ -330,23 +326,17 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	}
 	
 	
+	private int getMapSize(HashMap<TreeObject, HashSet<TreeObject>> newPositiveRelations2){
+		Set<TreeObject> keysetNumber = newPositiveRelations2.keySet();
+		int number = 0;
+		for (Object object : keysetNumber) {
+			number = number + newPositiveRelations2.get(object).size(); 
+		}
+		
+		return number;
+	}
+	
 	// Image handling ************************************************************************
-
-//	private void propagateDecoration(TreeItem item, int decoration){
-//		Image image = item.getImage();
-//		if (image != null) {
-//			if (decoration == DECORATION_ERROR) {
-//				item.setImage(decorateError(image));
-//			}
-//			else if (decoration == DECORATION_WARNING) {
-//				item.setImage(decorateError(image));
-//			}
-//		}
-//		
-//		if (item.getParentItem() != null) {
-//			propagateDecoration(item.getParentItem(), decoration);
-//		}
-//	}
 
 	public Image decorateWarning(Image image) {
 		return new DecorationOverlayIcon(image, warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
@@ -368,8 +358,8 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 					TreeItemData data = (TreeItemData) event.item.getData(); 
 					
 					// test scenario item.
-					if (data.isTestSimulationModel) {
-						Element tesSimulationModel = data.getTestSimulationModelElement();
+					if (data.isScenario) {
+						Element tesSimulationModel = data.getScenarioElement();
 						
 						if ( ((TreeItem)event.item).getChecked() ) {
 //							System.err.println("ADD test scenario to map.");
@@ -389,7 +379,7 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 								TreeItem testScenarioItem = testSimulationModelsItems[i];
 								testScenarioItem.setChecked(true);
 								TreeItemData tsData = (TreeItemData) testScenarioItem.getData();
-								userSelectedTestSimulationModels.add(tsData.getTestSimulationModelElement());
+								userSelectedTestSimulationModels.add(tsData.getScenarioElement());
 							}
 						}
 						else {
@@ -398,7 +388,7 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 								TreeItem testScenarioItem = testScenariosItems[i];
 								testScenarioItem.setChecked(false);
 								TreeItemData tsData = (TreeItemData) testScenarioItem.getData();
-								userSelectedTestSimulationModels.remove(tsData.getTestSimulationModelElement());
+								userSelectedTestSimulationModels.remove(tsData.getScenarioElement());
 							}
 						}
 					}
@@ -411,37 +401,45 @@ public class SelectScnearioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	
 	class TreeItemData{
 		
-		private boolean isTestSimulationModel = false;
+		private boolean isScenario = false;
+
+		private boolean isRequirement = false;
 		private boolean isPackage = false;
 		
-		private boolean isDiscarded = false;
-		private Element TestSimulationModelElement;
-		private Element PackageElement;
+		private Element scenarioElement;
+		private Element packageElement;
 		
-		
-		public void setIsTestSimulationModel(boolean isTestScenario) {
-			this.isTestSimulationModel = isTestScenario;
+		public boolean isScenario() {
+			return isScenario;
 		}
-		public boolean isTestSimulationModels() {
-			return isTestSimulationModel;
+		public void setScenario(boolean isScenario) {
+			this.isScenario = isScenario;
 		}
+
 		public void setIsPackage(boolean isPackage) {
 			this.isPackage = isPackage;
 		}
 		public boolean isPackage() {
 			return isPackage;
 		}
-		public void setTestSimulationModelElement(Element testScenarioElement) {
-			TestSimulationModelElement = testScenarioElement;
-		}
-		public Element getTestSimulationModelElement() {
-			return TestSimulationModelElement;
-		}
-		public void setPackageElement(Element packageElement) {
-			PackageElement = packageElement;
+
+		public void setPackageElement(Element _packageElement) {
+			packageElement = _packageElement;
 		}
 		public Element getPackageElement() {
-			return PackageElement;
+			return packageElement;
+		}
+		public boolean isRequirement() {
+			return isRequirement;
+		}
+		public void setIsRequirement(boolean isRequirement) {
+			this.isRequirement = isRequirement;
+		}
+		public Element getScenarioElement() {
+			return scenarioElement;
+		}
+		public void setScenarioElement(Element scenarioElement) {
+			this.scenarioElement = scenarioElement;
 		}
 	}
 	
