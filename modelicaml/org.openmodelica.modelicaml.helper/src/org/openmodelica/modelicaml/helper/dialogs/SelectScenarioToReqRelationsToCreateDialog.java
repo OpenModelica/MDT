@@ -30,6 +30,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
@@ -140,21 +141,24 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		final Tree failedSimulationModelsTree = new Tree(tabFolder, SWT.NONE);
 		createNotSimulatedItems(failedSimulationModelsTree);
 		
-		
-		
+				
 		Button btnSelectAll = new Button(container, SWT.NONE);
 		btnSelectAll.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				for (TreeItem treeItem : treeItemsPositiveRelations) {
-					treeItem.setChecked(true);
-					updateFinalLists(treeItem);
+				if (isPositiveRelationsTabActive(tabFolder)) {
+					for (TreeItem treeItem : treeItemsPositiveRelations) {
+						treeItem.setChecked(true);
+						updateFinalLists(treeItem);
+					}
+				}
+				else if (isNegativeRelationsTabActive(tabFolder)) {
+					for (TreeItem treeItem : treeItemsNegativeRelations) {
+						treeItem.setChecked(true);
+						updateFinalLists(treeItem);
+					}
 				}
 				
-				for (TreeItem treeItem : treeItemsNegativeRelations) {
-					treeItem.setChecked(true);
-					updateFinalLists(treeItem);
-				}
 			}
 		});
 		btnSelectAll.setText("Select All");
@@ -165,14 +169,17 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		btnDeselectAll.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				for (TreeItem treeItem : treeItemsPositiveRelations) {
-					treeItem.setChecked(false);
-					updateFinalLists(treeItem);
+				if (isPositiveRelationsTabActive(tabFolder)) {
+					for (TreeItem treeItem : treeItemsPositiveRelations) {
+						treeItem.setChecked(false);
+						updateFinalLists(treeItem);
+					}
 				}
-				
-				for (TreeItem treeItem : treeItemsNegativeRelations) {
-					treeItem.setChecked(false);
-					updateFinalLists(treeItem);
+				else if (isNegativeRelationsTabActive(tabFolder)) {
+					for (TreeItem treeItem : treeItemsNegativeRelations) {
+						treeItem.setChecked(false);
+						updateFinalLists(treeItem);
+					}
 				}
 			}
 		});
@@ -398,15 +405,16 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	private void createRequirementTreeItem(Element requirement, TreeItem scenarioItem, boolean isPositiveRelationsTree, boolean isPreselected){
 
 		TreeItem requirementItem = new TreeItem(scenarioItem, 0);	
-		
 
+		TreeItemData scenarioData = (TreeItemData) scenarioItem.getData();
+		Element scenario = scenarioData.getScenarioElement();
+
+		// add to final map
 		if (isPositiveRelationsTree) {
 			treeItemsPositiveRelations.add(requirementItem);
 			
 			if (isPreselected) {
-				// add to final map
-				TreeItemData data = (TreeItemData) scenarioItem.getData();
-				Element scenario = data.getScenarioElement();
+				
 				addToMap(positiveRelationsToCreate, scenario, requirement);
 			}
 		
@@ -416,8 +424,6 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 			
 			if (isPreselected) {
 				// add to final map
-				TreeItemData data = (TreeItemData) scenarioItem.getData();
-				Element scenario = data.getScenarioElement();
 				addToMap(negativeRelationsToCreate, scenario, requirement);
 			}
 		}
@@ -434,14 +440,66 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		String name = "? No name is defined ?";
 		if (((NamedElement)requirement).getName() != null) {
 			name = ((NamedElement)requirement).getName();
+
+			//Get the requirement TreeObject and determine it was violated
+			// Add it to the name as indication and decorate as warning
+			
+			if (isViolated(requirement, scenario)) {
+				name = "(VIOLATED) " + name;
+				requirementItem.setImage(decorateWarning(requirementItem.getImage()));
+				propagateWarning(requirementItem);
+			}
 		}
 		requirementItem.setText(name);
 		
 	}
 	
 	
+	
+	private boolean isViolated(Element requirement, Element scenario){
+		
+		// TODO: refactor this. there should be a map with violated requirement to scenarios 
+		
+		HashSet<Element> models = gmd.getGeneratedModels();
+		for (Element model : models) {
+			HashSet<TreeObject> scenarios = gmd.getScenarios(model);
+			HashSet<TreeObject> requirements = gmd.getRequirements(model);
+			for (TreeObject requirementInModel : requirements) {
+				String statusDotPath = requirementInModel.getDotPath() + "." + gmd.requirementStatusPropertyName;
+				
+				Element requirementElement = requirementInModel.getComponentType();
+				if (requirementElement != null) {
+					if (requirementElement.equals(requirement)) {
+						// requirement found
+						for (TreeObject scenarioTreeObject : scenarios) {
+							Element scenarioInModel = scenarioTreeObject.getComponentType();
+							if (scenarioInModel != null) {
+								if (scenarioInModel.equals(scenario)) {
+									// scenario found
+									HashSet<String> violatedRequirements = gmd.getViolatedRequirements();
+									if (violatedRequirements.contains(gmd.getModelToTreeItemKeyString(model, statusDotPath))) {
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	// Utls ************************************************************************ 
 
+	private void propagateWarning(TreeItem requirementItem){
+		TreeItem scenarioItem = requirementItem.getParentItem();
+		TreeItem packageItem = scenarioItem.getParentItem();
+		
+		scenarioItem.setImage(decorateWarning(scenarioItem.getImage()));
+		packageItem.setImage(decorateWarning(packageItem.getImage()));
+	}
+	
 	private boolean isPositiveRelationsTabActive(TabFolder tabFolder){
 		TabItem tab = tabFolder.getSelection()[0];
 		if (tab.getText().equals(TAB_TITLE_POSITIVE_RELATIONS)) {

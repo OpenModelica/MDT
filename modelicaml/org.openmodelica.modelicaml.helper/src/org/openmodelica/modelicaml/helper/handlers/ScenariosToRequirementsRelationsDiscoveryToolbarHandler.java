@@ -47,8 +47,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 
 	private String projectPath;
 	
-	private final static String requirementStatusPropertyName = "status";
-	private final static String delimiter = "@-->";
+
 	
 	
 	private HashSet<ScenariosToRequirementsRelationsDiscoveryToolbarHandler.GeneratedModelsData> genModelsData = new HashSet<ScenariosToRequirementsRelationsDiscoveryToolbarHandler.GeneratedModelsData>();
@@ -183,7 +182,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 					IResultsReader reader = new ReadMatlab4(resultsFile);
 					for (TreeObject requirement : requirements) {
 						
-						String statusDotPath = requirement.getDotPath().trim() + "." + requirementStatusPropertyName;
+						String statusDotPath = requirement.getDotPath().trim() + "." + gmd.requirementStatusPropertyName;
 						List<String> vars = reader.getNames();
 						
 						if (vars.contains(statusDotPath)) {
@@ -195,7 +194,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 									
 							// if requirement was evaluated -> positive relation
 							if (evaluated) { 
-								gmd.addToEvaluatedRequirements(getModelToTreeItemKeyString(model, statusDotPath));
+								gmd.addToEvaluatedRequirements(gmd.getModelToTreeItemKeyString(model, statusDotPath));
 								
 								// add only new dependencies
 								for (TreeObject scenario : scenarios) {
@@ -216,10 +215,10 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 							
 							// add to violated lists. this should be used for displaying that this requirement was violated in dialog
 							if (violated) {
-								gmd.addToViolatedRequirements(getModelToTreeItemKeyString(model, statusDotPath));
+								gmd.addToViolatedRequirements(gmd.getModelToTreeItemKeyString(model, statusDotPath));
 							}
 							else if (notViolated) {
-								gmd.addToNotViolatedRequirements(getModelToTreeItemKeyString(model, statusDotPath));
+								gmd.addToNotViolatedRequirements(gmd.getModelToTreeItemKeyString(model, statusDotPath));
 							}
 						}
 					}
@@ -233,12 +232,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	}
 	
 	
-	private String getModelToTreeItemKeyString(Element model, String dotPath){
-		if (model instanceof NamedElement) {
-			return ((NamedElement)model).getQualifiedName() + delimiter + dotPath;
-		}
-		return "";
-	}
+
 	
 	private boolean isNewRelation(TreeObject scenarioItem, TreeObject requirementItem, String dependencyStereotypeQName){
 		
@@ -413,7 +407,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		String requirementVariableFilter = "";
 		for (TreeObject treeObject : requirementItems) {
 			if (!treeObject.getDotPath().trim().equals("")) {
-				requirementVariableFilter = requirementVariableFilter + "|" + treeObject.getDotPath() + "." + requirementStatusPropertyName;
+				requirementVariableFilter = requirementVariableFilter + "|" + treeObject.getDotPath() + "." + gmd.requirementStatusPropertyName;
 			}
 		}
 		
@@ -489,6 +483,9 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		// negative scenario to requirements relations, i.e., scenario was used to stimulate the system mode and did NOT lead to an evaluation of the requirements
 		private HashMap<TreeObject, HashSet<TreeObject>> newNegativeRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
 		
+		
+		public final String requirementStatusPropertyName = "status";
+		public final static String delimiter = "@-->";
 		
 		
 		public GeneratedModelsData(HashSet<Element> generatedPackages) {
@@ -581,6 +578,12 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			}
 		}
 		
+		public String getModelToTreeItemKeyString(Element model, String dotPath){
+			if (model instanceof NamedElement) {
+				return ((NamedElement)model).getQualifiedName() + delimiter + dotPath;
+			}
+			return "";
+		}
 		
 		// Getters
 		public HashSet<Element> getGeneratedModels() {
