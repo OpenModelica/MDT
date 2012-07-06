@@ -1,6 +1,7 @@
 package org.openmodelica.modelicaml.helper.handlers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,8 +38,7 @@ import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.gen.modelica.popupactions.GenerateModelicaCodeFromEntireModelicaMLModelAction;
-import org.openmodelica.modelicaml.helper.dialogs.SelectScnearioToReqRelationsToCreateDialog;
-import org.openmodelica.modelicaml.helper.dialogs.VeMGenerationOptionsDialog;
+import org.openmodelica.modelicaml.helper.dialogs.SelectScenarioToReqRelationsToCreateDialog;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.simresults.IResultsReader;
 import org.openmodelica.modelicaml.simulation.simresults.ReadMatlab4;
@@ -75,7 +75,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	
 	@Override
 	protected void openDialog() {
-		super.setMode(VeMGenerationOptionsDialog.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY);
+		super.setMode(Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY);
 		super.openDialog();
 	}
 	
@@ -85,7 +85,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
  		Display.getDefault().asyncExec(new Runnable() {
  			public void run() {
 				// open dialog for displaying discovered relations
- 				SelectScnearioToReqRelationsToCreateDialog dialog = new SelectScnearioToReqRelationsToCreateDialog(getShell(), gmd.getNewPositiveRelations(), gmd.getNewNegativeRelations());
+ 				SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(getShell(), gmd);
  				dialog.open();
  			}
  		});
@@ -144,7 +144,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 									simulateModels(monitor);
 									
 									//collect values
-									collectValues(monitor);
+									analyzeResults(monitor);
 									
 									return Status.OK_STATUS;
 								}
@@ -165,9 +165,12 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	}
 	
 	
-	private void collectValues(IProgressMonitor monitor){
+	private void analyzeResults(IProgressMonitor monitor){
 		
-		monitor.setTaskName("Analyzing data ...");
+		monitor.setTaskName("Analyzing results ...");
+		
+		//set the simulation failed list
+		gmd.setSimulationFailedList(simulationFailedList);
 		
 		for (Element model : gmd.getGeneratedModels()) {
 			
@@ -186,12 +189,13 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 						if (vars.contains(statusDotPath)) {
 							double[] values = reader.getValues(statusDotPath);
 
-							boolean evaluated = checkChangedItsValue(values);
+							boolean notViolated = checkHadAtLeastOnceValue(values, "1");
 							boolean violated = checkHadAtLeastOnceValue(values, "2");
-							
+							boolean evaluated = notViolated || violated;
+									
 							// if requirement was evaluated -> positive relation
 							if (evaluated) { 
-								gmd.addToEvaluatedRequirements(((NamedElement)model).getQualifiedName() + delimiter + statusDotPath);
+								gmd.addToEvaluatedRequirements(getModelToTreeItemKeyString(model, statusDotPath));
 								
 								// add only new dependencies
 								for (TreeObject scenario : scenarios) {
@@ -212,7 +216,10 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 							
 							// add to violated lists. this should be used for displaying that this requirement was violated in dialog
 							if (violated) {
-								gmd.addToViolatedRequirements(((NamedElement)model).getQualifiedName() + delimiter + statusDotPath);
+								gmd.addToViolatedRequirements(getModelToTreeItemKeyString(model, statusDotPath));
+							}
+							else if (notViolated) {
+								gmd.addToNotViolatedRequirements(getModelToTreeItemKeyString(model, statusDotPath));
 							}
 						}
 					}
@@ -225,6 +232,13 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		
 	}
 	
+	
+	private String getModelToTreeItemKeyString(Element model, String dotPath){
+		if (model instanceof NamedElement) {
+			return ((NamedElement)model).getQualifiedName() + delimiter + dotPath;
+		}
+		return "";
+	}
 	
 	private boolean isNewRelation(TreeObject scenarioItem, TreeObject requirementItem, String dependencyStereotypeQName){
 		
@@ -243,21 +257,6 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		return false;
 	}
 	
-	private static Boolean checkChangedItsValue(double[] values){
-		Double firstValue = null;
-		for (int i = 0; i < values.length; i++) {
-			Double d = values[i];
-			if(firstValue != null)
-				if(!firstValue.equals(d)){
-					return false;
-				}
-			else{
-				firstValue = d;
-			}
-		}
-		return true;
-	}
-	
 	private static Boolean checkHadAtLeastOnceValue(double[] values, String argsString){
 		/*
 		 * We assume that it never had the value until we prove the opposite.
@@ -271,7 +270,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		}
 		return false;
 	}
-	
+		
 	private void simulateModels(IProgressMonitor monitor){
 		
 		clearLists();
@@ -427,16 +426,16 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	}
 	
 	
-	private String getSimulationResultsPath(NamedElement model){
-		return simulationResultsFolderPath + "/" + getModelQName((NamedElement) model) + "_res.mat";
-	}
+//	private String getSimulationResultsPath(NamedElement model){
+//		return simulationResultsFolderPath + "/" + getModelQName((NamedElement) model) + "_res.mat";
+//	}
 
 	
 	private void setUpProjectData(){
 		
 		// get UML model data
 		UmlModel umlModel = UmlUtils.getUmlModel();
-		String umlModelFileURI = umlModel.getResourceURI().toString();
+//		String umlModelFileURI = umlModel.getResourceURI().toString();
 
 		// get project data
 		String projectName = umlModel.getResource().getURI().segment(1);
@@ -468,7 +467,9 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	
 	
 	// internal data structures
-	private class GeneratedModelsData{
+	public class GeneratedModelsData{
+		
+		private List<String> simulationFailedList;
 		
 		private HashSet<Element> generatedPackages;
 		private HashSet<Element> generatedModels;
@@ -479,6 +480,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		// modelname + delimiter + variable dot path
 		private HashSet<String> evaluatedRequirements = new HashSet<String>();
 		private HashSet<String> violatedRequirements = new HashSet<String>();
+		private HashSet<String> notViolatedRequirements = new HashSet<String>();
 		
 
 		// positive scenario to requirements relations, i.e., scenario was used to stimulate the system mode and lead to an evaluation of the requirements
@@ -588,6 +590,66 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		public HashSet<TreeObject> getScenarios(Element simModel){
 			return modelToScenarios.get(simModel);
 		}
+		
+		public HashSet<Element> getAllScenarios(){
+			HashSet<Element> scenarios = new HashSet<Element>();
+			
+			for (Element model : modelToScenarios.keySet()) {
+				HashSet<TreeObject> modelScenarios = modelToScenarios.get(model);
+				if (modelScenarios != null && modelScenarios.size() > 0) {
+					for (TreeObject scenarioTreeObject : modelScenarios) {
+						Element scenario  = scenarioTreeObject.getComponentType();
+						if (scenario != null) {
+							scenarios.add(scenario);
+						}
+					}
+				}
+			}
+			return scenarios;
+		}
+		
+		
+		public HashSet<Element> getRequirements(Element scenario, boolean isPositiveRelation){
+			HashSet<Element> requirements = new HashSet<Element>();
+			
+			for (Element model : modelToScenarios.keySet()) {
+				HashSet<TreeObject> modelScenarios = modelToScenarios.get(model);
+				HashSet<TreeObject> modelRequirements= modelToRequirements.get(model);
+
+				if (modelScenarios != null && modelScenarios.size() > 0) {
+					for (TreeObject scenarioTreeObject : modelScenarios) {
+						Element scenarioInModel  = scenarioTreeObject.getComponentType();
+						// find the scenario 
+						if (scenario.equals(scenarioInModel) ) {
+							for (TreeObject requirementTreeObject : modelRequirements) {
+								String statusDotPath =   requirementTreeObject.getDotPath() + "." + requirementStatusPropertyName;
+								// get positive relations
+								if (isPositiveRelation) {
+									String key = getModelToTreeItemKeyString(model, statusDotPath);
+									if (evaluatedRequirements.contains(key)) {
+										Element requirement = requirementTreeObject.getComponentType();
+										if (requirement != null) {
+											requirements.add(requirement);
+										}
+									}
+								}
+								// negative relations
+								else {
+									if (!evaluatedRequirements.contains(getModelToTreeItemKeyString(model, statusDotPath))) {
+										Element requirement = requirementTreeObject.getComponentType();
+										if (requirement != null) {
+											requirements.add(requirement);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			return requirements;
+		}
+
 
 		public HashSet<TreeObject> getRequirements(Element simModel){
 			return modelToRequirements.get(simModel);
@@ -612,6 +674,56 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		public HashMap<TreeObject, HashSet<TreeObject>> getNewPositiveRelations() {
 			return newPositiveRelations;
 		}
+		
+		public HashMap<Element, HashSet<Element>> getNewPositiveRelationsElements() {
+			 HashMap<Element, HashSet<Element>> map = new HashMap<Element, HashSet<Element>>();
+			 
+			for (TreeObject scenario : newPositiveRelations.keySet()) {
+				Element scenarioElement = scenario.getComponentType();
+				if (scenarioElement != null) {
+					HashSet<TreeObject> requirements = newPositiveRelations.get(scenario);
+					if (requirements != null) {
+						HashSet<Element> requirementElements = new HashSet<Element>();
+						for (TreeObject requirement : requirements) {
+							Element requirementElement = requirement.getComponentType();
+							if (requirementElement != null) {
+								requirementElements.add(requirementElement);
+							}
+						}
+						if (requirementElements.size() > 0 ) {
+							map.put(scenarioElement, requirementElements);
+						}
+					}
+							
+				}
+			}
+			return map;
+		}
+		
+		public HashMap<Element, HashSet<Element>> getNewNegativeRelationsElements() {
+			 HashMap<Element, HashSet<Element>> map = new HashMap<Element, HashSet<Element>>();
+			 
+			for (TreeObject scenario : newNegativeRelations.keySet()) {
+				Element scenarioElement = scenario.getComponentType();
+				if (scenarioElement != null) {
+					HashSet<TreeObject> requirements = newNegativeRelations.get(scenario);
+					if (requirements != null) {
+						HashSet<Element> requirementElements = new HashSet<Element>();
+						for (TreeObject requirement : requirements) {
+							Element requirementElement = requirement.getComponentType();
+							if (requirementElement != null) {
+								requirementElements.add(requirementElement);
+							}
+						}
+						if (requirementElements.size() > 0 ) {
+							map.put(scenarioElement, requirementElements);
+						}
+					}
+							
+				}
+			}
+			return map;
+		}
 
 		public void addToPositiveRelations(TreeObject key, TreeObject value) {
 			addToMapList(this.newPositiveRelations, key, value);
@@ -623,6 +735,22 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 
 		public void addToNegativeRelations(TreeObject key, TreeObject value) {
 			addToMapList(this.newNegativeRelations, key, value);
+		}
+
+		public HashSet<String> getNotViolatedRequirements() {
+			return notViolatedRequirements;
+		}
+
+		public void addToNotViolatedRequirements(String string) {
+			this.notViolatedRequirements.add(string);
+		}
+
+		public List<String> getSimulationFailedList() {
+			return simulationFailedList;
+		}
+
+		public void setSimulationFailedList(List<String> simulationFailedList) {
+			this.simulationFailedList = simulationFailedList;
 		}
 	}
 	

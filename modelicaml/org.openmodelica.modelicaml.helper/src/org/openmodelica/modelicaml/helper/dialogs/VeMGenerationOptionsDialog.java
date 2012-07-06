@@ -91,8 +91,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	/*
 	 * The mode indicates if this dialog is used for verification models generation or scenarios to requirements <<UsedToVerify>> relations discovery
 	 */
-	public final static int MODE_VEM_GENERATION = 0;
-	public final static int MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY = 1;
+
 	private int mode;
 	
 	
@@ -170,14 +169,14 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		this.mode = mode;
 		
 		// set the mode the dialog message and preset options
-		if (getMode()== MODE_VEM_GENERATION) {
+		if (getMode()== Constants.MODE_VEM_GENERATION) {
 			dialogMessage = messageVemGen;
 			
 			considerPositiveRequirementsRelations = true;
 			considerNegativeRequirementsRelations = false;
 			considerAllUnknownRequirementsRelations = false;
 		}
-		else if (getMode() == MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY){
+		else if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY){
 			dialogMessage = messageScenarioToReqRelationDiscovery;
 			
 			considerPositiveRequirementsRelations = true;
@@ -430,7 +429,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		});
 		btnRequirementsBased.setBounds(10, 119, 625, 16);
 		btnRequirementsBased.setText("Create only one model containing the selected model and all possible requirements that can be verified");
-		if (mode == MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 			btnRequirementsBased.setEnabled(false); 
 		}
 		
@@ -451,7 +450,9 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		btnConsiderPositiveRelations.setSelection(considerPositiveRequirementsRelations);
 		btnConsiderPositiveRelations.setBounds(20, 46, 615, 16);
 		btnConsiderPositiveRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_UsedToVerify, "::")+">> relation");
-		
+//		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+//			btnConsiderPositiveRelations.setEnabled(false); 
+//		}
 		
 		
 		final Button btnConsiderNegativeRelations = new Button(grpOptions, SWT.CHECK);
@@ -469,7 +470,9 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		btnConsiderNegativeRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_DoNotUseToVerify, "::")+">> relation");
 		btnConsiderNegativeRelations.setBounds(20, 68, 615, 16);
 		btnConsiderNegativeRelations.setSelection(considerNegativeRequirementsRelations);
-		
+//		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+//			btnConsiderNegativeRelations.setEnabled(false); 
+//		}
 		
 		
 		final Button btnConsiderAllRequirements = new Button(grpOptions, SWT.CHECK);
@@ -487,6 +490,10 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		btnConsiderAllRequirements.setText("Consider all requirements with unknown relations to scenarios");
 		btnConsiderAllRequirements.setBounds(20, 90, 615, 16);
 		btnConsiderAllRequirements.setSelection(considerAllUnknownRequirementsRelations);
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+			btnConsiderAllRequirements.setEnabled(false); 
+		}
+		
 		
 		// set images for all buttons
 		updateButtonImages();
@@ -538,8 +545,8 @@ public class VeMGenerationOptionsDialog extends Dialog {
 							getSuperClass(),
 							isConsiderPositiveRequirementsRelations(), 
 							isConsiderNegativeRequirementsRelations(), 
-							isConsiderAllUnknownRequirementsRelations()
-							);
+							isConsiderAllUnknownRequirementsRelations(),
+							getMode());
 					
 					if (!smg.isTestSimulationModelGenerationCanceled()) {
 
@@ -657,73 +664,74 @@ public class VeMGenerationOptionsDialog extends Dialog {
         		EObject selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 
       			Button button = getActiveButton();
-      			
-        		if (button.equals(btnSystemModel)) {
-        			// Update data and button
-        			if (selectedElement instanceof Class && hasModelicaMLStereotype((Element) selectedElement)) {
-        				setSystemModel((Element) selectedElement);
-        				button.setSelection(false);
-        				updateButton(button);
-					}
-        			else {
-        				setSelectionHintMode(true, notValidString + "Only ModelicaML classes are allowed.");
-        			}
-				}
-        		else if (button.equals(btnTargetPackage)) {
-					// Update data and button 
-        			if (selectedElement instanceof Package) {
-        				setTargetPackge((Element) selectedElement);
-        				button.setSelection(false);
-        				updateButton(button);
-					}
-        			else {
-        				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
-        			}
-				}
-        		else if (button.equals(btnRequirementsPackage)) {
-					// Update data and button 
-        			if (selectedElement instanceof Package) {
-        				setRequirementsPackage((Element) selectedElement);
-        				button.setSelection(false);
-        				updateButton(button);
-					}
-        			else {
-        				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
-        			}
-				}
-        		else if (button.equals(btnScenariosPackage)) {
-					// Update data and button 
-        			if (selectedElement instanceof Package) {
-        				setScenariosPackage((Element) selectedElement);
-        				button.setSelection(false);
-        				updateButton(button);
-					}
-        			else {
-        				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
-        			}
-				}
-        		else if (button.equals(btnBindingsPackage)) {
-					// Update data and button 
-        			if (selectedElement instanceof Package) {
-        				setBindingsPackage((Element) selectedElement);
-        				button.setSelection(false);
-        				updateButton(button);
-					}
-        			else {
-        				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
-        			}
-				}
-        		else if (button.equals(btnSuperClass)) {
-        			// Update data and button
-        			if (selectedElement instanceof Class && hasModelicaMLStereotype((Element) selectedElement)) {
-						// Check ModelicaML Stereotype? 
-        				setSuperClass((Element) selectedElement);
-        				button.setSelection(false);
-        				updateButton(button);
-					}
-        			else {
-        				setSelectionHintMode(true, notValidString + "Only ModelicaML classes are allowed.");
-        			}
+      			if (button != null && !button.isDisposed()) {
+      				if (button.equals(btnSystemModel)) {
+            			// Update data and button
+            			if (selectedElement instanceof Class && hasModelicaMLStereotype((Element) selectedElement)) {
+            				setSystemModel((Element) selectedElement);
+            				button.setSelection(false);
+            				updateButton(button);
+    					}
+            			else {
+            				setSelectionHintMode(true, notValidString + "Only ModelicaML classes are allowed.");
+            			}
+    				}
+            		else if (button.equals(btnTargetPackage)) {
+    					// Update data and button 
+            			if (selectedElement instanceof Package) {
+            				setTargetPackge((Element) selectedElement);
+            				button.setSelection(false);
+            				updateButton(button);
+    					}
+            			else {
+            				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
+            			}
+    				}
+            		else if (button.equals(btnRequirementsPackage)) {
+    					// Update data and button 
+            			if (selectedElement instanceof Package) {
+            				setRequirementsPackage((Element) selectedElement);
+            				button.setSelection(false);
+            				updateButton(button);
+    					}
+            			else {
+            				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
+            			}
+    				}
+            		else if (button.equals(btnScenariosPackage)) {
+    					// Update data and button 
+            			if (selectedElement instanceof Package) {
+            				setScenariosPackage((Element) selectedElement);
+            				button.setSelection(false);
+            				updateButton(button);
+    					}
+            			else {
+            				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
+            			}
+    				}
+            		else if (button.equals(btnBindingsPackage)) {
+    					// Update data and button 
+            			if (selectedElement instanceof Package) {
+            				setBindingsPackage((Element) selectedElement);
+            				button.setSelection(false);
+            				updateButton(button);
+    					}
+            			else {
+            				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
+            			}
+    				}
+            		else if (button.equals(btnSuperClass)) {
+            			// Update data and button
+            			if (selectedElement instanceof Class && hasModelicaMLStereotype((Element) selectedElement)) {
+    						// Check ModelicaML Stereotype? 
+            				setSuperClass((Element) selectedElement);
+            				button.setSelection(false);
+            				updateButton(button);
+    					}
+            			else {
+            				setSelectionHintMode(true, notValidString + "Only ModelicaML classes are allowed.");
+            			}
+    				}
 				}
 			}
         	

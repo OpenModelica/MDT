@@ -182,10 +182,20 @@ public class ModelicaMLServices {
 		Comparator<Element> c = new Comparator<Element>() {
 			@Override
 			public int compare(Element arg0, Element arg1) {
-				if (arg0 instanceof NamedElement) {
-					return ((NamedElement)arg0).getName().compareToIgnoreCase( ((NamedElement)arg1).getName());
+				if (arg0 instanceof NamedElement && arg1 instanceof NamedElement) {
+					if (((NamedElement)arg0).getName() != null && ((NamedElement)arg1).getName() != null) {
+						return ((NamedElement)arg0).getName().compareToIgnoreCase( ((NamedElement)arg1).getName());
+					}
+					else {
+						return 0;
+					}
 				}
-				return arg0.toString().compareToIgnoreCase(arg1.toString());
+				if (arg0 != null && arg1 != null) {
+					return arg0.toString().compareToIgnoreCase(arg1.toString());
+				}
+				else{
+					return 0;
+				}
 			}
 		};
 		Collections.sort(listSorted, c);
@@ -475,7 +485,8 @@ public class ModelicaMLServices {
 
 					/*
 					 * http://docs.oracle.com/javase/1.4.2/docs/api/java/io/BufferedWriter.html
-					 * "In general, a Writer sends its output immediately to the underlying character or byte stream. Unless prompt output is required, it is advisable 
+					 * "In general, a Writer sends its output immediately to the underlying character or byte stream. 
+					 *  Unless prompt output is required, it is advisable 
 					 *  to wrap a BufferedWriter around any Writer whose write() operations may be costly, 
 					 *  such as FileWriters and OutputStreamWriters."
 					 *  

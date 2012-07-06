@@ -171,6 +171,10 @@ public class Constants {
 	public static final int MODE_ADD_MEDIATOR 						= 1;
 	public static final int MODE_ADD_PROVIDER 						= 2;
 	
+	// used for verification models generation or discovery of relations between scenarios and requirements
+	public final static int MODE_VEM_GENERATION = 3;
+	public final static int MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY = 4;
+	
 	// used by components tree plugin
 	public static final String inputsComponentName 			= "_inputs";
 	public static final String inputsClassName 				= "_Inputs";

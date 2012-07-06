@@ -1,7 +1,6 @@
 package org.openmodelica.modelicaml.helper.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,9 +34,10 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.helper.dialogs.SelectVerificationScenariosAndRequirementsDialog;
+import org.openmodelica.modelicaml.helper.dialogs.SelectedScenariosWithRequirementsDialog;
 
 public class VeMGeneratorScenariosBased extends Observable implements IRunnableWithProgress {
+	private int mode; 
 	
 	public VeMGeneratorScenariosBased(
 			HashSet<Element> sourceModels,
@@ -48,8 +48,8 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 			Element superClass,
 			boolean includeRequirementsWithPositiveRelations,
 			boolean includeRequirementsWithNegativeRelations,
-			boolean includeRequirementsWitnUnknownRelations
-			) {
+			boolean includeRequirementsWitnUnknownRelations,
+			int mode) {
 		
 		super();
 		
@@ -59,6 +59,8 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		this.testScenariosPackage = testScenariosPackage;
 		this.valueBindingsPackage = valueMediatorsPackage;
 		this.superClass = superClass;
+		
+		this.mode = mode;
 		
 		// options
 		this.includeRequirementsWithPositiveRelations = includeRequirementsWithPositiveRelations;
@@ -143,7 +145,6 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	
 	
 	
-	
 	public void generate(){
 		
 		if (sourceModels != null) {
@@ -221,13 +222,13 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				
 				// find all test scenarios
 				vsc = new VerificationScenariosCollector();
-				vsc.collectTestCasesFromPackage((Package) testScenariosPackage, true);
-				if (vsc.getAllTS().size() == 0) {
+				vsc.collectScenariosFromPackage((Package) testScenariosPackage, true);
+				if (vsc.getAllScenarios().size() == 0) {
 					String message = "INFO: No verification scenarios were found.";
 					addToLog(message);
 				}
 
-				for (Element testScenario : vsc.getAllTS() ) {
+				for (Element testScenario : vsc.getAllScenarios() ) {
 					if (testScenario instanceof Class) {
 						
 						Class scenarioToBeUsed = (Class) testScenario;
@@ -244,7 +245,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 						 * then this requirement is excluded from the <<UseToVerify>> (positive) list
 						 */
 						if (!includeRequirementsWithNegativeRelations) {
-//							reqWithPositiveRelations.removeAll(reqWithNegativeRelations);
+							reqWithPositiveRelations.removeAll(reqWithNegativeRelations);
 						}
 						
 						
@@ -324,7 +325,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 								requirementsToBeUsed,
 								(Package) valueBindingsPackage,
 								vsc.getAlwaysInclude(),
-								vsc.getModelToItsRequiredModels());
+								vsc.getModelToItsAdditionalModels());
 						
 						// add to map
 						scenarioToVerificationModelCombination.put(scenarioToBeUsed, tsmc);
@@ -370,7 +371,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		String errorMessage = "No scenarios were found that can be used to stimulate the model " +
 				"'"+((NamedElement)sourceModel).getName()+"'.";
 
-		if (vsc.getAllTS().size() > 0) {
+		if (vsc.getAllScenarios().size() > 0) {
 			if (testScenariosToBeInstantiated.size() > 0) {
 				// Create test simulation models
 				createSimulationModels(sourceModel);
@@ -397,7 +398,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 
 		Shell shell = getShell();
 
-		SelectVerificationScenariosAndRequirementsDialog dialog = new SelectVerificationScenariosAndRequirementsDialog(
+		SelectedScenariosWithRequirementsDialog dialog = new SelectedScenariosWithRequirementsDialog(
 				shell, 
 				testScenariosToBeInstantiated, 
 				testScenariosDiscarded, 
@@ -407,7 +408,10 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				vsc,
 				getLog(),
 				scenarioToVerificationModelCombination,
-				includeRequirementsWitnUnknownRelations);
+				includeRequirementsWithPositiveRelations,
+				includeRequirementsWithNegativeRelations,
+				includeRequirementsWitnUnknownRelations,
+				mode);
 		
 		dialog.open();
 		
@@ -446,7 +450,14 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				 * iterate over scenarios and generate for each valid combination a model
 				 */
 				for (Element testScenario : userSelectedTestScenariosSorted) {
-					if (testScenario instanceof Classifier) {
+					
+					boolean scenarioHasRequirements = false;
+					HashSet<Element> scenarioRequirements = userSelectedTestScenariosAndRequirements.get(testScenario);
+					if (scenarioRequirements != null && scenarioRequirements.size() > 0) {
+						scenarioHasRequirements = true;
+					}
+					
+					if (testScenario instanceof Classifier && scenarioHasRequirements) {
 						
 						// create the verification (simulation) model class
 						String simulationModelName = Constants.simModelsNamePrefix + ((NamedElement)testScenario).getName();
@@ -635,6 +646,9 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 						
 					}
 				}
+			}
+			else {
+				setTestSimulationModelGenerationCanceled(true); // indicate abort and stop here. 
 			}
 		}
 	}

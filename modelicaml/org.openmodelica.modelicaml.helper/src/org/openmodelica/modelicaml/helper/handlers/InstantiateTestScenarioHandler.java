@@ -106,12 +106,12 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 			tsc.collectScenariosFromModel(true);
 			
 			// if there are test scenarios at all -> open dialog
-			if (tsc.getAllTS().size() > 0 ) {
+			if (tsc.getAllScenarios().size() > 0 ) {
 				
 				Boolean calceled = false;
 				
 				// if there are selected requirements and there are no matched test scenarios for them -> ask user
-				if ( tsc.getSelectedReq()!= null &&  tsc.getSelectedReq().size() > 0 && tsc.getMatchedTS().size() == 0 ) {
+				if ( tsc.getSelectedReq()!= null &&  tsc.getSelectedReq().size() > 0 && tsc.getMatchedScenarios().size() == 0 ) {
 					// stop or continue based on user decision.
 					calceled = !MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Test scenarios search", "No test scenarios were found " +
 							"in '" + containingClass.getModel().getName()+ "' that can be used to test all the selected requirements." +
@@ -125,7 +125,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 					// get all requirements
 					EList<Element> allRequirements = ec.getElements();
 					// remove covered requirements
-					for (Element req: tsc.getReqToTS().keySet()) {
+					for (Element req: tsc.getReqToScenarios().keySet()) {
 						allRequirements.remove(req);
 					}
 					HashSet<Element> notCoveredRequirements = new HashSet<Element>();
@@ -134,11 +134,11 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 					InstantiateVerificationScenarioDialog dialog = new InstantiateVerificationScenarioDialog(
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 							containingClass, 
-							tsc.getAllTS(), 
-							tsc.getMatchedTS(),
-							tsc.getLinkedTS(),
-							tsc.getTsToReq(),
-							tsc.getReqToTS(),
+							tsc.getAllScenarios(), 
+							tsc.getMatchedScenarios(),
+							tsc.getLinkedScenarios(),
+							tsc.getScenarioToReq(),
+							tsc.getReqToScenarios(),
 							notCoveredRequirements,
 							selectedRequirements);
 					

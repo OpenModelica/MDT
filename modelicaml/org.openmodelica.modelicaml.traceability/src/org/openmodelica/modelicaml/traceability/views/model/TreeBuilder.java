@@ -215,19 +215,19 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 		// find all test scenarios
 		vsc = new VerificationScenariosCollector();
-		vsc.collectTestCasesFromPackage((Package) scenariosPackage, true);
-		if (vsc.getAllTS().size() == 0) {
+		vsc.collectScenariosFromPackage((Package) scenariosPackage, true);
+		if (vsc.getAllScenarios().size() == 0) {
 			String message = "INFO: No verification scenarios were found.";
 			addToLog(message);
 		}
 
-		for (Element scenario : vsc.getAllTS() ) {
+		for (Element scenario : vsc.getAllScenarios() ) {
 			if (scenario instanceof Class) {
 				
 				Class scenarioToBeUsed = (Class) scenario;
 
 				// get requirements
-				HashSet<Element> reqList = vsc.getTsToReq().get(scenarioToBeUsed);
+				HashSet<Element> reqList = vsc.getScenarioToReq().get(scenarioToBeUsed);
 				HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
 				
 				if (reqList != null) {
@@ -251,7 +251,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 						requirementsToBeUsed,
 						(Package) valueMediatorsPackage,
 						vsc.getAlwaysInclude(),
-						vsc.getModelToItsRequiredModels());
+						vsc.getModelToItsAdditionalModels());
 				
 				// add to map
 				scenarioToVerificationModelCombination.put(scenarioToBeUsed, tsmc);

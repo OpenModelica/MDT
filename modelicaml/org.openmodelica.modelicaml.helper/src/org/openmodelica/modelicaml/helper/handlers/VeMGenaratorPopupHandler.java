@@ -55,6 +55,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.helper.dialogs.VeMGenerationOptionsDialog;
 import org.openmodelica.modelicaml.helper.impl.VeMGeneratorScenariosBased;
 
@@ -71,7 +72,7 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 	boolean includeRequirementsWithNegativeRelations = false;
 	boolean includeRequirementsWitnUnknownRelations = false;
 	
-	protected int mode = VeMGenerationOptionsDialog.MODE_VEM_GENERATION;
+	protected int mode = Constants.MODE_VEM_GENERATION;
 	
 	// indicates if there was at at least one model for which bindings could not be generated 
 	private boolean bindingErrorsDetected = false;

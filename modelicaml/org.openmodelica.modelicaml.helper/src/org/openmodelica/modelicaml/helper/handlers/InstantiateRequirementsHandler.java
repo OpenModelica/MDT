@@ -59,6 +59,7 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
@@ -91,7 +92,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 				HashSet<Class> itemsFound = new HashSet<Class>();
 				
 				VerificationScenariosCollector tsc = new VerificationScenariosCollector();
-				for (Element element : tsc.collectRequirementsForTestCase(testCaseClass)) {
+				for (Element element : tsc.collectRequirementsForScenario(testCaseClass, Constants.stereotypeQName_UsedToVerify)) {
 					if (element instanceof Class) {
 						itemsFound.add((Class) element);
 					}
