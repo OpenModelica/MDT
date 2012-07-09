@@ -213,7 +213,7 @@ public class OMCProxy implements IModelicaCompiler
 	private  String getPathToObject()
 	{
 		String fileName = null;
-
+		String temp = System.getProperty("java.io.tmpdir");	
 		/* This mirrors the way OMC creates the object file. */		
 		switch (os)
 		{
@@ -224,12 +224,11 @@ public class OMCProxy implements IModelicaCompiler
 				username = "nobody";
 			}
 			if (corbaSession == null || corbaSession.equalsIgnoreCase(""))
-				fileName = "/tmp/openmodelica." + username + ".objid";
+				fileName = temp + "/openmodelica." + username + ".objid";
 			else
-				fileName = "/tmp/openmodelica." + username + ".objid" + "." +  corbaSession;
+				fileName = temp + "/openmodelica." + username + ".objid" + "." +  corbaSession;
 			break;
-		case WINDOWS:
-			String temp = System.getenv("TMP");			
+		case WINDOWS:	
 			if (corbaSession == null || corbaSession.equalsIgnoreCase(""))
 				fileName = temp + "\\openmodelica.objid";
 			else
