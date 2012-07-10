@@ -207,6 +207,12 @@ public class Constants {
 	
 	// simulation model generation
 	public final static String simModelsPackageNamePrefix = "GenVeMs for: ";
+
+	public final static String relationDiscoveryModelsPackageNamePrefix = "Temp_RelDiscovery using: ";
+	public final static String relationDiscoveryModelsNamePrefix = "Temp_RelDiscovery for: ";
+	public final static String relationDiscoveryDependeciesPackageName = "GenDiscoveredRelationsDependencies";
+
+	
 	public final static String simModelsNamePrefix = "VeM for: ";
 	public final static String systemModelPropertyNamePrefix = "sm_";
 	public final static String additionalModelPrefix = "add_";
@@ -251,6 +257,10 @@ public class Constants {
 	public final static String folderName_code_gen = "code-gen";
 	public final static String folderName_code_sync = "code-sync";
 	public final static String folderName_req_sync = "req-sync";
+	
+	public final static String folderName_relationsDiscovery = "relationsDiscovery-gen";
+	
+	public final static String fileName_relationsDiscovery = "relationsDiscovery-gen";
 	
 	// simulation
 	public final static String folderName_sim_gen = "sim-gen";

@@ -34,10 +34,9 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.helper.dialogs.SelectedScenariosWithRequirementsDialog;
+import org.openmodelica.modelicaml.helper.dialogs.SelectScenariosAndRequirementsDialog;
 
 public class VeMGeneratorScenariosBased extends Observable implements IRunnableWithProgress {
-	private int mode; 
 	
 	public VeMGeneratorScenariosBased(
 			HashSet<Element> sourceModels,
@@ -53,7 +52,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		
 		super();
 		
-		this.sourceModels = sourceModels;
+		this.systemModels = sourceModels;
 		this.targetPackage = targetPackage;
 		this.requirementsPackage = requirementsPackage;
 		this.testScenariosPackage = testScenariosPackage;
@@ -68,6 +67,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
 	}
 	
+	
 
 	public VeMGeneratorScenariosBased() {
 		super();
@@ -80,7 +80,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	private HashMap<Element, VeMScenarioReqCombinationsCreator> scenarioToVerificationModelCombination = new HashMap<Element, VeMScenarioReqCombinationsCreator>();
 
 	// the selected model to generate the simulation models for
-	private HashSet<Element> sourceModels = null;
+	private HashSet<Element> systemModels = null;
 
 	// the package for simulation models
 	private Element targetPackage = null;
@@ -143,11 +143,13 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	private boolean bindingErrorsDetected = false;
 	private HashSet<Element> modelsWithBindingErrors = new HashSet<Element>();
 	
+	// indicates if this generator is used for discovery of relations or verification models generation
+	private int mode;
 	
 	
 	public void generate(){
 		
-		if (sourceModels != null) {
+		if (systemModels != null) {
 
 			/* Collect all requirements in order to be able to determine 
 			 * which are not covered by simulation models.
@@ -160,7 +162,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 			 * instantiate all possible combinations of test scenarios and requirements that 
 			 * can be tested using the given test scenario.
 			 */
-			for (Element sourceModel : sourceModels) {
+			for (Element systemModel : systemModels) {
 				// clear all lists because the translation for each source model is individual.
 				clearAllLists();
 				
@@ -180,7 +182,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				}
 				
 				// generate simulation models for the source model 
-				generateSimulationModels(sourceModel);
+				generateSimulationModels(systemModel);
 
 			}
 		}
@@ -214,7 +216,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		monitorText1 = "Collecting data ...";
 		monitorText2 = "Analyzing combinations ...";
 		
-		for (Element sourceModel : this.sourceModels) {
+		for (Element sourceModel : this.systemModels) {
 			
 			if (sourceModel instanceof Class) {
 				
@@ -398,7 +400,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 
 		Shell shell = getShell();
 
-		SelectedScenariosWithRequirementsDialog dialog = new SelectedScenariosWithRequirementsDialog(
+		SelectScenariosAndRequirementsDialog dialog = new SelectScenariosAndRequirementsDialog(
 				shell, 
 				testScenariosToBeInstantiated, 
 				testScenariosDiscarded, 
@@ -432,6 +434,9 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				monitorText2 = "Creating models...";
 
 				String pkgName = Constants.simModelsPackageNamePrefix + ((NamedElement)sourceModel).getName();
+				if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+					pkgName = Constants.relationDiscoveryModelsPackageNamePrefix + ((NamedElement)sourceModel).getName();
+				}
 				String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
 				PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 			
@@ -461,6 +466,10 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 						
 						// create the verification (simulation) model class
 						String simulationModelName = Constants.simModelsNamePrefix + ((NamedElement)testScenario).getName();
+						if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							simulationModelName = Constants.relationDiscoveryModelsNamePrefix + ((NamedElement)testScenario).getName();
+						}
+
 						Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
 						
 						// create extends relation if specified
@@ -861,7 +870,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	// process time´is unknown
 	private boolean indeterminate = true; 
 	
-	private String progressMonitorTitle = "Test Simulation Models Generator ";
+	private String progressMonitorTitle = "Scenario-Based Models Generator ";
 	private String monitorText1 = "Collecting data ...";
 	private String monitorText2 = "Analyzing combinations ...";
 	
@@ -905,6 +914,11 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 
 	public HashSet<Element> getModelsWithBindingErrors() {
 		return modelsWithBindingErrors;
+	}
+	
+
+	public HashSet<Element> getSystemModels() {
+		return systemModels;
 	}
 
 }

@@ -61,7 +61,8 @@ import org.openmodelica.modelicaml.helper.impl.VeMGeneratorScenariosBased;
 
 public class VeMGenaratorPopupHandler extends AbstractHandler {
 
-	private EObject selectedElement = null;
+	protected EObject selectedElement = null;
+
 	private Element targetPackage;
 	private Element requirementsPackage; 
 	private Element testScenariosPackage; 
@@ -83,6 +84,10 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 	
 	protected void setSelectedSystemModel(){
 		selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+	}
+	
+	public EObject getSelectedSystemModel() {
+		return selectedElement;
 	}
 	
 	/* (non-Javadoc)

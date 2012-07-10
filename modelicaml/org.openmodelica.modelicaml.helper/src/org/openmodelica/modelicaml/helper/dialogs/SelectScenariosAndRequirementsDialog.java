@@ -43,7 +43,7 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.impl.VeMScenarioReqCombinationsCreator;
 import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
 
-public class SelectedScenariosWithRequirementsDialog extends TitleAreaDialog {
+public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 
 	// test scenarios that are appropriate for the system model
 	private HashSet<Element> preselectedTestScenarios;
@@ -116,7 +116,7 @@ public class SelectedScenariosWithRequirementsDialog extends TitleAreaDialog {
 	 * 
 	 * @param parentShell
 	 */
-	public SelectedScenariosWithRequirementsDialog(Shell parentShell,
+	public SelectScenariosAndRequirementsDialog(Shell parentShell,
 			HashSet<Element> selectedTestScenarios,
 			HashSet<Element> discardedTestScenarios,
 			HashSet<Element> selectedRequirements,
@@ -188,8 +188,8 @@ public class SelectedScenariosWithRequirementsDialog extends TitleAreaDialog {
 		// TAB: Pre-selected test scenarios
 		TabItem tbtmPreSelectedTestScenarios = new TabItem(tabFolder, SWT.NONE);
 //		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
-		String metricPreSelected = "(" + getScenariosWithRequirementsCount(tsc.getScenarioToReq()) + " of " +  tsc.getAllScenarios().size() + ")";
-		tbtmPreSelectedTestScenarios.setText(TAB_TITLE_Preselected_Scenarios + " " + metricPreSelected);
+//		String metricPreSelected = "(" + getScenariosWithRequirementsCount() + " of " +  tsc.getAllScenarios().size() + ")";
+		tbtmPreSelectedTestScenarios.setText(TAB_TITLE_Preselected_Scenarios + " " + getScenariosWithRequirementsCountString());
 		
 		final Tree treePreSelectedTestScenarios = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treePreSelectedTestScenarios, false);
@@ -577,32 +577,39 @@ public class SelectedScenariosWithRequirementsDialog extends TitleAreaDialog {
 	}
 	
 	private void createPkgTreeItems(Tree treeRoot, List<Element> pkgElements, boolean isPreSelected, boolean isDiscarded){
-		// create package nodes at the 1 level
-		for (Element pkg : pkgElements) {
+		
+		// create packages in Vem_GENERATION mode only if there are scenarios with scenarios 
+		if (tsc.getAllScenarios().size() > 0 && 
+				(	mode==Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY 
+					|| (mode == Constants.MODE_VEM_GENERATION && getScenariosWithRequirementsCount() > 0)) ) {
+			
+			// create package nodes at the 1 level
+			for (Element pkg : pkgElements) {
 
-			TreeItem pkgItem = new TreeItem(treeRoot, 0);
-			treeItems.add(pkgItem);
-			
-			TreeItemData data = new TreeItemData();
-			data.setIsPackage(true);
-			data.setIsDiscarded(isDiscarded);
-			data.setPackageElement(pkg);
+				TreeItem pkgItem = new TreeItem(treeRoot, 0);
+				treeItems.add(pkgItem);
+				
+				TreeItemData data = new TreeItemData();
+				data.setIsPackage(true);
+				data.setIsDiscarded(isDiscarded);
+				data.setPackageElement(pkg);
 
-			pkgItem.setData(data);
-			
-			// decorate the package image if isDiscarded
-			if (isDiscarded) {
-				pkgItem.setText(discardedPrefix + ((NamedElement)pkg).getName() + "  ("+((NamedElement)pkg).getQualifiedName()+")");
-				pkgItem.setImage(decorateWarning(ResourceManager
-						.getPluginImage("org.openmodelica.modelicaml.helper", "icons/Package.gif")));	
+				pkgItem.setData(data);
+				
+				// decorate the package image if isDiscarded
+				if (isDiscarded) {
+					pkgItem.setText(discardedPrefix + ((NamedElement)pkg).getName() + "  ("+((NamedElement)pkg).getQualifiedName()+")");
+					pkgItem.setImage(decorateWarning(ResourceManager
+							.getPluginImage("org.openmodelica.modelicaml.helper", "icons/Package.gif")));	
+				}
+				else{
+					pkgItem.setText(((NamedElement)pkg).getName() + "  ("+((NamedElement)pkg).getQualifiedName()+")");
+					pkgItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "icons/Package.gif"));
+				}
+				
+				// preselect
+				pkgItem.setChecked(isPreSelected);
 			}
-			else{
-				pkgItem.setText(((NamedElement)pkg).getName() + "  ("+((NamedElement)pkg).getQualifiedName()+")");
-				pkgItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "icons/Package.gif"));
-			}
-			
-			// preselect
-			pkgItem.setChecked(isPreSelected);
 		}
 	}
 	
@@ -639,23 +646,36 @@ public class SelectedScenariosWithRequirementsDialog extends TitleAreaDialog {
 	
 	
 	
-	private int getScenariosWithRequirementsCount(HashMap<Element, HashSet<Element>> scenariosWithRequirements){
+	private int getScenariosWithRequirementsCount(){
 		int count = 0;
-		if (scenariosWithRequirements != null && scenariosWithRequirements.keySet().size() > 0) {
-			for (Element scenario : scenariosWithRequirements.keySet()) {
-				HashSet<Element> requirements = scenariosWithRequirements.get(scenario);
+		
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+			count = selectedScenarios.size();
+		}
+		else if (mode == Constants.MODE_VEM_GENERATION) {
+			for (Element scenario : tsc.getScenarioToReq().keySet()) {
+				HashSet<Element> requirements = tsc.getScenarioToReq().get(scenario);
 				
-				if (this.mode == Constants.MODE_VEM_GENERATION) {
-					if (scenarioHasRequirements(requirements)) {
-						count ++;
-					}
-				}
-				else {
+				if (scenarioHasRequirements(requirements)) {
 					count ++;
 				}
 			}
 		}
 		return count;
+	}
+	
+	private String getScenariosWithRequirementsCountString(){
+		String string = "";
+		
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+			if (getScenariosWithRequirementsCount() == 0) {
+				// return nothing
+			}
+		}
+		else if (mode == Constants.MODE_VEM_GENERATION) {
+			string = "(" + getScenariosWithRequirementsCount() + " of " + tsc.getAllScenarios().size() + ")";
+		}
+		return string;
 	}
 	
 	
