@@ -15,7 +15,6 @@ public class ReadMatlab4 implements IResultsReader {
 	private int matrixTypes[] = { 51, 51, 51, 20, 0, 0 };
 	private byte binTrans = 1;
 	private int doublepresision = 0;
-	// private Map allInfo= new HashMap<String, Map<Double, Double>>();
 	private ModelicaMatVariable allInfo[];
 
 	private final String binTrans_char = "binTrans";
@@ -27,7 +26,6 @@ public class ReadMatlab4 implements IResultsReader {
 	private int nrows;
 	private int nvar;
 	private long var_offset;
-//	private double[][] vars;
 	private String path;
 
 	public ReadMatlab4(String path) throws Exception {
@@ -37,17 +35,11 @@ public class ReadMatlab4 implements IResultsReader {
 		int i = 0;
 
 		for (i = 0; i < matrixNames.length; i++) {
-			int nr = hdr.read(beraf); // fread(&hdr,sizeof(MHeader_t),1,reader->file);
+			int nr = hdr.read(beraf); 
 			int matrix_length, element_length;
-			// String name;
 			doublepresision = 1;
 			if (nr != 1)
 				throw new Exception("Corrupt header (1)");
-			/*
-			 * fprintf(stderr,
-			 * "Found matrix type=%04d mrows=%d ncols=%d imagf=%d namelen=%d\n",
-			 * hdr.type, hdr.mrows, hdr.ncols, hdr.imagf, hdr.namelen);
-			 */
 			if (hdr.type != matrixTypes[i]) {
 				if ((i > 3) && (hdr.type == 10))
 					doublepresision = 0;
@@ -60,13 +52,11 @@ public class ReadMatlab4 implements IResultsReader {
 				throw new Exception(
 						"Could not determine size of matrix elements");
 			byte name[] = new byte[hdr.namelen];
-			// nr = fread(name,hdr.namelen,1,reader->file);
 			nr = beraf.read(name);
 			if (nr != name.length)
 				throw new Exception("Corrupt header (2)");
 			if (name[hdr.namelen - 1] != 0)
 				throw new Exception("Corrupt header (3)");
-			/* fprintf(stderr, "  Name of matrix: %s\n", name); */
 			matrix_length = hdr.mrows * hdr.ncols * (1 + hdr.imagf) * element_length;
 			if ((new String(name)).equalsIgnoreCase(matrixNames[i]))
 				throw new Exception("Matrix name mismatch");
@@ -269,17 +259,14 @@ public class ReadMatlab4 implements IResultsReader {
 					 if (this.nrows < 2) 
 						 throw new Exception( "Too few rows in data_2 matrix");
 					 this.var_offset = beraf.getFilePointer();
-//					 this.vars = new double[this.nvar*2][hdr.mrows];
 					 beraf.seek(matrix_length+beraf.getFilePointer());
 				 }
 				 if (binTrans==0) {
-					 int k,j;
 					 this.nrows = hdr.mrows;
 					 this.nvar = hdr.ncols;
 					 if (this.nrows < 2) 
 						 throw new Exception("Too few rows in data_2 matrix");
 					 this.var_offset = beraf.getFilePointer();
-//					 this.vars = new double[this.nvar*2][hdr.mrows];
 					 beraf.seek(matrix_length+beraf.getFilePointer());
 				 }
 				 break;
@@ -320,6 +307,113 @@ public class ReadMatlab4 implements IResultsReader {
 			return -1;
 		}
 	}
+
+	public double val( String varName, double time) throws Exception {
+		int index = find_var(varName);
+		int varIndex = allInfo[index].index;
+		double res;
+		if (allInfo[index].isParam) {
+			if (varIndex < 0)
+				res = -params[Math.abs(varIndex) - 1];
+			else
+				res = params[varIndex - 1];
+		} else {
+			double[] times = read_vals(1);
+			if (time > stopTime())
+				throw new Exception("time > stoptime");
+			if (time < startTime())
+				throw new Exception("time < stoptime");
+			if (times.length == 0)
+				throw new Exception("no time values");;
+			int i1=0,i2=0;
+			double w1=0.0, w2=0.0, y1=0.0, y2=0.0;
+
+			// start find closest
+			int min = 0;
+			int max = nrows - 1;
+			int mid;
+			
+			do {
+				mid = min + (max - min) / 2;
+				if (time == times[mid]) {
+					/*
+					 * If we have events (multiple identical time stamps), use the
+					 * right limit
+					 */
+					while (mid < max && times[mid] == times[mid + 1])
+						mid++;
+					i1 = mid;
+					w1 = 1.0;
+					i2 = -1;
+					w2 = 0.0;
+					return read_single_val(varIndex,i1);
+				} else if (time > times[mid]) {
+					min = mid + 1;
+				} else {
+					max = mid - 1;
+				}
+			} while (max > min);
+			if (max == min) {
+				if(time != times[max]){
+					if (time > times[max])
+						max++;
+					else
+						min--;
+					i1 = max;
+					i2 = min;
+				}else{
+					i1 = max;
+					i2=-1;
+				}
+			}
+			// end find closest
+			if (i2 == -1) {
+				return read_single_val(varIndex,i1);
+			} else if (i1 == -1) {
+				return read_single_val(varIndex,i2);
+			} else {
+				w1 = (time - times[min]) / (times[max] - times[min]);
+				w2 = 1.0 - w1;
+				y1=read_single_val(varIndex,i1);
+				y2=read_single_val(varIndex,i2);
+				res = w1*y1 + w2*y2;
+			}
+		}
+		return res;
+	}
+
+	private double read_single_val( int varIndex, int timeIndex) throws IOException {
+		double res;
+		int absVarIndex = Math.abs(varIndex);
+		assert (absVarIndex > 0 && absVarIndex <= nvar);
+
+		if (binTrans == 1) {
+			if (doublepresision == 1) {
+				this.beraf.seek(var_offset + Double.SIZE / 8 *(timeIndex*nvar + absVarIndex-1));
+				res=beraf.readBEDouble();
+			} else {
+				this.beraf.seek(var_offset + Float.SIZE / 8 *(timeIndex*nvar + absVarIndex-1));
+				res = (double)beraf.readBEFloat();
+			}
+		}else{
+
+			if (doublepresision == 1) {
+				this.beraf.seek(var_offset + Double.SIZE / 8 * (absVarIndex - 1));
+				res = this.beraf.readBEDouble();
+				if (varIndex < 0)
+					res = -res;
+			} else {
+				this.beraf.seek(var_offset + Float.SIZE / 8 * (absVarIndex - 1));
+				res = (double) this.beraf.readBEFloat();
+				if (varIndex < 0)
+					res = -res;
+			}
+		}
+		if (varIndex < 0)
+			res = -(res);
+		return res;
+	}
+
 	public int getSize(){
 		return allInfo.length;
 	}
@@ -333,11 +427,11 @@ public class ReadMatlab4 implements IResultsReader {
 	private int find_var(String varName) {
 		ModelicaMatVariable key = new ModelicaMatVariable();
 		key.name = varName;
-		return allInfo[Arrays.binarySearch(allInfo, key)].index;
+		return Arrays.binarySearch(allInfo, key);
 	}
 
 	public double[] getValues(String name) throws Exception {
-		return read_vals(find_var(name));
+		return read_vals(allInfo[find_var(name)].index);
 	}
 	
 	public double[] read_vals(String name) throws Exception {
@@ -351,7 +445,7 @@ public class ReadMatlab4 implements IResultsReader {
 			}
 			return ret;
 		}else{
-			return read_vals(find_var(name));
+			return read_vals(allInfo[find_var(name)].index);
 		}
 	}
 
@@ -427,9 +521,6 @@ public class ReadMatlab4 implements IResultsReader {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		ReadMatlab4 input;
 		try {
@@ -446,15 +537,41 @@ public class ReadMatlab4 implements IResultsReader {
 //			double erg[]=input.read_vals("time");
 //			System.out.println("time -> "+Arrays.toString(erg));
 			
-			double erg[]=input.read_vals("req_003_0_max_level_of_liquid_in_tank.tankHeight");
-			System.out.println("req_003_0_max_level_of_liquid_in_tank.tankHeight -> "+Arrays.toString(erg));
-			
-			double erg2[]=input.read_vals("req_003_1_max_level_of_liquid_in_tank.tankHeight");
-			System.out.println("req_003_1_max_level_of_liquid_in_tank.tankHeight -> "+Arrays.toString(erg2));
+//			double erg[]=input.read_vals("req_003_0_max_level_of_liquid_in_tank.tankHeight");
+//			System.out.println("req_003_0_max_level_of_liquid_in_tank.tankHeight -> "+Arrays.toString(erg));
+//			
+//			double erg2[]=input.read_vals("req_003_1_max_level_of_liquid_in_tank.tankHeight");
+//			System.out.println("req_003_1_max_level_of_liquid_in_tank.tankHeight -> "+Arrays.toString(erg2));
+//
+//			double erg3[]=input.read_vals("time");
+//			System.out.println("time -> "+Arrays.toString(erg3));
+//			
+//			System.err.println("Both should be 2 all the time..!");
 
-			System.err.println("Both should be 2 all the time..!");
+//			double erg[]=input.read_vals("time");
+//			for (int i=0;i<erg.length-1;i++){
+//				System.out.println(erg[i]+ " = " + input.val( "time", erg[i]) );
+//			}
 			
-//			System.out.println("start: "+input.startTime()+" stop: " + input.stopTime());
+			double time[]=input.read_vals("time");
+			ArrayList<String> namen=input.getNames();
+			System.out.println("Time: "+Arrays.toString(time));
+			for(String n:namen){
+				double erg[]=input.read_vals(n);
+				System.out.print(n);
+				boolean ok=true;
+				for (int i=0;i<erg.length-1;i++){
+					if(erg[i]!=input.val( n, time[i])){
+						ok=false;
+//						System.out.print(i+ " ");
+					}
+				}
+				if(ok)
+					System.out.println(" OK");
+				else
+					System.out.println(" ERROR");
+			}
+			System.out.println("start: "+input.startTime()+" stop: " + input.stopTime());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
