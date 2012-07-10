@@ -102,8 +102,8 @@ public class ElementsCollector {
 		}
 		
 		// get all direct contents of the selected root element 
-//		Iterator<EObject> i = umlRootElement.eAllContents();
-		Iterator<EObject> i = umlRootElement.eResource().getAllContents();
+		Iterator<EObject> i = umlRootElement.eAllContents(); // only elements that are in the name space of this element 
+//		Iterator<EObject> i = umlRootElement.eResource().getAllContents(); // do not use this because this return all element in a .uml file
 
 		while (i.hasNext()) {
 			EObject object = i.next() ;

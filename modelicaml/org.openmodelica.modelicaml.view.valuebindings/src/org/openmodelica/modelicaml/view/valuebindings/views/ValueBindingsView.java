@@ -152,6 +152,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private Action actionValidate;
 
 	private Action actionShowRequiredClients;
+
+	private Action actionClear;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
@@ -411,6 +413,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(actionClear);
+		manager.add(new Separator());
 		manager.add(actionReload);
 		manager.add(new Separator());
 		manager.add(actionCollapseAll);
@@ -611,6 +615,26 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionReload.setText("(Re)load and validate");
 		actionReload.setToolTipText("(Re)load and validate");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/refresh.gif"));
+		
+		
+		
+		
+		actionClear = new Action("actionClear") {
+			public void run() {
+				// remove all tree items
+				TreeObject[] children = invisibleRoot.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					invisibleRoot.removeChild(children[i]);
+				}
+				
+				viewer.setInput(getViewSite());
+			}
+		};
+		actionClear.setText("Clear");
+		actionClear.setToolTipText("Clear");
+		actionClear.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
+		
+		
 		
 		
 		actionValidate = new Action("actionValidate") { //obviously a check box style
