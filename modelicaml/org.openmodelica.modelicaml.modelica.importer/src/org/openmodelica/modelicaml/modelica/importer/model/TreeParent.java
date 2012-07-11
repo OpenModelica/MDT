@@ -20,7 +20,7 @@ public class TreeParent extends TreeObject {
 		}
 		else {
 			String errorString = Utilities.extractErrorMessage(child.getName());
-			String msg = "OMC loading error for '"+getName()+"': " + errorString;
+			String msg = "OMC loading error for '" + getQName() + "': " + errorString;
 			Utilities.createOMCMarker(this, "error", msg);
 			
 			//TODO: for debug only, remove it.
