@@ -73,8 +73,12 @@ AbstractModelConstraint {
 					if(Utility.isElementHaveModelicaMLStereotypeApplied(element)){
 						return ctx.createSuccessStatus();
 					}
-
-					return ctx.createFailureStatus(new Object[] { "'"+element.eClass().getName()+"(s)' ('"+((NamedElement)element).getName()+"') cannot be a part of a Modelica package." });
+					if (element instanceof NamedElement) {
+						return ctx.createFailureStatus(new Object[] { "'"+element.eClass().getName()+"(s)' ('"+((NamedElement)element).getName()+"') cannot be a part of a Modelica package." });
+					}
+					else {
+						return ctx.createFailureStatus(new Object[] { "'"+element.eClass().getName()+"(s)' cannot be a part of a Modelica package." });
+					}
 				}
 				else if((element instanceof Property) && (element.getAppliedStereotype(Constants.stereotypeQName_Variable) != null)){
 					

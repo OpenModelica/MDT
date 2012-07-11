@@ -10,6 +10,7 @@ import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.validation.util.Utility;
@@ -45,7 +46,7 @@ public class C05_OpaqueBehaviorStereotypeConstraint extends
 		// In Batch mode
 		if(eType == EMFEventType.NULL){
 			
-			if( eObj instanceof OpaqueBehavior ){
+			if( eObj instanceof OpaqueBehavior && !(eObj instanceof FunctionBehavior)){
 
 				Element element = ((OpaqueBehavior) eObj).getOwner();
 				if( element instanceof Class ) {

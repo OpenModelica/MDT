@@ -497,7 +497,7 @@
                   lang="Java"
                   mode="Live"
                   name="C1_C2_NonSimilarNamesConstraint"
-                  severity="ERROR"
+                  severity="WARNING"
                   statusCode="1">
                <message>
                   C1 {0}
