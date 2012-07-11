@@ -721,10 +721,14 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				
 				String annotationString = "experiment(";
 				
-				if (startTime!= null) {annotationString = annotationString + "StartTime=" + startTime.toString() + ", "; }
-				if (stopTime!= null) {annotationString = annotationString + "StopTime=" + stopTime.toString() + ", "; }
+				if (startTime!= null && !((String)startTime).isEmpty()) {annotationString = annotationString + "StartTime=" + startTime.toString() + ", "; }
+				if (stopTime!= null && !((String)stopTime).isEmpty()) {annotationString = annotationString + "StopTime=" + stopTime.toString() + ", "; }
 				//if (numberOfIntervals!= null) {annotationString = annotationString + ", Output=" + numberOfIntervals.toString(); }
-				if (tolerance!= null) {annotationString = annotationString + "Tolerance=" + tolerance.toString(); }
+				if (tolerance!= null && !((String)tolerance).isEmpty()) {annotationString = annotationString + "Tolerance=" + tolerance.toString(); }
+				
+				if (annotationString.length() > 2 && annotationString.trim().endsWith(",")) {
+					annotationString = annotationString.substring(0, annotationString.length() - 2);
+				}
 				
 				annotationString = annotationString + ")";
 				annotationExperimentComment.setBody(annotationString);
