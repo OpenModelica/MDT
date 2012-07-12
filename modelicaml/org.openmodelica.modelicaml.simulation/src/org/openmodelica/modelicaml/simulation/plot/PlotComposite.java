@@ -90,8 +90,9 @@ public class PlotComposite extends org.eclipse.swt.widgets.Composite {
 			double[] time;
 			double[] values;
 			try {
-				time = reader.read_vals(timeName);
-				values = reader.read_vals(varPath);
+//				time = reader.read_vals(timeName);
+				time = reader.getTimeValues();
+				values = reader.getValues(varPath);
 
 				series = new XYSeries(varPath);
 				

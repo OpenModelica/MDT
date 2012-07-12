@@ -16,6 +16,7 @@ public class ReadMatlab4 implements IResultsReader {
 	private byte binTrans = 1;
 	private int doublepresision = 0;
 	private ModelicaMatVariable allInfo[];
+	private double[] times=null;
 
 	private final String binTrans_char = "binTrans";
 	private final String binNormal_char = "binNormal";
@@ -158,6 +159,7 @@ public class ReadMatlab4 implements IResultsReader {
 				 }
 			 case 3: { /* "dataInfo" */
 				 int k,j;
+//				 int paramcount=0, varcount=0;
 				 if (binTrans==1) {
 					 int dataInfo[][] = new int[hdr.ncols][hdr.mrows];
 					 for (k=0; k<hdr.ncols; k++) {
@@ -166,10 +168,13 @@ public class ReadMatlab4 implements IResultsReader {
 						 }
 				         if (j != dataInfo[k].length)
 							throw new Exception("Corrupt header: data_2 matrix");
-						 if(dataInfo[k][0] == 1)
+				         if(dataInfo[k][0] == 1){
 							 allInfo[k].isParam = true;
-						 else
+//							 paramcount++;
+						 }else{
 							 allInfo[k].isParam = false;
+//							 varcount++;
+						 }
 						 allInfo[k].index = dataInfo[k][1];
 //System.out.println(allInfo[k].index+"\t" +allInfo[k].name);
 					 }
@@ -182,16 +187,21 @@ public class ReadMatlab4 implements IResultsReader {
 						 for (j=0;j<hdr.ncols;j++){
 							 dataInfo[k][j]=beraf.readBEInt();
 						 }
+						 
 				         if (j != dataInfo.length)
 							throw new Exception("Corrupt header: data_2 matrix");
-						 if(dataInfo[k][0] == 1)
+						 if(dataInfo[k][0] == 1){
 							 allInfo[k].isParam = true;
-						 else
+//							 paramcount++;
+						 }else{
 							 allInfo[k].isParam = false;
+//							 varcount++;
+						 }
 						 allInfo[k].index = dataInfo[k][hdr.mrows];
 						 
 					 }
 				 }
+//				 System.out.println("Param="+paramcount+"\nVar="+varcount);
 				 /* Sort the variables so we can do faster lookup */
 				 Arrays.sort(this.allInfo);
 				 break;
@@ -318,7 +328,8 @@ public class ReadMatlab4 implements IResultsReader {
 			else
 				res = params[varIndex - 1];
 		} else {
-			double[] times = read_vals(1);
+			if(times==null)
+			times = read_vals(1);
 			if (time > stopTime())
 				throw new Exception("time > stoptime");
 			if (time < startTime())
@@ -389,21 +400,21 @@ public class ReadMatlab4 implements IResultsReader {
 
 		if (binTrans == 1) {
 			if (doublepresision == 1) {
-				this.beraf.seek(var_offset + Double.SIZE / 8 *(timeIndex*nvar + absVarIndex-1));
+				this.beraf.seek(var_offset + (Double.SIZE / 8) *(timeIndex*nvar + absVarIndex-1));
 				res=beraf.readBEDouble();
 			} else {
-				this.beraf.seek(var_offset + Float.SIZE / 8 *(timeIndex*nvar + absVarIndex-1));
+				this.beraf.seek(var_offset + (Float.SIZE / 8) *(timeIndex*nvar + absVarIndex-1));
 				res = (double)beraf.readBEFloat();
 			}
 		}else{
 
 			if (doublepresision == 1) {
-				this.beraf.seek(var_offset + Double.SIZE / 8 * (absVarIndex - 1));
+				this.beraf.seek(var_offset + (Double.SIZE / 8) * (absVarIndex - 1));
 				res = this.beraf.readBEDouble();
 				if (varIndex < 0)
 					res = -res;
 			} else {
-				this.beraf.seek(var_offset + Float.SIZE / 8 * (absVarIndex - 1));
+				this.beraf.seek(var_offset + (Float.SIZE / 8) * (absVarIndex - 1));
 				res = (double) this.beraf.readBEFloat();
 				if (varIndex < 0)
 					res = -res;
@@ -427,25 +438,34 @@ public class ReadMatlab4 implements IResultsReader {
 	private int find_var(String varName) {
 		ModelicaMatVariable key = new ModelicaMatVariable();
 		key.name = varName;
-		return Arrays.binarySearch(allInfo, key);
+		int ret = Arrays.binarySearch(allInfo, key);
+		if (ret >= 0){
+			return ret;
+		}else{
+			throw new RuntimeException("Value with name \""+ varName +"\" not found");
+		}
 	}
 
 	public double[] getValues(String name) throws Exception {
 		return read_vals(allInfo[find_var(name)].index);
 	}
 	
-	public double[] read_vals(String name) throws Exception {
+	private double[] read_vals(String name) throws Exception {
 		ModelicaMatVariable key = new ModelicaMatVariable();
 		key.name = name;
 		int allInfoIndex=Arrays.binarySearch(allInfo, key);
-		if (allInfo[allInfoIndex].isParam) {
-			double ret[] = new double[nrows];
-			for(int i=0;i<ret.length;i++){
-				ret[i]=params[Math.abs(allInfo[allInfoIndex].index)-1];
+		if(allInfoIndex >= 0){
+			if (allInfo[allInfoIndex].isParam) {
+				double ret[] = new double[nrows];
+				for(int i=0;i<ret.length;i++){
+					ret[i]=params[Math.abs(allInfo[allInfoIndex].index)-1];
+				}
+				return ret;
+			}else{
+				return read_vals(allInfo[find_var(name)].index);
 			}
-			return ret;
 		}else{
-			return read_vals(allInfo[find_var(name)].index);
+			throw new Exception("Value with name \""+ name +"\" not found");
 		}
 	}
 
@@ -458,14 +478,14 @@ public class ReadMatlab4 implements IResultsReader {
 			int i;
 			if (doublepresision == 1) {
 				for (i = 0; i < nrows; i++) {
-					this.beraf.seek(var_offset + Double.SIZE / 8 * (i * nvar + absVarIndex - 1));
+					this.beraf.seek(var_offset + (Double.SIZE / 8) * (i * nvar + absVarIndex - 1));
 					ret[i] = this.beraf.readBEDouble();
 					if (varIndex < 0)
 						ret[i] = -ret[i];
 				}
 			} else {
 				for (i = 0; i < nrows; i++) {
-					this.beraf.seek(var_offset + Float.SIZE / 8 * (i * nvar + absVarIndex - 1));
+					this.beraf.seek(var_offset + (Float.SIZE / 8) * (i * nvar + absVarIndex - 1));
 					ret[i] = this.beraf.readBEFloat();
 					if (varIndex < 0)
 						ret[i] = -ret[i];
@@ -475,14 +495,14 @@ public class ReadMatlab4 implements IResultsReader {
 		if (binTrans == 0) {
 			int i;
 			if (doublepresision == 1) {
-				this.beraf.seek(var_offset + Double.SIZE / 8 * (absVarIndex - 1));
+				this.beraf.seek(var_offset + (Double.SIZE / 8) * (absVarIndex - 1));
 				for (i = 0; i < nrows; i++) {
 					ret[i] = this.beraf.readBEDouble();
 					if (varIndex < 0)
 						ret[i] = -ret[i];
 				}
 			} else {
-				this.beraf.seek(var_offset + Float.SIZE / 8 * (absVarIndex - 1));
+				this.beraf.seek(var_offset + (Float.SIZE / 8) * (absVarIndex - 1));
 				for (i = 0; i < nrows; i++) {
 					ret[i] = this.beraf.readBEFloat();
 					if (varIndex < 0)
@@ -525,7 +545,9 @@ public class ReadMatlab4 implements IResultsReader {
 		ReadMatlab4 input;
 		try {
 //			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__TanksConnectedPI_1.VeM_for__Scenario__Change_of_input_flow_res.mat");
-			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__SystemEnvironment_1.VeM_for__Change_of_input_flow_res.mat");
+//			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__SystemEnvironment_1.VeM_for__Change_of_input_flow_res.mat");
+//			input = new ReadMatlab4("Change_of_input_flow.mat");
+			input = new ReadMatlab4("SRIN4_v3.SRI_v3.mat");
 
 //			input.print_all_vars();
 //			ArrayList<String> namen=input.getNames();
@@ -553,12 +575,12 @@ public class ReadMatlab4 implements IResultsReader {
 //				System.out.println(erg[i]+ " = " + input.val( "time", erg[i]) );
 //			}
 			
-			double time[]=input.read_vals("time");
-			ArrayList<String> namen=input.getNames();
+			double time[]=input.read_vals("Time");
 			System.out.println("Time: "+Arrays.toString(time));
+			ArrayList<String> namen=input.getNames();
 			for(String n:namen){
 				double erg[]=input.read_vals(n);
-				System.out.print(n);
+				System.out.print(n + " " + Arrays.toString(erg));
 				boolean ok=true;
 				for (int i=0;i<erg.length-1;i++){
 					if(erg[i]!=input.val( n, time[i])){
@@ -609,6 +631,12 @@ public class ReadMatlab4 implements IResultsReader {
 		}
 		@Override
 		public int compareTo(ModelicaMatVariable o) {
+//			/*
+//			 * The case when the time variable is called "time" or "Time"
+//			 */
+//			if (o.name.equalsIgnoreCase("time")) {
+//				return this.name.toLowerCase().compareTo(o.name.toLowerCase());
+//			}
 			return this.name.compareTo(o.name);
 		}
 	}
@@ -640,13 +668,13 @@ public class ReadMatlab4 implements IResultsReader {
 		        tmp[cnt] = readByte(); 
 		        cnt++; 
 		    } 
-		    long accum = 0; 
+		    int accum = 0; 
 		    i = 0; 
-		    for ( int shiftBy = 0; shiftBy < 64; shiftBy += 8 ) { 
+		    for ( int shiftBy = 0; shiftBy < Float.SIZE; shiftBy += 8 ) { 
 		        accum |= ( (long)( tmp[i] & 0xff ) ) << shiftBy; 
 		        i++; 
 		    } 
-			return (float) Double.longBitsToDouble(accum); 
+			return Float.intBitsToFloat(accum); 
 		}
 		public double readBEDouble() throws IOException {
 			int start=0;
@@ -659,7 +687,7 @@ public class ReadMatlab4 implements IResultsReader {
 		    } 
 		    long accum = 0; 
 		    i = 0; 
-		    for ( int shiftBy = 0; shiftBy < 64; shiftBy += 8 ) { 
+		    for ( int shiftBy = 0; shiftBy < Double.SIZE; shiftBy += 8 ) { 
 		        accum |= ( (long)( tmp[i] & 0xff ) ) << shiftBy; 
 		        i++; 
 		    } 
@@ -675,6 +703,13 @@ public class ReadMatlab4 implements IResultsReader {
 	@Override
 	public void releaseFile() throws IOException {
 		beraf.close();
+	}
+
+	@Override
+	public double[] getTimeValues() throws Exception {
+		if(times==null)
+			times = read_vals(1);
+		return times;
 	}
 	
 }
