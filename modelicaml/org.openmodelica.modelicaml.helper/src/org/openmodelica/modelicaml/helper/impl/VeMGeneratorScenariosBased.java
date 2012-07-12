@@ -236,10 +236,10 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 						Class scenarioToBeUsed = (Class) testScenario;
 
 						// get requirements according to the requirements selection options settings
-						// TODO: use the vsc.getTsToReq().get(scenarioToBeUsed) instead?
 						HashSet<Class> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UsedToVerify);
 						HashSet<Class> reqWithNegativeRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_DoNotUseToVerify);
-						HashSet<Element> reqAll = vsc.getAllRequirements();
+//						HashSet<Element> reqAll = vsc.getAllRequirements();
+						HashSet<Element> reqAll = getAllRequirements();
 
 						/*
 						 * NOTE: <<DoNotUseToVerify>> has higher priority, i.e. if there are <<UsedToVerify>> (positive) 

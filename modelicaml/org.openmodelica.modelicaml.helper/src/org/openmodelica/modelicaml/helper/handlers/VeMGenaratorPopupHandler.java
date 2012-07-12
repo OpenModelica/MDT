@@ -130,7 +130,7 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 				
 			}
 			else {
-				MessageDialog.openError(getShell(), "Packages Selection for Verification Models Generation",
+				MessageDialog.openError(getShell(), "Packages Selection for Models Generation",
 						"Cannot access the root model in Papyrus. Please try it again.");
 			}
 		}

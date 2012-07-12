@@ -624,12 +624,11 @@ public class VeMGenerationOptionsDialog extends Dialog {
 			protected void doExecute() {
 				try {
 					if (isScenariosBasedGeneration()) {
-						
 						// generate models
 						smg.generate();
 						new ProgressMonitorDialog(getShell()).run(true, true, smg);
-						
-						smg.notifyObservers();
+
+//						smg.notifyObservers();
 						// set the indication of there were errors during bindings generation
 //						setBindingErrorsDetected(smg.isBindingErrorsDetected());
 					}
@@ -637,7 +636,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 						rmg.generate();
 						new ProgressMonitorDialog(getShell()).run(true, true, rmg);
 						
-						rmg.notifyObservers();
+//						rmg.notifyObservers();
 						// set the indication of there were errors during bindings generation
 //						setBindingErrorsDetected(rmg.isBindingErrorsDetected());
 					}
