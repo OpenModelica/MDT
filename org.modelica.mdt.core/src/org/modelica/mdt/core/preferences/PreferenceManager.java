@@ -82,7 +82,8 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String CUSTOM_OMC_PATH = "CustomOmcPath";	
 	public static final String START_OMC = "StartOMC";
 	public static final String OMC_IGNORED_DIRECTORIES_AND_FILES = "OMCIgnoredDirectoriesAndFiles";
-	public static final String OMC_COMMAND_LINE_PARAMETERS = "OMCCommandLineParameters";	
+	public static final String OMC_COMMAND_LINE_PARAMETERS = "OMCCommandLineParameters";
+	public static final String OMC_LIBRARIES = "OMCLibraries";
 	
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
 	protected final static String EDITOR_MATCHING_BRACKETS_COLOR="matchingBracketsColor";
@@ -133,6 +134,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		store.setDefault(OMC_IGNORED_DIRECTORIES_AND_FILES, ignored);
 		
 		store.setDefault(OMC_COMMAND_LINE_PARAMETERS, "+g=MetaModelica");
+		store.setDefault(OMC_LIBRARIES, "Modelica");
 		
 		store.setDefault(EDITOR_MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB(192, 192, 192));		
@@ -202,6 +204,24 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static String[] getOMCCommandLineParametersArray()
 	{
 		String x = getStore().getString(OMC_COMMAND_LINE_PARAMETERS);
+		String splitAt = " ";
+		return x.split(splitAt);
+	}	
+	
+	/**
+	 * @return current setting for   
+	 */
+	public static String getOMCLibraries()
+	{
+		return getStore().getString(OMC_LIBRARIES);
+	}
+	
+	/**
+	 * @return current setting for   
+	 */
+	public static String[] getOMCLibrariesArray()
+	{
+		String x = getStore().getString(OMC_LIBRARIES);
 		String splitAt = " ";
 		return x.split(splitAt);
 	}	

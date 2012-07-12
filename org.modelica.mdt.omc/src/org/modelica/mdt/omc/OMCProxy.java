@@ -128,7 +128,7 @@ public class OMCProxy implements IModelicaCompiler
 
 
 	/* indicates if the Modelica System Library has been loaded */
-	private boolean systemLibraryLoaded = false;
+	private String[] omcLibraries = {};
 
 	private java.util.List<String> standardLibraryPackages = null;
 
@@ -1097,20 +1097,14 @@ public class OMCProxy implements IModelicaCompiler
 	 * the server
 	 */	
 	public String[] getStandardLibrary() throws ConnectException {
-		if (!systemLibraryLoaded) {
-			if (standardLibraryPackages == null) {
-				standardLibraryPackages = new ArrayList<String>();
-				standardLibraryPackages.add("Modelica"); 
+		String[] omcLibrariesFetch = PreferenceManager.getOMCLibrariesArray();
+		if (omcLibraries != omcLibrariesFetch ) {		
+			omcLibraries = omcLibrariesFetch;
+			for (int i=0;i<omcLibraries.length;i++) {
+				sendExpression("loadModel(" + omcLibraries[i] + ")", true);
 			}
-
-			sendExpression("loadModel(Modelica)", true);
-
-			systemLibraryLoaded = true;
 		}
-
-		String[] arr = standardLibraryPackages.toArray(new String[0]);
-
-		return arr;
+		return omcLibraries;
 	}
 
 	/**

@@ -75,6 +75,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 	private Text customOmcPath;
 	private Text omcIgnoreDirectoriesAndFiles;
 	private Text omcCommandLineParameters;
+	private Text omcLibraries;
 	
 	private Button browseButton;
 	
@@ -176,6 +177,27 @@ public class ModelicaPreferencePage	extends PreferencePage
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		omcCommandLineParameters.setLayoutData(data);		
 		
+		/*
+		 * OMC Libraries
+		 */	
+		/* dummy label for space */
+		new Label(parent, SWT.NONE);
+		group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("OMC libraries");		
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		group.setLayoutData(data);		
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		group.setLayout(layout);
+		
+		data = new GridData(GridData.FILL_HORIZONTAL);		
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalSpan = 1;		
+		omcLibraries = new Text(group, SWT.SINGLE | SWT.BORDER | SWT.LEFT);
+		omcLibraries.setText(PreferenceManager.getOMCLibraries());		
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		omcLibraries.setLayoutData(data);	
 		
 		/*
 		 * 'OMC path' group
@@ -316,6 +338,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		customOmcPath.setText(store.getDefaultString(PreferenceManager.CUSTOM_OMC_PATH));
 		omcIgnoreDirectoriesAndFiles.setText(store.getDefaultString(PreferenceManager.OMC_IGNORED_DIRECTORIES_AND_FILES));
 		omcCommandLineParameters.setText(store.getDefaultString(PreferenceManager.OMC_COMMAND_LINE_PARAMETERS));
+		omcLibraries.setText(store.getDefaultString(PreferenceManager.OMC_LIBRARIES));
 	}
 
 	
@@ -338,6 +361,8 @@ public class ModelicaPreferencePage	extends PreferencePage
 				omcIgnoreDirectoriesAndFiles.getText());
 		store.setValue(PreferenceManager.OMC_COMMAND_LINE_PARAMETERS,
 				omcCommandLineParameters.getText());
+		store.setValue(PreferenceManager.OMC_LIBRARIES,
+				omcLibraries.getText());
 		return true;
 	}
 }
