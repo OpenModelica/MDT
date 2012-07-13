@@ -228,7 +228,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 				// get requirements
 				HashSet<Element> reqList = vsc.getScenarioToReq().get(scenarioToBeUsed);
-				HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
+				HashSet<Element> requirementsToBeUsed = new HashSet<Element>();
 				
 				if (reqList != null) {
 					 for (Element req : reqList) {
@@ -265,7 +265,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 				}
 				
 				// add to selected or discarded requirements
-				HashSet<Class> requirements = tsmc.getRequirements();
+				HashSet<Element> requirements = tsmc.getRequirements();
 				for (Element requirement : requirements) {
 					addToMapList(reqToScenarios, requirement, scenario);
 					if (tsmc.getUnsatisfiedRequiredClients(requirement) != null) {
@@ -327,12 +327,12 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private void addRequirements(ScenarioItem scenarioItem){
 		// add requirements
 		VeMScenarioReqCombinationsCreator combination = scenarioToVerificationModelCombination.get(scenarioItem.getUmlElement());
-		HashSet<Class> requirements = combination.getRequirements();
+		HashSet<Element> requirements = combination.getRequirements();
 		
 		if (requirements != null && requirements.size() > 0) {
-			for (Class requirement : requirements) {
+			for (Element requirement : requirements) {
 				
-				RequirementItem requirementItem = new RequirementItem (getRequirementName(requirement));
+				RequirementItem requirementItem = new RequirementItem (getRequirementName((NamedElement) requirement));
 				requirementItem.setUmlElement(requirement);
 				treeItems.add(requirementItem);
 				
