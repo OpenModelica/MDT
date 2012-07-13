@@ -104,6 +104,12 @@ public class VeMGenerationOptionsDialog extends Dialog {
 			"This helper will create a package with models composed of the selected system model, scenario and requirements " +
 			"\r\nthat can be verified, then simulate them, and then analize results in order to determine relations between scenarios " +
 			"\r\nand requirements. Note, the composition of the verification models is based on value bindings which must to be defined correctly.";
+	
+	private String messageAutomaticScenarioBasedVerification = 
+			"This helper will create a package with models composed of the selected system model, scenarios and requirements " +
+			"\r\nthat can be verified, then simulate them, and then analize results. Note that requierements with positive " +
+			"\r\nrelations will be included only in corresponding scenarios. Requirements with negative relations will excluded from corresponding scenarios. " +
+			"\r\nNote, the composition of the verification models is based on value bindings which must to be defined correctly.";
 
 	
 	private String dialogMessage = "";
@@ -179,6 +185,14 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		else if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY){
 			dialogMessage = messageScenarioToReqRelationDiscovery;
 			
+			considerPositiveRequirementsRelations = true;
+			considerNegativeRequirementsRelations = true;
+			considerAllUnknownRequirementsRelations = true;
+		}
+		else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			dialogMessage = messageAutomaticScenarioBasedVerification;
+
+			// actually this does not matter here ...
 			considerPositiveRequirementsRelations = true;
 			considerNegativeRequirementsRelations = true;
 			considerAllUnknownRequirementsRelations = true;
@@ -412,7 +426,9 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		btnScenariosBased.setSelection(true);
 		btnScenariosBased.setBounds(10, 26, 625, 16);
 		btnScenariosBased.setText("Create models based on valid combinations of scenarios and requirements");
-		
+		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			btnScenariosBased.setEnabled(false);
+		}
 		
 		
 		final Button btnRequirementsBased = new Button(grpOptions, SWT.RADIO);
@@ -431,6 +447,9 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		btnRequirementsBased.setText("Create only one model containing the selected model and all possible requirements that can be verified");
 		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 			btnRequirementsBased.setEnabled(false); 
+		}
+		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			btnRequirementsBased.setEnabled(false);
 		}
 		
 		
@@ -453,6 +472,9 @@ public class VeMGenerationOptionsDialog extends Dialog {
 //		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 //			btnConsiderPositiveRelations.setEnabled(false); 
 //		}
+		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			btnConsiderPositiveRelations.setEnabled(false);
+		}
 		
 		
 		final Button btnConsiderNegativeRelations = new Button(grpOptions, SWT.CHECK);
@@ -473,7 +495,9 @@ public class VeMGenerationOptionsDialog extends Dialog {
 //		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 //			btnConsiderNegativeRelations.setEnabled(false); 
 //		}
-		
+		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			btnConsiderNegativeRelations.setEnabled(false); 
+		}
 		
 		final Button btnConsiderAllRequirements = new Button(grpOptions, SWT.CHECK);
 		btnConsiderAllRequirements.addSelectionListener(new SelectionAdapter() {
@@ -493,6 +517,9 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 			btnConsiderAllRequirements.setEnabled(false); 
 		}
+		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			btnConsiderAllRequirements.setEnabled(false); 
+		}
 		
 		
 		// set images for all buttons
@@ -504,7 +531,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	
 	@Override
 	protected void configureShell(Shell newShell) {
-		newShell.setMinimumSize(new Point(700, 500));
+		newShell.setMinimumSize(new Point(730, 500));
 		super.configureShell(newShell);
 //		super.configureShell(new Shell(getParentShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM));
 		
@@ -622,32 +649,43 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				try {
-					if (isScenariosBasedGeneration()) {
-						// generate models
-						smg.generate();
-						new ProgressMonitorDialog(getShell()).run(true, true, smg);
-
-//						smg.notifyObservers();
-						// set the indication of there were errors during bindings generation
-//						setBindingErrorsDetected(smg.isBindingErrorsDetected());
-					}
-					else if (isRequirementsBasedGeneration()) {
-						rmg.generate();
-						new ProgressMonitorDialog(getShell()).run(true, true, rmg);
-						
-//						rmg.notifyObservers();
-						// set the indication of there were errors during bindings generation
-//						setBindingErrorsDetected(rmg.isBindingErrorsDetected());
-					}
-					
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					MessageDialog.openError(getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
+				// TODO: implement the progress monitor correctly!  
+				
+				if (isScenariosBasedGeneration()) {
+					// generate models
+					smg.generate();
 				}
+				else if (isRequirementsBasedGeneration()) {
+					rmg.generate();
+				}
+				
+				
+//				try {
+//					if (isScenariosBasedGeneration()) {
+//						// generate models
+//						smg.generate();
+//						new ProgressMonitorDialog(getShell()).run(true, true, smg);
+//
+////						smg.notifyObservers();
+//						// set the indication of there were errors during bindings generation
+////						setBindingErrorsDetected(smg.isBindingErrorsDetected());
+//					}
+//					else if (isRequirementsBasedGeneration()) {
+//						rmg.generate();
+//						new ProgressMonitorDialog(getShell()).run(true, true, rmg);
+//						
+////						rmg.notifyObservers();
+//						// set the indication of there were errors during bindings generation
+////						setBindingErrorsDetected(rmg.isBindingErrorsDetected());
+//					}
+//					
+//				} catch (InvocationTargetException e) {
+//					e.printStackTrace();
+//					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//					MessageDialog.openError(getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
+//				}
 			}
 		};
 		cc.append(command);
@@ -800,10 +838,10 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	}
 	
 	private void setOKButtonEnablement(){
-		if (isValidSelection()) {
+		if (isValidSelection() && getButton(IDialogConstants.OK_ID) != null && !getButton(IDialogConstants.OK_ID).isDisposed()) {
 			getButton(IDialogConstants.OK_ID).setEnabled(true);
 		}
-		else {
+		else if (getButton(IDialogConstants.OK_ID) != null  && !getButton(IDialogConstants.OK_ID).isDisposed()) {
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 	}

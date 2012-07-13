@@ -36,6 +36,10 @@
             id="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations"
             name="Discover Scenarios to Requirements Relations Toolbar">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification"
+            name="Automatic Scenario-Based Verification">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -177,6 +181,10 @@
       <handler
             class="org.openmodelica.modelicaml.helper.handlers.ScenariosToRequirementsRelationsDiscoveryToolbarHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.AutomaticScenarioBasedVerificationToolbarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification">
       </handler>
    </extension>
 

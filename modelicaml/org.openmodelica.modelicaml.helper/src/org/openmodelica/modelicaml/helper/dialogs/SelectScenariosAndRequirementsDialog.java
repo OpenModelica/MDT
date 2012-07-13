@@ -244,7 +244,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		 * are referenced by scenarios with <<DoNotUseToVerify)>> and all that are not referenced 
 		 * by scenarios at all.  
 		 */
-		if (this.mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 			TabItem tbtmAllRequirements = new TabItem(tabFolder, SWT.NONE);
 			tbtmAllRequirements.setText(TAB_TITLE_Requirements + " " + " ("+requirements.size()+")");
 			
@@ -306,7 +306,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 								addToTestScenarioToRequirementsMap(data.getTestScenarioElement(), data.getRequirementElement());
 							}
 
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION ) {
 								// for DISCOVERY MODE ONLY
 								selectedRequirements.add(data.getRequirementElement());
 							}
@@ -323,7 +323,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 								selectedScenariosWithRequirements.put(data.getTestScenarioElement(), new HashSet<Element>());
 							}
 							
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION ) {
 								// for DISCOVERY MODE ONLY
 								selectedScenarios.add(data.getTestScenarioElement());
 							}
@@ -399,7 +399,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 								}
 							}
 							
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION ) {
 								// for DISCOVERY MODE ONLY
 								selectedRequirements.remove(data.getRequirementElement());
 							}
@@ -417,7 +417,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 								selectedScenariosWithRequirements.remove(data.getTestScenarioElement());
 							}
 							
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION ) {
 								// for DISCOVERY MODE ONLY
 								selectedScenarios.remove(data.getTestScenarioElement());
 							}
@@ -580,7 +580,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		
 		// create packages in Vem_GENERATION mode only if there are scenarios with scenarios 
 		if (tsc.getAllScenarios().size() > 0 && 
-				(	mode==Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY 
+				(	mode==Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION
 					|| (mode == Constants.MODE_VEM_GENERATION && getScenariosWithRequirementsCount() > 0)) ) {
 			
 			// create package nodes at the 1 level
@@ -649,7 +649,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	private int getScenariosWithRequirementsCount(){
 		int count = 0;
 		
-		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION ) {
 			count = selectedScenarios.size();
 		}
 		else if (mode == Constants.MODE_VEM_GENERATION) {
@@ -667,7 +667,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	private String getScenariosWithRequirementsCountString(){
 		String string = "";
 		
-		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION ) {
 			if (getScenariosWithRequirementsCount() == 0) {
 				// return nothing
 			}
@@ -713,7 +713,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 				selectedScenariosWithRequirements.put(testScenario, new HashSet<Element>());
 			}
 			
-			if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+			if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 				// for DISCOVERY MODE
 				selectedScenarios.add(testScenario);
 			}
@@ -790,7 +790,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 
 	private void createRequirementTreeItem(TreeItem parentItem, Element req){
 		
-		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 		
 			String prefix = requirementNamePrefix;
 			TreeItem reqItem = new TreeItem(parentItem, 0);
@@ -933,7 +933,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		return string;
 	}
 	
-	private String getRequirementsString(String prefix, HashSet<Class> set, VeMScenarioReqCombinationsCreator tsmc){
+	private String getRequirementsString(String prefix, HashSet<Element> set, VeMScenarioReqCombinationsCreator tsmc){
 		String string  = "";
 		HashSet<Element> tempSet = new HashSet<Element>();
 		for (Element element : set) {
@@ -1024,7 +1024,12 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	// Utls ************************************************************************ 
 
 	private void clearAllLists(){
+		
+		// clear all lists for a new run
 		selectedScenariosWithRequirements.clear();
+		selectedRequirements.clear();
+		selectedScenarios.clear();
+		
 		treeItems.clear();
 	}
 	
@@ -1103,7 +1108,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 							if (mode == Constants.MODE_VEM_GENERATION) {
 								addToTestScenarioToRequirementsMap(testScenarioElement, reqElement);
 							}
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 								// for DISCOVERY MODE
 								selectedRequirements.add(data.getRequirementElement());
 							}
@@ -1113,7 +1118,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 								removeFromTestScenarioToRequirementsMap(testScenarioElement, reqElement);
 //								System.err.println("remove requirement from map.");
 							}
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 								// for DISCOVERY MODE
 								selectedRequirements.remove(data.getRequirementElement());
 							}
@@ -1139,7 +1144,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 								}
 							}
 							
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 								// for DISCOVERY MODE
 								selectedScenarios.add(data.getTestScenarioElement());
 							}
@@ -1151,7 +1156,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 //								System.err.println("remove test scenario from map");	
 							}
 							
-							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+							if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 								// for DISCOVERY MODE
 								selectedScenarios.remove(data.getTestScenarioElement());
 							}
@@ -1183,8 +1188,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 									}
 								}
 								
-								if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
-									// for DISCOVERY MODE
+								if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 									selectedScenarios.add(data.getTestScenarioElement());
 								}
 							}
@@ -1200,9 +1204,8 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 									selectedScenariosWithRequirements.remove(tsData.getTestScenarioElement());
 								}
 								
-								if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
-									// for DISCOVERY MODE
-									selectedScenarios.remove(data.getTestScenarioElement());
+								if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+									selectedScenarios.remove(tsData.getTestScenarioElement());
 								}
 							}
 						}
@@ -1275,7 +1278,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	public HashMap<Element, HashSet<Element>> getSelectedTestScenariosWithRequirements() {
 		
 		// MODE: DISCOVERY of relation between scenarios and requirements 
-		if (this.mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+		if (this.mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 			HashMap<Element, HashSet<Element>> selectedScenariosWithAllRequirements = new HashMap<Element, HashSet<Element>>();
 			if (selectedRequirements.size() > 0) {
 				// selected scenarios

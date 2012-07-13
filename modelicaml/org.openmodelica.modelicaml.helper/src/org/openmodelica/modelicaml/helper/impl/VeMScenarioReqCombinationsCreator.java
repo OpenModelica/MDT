@@ -51,7 +51,7 @@ public class VeMScenarioReqCombinationsCreator {
 	/*
 	 * A set of requirements to be verified
 	 */
-	private HashSet<Class> requirements = new HashSet<Class>();
+	private HashSet<Element> requirements = new HashSet<Element>();
 
 	/*
 	 * All models that are required in addition based on the given set of requirements to be verified.
@@ -105,7 +105,7 @@ public class VeMScenarioReqCombinationsCreator {
 	
 	public VeMScenarioReqCombinationsCreator(Class systemModel, 
 			Class testScenario, 
-			HashSet<Class> requirements,
+			HashSet<Element> requirements,
 			Package valueMediatorsPackage,
 			HashSet<Element> allAlwaysIncludeFound,
 			HashMap<Element, HashSet<Element>> allModelsAndTheirRequiredModelsFound){
@@ -133,7 +133,7 @@ public class VeMScenarioReqCombinationsCreator {
 		requiredModels_systemModel.addAll(findAdditionModels(systemModel));
 		requiredModels_testScenario.addAll(findAdditionModels(testScenario));
 		
-		for (Class requirement : requirements) {
+		for (Element requirement : requirements) {
 			requiredModels_requirements.put(requirement, findAdditionModels(requirement));
 		}
 
@@ -154,15 +154,15 @@ public class VeMScenarioReqCombinationsCreator {
 	}
 	
 	
-	private HashSet<Element> findAdditionModels(Class sourceElement){
+	private HashSet<Element> findAdditionModels(Element sourceElement){
 		
 		HashSet<Element> collectedAdditionalModels = new HashSet<Element>();
 		
 		// if this model was not yet considered
-		if (!alreadyConsideredForAdditionalModelsSearch.contains(sourceElement)) {
+		if (!alreadyConsideredForAdditionalModelsSearch.contains(sourceElement) && sourceElement instanceof Class) {
 			
 			//Instantiate the source model in order to collect all classes that are used in its instance tree
-			ClassInstantiation ci_sourceModel = new ClassInstantiation(sourceElement, true);	
+			ClassInstantiation ci_sourceModel = new ClassInstantiation((Class) sourceElement, true);	
 			HashSet<Element> allModelsInInstantiationTree = new HashSet<Element>();
 			ci_sourceModel.createTree();
 			
@@ -651,12 +651,12 @@ public class VeMScenarioReqCombinationsCreator {
 	}
 
 
-	public HashSet<Class> getRequirements() {
+	public HashSet<Element> getRequirements() {
 		return requirements;
 	}
 
 
-	public void setRequirements(HashSet<Class> requirements) {
+	public void setRequirements(HashSet<Element> requirements) {
 		this.requirements = requirements;
 	}
 	

@@ -56,7 +56,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	
 	private HashMap<Element,String> simulationResultsFile = new HashMap<Element,String>();
 	
-	private GeneratedModelsData gmd;
+	protected GeneratedModelsData gmd;
 	
 	private Job simulationJob;
 	private JobChangeAdapter simulationJobChangeAdaptor = new JobChangeAdapter() {
@@ -67,6 +67,8 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	            	}
 	            }
 	         };
+
+	private String log;
 	
 	@Override
 	protected void openDialog() {
@@ -74,8 +76,12 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		super.openDialog();
 	}
 	
+	protected void openDialog(int mode) {
+		super.setMode(mode);
+		super.openDialog();
+	}
 	
-	private void openReport(){
+	protected void openReport(){
  		// Use this to open a Shell in the UI thread
  		Display.getDefault().asyncExec(new Runnable() {
  			public void run() {
@@ -205,18 +211,23 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 								
 								// add only new dependencies
 								for (TreeObject scenario : scenarios) {
+
+									// new POSITIVE relation
 									if (gmd.isNewRelation(scenario, requirement, Constants.stereotypeQName_UsedToVerify)) {
-
 										gmd.addToPositiveRelations(scenario, requirement);
-										
-										if (violated) {
-											// add to scenario to violated requirements map
-											gmd.addToMapList(gmd.getScenarioToViolatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
-										}
 
-										// add to scenario to evaluated requirements map
-										gmd.addToMapList(gmd.getScenarioToEvaluatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
+										// add to new relations between scenario UML element and requirement UML Element
+										gmd.addToMapList(gmd.getScenarioWithNewPositiveRelationsToRequirements(), scenario.getComponentType(), requirement.getComponentType());
 									}
+									
+									// add to scenario to requirement evaluation data
+									if (violated) {
+										// add to scenario to violated requirements map
+										gmd.addToMapList(gmd.getScenarioToViolatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
+									}
+
+									// add to scenario to evaluated requirements map
+									gmd.addToMapList(gmd.getScenarioToEvaluatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
 								}
 							}
 							
@@ -224,12 +235,17 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 							else { 
 								// add only new dependencies
 								for (TreeObject scenario : scenarios) {
+									
+									// new NEGATIVE relation
 									if (gmd.isNewRelation(scenario, requirement, Constants.stereotypeQName_DoNotUseToVerify)) {
 										gmd.addToNegativeRelations(scenario, requirement);
 										
-										// add to scenario to NOT evaluated requirements map
-										gmd.addToMapList(gmd.getScenarioToNotEvaluatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
+										// add to new relations between scenario UML element and requirement UML Element
+										gmd.addToMapList(gmd.getScenarioWithNewNegativeRelationsToRequirements(), scenario.getComponentType(), requirement.getComponentType());
 									}
+									
+									// add to scenario to NOT evaluated requirements map
+									gmd.addToMapList(gmd.getScenarioToNotEvaluatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
 								}
 							}
 							
@@ -251,24 +267,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		
 	}
 	
-		
-//	private boolean isNewRelation(TreeObject scenarioItem, TreeObject requirementItem, String dependencyStereotypeQName){
-//		
-//		Element scenario = scenarioItem.getComponentType();
-//		Element requirement = requirementItem.getComponentType();
-//		
-//		EList<Dependency> depList = ((Class)scenario).getClientDependencies();
-//		for (Dependency dependency : depList) {
-//			if (dependency.getAppliedStereotype(dependencyStereotypeQName) != null )  {
-//				EList<Element> targets = dependency.getTargets();
-//				if (targets.contains(requirement)) {
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
-	
+
 	private static Boolean checkHadAtLeastOnceValue(double[] values, String value){
 		/*
 		 * We assume that it never had the value until we prove the opposite.
@@ -295,6 +294,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			simulationResultsFolderPath = simulationResultsFolderPath.replace('\\', '/');
 		}
 
+		
 		//clear compiler
 		omcc.clear();
 		
@@ -304,7 +304,9 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		// if selected, load the standard library in advance
 		if (loadMSL) {
 			String reply = omcc.loadModel(Constants.actionLanguageName);
-			System.err.println(reply);
+			String message = "Loading MSL: " + reply;
+			System.err.println(message);
+			addToLog(message);
 		}
 		
 		// load code into compiler
@@ -313,6 +315,10 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_gen));
 		for (String string : filesToLoad) {
 			String reply = omcc.loadFile(string);
+			String message = "Loading models: " + filesToLoad.toString() + " \n reply: " + reply;
+			
+			System.err.println(message);
+			addToLog(message);
 		}
 		
 		// simulate each model
@@ -331,13 +337,18 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			 * This is necessary in case the same models should be simulated and the new simulation fails.
 			 * Old files needs to be deleted so that the simulation results will not get confused with older simulations.
 			 */
-			monitor.beginTask("Deleting old files for '" + modelQName + "'", 100);
+			String message = "Deleting old files for '" + modelQName + "'";
+			monitor.beginTask(message, 100);
+			addToLog(message);
+			
 			List<String> filesToBeDeleted = new ArrayList<String>();
 			filesToBeDeleted.add(modelQName + "_res.mat");
-			IStatus status = ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
-
+			ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
+			
 			// simulate
-			monitor.subTask("Simulating '" + modelQName + "'");
+			message = "Simulating '" + modelQName + "'";
+			monitor.subTask(message);
+			addToLog(message);
 			simulateModel((NamedElement) genModel, omcc);
 			
 			// Check if the simulation results are available
@@ -354,9 +365,12 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 //				simulationResultsFile.add(simulationResultsFolderPath + "/" + newMatFileInfo.toString());
 				String resultsFilePath = simulationResultsFolderPath + "/" + newMatFileInfo.toString();
 				simulationResultsFile.put(genModel, resultsFilePath);
+				
+				addToLog("'"+modelQName+"' was simulated.");
 			}
 			else {
 				simulationFailedList.add(modelQName);
+				addToLog("'"+modelQName+"' was NOT simulated.");
 			}	
 		}
 	}
@@ -473,39 +487,66 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	}
 	
 	
+	private void addToLog(String msg){
+//		this.log = this.log + "\n" + msg;
+		this.log = this.log + msg + "\n";
+	}
 	
 	
+	
+	
+	
+	
+	
+	
+	/*
+	 * TODO: re-factor this. Create "SimulatedModelsData" in order to separate the data that is filled before
+	 * and after simulation and simulation results post-processing 
+	 */
 	public class GeneratedModelsData{
 		
 		private HashSet<Element> systemModels;
 		private HashSet<Element> generatedPackages;
 		private HashSet<Element> generatedModels;
 		
+		// generated model to its contained scenarios
 		private HashMap<Element, HashSet<TreeObject>> modelToScenarios = new HashMap<Element, HashSet<TreeObject>>();
+		// generated model to its contained requirements
 		private HashMap<Element, HashSet<TreeObject>> modelToRequirements = new HashMap<Element, HashSet<TreeObject>>();
+	
+		public final String requirementStatusPropertyName = "status";
+		public final static String delimiter = "@-->";
+
 		
-		// model name + delimiter + variable dot path
+		/*
+		 * The rest of the data structure below is filled after simulation 
+		 * and results evaluation (i.e. post-processing of simulation result files)
+		 */
+
+		// for each set the strings are: simulation model qualified name + delimiter + variable dot path
 		private HashSet<String> evaluatedRequirements = new HashSet<String>();
 		private HashSet<String> violatedRequirements = new HashSet<String>();
 		private HashSet<String> notViolatedRequirements = new HashSet<String>();
 
 		// list of model qualified names that could not be simulated (determined by the fact if there is a simulation results file or not)
-		private List<String> simulationFailedList;
+		private List<String> simulationFailedList = new ArrayList<String>();
 		
 		// maps with scenarios and their requirements
 		private HashMap<Element, HashSet<Element>> scenarioToEvaluatedRequirements = new HashMap<Element, HashSet<Element>>();
 		private HashMap<Element, HashSet<Element>> scenarioToViolatedRequirements = new HashMap<Element, HashSet<Element>>();
 		private HashMap<Element, HashSet<Element>> scenarioToNotEvaluatedRequirements = new HashMap<Element, HashSet<Element>>();
 
+		
+		private HashMap<Element, HashSet<Element>> scenarioWithNewPositiveRelationsToRequirements = new HashMap<Element, HashSet<Element>>();
+		private HashMap<Element, HashSet<Element>> scenarioWithNewNegativeRelationsToRequirements = new HashMap<Element, HashSet<Element>>();
+
+		
 		// positive scenario to requirements relations, i.e., scenario was used to stimulate the system mode and lead to an evaluation of the requirements
 		private HashMap<TreeObject, HashSet<TreeObject>> newPositiveRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
 
 		// negative scenario to requirements relations, i.e., scenario was used to stimulate the system mode and did NOT lead to an evaluation of the requirements
 		private HashMap<TreeObject, HashSet<TreeObject>> newNegativeRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
 		
-		
-		public final String requirementStatusPropertyName = "status";
-		public final static String delimiter = "@-->";
 		
 		
 		public GeneratedModelsData(HashSet<Element> generatedPackages) {
@@ -619,15 +660,6 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			return "";
 		}
 		
-		// Getters
-		public HashSet<Element> getGeneratedModels() {
-			return generatedModels;
-		}
-		
-		public HashSet<TreeObject> getScenarios(Element simModel){
-			return modelToScenarios.get(simModel);
-		}
-		
 		public HashSet<Element> getAllScenarios(){
 			HashSet<Element> scenarios = new HashSet<Element>();
 			
@@ -646,32 +678,170 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		}
 		
 		
-		public HashSet<Element> getRequirements(Element scenario, boolean isPositiveRelation){
-			
-			if (isPositiveRelation) {
-				
-				/*
-				 * Note that evaluated requirements lists contains both: Violated and not violated requirements.
-				 */
-				HashSet<Element> requirementsEvaluated = getScenarioToEvaluatedRequirements().get(scenario);
-				
-				HashSet<Element> impactedRequirementsList = new HashSet<Element>();
-				if (requirementsEvaluated!= null) {
-					impactedRequirementsList.addAll(requirementsEvaluated);
-				}
-				
-				return impactedRequirementsList;
-			}
-			else {
-				HashSet<Element> requirementsNotEvaluated = getScenarioToNotEvaluatedRequirements().get(scenario);
-				HashSet<Element> notImpactedRequirementsList = new HashSet<Element>();
-				if (requirementsNotEvaluated!= null) {
-					notImpactedRequirementsList.addAll(requirementsNotEvaluated);
-				}
-				return notImpactedRequirementsList;
-			}
-		}
+		
+		
+		/*
+		 * After simulation
+		 */
+//		public HashSet<Element> getAnalizedRequirements(Element scenario, boolean isPositiveRelation){
+//			
+//			if (isPositiveRelation) {
+//				
+//				/*
+//				 * Note that evaluated requirements lists contains both: Violated and not violated requirements.
+//				 */
+//				HashSet<Element> requirementsEvaluated = getScenarioToEvaluatedRequirements().get(scenario);
+//				
+//				HashSet<Element> impactedRequirementsList = new HashSet<Element>();
+//				if (requirementsEvaluated!= null) {
+//					impactedRequirementsList.addAll(requirementsEvaluated);
+//				}
+//				
+//				return impactedRequirementsList;
+//			}
+//			
+//			// negative relations
+//			else {
+//				HashSet<Element> requirementsNotEvaluated = getScenarioToNotEvaluatedRequirements().get(scenario);
+//				HashSet<Element> notImpactedRequirementsList = new HashSet<Element>();
+//				if (requirementsNotEvaluated!= null) {
+//					notImpactedRequirementsList.addAll(requirementsNotEvaluated);
+//				}
+//				return notImpactedRequirementsList;
+//			}
+//		}
 
+		public HashSet<Element> getScenariosWithViolatedRequirements(){
+			HashSet<Element> allScenarios = getAllScenarios();
+			HashSet<Element> scenariosWithViolatedRequirements = new HashSet<Element>();
+			for (Element scenario : allScenarios) {
+				if (getScenarioToViolatedRequirements().get(scenario) != null) {
+					scenariosWithViolatedRequirements.add(scenario);
+				}
+			}
+			return scenariosWithViolatedRequirements;
+		}
+		
+		
+		public HashSet<Element> getScenariosWithNotViolatedRequirements(){
+			HashSet<Element> allScenarios = getAllScenarios();
+			HashSet<Element> scenariosWithNotViolatedRequirements = new HashSet<Element>();
+			for (Element scenario : allScenarios) {
+				HashSet<Element> evaluatedRequirements = getScenarioToEvaluatedRequirements().get(scenario);
+				HashSet<Element> violatedRequirements = getScenarioToViolatedRequirements().get(scenario);
+				
+				if (evaluatedRequirements != null) {
+					
+					// remove all violated requirements to get all that were evaluated and not violated
+					if (violatedRequirements != null) {
+						evaluatedRequirements.removeAll(violatedRequirements);
+					}
+				}
+				
+				if (getScenarioToViolatedRequirements().get(scenario) != null) {
+					scenariosWithNotViolatedRequirements.add(scenario);
+				}
+			}
+			return scenariosWithNotViolatedRequirements;
+		}
+		
+		public HashSet<Element> getNotEvaluatedRequirements(){
+			
+			HashSet<Element> allScenarios = getAllScenarios();
+			HashSet<Element> notEvaluatedRequirements = new HashSet<Element>();
+			HashSet<Element> evaluatedRequirements = new HashSet<Element>();
+			
+			for (Element scenario : allScenarios) {
+				// get scenarios evaluated and not evaluated requirements
+				HashSet<Element> evaluatedRequirementsForScenario = getScenarioToEvaluatedRequirements().get(scenario);
+				HashSet<Element> notEvaluatedRequirementsForScenario = getScenarioToNotEvaluatedRequirements().get(scenario);
+				
+				if (notEvaluatedRequirementsForScenario != null) {
+					// add all that were not evaluated in this scenario
+					notEvaluatedRequirements.addAll(notEvaluatedRequirementsForScenario);
+				}
+				if (evaluatedRequirementsForScenario != null) {
+					evaluatedRequirements.addAll(evaluatedRequirementsForScenario);
+				}
+			}
+			
+			// remove all that were evaluated
+			notEvaluatedRequirements.removeAll(evaluatedRequirements);
+			
+			return notEvaluatedRequirements;
+		}
+		
+		
+		
+		public HashSet<Element> getScenarioWithNotViolatedRequirements(Element scenario){
+				HashSet<Element> notViolatedRequirements = new HashSet<Element>();
+				
+				// get scenarios evaluated and not evaluated requirements
+				HashSet<Element> evaluatedRequirementsForScenario = getScenarioToEvaluatedRequirements().get(scenario);
+				HashSet<Element> violatedForScenario = getScenarioToViolatedRequirements().get(scenario);
+				
+				if (evaluatedRequirementsForScenario != null) {
+					// add all that were not evaluated in this scenario
+					notViolatedRequirements.addAll(evaluatedRequirementsForScenario);
+				}
+				if (violatedForScenario != null) {
+					notViolatedRequirements.removeAll(violatedForScenario);
+				}
+				
+			return notViolatedRequirements;
+		}
+		
+		
+		public HashSet<Element> getRequirementsViolatedInScenarios(){
+			HashSet<Element> allScenarios = getAllScenarios();
+			HashSet<Element> requirements = new HashSet<Element>();
+			for (Element scenario : allScenarios) {
+				HashSet<Element> violatedRequirementsForScenario = getScenarioToViolatedRequirements().get(scenario);
+				
+				if (violatedRequirementsForScenario != null) {
+					// add all that were violated in this scenario
+					// note, this is a HashSet -> no duplicates!
+					requirements.addAll(violatedRequirementsForScenario);
+				}
+				
+			}
+			return requirements;
+		}
+		
+		public HashSet<Element> getRequirementsNotViolatedInScenarios(){
+			HashSet<Element> allScenarios = getAllScenarios();
+			
+			HashSet<Element> requirements = new HashSet<Element>();
+			
+			for (Element scenario : allScenarios) {
+			
+				HashSet<Element> evaluatedRequirements = getScenarioToEvaluatedRequirements().get(scenario);
+				HashSet<Element> violatedRequirements = getScenarioToViolatedRequirements().get(scenario);
+				
+				if (evaluatedRequirements != null) {
+					
+					// remove all violated requirements to get all that were evaluated and not violated
+					if (violatedRequirements != null) {
+						evaluatedRequirements.removeAll(violatedRequirements);
+					}
+					
+					requirements.addAll(evaluatedRequirements);
+				}
+
+				
+//				HashSet<Element> notViolatedRequirementsForScenario = getScenarioToNotEvaluatedRequirements().get(scenario);
+//				
+//				if (notViolatedRequirementsForScenario != null) {
+//					// add all that were not violated in this scenario
+//					// note, this is a HashSet -> no duplicates!
+//					requirements.addAll(notViolatedRequirementsForScenario);
+//				}
+				
+			}
+			return requirements;
+		}
+		
+		
 		
 		public boolean isNewRelation(TreeObject scenarioItem, TreeObject requirementItem, String dependencyStereotypeQName){
 			
@@ -704,6 +874,46 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			return true;
 		}
 		
+		
+		public int getNewRelationsCount(boolean isPositive) {
+			HashSet<Element> newRequirementsRelations = new HashSet<Element>();
+			
+//			for (Element scenario : getAllScenarios()) {
+//				HashSet<Element> requirements = getAnalizedRequirements(scenario, isPositive);
+//				if (requirements != null) {
+//					count = count + requirements.size();
+//				}
+//			}
+			
+			// new POSITIVE relations
+			if (isPositive) {
+				for (Element scenario : getScenarioWithNewPositiveRelationsToRequirements().keySet()) {
+					HashSet<Element> requirements = getScenarioWithNewPositiveRelationsToRequirements().get(scenario);
+					if (requirements != null) {
+						for (Element requirement : requirements) {
+							// Note, this is a HashSet, i.e. no duplicates!
+							newRequirementsRelations.add(requirement);
+						}
+					}
+				}
+			}
+			// new NEGATIVE relations
+			else {
+				for (Element scenario : getScenarioWithNewNegativeRelationsToRequirements().keySet()) {
+					HashSet<Element> requirements = getScenarioWithNewNegativeRelationsToRequirements().get(scenario);
+					if (requirements != null) {
+						for (Element requirement : requirements) {
+							// Note, this is a HashSet, i.e. no duplicates!
+							newRequirementsRelations.add(requirement);
+						}
+					}
+				}
+			}
+			
+			
+			return newRequirementsRelations.size();
+		}
+		
 		public Dependency getExistingDependency(Element scenario, Element requirement, String dependencyStereotypeQName){
 			
 			EList<Dependency> depList = ((Class)scenario).getClientDependencies();
@@ -718,6 +928,38 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			return null;
 		}
 
+		public boolean isRequirementEvaluatedInScenario(Element requirement, Element scenario){
+			// if requirement was evaluated with the given scenario 
+			HashSet<Element> requirements = getScenarioToEvaluatedRequirements().get(scenario);
+			if (requirements != null) {
+				if (requirements.contains(requirement)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean isRequirementViolatedInScenario(Element requirement, Element scenario){
+			// if requirement was violated with the given scenario 
+			HashSet<Element> requirements = getScenarioToViolatedRequirements().get(scenario);
+			if (requirements != null) {
+				if (requirements.contains(requirement)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		
+		// Getters
+		public HashSet<Element> getGeneratedModels() {
+			return generatedModels;
+		}
+		
+		public HashSet<TreeObject> getScenarios(Element simModel){
+			return modelToScenarios.get(simModel);
+		}
+		
 		public HashSet<TreeObject> getRequirements(Element simModel){
 			return modelToRequirements.get(simModel);
 		}
@@ -742,20 +984,8 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			return newPositiveRelations;
 		}
 		
-		
-		public int getNewRelationsCount(boolean isPositive) {
-			int count = 0;
-			for (Element scenario : getAllScenarios()) {
-				HashSet<Element> requirements = getRequirements(scenario, isPositive);
-				if (requirements != null) {
-					count = count + requirements.size();
-				}
-			}
-			return count;
-		}
-
 		public void addToPositiveRelations(TreeObject key, TreeObject value) {
-			addToMapList(this.newPositiveRelations, key, value);
+			addToMapList(newPositiveRelations, key, value);
 		}
 
 		public HashMap<TreeObject, HashSet<TreeObject>> getNewNegativeRelations() {
@@ -763,7 +993,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		}
 
 		public void addToNegativeRelations(TreeObject key, TreeObject value) {
-			addToMapList(this.newNegativeRelations, key, value);
+			addToMapList(newNegativeRelations, key, value);
 		}
 
 		public HashSet<String> getNotViolatedRequirements() {
@@ -771,11 +1001,11 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		}
 
 		public void addToNotViolatedRequirements(String string) {
-			this.notViolatedRequirements.add(string);
+			notViolatedRequirements.add(string);
 		}
 
 		public List<String> getSimulationFailedList() {
-			return simulationFailedList;
+			return this.simulationFailedList;
 		}
 
 		public void setSimulationFailedList(List<String> simulationFailedList) {
@@ -786,43 +1016,38 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			return scenarioToViolatedRequirements;
 		}
 
-
 		public HashMap<Element, HashSet<Element>> getScenarioToEvaluatedRequirements() {
 			return scenarioToEvaluatedRequirements;
 		}
 		
-		public boolean isRequirementEvaluatedInScenario(Element requirement, Element scenario){
-			// if requirement was evaluated with the given scenario 
-			HashSet<Element> requirements = getScenarioToEvaluatedRequirements().get(scenario);
-			if (requirements != null) {
-				if (requirements.contains(requirement)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		public boolean isRequirementViolatedInScenario(Element requirement, Element scenario){
-			// if requirement was violated with the given scenario 
-			HashSet<Element> requirements = getScenarioToViolatedRequirements().get(scenario);
-			if (requirements != null) {
-				if (requirements.contains(requirement)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
 		public HashMap<Element, HashSet<Element>> getScenarioToNotEvaluatedRequirements() {
 			return scenarioToNotEvaluatedRequirements;
 		}
-
+		
 		public HashSet<Element> getSystemModels() {
 			return systemModels;
 		}
 
 		public void setSystemModels(HashSet<Element> systemModels) {
 			this.systemModels = systemModels;
+		}
+
+		public HashMap<Element, HashSet<Element>> getScenarioWithNewPositiveRelationsToRequirements() {
+			return scenarioWithNewPositiveRelationsToRequirements;
+		}
+
+		public void setScenarioWithNewPositiveRelationsToRequirements(
+				HashMap<Element, HashSet<Element>> scenarioWithNewPositiveRelationsToRequirements) {
+			this.scenarioWithNewPositiveRelationsToRequirements = scenarioWithNewPositiveRelationsToRequirements;
+		}
+
+		public HashMap<Element, HashSet<Element>> getScenarioWithNewNegativeRelationsToRequirements() {
+			return scenarioWithNewNegativeRelationsToRequirements;
+		}
+
+		public void setScenarioWithNewNegativeRelationsToRequirements(
+				HashMap<Element, HashSet<Element>> scenarioWithNewNegativeRelationsToRequirements) {
+			this.scenarioWithNewNegativeRelationsToRequirements = scenarioWithNewNegativeRelationsToRequirements;
 		}
 	}
 }

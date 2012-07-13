@@ -65,12 +65,50 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		this.includeRequirementsWithPositiveRelations = includeRequirementsWithPositiveRelations;
 		this.includeRequirementsWithNegativeRelations = includeRequirementsWithNegativeRelations;
 		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
+		
+		collectRequirementsAndScenarios();
 	}
 	
 	
 
 	public VeMGeneratorScenariosBased() {
 		super();
+		
+		collectRequirementsAndScenarios();
+	}
+	
+	
+	private void collectRequirementsAndScenarios(){
+		/* Collect all requirements in order to be able to determine 
+		 * which are not covered by simulation models.
+		 */
+		ElementsCollector ec = new ElementsCollector();
+		ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
+		allRequirements.addAll(ec.getElements());
+		
+		// find all scenarios
+		vsc = new VerificationScenariosCollector();
+		vsc.collectScenariosFromPackage((Package) testScenariosPackage, true);
+		if (vsc.getAllScenarios().size() == 0) {
+			String message = "INFO: No verification scenarios were found.";
+			addToLog(message);
+		}
+		
+		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			/*
+			 * Get all requirements and fill the requirements -> scenario candidate map
+			 * This information is used in the "automatic mode" to check if a requirement has scenario candidates 
+			 * and does not need to be considered with other scenarios. It implies that a requirement is only included
+			 * into a model with a certain scenario if and only if this scenario has an 
+			 * explicitly defined relation (i.e. <<UseToVerify>> relations) to this requirement.
+			 */
+			for (Element scenario : vsc.getAllScenarios()) {
+				HashSet<Element> reqWithPositiveRelations = getRequirements(scenario, Constants.stereotypeQName_UsedToVerify);
+				for (Element requirement : reqWithPositiveRelations) {
+					addToMap(requirementToScenarioCandidate, requirement, scenario);
+				}
+			}
+		}
 	}
 	
 	/*
@@ -115,6 +153,14 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	// the set of test scenario after user selection
 	private HashSet<Element> userSelectedTestScenarios = new HashSet<Element>();
 	
+	
+	// For each requirement: All scenarios that have positive (<<UseToVerify>>) relations to the requirement
+	/*
+	 * This information is used in the "automatic mode" to check if a requirement has scenario candidates 
+	 * and does not need to be considered with other scenarios
+	 */
+	private HashMap<Element, HashSet<Element>> requirementToScenarioCandidate = new HashMap<Element, HashSet<Element>>();
+	
 	/* all requirements that were selected for instantiation because 
 	 * the selected test scenarios reference them and all their clients are satisfied by the selected system model
 	 */
@@ -150,24 +196,18 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	public void generate(){
 		
 		if (systemModels != null) {
-
-			/* Collect all requirements in order to be able to determine 
-			 * which are not covered by simulation models.
-			 */
-			ElementsCollector ec = new ElementsCollector();
-			ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
-			allRequirements.addAll(ec.getElements());
 			
 			/* For each of the selected system models create a package containing classes that 
 			 * instantiate all possible combinations of test scenarios and requirements that 
 			 * can be tested using the given test scenario.
 			 */
 			for (Element systemModel : systemModels) {
+
 				// clear all lists because the translation for each source model is individual.
 				clearAllLists();
 				
-				// TODO: create a sub-progress monitor.
 				Shell shell = getShell();
+				
 				try {
 					// create combinations
 					new ProgressMonitorDialog(shell).run(true, true, this);
@@ -222,23 +262,14 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				
 				Class systemModel = (Class) sourceModel;
 				
-				// find all test scenarios
-				vsc = new VerificationScenariosCollector();
-				vsc.collectScenariosFromPackage((Package) testScenariosPackage, true);
-				if (vsc.getAllScenarios().size() == 0) {
-					String message = "INFO: No verification scenarios were found.";
-					addToLog(message);
-				}
-
 				for (Element testScenario : vsc.getAllScenarios() ) {
 					if (testScenario instanceof Class) {
 						
 						Class scenarioToBeUsed = (Class) testScenario;
 
 						// get requirements according to the requirements selection options settings
-						HashSet<Class> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UsedToVerify);
-						HashSet<Class> reqWithNegativeRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_DoNotUseToVerify);
-//						HashSet<Element> reqAll = vsc.getAllRequirements();
+						HashSet<Element> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UsedToVerify);
+						HashSet<Element> reqWithNegativeRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_DoNotUseToVerify);
 						HashSet<Element> reqAll = getAllRequirements();
 
 						/*
@@ -282,16 +313,68 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 							}
 						}
 						
-						
-						// TODO: sort requirements so that they appear in alphabetic order?
-						HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
+						HashSet<Element> requirementsToBeUsed = new HashSet<Element>();
 						if (reqCollection != null && reqCollection.size() > 0) {
-							 for (Element req : reqCollection) {
-								if (req instanceof Class) {
-									requirementsToBeUsed.add((Class) req);
+							 for (Element requirement : reqCollection) {
+								if (requirement instanceof Class) {
+									
+									if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+										/*
+										 * The "MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION" implies that a requirement is only included
+										 * into a model with a certain scenario if and only if this scenario has an 
+										 * explicitly defined relation (i.e. <<UseToVerify>> relations) to this requirement.
+										 */
+										HashSet<Element> scenarioCandidates = requirementToScenarioCandidate.get(requirement);
+										if (scenarioCandidates != null) {
+											
+											// if this scenario references this requirement then combine them!
+											if ( scenarioCandidates.contains(scenarioToBeUsed) ) {
+												requirementsToBeUsed.add(requirement);
+											}
+											/*
+											 * if this scenario does not reference this requirements
+											 * but there are other scenarios that reference this requirement
+											 * -> do not combine this scenario with this requirement
+											 */
+											else if (scenarioCandidates.size() > 0 ) {
+												String candidateNames = "";
+												for (Element scenario : scenarioCandidates) {
+													candidateNames += "              - " + getModelQName(scenario) + "\n"; 
+												}
+												String message = "DISCARDED: Requirement '" + getModelQName(requirement) + "' was not combined with the scenrio" +
+														"'" + scenarioToBeUsed.getQualifiedName() + "' because it has other candidates: \n" + candidateNames ;
+												addToLog(message);
+											}
+
+											/*
+											 * if this scenario does not reference this requirements
+											 * and there are no other scenarios that reference this requirement
+											 * -> combine this scenario with this requirement in order to try this combination!
+											 */
+											else {
+												requirementsToBeUsed.add(requirement);
+											}
+										}
+										else { // if there are no scenario candidates at all -> try this requirement with this scenario
+											requirementsToBeUsed.add(requirement);
+										}
+										
+										/*
+										 * In this mode also remove a requirement if there is a negative (<<DoNotUsetoVerify>>) 
+										 * relation
+										 */
+										if (reqWithNegativeRelations.contains(requirement)) {
+											requirementsToBeUsed.remove(requirement);
+										}
+									}
+									
+									
+									else { // in other modes: try this requirement with this scenario
+										requirementsToBeUsed.add((Class) requirement);
+									}
 								}
 								else {
-									String message = "NOT VALID: Requirement '" + req.toString() + "' is not a UML::Class";
+									String message = "NOT VALID: Requirement '" + requirement.toString() + "' is not a UML::Class";
 									addToLog(message);
 								}
 							}
@@ -300,27 +383,6 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 							String message = "INFO: No requirements are found for the test scenario '" + scenarioToBeUsed.getQualifiedName() + "'";
 							addToLog(message);
 						}
-						
-						
-						// OBSOLETE
-//						HashSet<Element> reqList = vsc.getTsToReq().get(scenarioToBeUsed);
-//						HashSet<Class> requirementsToBeUsed = new HashSet<Class>();
-//						
-//						if (reqList != null) {
-//							 for (Element req : reqList) {
-//								if (req instanceof Class) {
-//									requirementsToBeUsed.add((Class) req);
-//								}
-//								else {
-//									String message = "NOT VALID: Requirement '" + req.toString() + "' is not a UML::Class";
-//									addToLog(message);
-//								}
-//							}
-//						}
-//						else {
-//							String message = "INFO: No requirements are found for the test scenario '" + scenarioToBeUsed.getQualifiedName() + "'";
-//							addToLog(message);
-//						}
 						
 						VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator(systemModel, 
 								scenarioToBeUsed, 
@@ -341,7 +403,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 						}
 						
 						// add to selected or discarded requirements
-						HashSet<Class> requirements = tsmc.getRequirements();
+						HashSet<Element> requirements = tsmc.getRequirements();
 						for (Element requirement : requirements) {
 							if (tsmc.getUnsatisfiedRequiredClients(requirement) != null) {
 								requirementsDiscarded.add(requirement);
@@ -721,10 +783,10 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				
 				String annotationString = "experiment(";
 				
-				if (startTime!= null && !((String)startTime).isEmpty()) {annotationString = annotationString + "StartTime=" + startTime.toString() + ", "; }
-				if (stopTime!= null && !((String)stopTime).isEmpty()) {annotationString = annotationString + "StopTime=" + stopTime.toString() + ", "; }
+				if (startTime!= null && !startTime.toString().isEmpty()) {annotationString = annotationString + "StartTime=" + startTime.toString() + ", "; }
+				if (stopTime!= null && !stopTime.toString().isEmpty()) {annotationString = annotationString + "StopTime=" + stopTime.toString() + ", "; }
 				//if (numberOfIntervals!= null) {annotationString = annotationString + ", Output=" + numberOfIntervals.toString(); }
-				if (tolerance!= null && !((String)tolerance).isEmpty()) {annotationString = annotationString + "Tolerance=" + tolerance.toString(); }
+				if (tolerance!= null && !tolerance.toString().isEmpty()) {annotationString = annotationString + "Tolerance=" + tolerance.toString(); }
 				
 				if (annotationString.length() > 2 && annotationString.trim().endsWith(",")) {
 					annotationString = annotationString.substring(0, annotationString.length() - 2);
@@ -740,8 +802,8 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		}
 	}
 	
-	private HashSet<Class> getRequirements(Element scenario, String stereotypeQName){
-		HashSet<Class> requirements = new HashSet<Class>();
+	private HashSet<Element> getRequirements(Element scenario, String stereotypeQName){
+		HashSet<Element> requirements = new HashSet<Element>();
 		
 		// collect from dependencies
 		EList<Dependency> depList = ((NamedElement)scenario).getClientDependencies();
@@ -750,7 +812,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 			// Check if the dependency has the specified stereotype
 			if (dependency.getAppliedStereotype(stereotypeQName) != null) {
 			
-				for (Element target : dependency.getTargets()) {
+				for (Element target : dependency.getSuppliers()) {
 					// check if this is a requirement
 					if (target instanceof Class && target.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
 						requirements.add( (Class) target);
@@ -771,6 +833,41 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 
 	private void clearLog(){
 		this.log = "";
+	}
+	
+	private String getModelQName(Element element) {
+		if (element instanceof NamedElement) {
+			String qName = ((NamedElement)element).getQualifiedName();
+			if (qName != null) {
+				return qName; 
+			}
+		}
+		return "Qualified name is not known ..." + "  -> " + element.toString();
+	}
+	
+	private String getModelName(Element element) {
+		if (element instanceof NamedElement) {
+			String name = ((NamedElement)element).getName();
+			if (name != null) {
+				return name; 
+			}
+		}
+		return "Name is not known ..." + "  -> " + element.toString();
+	}
+	
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void addToMap(HashMap map, Element key, Element value){
+		Object list = map.get(key);
+		if (list instanceof HashSet) {
+			((HashSet<Element>)list).add(value);
+			map.put(key, list);
+		}
+		else{
+			HashSet<Element> newList = new HashSet<Element>();
+			newList.add(value);
+			map.put(key, newList);
+		}
 	}
 	
 	// GETTERS ############################################
@@ -883,6 +980,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		
 		if (!this.isTestSimulationModelGenerationCanceled()) {
 			monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
+			
 		    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
 		      Thread.sleep(INCREMENT);
 		      monitor.worked(INCREMENT);
