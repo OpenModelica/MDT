@@ -174,6 +174,7 @@ public class Constants {
 	// used for verification models generation or discovery of relations between scenarios and requirements
 	public final static int MODE_VEM_GENERATION = 3;
 	public final static int MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY = 4;
+	public final static int MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION = 5;
 	
 	// used by components tree plugin
 	public static final String inputsComponentName 			= "_inputs";
@@ -259,8 +260,10 @@ public class Constants {
 	public final static String folderName_req_sync = "req-sync";
 	
 	public final static String folderName_relationsDiscovery = "relationsDiscovery-gen";
-	
-	public final static String fileName_relationsDiscovery = "relationsDiscovery-gen";
+	public final static String fileName_relationsDiscovery = "relationsDiscovery";
+
+	public final static String folderName_automaticScenarioBasedDesignVerificationDiscovery = "aVerification-gen";
+	public final static String fileName_automaticScenarioBasedDesignVerification = "aVerification";
 	
 	// simulation
 	public final static String folderName_sim_gen = "sim-gen";
