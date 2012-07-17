@@ -31,14 +31,20 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 
 public class ModelicaMLServices {
 
+	
+	
+	
 	/*
 	 * Regeneration of  code
 	 */
@@ -537,4 +543,66 @@ public class ModelicaMLServices {
 		return null;
 	}
 	
+
+
+	
+	
+	
+	
+	
+	public static String getQualifiedName(Element element) {
+		if (element instanceof NamedElement) {
+			String qName = ((NamedElement)element).getQualifiedName();
+			if (qName != null) {
+				return qName; 
+			}
+		}
+		return Constants.UKNOWN_NAME + "  -> " + element.toString();
+	}
+	
+	public static String getName(Element element) {
+		if (element instanceof NamedElement) {
+			String name = ((NamedElement)element).getName();
+			if (name != null) {
+				return name; 
+			}
+		}
+		return Constants.UKNOWN_NAME + "  -> " + element.toString();
+	}
+	
+	
+	
+	
+	/*
+	 * Model instantiations
+	 */
+	
+	
+	public static HashMap<Element,TreeParent> getModelInstantiations(HashSet<Element> models, HashMap<Element,TreeParent> preparedInstantiations){
+		
+		HashMap<Element,TreeParent> modelToInstantiations = new HashMap<Element, TreeParent>();
+		
+		for (Element model : models) {
+			TreeParent newChild = getModelInstantiation(model, preparedInstantiations);
+			if (newChild != null) {
+				modelToInstantiations.put(model, newChild);
+			}
+		}
+		
+		return modelToInstantiations;
+	}
+	
+	public static TreeParent getModelInstantiation(Element model, HashMap<Element,TreeParent> preparedInstantiations){
+		TreeParent newChild = null;
+
+		// create only if it does not exists already
+		if (preparedInstantiations.get(model) == null) {
+			
+			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
+			ci_model.createTree();
+			newChild = ci_model.getTreeRoot();
+		}
+		
+		return newChild;
+	}
 }

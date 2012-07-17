@@ -54,6 +54,10 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 //	private EObject umlRootModel;
 //	private TreeObject instantiationTreeRoot;
 	
+	// all mediators found
+	private HashSet<Element> allMediators = new HashSet<Element>();
+
+	// all mediators that are used in the selected instantiated class hierarchy
 	private HashSet<Element> usedMediators = new HashSet<Element>();
 	private HashSet<Element> referencedClients = new HashSet<Element>();
 	private HashSet<Element> referencedRequiredClients = new HashSet<Element>();
@@ -151,11 +155,15 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 	public void collectMeditorsDataFromUmlModel(EObject umlRootElement, HashSet<Element> umlElementsInInstantiationTree){
 		if (umlRootElement instanceof NamedElement) {
 			
-			// collect all mediators
-			MediatorsCollector mc = new MediatorsCollector();
-			mc.collectElementsFromModel(umlRootElement);
+			// collect mediators if they were not provided yet
+			if (allMediators == null || allMediators.size() == 0) {
+				MediatorsCollector mc = new MediatorsCollector();
+				mc.collectElementsFromModel(umlRootElement);
+				
+				allMediators = mc.getValueMediators();
+			}
 			
-			for ( Element object : mc.getValueMediators() ) {
+			for ( Element object : allMediators ) {
 				if (object instanceof NamedElement 
 						&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
 					
@@ -457,7 +465,14 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 	public HashMap<Element, HashSet<Element>> getMediatorToProviders() {
 		return mediatorToProviders;
 	}
+	
+	public HashSet<Element> getAllMediators() {
+		return allMediators;
+	}
 
+	public void setAllMediators(HashSet<Element> allMediators) {
+		this.allMediators = allMediators;
+	}
 	
 	
 	public String getLog() {

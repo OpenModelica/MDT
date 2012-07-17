@@ -58,9 +58,9 @@ public class MediatorsCollector {
 	private HashSet<Element> importedMediators = new HashSet<Element>(); 
 	
 	// collected mediator containers
-	private EList<Element> valueMediatorContainers = new BasicEList<Element>();
+	private HashSet<Element> valueMediatorContainers = new HashSet<Element>();
 	// collected mediators
-	private EList<Element> valueMediators = new BasicEList<Element>();
+	private HashSet<Element> valueMediators = new HashSet<Element>();
 
 	
 	public void collectElementsFromModel(EObject umlRootElement){
@@ -213,11 +213,11 @@ public class MediatorsCollector {
 	
 	
 	// ########## GETTER
-	public EList<Element> getValueMediatorContainers() {
+	public HashSet<Element> getValueMediatorContainers() {
 		return valueMediatorContainers;
 	}
 
-	public EList<Element> getValueMediators() {
+	public HashSet<Element> getValueMediators() {
 		return valueMediators;
 	}
 

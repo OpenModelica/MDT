@@ -21,6 +21,7 @@ import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
+import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageableElement;
@@ -31,85 +32,12 @@ import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
-import org.openmodelica.modelicaml.common.services.ElementsCollector;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.dialogs.SelectScenariosAndRequirementsDialog;
 
 public class VeMGeneratorScenariosBased extends Observable implements IRunnableWithProgress {
-	
-	public VeMGeneratorScenariosBased(
-			HashSet<Element> sourceModels,
-			Element targetPackage, 
-			Element requirementsPackage,
-			Element testScenariosPackage, 
-			Element valueMediatorsPackage,
-			Element superClass,
-			boolean includeRequirementsWithPositiveRelations,
-			boolean includeRequirementsWithNegativeRelations,
-			boolean includeRequirementsWitnUnknownRelations,
-			int mode) {
-		
-		super();
-		
-		this.systemModels = sourceModels;
-		this.targetPackage = targetPackage;
-		this.requirementsPackage = requirementsPackage;
-		this.testScenariosPackage = testScenariosPackage;
-		this.valueBindingsPackage = valueMediatorsPackage;
-		this.superClass = superClass;
-		
-		this.mode = mode;
-		
-		// options
-		this.includeRequirementsWithPositiveRelations = includeRequirementsWithPositiveRelations;
-		this.includeRequirementsWithNegativeRelations = includeRequirementsWithNegativeRelations;
-		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
-		
-		collectRequirementsAndScenarios();
-	}
-	
-	
-
-	public VeMGeneratorScenariosBased() {
-		super();
-		
-		collectRequirementsAndScenarios();
-	}
-	
-	
-	private void collectRequirementsAndScenarios(){
-		/* Collect all requirements in order to be able to determine 
-		 * which are not covered by simulation models.
-		 */
-		ElementsCollector ec = new ElementsCollector();
-		ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
-		allRequirements.addAll(ec.getElements());
-		
-		// find all scenarios
-		vsc = new VerificationScenariosCollector();
-		vsc.collectScenariosFromPackage((Package) testScenariosPackage, true);
-		if (vsc.getAllScenarios().size() == 0) {
-			String message = "INFO: No verification scenarios were found.";
-			addToLog(message);
-		}
-		
-		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
-			/*
-			 * Get all requirements and fill the requirements -> scenario candidate map
-			 * This information is used in the "automatic mode" to check if a requirement has scenario candidates 
-			 * and does not need to be considered with other scenarios. It implies that a requirement is only included
-			 * into a model with a certain scenario if and only if this scenario has an 
-			 * explicitly defined relation (i.e. <<UseToVerify>> relations) to this requirement.
-			 */
-			for (Element scenario : vsc.getAllScenarios()) {
-				HashSet<Element> reqWithPositiveRelations = getRequirements(scenario, Constants.stereotypeQName_UsedToVerify);
-				for (Element requirement : reqWithPositiveRelations) {
-					addToMap(requirementToScenarioCandidate, requirement, scenario);
-				}
-			}
-		}
-	}
 	
 	/*
 	 * Possible combinations, each containing an initial set (1 system model, 1 scenario and n requirements) and 
@@ -123,15 +51,19 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	// the package for simulation models
 	private Element targetPackage = null;
 	
-	// the package to containing the requirements to be used
+	// the package containing the requirements to be used
 	private Element requirementsPackage = null;
-	// the package to containing the test scenarios to be used
-	private Element testScenariosPackage = null;
-	// the package to containing the value mediators to be used
-	private Element valueBindingsPackage = null;
+	// the package containing the scenarios to be used
+	private Element scenariosPackage = null;
+	// the package containing the value bindings to be used
+	private Element bindingsPackage = null;
+	
+	// prepared instantiations of model in order to avoid instantiating models several times
+	private HashMap<Element, TreeParent> preparedModelInstantiations = new HashMap<Element, TreeParent>();
 	
 	// all created packages that contain generated models
 	private HashSet<Element> generatedPackages = new HashSet<Element>();
+	
 	// all generated models
 //	private List<Element> generatedModels = new ArrayList<Element>();
 	
@@ -144,6 +76,9 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	private HashSet<Element> allRequirements = new HashSet<Element>();
 	// all test scenarios that were collected from the specified test scenarios package
 	private HashSet<Element> allTestScenarios = new HashSet<Element>();
+	
+	// all mediators collected from the specified bindings package
+	private HashSet<Element> allMediators = new HashSet<Element>();
 	
 	// all test scenarios that were selected for the selected system model
 	private HashSet<Element> testScenariosToBeInstantiated = new HashSet<Element>();
@@ -193,6 +128,127 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 	private int mode;
 	
 	
+	// Constructor ****************************************************************************************************************
+	
+	
+	public VeMGeneratorScenariosBased(
+			HashSet<Element> sourceModels,
+			Element targetPackage, 
+			Element requirementsPackage,
+			Element testScenariosPackage, 
+			Element valueMediatorsPackage,
+			Element superClass,
+			boolean includeRequirementsWithPositiveRelations,
+			boolean includeRequirementsWithNegativeRelations,
+			boolean includeRequirementsWitnUnknownRelations,
+			int mode) {
+		
+		super();
+		
+		this.systemModels = sourceModels;
+		this.targetPackage = targetPackage;
+		this.requirementsPackage = requirementsPackage;
+		this.scenariosPackage = testScenariosPackage;
+		this.bindingsPackage = valueMediatorsPackage;
+		this.superClass = superClass;
+		
+		this.mode = mode;
+		
+		// options
+		this.includeRequirementsWithPositiveRelations = includeRequirementsWithPositiveRelations;
+		this.includeRequirementsWithNegativeRelations = includeRequirementsWithNegativeRelations;
+		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
+		
+		collectRequirementsAndScenarios();
+	}
+	
+	
+
+	public VeMGeneratorScenariosBased() {
+		super();
+		
+		collectRequirementsAndScenarios();
+	}
+	
+	
+	
+	
+	
+	
+	
+	private Model getRootModel(HashSet<Element> selectedModels){
+		/*
+		 * TODO: how handle that if multiple design models are selected?
+		 */
+		Model rootModel = null;
+		for (Element selectedModel : selectedModels) {
+			Element root = selectedModel.getModel();
+			if (root != null) {
+				rootModel = selectedModel.getModel();
+			}
+		}
+		return rootModel;
+	}
+	
+	
+	// Combination Generation *******************************************************************************************
+	
+//	private void prepareInstantiations(HashSet<Element> newModels){
+//		preparedModelInstantiations.putAll(Utls.getModelInstantiations(newModels, preparedModelInstantiations));
+//	}
+	
+	private void collectRequirementsAndScenarios(){
+
+//		/* Collect all requirements in order to be able to determine 
+//		 * which are not covered by simulation models.
+//		 */
+//		ElementsCollector ec = new ElementsCollector();
+//		ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
+//		allRequirements.addAll(ec.getElements());
+		
+//		vsc = new VerificationScenariosCollector();
+//		vsc.collectScenariosFromPackage((Package) scenariosPackage, true);
+		
+		// collect scenarios and requirements
+		vsc = new VerificationScenariosCollector( getRootModel(this.systemModels), requirementsPackage, scenariosPackage, bindingsPackage);
+		vsc.collectAll(true);
+		
+		if (vsc.getAllScenarios().size() == 0) {
+			String message = "INFO: No verification scenarios were found.";
+			addToLog(message);
+		}
+
+		/* Collect all requirements in order to be able to determine 
+		 * which are not covered by simulation models.
+		 */
+		allRequirements.addAll(vsc.getAllRequirements());
+
+		/* 
+		 * Collect all mediators to be passed in order to avoid 
+		 * several collection runs  
+		 */
+		allMediators.addAll(vsc.getAllMediators());
+		
+		
+		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			/*
+			 * Get all requirements and fill the requirements -> scenario candidate map
+			 * This information is used in the "automatic mode" to check if a requirement has scenario candidates 
+			 * and does not need to be considered with other scenarios. It implies that a requirement is only included
+			 * into a model with a certain scenario if and only if this scenario has an 
+			 * explicitly defined relation (i.e. <<UseToVerify>> relations) to this requirement.
+			 */
+			for (Element scenario : vsc.getAllScenarios()) {
+				HashSet<Element> reqWithPositiveRelations = getRequirements(scenario, Constants.stereotypeQName_UsedToVerify);
+				for (Element requirement : reqWithPositiveRelations) {
+					addToMap(requirementToScenarioCandidate, requirement, scenario);
+				}
+			}
+		}
+	}
+	
+	
+	
 	public void generate(){
 		
 		if (systemModels != null) {
@@ -209,16 +265,17 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				Shell shell = getShell();
 				
 				try {
-					// create combinations
 					new ProgressMonitorDialog(shell).run(true, true, this);
-					createCombinationsForSimulationModels();
+
+					// create combinations
+					createCombinationsForSimulationModels(systemModel);
 
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					MessageDialog.openError(shell, "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
+					MessageDialog.openError(shell, "Simulation Models Generation Process Error", "It was not possible to invoke the generation of models.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					MessageDialog.openError(shell, "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
+					MessageDialog.openError(shell, "Simulation Models Generation Process Abort", "The generation of models was canceled.");
 				}
 				
 				// generate simulation models for the source model 
@@ -228,44 +285,29 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		}
 	}
 	
-	private Shell getShell(){
-		Shell shell = null;
-		IWorkbench wb = PlatformUI.getWorkbench();
-		if (wb != null) {
-			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-			if (win != null) {
-				shell = win.getShell();
-			}
-		}
-		if (shell == null) {
-			shell = new Shell();
-		}
-		return shell;
-	}
+
 	
-	private void clearAllLists(){
-		testScenariosToBeInstantiated.clear();
-		testScenariosDiscarded.clear();
-		requirementsToBeInstantiated.clear();
-		requirementsDiscarded.clear();
+	private void createCombinationsForSimulationModels(Element sourceModel){
 		
-		modelsWithBindingErrors.clear();
-	}
-	
-	private void createCombinationsForSimulationModels(){
 		monitorText1 = "Collecting data ...";
-		monitorText2 = "Analyzing combinations ...";
+		monitorText2 = "Instantiating models and analyzing combinations ...";
 		
-		for (Element sourceModel : this.systemModels) {
+//		for (Element sourceModel : this.systemModels) {
 			
 			if (sourceModel instanceof Class) {
 				
 				Class systemModel = (Class) sourceModel;
+				// prepare instantiation so that it can be reused for other iterations
+				preparedModelInstantiations.put(systemModel, ModelicaMLServices.getModelInstantiation(systemModel, preparedModelInstantiations));
 				
 				for (Element testScenario : vsc.getAllScenarios() ) {
+					
 					if (testScenario instanceof Class) {
 						
 						Class scenarioToBeUsed = (Class) testScenario;
+						// prepare instantiation so that it can be reused for other iterations
+						preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations));
+
 
 						// get requirements according to the requirements selection options settings
 						HashSet<Element> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UsedToVerify);
@@ -339,9 +381,9 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 											else if (scenarioCandidates.size() > 0 ) {
 												String candidateNames = "";
 												for (Element scenario : scenarioCandidates) {
-													candidateNames += "              - " + getModelQName(scenario) + "\n"; 
+													candidateNames += "              - " + ModelicaMLServices.getQualifiedName(scenario) + "\n"; 
 												}
-												String message = "DISCARDED: Requirement '" + getModelQName(requirement) + "' was not combined with the scenrio" +
+												String message = "DISCARDED: Requirement '" + ModelicaMLServices.getQualifiedName(requirement) + "' was not combined with the scenrio" +
 														"'" + scenarioToBeUsed.getQualifiedName() + "' because it has other candidates: \n" + candidateNames ;
 												addToLog(message);
 											}
@@ -380,16 +422,32 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 							}
 						}
 						else {
-							String message = "INFO: No requirements are found for the test scenario '" + scenarioToBeUsed.getQualifiedName() + "'";
+							String message = "INFO: No requirements are referenced by the scenario '" + scenarioToBeUsed.getQualifiedName() + "'";
 							addToLog(message);
 						}
+						
+						
+						// prepare instantiation so that it can be reused for other iterations
+						preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations));
+						
+						preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(vsc.getAlwaysInclude(), preparedModelInstantiations));
+//						HashSet<Element> addidtionalModels = new HashSet<Element>();
+//						for (Element addModel : vsc.getModelToItsAdditionalModels().keySet()) {
+//							addidtionalModels.addAll(vsc.getModelToItsAdditionalModels().get(addModel));
+//						}
+//						preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(addidtionalModels, preparedModelInstantiations));
+
+						
 						
 						VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator(systemModel, 
 								scenarioToBeUsed, 
 								requirementsToBeUsed,
-								(Package) valueBindingsPackage,
+								(Package) bindingsPackage,
 								vsc.getAlwaysInclude(),
-								vsc.getModelToItsAdditionalModels());
+								vsc.getModelToItsAdditionalModels(),
+								preparedModelInstantiations);
+						
+						
 						
 						// add to map
 						scenarioToVerificationModelCombination.put(scenarioToBeUsed, tsmc);
@@ -426,8 +484,10 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 				String message = "NOT VALID: System model '" + sourceModel.toString() + "' is not a UML Class.";
 				addToLog(message);
 			}
-		}
+//		}
 	}
+	
+	
 	
 	private void generateSimulationModels(Element sourceModel){
 		
@@ -449,10 +509,12 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		}
 	}
 	
-	private void reportError(String title, String message){
-		Shell shell = getShell();
-		MessageDialog.openError(shell, title, message);
-	}
+	
+	
+	/*
+	 * Models Creation *********************************************************************************************************
+	 */
+	
 	
 	public void createSimulationModels(Element sourceModel){
 		
@@ -694,10 +756,16 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 						
 						// update all bindings in the created simulation model class
 						ValueBindingCreator vbc = new ValueBindingCreator();
+						// pass the mediators that were already collected
+						vbc.setAllMediators(vsc.getAllMediators());
+						
 						/* Note, the updateAllBindings() is called with the last argument simulateOnly = false  
 						 * so that modifications ARE created in components.
 						 */
-						vbc.updateAllBindings((Package)valueBindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
+						vbc.updateAllBindings((Package)bindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
+
+						// add to instantiations. May be useful for for later analysis of generated models
+						preparedModelInstantiations.put(simulationModel, ci.getTreeRoot());
 						
 						/*
 						 * Determine if there were models for which no correct bindings could be generated
@@ -802,6 +870,11 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		}
 	}
 	
+	
+	
+	
+	
+	
 	private HashSet<Element> getRequirements(Element scenario, String stereotypeQName){
 		HashSet<Element> requirements = new HashSet<Element>();
 		
@@ -823,7 +896,34 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		return requirements;
 	}
 
+	private void reportError(String title, String message){
+		Shell shell = getShell();
+		MessageDialog.openError(shell, title, message);
+	}
 	
+	private Shell getShell(){
+		Shell shell = null;
+		IWorkbench wb = PlatformUI.getWorkbench();
+		if (wb != null) {
+			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+			if (win != null) {
+				shell = win.getShell();
+			}
+		}
+		if (shell == null) {
+			shell = new Shell();
+		}
+		return shell;
+	}
+	
+	private void clearAllLists(){
+		testScenariosToBeInstantiated.clear();
+		testScenariosDiscarded.clear();
+		requirementsToBeInstantiated.clear();
+		requirementsDiscarded.clear();
+		
+		modelsWithBindingErrors.clear();
+	}
 	
 	
 	private void addToLog(String msg){
@@ -835,25 +935,7 @@ public class VeMGeneratorScenariosBased extends Observable implements IRunnableW
 		this.log = "";
 	}
 	
-	private String getModelQName(Element element) {
-		if (element instanceof NamedElement) {
-			String qName = ((NamedElement)element).getQualifiedName();
-			if (qName != null) {
-				return qName; 
-			}
-		}
-		return "Qualified name is not known ..." + "  -> " + element.toString();
-	}
-	
-	private String getModelName(Element element) {
-		if (element instanceof NamedElement) {
-			String name = ((NamedElement)element).getName();
-			if (name != null) {
-				return name; 
-			}
-		}
-		return "Name is not known ..." + "  -> " + element.toString();
-	}
+
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

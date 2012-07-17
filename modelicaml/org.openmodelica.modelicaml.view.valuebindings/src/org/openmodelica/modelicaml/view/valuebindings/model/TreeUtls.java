@@ -96,8 +96,8 @@ public class TreeUtls {
 		return stringPropertyList;
 	}
 	
-	public static EList<Element> getReferencingMediators(Element targetElement, EList<Element> mediators, String dependencyStereotypeQName){
-		EList<Element> referencingMediators = new BasicEList<Element>();
+	public static HashSet<Element> getReferencingMediators(Element targetElement, HashSet<Element> mediators, String dependencyStereotypeQName){
+		HashSet<Element> referencingMediators = new HashSet<Element>();
 		for (Element mediator : mediators) {
 			if (mediator instanceof NamedElement) {
 				EList<Dependency> depList = ((NamedElement)mediator).getClientDependencies();

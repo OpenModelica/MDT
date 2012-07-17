@@ -107,8 +107,8 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	
 	private String messageAutomaticScenarioBasedVerification = 
 			"This helper will create a package with models composed of the selected system model, scenarios and requirements " +
-			"\r\nthat can be verified, then simulate them, and then analize results. Note that requierements with positive " +
-			"\r\nrelations will be included only in corresponding scenarios. Requirements with negative relations will excluded from corresponding scenarios. " +
+			"\r\nthat can be verified, then simulate them, and then analize results. Note that requierements with positive relations will be " +
+			"\r\nincluded only in corresponding scenarios. Requirements with negative relations will be excluded from corresponding scenarios. " +
 			"\r\nNote, the composition of the verification models is based on value bindings which must to be defined correctly.";
 
 	
@@ -234,7 +234,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		CLabel lblInfo = new CLabel(container, SWT.NONE);
 		lblInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
 		GridData gd_lblInfo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_lblInfo.widthHint = 720;
+		gd_lblInfo.widthHint = 750;
 		lblInfo.setLayoutData(gd_lblInfo);
 		lblInfo.setTopMargin(5);
 		lblInfo.setBottomMargin(5);
@@ -531,7 +531,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	
 	@Override
 	protected void configureShell(Shell newShell) {
-		newShell.setMinimumSize(new Point(730, 500));
+		newShell.setMinimumSize(new Point(750, 500));
 		super.configureShell(newShell);
 //		super.configureShell(new Shell(getParentShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM));
 		

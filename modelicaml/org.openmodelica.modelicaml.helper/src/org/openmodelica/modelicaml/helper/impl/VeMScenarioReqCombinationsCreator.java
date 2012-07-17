@@ -17,10 +17,12 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 
 public class VeMScenarioReqCombinationsCreator {
+	
 	/* 
 	 * Package were to search for value mediators  
 	 */
 	private Package valueMediatorsPackage;
+	
 	
 	/* 
 	 * Selected system model to generate a simulation model.
@@ -81,7 +83,7 @@ public class VeMScenarioReqCombinationsCreator {
 	// All instantiated models
 	private HashSet<TreeParent> allModelInstantiations = new HashSet<TreeParent>();
 
-	// All instantiated models
+	// All models and their instantiation graphs
 	private HashMap<Element, TreeParent> modelToItsInstantiation = new HashMap<Element, TreeParent>();
 
 	// Virtual instantiation root. Its direct children are the instantiation roots of all models provided and collected. 
@@ -108,7 +110,8 @@ public class VeMScenarioReqCombinationsCreator {
 			HashSet<Element> requirements,
 			Package valueMediatorsPackage,
 			HashSet<Element> allAlwaysIncludeFound,
-			HashMap<Element, HashSet<Element>> allModelsAndTheirRequiredModelsFound){
+			HashMap<Element, HashSet<Element>> allModelsAndTheirRequiredModelsFound,
+			HashMap<Element, TreeParent> preparedModelsToInstantiations){
 		
 		this.systemModel = systemModel;
 		this.testScenario = testScenario;
@@ -120,6 +123,11 @@ public class VeMScenarioReqCombinationsCreator {
 		
 		// initial information for the log
 		initializeLog();
+		
+		// use the pre-instantiated models in order to avoid instantiating models multiple times
+		if (preparedModelsToInstantiations != null) {
+			setModelToItsInstantiation(preparedModelsToInstantiations);
+		}
 		
 		/*
 		 *  Initial set of models provided.
@@ -144,6 +152,7 @@ public class VeMScenarioReqCombinationsCreator {
 		HashSet<Element> allModels = new HashSet<Element>();
 		allModels.addAll(initialSetOfModels);
 		allModels.addAll(allCollectedAdditionalModels);
+		
 		instantiateAll(allModels);
 		
 		// validate this combination (checks only the system model and the verification scenario)
@@ -266,19 +275,37 @@ public class VeMScenarioReqCombinationsCreator {
 		// new instantiations
 		for (Element model : models) {
 			if (model instanceof Class) {
-
+				
+				TreeParent newChild = null;
+				
+				/*
+				 * First look if the graph for this model was already craeted (i.e. if there is an instantiation available for that model)
+				 * If not -> create a new instantiation
+				 */
+				if ( modelToItsInstantiation.get(model) != null) {
+					newChild = getModelToItsInstantiation().get(model);
+				}
+				else {
+					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
+					ci_model.createTree();
+					newChild = ci_model.getTreeRoot();
+					
+					// add to model -> its instantiation map
+					modelToItsInstantiation.put(model, newChild);
+				}
+				
 				// instantiate model
-				ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
-				ci_model.createTree();
+//				ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
+//				ci_model.createTree();
 				
 				// add the instantiated model to the root
-				virtualInstantiationTreeRoot.addChild(ci_model.getTreeRoot());
+				virtualInstantiationTreeRoot.addChild(newChild);
 				
 				// add  the instantiation object to the map. 
-				allModelInstantiations.add(ci_model.getTreeRoot());
+				allModelInstantiations.add(newChild);
 				
 				// add to model -> its instantiation map
-				modelToItsInstantiation.put(model, ci_model.getTreeRoot());
+//				modelToItsInstantiation.put(model, newChild);
 			}
 		}
 	}
@@ -578,7 +605,7 @@ public class VeMScenarioReqCombinationsCreator {
 	
 	private void initializeLog(){
 		this.log = "\n----------------------------------------------" +
-		"---------------------------------------------------" +
+//		"---------------------------------------------------" +
 		"--------------------------------------------------- \n" +
 		"Log for the combination:" +
 			"\n   - Scenario '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
@@ -664,6 +691,13 @@ public class VeMScenarioReqCombinationsCreator {
 	public HashMap<Element, TreeParent> getModelToItsInstantiation() {
 		return modelToItsInstantiation;
 	}
+	
+	public void setModelToItsInstantiation(
+			HashMap<Element, TreeParent> modelToItsInstantiation) {
+		this.modelToItsInstantiation = modelToItsInstantiation;
+	}
+
+	
 	
 	public HashSet<Element> getAlwaysInclude() {
 		return alwaysInclude;

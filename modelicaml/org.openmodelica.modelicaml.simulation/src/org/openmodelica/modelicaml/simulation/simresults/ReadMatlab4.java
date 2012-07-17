@@ -66,18 +66,18 @@ public class ReadMatlab4 implements IResultsReader {
 			case 0: {
 				int k;
 				int j;
-				if (hdr.mrows != 4)
-					throw new Exception("Aclass matrix does not have 4 rows");
-				if (hdr.ncols != 11)
-					throw new Exception("Aclass matrix does not have 11 cols");
-				
+//				if (hdr.mrows != 4)
+//					throw new Exception("Aclass matrix does not have 4 rows");
+//				if (hdr.ncols != 11)
+//					throw new Exception("Aclass matrix does not have 11 cols");
+//				
 				byte tmp[] = new byte[hdr.ncols * hdr.mrows];
 				
 				if (beraf.read(tmp) != tmp.length) {
 					throw new Exception("Corrupt header: Aclass matrix");
 				}
 				for (k = 0; k < hdr.mrows; k++) {
-					char row[] = new char[12];
+					char row[] = new char[hdr.ncols+1];
 					for (j = 0; j < hdr.ncols; j++) {
 						row[j] = (char) tmp[j * hdr.mrows + k];
 					}
@@ -319,10 +319,10 @@ public class ReadMatlab4 implements IResultsReader {
 	}
 
 	public double val( String varName, double time) throws Exception {
-		int index = find_var(varName);
-		int varIndex = allInfo[index].index;
+		int allInfoIndex = find_var(varName);
+		int varIndex = allInfo[allInfoIndex].index;
 		double res;
-		if (allInfo[index].isParam) {
+		if (allInfo[allInfoIndex].isParam) {
 			if (varIndex < 0)
 				res = -params[Math.abs(varIndex) - 1];
 			else
@@ -447,13 +447,7 @@ public class ReadMatlab4 implements IResultsReader {
 	}
 
 	public double[] getValues(String name) throws Exception {
-		return read_vals(allInfo[find_var(name)].index);
-	}
-	
-	private double[] read_vals(String name) throws Exception {
-		ModelicaMatVariable key = new ModelicaMatVariable();
-		key.name = name;
-		int allInfoIndex=Arrays.binarySearch(allInfo, key);
+		int allInfoIndex=find_var(name);
 		if(allInfoIndex >= 0){
 			if (allInfo[allInfoIndex].isParam) {
 				double ret[] = new double[nrows];
@@ -462,10 +456,10 @@ public class ReadMatlab4 implements IResultsReader {
 				}
 				return ret;
 			}else{
-				return read_vals(allInfo[find_var(name)].index);
+				return read_vals(allInfo[allInfoIndex].index);
 			}
 		}else{
-			throw new Exception("Value with name \""+ name +"\" not found");
+			throw new Exception("Value with name \""+ name +"\" was not found");
 		}
 	}
 
@@ -547,7 +541,8 @@ public class ReadMatlab4 implements IResultsReader {
 //			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__TanksConnectedPI_1.VeM_for__Scenario__Change_of_input_flow_res.mat");
 //			input = new ReadMatlab4("TwoTanksExample.GenVeMs_for__SystemEnvironment_1.VeM_for__Change_of_input_flow_res.mat");
 //			input = new ReadMatlab4("Change_of_input_flow.mat");
-			input = new ReadMatlab4("SRIN4_v3.SRI_v3.mat");
+//			input = new ReadMatlab4("SRIN4_v3.SRI_v3.mat");
+			input = new ReadMatlab4("ExampleModel1.mat");
 
 //			input.print_all_vars();
 //			ArrayList<String> namen=input.getNames();
@@ -575,23 +570,15 @@ public class ReadMatlab4 implements IResultsReader {
 //				System.out.println(erg[i]+ " = " + input.val( "time", erg[i]) );
 //			}
 			
-			double time[]=input.read_vals("Time");
+			double time[]=input.getTimeValues();
 			System.out.println("Time: "+Arrays.toString(time));
 			ArrayList<String> namen=input.getNames();
+			System.out.println("Namen: "+namen+"\nsize:"+namen.size());
+			int i=0;
 			for(String n:namen){
-				double erg[]=input.read_vals(n);
-				System.out.print(n + " " + Arrays.toString(erg));
-				boolean ok=true;
-				for (int i=0;i<erg.length-1;i++){
-					if(erg[i]!=input.val( n, time[i])){
-						ok=false;
-//						System.out.print(i+ " ");
-					}
-				}
-				if(ok)
-					System.out.println(" OK");
-				else
-					System.out.println(" ERROR");
+				double erg[]=input.getValues(n);
+				System.out.println(i + "\t"+n + " " + Arrays.toString(erg));
+				i++;
 			}
 			System.out.println("start: "+input.startTime()+" stop: " + input.stopTime());
 		} catch (Exception e) {
@@ -631,13 +618,14 @@ public class ReadMatlab4 implements IResultsReader {
 		}
 		@Override
 		public int compareTo(ModelicaMatVariable o) {
-//			/*
-//			 * The case when the time variable is called "time" or "Time"
-//			 */
-//			if (o.name.equalsIgnoreCase("time")) {
-//				return this.name.toLowerCase().compareTo(o.name.toLowerCase());
-//			}
 			return this.name.compareTo(o.name);
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if(obj instanceof ModelicaMatVariable)
+				return this.name.equals( ((ModelicaMatVariable)obj).name );
+			else
+				return false;
 		}
 	}
 	
@@ -707,8 +695,8 @@ public class ReadMatlab4 implements IResultsReader {
 
 	@Override
 	public double[] getTimeValues() throws Exception {
-		if(times==null)
-			times = read_vals(1);
+		if(times== null)
+			times=read_vals(1);
 		return times;
 	}
 	

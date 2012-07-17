@@ -509,7 +509,7 @@ public class VeMReqCombinationsCreator {
 	
 	private void initializeLog(){
 		this.log = "\n----------------------------------------------" +
-		"---------------------------------------------------" +
+//		"---------------------------------------------------" +
 		"--------------------------------------------------- \n" +
 		"Log for the combination:" +
 			"\n   - System Model '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +

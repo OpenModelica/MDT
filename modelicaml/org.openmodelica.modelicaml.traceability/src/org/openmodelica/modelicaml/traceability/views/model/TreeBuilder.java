@@ -38,7 +38,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -69,6 +68,7 @@ import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.helper.dialogs.VeMGenerationOptionsDialog;
 import org.openmodelica.modelicaml.helper.impl.VeMScenarioReqCombinationsCreator;
 import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.traceability.views.helper.ModelComposer;
@@ -92,6 +92,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	private VerificationScenariosCollector vsc;
 
+	// prepared instantiations of model in order to avoid instantiating models several times
+	private HashMap<Element, org.openmodelica.modelicaml.common.instantiation.TreeParent> preparedModelInstantiations = new HashMap<Element, org.openmodelica.modelicaml.common.instantiation.TreeParent>();
+	
 	/*
 	 * Possible combinations, each containing an initial set (1 system model, 1 test scenario  and n requirements) and 
 	 * all additional model that are required by any of the initial set models. 
@@ -154,19 +157,36 @@ public class TreeBuilder implements IRunnableWithProgress{
 	public void initialize(NamedElement selectedElement){
 		
 		this.selectedElement = selectedElement;
-		
+
 		// get the uml model that is open in Papyrus.
 		umlModel = UmlUtils.getUmlModel();
 		if (umlModel != null ) {
 			try {
+				
 				targetPackage = (Element) umlModel.lookupRoot();
 				requirementsPackage = (Element) umlModel.lookupRoot();
 				scenariosPackage = (Element) umlModel.lookupRoot();
 				valueMediatorsPackage = (Element) umlModel.lookupRoot();
 				
+//				// Set requirements selection options via user dialog
+//				VeMGenerationOptionsDialog dialog = new VeMGenerationOptionsDialog(
+//								new Shell(), 
+//								(Element) selectedElement, 
+//								targetPackage, 
+//								requirementsPackage, 
+//								scenariosPackage, 
+//								valueMediatorsPackage,
+//								Constants.MODE_VEM_GENERATION);
+//				dialog.open();
+//				
+//				targetPackage = dialog.getTargetPackge();
+//				requirementsPackage = dialog.getRequirementsPackage();
+//				scenariosPackage = dialog.getScenariosPackage();
+//				valueMediatorsPackage = dialog.getBindingsPackage();
+				
 			} catch (NotFoundException e) {
 				e.printStackTrace();
-				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in Papyrus. Please open die model in editor and try it again.");
 			}
 		}
 		
@@ -204,9 +224,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 
 	
-	
 	private void collectData(){
 		
+		// clear all lists from previous iterations
 		clearAll();
 		
 		ElementsCollector ec = new ElementsCollector();
@@ -217,14 +237,18 @@ public class TreeBuilder implements IRunnableWithProgress{
 		vsc = new VerificationScenariosCollector();
 		vsc.collectScenariosFromPackage((Package) scenariosPackage, true);
 		if (vsc.getAllScenarios().size() == 0) {
-			String message = "INFO: No verification scenarios were found.";
+			String message = "INFO: No scenarios were found.";
 			addToLog(message);
 		}
 
+		preparedModelInstantiations.put(selectedElement, ModelicaMLServices.getModelInstantiation(selectedElement, preparedModelInstantiations));
+		
 		for (Element scenario : vsc.getAllScenarios() ) {
+			
 			if (scenario instanceof Class) {
 				
 				Class scenarioToBeUsed = (Class) scenario;
+				preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations));
 
 				// get requirements
 				HashSet<Element> reqList = vsc.getScenarioToReq().get(scenarioToBeUsed);
@@ -236,22 +260,27 @@ public class TreeBuilder implements IRunnableWithProgress{
 							requirementsToBeUsed.add((Class) req);
 						}
 						else {
-							String message = "NOT VALID: Requirement '" + req.toString() + "' is not a class";
+							String message = "NOT VALID: Requirement '" + req.toString() + "' is not a UML::Class.";
 							addToLog(message);
 						}
 					}
 				}
 				else {
-					String message = "INFO: No requirements are found for the test scenario '" + scenarioToBeUsed.getQualifiedName() + "'";
+					String message = "INFO: No requirements are referenced by the scenario '" + ModelicaMLServices.getQualifiedName(scenarioToBeUsed) + "'";
 					addToLog(message);
 				}
+				
+				
+				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations));
+				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(vsc.getAlwaysInclude(), preparedModelInstantiations));
 				
 				VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator((Class) selectedElement, 
 						scenarioToBeUsed, 
 						requirementsToBeUsed,
 						(Package) valueMediatorsPackage,
 						vsc.getAlwaysInclude(),
-						vsc.getModelToItsAdditionalModels());
+						vsc.getModelToItsAdditionalModels(),
+						preparedModelInstantiations);
 				
 				// add to map
 				scenarioToVerificationModelCombination.put(scenarioToBeUsed, tsmc);
@@ -280,7 +309,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 				addToLog(tsmc.getLog().trim());
 			}
 			else {
-				String message = "NOT VALID: Scenario '" + selectedElement.toString() + "' is not a UML Class.";
+				String message = "NOT VALID: Scenario '" + ModelicaMLServices.getQualifiedName(selectedElement) + "' is not a UML::Class.";
 				addToLog(message);
 			}
 		}
@@ -319,7 +348,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			// add requirements
 			addRequirements(scenarioItem);
 
-			// TODO: add models that are needed for this scenario in addition
+			// TODO: add models that are needed for this scenario in addition?
 		}
 	}
 	

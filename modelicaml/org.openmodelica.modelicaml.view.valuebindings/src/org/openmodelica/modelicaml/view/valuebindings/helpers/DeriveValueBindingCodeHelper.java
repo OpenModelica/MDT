@@ -66,8 +66,6 @@ import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 public class DeriveValueBindingCodeHelper {
 	
-	//	private TreeObject selectedTreeItem;
-	
 	private TreeObject clientTreeItem;
 	private Element clientElement = null; // is the determined element that owns the script for the selected tree item client. 
 	private String clientOperation = null; // final operation script.
@@ -83,10 +81,7 @@ public class DeriveValueBindingCodeHelper {
 	private HashSet<TreeObject> providers = new HashSet<TreeObject>(); // final providers that are derived.
 
 	private HashSet<Element> mediatorsContainingClientOperationScript = new HashSet<Element>();
-	
-//	private TreeObject instantiationTreeRoot;
-//	private Element umlRootModel;
-	
+
 	private ValueBindingsDataCollector dataCollection;
 
 	private String code = null; // derived code
@@ -96,7 +91,7 @@ public class DeriveValueBindingCodeHelper {
 	
 	private Boolean userSelectionRequired = false; // indicates if an error was detected.
 
-	public void initialize(Package valueBindingsPackage, TreeObject instantiationTreeRoot, boolean showProgressMonitor){
+	public void initialize(Package valueBindingsPackage, TreeObject instantiationTreeRoot, HashSet<Element> preCollectedMediators, boolean showProgressMonitor){
 		
 		if (instantiationTreeRoot instanceof TreeParent) {
 			if (valueBindingsPackage == null) {
@@ -105,8 +100,19 @@ public class DeriveValueBindingCodeHelper {
 			if (showProgressMonitor) {
 				try {
 					dataCollection = new ValueBindingsDataCollector();
+					
+					/*
+					 * Use mediators that were already collected. If no mediators are provided -> find some in the specified bindings package
+					 * If mediators are provided then the collectAll() method will use them and skip an additional search
+					 */
+					if (preCollectedMediators != null && preCollectedMediators.size() > 0) {
+						dataCollection.setAllMediators(preCollectedMediators);
+					}
+					
 					dataCollection.collectAll((Element) valueBindingsPackage, instantiationTreeRoot);
+					
 					new ProgressMonitorDialog(getShell()).run(true, true, dataCollection);
+					
 		        } catch (InvocationTargetException e) {
 		        	MessageDialog.openError(getShell(), "Error", e.getMessage());
 		        } catch (InterruptedException e) {
@@ -115,6 +121,15 @@ public class DeriveValueBindingCodeHelper {
 			}
 			else {
 				dataCollection = new ValueBindingsDataCollector();
+				
+				/*
+				 * Use mediators that were already collected. If no mediators are provided -> find some in the specified bindings package
+				 * If mediators are provided then the collectAll() method will use them and skip an additional search
+				 */
+				if (preCollectedMediators != null && preCollectedMediators.size() > 0) {
+					dataCollection.setAllMediators(preCollectedMediators);
+				}
+				
 				dataCollection.collectAll((Element) valueBindingsPackage, instantiationTreeRoot);
 			}
 		}
@@ -473,7 +488,8 @@ public class DeriveValueBindingCodeHelper {
 	
 	private void storePreferredProvider(Element mediator, TreeObject client, TreeObject provider) {
 		if (mediator != null && client != null && provider != null) {
-			boolean result = TreeUtls.addToPreferredProvider(mediator, client.getDotPath(), provider.getDotPath());
+//			boolean result = TreeUtls.addToPreferredProvider(mediator, client.getDotPath(), provider.getDotPath());
+			TreeUtls.addToPreferredProvider(mediator, client.getDotPath(), provider.getDotPath());
 		}
 		else {
 			MessageDialog.openError(getShell(), "Error", "Could not add the provider to preferred providers.");
@@ -893,7 +909,7 @@ public class DeriveValueBindingCodeHelper {
 						if (bindingEqationParts.length == 2 ) {// it is a binding equation with left and right part 
 							
 							// get the left and right parts and trim them
-							String leftHand = bindingEqationParts[0].trim();
+//							String leftHand = bindingEqationParts[0].trim();
 							String rightHand = bindingEqationParts[1].trim();
 							finalScript = rightHand;
 						}

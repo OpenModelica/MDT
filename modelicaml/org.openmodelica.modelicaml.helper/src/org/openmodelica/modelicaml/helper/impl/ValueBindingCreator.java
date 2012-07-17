@@ -64,6 +64,9 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 	// all deleted modification string
 	private List<String> deletedModifications = new ArrayList<String>();
 	
+	// all mediators found and provided in advance
+	private HashSet<Element> allMediators;
+	
 	/* All tree items that are clients
 	 * Note, the selected tree item may not be the actual client element that owns the client script (see deriveCodeHelper.getClientElement()).
 	 */
@@ -101,7 +104,7 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 		// Instantiate a new derive code helper
 		deriveCodeHelper = new DeriveValueBindingCodeHelper();
 		// initialize the helper in order to collect and sort the data from the model and the instantiated class.
-		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, showProgressMonitor); 
+		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, getAllMediators(), showProgressMonitor); 
 		
 		// update bindings for all sub-components (recursively) of the selected tree item.
 		updateAllSubComponents(treeParent, 
@@ -126,7 +129,7 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 		// Instantiate a new derive code helper
 		deriveCodeHelper = new DeriveValueBindingCodeHelper();
 		// initialize the helper in order to collect and sort the data from the model and the instantiated class.
-		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, showProgressMonitor); 
+		deriveCodeHelper.initialize( valueBindingsPackage, treeRoot, getAllMediators(), showProgressMonitor); 
 		
 		// update the binding only for the selected tree item
 		updateSingle(treeItem, 
@@ -384,5 +387,13 @@ public class ValueBindingCreator implements IRunnableWithProgress {
 	    if (monitor.isCanceled()){
 	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
 	    }   
+	}
+
+	public HashSet<Element> getAllMediators() {
+		return allMediators;
+	}
+
+	public void setAllMediators(HashSet<Element> allMediators) {
+		this.allMediators = allMediators;
 	}
 }

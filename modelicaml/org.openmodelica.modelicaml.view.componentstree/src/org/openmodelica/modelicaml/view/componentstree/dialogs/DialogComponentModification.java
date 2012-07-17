@@ -351,7 +351,7 @@ public class DialogComponentModification extends Dialog {
 		
 
     	final DeriveValueBindingCodeHelper deriveValueBindingCodeHelper = new DeriveValueBindingCodeHelper();
-    	deriveValueBindingCodeHelper.initialize(root.getSelectedClass().getModel(), root, false);
+    	deriveValueBindingCodeHelper.initialize(root.getSelectedClass().getModel(), root, null, false);
     	
     	// the user shall select the providers, so don't activate the automatic selection of preferred providers and the deletion of old bindings!
     	deriveValueBindingCodeHelper.deriveBindingCodeForClient(treeObject, false, false);

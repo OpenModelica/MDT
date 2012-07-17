@@ -23,6 +23,9 @@ public class VerificationScenariosCollector {
 	// all requirements that are found
 	private HashSet<Element> allRequirements = new HashSet<Element>();
 	
+	// all mediators that are found
+	private HashSet<Element> allMediators = new HashSet<Element>();
+	
 	// scenarios that can be used to test selected requirements
 	private HashSet<Element> matchedScenarios = new HashSet<Element>();
 
@@ -50,6 +53,13 @@ public class VerificationScenariosCollector {
 	// UML root model
 	private Model umlRoolModel = null;
 	
+	// the package containing the requirements to be used
+	private Element requirementsPackage;
+	// the package containing the scenarios to be used
+	private Element scenariosPackage;
+	// the package to containing the value bindings to be used
+	private Element bindingsPackage;
+	
 	
 	// Constructors
 	public VerificationScenariosCollector(){}
@@ -58,21 +68,50 @@ public class VerificationScenariosCollector {
 		this.umlRoolModel = model;
 	}
 	
-	public boolean collectScenariosFromModel(Boolean sortData){
+	public VerificationScenariosCollector(Model model,
+			Element requirementsPackage,
+			Element scenariosPackage,
+			 Element bindingsPackage
+			 ){
+		
+		this.umlRoolModel = model;
+		
+		this.requirementsPackage = requirementsPackage;
+		this.scenariosPackage = scenariosPackage;
+		this.bindingsPackage = bindingsPackage;
+	}
+	
+	private void clearAll(){
 		// clear the list in order to enable multiple calls of this method in the the same object
 		this.allScenarios.clear();
 		this.allRequirements.clear();
+		this.allMediators.clear();
 		this.alwaysInclude.clear();
 		this.modelToItsAdditionalModels.clear();
+	}
+	
+	public boolean collectScenariosFromModel(Boolean sortData){
+		
+		clearAll();
 		
 		if ( umlRoolModel != null ) {
-			VerificationDataCollector ec = new VerificationDataCollector(umlRoolModel);
+			
+			VerificationDataCollector ec;
+			// if the packages to search on were specified -> use them
+			if (requirementsPackage != null && scenariosPackage != null && bindingsPackage != null) {
+				ec = new VerificationDataCollector(umlRoolModel, requirementsPackage, scenariosPackage, bindingsPackage);
+			}
+			else {
+				ec = new VerificationDataCollector(umlRoolModel);
+			}
 			
 			this.allScenarios.addAll(ec.getAllScenarios());
 			this.alwaysInclude.addAll(ec.getAlwaysInclude());
 			this.modelToItsAdditionalModels.putAll(ec.getModelToItsRequiredModels());
 			
 			this.allRequirements.addAll(ec.getAllRequirements());
+			
+			this.allMediators.addAll(ec.getAllMediators());
 			
 			// sort data (i.e. fill other sets and maps)
 			if (sortData) { sortData();}
@@ -83,11 +122,15 @@ public class VerificationScenariosCollector {
 		return false;
 	}
 	
+	
+	public boolean collectAll(Boolean sortData){
+		return collectScenariosFromModel(sortData);
+	}
+	
+	
 	public boolean collectScenariosFromPackage(Package rootPackage, boolean sortData){
-		// clear the list in order to enable multiple calls of this method in the the same object
-		this.allScenarios.clear();
-		this.alwaysInclude.clear();
-		this.modelToItsAdditionalModels.clear();
+
+		clearAll();
 
 		if ( rootPackage != null ) {
 			VerificationDataCollector ec = new VerificationDataCollector((EObject) rootPackage);
@@ -106,6 +149,8 @@ public class VerificationScenariosCollector {
 		
 		return false;
 	}
+	
+	
 	
 	private void sortData(){
 		// clear all data
@@ -377,6 +422,14 @@ public class VerificationScenariosCollector {
 
 	public HashMap<Element,HashSet<Element>> getScenariosWithNegativeRelationsToReq() {
 		return scenarioWithNegativeRelationsToReq;
+	}
+
+	public HashSet<Element> getAllMediators() {
+		return allMediators;
+	}
+
+	public void setAllMediators(HashSet<Element> allMediators) {
+		this.allMediators = allMediators;
 	}
 	
 }

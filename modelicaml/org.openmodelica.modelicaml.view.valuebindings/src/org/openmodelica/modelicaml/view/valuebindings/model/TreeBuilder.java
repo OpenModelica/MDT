@@ -53,14 +53,15 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.MediatorsCollector;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
 
 
 public class TreeBuilder {
 
-	private EList<Element> valueMediatorContainers = new BasicEList<Element>();
-	private EList<Element> valueMediators = new BasicEList<Element>();
+	private HashSet<Element> valueMediatorContainers = new HashSet<Element>();
+	private HashSet<Element> valueMediators = new HashSet<Element>();
 	
 	// only the imported mediator containers
 	private HashSet<Element> importedMediatorContainers = new HashSet<Element>();
@@ -441,10 +442,10 @@ public class TreeBuilder {
 		if (element != null) {
 			List<Element> list = new ArrayList<Element>();
 			if (item.isValueClient()) {
-				list = TreeUtls.getReferencingMediators(element, valueMediators, Constants.stereotypeQName_ProvidesValueFor);
+				list = ModelicaMLServices.getSortedByName(TreeUtls.getReferencingMediators(element, valueMediators, Constants.stereotypeQName_ProvidesValueFor));
 			}
 			if (item.isValueProvider()) {
-				list = TreeUtls.getReferencingMediators(element, valueMediators, Constants.stereotypeQName_ObtainsValueFrom);
+				list = ModelicaMLServices.getSortedByName(TreeUtls.getReferencingMediators(element, valueMediators, Constants.stereotypeQName_ObtainsValueFrom));
 			}
 
 			int numberOfMediators = list.size();
