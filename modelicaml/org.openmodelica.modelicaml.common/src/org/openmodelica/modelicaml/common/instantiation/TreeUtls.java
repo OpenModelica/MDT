@@ -35,28 +35,22 @@
 package org.openmodelica.modelicaml.common.instantiation;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
-import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.Signal;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
-import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.Vertex;
-import org.eclipse.uml2.uml.util.UMLUtil;
-import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
 
@@ -65,6 +59,8 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 		// is set by the components tree plugin and each time it instantiates a class
 		// it is used by other plugins, e.g., value bindings in order to get the currently instantiated class.
 		// IMPORTANT: components tree plugin should not forget to reset it! 
+		
+		public static ClassInstantiation classInstantiation = null;
 		public static TreeParent componentsTreeRoot = null;
 		public static Viewer componentsTreeViewer = null;
 		
@@ -112,154 +108,6 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 		}
 		
 	
-//	// TODO: remove it and use the getValueMediators() instead
-//	public static HashSet<Property> getValueBindings(Property property, String valueBindingStereotypeQName, String valueBindingPropertyName){
-//		HashSet<Property> list = new HashSet<Property>();
-//
-//		String stereotypeQName = valueBindingStereotypeQName;
-//		Stereotype valueBindingStereotype = property.getAppliedStereotype(stereotypeQName);
-//		
-//		if (valueBindingStereotype != null) {
-//			Object stereotypeValue = property.getValue(valueBindingStereotype, valueBindingPropertyName);
-//			if (stereotypeValue instanceof EList) {
-//				for (Object object : (EList)stereotypeValue) {
-//					EList<EObject> crossreferencesList = ((EObject)object).eCrossReferences();
-//					for (EObject eObject : crossreferencesList) { // to get the Property that the stereotype is applied to
-//						if (eObject instanceof Property) {
-//							list.add((Property)eObject); // add the proxy Property
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return list;
-//	}
-	
-		
-//	public static EList<Element> getValueMediators(Element element, String valueBindingStereotypeQName, String valueBindingPropertyName){
-//		EList<Element> list = new BasicEList<Element>();
-//
-//		String stereotypeQName = valueBindingStereotypeQName;
-//		Stereotype valueBindingStereotype = element.getAppliedStereotype(stereotypeQName);
-//		
-//		if (valueBindingStereotype != null) {
-//			Object stereotypeValue = element.getValue(valueBindingStereotype, valueBindingPropertyName);
-//			if (stereotypeValue instanceof EList) {
-//				for (Object object : (EList)stereotypeValue) {
-//					if (object instanceof EObject) {
-//						Element valueMediator = UMLUtil.getBaseElement((EObject)object);
-//						list.add(valueMediator);
-//					}
-//				}
-//			}
-//		}
-//		return list;
-//	}
-	
-	
-	/**
-	 * Gets the all linked primitive variables dot path through proxy.
-	 *
-	 * @param p the p
-	 * @param listOfReqPropertyProxies the list of proxies
-	 * @param treeParent the tree parent
-	 * @return the all linked primitive variables dot path through proxy
-	 */
-//	public static HashSet<String> getAllLinkedPrimitiveVariablesDotPathThroughProxy (Property p, EList<Element> listOfReqPropertyProxies, TreeObject treeParent){
-//		HashSet<String> list = new HashSet<String>();
-//		TreeObject[] children = ((TreeParent)treeParent).getChildren();
-//		for (int i = 0; i < children.length; i++) {
-//			if (children[i].isLeaf()) {
-//				Property childProperty = children[i].getProperty();
-//				if (childProperty != null && !childProperty.equals(p)) {
-//					
-//					//System.err.println("childProperty: " + childProperty.getName());
-//					
-//					String valueBindingStereotypeQName = "ModelicaMLTesting::ValueBinding::ValueProvider"; 
-//					String valueBindingPropertyName = "providesValueFor";
-//					
-//					if (childProperty.getAppliedStereotype(valueBindingStereotypeQName) != null) {
-//						//System.err.println("childProperty has stereotype");
-//						EList<Element> listOfChildPropertyProxies = getValueMediators(childProperty, valueBindingStereotypeQName, valueBindingPropertyName);
-//						
-////						System.err.println("listOfProxies: " + listOfProxies);
-////						System.err.println("listOfChildPropertyProxies: " + listOfChildPropertyProxies);
-//						
-//						for (Element property : listOfChildPropertyProxies) {
-//							if (listOfReqPropertyProxies.contains(property)) {
-////								System.err.println("the list of proxies contains the proxy '"+property.getName()+"' of the childProperty '" + childProperty.getName() + "' ");
-//								list.add(children[i].getDotPath());
-//								// TODO: if it is a state then add ".active" to the dotPath.
-//							}
-//						}
-//					}
-//				}
-//			}
-//			else {
-//				HashSet<String> nextLevelList = getAllLinkedPrimitiveVariablesDotPathThroughProxy(p, listOfReqPropertyProxies ,children[i]);
-//				list.addAll(nextLevelList);
-//			}
-//		}
-//		
-//		// TODO: do the same for states of statemachines?
-//		
-//		return list;
-//	}
-	
-//	public static EList<TreeObject> getValueProviders(Element valueClient, EList<Element> listOfMediators, TreeObject treeParent){
-//		EList<TreeObject> list = new BasicEList<TreeObject>();
-//		TreeObject[] children = ((TreeParent)treeParent).getChildren();
-//		for (int i = 0; i < children.length; i++) {
-////			if (children[i].isLeaf()) {
-//				Property childProperty = children[i].getProperty();
-//				if (childProperty != null && !childProperty.equals(valueClient)) {
-//					
-//					//System.err.println("childProperty: " + childProperty.getName());
-//					
-//					String valueBindingStereotypeQName = Constants.stereotypeQName_ValueProvider; 
-//					String valueBindingPropertyName = Constants.stereotypeQName_ValueProvider_providesValueFor;
-//					
-//					if (childProperty.getAppliedStereotype(valueBindingStereotypeQName) != null) {
-//						//System.err.println("childProperty has stereotype");
-//						EList<Element> listOfChildPropertyProxies = getValueMediators(childProperty, valueBindingStereotypeQName, valueBindingPropertyName);
-//						
-////						System.err.println("listOfProxies: " + listOfProxies);
-////						System.err.println("listOfChildPropertyProxies: " + listOfChildPropertyProxies);
-//						
-//						for (Element property : listOfChildPropertyProxies) {
-//							if (listOfMediators.contains(property)) {
-////								System.err.println("the list of proxies contains the proxy '"+property.getName()+"' of the childProperty '" + childProperty.getName() + "' ");
-//								list.add(children[i]);
-////								System.err.println(children[i].getName());
-//							}
-//						}
-//					}
-//				}
-////			}
-////			else {
-//				if ( !children[i].isLeaf() ) { // TODO: use getChlidren?
-//					EList<TreeObject> nextLevelList = getValueProviders(valueClient, listOfMediators, children[i]);
-//					list.addAll(nextLevelList);
-//				}
-////			}
-//		}
-//		
-//		// TODO: do the same for states of statemachines?
-//		
-//		return list;
-//	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
 	/**
 	 * Gets the all primitive variables dot path.
 	 * 
@@ -394,162 +242,5 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 		return list;
 	}
 	
-	/**
-	 * Gets the all linked primitive variables dot path.
-	 * 
-	 * @param p
-	 *            the p
-	 * @param treeParent
-	 *            the tree parent
-	 * @return the all linked primitive variables dot path
-	 */
-//	
-//	// TODO: remove it. this is now replaced by the value-proxy concept (see below). 
-//	
-//	public static HashSet<String> getAllLinkedPrimitiveVariablesDotPath (Property p, TreeObject treeParent){
-//		HashSet<String> list = new HashSet<String>();
-//		TreeObject[] children = ((TreeParent)treeParent).getChildren();
-//		for (int i = 0; i < children.length; i++) {
-//			if (children[i].isLeaf()) {
-//				Property childProperty = children[i].getProperty();
-//				if (childProperty != null) {
-//					// get Dependencies from the passed property
-//					EList<Dependency> dep = p.getClientDependencies();
-//					for (Dependency dependency : dep) {
-//						EList<Element> targets = dependency.getTargets();
-//						for (Element element : targets) {
-//							if (element instanceof Property) {
-////								System.out.println("element " + ((Property) element).getName());
-////								System.out.println("children[i].getProperty():  " + children[i].getProperty());
-//								if ( ((Property)element) == children[i].getProperty()) {
-//									list.add(children[i].getDotPath());
-//									
-//									// for Ports
-//									if ( !children[i].isOfPrimitiveType() ) {
-//										HashSet<String> nextLevelList = getAllPrimitiveVariablesDotPath(children[i]);
-//										list.addAll(nextLevelList);
-//									}
-//								}
-//							}
-//						}
-//					}
-//					
-//					// get Dependencies from the iterated property
-//					EList<Dependency> childDep = childProperty.getClientDependencies();
-//					for (Dependency dependency : childDep) {
-//						EList<Element> targets = dependency.getTargets();
-//						for (Element element : targets) {
-//							if (element instanceof Property) {
-////								System.out.println("element " + ((Property) element).getName());
-////								System.out.println("children[i].getProperty():  " + children[i].getProperty());
-//								if ( ((Property)element) == p ) {
-//									list.add(children[i].getDotPath());
-//									
-//									// for Ports
-//									if ( !children[i].isOfPrimitiveType() ) {
-//										HashSet<String> nextLevelList = getAllPrimitiveVariablesDotPath(children[i]);
-//										list.addAll(nextLevelList);
-//									}
-//								}
-//							}
-//						}
-//					}
-//
-//				}
-//			}
-//			else {
-//				HashSet<String> nextLevelList = getAllLinkedPrimitiveVariablesDotPath(p,children[i]);
-//				list.addAll(nextLevelList);
-//			}
-//		}
-//		
-//		// TODO: do the same for states of statemachines.
-//		
-//		return list;
-//	}
-//	
-	
-	
-	
-	
-//	/**
-//	 * Gets the value bindings.
-//	 *
-//	 * @param property the property
-//	 * @param valueBindingStereotypeQName the value binding stereotype q name
-//	 * @param valueBindingPropertyName the value binding property name
-//	 * @return the value bindings
-//	 */
-//	public HashSet<Property> getValueBindings(Property property, String valueBindingStereotypeQName, String valueBindingPropertyName){
-//		HashSet<Property> list = new HashSet<Property>();
-//		//final String stereotypeQName = "ModelicaMLTesting::ValueBinding::ValueClient";
-//		String stereotypeQName = valueBindingStereotypeQName;
-//		Stereotype valueBindingStereotype = property.getAppliedStereotype(stereotypeQName);
-//		if (valueBindingStereotype != null) {
-//			//Object stereotypeValue = property.getValue(valueBindingStereotype, "obtainsValueFrom");
-//			Object stereotypeValue = property.getValue(valueBindingStereotype, valueBindingPropertyName);
-//			if (stereotypeValue instanceof EList) {
-//				for (Object object : (EList)stereotypeValue) {
-//					EList<EObject> crossreferencesList = ((EObject)object).eCrossReferences();
-//					for (EObject eObject : crossreferencesList) { // to get the Property that the stereotype is applied to
-//						if (eObject instanceof Property) {
-//							//System.err.println(property.getName() + " has the proxy: " + ((Property)eObject).getName());
-//							list.add((Property)eObject); // add the proxy Property
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return list;
-//	}
-	
-//	/**
-//	 * Gets the all linked primitive variables dot path through proxy.
-//	 *
-//	 * @param p the p
-//	 * @param listOfProxies the list of proxies
-//	 * @param treeParent the tree parent
-//	 * @return the all linked primitive variables dot path through proxy
-//	 */
-//	public HashSet<String> getAllLinkedPrimitiveVariablesDotPathThroughProxy (Property p, HashSet<Property> listOfProxies, TreeObject treeParent){
-//		HashSet<String> list = new HashSet<String>();
-//		TreeObject[] children = ((TreeParent)treeParent).getChildren();
-//		for (int i = 0; i < children.length; i++) {
-//			if (children[i].isLeaf()) {
-//				Property childProperty = children[i].getProperty();
-//				if (childProperty != null && !childProperty.equals(p)) {
-//					
-//					//System.err.println("childProperty: " + childProperty.getName());
-//					
-//					String valueBindingStereotypeQName = "ModelicaMLTesting::ValueBinding::ValueProvider"; 
-//					String valueBindingPropertyName = "providesValueFor";
-//					
-//					if (childProperty.getAppliedStereotype(valueBindingStereotypeQName) != null) {
-//						//System.err.println("childProperty has stereotype");
-//						HashSet<Property> listOfChildPropertyProxies = getValueBindings(childProperty, valueBindingStereotypeQName, valueBindingPropertyName);
-//						
-////						System.err.println("listOfProxies: " + listOfProxies);
-////						System.err.println("listOfChildPropertyProxies: " + listOfChildPropertyProxies);
-//						
-//						for (Property property : listOfChildPropertyProxies) {
-//							if (listOfProxies.contains(property)) {
-////								System.err.println("the list of proxies contains the proxy '"+property.getName()+"' of the childProperty '" + childProperty.getName() + "' ");
-//								list.add(children[i].getDotPath());
-//								// TODO: if it is a state then add ".active" to the dotPath.
-//							}
-//						}
-//					}
-//				}
-//			}
-//			else {
-//				HashSet<String> nextLevelList = getAllLinkedPrimitiveVariablesDotPathThroughProxy(p, listOfProxies ,children[i]);
-//				list.addAll(nextLevelList);
-//			}
-//		}
-//		
-//		// TODO: do the same for states of statemachines?
-//		
-//		return list;
-//	}
 	
 }

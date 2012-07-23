@@ -99,7 +99,12 @@ public class PapyrusListener implements IPapyrusListener {
 			
 			umlModelResource = ((Element) notification.getNotifier()).getModel().eResource();
 			
-			umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+			try {
+				umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+//				e.printStackTrace();
+			}
 
 			if (umlModel != null) {
 				//String projectName = umlModel.getResourceURI().segment(1);

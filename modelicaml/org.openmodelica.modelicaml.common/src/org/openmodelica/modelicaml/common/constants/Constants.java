@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.common.constants;
 
+
 public class Constants {
 	public static final String modelingLanguageName 				= "ModelicaML";
 	public static final String actionLanguageName 					= "Modelica";
@@ -311,6 +312,8 @@ public class Constants {
 	public static final String validationKeyWord_NOT_VALID 		= "NOT VALID";
 	
 	public static final String UKNOWN_NAME 		= "UKNONWN";
+	
+	public final static String linkDelimiter = "@-->";
 	
 }
 

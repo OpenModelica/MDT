@@ -40,7 +40,7 @@ public class VerificationExecutionServices {
 	public static HashSet<Element> verificationModels = new HashSet<Element>();
 	
 	// used to separate the qualified name of UML element and the component path in a locate html link 
-	public static String linkDelimiter = "@-->";
+	public static String linkDelimiter = Constants.linkDelimiter;
 	
 	
 	/*
@@ -412,8 +412,9 @@ public class VerificationExecutionServices {
 	public static EList<TreeObject> getRequirements(Element element){
 		EList<TreeObject> treeItems = new BasicEList<TreeObject>();
 		if (element instanceof Class) {
+			
 			// instantiate
-			ClassInstantiation ci = new ClassInstantiation((Class) element, true);
+			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false);
 			ci.setUmlModel(element.getModel());
 			ci.createTree();
 
@@ -440,8 +441,9 @@ public class VerificationExecutionServices {
 	public static EList<TreeObject> getComponents(Element element){
 		EList<TreeObject> treeItems = new BasicEList<TreeObject>();
 		if (element instanceof Class) {
+
 			// instantiate
-			ClassInstantiation ci = new ClassInstantiation((Class) element, true);
+			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false);
 			ci.setUmlModel(element.getModel());
 			ci.createTree();
 			

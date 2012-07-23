@@ -33,12 +33,12 @@ import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
-import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 
 public class ModelicaMLServices {
 
@@ -578,31 +578,135 @@ public class ModelicaMLServices {
 	 */
 	
 	
-	public static HashMap<Element,TreeParent> getModelInstantiations(HashSet<Element> models, HashMap<Element,TreeParent> preparedInstantiations){
+//	public static HashMap<Element,TreeParent> getModelInstantiations(HashSet<Element> models, HashMap<Element,TreeParent> preparedInstantiations){
+//		
+//		HashMap<Element,TreeParent> modelToInstantiations = new HashMap<Element, TreeParent>();
+//		
+//		for (Element model : models) {
+//			TreeParent newChild = getModelInstantiation(model, preparedInstantiations);
+//			if (newChild != null) {
+//				modelToInstantiations.put(model, newChild);
+//			}
+//		}
+//		
+//		return modelToInstantiations;
+//	}
+//	
+//	public static TreeParent getModelInstantiation(Element model, HashMap<Element,TreeParent> preparedInstantiations){
+//		TreeParent newChild = null;
+//
+//		// create only if it does not exists already
+//		if (preparedInstantiations.get(model) == null) {
+//			
+//			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
+//			ci_model.createTree();
+//			newChild = ci_model.getTreeRoot();
+//		}
+//		
+//		return newChild;
+//	}
+	
+	
+	public static HashMap<Element,ClassInstantiation> getModelInstantiations(HashSet<Element> models, HashMap<Element,ClassInstantiation> preparedInstantiations){
 		
-		HashMap<Element,TreeParent> modelToInstantiations = new HashMap<Element, TreeParent>();
+		HashMap<Element,ClassInstantiation> modelToInstantiations = new HashMap<Element, ClassInstantiation>();
 		
 		for (Element model : models) {
-			TreeParent newChild = getModelInstantiation(model, preparedInstantiations);
-			if (newChild != null) {
-				modelToInstantiations.put(model, newChild);
+			ClassInstantiation newInstantiation = getModelInstantiation(model, preparedInstantiations);
+			if (newInstantiation != null) {
+				modelToInstantiations.put(model, newInstantiation);
 			}
 		}
 		
 		return modelToInstantiations;
 	}
 	
-	public static TreeParent getModelInstantiation(Element model, HashMap<Element,TreeParent> preparedInstantiations){
-		TreeParent newChild = null;
+	public static ClassInstantiation getModelInstantiation(Element model, HashMap<Element,ClassInstantiation> preparedInstantiations){
+		ClassInstantiation newInstantiation = preparedInstantiations.get(model);
 
 		// create only if it does not exists already
-		if (preparedInstantiations.get(model) == null) {
+		if ( newInstantiation == null) {
 			
-			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
+			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
 			ci_model.createTree();
-			newChild = ci_model.getTreeRoot();
+			
+			newInstantiation = ci_model;
 		}
 		
-		return newChild;
+		return newInstantiation;
+	}
+	
+	
+	
+	public static Model getCommonRootModel(HashSet<Element> selectedModels){
+		/*
+		 * TODO: Issue: If models are in different root Models which are at the same hierarchy?
+		 */
+		Model rootModel = null;
+		for (Element selectedModel : selectedModels) {
+			Model newRootCandidate = selectedModel.getModel();
+			if (newRootCandidate  != null) {
+				
+				// new root is contained in the known root
+				if (rootModel != null && rootModel.getQualifiedName().contains(newRootCandidate.getQualifiedName()) ) {
+					// let the known model be ...
+				}
+				else if (rootModel != null && newRootCandidate.getQualifiedName().contains(rootModel.getQualifiedName()) ) {
+					rootModel = newRootCandidate;
+				}
+				// very first time
+				else if (rootModel == null) {
+					rootModel = newRootCandidate;
+				}
+				else {
+					//TODO: here the models are in different root Models which are at the same hierarchy?
+					// which to take? 
+					System.err.println("PROBLEM detecting common root model: Root models are at the same hierarchy levels.");
+				}
+			}
+		}
+		return rootModel;
+	}
+	
+	
+	
+	
+	
+	public static HashSet<Element> getElementsFromAllInstantiations(HashMap<Element, ClassInstantiation> modelToItsInstantiation){
+		HashSet<Element> allElements = new HashSet<Element>();
+		HashSet<ClassInstantiation> classInstantiations = new HashSet<ClassInstantiation>();
+		for (Element model: modelToItsInstantiation.keySet()) {
+			classInstantiations.add(modelToItsInstantiation.get(model));
+		}
+		
+		for (ClassInstantiation classInstantiation : classInstantiations) {
+			allElements.addAll(classInstantiation.getElementToInstantiationTreeObjects().keySet());
+		}
+		return allElements;
+	}
+	
+	public static HashMap<Element,HashSet<TreeObject>> getElementToInstantiationTreeObjects(HashMap<Element, ClassInstantiation> modelToItsInstantiation){
+		 HashMap<Element,HashSet<TreeObject>> allElements = new  HashMap<Element,HashSet<TreeObject>>();
+		HashSet<ClassInstantiation> classInstantiations = new HashSet<ClassInstantiation>();
+		for (Element model: modelToItsInstantiation.keySet()) {
+			classInstantiations.add(modelToItsInstantiation.get(model));
+		}
+		
+		for (ClassInstantiation classInstantiation : classInstantiations) {
+			allElements.putAll(classInstantiation.getElementToInstantiationTreeObjects());
+		}
+		return allElements;
+	}
+	
+	public static HashSet<TreeObject> getAllTreeObjectsFromInstantiation(ClassInstantiation classInstantiation){
+		HashSet<TreeObject> allTreeObjects = new HashSet<TreeObject>();
+		
+		for (Element element : classInstantiation.getElementToInstantiationTreeObjects().keySet()) {
+			HashSet<TreeObject> treeObjects = classInstantiation.getElementToInstantiationTreeObjects().get(element);
+			if (treeObjects != null && treeObjects.size() > 0 ) {
+				allTreeObjects.addAll(treeObjects);
+			}
+		}
+		return allTreeObjects;
 	}
 }

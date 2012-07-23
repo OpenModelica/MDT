@@ -58,9 +58,11 @@ import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
+
 
 public class ClassInstantiation {
 
@@ -69,13 +71,24 @@ public class ClassInstantiation {
 	private TreeParent invisibleRoot;
 	private TreeParent treeRoot;
 	
-	private HashSet<Element> referencedClients = new HashSet<Element>();
-	private HashSet<Element> referencedRequiredClients = new HashSet<Element>();
+//	private HashSet<Element> allElements = new HashSet<Element>();
+	private HashSet<TreeObject> allTreeObjects = new HashSet<TreeObject>();
+
+	private HashMap<Element,HashSet<TreeObject>> elementToInstantiationTreeObjects = new HashMap<Element,HashSet<TreeObject>>();
 	
-	private HashSet<Element> referencedProviders = new HashSet<Element>();
+//	private HashSet<Element> referencedClients = new HashSet<Element>();
+//	private HashSet<Element> referencedRequiredClients = new HashSet<Element>();
+	
+	// all mediators that were pre-collected
+	private HashSet<Element> allMediators = new HashSet<Element>();
+	
+//	private HashSet<Element> referencedProviders = new HashSet<Element>();
 	
 	/** The action show state machines. */
-	private Boolean includeStateMachines;
+	private boolean includeStateMachines;
+	
+	/** The action show state machines. */
+	private boolean buildPredefinedTypesProperties;
 
 	
 	public HashMap<String,Type> redeclaredComponentTypes = new HashMap<String,Type>();
@@ -84,15 +97,45 @@ public class ClassInstantiation {
 	
 	public HashMap<String,String> modifications = new HashMap<String,String>();
 	
-//	public HashMap<Property,Class> componentIsInheritedFrom = new HashMap<Property,Class>(); // TODO do we need it? 
-	
 	public HashSet<Property> selectedClassOwnedComponents = new HashSet<Property>();
-	public HashMap<Generalization,EList<Property>> selectedClassExtensionsReferenceForInheritedComponents = new HashMap<Generalization,EList<Property>>(); // TODO do we need it?
+	public HashMap<Generalization,EList<Property>> selectedClassExtensionsReferenceForInheritedComponents = new HashMap<Generalization,EList<Property>>();
+	
+	private Element umlModel= null;
+	
+	//  value bindings data collection
+	private ValueBindingsDataCollector valueBindingsDataCollector; 
+
 	
 	
-	public ClassInstantiation(Class selectedClass, Boolean includeStateMachines){
+	
+	/*
+	 * This constructor is used for instantiations that 
+	 * get added sub graphs and will not create their own graph
+	 */
+	public ClassInstantiation(Class selectedClass){
 		this.selectedClass = selectedClass;
-		this.includeStateMachines = includeStateMachines;
+		this.setIncludeStateMachines(includeStateMachines);
+		this.setBuildPredefinedTypesProperties(buildPredefinedTypesProperties);
+		
+		invisibleRoot = new TreeParent("", null, null, "", false, false, new HashSet<String>(), selectedClass, false);
+		
+		String name = "Instantiated '" + selectedClass.getName() +"' ";
+		treeRoot = new TreeParent(name, null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
+		invisibleRoot.addChild(treeRoot);
+//		allElements.add(selectedClass);
+		allTreeObjects.add(treeRoot);
+		addToElementToInstantiationTreeObjectMap(selectedClass, treeRoot);
+		
+	}
+	
+	
+	
+	
+	
+	public ClassInstantiation(Class selectedClass, boolean includeStateMachines, boolean buildPredefinedTypesProperties){
+		this.selectedClass = selectedClass;
+		this.setIncludeStateMachines(includeStateMachines);
+		this.setBuildPredefinedTypesProperties(buildPredefinedTypesProperties);
 	}
 	
 	
@@ -100,11 +143,12 @@ public class ClassInstantiation {
 		if (selectedClass != null) {
 			invisibleRoot = new TreeParent("", null, null, "", false, false, new HashSet<String>(), selectedClass, false);
 			
-//			String name = "'" + selectedClass.getName() +"' components";
-//			String name = "'" + selectedClass.getName() +"' instantiated";
-			String name = "instantiated '" + selectedClass.getName() +"' ";
+			String name = "Instantiated '" + selectedClass.getName() +"' ";
 			treeRoot = new TreeParent(name, null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
 			invisibleRoot.addChild(treeRoot);
+//			allElements.add(selectedClass);
+			allTreeObjects.add(treeRoot);
+			addToElementToInstantiationTreeObjectMap(selectedClass, treeRoot);
 			
 			// get class components in order to know which other attributes are inherited.
 			selectedClassOwnedComponents.addAll(this.selectedClass.getOwnedAttributes());
@@ -121,29 +165,185 @@ public class ClassInstantiation {
 				}
 			}
 			
-			
-			
 			// build tree starting from the selected class node.
 			buildNextTreeLevel(this.selectedClass, null, treeRoot , "");
 
-			// Get value bindings data 
+			// Get value bindings data and create tree nodes for predefined properties if they are used as clients or providers
 			collectValueClientsAndProvidersFromUmlModel();
 
-			
-//			for (Object object : modifications.keySet() ) {
-//				System.err.println( object.toString() + " = " + modifications.get(object).toString() );
-//			}
-//			for (Object object : redeclaredComponentTypes.keySet() ) {
-//				System.err.println( object.toString() + " = " + ((Type)redeclaredComponentTypes.get(object)).getQualifiedName() );
-//			}
-
-//			for (Object object : modificationSource.keySet() ) {
-//				System.err.println( object.toString() + " = " + ((NamedElement)modificationSource.get(object)).getQualifiedName() );
-//			}
+			// indicate the size of the tree
+			int numberOfTreeNodes = getAllTreeObjects().size();
+			treeRoot.setName(treeRoot.getName() + " (" + numberOfTreeNodes + " nodes)");
 		}
 	}
 	
 	
+	/**
+	 * Gets the all inherited attributes.
+	 * 
+	 * @param aClass
+	 *            the a class
+	 * @param passedAList
+	 *            the passed a list
+	 * @return the all inherited attributes
+	 */
+	public EList<Property> getAllInheritedAttributes(Classifier aClass, EList<Property> passedAList) {
+		// TODO: verify if this works correctly for Modelica inheritance concept.
+		HashSet<Property> mergedSet = new HashSet<Property>();
+		mergedSet.addAll(passedAList);
+	
+		HashSet<Property> finalSet = new HashSet<Property>();
+		EList<Property> finalList = new BasicEList<Property>();
+	
+		EList<Generalization> extendsRelations = aClass.getGeneralizations(); // TODO: filter on ModelicaML stereotypes
+	
+		if (extendsRelations.size() < 1) { // if there there is no inheritance then just return the passedAList
+			finalList.addAll(passedAList);
+		} 
+		else {	// if there are inheritance then merge
+			for (Generalization generalization : extendsRelations) {
+				EList<Element> targets = generalization.getTargets();
+				for (Element element : targets) {
+					if (element instanceof Classifier) { // if the target is a class TODO: filter for applied ModelicaML stereotypes
+						EList<Property> inheritedProperties = ((Classifier) element).getAttributes(); // get the attributes of the class
+						
+						mergedSet.addAll(inheritedProperties); // add all class attribute to list
+						
+						for (Property propertyInherited : inheritedProperties) { // iterate over the class attributes
+							String nameInheritedProperty = propertyInherited.getName();
+							for (Property propertyPassed : passedAList) { // iterate over the passed list
+								String namePropertyPassed = propertyPassed.getName();
+								if (nameInheritedProperty.equals(namePropertyPassed)) { // if a duplicate is found ...
+									mergedSet.remove(propertyInherited); // remove duplicate from the final list.
+									// System.out.println("removed: " + propertyInherited.getName());
+								}
+							}
+						}
+						EList<Property> list = new BasicEList<Property>();
+						list.addAll(mergedSet);
+						finalSet.addAll(getAllInheritedAttributes((Classifier) element, list)); // recursive call
+					}
+				}
+			}
+		}
+		finalList.addAll(finalSet);
+		return finalList;
+	}
+
+
+	public void buildNextTreeLevel(Class aClass, Property firstLevelComponent, TreeParent parent, String dotPath) {
+		
+		// collect selected class inherited modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
+		addInheritedClassModifications(aClass, dotPath);
+		
+		EList<Property> pList = getClassComponents(aClass); // get all (i.e. also inherited) class components
+	
+		for (Property property : pList) {
+	
+			if (firstLevelComponent == null) { // this is a very first component
+				firstLevelComponent = property;
+			}
+	
+			String newDotPath = "";
+			if (!dotPath.equals("")) {
+				newDotPath = dotPath + "." + property.getName();
+			} else {
+				newDotPath = property.getName();
+			}
+	
+			if (isPrimitiveType(property)) { // if it is a primitive which value can be modified
+	
+				addClassComponentsModifications(property, dotPath);
+				HashSet<String> modifications = null;
+				
+				TreeParent child = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, includeStateMachines);
+				parent.addChild(child);
+//				allElements.add(property);
+				allTreeObjects.add(child);
+				addToElementToInstantiationTreeObjectMap(property, child);
+				
+				// set the final modification right hand
+				child.setModificationRightHand(this.modifications.get(newDotPath));
+				child.setModificationSource(this.modificationSource.get(newDotPath));
+	
+				// set the store location for the tree object.
+				setModificationStoreLocation(child);
+	
+				if (isBuildPredefinedTypesProperties()) {
+					/*
+					 * Note, the building of predefined properties of primitive variables 
+					 * is typically disabled by default because it blows up the tree by factor 5 or more ... 
+					 */
+					
+					// create predefined properties for Modelica real, string, integer and boolean.
+					createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath, null); // predefinedPropertyName = null means create all predefined properties
+				}
+				
+			} else { // non-primitive item
+	
+				addClassComponentsModifications(property, dotPath);
+	
+				Type pType = null;
+				pType = this.redeclaredComponentTypes.get(newDotPath);
+				if (pType == null) {
+					pType = property.getType();
+				}
+				
+				HashSet<String> modifications = null;
+				TreeParent newParent = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, false, false, modifications, selectedClass, includeStateMachines);
+				parent.addChild(newParent);
+//				allElements.add(property);
+				allTreeObjects.add(newParent);
+				addToElementToInstantiationTreeObjectMap(property, newParent);
+				
+				// set the final modification right hand
+				newParent.setModificationRightHand(this.modifications.get(newDotPath));
+				newParent.setModificationSource(this.modificationSource.get(newDotPath));
+				
+				// set the store location for the tree object.
+				setModificationStoreLocation(newParent);
+	
+				// make sure that the tree object gets its redeclared type.
+				newParent.setComponentType(pType); 
+				
+				if (pType instanceof Class && (Class) pType != aClass && !(pType instanceof Stereotype)) { // TODO: // prevent endless looping, implement it correctly!
+					buildNextTreeLevel((Class) pType, firstLevelComponent, newParent, newDotPath);
+				}
+			}
+			
+			// reset the firstLevelComponent. This ensures that only the very first level components are passed.
+			if (firstLevelComponent == property) {
+				firstLevelComponent = null;
+			}
+		}
+	}
+
+
+	/**
+	 * Gets the component modifications.
+	 * 
+	 * @param component
+	 *            the component
+	 * @return the component modifications
+	 */
+	@SuppressWarnings("unchecked")
+	public HashSet<String> getComponentModifications(Property component) {
+		HashSet<String> mList = new HashSet<String>();
+		String stereotypeName = getFirstModelicaMLComponentStereotypeName(component);
+		List<String> modificationList = new ArrayList<String>();
+		if (stereotypeName != null) {
+			Object o = UmlServices.getStereotypeValue((Element) component, getFirstModelicaMLComponentStereotypeName(component), "modification");
+			if (o instanceof List<?>) {
+				modificationList = (List<String>) o;
+			}
+			for (String string : modificationList) {
+				mList.add(StringUtls.removeOutterBraces(string));
+			}
+		}
+		return mList;
+	}
+
+
 	private void addInheritedClassModifications(Class aClass, String dotPath){
 		EList<Generalization> extendsRelations = aClass.getGeneralizations();
 		
@@ -171,14 +371,11 @@ public class ClassInstantiation {
 		if (!dotPath.trim().equals("")) {
 			prefix = dotPath + ".";
 		}
-//		EList<Property> components = getClassComponents(aClass);
-//		for (Property property : components) {
-			HashSet<String> modList = getComponentModifications(property);
-			String propertyName = prefix + StringUtls.replaceSpecChar(property.getName());
-			for (String string : modList) {
-				addToModificationList(string, propertyName, property);
-			}
-//		}
+		HashSet<String> modList = getComponentModifications(property);
+		String propertyName = prefix + StringUtls.replaceSpecChar(property.getName());
+		for (String string : modList) {
+			addToModificationList(string, propertyName, property);
+		}
 	}
 	
 	private void addToModificationList(String string, String dotPath, NamedElement sourceOfModification) {
@@ -243,36 +440,6 @@ public class ClassInstantiation {
 	
 	
 	
-	
-	
-	
-	
-	
-	public TreeParent getTreeRoot() {
-		return treeRoot;
-	}
-	
-	
-	public TreeParent getInvisibleRoot() {
-		return invisibleRoot;
-	}
-	
-	public void setIncludeStateMachines(Boolean showStateMachines) {
-		this.includeStateMachines = showStateMachines;
-	}
-
-	public Boolean getIncludeStateMachines() {
-		return includeStateMachines;
-	}
-
-	public void setSelectedClass(Class aClass) {
-		this.selectedClass = aClass;
-	}
-
-	public Class getSelectedClass() {
-		return selectedClass;
-	}
-
 	/**
 	 * Checks if is primitive type.
 	 * 
@@ -305,175 +472,6 @@ public class ClassInstantiation {
 		return pFinalList;
 	}
 
-	/**
-	 * Gets the all inherited attributes.
-	 * 
-	 * @param aClass
-	 *            the a class
-	 * @param passedAList
-	 *            the passed a list
-	 * @return the all inherited attributes
-	 */
-	public EList<Property> getAllInheritedAttributes(Classifier aClass, EList<Property> passedAList) {
-		// TODO: verify if this works correctly for Modelica inheritance concept.
-		HashSet<Property> mergedSet = new HashSet<Property>();
-		mergedSet.addAll(passedAList);
-
-		HashSet<Property> finalSet = new HashSet<Property>();
-		EList<Property> finalList = new BasicEList<Property>();
-
-		EList<Generalization> extendsRelations = aClass.getGeneralizations(); // TODO: filter on ModelicaML stereotypes
-
-		if (extendsRelations.size() < 1) { // if there there is no inheritance then just return the passedAList
-			finalList.addAll(passedAList);
-		} 
-		else {	// if there are inheritance then merge
-			for (Generalization generalization : extendsRelations) {
-				EList<Element> targets = generalization.getTargets();
-				for (Element element : targets) {
-					if (element instanceof Classifier) { // if the target is a class TODO: filter for applied ModelicaML stereotypes
-						EList<Property> inheritedProperties = ((Classifier) element).getAttributes(); // get the attributes of the class
-						
-						mergedSet.addAll(inheritedProperties); // add all class attribute to list
-						
-						for (Property propertyInherited : inheritedProperties) { // iterate over the class attributes
-							String nameInheritedProperty = propertyInherited.getName();
-							for (Property propertyPassed : passedAList) { // iterate over the passed list
-								String namePropertyPassed = propertyPassed.getName();
-								if (nameInheritedProperty.equals(namePropertyPassed)) { // if a duplicate is found ...
-									mergedSet.remove(propertyInherited); // remove duplicate from the final list.
-									// System.out.println("removed: " + propertyInherited.getName());
-								}
-							}
-						}
-						EList<Property> list = new BasicEList<Property>();
-						list.addAll(mergedSet);
-						finalSet.addAll(getAllInheritedAttributes((Classifier) element, list)); // recursive call
-					}
-				}
-			}
-		}
-		finalList.addAll(finalSet);
-		return finalList;
-	}
-
-
-	public void buildNextTreeLevel(Class aClass, Property firstLevelComponent, TreeParent parent, String dotPath) {
-		
-		// collect selected class inherited modifications. add to modifications list. If there are redeclare modifications add them to redeclaredTypes
-		addInheritedClassModifications(aClass, dotPath);
-		
-		EList<Property> pList = getClassComponents(aClass); // get all (i.e. also inherited) class components
-
-		for (Property property : pList) {
-
-			if (firstLevelComponent == null) { // this is a very first component
-				firstLevelComponent = property;
-			}
-
-			String newDotPath = "";
-			if (!dotPath.equals("")) {
-				newDotPath = dotPath + "." + property.getName();
-			} else {
-				newDotPath = property.getName();
-			}
-
-			if (isPrimitiveType(property)) { // if it is a primitive which value can be modified
-
-				addClassComponentsModifications(property, dotPath);
-				HashSet<String> modifications = null;
-				
-				TreeParent child = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, includeStateMachines);
-				parent.addChild(child);
-				
-				// set the final modification right hand
-//				child.setFinalModificationRightHand(this.modifications.get(newDotPath));
-				child.setModificationRightHand(this.modifications.get(newDotPath));
-				child.setModificationSource(this.modificationSource.get(newDotPath));
-
-				// set the store location for the tree object.
-				setModificationStoreLocation(child);
-
-				// set parent "has inputs, outputs" indicators to all ancestors
-//				if (child.isInput()) { parent.setHasInputs(treeRoot); }
-//				if (child.isOutput()) { parent.setHasOutputs(treeRoot); }
-
-				// set parent "has value clients or providers" indicators
-//				if (child.isValueClient()) { parent.setHasValueClients(treeRoot); }
-//				if (child.isValueProvider()) { parent.setHasValueProviders(treeRoot); }
-				
-//				if (this.referencedClients.contains(property)) {
-//					child.setIsValueClient(true);
-//					parent.setHasValueClients(treeRoot);
-//				}
-				if (this.referencedRequiredClients.contains(property)) {
-					child.setValueClient_required(true);
-				}
-
-//				if (this.referencedProviders.contains(property)) {
-//					child.setIsValueProvider(true);
-//					parent.setHasValueProviders(treeRoot);
-//				}
-
-				// create predefined properties for Modelica real, string, integer and boolean.
-				createPredefinedTypeProperties(property, firstLevelComponent, child, newDotPath);
-				
-			} else { // non-primitive item
-
-				addClassComponentsModifications(property, dotPath);
-
-				Type pType = null;
-				pType = this.redeclaredComponentTypes.get(newDotPath);
-				if (pType == null) {
-					pType = property.getType();
-				}
-				
-				HashSet<String> modifications = null;
-				TreeParent newParent = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, false, false, modifications, selectedClass, includeStateMachines);
-				parent.addChild(newParent);
-				
-				// set the final modification right hand
-//				newParent.setFinalModificationRightHand(this.modifications.get(newDotPath));
-				newParent.setModificationRightHand(this.modifications.get(newDotPath));
-				newParent.setModificationSource(this.modificationSource.get(newDotPath));
-				
-				// set the store location for the tree object.
-				setModificationStoreLocation(newParent);
-				
-				// set has requirements indicator to all ancestors
-//				if (newParent.isRequirementInstance()) { newParent.setHasRequirements(treeRoot); }
-				
-				// set parent "has value clients or providers" indicators
-//				if (newParent.isValueClient()) { newParent.setHasValueClients(treeRoot); }
-//				if (newParent.isValueProvider()) { newParent.setHasValueProviders(treeRoot); }
-//				if (this.referencedClients.contains(property)) {
-//					newParent.setIsValueClient(true);
-//					newParent.setHasValueClients(treeRoot);
-//				}
-				if (this.referencedRequiredClients.contains(property)) {
-					newParent.setValueClient_required(true);
-				}
-
-//				if (this.referencedProviders.contains(property)) {
-//					newParent.setIsValueProvider(true);
-//					newParent.setHasValueProviders(treeRoot);
-//				}
-				
-				// make sure that the tree object gets its redeclared type.
-				newParent.setComponentType(pType); 
-				
-				if (pType instanceof Class && (Class) pType != aClass && !(pType instanceof Stereotype)) { // TODO: // prevent endless looping, implement it correctly!
-					buildNextTreeLevel((Class) pType, firstLevelComponent, newParent, newDotPath);
-				}
-			}
-			
-			// reset the firstLevelComponent. This ensures that only the very first level components are passed.
-			if (firstLevelComponent == property) {
-				firstLevelComponent = null;
-			}
-		}
-	}
-
 	private void setModificationStoreLocation(TreeParent treeItem){
 		if (treeItem.getFirstLevelComponent() != null) { // if first level component is defined
 			if (selectedClassOwnedComponents.contains(treeItem.getFirstLevelComponent()) ) { //check if this is an owned attribute of the selected class
@@ -494,9 +492,12 @@ public class ClassInstantiation {
 	}
 	
 
-	private void createPredefinedTypeProperties(Property property, Property firstLevelComponent, TreeParent parent, String dotPath) {
+	private TreeObject createPredefinedTypeProperties(Property property, Property firstLevelComponent, TreeParent parent, String dotPath, String predefinedPropertyName) {
+		TreeObject createdTreeObject = null;
+		
 		Type pType = null;
 		pType = this.redeclaredComponentTypes.get(dotPath);
+		
 		if (pType == null) {
 			pType = property.getType();
 		}
@@ -506,51 +507,49 @@ public class ClassInstantiation {
 				EList<Property> ModelicaPredefinedTypeProperties = ((Classifier) pType).getAllAttributes();
 				for (Property p : ModelicaPredefinedTypeProperties) {
 
-					String newDotPath = "";
-					if (!dotPath.equals("")) {
-						newDotPath = dotPath + "." + p.getName();
-					} else {
-						newDotPath = p.getName();
+					boolean skip = false;
+					if (predefinedPropertyName != null && !p.getName().equals(predefinedPropertyName)) {
+						skip = true;
 					}
-
-					HashSet<String> modifications = null;
-					TreeParent child = new TreeParent(p.getName(), p, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, false);
-					parent.addChild(child);
 					
-					// set the final modification right hand
-//					child.setFinalModificationRightHand(this.modifications.get(newDotPath));
-					child.setModificationRightHand(this.modifications.get(newDotPath));
-					child.setModificationSource(this.modificationSource.get(newDotPath));
+					if (!skip) {
+						String newDotPath = "";
+						if (!dotPath.equals("")) {
+							newDotPath = dotPath + "." + p.getName();
+						} else {
+							newDotPath = p.getName();
+						}
 
-					child.setIsPredefinedModelicaProperty(true);
-					
-					// set the store location for the tree object.
-					setModificationStoreLocation(child);
+						HashSet<String> modifications = null;
+						TreeParent child = new TreeParent(p.getName(), p, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, false);
+						parent.addChild(child);
+//						allElements.add(p);
+						allTreeObjects.add(child);
+						addToElementToInstantiationTreeObjectMap(p, child);
+						
+						// set the final modification right hand
+//						child.setFinalModificationRightHand(this.modifications.get(newDotPath));
+						child.setModificationRightHand(this.modifications.get(newDotPath));
+						child.setModificationSource(this.modificationSource.get(newDotPath));
+
+						child.setIsPredefinedModelicaProperty(true);
+						
+						// set the store location for the tree object.
+						setModificationStoreLocation(child);
+						
+						createdTreeObject = child;
+					}
 				}
 			}
 		}
+		return createdTreeObject;
 	}
 
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
 	private Type findType(Element sourceOfRedeclaration, String dotPath){
 		Model model = sourceOfRedeclaration.getModel();
 		Iterator<EObject> i = model.eAllContents();
-//		List<EObject> redeclaredTypes = new ArrayList<EObject>() ;
-//		Type type = null;
 		String typeDotPath = "";
 		while (i.hasNext()) {
 			EObject object = i.next() ;
@@ -591,30 +590,6 @@ public class ClassInstantiation {
 	}
 
 	/**
-	 * Gets the component modifications.
-	 * 
-	 * @param component
-	 *            the component
-	 * @return the component modifications
-	 */
-	public HashSet<String> getComponentModifications(Property component) {
-		HashSet<String> mList = new HashSet<String>();
-		String stereotypeName = getFirstModelicaMLComponentStereotypeName(component);
-		List<String> modificationList = new ArrayList<String>();
-		if (stereotypeName != null) {
-			Object o = UmlServices.getStereotypeValue((Element) component, getFirstModelicaMLComponentStereotypeName(component), "modification");
-			if (o instanceof List<?>) {
-				modificationList = (List<String>) o;
-			}
-			for (String string : modificationList) {
-				mList.add(StringUtls.removeOutterBraces(string));
-			}
-			//mList.addAll(modificationList);
-		}
-		return mList;
-	}
-	
-	/**
 	 * Gets the generalization modifications.
 	 * 
 	 * @param extendsRelation
@@ -623,6 +598,7 @@ public class ClassInstantiation {
 	 *            the stereotype
 	 * @return the generalization modifications
 	 */
+	@SuppressWarnings("unchecked")
 	private EList<String> getGeneralizationModifications(Generalization extendsRelation, Stereotype stereotype) {
 		EList<String> mList = new BasicEList<String>();
 		
@@ -660,17 +636,45 @@ public class ClassInstantiation {
 		TreeObject[] children = item.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			TreeObject treeObject = children[i];
-			if (referencedClients.contains(treeObject.getUmlElement())) {
+			
+			boolean isClient = false;
+			boolean isProvider = false;
+			
+			// client
+			if (valueBindingsDataCollector.getReferencedClients().contains(treeObject.getUmlElement())) {
 				treeObject.setIsValueClient(true);
+				isClient = true;
 			}
-			if (referencedRequiredClients.contains(treeObject.getUmlElement())) {
+			if (valueBindingsDataCollector.getReferencedRequiredClients().contains(treeObject.getUmlElement())) {
 				treeObject.setValueClient_required(true);
+				isClient = true;
 			}
 
-			if (referencedProviders.contains(treeObject.getUmlElement())) {
-				treeObject.setIsValueProvider(true);
+			if (isClient) {
+				/*
+				 * If there are predefined properties used in the client operation
+				 * then we need to add the predefined properties to the tree in order to make sure that the 
+				 * binding code will be created for them.
+				 */
+				addClientPredefinedProperties(treeObject);	
 			}
 			
+			// provider
+			if (valueBindingsDataCollector.getReferencedProviders().contains(treeObject.getUmlElement())) {
+				treeObject.setIsValueProvider(true);
+				isProvider = true;
+			}
+
+			if (isProvider) {
+				/*
+				 * It is actually not necessary to create predefined properties for providers. 
+				 * Because the binding code is derived based on
+				 * the found provider (which cannot be a predefined property) and its 
+				 * provider operation.
+				 */
+			}
+			
+			// recursive call
 			if (treeObject instanceof TreeParent) {
 				setValueClientOrProviderIndicator((TreeParent) treeObject);
 			}
@@ -678,11 +682,130 @@ public class ClassInstantiation {
 
 	}
 	
-	private Element umlModel= null;
+	private void addClientPredefinedProperties(TreeObject upperClientTeeItem){
+
+		Element element = upperClientTeeItem.getProperty();
+		HashSet<String> operations = new HashSet<String>();
+
+		if (element != null) {
+			// add all client operations
+			if (valueBindingsDataCollector.getReferencedClients().contains(element)) {
+				HashSet<String> clientOperations = valueBindingsDataCollector.getClientOperations().get(element);
+				if (clientOperations != null) {
+					operations.addAll(clientOperations);
+				}
+			}
+		}
+		
+		for (String operation : operations) {
+			String[] scriptCodeSplitted = operation.split(";");
+			if ( scriptCodeSplitted.length > 0) { // if there is at least one line that ends with ";"
+				for (int i = 0; i < scriptCodeSplitted.length; i++) { // the next will always overwrite the previous, i.e. the last one is always taken. 
+					
+					if ( !scriptCodeSplitted[i].trim().equals("") ) { // if it is not an empty line 
+						String[] bindingEqationParts = scriptCodeSplitted[i].split("=");
+						if (bindingEqationParts.length == 2 ) {// it is a binding equation with left and right part 
+							
+							// get the left and right parts and trim them
+							String leftHand = bindingEqationParts[0].trim();
+//							String rightHand = bindingEqationParts[1].trim();
+							
+							String expandedLeftHand = leftHand.replaceFirst(Constants.MACRO_clientPath, upperClientTeeItem.getDotPath()).trim();
+							
+							List<String> clientData = getDotPathWithoutPredefinedPropertyName(expandedLeftHand);
+							// if a predefined property is referenced in the left hand 
+							if (clientData != null && clientData.size() == 2) {
+								
+								String actualClientDotPath = clientData.get(0);
+								String predefinedPropertyName = clientData.get(1);
+								
+								// get the actual client from the tree
+								TreeObject actualClient = getTreeObject(actualClientDotPath);
+								
+								if (actualClient != null) {
+									// if the client is is a primitive variable 
+									if (isPrimitiveType(actualClient.getProperty()) && actualClient instanceof TreeParent) {
+										
+										// create only a tree node for the referenced predefined properties
+										TreeObject createdTreeObject = createPredefinedTypeProperties(actualClient.getProperty(), upperClientTeeItem.getFirstLevelComponent(), (TreeParent) actualClient, actualClientDotPath, predefinedPropertyName);
+										if (createdTreeObject != null) {
+											
+											// indicate that this is a client
+											createdTreeObject.setIsValueClient(true);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	
-	public void setUmlModel(Element model) {
-		this.umlModel = model;
-	} 
+	private List<String> getDotPathWithoutPredefinedPropertyName(String dotPath){
+		List<String> reply = new ArrayList<String>();
+
+		// TODO: check if this list is complete AND move the list to ModelicaML Constants! 
+		HashSet<String> predefinedPropertyNames = new HashSet<String>();
+		predefinedPropertyNames.add("min");
+		predefinedPropertyNames.add("max");
+		
+		predefinedPropertyNames.add("start");
+		predefinedPropertyNames.add("fixed");
+		
+		predefinedPropertyNames.add("nominal");
+		predefinedPropertyNames.add("stateSelect");
+		
+		predefinedPropertyNames.add("unit");
+		predefinedPropertyNames.add("displayUnit");
+		
+		predefinedPropertyNames.add("quantity");
+		
+		String dotPathWithoutPredefinedPropertyName = null;
+		
+		for (String predefinedPropertyName : predefinedPropertyNames) {
+			// if the upper client path ends with "." predefined property name
+			if (dotPath.endsWith( "." + predefinedPropertyName)) {
+				
+				// get the path and the predefined property name
+				dotPathWithoutPredefinedPropertyName = dotPath.substring(0, dotPath.length() - ("." + predefinedPropertyName).length());
+				reply.add(dotPathWithoutPredefinedPropertyName);
+				reply.add(predefinedPropertyName);
+				
+				return reply; 
+			}
+		}
+		
+		return reply;
+	}
+	
+	private TreeObject getTreeObject(String dotPath){
+		for (TreeObject treeObject : allTreeObjects) {
+			if (treeObject.getDotPath().equals(dotPath)) {
+				return treeObject;
+			}
+		}
+		return null;
+	}
+	
+	
+	private void addToElementToInstantiationTreeObjectMap(Element key, TreeObject item){
+		HashSet<TreeObject> set = elementToInstantiationTreeObjects.get(key);
+		HashSet<TreeObject> updatedSet = new HashSet<TreeObject>();
+		
+		if (set != null && set.size() > 0 ) {
+			updatedSet.addAll(set);
+			updatedSet.add(item);
+			elementToInstantiationTreeObjects.put(key, updatedSet);
+		}
+		else {
+			updatedSet.add(item);
+			elementToInstantiationTreeObjects.put(key, updatedSet);
+		}
+	}
+
 	
 	private void collectValueClientsAndProvidersFromUmlModel(){
 		
@@ -709,61 +832,106 @@ public class ClassInstantiation {
 		}
 
 		if (valueMediatorsPackage != null ) {
-//			Element valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
-			ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
-			dc.collectAll(valueMediatorsPackage, treeRoot);
-			referencedClients.addAll(dc.getReferencedClients());
-			referencedProviders.addAll(dc.getReferencedProviders());
-			referencedRequiredClients.addAll(dc.getReferencedRequiredClients());
+			valueBindingsDataCollector = new ValueBindingsDataCollector();
+			
+			// pass all pre-collected mediators in order to avoid another search
+			valueBindingsDataCollector.setAllMediators(getAllMediators());
+			
+//			dc.collectAll(valueMediatorsPackage, treeRoot);
+			valueBindingsDataCollector.collectAll(valueMediatorsPackage, this, treeRoot);
+//			referencedClients.addAll(valueBindingsDataCollector.getReferencedClients());
+//			referencedProviders.addAll(valueBindingsDataCollector.getReferencedProviders());
+//			referencedRequiredClients.addAll(valueBindingsDataCollector.getReferencedRequiredClients());
 			
 			setValueClientOrProviderIndicator(treeRoot);
 		}
 		else {
 //			System.err.println("Component Tree View: Cannot access the root model in Papyrus in order to collect value bindings data.");
 		}
-		
-		
-		
-//		Iterator<EObject> i = umlRootElement.eAllContents();
-//		while (i.hasNext()) {
-//			EObject object = i.next();
-//			if (object instanceof NamedElement 
-//					&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
-//				
-//				NamedElement mediator = (NamedElement)object;
-//				EList<Dependency> depList = mediator.getClientDependencies();
-//				for (Dependency dependency : depList) {
-//					
-//					// reference to a clients
-//					Stereotype s_providesValueFor = dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
-//					if (s_providesValueFor != null ) { 
-//						EList<Element> targets = dependency.getTargets();
-//						for (Element element : targets) {
-//							if (element instanceof NamedElement) {
-//								// add only mediators and referenced elements if they are used in the instantiation tree
-//								referencedClients.add(element);
-//								Object o = dependency.getValue(s_providesValueFor, Constants.propertyName_isRequired);
-//								if (o instanceof Boolean) {
-//									if ((Boolean)o == true) {
-////										System.err.println("required client: " + ((NamedElement)element).getQualifiedName());
-//										referencedRequiredClients.add(element);
-//									}
-//								}
-//							}
-//						}
-//					}
-//					// reference to providers or other mediators
-//					else if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null ) {
-//						EList<Element> targets = dependency.getTargets();
-//						for (Element element : targets) {
-//							if (element instanceof NamedElement) {
-//								referencedProviders.add(element);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
+	}
+	
+	
+	public TreeParent getTreeRoot() {
+		return treeRoot;
+	}
+	
+	
+	public TreeParent getInvisibleRoot() {
+		return invisibleRoot;
+	}
+	
+	public void setIncludeStateMachines(Boolean showStateMachines) {
+		this.includeStateMachines = showStateMachines;
 	}
 
+	public Boolean getIncludeStateMachines() {
+		return includeStateMachines;
+	}
+
+	public void setSelectedClass(Class aClass) {
+		this.selectedClass = aClass;
+	}
+
+	public Class getSelectedClass() {
+		return selectedClass;
+	}
+
+
+	public void setUmlModel(Element model) {
+		this.umlModel = model;
+	}
+
+
+//	public HashSet<Element> getAllElements() {
+//		return allElements;
+//	}
+
+
+//	public void setAllElements(HashSet<Element> allElements) {
+//		this.allElements = allElements;
+//	}
+	
+	public HashMap<Element, HashSet<TreeObject>> getElementToInstantiationTreeObjects() {
+		return elementToInstantiationTreeObjects;
+	}
+
+
+	public HashSet<Element> getAllMediators() {
+		return allMediators;
+	}
+
+
+	public void setAllMediators(HashSet<Element> allMediators) {
+		this.allMediators = allMediators;
+	}
+
+
+	public boolean isBuildPredefinedTypesProperties() {
+		return buildPredefinedTypesProperties;
+	}
+
+
+	public void setBuildPredefinedTypesProperties(
+			boolean buildPredefinedTypesProperties) {
+		this.buildPredefinedTypesProperties = buildPredefinedTypesProperties;
+	}
+	
+	public HashSet<TreeObject> getAllTreeObjects() {
+		return allTreeObjects;
+	}
+
+
+	public void setAllTreeObjects(HashSet<TreeObject> allTreeObjects) {
+		this.allTreeObjects = allTreeObjects;
+	}
+	
+	public ValueBindingsDataCollector getValueBindingsDataCollector() {
+		return valueBindingsDataCollector;
+	}
+
+
+	public void setValueBindingsDataCollector(
+			ValueBindingsDataCollector valueBindingsDataCollector) {
+		this.valueBindingsDataCollector = valueBindingsDataCollector;
+	}
 }

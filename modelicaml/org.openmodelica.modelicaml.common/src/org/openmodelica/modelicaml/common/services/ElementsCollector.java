@@ -37,7 +37,6 @@ package org.openmodelica.modelicaml.common.services;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Element;
@@ -56,7 +55,7 @@ public class ElementsCollector {
 	protected HashSet<Element> importedElements = new HashSet<Element>();
 	
 	// all collected elements
-	protected EList<Element> elements = new BasicEList<Element>();
+	protected HashSet<Element> elements = new HashSet<Element>();
 
 	
 	public void collectElementsFromModel(EObject umlRootElement, String stereotypeQName){
@@ -86,20 +85,6 @@ public class ElementsCollector {
 				// go to the contents of the imported package
 				collectFromImportedMember(importedPackage);
 			}
-			
-//			EList<PackageableElement> importedElements = getImportedMembers(element);
-//			if (importedElements != null && importedElements.size() > 0) {
-//				for (PackageableElement packageableElement : importedElements) {
-//					
-//					// check if the imported member is an element
-//					if (packageableElement instanceof Element) {
-//						collectElements(packageableElement, true);
-//					}
-//					
-//					// go to the contents of the imported member
-//					collectFromImportedMember(packageableElement);
-//				}
-//			}
 			
 		}
 		else {
@@ -233,7 +218,7 @@ public class ElementsCollector {
 	
 	
 	// ########## GETTER
-	public EList<Element> getElements() {
+	public HashSet<Element> getElements() {
 		return elements;
 	}
 

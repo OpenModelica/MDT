@@ -92,8 +92,7 @@ public class UmlServices {
 	public static Stereotype getStereotype(Element elt, String stereotype){
 		Stereotype result = null;
 		// search with real stereotype
-		for (Iterator<Stereotype> iter = elt.getAppliedStereotypes().iterator(); iter
-				.hasNext();) {
+		for ( Iterator<Stereotype> iter = elt.getAppliedStereotypes().iterator(); iter.hasNext(); ) {
 			Stereotype element = iter.next();
 			if (element.getName().equals(stereotype)) {
 				result = element;

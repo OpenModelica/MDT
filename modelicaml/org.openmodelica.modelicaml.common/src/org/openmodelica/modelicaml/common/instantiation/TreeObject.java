@@ -50,6 +50,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 
 
@@ -68,6 +69,8 @@ public class TreeObject implements IAdaptable {
 	/** The name. */
 	private String name;
 	
+
+
 	/** The parent. */
 	private TreeParent parent;
 	
@@ -82,9 +85,18 @@ public class TreeObject implements IAdaptable {
 	/** The is root. */
 	private Boolean isRoot;
 	
+	public Boolean getIsRoot() {
+		return isRoot;
+	}
+
+
+	public void setIsRoot(Boolean isRoot) {
+		this.isRoot = isRoot;
+	}
+
 	/** The first level component. */
 	private Property firstLevelComponent = null;
-	
+
 	/** The dot path without first level component. */
 	private String dotPathWithoutFirstLevelComponent;
 
@@ -113,6 +125,10 @@ public class TreeObject implements IAdaptable {
 	/** The selected class. */
 	private Class selectedClass;
 	
+	public void setSelectedClass(Class selectedClass) {
+		this.selectedClass = selectedClass;
+	}
+
 	/** The component type. */
 	private Type componentType = null;
 
@@ -146,7 +162,8 @@ public class TreeObject implements IAdaptable {
 		
 		// dotPathWithoutFirstLevelComponent 
 		if (firstLevelComponent != null) {
-			this.dotPathWithoutFirstLevelComponent = this.dotPath.replaceFirst(firstLevelComponent.getName() + ".", "");
+			// delete the name of the first-level component from the dot path.
+			this.dotPathWithoutFirstLevelComponent = this.dotPath.replaceFirst(getFirstLevelComponent().getName() + ".", "");
 		}
 		
 		this.isLeaf = isLeaf;
@@ -281,6 +298,10 @@ public class TreeObject implements IAdaptable {
 		return name;	
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	/**
 	 * Gets the property.
 	 * 
@@ -298,6 +319,36 @@ public class TreeObject implements IAdaptable {
 	public Property getFirstLevelComponent() {
 		return firstLevelComponent;
 	}
+	
+	
+	public boolean isFirstLevelComponent(){
+		return getUmlElement().equals(getFirstLevelComponent());
+	}
+	
+	
+	/*
+	 * This operation is used for manipulating the tree objects after the tree is created.
+	 * For example, when instantiations are reused and sub-graphs are joint 
+	 * it is necessary to update the first level component of each tree
+	 * object as well as its dot-path and typically also the modification store location.
+	 */
+	public void setFirstLevelComponent(Property firstLevelComponent) {
+
+		this.firstLevelComponent = firstLevelComponent;
+		
+		// if the tree was put underneath another component -> update the dot path of the component
+		String firstLevelComponentName = StringUtls.replaceSpecChar(firstLevelComponent.getName());
+		if (!this.dotPath.startsWith(firstLevelComponentName) ) {
+			this.dotPath = StringUtls.replaceSpecChar(firstLevelComponent.getName()) + "."  + this.dotPath;
+			this.dotPathWithoutFirstLevelComponent = this.dotPath.replaceFirst(firstLevelComponentName + ".", "");
+		}
+	}
+	
+//	public void setDotPathWithoutFirstLevelComponent(
+//			String dotPathWithoutFirstLevelComponent) {
+//		this.dotPathWithoutFirstLevelComponent = dotPathWithoutFirstLevelComponent;
+//	}
+	
 	
 	/**
 	 * Sets the parent.
@@ -397,7 +448,7 @@ public class TreeObject implements IAdaptable {
 	 */
 	public Boolean isInput(){
 		if (this.property != null) {
-			if (isInputOrOutputVariable(this.property, "input")) {
+			if (isInputOrOutputVariable(this.property, Constants.propertyName_input)) {
 				return true;
 			}
 		}
@@ -411,7 +462,7 @@ public class TreeObject implements IAdaptable {
 	 */
 	public Boolean isOutput(){
 		if (this.property != null) {
-			if (isInputOrOutputVariable(this.property, "output")) {
+			if (isInputOrOutputVariable(this.property, Constants.propertyName_output)) {
 				return true;
 			}
 		}
@@ -432,10 +483,10 @@ public class TreeObject implements IAdaptable {
 		Boolean result = false;
 		Object causality = null;
 		if (property instanceof Port) {
-			causality = UmlServices.getStereotypeValue(property, "ConnectionPort", "causality");				
+			causality = UmlServices.getStereotypeValue(property, Constants.stereotypeQName_ConnectionPort, Constants.propertyName_causality);				
 		}
 		else if (property instanceof Property) {
-			causality = UmlServices.getStereotypeValue(property, "Variable", "causality");								
+			causality = UmlServices.getStereotypeValue(property, Constants.stereotypeQName_Variable, Constants.propertyName_causality);								
 		}
 
 		if (causality != null) {
