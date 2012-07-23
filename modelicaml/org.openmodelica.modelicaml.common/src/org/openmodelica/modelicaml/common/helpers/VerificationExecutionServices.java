@@ -489,7 +489,7 @@ public class VerificationExecutionServices {
 		return "Unknown";
 	}
 	
-	private static List<TreeObject> getRequiredClientsTreeItems(TreeObject treeItem, HashSet<TreeObject> collectedItems) {
+	public static List<TreeObject> getRequiredClientsTreeItems(TreeObject treeItem, HashSet<TreeObject> collectedItems) {
 		HashSet<TreeObject> collectedItem_temp = new HashSet<TreeObject>();
 		collectedItem_temp.addAll(collectedItems);
 		
@@ -498,6 +498,30 @@ public class VerificationExecutionServices {
 			for (int i = 0; i < children.length; i++) {
 				TreeObject treeObject = children[i];
 				if (!collectedItem_temp.contains(treeObject) && treeObject.isValueClient_required()) {
+					collectedItem_temp.add(treeObject);
+					
+					// recursive call
+					if (treeObject instanceof TreeParent) {
+						collectedItem_temp.addAll(getRequiredClientsTreeItems(treeObject, collectedItem_temp));
+					}
+				}
+			}
+		}
+		
+		List<TreeObject> sortedList = ModelicaMLServices.getSortedByDotPath(collectedItem_temp);
+		
+		return sortedList;
+	}
+	
+	public static List<TreeObject> getClientsTreeItems(TreeObject treeItem, HashSet<TreeObject> collectedItems) {
+		HashSet<TreeObject> collectedItem_temp = new HashSet<TreeObject>();
+		collectedItem_temp.addAll(collectedItems);
+		
+		if (treeItem != null & treeItem instanceof TreeParent && ((TreeParent)treeItem).hasChildren()) {
+			TreeObject[] children =  ((TreeParent)treeItem).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				TreeObject treeObject = children[i];
+				if (!collectedItem_temp.contains(treeObject) && treeObject.isValueClient()) {
 					collectedItem_temp.add(treeObject);
 					
 					// recursive call

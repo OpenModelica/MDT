@@ -339,8 +339,17 @@ public class TreeObject implements IAdaptable {
 		// if the tree was put underneath another component -> update the dot path of the component
 		String firstLevelComponentName = StringUtls.replaceSpecChar(firstLevelComponent.getName());
 		if (!this.dotPath.startsWith(firstLevelComponentName) ) {
-			this.dotPath = StringUtls.replaceSpecChar(firstLevelComponent.getName()) + "."  + this.dotPath;
-			this.dotPathWithoutFirstLevelComponent = this.dotPath.replaceFirst(firstLevelComponentName + ".", "");
+			if (this.dotPath.isEmpty()) {
+				
+				// the first level component itself
+				this.dotPath = StringUtls.replaceSpecChar(firstLevelComponent.getName());
+				this.dotPathWithoutFirstLevelComponent = "";
+			}
+			else {
+				// not the first level component but a component that is deeper in the hierarchy
+				this.dotPath = StringUtls.replaceSpecChar(firstLevelComponent.getName()) + "."  + this.dotPath;
+				this.dotPathWithoutFirstLevelComponent = this.dotPath.replaceFirst(firstLevelComponentName + ".", "");
+			}
 		}
 	}
 	
