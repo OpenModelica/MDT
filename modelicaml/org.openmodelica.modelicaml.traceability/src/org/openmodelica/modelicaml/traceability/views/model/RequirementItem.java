@@ -3,7 +3,7 @@ package org.openmodelica.modelicaml.traceability.views.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmodelica.modelicaml.helper.impl.VeMScenarioReqCombinationsCreator;
+import org.openmodelica.modelicaml.helper.structures.VeMScenarioReqCombinationsCreator;
 
 public class RequirementItem extends TreeParent {
 	private boolean isValid = false;

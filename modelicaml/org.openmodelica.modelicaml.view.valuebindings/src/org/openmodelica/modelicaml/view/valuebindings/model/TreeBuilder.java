@@ -66,7 +66,7 @@ public class TreeBuilder {
 	// only the imported mediator containers
 	private HashSet<Element> importedMediatorContainers = new HashSet<Element>();
 	// only the imported mediators
-	private HashSet<Element> importedMediators = new HashSet<Element>(); 
+//	private HashSet<Element> importedMediators = new HashSet<Element>(); 
 	
 //	private EList<Property> valueClients = new BasicEList<Property>();
 //	private EList<Property> valueProviders = new BasicEList<Property>();
@@ -81,7 +81,7 @@ public class TreeBuilder {
 	
 	
 	
-	public void buildTreeFromInstantiatedClass(TreeParent treeRoot, org.openmodelica.modelicaml.common.instantiation.TreeParent instantiatedClassTreeItem){
+	public void buildTreeFromInstantiatedClass(TreeParent treeRoot, org.openmodelica.modelicaml.common.instantiation.ClassInstantiation classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeParent instantiatedClassTreeItem){
 		
 		valueClientsTreeItems.clear();
 		valueProvidersTreeItems.clear();
@@ -97,7 +97,7 @@ public class TreeBuilder {
 			treeRoot.addChild(rootModelNode);
 			
 			ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
-			dc.collectAll(instantiatedClassTreeItem.getSelectedClass().getModel(), instantiatedClassTreeItem);
+			dc.collectAll(instantiatedClassTreeItem.getSelectedClass().getModel(), classInstantiation, instantiatedClassTreeItem);
 
 			// add mediators, clients and providers - Mediator Perspective 
 			addValueMediatorsUsedInInstantaitedClass(rootModelNode, dc);
@@ -565,7 +565,7 @@ public class TreeBuilder {
 			valueMediators = mc.getValueMediators();
 			
 			importedMediatorContainers = mc.getImportedMediatorContainers();
-			importedMediators = mc.getImportedMediators();
+//			importedMediators = mc.getImportedMediators();
 		}
 		else {
 			// Do nothing because the the user will be informed in the viewer to reload the tree ...
@@ -626,7 +626,8 @@ public class TreeBuilder {
 		}
 	}
 	
-	private void addToMapList(HashMap map, Element key, Element value){
+	@SuppressWarnings({ "unchecked" })
+	private void addToMapList(@SuppressWarnings("rawtypes") HashMap map, Element key, Element value){
 		Object list = map.get(key);
 		if (list instanceof HashSet) {
 			((HashSet<Element>)list).add(value);

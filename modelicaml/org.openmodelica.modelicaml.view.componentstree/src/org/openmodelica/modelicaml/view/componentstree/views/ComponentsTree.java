@@ -114,14 +114,15 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.OMCClassValidator;
+import org.openmodelica.modelicaml.helper.generators.CreatorValueBinding;
+import org.openmodelica.modelicaml.helper.generators.CreatorVerificationVerdictElements;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler;
 import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandler;
-import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
-import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
 import org.openmodelica.modelicaml.simulation.handlers.SimulationOMCAction2;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
+import org.openmodelica.modelicaml.view.componentstree.display.NameSorter;
 import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
 import org.openmodelica.modelicaml.view.componentstree.listeners.DragListener;
@@ -250,6 +251,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private Action actionValidate;
 
 	private Action actionSimulate;
+
+	private Action actionShowPredefinedTypesProperties;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
@@ -262,11 +265,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 *            the parent
 	 */
 	public void createPartControl(Composite parent) {
+//		viewer = new TreeViewer(parent, SWT.VIRTUAL | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-//		viewer.setSorter(new NameSorter()); // sorts the tree names alphabetically
+		viewer.setSorter(new NameSorter()); // sorts the tree names alphabetically
 		viewer.setInput(getViewSite());
 		
 		ViewerFilter[] filters = {showAllFilter};
@@ -350,6 +355,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		manager.add(new Separator());
 		manager.add(actionShowStateMachines);
+		manager.add(actionShowPredefinedTypesProperties);
 		
 		manager.add(new Separator());
 		manager.add(actionExpandArrays);
@@ -512,7 +518,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				actionInstantiateTestScenarios.setText("Instantiate test scenarios");
 				
 				
-				if (VerificationVerdictElementsGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, false)) {
+				if (CreatorVerificationVerdictElements.removeRegTestEvalElemenents_deleteOption(selectedClass, false)) {
 					manager.add(new Separator());
 					manager.add(actionDeleteReqTestEvaluationElements);
 				}
@@ -837,8 +843,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 						try {
 							// update bindings
-							ValueBindingCreator vc = new ValueBindingCreator();
-							vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true, false);
+							CreatorValueBinding vc = new CreatorValueBinding();
+							vc.updateAllBindings(root.getSelectedClass().getModel(), 
+										org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, 
+										item, 
+										root, 
+										deleteOldBindings, 
+										confirmationDialog.isAutomaticSelectionOfProviders(), 
+										true, 
+										false);
 							
 							// get the updated items
 							List<TreeObject> updatedItems = vc.getUpdatedItems();
@@ -1108,6 +1121,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //		actionShowStateMachines.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
 
+		
+		actionShowPredefinedTypesProperties = new Action("actionShowPredefinedTypesProperties", 2) {
+			public void run() {}
+		};
+		actionShowPredefinedTypesProperties.setText("Show Predefined Types Properties");
+		actionShowPredefinedTypesProperties.setChecked(false); // this is on purpose because the number of tree nodes will explode if we create all predefined type properties for each primitive type! 
+		actionShowPredefinedTypesProperties.setToolTipText("Show Predefined Types Properties");
+		
 		
 		actionExpandArrays = new Action("actionExpandArrays", 2) {
 			public void run() {
@@ -1598,7 +1619,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof TreeParent) {
 					//TestPassFailCodeGenerator t = new TestPassFailCodeGenerator(selectedClass);
-					VerificationVerdictElementsGenerator t = new VerificationVerdictElementsGenerator(selectedClass);
+					CreatorVerificationVerdictElements t = new CreatorVerificationVerdictElements(selectedClass);
 					updateItem(obj);
 					showSelection(par, sel);
 				}
@@ -1621,7 +1642,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					Boolean go = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 
 					if (go) {
-						VerificationVerdictElementsGenerator.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
+						CreatorVerificationVerdictElements.removeRegTestEvalElemenents_deleteOption(selectedClass, true);
 						updateItem(obj);
 						showSelection(par, sel);
 					}
@@ -1637,6 +1658,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionLinkWithEditor = new Action("Action6", 2) { //obviously a check box style
 			public void run() {
 				if (actionShowOutputs.isChecked()) {
+					org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation = null;
 					org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = null;
 					showSelection(par, sel);
 				}
@@ -2376,14 +2398,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			
 			if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
 				
-				ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked());
+				ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked(), actionShowPredefinedTypesProperties.isChecked());
 
 				ast.createTree();
 				invisibleRoot = ast.getInvisibleRoot();
-//				invisibleRoot = new TreeParent("");
 				root = ast.getTreeRoot();
 				
 				// set the static variable to be used by other plugins. This is done in order to avoid cyclic plugin dependecies
+				org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation = ast;
 				org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = root;
 				org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeViewer = viewer;
 			}

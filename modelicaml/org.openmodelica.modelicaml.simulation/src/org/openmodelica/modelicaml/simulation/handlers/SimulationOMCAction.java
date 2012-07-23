@@ -161,7 +161,12 @@ public class SimulationOMCAction extends AbstractHandler {
 		// instantiate in order to see of MSL is used
 		boolean isMSLUsed = false;
 		if (umlElement instanceof Class) {
-			ClassInstantiation ci = new ClassInstantiation((Class) umlElement, true);
+			
+			/*
+			 * NOTE: this is expensive if the class is large. 
+			 * TODO: think about how to avoid the instantiation ...
+			 */
+			ClassInstantiation ci = new ClassInstantiation((Class) umlElement, true, false);
 			ci.createTree();
 			TreeParent treeRoot = ci.getTreeRoot();
 			HashSet<Element> allTypes = TreeUtls.getAllTreeItemsClasses(treeRoot);

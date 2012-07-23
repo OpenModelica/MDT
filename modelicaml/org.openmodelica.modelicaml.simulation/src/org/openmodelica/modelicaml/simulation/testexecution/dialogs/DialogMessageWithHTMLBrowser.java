@@ -37,12 +37,12 @@ package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.util.HashSet;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -198,8 +198,8 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
         return parent;
 	}
 	
-	private EList<Element> findElement(String qName){
-		EList<Element> elements = null; 
+	private HashSet<Element> findElement(String qName){
+		HashSet<Element> elements = null; 
 		UmlModel umlModel = UmlUtils.getUmlModel();
 		try {
 			EObject rootModel = umlModel.lookupRoot();

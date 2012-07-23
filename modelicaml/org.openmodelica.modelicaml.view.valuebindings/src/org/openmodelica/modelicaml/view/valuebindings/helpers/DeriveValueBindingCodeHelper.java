@@ -57,6 +57,7 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
@@ -91,12 +92,18 @@ public class DeriveValueBindingCodeHelper {
 	
 	private Boolean userSelectionRequired = false; // indicates if an error was detected.
 
-	public void initialize(Package valueBindingsPackage, TreeObject instantiationTreeRoot, HashSet<Element> preCollectedMediators, boolean showProgressMonitor){
+	public void initialize(Package valueBindingsPackage, 
+			ClassInstantiation classInstantiation, 
+			TreeParent instantiationTreeRoot, 
+			HashSet<Element> preCollectedMediators, 
+			boolean showProgressMonitor){
 		
 		if (instantiationTreeRoot instanceof TreeParent) {
+			
 			if (valueBindingsPackage == null) {
 				valueBindingsPackage = (Package) instantiationTreeRoot.getSelectedClass().getModel();
 			}
+			
 			if (showProgressMonitor) {
 				try {
 					dataCollection = new ValueBindingsDataCollector();
@@ -109,7 +116,7 @@ public class DeriveValueBindingCodeHelper {
 						dataCollection.setAllMediators(preCollectedMediators);
 					}
 					
-					dataCollection.collectAll((Element) valueBindingsPackage, instantiationTreeRoot);
+					dataCollection.collectAll((Element) valueBindingsPackage, classInstantiation, instantiationTreeRoot);
 					
 					new ProgressMonitorDialog(getShell()).run(true, true, dataCollection);
 					
@@ -130,7 +137,7 @@ public class DeriveValueBindingCodeHelper {
 					dataCollection.setAllMediators(preCollectedMediators);
 				}
 				
-				dataCollection.collectAll((Element) valueBindingsPackage, instantiationTreeRoot);
+				dataCollection.collectAll((Element) valueBindingsPackage, classInstantiation, instantiationTreeRoot);
 			}
 		}
 		else {
@@ -758,6 +765,14 @@ public class DeriveValueBindingCodeHelper {
 		clientOperation = null;
 		
 		List<TreeObject> topDownPathSegments = getTopDownPathItems(selectedTreeItem);
+		
+		/*
+		 * TODO: rework this. 
+		 * Instead of looking up the actual client in the path, 
+		 * starting from CreatorValueBinding, pass a list with (key) dot path of a client 
+		 * and the actual clients found while traversing (HashMap<String, List<Element>()). 
+		 * Look up only if this list is null (this will happen when derive binding code feature is used in ComponentsTree for a selected client)
+		 */
 		
 		// top town path traverse. Determine the first tree element that either has a script for the selectedItem or is the selectedItem itself.
 		for (TreeObject potentialClient : topDownPathSegments) {

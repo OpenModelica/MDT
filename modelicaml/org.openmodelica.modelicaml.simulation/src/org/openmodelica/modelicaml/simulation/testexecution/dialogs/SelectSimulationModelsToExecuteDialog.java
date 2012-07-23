@@ -37,7 +37,7 @@ import org.eclipse.swt.layout.GridLayout;
 public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 
 	// test scenarios that are appropriate for the system model
-	private EList<Element> selectedTestSimulationModels;
+	private HashSet<Element> selectedTestSimulationModels;
 	
 	// the final selection done by user
 	private HashSet<Element> userSelectedTestSimulationModels = new HashSet<Element>();
@@ -62,7 +62,7 @@ public class SelectSimulationModelsToExecuteDialog extends TitleAreaDialog {
 	 * @param parentShell
 	 */
 	public SelectSimulationModelsToExecuteDialog(Shell parentShell,
-			EList<Element> selectedTestSimulationModels) {
+			HashSet<Element> selectedTestSimulationModels) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);

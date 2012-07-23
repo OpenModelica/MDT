@@ -15,8 +15,9 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
-import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
-import org.openmodelica.modelicaml.helper.impl.VerificationDataCollector;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.generators.NOT_USED_Utls;
+import org.openmodelica.modelicaml.helper.generators.CreatorValueBinding;
 
 public class ModelComposer {
 	
@@ -50,28 +51,22 @@ public class ModelComposer {
 	// All models that were found in the defined root model/package that should always be instantiated
 	private HashSet<Element> allAlwaysIncludeFound = new HashSet<Element>();
 	
-	private VerificationDataCollector ec;
+//	private VerificationDataCollector ec;
 
 	// All instantiated models
 	private HashSet<TreeParent> allModelInstantiations = new HashSet<TreeParent>();
 
 	// All instantiated models
-	private HashMap<Element, TreeParent> modelToItsInstantiation = new HashMap<Element, TreeParent>();
-
-	public HashMap<Element, TreeParent> getModelToItsInstantiation() {
-		return modelToItsInstantiation;
-	}
+	private HashMap<Element, ClassInstantiation> modelToItsInstantiation = new HashMap<Element, ClassInstantiation>();
 
 	// Virtual instantiation root. Its direct children are the instantiation roots of all models provided and collected. 
 	private TreeParent virtualInstantiationTreeRoot;
 	
-	public TreeParent getVirtualInstantiationTreeRoot() {
-		return virtualInstantiationTreeRoot;
-	}
-
 	// contains tree objects (instantiation roots of models) with all mandatory clients that are NOT satisfied.
 	private HashMap<TreeParent, HashSet<TreeObject>> requiredClients_unsatisfied = new HashMap<TreeParent, HashSet<TreeObject>>();
-
+	
+	// collector of verification data (scenarios, requirements etc.)
+	private VerificationScenariosCollector collector;
 	
 	// internal log
 	private String log;
@@ -81,7 +76,9 @@ public class ModelComposer {
 			NamedElement sourceModel,
 			List<Element> modelsToBeInstantiated, 
 			Package valueBindingsPackage,
-			Element umlRoolModel){
+			Element umlRoolModel,
+			HashMap<Element, ClassInstantiation> preparedModelsToInstantiations,
+			VerificationScenariosCollector collector){
 		
 		this.systemModel = sourceModel;
 		if (this.systemModel instanceof Class) {
@@ -89,6 +86,11 @@ public class ModelComposer {
 		}
 		
 		this.valueBindingsPackage = valueBindingsPackage;
+		
+		// use the pre-instantiated models in order to avoid instantiating models multiple times
+		if (preparedModelsToInstantiations != null) {
+			getModelToItsInstantiation().putAll(preparedModelsToInstantiations);
+		}
 		
 		this.modelsToBeInstantiated.addAll(modelsToBeInstantiated);
 		// TODO: what to do if there are not only requirements?
@@ -102,7 +104,9 @@ public class ModelComposer {
 		this.initialSetOfModels.addAll(this.modelsToBeInstantiated); 
 		this.initialSetOfModels.add(systemModel);
 		
-		this.ec = new VerificationDataCollector(umlRoolModel);
+		this.collector = collector;
+		
+//		this.ec = new VerificationDataCollector(umlRoolModel);
 		
 		// virtual instantiation root 
 		virtualInstantiationTreeRoot = new TreeParent("Virtual Instantiation", null, null, "", false, true, null, null, true);
@@ -126,26 +130,33 @@ public class ModelComposer {
 			virtualInstantiationTreeRoot.removeChild(instantiatedModel);
 		}
 
-		// clear the list
-		allModelInstantiations.clear();
-		modelToItsInstantiation.clear();
-		
 		// new instantiations
 		for (Element model : models) {
 			if (model instanceof Class) {
 
-				// instantiate model
-				ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
-				ci_model.createTree();
+				TreeParent newChild = null;
 				
+				/*
+				 * First look if the graph for this model was already created (i.e. if there is an instantiation available for that model)
+				 * If not -> create a new instantiation
+				 */
+				if ( modelToItsInstantiation.get(model) != null) {
+					newChild = getModelToItsInstantiation().get(model).getTreeRoot();
+				}
+				else {
+					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
+					ci_model.createTree();
+					newChild = ci_model.getTreeRoot();
+					
+					// add to model -> its instantiation map
+					modelToItsInstantiation.put(model, ci_model);
+				}
+
 				// add the instantiated model to the root
-				virtualInstantiationTreeRoot.addChild(ci_model.getTreeRoot());
+				virtualInstantiationTreeRoot.addChild(newChild);
 				
 				// add  the instantiation object to the map. 
-				allModelInstantiations.add(ci_model.getTreeRoot());
-				
-				// add to model -> its instantiation map
-				modelToItsInstantiation.put(model, ci_model.getTreeRoot());
+				allModelInstantiations.add(newChild);
 			}
 		}
 	}
@@ -156,12 +167,13 @@ public class ModelComposer {
 	
 	public HashSet<Element> getAdditionallModels(Element model, boolean prune){
 		if (!prune) {
-			return ec.getModelToItsRequiredModels().get(model);
+			return collector.getModelToItsAdditionalModels().get(model);
 		}
 		HashSet<Element> additionalModels = new HashSet<Element>();
-		if (ec.getModelToItsRequiredModels().get(model) != null) {
-			for (Element additionalModel : ec.getModelToItsRequiredModels().get(model)) {
-				TreeParent additionalModelInstantiation = this.modelToItsInstantiation.get(additionalModel);
+		HashSet<Element> collectedAdditionalModels = collector.getModelToItsAdditionalModels().get(model);
+		if (collectedAdditionalModels != null) {
+			for (Element additionalModel : collectedAdditionalModels) {
+				TreeParent additionalModelInstantiation = this.modelToItsInstantiation.get(additionalModel).getTreeRoot();
 				if (additionalModelInstantiation != null) {
 					if (alwaysInclude.contains(additionalModel) 
 							|| isAtLeastOneProviderUsed(virtualInstantiationTreeRoot, additionalModelInstantiation)) {
@@ -248,12 +260,13 @@ public class ModelComposer {
 
 			// discard itself
 			if (modelInstnatiationTreeRootItem != treeParentToStartTheCheckOn && modelInstnatiationTreeRootItem instanceof TreeParent) {
-				ValueBindingCreator vbc = new ValueBindingCreator();
-			
+				CreatorValueBinding vbc = new CreatorValueBinding();
+				vbc.setAllMediators(collector.getAllMediators());
+				
 				/* Note, the updateAllBindings() is called with the last argument simulateOnly = true  
 				 * so that no modifications are created in components because we only want to analyze possible bindings.
 				 */
-				vbc.updateAllBindings(valueBindingsPackage, (TreeParent) modelInstnatiationTreeRootItem, virtualInstantiationTreeRoot, false, true, false, true);
+				vbc.updateAllBindings(valueBindingsPackage, null, (TreeParent) modelInstnatiationTreeRootItem, virtualInstantiationTreeRoot, false, true, false, true);
 				atLeastOneProviderIsUsed = treeContainsOneOf(vbc.getUsedProviders(),treeParentToStartTheCheckOn);
 
 				// stop the check as soon as at least one used provider was found.
@@ -272,14 +285,15 @@ public class ModelComposer {
 		/* 
 		 * Get the list of clients for which the code could be derived (even if a user interaction would be necessary) 
 		*/
-		ValueBindingCreator vbc = new ValueBindingCreator();
+		CreatorValueBinding vbc = new CreatorValueBinding();
+		vbc.setAllMediators(collector.getAllMediators());
 		
 		/* Note, the updateAllBindings() is called with the last argument simulateOnly = true  
 		 * so that no modifications are created in components because we only want to analyze possible bindings.
 		 */
 		boolean allRequiredClientsAreSatisfied = true;
 		
-		vbc.updateAllBindings(valueBindingsPackage, treeParentToStartTheCheckOn, virtualInstantiationTreeRoot, false, true, false, true);
+		vbc.updateAllBindings(valueBindingsPackage, null, treeParentToStartTheCheckOn, virtualInstantiationTreeRoot, false, true, false, true);
 		
 		if ( vbc.getAllRequiredClientsFound().size() > 0 
 				&& !vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllRequiredClientsFound())) {
@@ -307,13 +321,27 @@ public class ModelComposer {
 		
 		// if this model was not yet considered
 		if (!alreadyConsideredForAdditionalModelsSearch.contains(sourceElement)) {
-			
-			//Instantiate the source model in order to collect all classes that are used in its instance tree
-			ClassInstantiation ci_sourceModel = new ClassInstantiation(sourceElement, true);	
+
 			HashSet<Element> allModelsInInstantiationTree = new HashSet<Element>();
-			ci_sourceModel.createTree();
+
+			TreeParent sourceElementInstantiated;
+			/*
+			 * First look if the graph for this model was already created (i.e. if there is an instantiation available for that model)
+			 * If not -> create a new instantiation
+			 */
+			if ( modelToItsInstantiation.get(sourceElement) != null) {
+				sourceElementInstantiated = getModelToItsInstantiation().get(sourceElement).getTreeRoot();
+			}
+			else {
+				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false);
+				ci_model.createTree();
+				sourceElementInstantiated = ci_model.getTreeRoot();
+				
+				// add to model -> its instantiation map
+				modelToItsInstantiation.put(sourceElement, ci_model);
+			}
 			
-			allModelsInInstantiationTree.addAll(getAllTreeItemsClasses(ci_sourceModel.getTreeRoot()));
+			allModelsInInstantiationTree.addAll(getAllTreeItemsClasses(sourceElementInstantiated));
 			
 			// mark all classes collected from the instantiation tree in order to avoid dead lock search
 			alreadyConsideredForAdditionalModelsSearch.addAll(allModelsInInstantiationTree);
@@ -368,7 +396,7 @@ public class ModelComposer {
 	
 	public HashSet<TreeObject> getUnsatisfiedRequiredClients(Element model){
 		if (model != null) {
-			TreeParent modelInstantiation = modelToItsInstantiation.get(model);
+			TreeParent modelInstantiation = modelToItsInstantiation.get(model).getTreeRoot();
 			
 			if (modelInstantiation != null) {
 				HashSet<TreeObject> unsatisfiedClients = requiredClients_unsatisfied.get(modelInstantiation);
@@ -388,5 +416,15 @@ public class ModelComposer {
 		"Log for:" +
 			"\n   - System Model '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
 			"\n";
+	}
+	
+	
+	
+	public TreeParent getVirtualInstantiationTreeRoot() {
+		return virtualInstantiationTreeRoot;
+	}
+
+	public HashMap<Element, ClassInstantiation> getModelToItsInstantiation() {
+		return modelToItsInstantiation;
 	}
 }

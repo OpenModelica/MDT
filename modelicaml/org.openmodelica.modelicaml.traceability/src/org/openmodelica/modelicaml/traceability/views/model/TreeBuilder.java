@@ -66,16 +66,17 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.services.ElementsCollector;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.helper.dialogs.VeMGenerationOptionsDialog;
-import org.openmodelica.modelicaml.helper.impl.VeMScenarioReqCombinationsCreator;
-import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.structures.VeMScenarioReqCombinationsCreator;
 import org.openmodelica.modelicaml.traceability.views.helper.ModelComposer;
 
 public class TreeBuilder implements IRunnableWithProgress{
 
 	private List<TreeObject> treeItems = new ArrayList<TreeObject>(); // created tree clients
+
+	private Element rootPackage;
 
 	private NamedElement selectedElement;
 	private Element targetPackage;
@@ -93,7 +94,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private VerificationScenariosCollector vsc;
 
 	// prepared instantiations of model in order to avoid instantiating models several times
-	private HashMap<Element, org.openmodelica.modelicaml.common.instantiation.TreeParent> preparedModelInstantiations = new HashMap<Element, org.openmodelica.modelicaml.common.instantiation.TreeParent>();
+	private HashMap<Element, ClassInstantiation> preparedModelInstantiations = new HashMap<Element, ClassInstantiation>();
 	
 	/*
 	 * Possible combinations, each containing an initial set (1 system model, 1 test scenario  and n requirements) and 
@@ -160,13 +161,17 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 		// get the uml model that is open in Papyrus.
 		umlModel = UmlUtils.getUmlModel();
+		
 		if (umlModel != null ) {
 			try {
 				
-				targetPackage = (Element) umlModel.lookupRoot();
-				requirementsPackage = (Element) umlModel.lookupRoot();
-				scenariosPackage = (Element) umlModel.lookupRoot();
-				valueMediatorsPackage = (Element) umlModel.lookupRoot();
+				Element root = (Element) umlModel.lookupRoot();
+				
+				setRootPackage(root);
+				targetPackage = root;
+				requirementsPackage = root;
+				scenariosPackage = root;
+				valueMediatorsPackage = root;
 				
 //				// Set requirements selection options via user dialog
 //				VeMGenerationOptionsDialog dialog = new VeMGenerationOptionsDialog(
@@ -229,9 +234,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 		// clear all lists from previous iterations
 		clearAll();
 		
-		ElementsCollector ec = new ElementsCollector();
-		ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
-		requirementsAll.addAll(ec.getElements());
+//		ElementsCollector ec = new ElementsCollector();
+//		ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
+//		requirementsAll.addAll(ec.getElements());
 		
 		// find all test scenarios
 		vsc = new VerificationScenariosCollector();
@@ -240,6 +245,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 			String message = "INFO: No scenarios were found.";
 			addToLog(message);
 		}
+		
+		requirementsAll.addAll(vsc.getAllRequirements());
 
 		preparedModelInstantiations.put(selectedElement, ModelicaMLServices.getModelInstantiation(selectedElement, preparedModelInstantiations));
 		
@@ -280,7 +287,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 						(Package) valueMediatorsPackage,
 						vsc.getAlwaysInclude(),
 						vsc.getModelToItsAdditionalModels(),
-						preparedModelInstantiations);
+						preparedModelInstantiations,
+						vsc);
 				
 				// add to map
 				scenarioToVerificationModelCombination.put(scenarioToBeUsed, tsmc);
@@ -481,8 +489,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 			List<Element> modelsToBeInstantiated = new ArrayList<Element>();
 			modelsToBeInstantiated.add(req);
 			
-			ModelComposer modelComposer = new ModelComposer(this.selectedElement, modelsToBeInstantiated, (Package) valueMediatorsPackage, targetPackage);
-			org.openmodelica.modelicaml.common.instantiation.TreeParent reqInstantiationItem = modelComposer.getModelToItsInstantiation().get(req);
+			ModelComposer modelComposer = new ModelComposer(this.selectedElement, modelsToBeInstantiated, (Package) valueMediatorsPackage, targetPackage, preparedModelInstantiations, vsc);
+			org.openmodelica.modelicaml.common.instantiation.TreeParent reqInstantiationItem = modelComposer.getModelToItsInstantiation().get(req).getTreeRoot();
 			
 			if (reqInstantiationItem != null) {
 				
@@ -588,9 +596,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 		this.log = this.log + msg + "\n";
 	}
 
-	private void clearLog(){
-		this.log = "";
-	}
+//	private void clearLog(){
+//		this.log = "";
+//	}
 	
 //	private HashSet<TreeObject> getAllItemsFromParent(TreeParent treeParent){
 //		
@@ -892,6 +900,16 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 	public UmlModel getUmlModel() {
 		return umlModel;
+	}
+
+
+	public Element getRootPackage() {
+		return rootPackage;
+	}
+
+
+	public void setRootPackage(Element rootPackage) {
+		this.rootPackage = rootPackage;
 	}
 
 }

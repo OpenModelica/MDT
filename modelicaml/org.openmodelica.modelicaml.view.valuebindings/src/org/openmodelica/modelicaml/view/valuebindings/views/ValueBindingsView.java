@@ -593,7 +593,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 				
 				if (actionInstantiatedClassMode.isChecked()) {
-					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
 				}
 				else {
 					treeBuilder.buildTreeFromUmlModel(invisibleRoot);	
@@ -721,7 +721,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					for (int i = 0; i < children.length; i++) {
 						invisibleRoot.removeChild(children[i]);
 					}
-					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
 					viewer.setInput(getViewSite());
 					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 				}
@@ -912,7 +912,6 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 		
 		actionDeleteReference = new Action("actionDeleteReference") {
-			@SuppressWarnings("rawtypes")
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();

@@ -1,6 +1,7 @@
 package org.openmodelica.modelicaml.traceability.views;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -57,10 +58,12 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
-import org.openmodelica.modelicaml.helper.impl.VeMGeneratorScenariosBased;
+import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
 import org.openmodelica.modelicaml.traceability.Activator;
 import org.openmodelica.modelicaml.traceability.views.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.traceability.views.display.ViewLabelProviderStyledCell;
@@ -411,7 +414,7 @@ public class TraceabilityView extends ViewPart {
 							Command command = new RecordingCommand(editingDomain) {
 								@Override
 								protected void doExecute() {
-									VeMGeneratorScenariosBased mg = new VeMGeneratorScenariosBased();
+									GeneratorVeMScenariosBased mg = new GeneratorVeMScenariosBased();
 									
 									mg.setRequirementsDiscarded(treeBuilder.getRequirementsWithUnsatisfiedClients());
 									mg.setRequirementsToBeInstantiated(treeBuilder.getRequirementsValid());
@@ -460,11 +463,21 @@ public class TraceabilityView extends ViewPart {
 							List<Element> elementsToBeInstantiated = new ArrayList<Element>();
 							elementsToBeInstantiated.add(treeItem.getUmlElement());
 							
+							
+							// prepare instantiation so that it can be reused for other iterations
+							HashMap<Element, ClassInstantiation> preparedModelInstantiations = new HashMap<Element, ClassInstantiation>();
+							// prepare the system model
+							preparedModelInstantiations.put(treeBuilder.getSelectedElement(), ModelicaMLServices.getModelInstantiation(treeBuilder.getSelectedElement(), preparedModelInstantiations));
+							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllRequirements(), preparedModelInstantiations));
+							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllScenarios(), preparedModelInstantiations));
+							
 							final VerModelForRequirementsWithoutScenarioCreator mc = new VerModelForRequirementsWithoutScenarioCreator(
 									treeBuilder.getSelectedElement(), 
 									elementsToBeInstantiated, 
 									(Package) treeBuilder.getTargetPackage(), 
-									treeBuilder.getTargetPackage());
+									treeBuilder.getTargetPackage(),
+									preparedModelInstantiations,
+									treeBuilder.getVsc());
 							
 							CompoundCommand cc = new CompoundCommand("Model Creation From Traceability View");
 							Command command = new RecordingCommand(editingDomain) {

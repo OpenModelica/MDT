@@ -1,6 +1,7 @@
 package org.openmodelica.modelicaml.traceability.views.helper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -19,9 +20,11 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
-import org.openmodelica.modelicaml.helper.impl.ValueBindingCreator;
-import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationDataCollector;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.generators.InstantiatorRequirements;
+import org.openmodelica.modelicaml.helper.generators.CreatorValueBinding;
+import org.openmodelica.modelicaml.helper.generators.CreatorVerificationVerdictElements;
 
 public class VerModelForRequirementsWithoutScenarioCreator {
 	
@@ -40,6 +43,9 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 
 	private ModelComposer modelComposer;
 	
+//	private HashMap<Element, org.openmodelica.modelicaml.common.instantiation.TreeParent> preparedModelInstantiations = new HashMap<Element, org.openmodelica.modelicaml.common.instantiation.TreeParent>();
+
+	
 	// internal log
 	private String log;
 	
@@ -47,9 +53,11 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 			NamedElement sourceModel,
 			List<Element> modelsToBeInstantiated, 
 			Package targetPackage,
-			Element umlRoolModel){
-		
-		modelComposer = new ModelComposer(sourceModel, modelsToBeInstantiated, targetPackage, umlRoolModel);
+			Element umlRoolModel,
+			HashMap<Element, ClassInstantiation> preparedModelInstantiations,
+			VerificationScenariosCollector vsc){
+
+		modelComposer = new ModelComposer(sourceModel, modelsToBeInstantiated, targetPackage, umlRoolModel, preparedModelInstantiations, vsc);
 
 		this.systemModel = sourceModel;
 		this.modelsToBeInstantiated.addAll(modelsToBeInstantiated);
@@ -69,6 +77,8 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 	
 	public EObject createModel(){
 
+		VerificationDataCollector collector = new VerificationDataCollector(systemModel.getModel());
+		
 		String pkgName = Constants.simModelsPackageNamePrefix + ((NamedElement)systemModel).getName();
 		String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
 		PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
@@ -121,7 +131,7 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 		
 		//************************************************************************************
 		// add requirements
-		RequirementsInstantiator ri = new RequirementsInstantiator();
+		InstantiatorRequirements ri = new InstantiatorRequirements();
 		HashSet<Element> reqList = new HashSet<Element>();
 		reqList.addAll(this.requirementsToBeInstantiated);
 		List<Element> requirements_sorted = ModelicaMLServices.getSortedByName(reqList);
@@ -130,7 +140,7 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 			if (requirement instanceof Classifier) {
 			
 				// get the number of required instantiations
-				int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement);
+				int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement, collector.getAllMediators());
 				String requiredNumberOfInstantionsString = "";
 				
 				for (int i = 0; i < requiredNumberOfInstantions; i++) {
@@ -174,20 +184,20 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 		 * Instantiate the created simulation model class
 		 * (it now contains all components)
 		 */
-		ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true);
+		ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true, false);
 		ci.createTree();
 		
 		// update all bindings in the created simulation model class
-		ValueBindingCreator vbc = new ValueBindingCreator();
+		CreatorValueBinding vbc = new CreatorValueBinding();
 		/* Note, the updateAllBindings() is called with the last argument simulateOnly = false  
 		 * so that modifications ARE created in components.
 		 */
-		vbc.updateAllBindings((Package)valueBindingsPackage, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
+		vbc.updateAllBindings((Package)valueBindingsPackage, ci, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
 		
 		/*
 		 * Create test verdict code
 		 */
-		VerificationVerdictElementsGenerator.createVerificationVerdictElements(simulationModel);
+		CreatorVerificationVerdictElements.createVerificationVerdictElements(simulationModel);
 		
 		return simulationModel;
 	}
