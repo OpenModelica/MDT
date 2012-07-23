@@ -302,7 +302,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 //		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.VIRTUAL | SWT.H_SCROLL | SWT.V_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(labelProvider);
