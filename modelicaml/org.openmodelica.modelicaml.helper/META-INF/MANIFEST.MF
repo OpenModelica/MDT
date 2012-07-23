@@ -24,8 +24,10 @@ Import-Package: org.eclipse.emf.ecore,
  org.eclipse.uml2.uml,
  org.openmodelica.modelicaml.simulation.omc
 Bundle-Vendor: OpenModelica Project
-Export-Package: org.openmodelica.modelicaml.helper.dialogs,
+Export-Package: org.openmodelica.modelicaml.helper.datacollection,
+ org.openmodelica.modelicaml.helper.dialogs,
+ org.openmodelica.modelicaml.helper.generators,
  org.openmodelica.modelicaml.helper.handlers,
- org.openmodelica.modelicaml.helper.impl
+ org.openmodelica.modelicaml.helper.structures
 Bundle-ClassPath: .,
  swt-grouplayout.jar

@@ -61,10 +61,10 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
-import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
-import org.openmodelica.modelicaml.helper.impl.VerificationVerdictElementsGenerator;
-import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.generators.InstantiatorRequirements;
+import org.openmodelica.modelicaml.helper.generators.CreatorVerificationVerdictElements;
 
 
 
@@ -193,8 +193,8 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 //				else {
 //					MessageDialog.openError(new Shell(), "Error:", "Cannot apply ModelicaML stereotype to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 //				}
-				RequirementsInstantiator ri = new RequirementsInstantiator();
-				ri.instantiateRequirements(owningClass, selectedReq, selectedNumberOfInstantiations);
+				InstantiatorRequirements ri = new InstantiatorRequirements();
+				ri.instantiateRequirements(owningClass, selectedReq, selectedNumberOfInstantiations, null);
 			}
 		};
 		cc.append(command);
@@ -215,7 +215,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				VerificationVerdictElementsGenerator.createVerificationVerdictElements(owningClass);
+				CreatorVerificationVerdictElements.createVerificationVerdictElements(owningClass);
 			}
 		};
 		cc.append(command);

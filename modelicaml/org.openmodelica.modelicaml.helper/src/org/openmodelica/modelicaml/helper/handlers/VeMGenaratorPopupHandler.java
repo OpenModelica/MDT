@@ -57,10 +57,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.helper.dialogs.VeMGenerationOptionsDialog;
-import org.openmodelica.modelicaml.helper.impl.VeMGeneratorScenariosBased;
+import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
 
 public class VeMGenaratorPopupHandler extends AbstractHandler {
 
+	protected Element rootPackage; 
+	
 	protected EObject selectedElement = null;
 
 	private Element targetPackage;
@@ -79,7 +81,7 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 	private boolean bindingErrorsDetected = false;
 	
 	// models generator
-	protected VeMGeneratorScenariosBased smg;
+	protected GeneratorVeMScenariosBased smg;
 	
 	
 	protected void setSelectedSystemModel(){
@@ -108,13 +110,13 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 			try {
 
 				// get the top levelPapyrus UML::Model
-				Element topLevelModel = (Element) papyrusModel.lookupRoot();
+				rootPackage = (Element) papyrusModel.lookupRoot();
 				
 				// preset the packages to search in
-				targetPackage = topLevelModel;
-				requirementsPackage = topLevelModel;
-				testScenariosPackage = topLevelModel;
-				valueMediatorsPackage = topLevelModel;
+				targetPackage = rootPackage;
+				requirementsPackage = rootPackage;
+				testScenariosPackage = rootPackage;
+				valueMediatorsPackage = rootPackage;
 		
 			} catch (NotFoundException e) {
 				e.printStackTrace();
@@ -170,6 +172,7 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 		// Set requirements selection options via user dialog
 		dialog = new VeMGenerationOptionsDialog(
 						new Shell(), 
+						rootPackage,
 						(Element) selectedElement, 
 						targetPackage, 
 						requirementsPackage, 

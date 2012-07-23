@@ -1,6 +1,5 @@
 package org.openmodelica.modelicaml.helper.dialogs;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,8 +13,6 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.core.services.ServiceException;
@@ -27,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -47,12 +45,13 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
-import org.openmodelica.modelicaml.helper.impl.VeMGeneratorRequirementsBased;
-import org.openmodelica.modelicaml.helper.impl.VeMGeneratorScenariosBased;
-import org.eclipse.swt.graphics.Point;
+import org.openmodelica.modelicaml.helper.generators.GeneratorVeMRequirementsBased;
+import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
 
 public class VeMGenerationOptionsDialog extends Dialog {
 
+	private Element rootPackage;
+	
 	private Element systemModel;
 	private Element targetPackage;
 	private Element requirementsPackage;
@@ -136,10 +135,10 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	private boolean considerAllUnknownRequirementsRelations = false;
 
 	// scenario based models generator
-	private VeMGeneratorScenariosBased smg;
+	private GeneratorVeMScenariosBased smg;
 
 	// scenario based models generator
-	private VeMGeneratorRequirementsBased rmg;
+	private GeneratorVeMRequirementsBased rmg;
 	
 	
 	private static final String defaultNegativeString = "Not specified ... ";
@@ -156,6 +155,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 
 	
 	public VeMGenerationOptionsDialog(Shell parentShell,
+			Element rootPackage,
 			Element systemModel,
 			Element targetPackage,
 			Element requirementsPackage,
@@ -166,6 +166,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP );
 		
+		this.rootPackage = rootPackage;
 		this.systemModel = systemModel;
 		this.targetPackage = targetPackage;
 		this.requirementsPackage = requirementsPackage;
@@ -563,7 +564,8 @@ public class VeMGenerationOptionsDialog extends Dialog {
 					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					
-					smg = new VeMGeneratorScenariosBased(
+					smg = new GeneratorVeMScenariosBased(
+							rootPackage,
 							systemModels, 
 							getTargetPackge(), 
 							getRequirementsPackage(), 
@@ -606,7 +608,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					
-					rmg = new VeMGeneratorRequirementsBased(
+					rmg = new GeneratorVeMRequirementsBased(
 							systemModels, 
 							getTargetPackge(), 
 							getRequirementsPackage(), 
@@ -1183,7 +1185,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 //		this.bindingErrorsDetected = bindingErrorsDetected;
 //	}
 	
-	public VeMGeneratorScenariosBased getSmg() {
+	public GeneratorVeMScenariosBased getSmg() {
 		return smg;
 	}
 }

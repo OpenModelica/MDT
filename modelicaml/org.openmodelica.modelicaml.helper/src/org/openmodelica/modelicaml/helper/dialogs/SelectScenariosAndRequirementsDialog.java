@@ -40,8 +40,8 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-import org.openmodelica.modelicaml.helper.impl.VeMScenarioReqCombinationsCreator;
-import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.structures.VeMScenarioReqCombinationsCreator;
 
 public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 

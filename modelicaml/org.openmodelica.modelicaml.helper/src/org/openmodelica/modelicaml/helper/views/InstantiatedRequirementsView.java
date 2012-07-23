@@ -139,7 +139,7 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 				reqInstancesList.clear(); 
 				
 				// instantiate class 
-				ClassInstantiation ci = new ClassInstantiation(selectedClass, false);
+				ClassInstantiation ci = new ClassInstantiation(selectedClass, false, false);
 				ci.createTree();
 				TreeParent treeRoot = ci.getTreeRoot();
 				

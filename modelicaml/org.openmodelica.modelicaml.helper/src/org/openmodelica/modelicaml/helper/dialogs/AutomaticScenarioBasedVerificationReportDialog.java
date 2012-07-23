@@ -43,7 +43,8 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.Activator;
-import org.openmodelica.modelicaml.helper.handlers.ScenariosToRequirementsRelationsDiscoveryToolbarHandler.GeneratedModelsData;
+import org.openmodelica.modelicaml.helper.report.XMLReportGenerator;
+import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
 
 public class AutomaticScenarioBasedVerificationReportDialog extends Dialog {
@@ -237,8 +238,8 @@ public class AutomaticScenarioBasedVerificationReportDialog extends Dialog {
 					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
 					
 					// create report
-					String fileContent = XMLReportGenerator.getXMLReportContent(gmd);
-					String filePath = XMLReportGenerator.createFile(projectName, folderName, fileName, fileContent, false);
+					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
+					String filePath = reportGenerator.createFile(projectName, folderName, fileName, false);
 					
 					if (filePath != null) {
 						String message = "The file was stored: \n"+filePath+"";
@@ -408,7 +409,7 @@ public class AutomaticScenarioBasedVerificationReportDialog extends Dialog {
 					
 					failedModelItem.setText(getModelName(modelElement) + "  ("+getModelQName(modelElement)+")");
 					// decorate with an error overlay
-					failedModelItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "icons/Class.gif")));
+					failedModelItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Class.gif")));
 				}
 			}
 		}

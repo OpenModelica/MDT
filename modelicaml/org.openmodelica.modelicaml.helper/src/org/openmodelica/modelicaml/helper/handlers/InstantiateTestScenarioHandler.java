@@ -60,9 +60,9 @@ import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateVerificationScenarioDialog;
-import org.openmodelica.modelicaml.helper.impl.VerificationScenariosInstantiator;
-import org.openmodelica.modelicaml.helper.impl.VerificationScenariosCollector;
+import org.openmodelica.modelicaml.helper.generators.InstantiatorScenarios;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -119,11 +119,9 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 				}
 				
 				if ( !calceled ) { // if user want to see it event if there are no matched test scenarios. 
+
 					// collect not covered requirements
-					ElementsCollector ec = new ElementsCollector();
-					ec.collectElementsFromModel(containingClass.getModel(), Constants.stereotypeQName_Requirement);
-					// get all requirements
-					EList<Element> allRequirements = ec.getElements();
+					HashSet<Element> allRequirements = tsc.getAllRequirements();
 					// remove covered requirements
 					for (Element req: tsc.getReqToScenarios().keySet()) {
 						allRequirements.remove(req);
@@ -167,7 +165,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				VerificationScenariosInstantiator ri = new VerificationScenariosInstantiator ();
+				InstantiatorScenarios ri = new InstantiatorScenarios ();
 				instantiatedElements = ri.instantiateTestScenarios(containingClass, selectedTS);
 			}
 		};

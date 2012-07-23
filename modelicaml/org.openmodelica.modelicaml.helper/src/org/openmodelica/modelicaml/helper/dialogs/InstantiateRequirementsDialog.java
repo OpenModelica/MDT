@@ -68,9 +68,9 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
-import org.openmodelica.modelicaml.helper.impl.RequirementsInstantiator;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationDataCollector;
+import org.openmodelica.modelicaml.helper.generators.InstantiatorRequirements;
 
 
 // TODO: Auto-generated Javadoc
@@ -110,6 +110,8 @@ public class InstantiateRequirementsDialog extends Dialog {
 
 	private HashMap<Class, Integer> selectedNumberOfInstantiations = new HashMap<Class, Integer>();
 
+	private VerificationDataCollector collector;
+	
 	/**
 	 * Instantiates a new instantiate requirements dialog.
 	 * 
@@ -279,11 +281,13 @@ public class InstantiateRequirementsDialog extends Dialog {
 //			RequirementsCollector rc = new RequirementsCollector();
 //			rc.collectElementsFromModel(model);
 			
-			ElementsCollector ec = new ElementsCollector();
-			ec.collectElementsFromModel(model, Constants.stereotypeQName_Requirement);
+//			ElementsCollector ec = new ElementsCollector();
+//			ec.collectElementsFromModel(model, Constants.stereotypeQName_Requirement);
+			
+			collector = new VerificationDataCollector(model);
 			
 			List<Class> requirements = new ArrayList<Class>();
-			for (Element element : ec.getElements()) {
+			for (Element element : collector.getAllRequirements()) {
 				if (element instanceof Class) {
 					requirements.add((Class) element);
 				}
@@ -474,10 +478,12 @@ public class InstantiateRequirementsDialog extends Dialog {
 				String qName = "" + req.getQualifiedName();
 
 				Class reqClass = req;
-				RequirementsInstantiator ri = new RequirementsInstantiator();
+				InstantiatorRequirements ri = new InstantiatorRequirements();
 				final int numberOfExisingInstantiations = ri.getNumberOfExisitngClassInstances(this.containingClass, reqClass);
 //				System.err.println("numberOfExisingInstantiations: " + numberOfExisingInstantiations);
-				final int numberOfRequiredInstantiations = ri.getMaxNumberOfProviders(this.containingClass, reqClass);
+
+				// avoid collecting of mediators again -> collect them in advance and pass them  
+				final int numberOfRequiredInstantiations = ri.getMaxNumberOfProviders(this.containingClass, reqClass, collector.getAllMediators());
 //				System.err.println("numberOfRequiredInstantiations: " + numberOfRequiredInstantiations);
 				
 				int recommendedNumberOfInstantiations = 0;

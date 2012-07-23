@@ -47,7 +47,8 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-import org.openmodelica.modelicaml.helper.handlers.ScenariosToRequirementsRelationsDiscoveryToolbarHandler.GeneratedModelsData;
+import org.openmodelica.modelicaml.helper.report.XMLReportGenerator;
+import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 import org.eclipse.swt.widgets.Label;
 
 public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog {
@@ -269,8 +270,8 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 					String fileName = Constants.fileName_relationsDiscovery + "_" + System.currentTimeMillis() + ".xml";
 					
 					// create report
-					String fileContent = XMLReportGenerator.getXMLReportContent(gmd);
-					String filePath = XMLReportGenerator.createFile(projectName, folderName, fileName, fileContent, false);
+					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
+					String filePath = reportGenerator.createFile(projectName, folderName, fileName, false);
 					
 					if (filePath != null) {
 						String message = "The file was stored: \n"+filePath+"";
