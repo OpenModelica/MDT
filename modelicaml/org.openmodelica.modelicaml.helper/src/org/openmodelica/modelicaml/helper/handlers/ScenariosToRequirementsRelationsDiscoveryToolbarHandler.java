@@ -47,6 +47,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	private boolean loadMSL = true;
 //	private String omcLog;
 	
+	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
 	private List<String> simulationFailedList;
 	private List<String> simulationSuccededList;
 	
@@ -173,6 +174,7 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		
 		//set the simulation failed list
 		gmd.setSimulationFailedList(simulationFailedList);
+		gmd.setNotSimulatedModels(getNotSimulatedModels());
 		
 		for (Element model : gmd.getGeneratedModels()) {
 			
@@ -360,6 +362,8 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 				addToLog("'"+modelQName+"' was simulated.");
 			}
 			else {
+				notSimulatedModels.add(genModel);
+				
 				simulationFailedList.add(modelQName);
 				addToLog("'"+modelQName+"' was NOT simulated.");
 			}	
@@ -481,6 +485,14 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 	private void addToLog(String msg){
 //		this.log = this.log + "\n" + msg;
 		this.log = this.log + msg + "\n";
+	}
+
+	public HashSet<Element> getNotSimulatedModels() {
+		return notSimulatedModels;
+	}
+
+	public void setNotSimulatedModels(HashSet<Element> notSimulatedModels) {
+		this.notSimulatedModels = notSimulatedModels;
 	}
 	
 	

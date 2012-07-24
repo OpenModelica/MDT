@@ -1,5 +1,6 @@
 package org.openmodelica.modelicaml.helper.report;
 
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +13,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -26,7 +27,6 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
-import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
@@ -36,39 +36,52 @@ public class XMLReportGenerator {
 	private HashMap<Element, ClassInstantiation> preparedModelInstantiations;
 	
 	// default line break is for HTML
-	private String lineDelimiter = "<br />";
+	public String lineDelimiter = "<br />";
 	
-	private final static String XMLTagName_report = "report";
-	private final static String XMLTagName_date = "date";
-	private final static String XMLTagName_verificationModel = "verificationModel";
-	private final static String XMLTagName_systemModel = "systemModel";
-	private final static String XMLTagName_comments = "comments";
-	private final static String XMLTagName_scenario = "scenario";
-	private final static String XMLTagName_notUsedScenarios = "notUsedScenarios";
-	private final static String XMLTagName_notImplementedRequirements= "notImplementedRequirements";
-	private final static String XMLTagName_requirement = "requirement";
-	private final static String XMLTagName_requirementText = "text";
+	public final static String XMLTagName_report 						= "report";
+	public final static String XMLTagName_date 							= "date";
+	
+	public final static String XMLTagName_verificationModels 			= "verificationModels";
+	
+	public final static String XMLTagName_verificationModel 			= "verificationModel";
+	public final static String XMLTagName_systemModel 					= "systemModel";
+	public final static String XMLTagName_comments 						= "comments";
+	public final static String XMLTagName_comment 						= "comment";
+	public final static String XMLTagName_scenario 						= "scenario";
+	
+	public final static String XMLTagName_notUsedScenarios 				= "notUsedScenarios";
+	public final static String XMLTagName_usedScenarios 				= "usedScenarios";
+	
+	public final static String XMLTagName_notImplementedRequirements	= "notImplementedRequirements";
+	public final static String XMLTagName_violatedRequirements 			= "violatedRequirements";
+	public final static String XMLTagName_notViolatedRequirements 		= "notViolatedRequirements";
+	
+	public final static String XMLTagName_requirements 					= "requirements";
+	public final static String XMLTagName_requirement 					= "requirement";
+	public final static String XMLTagName_id 							= "id";
+	public final static String XMLTagName_requirementText 				= "text";
+	public final static String XMLTagName_isEvaluated 					= "isEvaluated";
+	public final static String XMLTagName_isViolated 					= "isViolated";
+	
+	public final static String XMLTagName_client 						= "client";
+	
+	public final static String XMLTagName_isMandatory 					= "isMandatory";
+	public final static String XMLTagName_binding 						= "binding";
+	
+	public final static String XMLTagName_locateLink 					= "locateLink";
+	public final static String XMLTagName_plotLink 						= "plotLink";
+	
+	public final static String XMLTagName_name 							= "name";
+	public final static String XMLTagName_qualifiedName 				=  "qualifiedName";
+	public final static String XMLTagName_instanceName 					= "instanceName";
 
-	private final static String XMLTagName_client = "client";
+	public final static String XMLTagName_newPositiveRelations 			= "newPositiveRelations";
+	public final static String XMLTagName_newNegativeRelations 			= "newNegativeRelations";
 	
-	private final static String XMLTagName_isMandatory = "isMandatory";
-	private final static String XMLTagName_binding = "binding";
+	public final static String XMLTagName_simulated 					= "simulatedModels";
+	public final static String XMLTagName_notSimulated 					= "notSimulatedModels";
 	
-	private final static String XMLTagName_isEvaluated = "isEvaluated";
-	private final static String XMLTagName_isViolated = "isViolated";
-	
-	private final static String XMLTagName_locateLink = "locateLink";
-	private final static String XMLTagName_plotLink =  "plotLink";
-	
-	private final static String XMLTagName_name = "name";
-	private final static String XMLTagName_qualifiedName =   "qualifiedName";
-	private final static String XMLTagName_instanceName = "instanceName";
-
-	private final static String XMLTagName_id =   "id";
-
-	private final static String XMLTagName_newPositiveRelations = "newPositiveRelations";
-	private final static String XMLTagName_newNegativeRelations = "newNegativeRelations";
-	
+	public final static String XMLTagName_count 						= "count";
 	
 	private String fileContent;
 	
@@ -90,7 +103,8 @@ public class XMLReportGenerator {
 		
 		String string = "";
 		string += "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
-		// TODO: add here the XSL tag 
+		
+		// TODO: XSL tag for translation into HTML 
 		
 		string += "<"+XMLTagName_report+">";
 		
@@ -100,51 +114,116 @@ public class XMLReportGenerator {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 		string += sdf.format(date);
 		string += "</"+XMLTagName_date+">";
-		
-		// simulated models
-		string += getVeMItems();
 
-		// TODO: Not simulated models
+		// violated requirements
+		string += getEvaluatedRequirementItems(true);
 		
-		// TODO: Indicators for how many models were simulated, how many requirements were violated and evaluated, etc.
-		
+		// violated requirements
+		string += getEvaluatedRequirementItems(false);
 
 		// requirements for which no binding could be derived
 		string += getNotImplementedRequirementItems();
+
+		// scenarios that were not used because they do not stimulate the model properly
+		string += getUsedScenarioItems();
 		
-		// Scenarios that were not used because they do not stimulate the model properly
-		string += getNotUsedScenariosItems();
-		
+		// scenarios that were not used because they do not stimulate the model properly
+		string += getNotUsedScenarioItems();
+
 		// new positive and negative relations between scenarios and requirements
 		string += getNewRelationItems(true);
 		string += getNewRelationItems(false);
+
+		
+		// all verification models
+		string += getVeMItems();
+
+		// not simulated models
+		string += getNotSimulatedModelItems();
 		
 		string += "</"+XMLTagName_report+">";
+		
+		return string;
+	}
+	
+	
+	
+	private String getNotSimulatedModelItems(){
+		String string = "";
+		string += "<"+XMLTagName_notSimulated+">";
+		
+		int i = 0;
+		for (Element model : gmd.getNotSimulatedModels()) {
+			
+			// counter
+			i++;
+			
+			string += "<"+XMLTagName_verificationModel+" "+
+						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
+						XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
+			
+			string += 	getAllComments(model);
+			
+			string += "</"+XMLTagName_verificationModel+">";
+		}
+		
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		
+		string += "</"+XMLTagName_notSimulated+">";
+		
 		return string;
 	}
 	
 	
 	private String getVeMItems(){
 		String string = "";
+		
+		string += "<"+XMLTagName_verificationModels+">";
+		
+		int i = 0;
+		
 		for (Element model : gmd.getGeneratedModels()) {
-			string += "<"+XMLTagName_verificationModel+" "+XMLTagName_name+"=\""+ModelicaMLServices.getName(model)+"\" "+XMLTagName_qualifiedName+"=\""+ModelicaMLServices.getQualifiedName(model)+"\">";
-
-			ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, preparedModelInstantiations);
+			// counter
+			i++; 
 			
-			string += getSystemModelItems(ci);
+			// no filter for requirements
+			string += getVeMItem(model, null, false, false);
 			
-			string += getScenarioItems(ci);
-			
-			string += getRequirementItems(ci);
-			
-			string += "</"+XMLTagName_verificationModel+">";
 		}
+		
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+
+		string += "</"+XMLTagName_verificationModels+">";
+		
 		return string;
 	}
+	
+	private String getVeMItem(Element model, Element filterForRequirementElement, boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements){
+		String string = "";
+		
+		string += "<"+XMLTagName_verificationModel+" "+
+					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
+					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
+
+		ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, preparedModelInstantiations);
+		
+		string += getSystemModelItems(ci);
+		
+		string += getScenarioItems(ci);
+		
+		string += getRequirementItems(ci, filterForRequirementElement, onlyViolatedRequirements, onlyNotViolatedRequirements);
+		
+		string += "</"+XMLTagName_verificationModel+">";
+		
+		return string;
+	}
+	
 	
 	private String getNewRelationItems(boolean isPositiveRelations){
 		
 		String string = "";
+		int i = 0;
+		
 		if (isPositiveRelations) {
 			string += "<"+XMLTagName_newPositiveRelations+">";
 		}
@@ -165,29 +244,38 @@ public class XMLReportGenerator {
 			Element scenarioType = scenario.getComponentType();
 			
 			string += "<"+XMLTagName_scenario+" "+
-					XMLTagName_locateLink+"=\""+getLocateLink(scenarioType)+"\" " +
+					XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(scenarioType))+"\" " +
 					XMLTagName_instanceName+"=\""+scenario.getDotPath()+"\" "+
-					XMLTagName_name+"=\""+ModelicaMLServices.getName(scenarioType)+"\"  "+
-					XMLTagName_qualifiedName+"=\""+ModelicaMLServices.getQualifiedName(scenarioType)+"\">";
+					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(scenarioType))+"\"  "+
+					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(scenarioType))+"\">";
 			
 			HashSet<TreeObject> requirements = relationsMap.get(scenario);
 			
 			if (requirements != null) {
 				for (TreeObject requirement : requirements) {
 					
+					// counter
+					i++;
+					
 					Element requirementType = requirement.getComponentType();
 					
 					string += "<"+XMLTagName_requirement+" "+
-							XMLTagName_locateLink+"=\""+getLocateLink(requirementType)+"\" " +
+							XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(requirementType))+"\" " +
 							XMLTagName_instanceName+"=\""+requirement.getDotPath()+"\" "+
-							XMLTagName_name+"=\""+ModelicaMLServices.getName(requirementType)+"\"  "+
-							XMLTagName_qualifiedName+"=\""+ModelicaMLServices.getQualifiedName(requirementType)+"\">";
+							XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(requirementType))+"\"  "+
+							XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(requirementType))+"\">";
 					string += "</"+XMLTagName_requirement+">";
 				}
 			}
 			
+			// add VeM for traceability
+			string += getVeMforScenario(scenarioType);
+			
 			string += "</"+XMLTagName_scenario+">";
 		}
+		
+		
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
 		
 		if (isPositiveRelations) {
 			string += "</"+XMLTagName_newPositiveRelations+">";
@@ -210,14 +298,14 @@ public class XMLReportGenerator {
 			if (gmd.getGenerator().getSystemModels().contains(type)) {
 				
 				string += "<"+XMLTagName_systemModel+" "+
-								XMLTagName_locateLink+"=\""+getLocateLink(VeM, treeObject)+"\" " +
-								XMLTagName_plotLink+"=\""+getPlotStatusLink(VeM, treeObject)+"\" " +
+								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, treeObject))+"\" " +
+								XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotStatusLink(VeM, treeObject))+"\" " +
 								XMLTagName_instanceName+"=\""+treeObject.getDotPath()+"\" "+
-								XMLTagName_name+"=\""+ModelicaMLServices.getName(type)+"\"  "+
-								XMLTagName_qualifiedName+"=\""+ModelicaMLServices.getQualifiedName(type)+"\">";
+								XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(type))+"\"  "+
+								XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(type))+"\">";
 				
 				// add comments
-				string += 	"<"+XMLTagName_comments+">" + getAllComments(type, "<br />") + "</"+XMLTagName_comments+">";
+				string += 	getAllComments(type);
 
 				// Add clients (isMandatory, binding, plot link)
 				string += getClientItems(VeM, treeObject);
@@ -241,12 +329,12 @@ public class XMLReportGenerator {
 				Element type = scenario.getComponentType();
 
 				string += "<"+XMLTagName_scenario+" "+
-						XMLTagName_locateLink+"=\""+getLocateLink(VeM, scenario)+"\" " +
-						XMLTagName_plotLink+"=\""+getPlotStatusLink(VeM, scenario)+"\" " +
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, scenario))+"\" " +
+						XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotStatusLink(VeM, scenario))+"\" " +
 						XMLTagName_instanceName+"=\""+scenario.getDotPath()+"\" "+
-						XMLTagName_name+"=\""+ModelicaMLServices.getName(type)+"\" "+
-						XMLTagName_qualifiedName+"=\""+ModelicaMLServices.getQualifiedName(type)+"\">";
-				string += "<"+XMLTagName_comments+">" + getAllComments(type, lineDelimiter) + "</"+XMLTagName_comments+">";
+						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(type))+"\" "+
+						XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(type))+"\">";
+				string += getAllComments(type);
 
 				// Add clients (isMandatory, binding, plot link)
 				string += getClientItems(VeM, scenario);
@@ -259,11 +347,15 @@ public class XMLReportGenerator {
 		return string;
 	}
 	
-	private String getRequirementItems(ClassInstantiation ci){
+	private String getRequirementItems(ClassInstantiation ci, Element filterForRequirementElement, boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements){
 		String string = "";
+		int i = 0;
+		
+		string += "<"+XMLTagName_requirements+">";
 		
 		Element VeM = ci.getSelectedClass();
 		HashSet<TreeObject> requirements = gmd.getRequirements(VeM);
+		
 		for (TreeObject requirement : requirements) {
 			
 			Element type = requirement.getComponentType();
@@ -280,25 +372,47 @@ public class XMLReportGenerator {
 				isEvaluated = "true";
 			}
 			
-			string += "<"+XMLTagName_requirement+" " +
-					XMLTagName_isViolated + "=\""+isViolated+"\" " +
-					XMLTagName_isEvaluated+"=\""+isEvaluated+"\" " +
-					XMLTagName_instanceName+"=\""+requirement.getDotPath()+"\" " +
-					XMLTagName_locateLink+"=\""+getLocateLink(VeM, requirement)+"\" " +
-					XMLTagName_plotLink+"=\""+getPlotStatusLink(VeM, requirement)+"\" " +
-					XMLTagName_name+"=\""+ModelicaMLServices.getName(type)+"\" " +
-					XMLTagName_qualifiedName + "=\""+ModelicaMLServices.getQualifiedName(type) +"\" " +
-					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(type) +"\"" +
-							">";
+			boolean skip = false;
+			// if the requirements list should only include requirements with type "filterForRequirementElement"
+			if (filterForRequirementElement != null && !type.equals(filterForRequirementElement)) {
+				skip = true;
+			}
+			// if only violated requirements should be shown
+			else if (onlyViolatedRequirements && !isViolated.equals("true")) {
+				skip = true;
+			}
+			// if only not violated should be shown
+			else if (onlyNotViolatedRequirements && !gmd.getNotViolatedRequirements().contains(key)) {
+				skip = true;
+			}
 			
-			// add requirement text
-			string += "<"+XMLTagName_requirementText+">" + ModelicaMLServices.getRequirementText(type) + "</"+XMLTagName_requirementText+">"; 
+			if (!skip) {
+				// counter 
+				i ++;
+				string += "<"+XMLTagName_requirement+" " +
+						XMLTagName_isViolated + "=\""+isViolated+"\" " +
+						XMLTagName_isEvaluated+"=\""+isEvaluated+"\" " +
+						XMLTagName_instanceName+"=\""+requirement.getDotPath()+"\" " +
+						XMLTagName_locateLink+"=\""+getLocateLink(VeM, requirement)+"\" " +
+						XMLTagName_plotLink+"=\""+getPlotStatusLink(VeM, requirement)+"\" " +
+						XMLTagName_name+"=\""+ModelicaMLServices.getName(type)+"\" " +
+						XMLTagName_qualifiedName + "=\""+ModelicaMLServices.getQualifiedName(type) +"\" " +
+						XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(type) +"\"" +
+								">";
+				
+				// add requirement text
+				string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(type)) + "</"+XMLTagName_requirementText+">"; 
 
-			// Add clients (isMandatory, binding, plot link)
-			string += getClientItems(VeM, requirement);
+				// Add clients (isMandatory, binding, plot link)
+				string += getClientItems(VeM, requirement);
 
-			string += "</"+XMLTagName_requirement+">";
+				string += "</"+XMLTagName_requirement+">";
+			}
 		}
+		
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		
+		string += "</"+XMLTagName_requirements+">";
 		
 		return string;
 	}
@@ -313,11 +427,11 @@ public class XMLReportGenerator {
 			string += "<"+XMLTagName_client+" " +  
 						XMLTagName_instanceName+"=\"" + client.getDotPath() + "\" " + 
 						XMLTagName_isMandatory+"=\"" + isMandatory + "\"" +
-						XMLTagName_locateLink+"=\""+getLocateLink(VeM, client)+"\" " +
-						XMLTagName_plotLink +"=\"" + getPlotLink(VeM, client) + "\"" +
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, client))+"\" " +
+						XMLTagName_plotLink +"=\"" + StringEscapeUtils.escapeXml(getPlotLink(VeM, client)) + "\"" +
 								">";
 			
-			string += "<"+XMLTagName_binding+">" + client.getFinalModificationRightHand() + "</"+XMLTagName_binding+">";;
+			string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(client.getFinalModificationRightHand()) + "</"+XMLTagName_binding+">";;
 			string += "</"+XMLTagName_client+">";
 		}
 		return string;
@@ -348,8 +462,136 @@ public class XMLReportGenerator {
 		return linkAdress + "." + Constants.propertyName_mStatus;
 	}
 	
+	
+	private String getVeMforScenario(Element usedScenario){
+		String string = "";
+		// loop over all VeM and see if this requirement is in the 
+		for (Element VeM : gmd.getGeneratedModels()) {
+			HashSet<TreeObject> scenarios = gmd.getScenarios(VeM);
+			boolean modelContains  = false;
+			if (scenarios != null) {
+				for (TreeObject scenarioTreeObject : scenarios) {
+					Element type = scenarioTreeObject.getComponentType();
+					if (usedScenario.equals(type)) {
+						modelContains = true; 
+					}
+				}
+			}
+			
+			if (modelContains) {
+				string += getVeMItem(VeM, null, false, false);
+			}
+		}
+		return string;
+	}
+	
+	
+	private String getUsedScenarioItems(){
+		String string = "";
+		int i = 0;
+		
+		HashSet<Element> usedScenarios = gmd.getAllScenarios();
+		
+		string += "<"+XMLTagName_usedScenarios+">";
+		
+		for (Element usedScenario : usedScenarios) {
+			
+			// counter
+			i++ ;
+			
+			string += "<"+XMLTagName_scenario+" "+
+					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(usedScenario))+"\" "+
+					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(usedScenario))+"\">";
+			string += getAllComments(usedScenario);
+
+			// loop over all VeM and see if this requirement is in the 
+			string += getVeMforScenario(usedScenario);
+
+			string += "</"+XMLTagName_scenario+">";
+		}
+		
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		
+		string += "</"+XMLTagName_usedScenarios+">";
+		
+		return string;
+	}
+	
+	
+	private String getVeMForRequirement(Element evaluatedRequirement, boolean isViolated){
+		String string = "";
+		for (Element VeM : gmd.getGeneratedModels()) {
+			HashSet<TreeObject> requirements = gmd.getRequirements(VeM);
+			boolean modelContains  = false;
+			if (requirements != null) {
+				for (TreeObject requirementTreeObject : requirements) {
+					Element type = requirementTreeObject.getComponentType();
+					if (evaluatedRequirement.equals(type)) {
+						modelContains = true; 
+					}
+				}
+			}
+			
+			if (modelContains) {
+				string += getVeMItem(VeM, evaluatedRequirement, isViolated, !isViolated);
+			}
+		}
+		
+		return string;
+	}
+	
+	
+	private String getEvaluatedRequirementItems(boolean isViolated){
+		String string = "";
+		int i = 0;
+		
+		HashSet<Element> evaluatedRequirements = new HashSet<Element>();
+		if (isViolated) {
+			evaluatedRequirements = gmd.getRequirementsViolatedInScenarios();
+			string += "<"+XMLTagName_violatedRequirements+">";
+
+		}
+		else {
+			evaluatedRequirements = gmd.getRequirementsNotViolatedInScenarios();
+			string += "<"+XMLTagName_notViolatedRequirements+">";
+		}
+
+		for (Element evaluatedRequirement : evaluatedRequirements) {
+			i++ ;
+			string += "<"+XMLTagName_requirement+" "+
+					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(evaluatedRequirement) +"\"" +
+					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(evaluatedRequirement))+"\" "+
+					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(evaluatedRequirement))+"\">";
+					string += getAllComments(evaluatedRequirement);
+		
+			// add requirement text
+			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
+
+			// loop over all VeM and see if this requirement is in the 
+			string += getVeMForRequirement(evaluatedRequirement, isViolated);
+			
+			string += "</"+XMLTagName_requirement+">";
+		}
+		
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		
+		if (isViolated) {
+			evaluatedRequirements = gmd.getRequirementsViolatedInScenarios();
+			string += "</"+XMLTagName_violatedRequirements+">";
+		}
+		else {
+			evaluatedRequirements = gmd.getRequirementsNotViolatedInScenarios();
+			string += "</"+XMLTagName_notViolatedRequirements+">";
+		}
+		
+		return string;
+	}
+	
+	
 	private String getNotImplementedRequirementItems(){
 		String string = "";
+		int i = 0;
+		
 		HashSet<Element> allFoundRequirements = gmd.getGenerator().getVsc().getAllRequirements();
 		HashSet<Element> allUsedRequirements= gmd.getAllRequirements();
 		
@@ -360,10 +602,18 @@ public class XMLReportGenerator {
 			string += "<"+XMLTagName_notImplementedRequirements+">";
 			
 			for (Element requirement : allNotImplementedRequirements) {
-				string += "<"+XMLTagName_requirement+" "+XMLTagName_name+"=\""+ModelicaMLServices.getName(requirement)+"\" "+XMLTagName_qualifiedName+"=\""+ModelicaMLServices.getQualifiedName(requirement)+"\">";
-				string += "<"+XMLTagName_comments+">" + getAllComments(requirement, lineDelimiter) + "</"+XMLTagName_comments+">";
+				
+				// counter 
+				i++ ;
+				
+				string += "<"+XMLTagName_requirement+" "+
+							XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(requirement))+"\" "+
+							XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(requirement))+"\">";
+				string += getAllComments(requirement);
 				string += "</"+XMLTagName_requirement+">";
 			}
+			
+			string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
 			
 			string += "</"+XMLTagName_notImplementedRequirements+">";
 		}
@@ -371,8 +621,9 @@ public class XMLReportGenerator {
 	}
 	
 
-	private String getNotUsedScenariosItems(){
+	private String getNotUsedScenarioItems(){
 		String string = "";
+		int i = 0;
 		
 		HashSet<Element> allFoundScenarios = gmd.getGenerator().getVsc().getAllScenarios();
 		HashSet<Element> allUsedScenarios = gmd.getAllScenarios();
@@ -384,11 +635,17 @@ public class XMLReportGenerator {
 			string += "<"+XMLTagName_notUsedScenarios+">";
 			
 			for (Element scenario : allNotUsedScenarios) {
-				string += "<"+XMLTagName_scenario+" "+XMLTagName_name+"=\""+ModelicaMLServices.getName(scenario)+"\" "+XMLTagName_qualifiedName+"=\""+ModelicaMLServices.getQualifiedName(scenario)+"\">";
-				string += "<"+XMLTagName_comments+">" + getAllComments(scenario, lineDelimiter) + "</"+XMLTagName_comments+">";
+				// counter
+				i++;
+				
+				string += "<"+XMLTagName_scenario+" "+
+							XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(scenario))+"\" "+
+							XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(scenario))+"\">";
+				string += getAllComments(scenario);
 				string += "</"+XMLTagName_scenario+">";
 			}
 			
+			string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
 			string += "</"+XMLTagName_notUsedScenarios+">";
 		}
 		return string;
@@ -399,14 +656,21 @@ public class XMLReportGenerator {
 	/*
 	 * Additional info 
 	 */
-	private String getAllComments(Element element, String lineBreakString) {
-		String commentString = "";
+	private String getAllComments(Element element) {
+		String string = "";
+		int i = 0;
+		
+		string += "<"+XMLTagName_comments+">";
 		if (element instanceof Element) {
 			for (Comment comment : element.getOwnedComments()) {
-				commentString += comment.getBody() + lineBreakString;
+				//counter
+				i++;
+				string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
 			}
 		}
-		return commentString;
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		string += "</"+XMLTagName_comments+">";
+		return string;
 	}
 	
 	

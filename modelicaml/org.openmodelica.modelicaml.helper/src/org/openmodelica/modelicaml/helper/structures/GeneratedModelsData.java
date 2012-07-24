@@ -49,6 +49,8 @@ public class GeneratedModelsData {
 	// list of model qualified names that could not be simulated (determined by the fact if there is a simulation results file or not)
 	private List<String> simulationFailedList = new ArrayList<String>();
 	
+	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
+	
 	// maps with scenarios and their requirements
 	private HashMap<Element, HashSet<Element>> scenarioToEvaluatedRequirements = new HashMap<Element, HashSet<Element>>();
 	private HashMap<Element, HashSet<Element>> scenarioToViolatedRequirements = new HashMap<Element, HashSet<Element>>();
@@ -557,6 +559,14 @@ public class GeneratedModelsData {
 	public void setModelToSystemModel(
 			HashMap<Element, HashSet<TreeObject>> modelToSystemModel) {
 		this.modelToSystemModel = modelToSystemModel;
+	}
+
+	public HashSet<Element> getNotSimulatedModels() {
+		return notSimulatedModels;
+	}
+
+	public void setNotSimulatedModels(HashSet<Element> notSimulatedModels) {
+		this.notSimulatedModels = notSimulatedModels;
 	}
 	
 	// OBSOLETE:
