@@ -30,7 +30,10 @@ public class ReadMatlab4 implements IResultsReader {
 	private String path;
 
 	public ReadMatlab4(String path) throws Exception {
-		this.path=path;
+
+		// this.path=path;
+		// decode white spaces
+		this.path=path.replaceAll("%20", " ");
 		
 		beraf = new BigEndianRandomAccessFile(this.path, "r");
 		int i = 0;
