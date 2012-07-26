@@ -1,0 +1,311 @@
+package org.openmodelica.modelicaml.helper.handlers;
+
+import java.util.HashMap;
+import java.util.HashSet;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.gen.modelica.popupactions.GenerateModelicaCodeFromEntireModelicaMLModelAction;
+import org.openmodelica.modelicaml.helper.analyzers.SimulationResultsAnalyzer;
+import org.openmodelica.modelicaml.helper.dialogs.AnalyseSimulationResulstOptionsDialog;
+import org.openmodelica.modelicaml.helper.dialogs.AutomaticScenarioBasedVerificationReportDialog;
+import org.openmodelica.modelicaml.helper.dialogs.SelectScenarioToReqRelationsToCreateDialog;
+import org.openmodelica.modelicaml.helper.simulation.Simulator;
+import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
+
+public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
+
+	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
+	private HashMap<Element,String> simulationResultsFile = new HashMap<Element,String>();
+	
+	protected GeneratedModelsData generatedModelsData;
+	
+	private boolean onlyRecordRequirementStatus = false;
+	private boolean simulate = false;
+	private boolean analyzeFiles = false;
+	private String resultsFileFolderPath; 
+	
+	private String projectPath;
+	
+	// mode indicates which report dialog should be opened. by default this is the automatic scenario-based verification report dialog.
+	private int mode = Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION;
+	
+	private Job analysisJob;
+	private JobChangeAdapter analysisJobChangeAdaptor = new JobChangeAdapter() {
+		public void done(IJobChangeEvent event) {
+            if (event.getResult().isOK()) {
+            		openReport();
+            	}
+            }
+         };
+	
+	
+	 protected void openReport(){
+		// Use this to open a Shell in the UI thread
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+					SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(ModelicaMLServices.getShell(), getGeneratedModelsData());
+					dialog.open();
+				}
+				else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+		     		AutomaticScenarioBasedVerificationReportDialog dialog = new AutomaticScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGeneratedModelsData());
+		     		dialog.open();
+				}
+			}
+		});
+	}
+         
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		
+		Element generatedModelsPackage = null;
+		// if the generated models data was passed (i.e. a generator ran in advance)
+		if (getGeneratedModelsData() != null) {
+			generatedModelsPackage = getGeneratedModelsData().getGeneratedModelsPackage();
+		}
+		
+		AnalyseSimulationResulstOptionsDialog dialog = new AnalyseSimulationResulstOptionsDialog(new Shell(), generatedModelsPackage);
+		// pass the data object in order to avoid new search of elements
+		dialog.setGeneratedModelsData(getGeneratedModelsData());
+		dialog.open();
+		
+		if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
+			
+			boolean go = setUpProjectData();
+			
+			if (go) {
+				setSimulate(dialog.isSimulate());
+				setOnlyRecordRequirementStatus(dialog.isRecordOnlyRequirements());
+
+				setAnalyzeFiles(!dialog.isSimulate());
+				setResultsFileFolderPath(dialog.getResultFilesFolderPath());
+
+				generatedModelsData = dialog.getGeneratedModelsData();
+				
+				proceed();
+			}
+		}
+		return null;
+	}
+
+	
+	private void proceed(){
+		
+		/*
+		 * simulate models with OMC
+		 */
+		if ( isSimulate() ) {
+			
+			// generate code
+			GenerateModelicaCodeFromEntireModelicaMLModelAction cgAction = new GenerateModelicaCodeFromEntireModelicaMLModelAction();
+			try {
+				
+				// generate code
+				/*
+				 * TODO: set name space for code generation in order to only generate code for the new models
+				 */
+				cgAction.execute(null);
+				/*
+				 * TODO: reset name space for later code generation
+				 */
+				
+				// when finished start the simulation job
+				cgAction.getJob().addJobChangeListener(new JobChangeAdapter() {
+					public void done(IJobChangeEvent event) {
+			            if (event.getResult().isOK()) {
+			            	
+			            	// generate code, simulated
+							final Simulator simulator = new Simulator(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatus());
+							simulator.generateCodeAndSimulate();
+							
+							simulator.getSimulationJob().addJobChangeListener(new JobChangeAdapter() {
+								public void done(IJobChangeEvent event) {
+						            if (event.getResult().isOK()) {
+						            	// start simulation job
+						            	analysisJob = new Job("Analysing results ...") {
+											
+											@Override
+											protected IStatus run(IProgressMonitor monitor) {
+												
+												if (monitor.isCanceled()){
+													return Status.CANCEL_STATUS;
+												}
+												simulationResultsFile = simulator.getSimulationResultsFile();
+												notSimulatedModels = simulator.getNotSimulatedModels();
+												generatedModelsData = simulator.getGmd();
+												
+												SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFile, notSimulatedModels, monitor);
+												analyzer.analyze();
+												
+												return Status.OK_STATUS;
+											}
+										};
+										
+										analysisJob.addJobChangeListener(analysisJobChangeAdaptor);
+										analysisJob.setUser(true);
+										analysisJob.schedule();
+						            	}
+						            }
+						         });
+			            	}
+			            }
+			         });
+				
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		/*
+		 * Analyze files
+		 */
+		else if (isAnalyzeFiles() && getResultsFileFolderPath() != null && generatedModelsData != null) {
+			
+			HashMap<Element, String> simulationResultFiles = new HashMap<Element, String>();
+
+			for (Element VeM : generatedModelsData.getGeneratedModels()) {
+				String resultFilePath = resultsFileFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) VeM);
+				simulationResultFiles.put(VeM, resultFilePath);
+			}
+			simulationResultsFile = simulationResultFiles;
+			
+			analysisJob = new Job("Analysing results ...") {
+				
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					
+					if (monitor.isCanceled()){
+						return Status.CANCEL_STATUS;
+					}
+					
+					SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFile, notSimulatedModels, monitor);
+					analyzer.analyze();
+					
+					return Status.OK_STATUS;
+				}
+			};
+			
+			analysisJob.addJobChangeListener(analysisJobChangeAdaptor);
+			analysisJob.setUser(true);
+			analysisJob.schedule();
+		}
+	}
+	
+	
+	private boolean setUpProjectData(){
+		
+		// get UML model data
+		UmlModel umlModel = UmlUtils.getUmlModel();
+//		String umlModelFileURI = umlModel.getResourceURI().toString();
+
+		if (umlModel != null) {
+			// get project data
+			String projectName = umlModel.getResource().getURI().segment(1);
+			
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			
+			setProjectPath(iProject.getLocationURI().toString().replaceFirst("file:\\/", ""));
+			
+			if (getProjectPath() != null) {
+				return true;
+			}
+		}
+		else {
+			MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Model Access", "Could not access the ModelicaML model. Please open it in editor.");
+		}
+		
+		return false;
+	}
+	
+	
+	
+	public Job getAnalysisJob() {
+		return analysisJob;
+	}
+
+	public void setAnalysisJob(Job analysisJob) {
+		this.analysisJob = analysisJob;
+	}
+
+	public boolean isSimulate() {
+		return simulate;
+	}
+
+	public void setSimulate(boolean simulate) {
+		this.simulate = simulate;
+	}
+
+	public boolean isAnalyzeFiles() {
+		return analyzeFiles;
+	}
+
+	public void setAnalyzeFiles(boolean analyzeFiles) {
+		this.analyzeFiles = analyzeFiles;
+	}
+
+	public String getResultsFileFolderPath() {
+		return resultsFileFolderPath;
+	}
+
+	public void setResultsFileFolderPath(String resultsFileFolderPath) {
+		this.resultsFileFolderPath = resultsFileFolderPath;
+	}
+
+	public String getProjectPath() {
+		return projectPath;
+	}
+
+	public void setProjectPath(String projectPath) {
+		this.projectPath = projectPath;
+	}
+	
+	public GeneratedModelsData getGeneratedModelsData() {
+		return generatedModelsData;
+	}
+
+	public void setGeneratedModelsData(GeneratedModelsData generatedModelsData) {
+		this.generatedModelsData = generatedModelsData;
+	}
+
+	public boolean isOnlyRecordRequirementStatus() {
+		return onlyRecordRequirementStatus;
+	}
+
+	public void setOnlyRecordRequirementStatus(boolean onlyRecordRequirementStatus) {
+		this.onlyRecordRequirementStatus = onlyRecordRequirementStatus;
+	}
+
+	public int getMode() {
+		return mode;
+	}
+
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+	
+}

@@ -274,6 +274,21 @@
                   </with>
                </visibleWhen>
             </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults"
+                  icon="resources/icons/icons16/runanalysis.gif"
+                  label="Analyze Verification Results"
+                  style="push"
+                  tooltip="Analyze Verification Results">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
             <separator
                   name="org.openmodelica.modelicaml.profile.separator2"
                   visible="true">

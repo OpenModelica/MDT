@@ -43,6 +43,7 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
+import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMRequirementsBased;
@@ -147,7 +148,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	private static final String notValidString = "Not valid. ";
 	
 	
-	// only for debbuging
+	// only for debugging
 //	public static void main(String[] args) {
 //		VerificationModelsGenerationOptionsDialog dialog = new VerificationModelsGenerationOptionsDialog(new Shell(), null, null, null, null, null);
 //		dialog.open();
@@ -560,39 +561,37 @@ public class VeMGenerationOptionsDialog extends Dialog {
 				HashSet<Element> systemModels = new HashSet<Element>();
 				systemModels.add(getSystemModel());
 				
-				try {
-					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-					
-					smg = new GeneratorVeMScenariosBased(
-							rootPackage,
-							systemModels, 
-							getTargetPackge(), 
-							getRequirementsPackage(), 
-							getScenariosPackage(), 
-							getBindingsPackage(), 
-							getSuperClass(),
-							isConsiderPositiveRequirementsRelations(), 
-							isConsiderNegativeRequirementsRelations(), 
-							isConsiderAllUnknownRequirementsRelations(),
-							getMode());
-					
-					if (!smg.isTestSimulationModelGenerationCanceled()) {
+//				ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//				TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+				TransactionalEditingDomain  editingDomain = PapyrusServices.getPapyrusEditingDomain();
+									
+				smg = new GeneratorVeMScenariosBased(
+						rootPackage,
+						systemModels, 
+						getTargetPackge(), 
+						getRequirementsPackage(), 
+						getScenariosPackage(), 
+						getBindingsPackage(), 
+						getSuperClass(),
+						isConsiderPositiveRequirementsRelations(), 
+						isConsiderNegativeRequirementsRelations(), 
+						isConsiderAllUnknownRequirementsRelations(),
+						getMode());
+				
+				if (!smg.isTestSimulationModelGenerationCanceled()) {
 
-						// execute 
-						editingDomain.getCommandStack().execute(getCommand(editingDomain));
-
+					// execute 
+					editingDomain.getCommandStack().execute(getCommand(editingDomain));
+					
+					if (getMode()== Constants.MODE_VEM_GENERATION) {
 						// show log
 						String msg = "Generation of Verification Models for '" + ((NamedElement)getSystemModel()).getName() + "'\n" +
-									 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
+								 "Number of created models: " + smg.getUserSelectedTestScenarios().size() + "\n\n";
 
 						DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
-								"Data collecation and models generation log entries:", msg + smg.getLog().trim(), false);
+							"Data collecation and models generation log entries:", msg + smg.getLog().trim(), false);
 						dialog.open();
 					}
-
-				} catch (ServiceException e) {
-					e.printStackTrace();
 				}
 			}
 			/*
@@ -625,13 +624,15 @@ public class VeMGenerationOptionsDialog extends Dialog {
 						// execute 
 						editingDomain.getCommandStack().execute(getCommand(editingDomain));
 
-						// show log
-						String msg = "Generation of Verification Models for '" + ((NamedElement)getSystemModel()).getName() + "'\n" +
-									 "Number of created models: 1\n\n";
+						if (getMode()== Constants.MODE_VEM_GENERATION) {
+							// show log
+							String msg = "Generation of Verification Models for '" + ((NamedElement)getSystemModel()).getName() + "'\n" +
+										 "Number of created models: 1\n\n";
 
-						DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
-								"Data collecation and models generation log entries:", msg + rmg.getLog().trim(), false);
-						dialog.open();
+							DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
+									"Data collecation and models generation log entries:", msg + rmg.getLog().trim(), false);
+							dialog.open();
+						}
 					}
 
 				} catch (ServiceException e) {

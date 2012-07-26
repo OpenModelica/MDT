@@ -209,7 +209,10 @@ public class Constants {
 	
 	// simulation model generation
 	public final static String simModelsPackageNamePrefix = "GenVeMs for: ";
-
+	
+	public final static String automaticScenarioBasedVerificationPackageNamePrefix = "aGenVeMs for: ";
+	public final static String automaticScenarioBasedVerificationModelsNamePrefix = "aVeM for: ";
+	
 	public final static String relationDiscoveryModelsPackageNamePrefix = "Temp_RelDiscovery using: ";
 	public final static String relationDiscoveryModelsNamePrefix = "Temp_RelDiscovery for: ";
 	public final static String relationDiscoveryDependeciesPackageName = "GenDiscoveredRelationsDependencies";

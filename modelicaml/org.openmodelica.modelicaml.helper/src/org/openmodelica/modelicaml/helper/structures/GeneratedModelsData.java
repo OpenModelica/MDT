@@ -3,18 +3,23 @@ package org.openmodelica.modelicaml.helper.structures;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.helper.datacollection.VerificationDataCollector;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
 
 public class GeneratedModelsData {
@@ -24,6 +29,11 @@ public class GeneratedModelsData {
 	
 	// generated VeMs
 	private HashSet<Element> generatedModels;
+	private Element generatedModelsPackage;
+	
+
+	// System models that where used for verification
+	private HashSet<Element> systemModels = new HashSet<Element>();
 	
 	// map containing the VeM and its system models 
 	private HashMap<Element, HashSet<TreeObject>> modelToSystemModel = new HashMap<Element, HashSet<TreeObject>>();
@@ -34,7 +44,10 @@ public class GeneratedModelsData {
 
 	public final String requirementStatusPropertyName = Constants.propertyName_mStatus;
 	public final static String delimiter = Constants.linkDelimiter;
-
+	
+	private VerificationDataCollector verificationDataCollector;
+	
+	private HashMap<Element, ClassInstantiation> preparedInstantiations;
 	
 	/*
 	 * The rest of the data structure below is filled after simulation 
@@ -68,41 +81,123 @@ public class GeneratedModelsData {
 	private HashMap<TreeObject, HashSet<TreeObject>> newNegativeRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
 	
 
-	
-	
-	
-	public GeneratedModelsData(GeneratorVeMScenariosBased generator) {
+	/*
+	 * This constructor should if no generator can be passed
+	 */
+	public GeneratedModelsData(Element generatedModelsPackage, VerificationDataCollector verificationDataCollector) {
 		
-		this.generator = generator;
-		this.generatedModels = generator.getGeneratedVeMs();
+		// generated VeM package
+		this.setGeneratedModelsPackage(generatedModelsPackage);
 		
+		// generated VeMs
+		this.setGeneratedModels(getGenVerificationModels(generatedModelsPackage));
+		
+		// set the data collector
+		this.setVerificationDataCollector(verificationDataCollector);
+		
+		// deduce system models
+		this.setSystemModels(collectSystemModels(getVerificationDataCollector(), getGeneratedModels()));
+		
+		// sort other data
 		sortData();
 	}
 	
-	private void sortData(){
-		for (Element genModel : this.generatedModels) {
+	/*
+	 * This constructor should be used when a generator was running
+	 */
+	public GeneratedModelsData(GeneratorVeMScenariosBased generator) {
+		
+		this.setGenerator(generator);
+		// set the most common package that contains all generated packages
+		Element generatedModelsPackage = null;
+		if (generator.getGeneratedPackages().size() > 1) {
+			// TODO: we assume here that all packages have the same owner. Will that lead to an issue? 
+			generatedModelsPackage = ((Element) generator.getGeneratedPackages().toArray()[0]).getNearestPackage();
+		}
+		else {
+			generatedModelsPackage = (Element) generator.getGeneratedPackages().toArray()[0];
+		}
+		this.setGeneratedModelsPackage(generatedModelsPackage);
+		this.setGeneratedModels(generator.getGeneratedVeMs());
+		this.setSystemModels(generator.getSystemModels());
+		this.setVerificationDataCollector(generator.getVerificationScenariosCollector().getVerificationDataCollector());
+		this.setPreparedInstantiations(generator.getPreparedModelInstantiations());
 
+		// sort other data
+		sortData();
+	}
+	
+	
+	
+	private void sortData(){
+
+		for (Element genModel : this.generatedModels) {
 			// get model instantiation
-			ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(genModel, generator.getPreparedModelInstantiations());
-			ci.setAllMediators(generator.getVsc().getAllMediators());
+			ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(genModel, getPreparedInstantiations());
+			
+			// pass pre-collected mediators in order to avoid another search
+			ci.setAllMediators(getAllFoundMediators());
 			
 			// fill data maps
 			findScenariosAndRequirements(ci, genModel);
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void addToMap(HashMap map, Element key, TreeObject value){
-		Object list = map.get(key);
-		if (list instanceof HashSet) {
-			((HashSet<TreeObject>)list).add(value);
-			map.put(key, list);
+	
+//	protected HashSet<Element> getGenVerificationModels(HashSet<Element> generatedPackages){
+	protected HashSet<Element> getGenVerificationModels(Element generatedPackage){
+		
+		HashSet<Element> generatedModels = new HashSet<Element>();
+		
+//		for (Element genPackage : generatedPackages) {
+		
+			Element genPackage = generatedPackage;
+			
+			Iterator<EObject> i = genPackage.eAllContents(); // only elements that are in the name space of this element 
+			while (i.hasNext()) {
+				EObject object = i.next() ;
+				if (object instanceof Class) {
+	
+					Element element  = (Element)object;
+					
+					if (element.getAppliedStereotype(Constants.stereotypeQName_VerificationModel) != null) {
+						generatedModels.add(element);
+						
+						// sort VeM to system models
+						setVemToSystemModel(element);
+					}
+				}
+			}
+//		}
+	
+		return generatedModels;
+	}
+
+	protected HashSet<Element> setVemToSystemModel(Element VeM){
+		
+		HashSet<Element> generatedModels = new HashSet<Element>();
+		
+		/*
+		 * NOTE: This is not a deep search. Here we are only looking 
+		 * at the first level properties of the VeM. We are not 
+		 * traversing the instantiated VeM graph. 
+		 */
+		
+		EList<Element> ownedElements = VeM.getOwnedElements();
+		
+		for (Element ownedElement : ownedElements) {
+			if (ownedElement instanceof Property) {
+				Property property = (Property) ownedElement;
+				Type type = property.getType();
+				if (type != null) {
+					if (this.getSystemModels().contains(type)) {
+						addToMapList(modelToSystemModel, VeM, type);
+					}
+				}
+			}
 		}
-		else{
-			HashSet<TreeObject> newList = new HashSet<TreeObject>();
-			newList.add(value);
-			map.put(key, newList);
-		}
+		
+		return generatedModels;
 	}
 	
 
@@ -133,13 +228,77 @@ public class GeneratedModelsData {
 		else if (umlElementType instanceof Element && umlElementType.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
 			addToMapList(modelToRequirements, simModel, treeItem);
 		}
-		else if (umlElementType instanceof Element && generator.getSystemModels().contains(umlElementType)) {
+		/*
+		 * If a generator was passed then we got the system models from the generator.
+		 */
+		else if (umlElementType instanceof Element && this.getSystemModels().contains(umlElementType)) {
 			addToMap(modelToSystemModel, simModel, treeItem);
 		}
 	}
 	
+	/*
+	 * This method is used if system models are not predefined but need to be deduced from a given verification model
+	 */
+	private HashSet<Element> collectSystemModels(VerificationDataCollector verificationDataCollector, HashSet<Element> generatedVeM){
+		/*
+		 * Note, this is not a deep search. We only look at the first level components
+		 * because by convention the system model, scenario and requirements should
+		 * be created as first level components in a VeM.
+		 * The main reason to not traversing the instantiation tree is efficiency. 
+		 */
+		
+		HashSet<Element> systemModels = new HashSet<Element>();
+		
+		for (Element  VeM : generatedVeM) {
+			
+			EList<Element> elements = VeM.getOwnedElements();
+			for (Element component : elements) {
+				if (component instanceof Property) {
+					
+					Property property = (Property) component;
+					Type type = property.getType();
+					
+					/*
+					 * if the component is not an instance of
+					 * requirement, scenario, an additional model or an requirement verdict -> then this is a system model 
+					 */
+						
+					if (type.getAppliedStereotype(Constants.stereotypeQName_Requirement) == null 
+							&& type.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario) == null 
+							&& !verificationDataCollector.getAllAdditionalModels().contains(type)
+							
+							&& !property.getName().startsWith(Constants.propertyName_requirementsVerificationVerdict)) {
+						
+						systemModels.add(type);
+					}
+				}
+			}
+		}
+		
+		return systemModels;
+	}
+	
+	
+	
 	
 	// Utilities
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void addToMap(HashMap map, Element key, TreeObject value){
+		Object list = map.get(key);
+		if (list instanceof HashSet) {
+			((HashSet<TreeObject>)list).add(value);
+			map.put(key, list);
+		}
+		else{
+			HashSet<TreeObject> newList = new HashSet<TreeObject>();
+			newList.add(value);
+			map.put(key, newList);
+		}
+	}
+	
+
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addToMapList(HashMap map, Element key, TreeObject value){
 		Object list = map.get(key);
@@ -207,7 +366,7 @@ public class GeneratedModelsData {
 	}
 	
 	
-	public HashSet<Element> getAllRequirements(){
+	public HashSet<Element> getAllUsedRequirements(){
 		HashSet<Element> requirements = new HashSet<Element>();
 		
 		for (Element model : modelToRequirements.keySet()) {
@@ -223,7 +382,6 @@ public class GeneratedModelsData {
 		}
 		return requirements;
 	}
-	
 	
 	
 	/*
@@ -412,7 +570,6 @@ public class GeneratedModelsData {
 			}
 		}
 		
-		
 		return newRequirementsRelations.size();
 	}
 	
@@ -569,82 +726,52 @@ public class GeneratedModelsData {
 		this.notSimulatedModels = notSimulatedModels;
 	}
 	
-	// OBSOLETE:
-//	protected HashSet<Element> getGenVerificationModels(HashSet<Element> generatedPackages){
-//	HashSet<Element> generatedModels = new HashSet<Element>();
-//	
-//	for (Element genPackage : generatedPackages) {
-//		
-//		Iterator<EObject> i = genPackage.eAllContents(); // only elements that are in the name space of this element 
-//		while (i.hasNext()) {
-//			EObject object = i.next() ;
-//			if (object instanceof Class) {
-//
-//				Element element  = (Element)object;
-//				
-//				if (element.getAppliedStereotype(Constants.stereotypeQName_VerificationModel) != null) {
-//					generatedModels.add(element);
-//					
-//					// sort VeM to system models
-//					setVemToSystemModel(element);
-//				}
-//			}
-//		}
-//	}
-//	
-//	return generatedModels;
-//}
+	
+	public HashSet<Element> getSystemModels() {
+		return systemModels;
+	}
+	
+	public void setGeneratedModels(HashSet<Element> generatedModels) {
+		this.generatedModels = generatedModels;
+	}
 
-//protected HashSet<Element> setVemToSystemModel(Element VeM){
-//HashSet<Element> generatedModels = new HashSet<Element>();
-//
-///*
-// * NOTE: This is not a deep search. Here we are only looking 
-// * at the first level properties of the VeM. We are not 
-// * traversing the instantiated VeM graph. 
-// */
-//
-//EList<Element> ownedElements = VeM.getOwnedElements();
-//
-//for (Element ownedElement : ownedElements) {
-//	if (ownedElement instanceof Property) {
-//		Property property = (Property) ownedElement;
-//		Type type = property.getType();
-//		if (type != null) {
-//			if (generator.getSystemModels().contains(type)) {
-//				addToMap(modelToSystemModel, VeM, type);
-//			}
-//		}
-//	}
-//}
-//return generatedModels;
-//}
+	public void setSystemModels(HashSet<Element> systemModels) {
+		this.systemModels = systemModels;
+	}
 
+	public HashSet<Element> getAllFoundRequirements() {
+		return getVerificationDataCollector().getAllRequirements();
+	}
+	
+	public HashSet<Element> getAllFoundScenarios() {
+		return getVerificationDataCollector().getAllScenarios();
+	}
 
-//private String getAllcomments(Element element, String lineBreakString) {
-//String commentString = "";
-//if (element instanceof Element) {
-//	for (Comment comment : element.getOwnedComments()) {
-//		commentString += comment.getBody() + lineBreakString;
-//	}
-//}
-//return commentString;
-//}
+	public HashSet<Element> getAllFoundMediators() {
+		return getVerificationDataCollector().getAllMediators();
+	}
+	public HashMap<Element, ClassInstantiation> getPreparedInstantiations() {
+		return preparedInstantiations;
+	}
 
-//private void findScenariosAndRequirements(ClassInstantiation ci, Element selectedClass){			
-//
-//TreeParent parent = ci.getTreeRoot();
-//
-//// check the given element
-//Element parentUmlElementType = parent.getComponentType();
-//fillMap(parentUmlElementType, parent, selectedClass);
-//
-//// go for the next level
-//TreeObject[] children = parent.getChildren();
-//for (int i = 0; i < children.length; i++) {
-//	TreeObject child = children[i];
-//	findScenariosAndRequirements((TreeParent) child, selectedClass);
-//}
-//}
+	public void setPreparedInstantiations(HashMap<Element, ClassInstantiation> preparedInstantiations) {
+		this.preparedInstantiations = preparedInstantiations;
+	}
+
+	public VerificationDataCollector getVerificationDataCollector() {
+		return verificationDataCollector;
+	}
+
+	public void setVerificationDataCollector(VerificationDataCollector verificationDataCollector) {
+		this.verificationDataCollector = verificationDataCollector;
+	}
+
+	public Element getGeneratedModelsPackage() {
+		return generatedModelsPackage;
+	}
+
+	public void setGeneratedModelsPackage(Element generatedModelsPackage) {
+		this.generatedModelsPackage = generatedModelsPackage;
+	}
 
 }

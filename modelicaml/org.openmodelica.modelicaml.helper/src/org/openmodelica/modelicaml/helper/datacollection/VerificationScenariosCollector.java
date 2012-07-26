@@ -61,6 +61,8 @@ public class VerificationScenariosCollector {
 	private Element bindingsPackage;
 	
 	
+	private VerificationDataCollector verificationDataCollector;
+	
 	// Constructors
 	public VerificationScenariosCollector(){}
 	
@@ -96,22 +98,21 @@ public class VerificationScenariosCollector {
 		
 		if ( umlRoolModel != null ) {
 			
-			VerificationDataCollector ec;
 			// if the packages to search on were specified -> use them
 			if (requirementsPackage != null && scenariosPackage != null && bindingsPackage != null) {
-				ec = new VerificationDataCollector(umlRoolModel, requirementsPackage, scenariosPackage, bindingsPackage);
+				verificationDataCollector = new VerificationDataCollector(umlRoolModel, requirementsPackage, scenariosPackage, bindingsPackage);
 			}
 			else {
-				ec = new VerificationDataCollector(umlRoolModel);
+				verificationDataCollector = new VerificationDataCollector(umlRoolModel);
 			}
 			
-			this.allScenarios.addAll(ec.getAllScenarios());
-			this.alwaysInclude.addAll(ec.getAlwaysInclude());
-			this.modelToItsAdditionalModels.putAll(ec.getModelToItsRequiredModels());
+			this.allScenarios.addAll(verificationDataCollector.getAllScenarios());
+			this.alwaysInclude.addAll(verificationDataCollector.getAlwaysInclude());
+			this.modelToItsAdditionalModels.putAll(verificationDataCollector.getModelToItsRequiredModels());
 			
-			this.allRequirements.addAll(ec.getAllRequirements());
+			this.allRequirements.addAll(verificationDataCollector.getAllRequirements());
 			
-			this.allMediators.addAll(ec.getAllMediators());
+			this.allMediators.addAll(verificationDataCollector.getAllMediators());
 			
 			// sort data (i.e. fill other sets and maps)
 			if (sortData) { sortData();}
@@ -432,4 +433,12 @@ public class VerificationScenariosCollector {
 		this.allMediators = allMediators;
 	}
 	
+	public VerificationDataCollector getVerificationDataCollector() {
+		return verificationDataCollector;
+	}
+
+	public void setVerificationDataCollector(
+			VerificationDataCollector verificationDataCollector) {
+		this.verificationDataCollector = verificationDataCollector;
+	}
 }

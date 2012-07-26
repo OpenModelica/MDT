@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +22,11 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.constants.Constants;
@@ -30,7 +36,7 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
-public class XMLReportGenerator {
+public class XMLReportGenerator implements IRunnableWithProgress {
 
 	private GeneratedModelsData gmd;
 	private HashMap<Element, ClassInstantiation> preparedModelInstantiations;
@@ -55,6 +61,7 @@ public class XMLReportGenerator {
 	public final static String XMLTagName_notImplementedRequirements	= "notImplementedRequirements";
 	public final static String XMLTagName_violatedRequirements 			= "violatedRequirements";
 	public final static String XMLTagName_notViolatedRequirements 		= "notViolatedRequirements";
+	public final static String XMLTagName_notEvaluatedRequirements 			= "notEvaluatedRequirements";
 	
 	public final static String XMLTagName_requirements 					= "requirements";
 	public final static String XMLTagName_requirement 					= "requirement";
@@ -87,19 +94,42 @@ public class XMLReportGenerator {
 	
 	public static int XMLContent = 0;
 	
-	public XMLReportGenerator(GeneratedModelsData gmd, int contentType){
+	
+	
+	public XMLReportGenerator(GeneratedModelsData gmd, int contentType) {
 		
 		this.gmd = gmd;
-		preparedModelInstantiations = gmd.getGenerator().getPreparedModelInstantiations();
+		
+		if (gmd.getGenerator() != null) {
+			preparedModelInstantiations = gmd.getGenerator().getPreparedModelInstantiations();
+		}
 		
 		if (contentType == XMLContent) {
-			fileContent = getXMLReportContent();
+			IWorkbench wb = PlatformUI.getWorkbench();
+			IProgressService ps = wb.getProgressService();
+			try {
+				ps.run(false, true, this);
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
+	@Override
+	public void run(IProgressMonitor monitor) throws InvocationTargetException,
+			InterruptedException {
+		fileContent = getXMLReportContent(monitor);
+	}
+
 	
 	
-	public String getXMLReportContent(){
+	public String getXMLReportContent(IProgressMonitor monitor){
+		
+		monitor.setTaskName("Creating XML Report...");
 		
 		String string = "";
 		string += "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
@@ -116,29 +146,40 @@ public class XMLReportGenerator {
 		string += "</"+XMLTagName_date+">";
 
 		// violated requirements
-		string += getEvaluatedRequirementItems(true);
+		monitor.setTaskName("Collecting Violated Requirements ...");
+		string += getEvaluatedRequirementItems(true, false, false);
 		
-		// violated requirements
-		string += getEvaluatedRequirementItems(false);
+		// not violated requirements
+		monitor.setTaskName("Collecting Not Violated Requirements ...");
+		string += getEvaluatedRequirementItems(false, true, false);
+		
+		// not violated requirements
+		monitor.setTaskName("Collecting Not Evaluated Requirements ...");
+		string += getNotEvaluatedRequirementItems();
 
 		// requirements for which no binding could be derived
+		monitor.setTaskName("Collecting Not Implemented Requirements ...");
 		string += getNotImplementedRequirementItems();
 
 		// scenarios that were not used because they do not stimulate the model properly
+		monitor.setTaskName("Collecting Used Scenarios ...");
 		string += getUsedScenarioItems();
 		
 		// scenarios that were not used because they do not stimulate the model properly
+		monitor.setTaskName("Collecting Not Used Scenarios ...");
 		string += getNotUsedScenarioItems();
 
 		// new positive and negative relations between scenarios and requirements
+		monitor.setTaskName("Collecting New Relations ...");
 		string += getNewRelationItems(true);
 		string += getNewRelationItems(false);
-
 		
 		// all verification models
+		monitor.setTaskName("Collecting Verification Models ...");
 		string += getVeMItems();
 
 		// not simulated models
+		monitor.setTaskName("Collecting Not Simulated ...");
 		string += getNotSimulatedModelItems();
 		
 		string += "</"+XMLTagName_report+">";
@@ -167,7 +208,7 @@ public class XMLReportGenerator {
 			string += "</"+XMLTagName_verificationModel+">";
 		}
 		
-		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		string += "<"+XMLTagName_count+">" + i + " of " + gmd.getGeneratedModels().size() + "</"+XMLTagName_count+">";
 		
 		string += "</"+XMLTagName_notSimulated+">";
 		
@@ -187,7 +228,7 @@ public class XMLReportGenerator {
 			i++; 
 			
 			// no filter for requirements
-			string += getVeMItem(model, null, false, false);
+			string += getVeMItem(model, null, false, false, false);
 			
 		}
 		
@@ -198,7 +239,12 @@ public class XMLReportGenerator {
 		return string;
 	}
 	
-	private String getVeMItem(Element model, Element filterForRequirementElement, boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements){
+	private String getVeMItem(Element model, 
+			Element filterForRequirementElement, 
+			boolean onlyViolatedRequirements, 
+			boolean onlyNotViolatedRequirements, 
+			boolean onlyNotEvaluatedRequirements){
+		
 		String string = "";
 		
 		string += "<"+XMLTagName_verificationModel+" "+
@@ -211,7 +257,7 @@ public class XMLReportGenerator {
 		
 		string += getScenarioItems(ci);
 		
-		string += getRequirementItems(ci, filterForRequirementElement, onlyViolatedRequirements, onlyNotViolatedRequirements);
+		string += getRequirementItems(ci, filterForRequirementElement, onlyViolatedRequirements, onlyNotViolatedRequirements, onlyNotEvaluatedRequirements);
 		
 		string += "</"+XMLTagName_verificationModel+">";
 		
@@ -295,7 +341,7 @@ public class XMLReportGenerator {
 			
 			Element type = treeObject.getComponentType();
 			
-			if (gmd.getGenerator().getSystemModels().contains(type)) {
+			if (gmd.getSystemModels().contains(type)) {
 				
 				string += "<"+XMLTagName_systemModel+" "+
 								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, treeObject))+"\" " +
@@ -339,7 +385,6 @@ public class XMLReportGenerator {
 				// Add clients (isMandatory, binding, plot link)
 				string += getClientItems(VeM, scenario);
  
-
 				string += "</"+XMLTagName_scenario+">";
 			}
 		}
@@ -347,7 +392,12 @@ public class XMLReportGenerator {
 		return string;
 	}
 	
-	private String getRequirementItems(ClassInstantiation ci, Element filterForRequirementElement, boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements){
+	private String getRequirementItems(ClassInstantiation ci, 
+				Element filterForRequirementElement, 
+				boolean onlyViolatedRequirements, 
+				boolean onlyNotViolatedRequirements,
+				boolean onlyNotEvaluatedRequirements){
+		
 		String string = "";
 		int i = 0;
 		
@@ -385,6 +435,10 @@ public class XMLReportGenerator {
 			else if (onlyNotViolatedRequirements && !gmd.getNotViolatedRequirements().contains(key)) {
 				skip = true;
 			}
+			// of only not evaluated should be shown
+			else if (onlyNotEvaluatedRequirements && !gmd.getNotEvaluatedRequirements().contains(key)) {
+				 skip = true;
+			}
 			
 			if (!skip) {
 				// counter 
@@ -410,7 +464,7 @@ public class XMLReportGenerator {
 			}
 		}
 		
-		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundRequirements().size() + "</"+XMLTagName_count+">";
 		
 		string += "</"+XMLTagName_requirements+">";
 		
@@ -438,29 +492,7 @@ public class XMLReportGenerator {
 	}
 	
 	
-	private String getLocateLink(Element model){
-		String linkAdress = "";
-		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model);
-		return linkAdress;
-	}
-	
-	private String getLocateLink(Element model, TreeObject treeObject){
-		String linkAdress = "";
-		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
-		return linkAdress;
-	}
-	
-	private String getPlotLink(Element model, TreeObject treeObject){
-		String linkAdress = "";
-		linkAdress = "plot:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
-		return linkAdress;
-	}
-	
-	private String getPlotStatusLink(Element model, TreeObject treeObject){
-		String linkAdress = "";
-		linkAdress = "plot:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
-		return linkAdress + "." + Constants.propertyName_mStatus;
-	}
+
 	
 	
 	private String getVeMforScenario(Element usedScenario){
@@ -479,7 +511,7 @@ public class XMLReportGenerator {
 			}
 			
 			if (modelContains) {
-				string += getVeMItem(VeM, null, false, false);
+				string += getVeMItem(VeM, null, false, false, false);
 			}
 		}
 		return string;
@@ -510,7 +542,7 @@ public class XMLReportGenerator {
 			string += "</"+XMLTagName_scenario+">";
 		}
 		
-		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundScenarios().size() + "</"+XMLTagName_count+">";
 		
 		string += "</"+XMLTagName_usedScenarios+">";
 		
@@ -518,7 +550,7 @@ public class XMLReportGenerator {
 	}
 	
 	
-	private String getVeMForRequirement(Element evaluatedRequirement, boolean isViolated){
+	private String getVeMForRequirement(Element evaluatedRequirement, boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements, boolean onlyNotEvaluatedRequirements){
 		String string = "";
 		for (Element VeM : gmd.getGeneratedModels()) {
 			HashSet<TreeObject> requirements = gmd.getRequirements(VeM);
@@ -533,7 +565,7 @@ public class XMLReportGenerator {
 			}
 			
 			if (modelContains) {
-				string += getVeMItem(VeM, evaluatedRequirement, isViolated, !isViolated);
+				string += getVeMItem(VeM, evaluatedRequirement, onlyViolatedRequirements, onlyNotViolatedRequirements, onlyNotEvaluatedRequirements);
 			}
 		}
 		
@@ -541,17 +573,17 @@ public class XMLReportGenerator {
 	}
 	
 	
-	private String getEvaluatedRequirementItems(boolean isViolated){
+	private String getEvaluatedRequirementItems( boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements, boolean onlyNotEvaluatedRequirements){
 		String string = "";
 		int i = 0;
 		
 		HashSet<Element> evaluatedRequirements = new HashSet<Element>();
-		if (isViolated) {
+		if (onlyViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsViolatedInScenarios();
 			string += "<"+XMLTagName_violatedRequirements+">";
 
 		}
-		else {
+		else if (onlyNotViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsNotViolatedInScenarios();
 			string += "<"+XMLTagName_notViolatedRequirements+">";
 		}
@@ -568,18 +600,18 @@ public class XMLReportGenerator {
 			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
 
 			// loop over all VeM and see if this requirement is in the 
-			string += getVeMForRequirement(evaluatedRequirement, isViolated);
+			string += getVeMForRequirement(evaluatedRequirement, onlyViolatedRequirements, onlyNotViolatedRequirements, onlyNotEvaluatedRequirements);
 			
 			string += "</"+XMLTagName_requirement+">";
 		}
 		
-		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundRequirements().size() + "</"+XMLTagName_count+">";
 		
-		if (isViolated) {
+		if (onlyViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsViolatedInScenarios();
 			string += "</"+XMLTagName_violatedRequirements+">";
 		}
-		else {
+		else if (onlyNotViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsNotViolatedInScenarios();
 			string += "</"+XMLTagName_notViolatedRequirements+">";
 		}
@@ -588,12 +620,48 @@ public class XMLReportGenerator {
 	}
 	
 	
+	
+	private String getNotEvaluatedRequirementItems(){
+		String string = "";
+		int i = 0;
+		boolean showOnlyNotEvaluated = true;
+		boolean showOnlyViolated = false;
+		boolean showOnlyNotViolated = false;
+		
+		HashSet<Element> evaluatedRequirements = gmd.getNotEvaluatedRequirements();
+		string += "<"+XMLTagName_notEvaluatedRequirements+">";
+
+
+		for (Element evaluatedRequirement : evaluatedRequirements) {
+			i++ ;
+			string += "<"+XMLTagName_requirement+" "+
+					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(evaluatedRequirement) +"\"" +
+					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(evaluatedRequirement))+"\" "+
+					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(evaluatedRequirement))+"\">";
+					string += getAllComments(evaluatedRequirement);
+		
+			// add requirement text
+			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
+
+			// loop over all VeM and see if this requirement is in the 
+			string += getVeMForRequirement(evaluatedRequirement, showOnlyViolated, showOnlyNotViolated, showOnlyNotEvaluated);
+			
+			string += "</"+XMLTagName_requirement+">";
+		}
+		
+		string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundRequirements().size() + "</"+XMLTagName_count+">";
+		
+		string += "</"+XMLTagName_notEvaluatedRequirements+">";
+		return string;
+	}
+	
+	
 	private String getNotImplementedRequirementItems(){
 		String string = "";
 		int i = 0;
 		
-		HashSet<Element> allFoundRequirements = gmd.getGenerator().getVsc().getAllRequirements();
-		HashSet<Element> allUsedRequirements= gmd.getAllRequirements();
+		HashSet<Element> allFoundRequirements = gmd.getAllFoundRequirements();
+		HashSet<Element> allUsedRequirements= gmd.getAllUsedRequirements();
 		
 		allFoundRequirements.removeAll(allUsedRequirements);
 		
@@ -613,7 +681,7 @@ public class XMLReportGenerator {
 				string += "</"+XMLTagName_requirement+">";
 			}
 			
-			string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+			string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundRequirements().size() + "</"+XMLTagName_count+">";
 			
 			string += "</"+XMLTagName_notImplementedRequirements+">";
 		}
@@ -625,7 +693,7 @@ public class XMLReportGenerator {
 		String string = "";
 		int i = 0;
 		
-		HashSet<Element> allFoundScenarios = gmd.getGenerator().getVsc().getAllScenarios();
+		HashSet<Element> allFoundScenarios = gmd.getAllFoundScenarios();
 		HashSet<Element> allUsedScenarios = gmd.getAllScenarios();
 		
 		allFoundScenarios.removeAll(allUsedScenarios);
@@ -645,12 +713,39 @@ public class XMLReportGenerator {
 				string += "</"+XMLTagName_scenario+">";
 			}
 			
-			string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+			string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundScenarios().size() + "</"+XMLTagName_count+">";
 			string += "</"+XMLTagName_notUsedScenarios+">";
 		}
 		return string;
 	}
 
+	
+	
+	// Links
+	private String getLocateLink(Element model){
+		String linkAdress = "";
+		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model);
+		return linkAdress;
+	}
+	
+	private String getLocateLink(Element model, TreeObject treeObject){
+		String linkAdress = "";
+		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
+		return linkAdress;
+	}
+	
+	private String getPlotLink(Element model, TreeObject treeObject){
+		String linkAdress = "";
+		linkAdress = "plot:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
+		return linkAdress;
+	}
+	
+	private String getPlotStatusLink(Element model, TreeObject treeObject){
+		String linkAdress = "";
+		linkAdress = "plot:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
+		return linkAdress + "." + Constants.propertyName_mStatus;
+	}
+	
 	
 	
 	/*
@@ -785,5 +880,9 @@ public class XMLReportGenerator {
 	public void setFileContent(String fileContent) {
 		this.fileContent = fileContent;
 	}
+
+
+
+
 
 }

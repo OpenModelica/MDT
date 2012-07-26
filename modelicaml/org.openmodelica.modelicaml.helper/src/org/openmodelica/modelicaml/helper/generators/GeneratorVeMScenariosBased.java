@@ -71,14 +71,11 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	
 	// all created VeM
 	private HashSet<Element> generatedVeMs = new HashSet<Element>();
-	
-	// all generated models
-//	private List<Element> generatedModels = new ArrayList<Element>();
-	
+
 	// super class that each generated model should inherit from
 	private Element superClass = null;
 	
-	private VerificationScenariosCollector vsc;
+	private VerificationScenariosCollector verificationScenariosCollector;
 
 	// all requirements that were collected from the specified requirements package
 	private HashSet<Element> allRequirements = new HashSet<Element>();
@@ -214,10 +211,10 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 //		vsc.collectScenariosFromPackage((Package) scenariosPackage, true);
 		
 		// collect scenarios and requirements
-		vsc = new VerificationScenariosCollector( rootPackage, requirementsPackage, scenariosPackage, bindingsPackage );
-		vsc.collectAll(true);
+		verificationScenariosCollector = new VerificationScenariosCollector( rootPackage, requirementsPackage, scenariosPackage, bindingsPackage );
+		verificationScenariosCollector.collectAll(true);
 		
-		if (vsc.getAllScenarios().size() == 0) {
+		if (verificationScenariosCollector.getAllScenarios().size() == 0) {
 			String message = "INFO: No verification scenarios were found.";
 			addToLog(message);
 		}
@@ -225,7 +222,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		/* Collect all requirements in order to be able to determine 
 		 * which are not covered by simulation models.
 		 */
-		allRequirements.addAll(vsc.getAllRequirements());
+		allRequirements.addAll(verificationScenariosCollector.getAllRequirements());
 
 		/* 
 		 * Collect all mediators to be passed in order to avoid 
@@ -242,7 +239,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			 * into a model with a certain scenario if and only if this scenario has an 
 			 * explicitly defined relation (i.e. <<UseToVerify>> relations) to this requirement.
 			 */
-			for (Element scenario : vsc.getAllScenarios()) {
+			for (Element scenario : verificationScenariosCollector.getAllScenarios()) {
 				HashSet<Element> reqWithPositiveRelations = getRequirements(scenario, Constants.stereotypeQName_UsedToVerify);
 				for (Element requirement : reqWithPositiveRelations) {
 					addToMap(requirementToScenarioCandidate, requirement, scenario);
@@ -302,7 +299,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			// prepare instantiation so that it can be reused for other iterations
 			preparedModelInstantiations.put(systemModel, ModelicaMLServices.getModelInstantiation(systemModel, preparedModelInstantiations));
 			
-			for (Element testScenario : vsc.getAllScenarios() ) {
+			for (Element testScenario : verificationScenariosCollector.getAllScenarios() ) {
 				
 				if (testScenario instanceof Class) {
 					
@@ -434,8 +431,8 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 
 					// prepare all additional models instantiations
 					HashSet<Element> addidtionalModels = new HashSet<Element>();
-					for (Element addModel : vsc.getModelToItsAdditionalModels().keySet()) {
-						addidtionalModels.addAll(vsc.getModelToItsAdditionalModels().get(addModel));
+					for (Element addModel : verificationScenariosCollector.getModelToItsAdditionalModels().keySet()) {
+						addidtionalModels.addAll(verificationScenariosCollector.getModelToItsAdditionalModels().get(addModel));
 					}
 					preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(addidtionalModels, preparedModelInstantiations));
 
@@ -445,10 +442,10 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 							scenarioToBeUsed, 
 							requirementsToBeUsed,
 							(Package) bindingsPackage,
-							vsc.getAlwaysInclude(),
-							vsc.getModelToItsAdditionalModels(),
+							verificationScenariosCollector.getAlwaysInclude(),
+							verificationScenariosCollector.getModelToItsAdditionalModels(),
 							preparedModelInstantiations,
-							vsc);
+							verificationScenariosCollector);
 					
 					// add all instantiations in order to avoid new instantiations 
 					preparedModelInstantiations.putAll(tsmc.getModelToItsInstantiation());
@@ -502,7 +499,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		String errorMessage = "No scenarios were found that can be used to stimulate the model " +
 				"'"+((NamedElement)sourceModel).getName()+"'.";
 
-		if (vsc.getAllScenarios().size() > 0) {
+		if (verificationScenariosCollector.getAllScenarios().size() > 0) {
 			if (testScenariosToBeInstantiated.size() > 0) {
 				
 				// Create test simulation models
@@ -538,7 +535,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 				requirementsToBeInstantiated, 
 				requirementsDiscarded, 
 				sourceModel,
-				vsc,
+				verificationScenariosCollector,
 				getLog(),
 				scenarioToVerificationModelCombination,
 				includeRequirementsWithPositiveRelations,
@@ -565,9 +562,14 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 				monitorText2 = "Creating models...";
 
 				String pkgName = Constants.simModelsPackageNamePrefix + ((NamedElement)sourceModel).getName();
+				
 				if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 					pkgName = Constants.relationDiscoveryModelsPackageNamePrefix + ((NamedElement)sourceModel).getName();
 				}
+				else if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+					pkgName = Constants.automaticScenarioBasedVerificationPackageNamePrefix + ((NamedElement)sourceModel).getName();
+				}
+				
 				String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
 				PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 			
@@ -597,8 +599,12 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						
 						// create the verification (simulation) model class
 						String simulationModelName = Constants.simModelsNamePrefix + ((NamedElement)testScenario).getName();
+						
 						if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 							simulationModelName = Constants.relationDiscoveryModelsNamePrefix + ((NamedElement)testScenario).getName();
+						}
+						else if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+							simulationModelName = Constants.automaticScenarioBasedVerificationModelsNamePrefix + ((NamedElement)testScenario).getName();
 						}
 
 						// create VeM (verification model which is a simulation model)
@@ -716,7 +722,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 							if (requirement instanceof Classifier) {
 							
 								// get the number of required instantiations
-								int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement, vsc.getAllMediators());
+								int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement, verificationScenariosCollector.getAllMediators());
 								String requiredNumberOfInstantionsString = "";
 								
 								for (int i = 0; i < requiredNumberOfInstantions; i++) {
@@ -767,7 +773,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						// update all bindings in the created simulation model class
 						CreatorValueBinding vbc = new CreatorValueBinding();
 						// pass the mediators that were already collected
-						vbc.setAllMediators(vsc.getAllMediators());
+						vbc.setAllMediators(verificationScenariosCollector.getAllMediators());
 						
 
 						//Alternative 1: rather slow because each VeM is instantiated ********************************************************************************************
@@ -856,7 +862,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 									// add the instantiated class to the prepared instantiation for reuse
 									ClassInstantiation veMCi = new ClassInstantiation(simulationModel);
 									// pass pre-collected meditors in order to avoid new search
-									veMCi.setAllMediators(vsc.getAllMediators());
+									veMCi.setAllMediators(verificationScenariosCollector.getAllMediators());
 									
 									// DO NOT create tree, we will reused available instantiation trees! 
 									
@@ -1183,12 +1189,12 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		return userSelectedTestScenarios;
 	}
 	
-	public VerificationScenariosCollector getVsc() {
-		return vsc;
+	public VerificationScenariosCollector getVerificationScenariosCollector() {
+		return verificationScenariosCollector;
 	}
 
-	public void setVsc(VerificationScenariosCollector vsc) {
-		this.vsc = vsc;
+	public void setVerificationScenariosCollector(VerificationScenariosCollector vsc) {
+		this.verificationScenariosCollector = vsc;
 	}
 	
 	public Element getTargetPackage() {

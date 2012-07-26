@@ -207,10 +207,6 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		});
 		
 		
-		
-		
-		
-		
 //		Button btnSeeLog = new Button(container, SWT.NONE);
 //		btnSeeLog.addMouseListener(new MouseAdapter() {
 //			@Override
@@ -308,28 +304,6 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		return area;
 	}
 
-	
-	
-	
-//	private HashSet<Element> geAllSelectedRequirement(){
-//		HashSet<Element> selectedRequirements = new HashSet<Element>();
-//		
-//		for (Element element: positiveRelationsToCreate.keySet()) {
-//			HashSet<Element> values = positiveRelationsToCreate.get(element);
-//			if (values != null ) {
-//				selectedRequirements.addAll(values);
-//			}
-//		}
-//		
-//		for (Element element: negativeRelationsToCreate.keySet()) {
-//			HashSet<Element> values = negativeRelationsToCreate.get(element);
-//			if (values != null ) {
-//				selectedRequirements.addAll(values);
-//			}
-//		}
-//		
-//		return selectedRequirements;
-//	}
 	
 	private Package getGeneratedDependenciesOwner(Element dependencySource){
 		Package owner = dependencySource.getNearestPackage();
@@ -762,19 +736,6 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		}
 	}
 	
-	
-//	private int getMapSize(HashMap<Element, HashSet<Element>> map){
-//		int number = 0;
-//		if (map != null) {
-//			for (Object key : map.keySet()) {
-//				// get the list for the key and add it to the count
-//				number = number + map.get(key).size(); 
-//			}
-//		}
-//		return number;
-//	}
-	
-	
 	private HashMap<Element, HashSet<Element>> addToMap(HashMap<Element, HashSet<Element>> map, Element key, Element value){
 		HashSet<Element> set = map.get(key);
 		HashSet<Element> updatedSet = new HashSet<Element>();
@@ -1020,11 +981,6 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 			this.requirementElement = requirementElement;
 		}
 	}
-	
-	// GETTER/SETTER ************************************************************************
-//	public HashSet<Element> getUserSelectedTestSimulationModels() {
-//		return userSelectedTestSimulationModels;
-//	}
 	
 }
 

@@ -424,7 +424,7 @@ public class TraceabilityView extends ViewPart {
 									scenariosToBeInstantiated.add(treeItem.getUmlElement());
 									mg.setTestScenariosToBeInstantiated(scenariosToBeInstantiated);
 
-									mg.setVsc(treeBuilder.getVsc());
+									mg.setVerificationScenariosCollector(treeBuilder.getVsc());
 									
 									mg.setScenarioToVerificationModelCombination(treeBuilder.getScenarioToVerificationModelCombination());
 									

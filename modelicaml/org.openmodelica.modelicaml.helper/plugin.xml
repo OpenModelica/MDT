@@ -40,6 +40,10 @@
             id="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification"
             name="Automatic Scenario-Based Verification">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults"
+            name="Analyze Simulation Results Toolbar">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -185,6 +189,10 @@
       <handler
             class="org.openmodelica.modelicaml.helper.handlers.AutomaticScenarioBasedVerificationToolbarHandler"
             commandId="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.AnalyzeSimulationResultsToolbarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults">
       </handler>
    </extension>
 

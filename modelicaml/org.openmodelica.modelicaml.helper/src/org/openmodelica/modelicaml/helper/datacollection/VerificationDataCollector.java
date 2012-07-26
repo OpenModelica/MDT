@@ -53,6 +53,9 @@ public class VerificationDataCollector extends ElementsCollector {
 	// all models that should always be instantiated in addition
 	private HashSet<Element> alwaysInclude = new HashSet<Element>();
 	
+	// all additional models found 
+	private HashSet<Element> allAdditionalModels = new HashSet<Element>();
+
 	// all mediators found
 	private HashSet<Element> allMediators = new HashSet<Element>();
 	
@@ -158,7 +161,9 @@ public class VerificationDataCollector extends ElementsCollector {
 					for (Element target : dep.getTargets()) {
 						// add to map
 						for (Element client : dep.getClients()) {
+							
 							addToModelToItsRequiredModelsMap(client, target);
+							allAdditionalModels.add(target);
 							
 							// add to always include set
 							if (isAlways instanceof Boolean && (Boolean)isAlways) {
@@ -177,7 +182,9 @@ public class VerificationDataCollector extends ElementsCollector {
 					for (Element client : dep.getClients()) {
 						// add to map
 						for (Element target : dep.getTargets()) {
+							
 							addToModelToItsRequiredModelsMap(target, client);
+							allAdditionalModels.add(client);
 							
 							// add to always include set
 							if (isAlways instanceof Boolean && (Boolean)isAlways) {
@@ -286,4 +293,13 @@ public class VerificationDataCollector extends ElementsCollector {
 		this.allMediators = allMediators;
 	}
 	
+	
+	public HashSet<Element> getAllAdditionalModels() {
+		return allAdditionalModels;
+	}
+
+	public void setAllAdditionalModels(HashSet<Element> allAdditionalModels) {
+		this.allAdditionalModels = allAdditionalModels;
+	}
+
 }

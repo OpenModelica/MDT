@@ -31,6 +31,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
@@ -622,7 +626,10 @@ public class ModelicaMLServices {
 	}
 	
 	public static ClassInstantiation getModelInstantiation(Element model, HashMap<Element,ClassInstantiation> preparedInstantiations){
-		ClassInstantiation newInstantiation = preparedInstantiations.get(model);
+		ClassInstantiation newInstantiation = null;
+		if (preparedInstantiations != null) {
+			newInstantiation = preparedInstantiations.get(model);
+		}
 
 		// create only if it does not exists already
 		if ( newInstantiation == null) {
@@ -632,7 +639,7 @@ public class ModelicaMLServices {
 			
 			newInstantiation = ci_model;
 		}
-		
+
 		return newInstantiation;
 	}
 	
@@ -708,5 +715,30 @@ public class ModelicaMLServices {
 			}
 		}
 		return allTreeObjects;
+	}
+	
+	
+	public static String getSimulationResultsFileName(NamedElement model){
+		return getModelQName((NamedElement) model) + "_res.mat";
+	}
+	
+	public static String getModelQName(NamedElement model) {
+		return StringUtls.replaceSpecCharExceptThis( model.getQualifiedName(), "::").replaceAll("::", ".");
+	}
+	
+	
+	public static Shell getShell(){
+		Shell shell = null;
+		IWorkbench wb = PlatformUI.getWorkbench();
+		if (wb != null) {
+			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+			if (win != null) {
+				shell = win.getShell();
+			}
+		}
+		if (shell == null) {
+			shell = new Shell();
+		}
+		return shell;
 	}
 }

@@ -68,6 +68,7 @@ public class AutomaticScenarioBasedVerificationReportDialog extends Dialog {
 	private Tree treeNotViolatedRequirement;
 	private Tree treeNotEvaluatedRequirements;
 	private Tree failedSimulationModelsTree;
+	private Button btnNewRelations;
 	
 	public AutomaticScenarioBasedVerificationReportDialog(Shell parentShell, GeneratedModelsData gmd) {
 		
@@ -80,7 +81,7 @@ public class AutomaticScenarioBasedVerificationReportDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/automaticScenarioBasedVerification.gif"));
-		newShell.setText("Automatic Scenario-Based Verification Report");
+		newShell.setText("Automatic Scenario-Based Verification: Report");
 	}
 	
 	@Override
@@ -156,16 +157,23 @@ public class AutomaticScenarioBasedVerificationReportDialog extends Dialog {
 		/*
 		 * Open relations dialog
 		 */
-		Button btnDiscoverRelations = new Button(container, SWT.NONE);
-		btnDiscoverRelations.addMouseListener(new MouseAdapter() {
+		btnNewRelations = new Button(container, SWT.NONE);
+		btnNewRelations.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(new Shell(), gmd);
 				dialog.open();
 			}
 		});
-		btnDiscoverRelations.setText("Discover Relations");
-		btnDiscoverRelations.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "/resources/icons/icons16/correlationset.gif"));
+		btnNewRelations.setText("New Relations");
+		btnNewRelations.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "/resources/icons/icons16/correlationset.gif"));
+		if (gmd.getNewRelationsCount(true) > 0 || gmd.getNewRelationsCount(false) > 0) {
+			btnNewRelations.setEnabled(true);
+		}
+		else {
+			btnNewRelations.setEnabled(false);
+		}
+		
 		
 		Button btnLocate = new Button(container, SWT.NONE);
 		btnLocate.addMouseListener(new MouseAdapter() {
