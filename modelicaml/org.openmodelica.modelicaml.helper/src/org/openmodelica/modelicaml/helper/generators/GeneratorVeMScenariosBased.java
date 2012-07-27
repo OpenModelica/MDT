@@ -120,6 +120,15 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	private boolean includeRequirementsWithNegativeRelations = false;
 	// include all requirements that are not referenced by scenarios at all
 	private boolean includeRequirementsWitnUnknownRelations = false;
+
+	/*
+	 * If true then the generator will ONLY combine a requirement with a scenario if this 
+	 * scenario explicitly references this requirement (by <<UseToVerify>> relation) or
+	 * if there is no scenario at all that references this requirement either by 
+	 * positive (<<UseToVerify>> relation) or negative (<<DoNotUseToVerify>> relation)
+	 */
+	private boolean minimizeNumberOfRequirementInstantiations = false;
+
 	
 	// indicates if there was at at least one model for which bindings could not be generated 
 	private boolean bindingErrorsDetected = false;
@@ -143,6 +152,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			boolean includeRequirementsWithPositiveRelations,
 			boolean includeRequirementsWithNegativeRelations,
 			boolean includeRequirementsWitnUnknownRelations,
+			boolean minimizeNumberOfRequirementInstantiations,
 			int mode) {
 		
 		super();
@@ -162,6 +172,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		this.includeRequirementsWithPositiveRelations = includeRequirementsWithPositiveRelations;
 		this.includeRequirementsWithNegativeRelations = includeRequirementsWithNegativeRelations;
 		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
+		this.minimizeNumberOfRequirementInstantiations = minimizeNumberOfRequirementInstantiations;
 		
 		collectRequirementsAndScenarios();
 	}
@@ -177,39 +188,12 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	
 	
 	
-	
-	
-	
-	
-//	private Model getRootModel(HashSet<Element> selectedModels){
-//		/*
-//		 * TODO: how handle that if multiple design models are selected?
-//		 */
-//		Model rootModel = null;
-//		for (Element selectedModel : selectedModels) {
-//			Element root = selectedModel.getModel();
-//			if (root != null) {
-//				rootModel = selectedModel.getModel();
-//			}
-//		}
-//		return rootModel;
-//	}
-	
+
 
 	// Combination Generation *******************************************************************************************
 	
 	private void collectRequirementsAndScenarios(){
 
-//		/* Collect all requirements in order to be able to determine 
-//		 * which are not covered by simulation models.
-//		 */
-//		ElementsCollector ec = new ElementsCollector();
-//		ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
-//		allRequirements.addAll(ec.getElements());
-		
-//		vsc = new VerificationScenariosCollector();
-//		vsc.collectScenariosFromPackage((Package) scenariosPackage, true);
-		
 		// collect scenarios and requirements
 		verificationScenariosCollector = new VerificationScenariosCollector( rootPackage, requirementsPackage, scenariosPackage, bindingsPackage );
 		verificationScenariosCollector.collectAll(true);
@@ -224,13 +208,6 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		 */
 		allRequirements.addAll(verificationScenariosCollector.getAllRequirements());
 
-		/* 
-		 * Collect all mediators to be passed in order to avoid 
-		 * several collection runs  
-		 */
-//		allMediators.addAll(vsc.getAllMediators());
-		
-		
 		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 			/*
 			 * Get all requirements and fill the requirements -> scenario candidate map
@@ -263,7 +240,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 				// clear all lists because the translation for each source model is individual.
 				clearAllLists();
 				
-				Shell shell = getShell();
+				Shell shell = ModelicaMLServices.getShell();
 				
 				try {
 					new ProgressMonitorDialog(shell).run(true, true, this);
@@ -299,7 +276,10 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			// prepare instantiation so that it can be reused for other iterations
 			preparedModelInstantiations.put(systemModel, ModelicaMLServices.getModelInstantiation(systemModel, preparedModelInstantiations));
 			
-			for (Element testScenario : verificationScenariosCollector.getAllScenarios() ) {
+			/*
+			 * Sort scenarios in order to make generation be deterministic (at least in terms of scenario names and associated combinations of requirements)
+			 */
+			for (Element testScenario : ModelicaMLServices.getSortedByName(verificationScenariosCollector.getAllScenarios())) {
 				
 				if (testScenario instanceof Class) {
 					
@@ -368,16 +348,17 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 									HashSet<Element> scenarioCandidates = requirementToScenarioCandidate.get(requirement);
 									if (scenarioCandidates != null) {
 										
-										// if this scenario references this requirement then combine them!
+										// if this scenario references this requirement then -> combine them.
 										if ( scenarioCandidates.contains(scenarioToBeUsed) ) {
 											requirementsToBeUsed.add(requirement);
 										}
 										/*
+										 * if the "minimize requirement instantiations option" is selected and 
 										 * if this scenario does not reference this requirements
 										 * but there are other scenarios that reference this requirement
-										 * -> do not combine this scenario with this requirement
+										 * -> do not combine this scenario with this requirement (it will be combined with some other scenario)
 										 */
-										else if (scenarioCandidates.size() > 0 ) {
+										else if (scenarioCandidates.size() > 0 && isMinimizeNumberOfRequirementInstantiations()) {
 											String candidateNames = "";
 											for (Element scenario : scenarioCandidates) {
 												candidateNames += "              - " + ModelicaMLServices.getQualifiedName(scenario) + "\n"; 
@@ -526,7 +507,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		 * It should enable a selection of test scenarios and requirements to be finally instantiated. 
 		 */
 
-		Shell shell = getShell();
+		Shell shell = ModelicaMLServices.getShell();
 
 		SelectScenariosAndRequirementsDialog dialog = new SelectScenariosAndRequirementsDialog(
 				shell, 
@@ -1027,24 +1008,10 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	}
 
 	private void reportError(String title, String message){
-		Shell shell = getShell();
+		Shell shell = ModelicaMLServices.getShell();
 		MessageDialog.openError(shell, title, message);
 	}
-	
-	private Shell getShell(){
-		Shell shell = null;
-		IWorkbench wb = PlatformUI.getWorkbench();
-		if (wb != null) {
-			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-			if (win != null) {
-				shell = win.getShell();
-			}
-		}
-		if (shell == null) {
-			shell = new Shell();
-		}
-		return shell;
-	}
+
 	
 	private void clearAllLists(){
 		testScenariosToBeInstantiated.clear();
@@ -1258,6 +1225,19 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 
 	public void setGeneratedVeMs(HashSet<Element> generatedVeMs) {
 		this.generatedVeMs = generatedVeMs;
+	}
+
+
+
+	public boolean isMinimizeNumberOfRequirementInstantiations() {
+		return minimizeNumberOfRequirementInstantiations;
+	}
+
+
+
+	public void setMinimizeNumberOfRequirementInstantiations(
+			boolean minimizeNumberOfRequirementInstantiations) {
+		this.minimizeNumberOfRequirementInstantiations = minimizeNumberOfRequirementInstantiations;
 	}
 
 }

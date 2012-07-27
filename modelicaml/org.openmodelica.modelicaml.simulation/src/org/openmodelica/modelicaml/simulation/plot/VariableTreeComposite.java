@@ -49,6 +49,8 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 	/** The tree model. */
 	private Tree treeModel;
 	
+
+
 	/** The composite search. */
 	private Composite compositeSearch;
 
@@ -610,6 +612,14 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 	
 	public void setChart(PlotComposite chart) {
 		this.chart = chart;
+	}
+	
+	public Tree getTreeModel() {
+		return treeModel;
+	}
+
+	public void setTreeModel(Tree treeModel) {
+		this.treeModel = treeModel;
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -14,6 +15,9 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
 import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.SWT;
@@ -34,7 +38,9 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
@@ -49,11 +55,13 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.report.XMLReportGenerator;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
-import org.eclipse.swt.widgets.Label;
 
 public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog {
 
 	private GeneratedModelsData gmd;
+	
+	// map of models and the corresponding simulation result paths (absolute)
+	private HashMap<Element,String> simulationResultsFiles = new HashMap<Element,String>();
 	
 	// positive scenario to requirements relations, i.e., scenario was used to stimulate the system mode and lead to an evaluation of the requirements
 	private HashMap<Element,HashSet<Element>> positiveRelationsToCreate = new HashMap<Element,HashSet<Element>>();
@@ -79,21 +87,44 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 
 	private final static String TAB_TITLE_POSITIVE_RELATIONS = "New Positive Relations";
 	private final static String TAB_TITLE_NEGATIVE_RELATIONS = "New Negative Relations";
+	private final static String TAB_TITLE_NOT_SIMULATED = "Not Simulated";
 	
 	
 	private TabFolder tabFolder;
 	private Button btnSave;
 	
+	boolean openedFromReportDialog = false;
+	private TabItem tbtmnewPositiveRelations;
+	private TabItem tbtmNewNegativeRelations;
+	private TabItem tbtmNotSimulated;
+	private Tree treeNewNegativeRelations;
+	private Tree treePreSelectedNewPositiveRelations;
+	private Tree treeNotSimulated;
 	
+	
+
 	/**
 	 * Create the dialog.
 	 * 
 	 * @param parentShell
 	 */
-	public SelectScenarioToReqRelationsToCreateDialog(Shell parentShell, GeneratedModelsData gmd) {
+	public SelectScenarioToReqRelationsToCreateDialog(Shell parentShell, 
+			GeneratedModelsData gmd,
+			HashMap<Element,String> simulationResultsFiles,
+			boolean openedFromReportDialog) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
+		this.setGmd(gmd);
+		this.setSimulationResultsFiles(simulationResultsFiles);
+		this.setOpenedFromReportDialog(openedFromReportDialog);
+	}
+
+	public GeneratedModelsData getGmd() {
+		return gmd;
+	}
+
+	public void setGmd(GeneratedModelsData gmd) {
 		this.gmd = gmd;
 	}
 
@@ -117,22 +148,22 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
-		container.setLayout(new GridLayout(7, false));
+		container.setLayout(new GridLayout(8, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		tabFolder = new TabFolder(container, SWT.NONE);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 7, 1);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 8, 1);
 		gd_tabFolder.widthHint = 626;
 		tabFolder.setLayoutData(gd_tabFolder);
 
 		/*
 		 * TAB Negative relations
 		 */
-		TabItem tbtmnewPositiveRelations = new TabItem(tabFolder, SWT.NONE);
+		tbtmnewPositiveRelations = new TabItem(tabFolder, SWT.NONE);
 		String metricPreSelectedPositiveRelations = "(" + gmd.getNewRelationsCount(true) + ")";
 		tbtmnewPositiveRelations.setText(TAB_TITLE_POSITIVE_RELATIONS + " " + metricPreSelectedPositiveRelations);
 		
-		final Tree treePreSelectedNewPositiveRelations = new Tree(tabFolder, SWT.CHECK);
+		treePreSelectedNewPositiveRelations = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treePreSelectedNewPositiveRelations, true, true);
 		
 		// Add listeners
@@ -142,32 +173,27 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		/*
 		 * TAB: Negative relations
 		 */
-		TabItem tbtmNewNegativeRelations = new TabItem(tabFolder, SWT.NONE);
+		tbtmNewNegativeRelations = new TabItem(tabFolder, SWT.NONE);
 		String metricNegativeRelations = "(" + gmd.getNewRelationsCount(false) + ")";
 		tbtmNewNegativeRelations.setText(TAB_TITLE_NEGATIVE_RELATIONS + " " + metricNegativeRelations);
 		
-		final Tree treeNewNegativeRelations = new Tree(tabFolder, SWT.CHECK);
+		treeNewNegativeRelations = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treeNewNegativeRelations, false, false);
 		
 		// Add listeners
 		treeNewNegativeRelations.addSelectionListener(new CheckboxTreeSelectionListener());
 		tbtmNewNegativeRelations.setControl(treeNewNegativeRelations);
-		
-		
-		/*
-		 * TAB: Not simulated models
-		 */
-		TabItem tbtmNotSimulated = new TabItem(tabFolder, SWT.NONE);
-		tbtmNotSimulated.setText("Errors (0)");
-		final Tree failedSimulationModelsTree = new Tree(tabFolder, SWT.NONE);
-		createNotSimulatedItems(failedSimulationModelsTree);
-		tbtmNotSimulated.setControl(failedSimulationModelsTree);
+		tbtmNotSimulated = new TabItem(tabFolder, SWT.NONE);
+		tbtmNotSimulated.setText(TAB_TITLE_NOT_SIMULATED);
+		treeNotSimulated = new Tree(tabFolder, SWT.NONE);
+		createNotSimulatedItems(treeNotSimulated);
+		tbtmNotSimulated.setControl(treeNotSimulated);
 		
 				
 		Button btnSelectAll = new Button(container, SWT.NONE);
-		btnSelectAll.addMouseListener(new MouseAdapter() {
+		btnSelectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				if (isPositiveRelationsTabActive(tabFolder)) {
 					for (TreeItem treeItem : treeItemsPositiveRelations) {
 						treeItem.setChecked(true);
@@ -180,17 +206,32 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 						updateFinalLists(treeItem);
 					}
 				}
-				
 			}
 		});
+//		btnSelectAll.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseDown(MouseEvent e) {
+//				if (isPositiveRelationsTabActive(tabFolder)) {
+//					for (TreeItem treeItem : treeItemsPositiveRelations) {
+//						treeItem.setChecked(true);
+//						updateFinalLists(treeItem);
+//					}
+//				}
+//				else if (isNegativeRelationsTabActive(tabFolder)) {
+//					for (TreeItem treeItem : treeItemsNegativeRelations) {
+//						treeItem.setChecked(true);
+//						updateFinalLists(treeItem);
+//					}
+//				}
+//				
+//			}
+//		});
 		btnSelectAll.setText("Select All");
 		
 		Button btnDeselectAll = new Button(container, SWT.NONE);
-		btnDeselectAll.setEnabled(true);
-		btnDeselectAll.setText("Deselect All");
-		btnDeselectAll.addMouseListener(new MouseAdapter() {
+		btnDeselectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				if (isPositiveRelationsTabActive(tabFolder)) {
 					for (TreeItem treeItem : treeItemsPositiveRelations) {
 						treeItem.setChecked(false);
@@ -205,6 +246,25 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 				}
 			}
 		});
+		btnDeselectAll.setEnabled(true);
+		btnDeselectAll.setText("Deselect All");
+//		btnDeselectAll.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseDown(MouseEvent e) {
+//				if (isPositiveRelationsTabActive(tabFolder)) {
+//					for (TreeItem treeItem : treeItemsPositiveRelations) {
+//						treeItem.setChecked(false);
+//						updateFinalLists(treeItem);
+//					}
+//				}
+//				else if (isNegativeRelationsTabActive(tabFolder)) {
+//					for (TreeItem treeItem : treeItemsNegativeRelations) {
+//						treeItem.setChecked(false);
+//						updateFinalLists(treeItem);
+//					}
+//				}
+//			}
+//		});
 		
 		
 //		Button btnSeeLog = new Button(container, SWT.NONE);
@@ -221,10 +281,9 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 //		btnSeeLog.setText("Log");
 		
 		Button btnRestore = new Button(container, SWT.NONE);
-		btnRestore.addMouseListener(new MouseAdapter() {
+		btnRestore.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
-				
+			public void widgetSelected(SelectionEvent e) {
 				treePreSelectedNewPositiveRelations.removeAll();
 				treeNewNegativeRelations.removeAll();
 				
@@ -234,24 +293,93 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 				buildTree(treeNewNegativeRelations, false, false);
 			}
 		});
+//		btnRestore.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseDown(MouseEvent e) {
+//				
+//				treePreSelectedNewPositiveRelations.removeAll();
+//				treeNewNegativeRelations.removeAll();
+//				
+//				clearAllLists();
+//				
+//				buildTree(treePreSelectedNewPositiveRelations, true, true);
+//				buildTree(treeNewNegativeRelations, false, false);
+//			}
+//		});
 		btnRestore.setImage(ResourceManager.getPluginImage("org.eclipse.emf.common.ui", "/org/eclipse/emf/common/ui/Restore.gif"));
 		btnRestore.setText("Restore");
 		
 		Composite composite = new Composite(container, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite.widthHint = 311;
+		gd_composite.widthHint = 78;
 		gd_composite.heightHint = 20;
 		composite.setLayoutData(gd_composite);
 		
 		/*
 		 * Save as File 
 		 */
-		new Label(container, SWT.NONE);
-		Button btnSaveasfile = new Button(container, SWT.NONE);
-		btnSaveasfile.addMouseListener(new MouseAdapter() {
+		
+		Button btnLocate = new Button(container, SWT.NONE);
+		btnLocate.setText("Locate");
+		btnLocate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+
+				ModelExplorerPageBookView modelExplorerPageBookView = null;
+				if (view instanceof ModelExplorerPageBookView) {
+					modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+				   }
 				
+				if (modelExplorerPageBookView != null) {
+					Tree activeTree = getActiveTree();
+					HashSet<Object> selectedObjects = new HashSet<Object>();
+					if (activeTree != null) {
+						TreeItem[] items = activeTree.getSelection();
+						for (TreeItem treeItem : items) {
+							TreeItemData data = (TreeItemData) treeItem.getData();
+							if (data != null && data.getUMLElement() != null) {
+								selectedObjects.add(data.getUMLElement());
+							}
+						}
+					}
+					if (selectedObjects.size() > 0) {
+						CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+						List<Object> items = new ArrayList<Object>();
+						for (Object object2 : selectedObjects) {
+							if (object2 instanceof EObject) {
+								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject) object2));
+							}
+						}
+						modelExplorerView.setSelection(new StructuredSelection(items), true);
+					}
+				}
+			}
+		});
+		btnLocate.setText("Locate");
+		btnLocate.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+
+		
+		Button btnReadReport = new Button(container, SWT.NONE);
+		btnReadReport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(getShell(), gmd, getSimulationResultsFiles(), true);
+				dialog.open();
+			}
+		});
+		btnReadReport.setText("Read Report");
+		btnReadReport.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/automaticScenarioBasedVerification.gif"));
+		// disable this button if dialog was opened from another dialog that can be opened from this dialog to avoid cycles
+		if (isOpenedFromReportDialog()) {
+			btnReadReport.setEnabled(false);
+		}
+		
+		
+		Button btnSaveasfile = new Button(container, SWT.NONE);
+		btnSaveasfile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
 				if (umlModel != null) {
 
@@ -271,7 +399,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 					
 					if (filePath != null) {
 						String message = "The file was stored: \n"+filePath+"";
-						DialogMessage dialog = new DialogMessage(new Shell(), "Report Generation", "", message, false);
+						DialogMessage dialog = new DialogMessage(getParentShell(), "Report Generation", "", message, false);
 						dialog.open();
 					}
 				}
@@ -280,6 +408,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 				}
 			}
 		});
+
 		btnSaveasfile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnSaveasfile.setText("Create Report");
 		btnSaveasfile.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "/icons/report.gif"));
@@ -289,14 +418,21 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		 * Store dependencies 
 		 */
 		btnSave = new Button(container, SWT.NONE);
-		btnSave.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		btnSave.addMouseListener(new MouseAdapter() {
+		btnSave.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				// save relations
 				storeRelations();
 			}
 		});
+		btnSave.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+//		btnSave.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseDown(MouseEvent e) {
+//				// save relations
+//				storeRelations();
+//			}
+//		});
 //		btnSave.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/saveall_edit.gif"));
 		btnSave.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/Dependency.gif"));
 		btnSave.setText("Save Realations");
@@ -304,6 +440,24 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		return area;
 	}
 
+	
+	
+	private Tree getActiveTree() {
+		TabItem selectedTab = tabFolder.getSelection()[0];
+		if (selectedTab != null) {
+			if ( selectedTab.getText().startsWith(TAB_TITLE_POSITIVE_RELATIONS)) {
+				return treePreSelectedNewPositiveRelations;
+			}
+			else if (selectedTab.getText().startsWith(TAB_TITLE_NEGATIVE_RELATIONS)) {
+				return treeNewNegativeRelations;
+			}
+			else if (selectedTab.getText().startsWith(TAB_TITLE_NEGATIVE_RELATIONS)) {
+				return treeNewNegativeRelations;
+			}
+		}
+		return null;
+	}
+	
 	
 	private Package getGeneratedDependenciesOwner(Element dependencySource){
 		Package owner = dependencySource.getNearestPackage();
@@ -426,28 +580,6 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	}
 	
 	
-	
-//	private void printMapString(HashMap<Element,HashSet<Element>> map, String mapName){
-//		for (Element key : map.keySet()) {
-//			if (key instanceof NamedElement) {
-//				String keyName = ((NamedElement)key).getName();
-//				
-//				System.err.println(mapName + ": "+ keyName);
-//				
-//				HashSet<Element> values = map.get(key);
-//				for (Element element : values) {
-//					if (element instanceof NamedElement) {
-//						String valueName = ((NamedElement)element).getName();
-//						
-//						System.err.println("          - " + valueName);
-//					}
-//				}
-//				System.err.println();
-//			}
-//		}
-//	}
-	
-	
 	/**
 	 * Create contents of the button bar.
 	 * 
@@ -549,11 +681,13 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	
 	
 	private void createNotSimulatedItems(Tree treeRoot){
-
+		//counter 
+		int i = 0;
 		for (String modelQName : gmd.getSimulationFailedList()) {
 
 			for (Element modelElement : gmd.getGeneratedModels()) {
 				if (getModelQName((NamedElement) modelElement).equals(modelQName)) {
+					i++;
 					TreeItem failedModelItem = new TreeItem(treeRoot,SWT.NONE);
 
 					failedModelItem.setText(getModelName(modelElement) + "  ("+getModelQName(modelElement)+")");
@@ -562,6 +696,9 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 				}
 			}
 		}
+		
+		// update tab indicator
+		tbtmNotSimulated.setText(tbtmNotSimulated.getText() + " ("+i+")");
 	}
 	
 	private TreeItem getPackageTreeItem(Tree treeRoot, Element testSimulationModel){
@@ -931,16 +1068,25 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	
 	// Data structure ************************************************************************
 	
-	class TreeItemData{
+class TreeItemData{
 		
 		private boolean isScenario = false;
+		private boolean isModel = false;
 
 		private boolean isRequirement = false;
 		private boolean isPackage = false;
 		
+		private boolean isProperty = false;
+		
+		private Element UMLElement;
+		
 		private Element scenarioElement;
 		private Element requirementElement;
 		private Element packageElement;
+		private Element modelElement;
+		private Element propertyElement;
+		
+		
 		
 		public boolean isScenario() {
 			return isScenario;
@@ -955,32 +1101,90 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		public boolean isPackage() {
 			return isPackage;
 		}
-
-		public void setPackageElement(Element _packageElement) {
-			packageElement = _packageElement;
-		}
-		public Element getPackageElement() {
-			return packageElement;
-		}
+		
 		public boolean isRequirement() {
 			return isRequirement;
 		}
 		public void setIsRequirement(boolean isRequirement) {
 			this.isRequirement = isRequirement;
 		}
+		public boolean isProperty() {
+			return isProperty;
+		}
+		public void setIsProperty(boolean isProperty) {
+			this.isProperty = isProperty;
+		}
+		public boolean isModel() {
+			return isModel;
+		}
+		public void setIsModel(boolean isModel) {
+			this.isModel = isModel;
+		}
+		
+				
+		
+
+		public void setPackageElement(Element _packageElement) {
+			packageElement = _packageElement;
+			setUMLElement(_packageElement);
+		}
+		public Element getPackageElement() {
+			return packageElement;
+		}
+
 		public Element getScenarioElement() {
 			return scenarioElement;
 		}
 		public void setScenarioElement(Element scenarioElement) {
 			this.scenarioElement = scenarioElement;
+			setUMLElement(scenarioElement);
 		}
 		public Element getRequirementElement() {
 			return requirementElement;
 		}
 		public void setRequirementElement(Element requirementElement) {
 			this.requirementElement = requirementElement;
+			setUMLElement(requirementElement);
+		}
+
+		public Element getModelElement() {
+			return modelElement;
+		}
+		public void setModelElement(Element modelElement) {
+			this.modelElement = modelElement;
+			setUMLElement(modelElement);
+		}
+		public Element getPropertyElement() {
+			return propertyElement;
+		}
+		public void setPropertyElement(Element propertyElement) {
+			this.propertyElement = propertyElement;
+			setUMLElement(propertyElement);
+		}
+		public Element getUMLElement() {
+			return UMLElement;
+		}
+		public void setUMLElement(Element uMLElement) {
+			UMLElement = uMLElement;
 		}
 	}
+
 	
+	
+	public boolean isOpenedFromReportDialog() {
+		return openedFromReportDialog;
+	}
+
+	public void setOpenedFromReportDialog(boolean openedFromReportDialog) {
+		this.openedFromReportDialog = openedFromReportDialog;
+	}
+
+	public HashMap<Element,String> getSimulationResultsFiles() {
+		return simulationResultsFiles;
+	}
+
+	public void setSimulationResultsFiles(HashMap<Element,String> simulationResultsFiles) {
+		this.simulationResultsFiles = simulationResultsFiles;
+	}
 }
 

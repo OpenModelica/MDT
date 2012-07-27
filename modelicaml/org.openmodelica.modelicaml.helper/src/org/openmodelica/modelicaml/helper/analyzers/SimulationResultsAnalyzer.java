@@ -102,6 +102,9 @@ public class SimulationResultsAnalyzer {
 							
 							// if requirement was not evaluated -> negative relation
 							else { 
+								
+								gmd.addToNotEvaluatedRequirements(gmd.getModelToTreeItemKeyString(model, statusDotPath));
+								
 								// add only new dependencies
 								for (TreeObject scenario : scenarios) {
 									

@@ -29,7 +29,7 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.gen.modelica.popupactions.GenerateModelicaCodeFromEntireModelicaMLModelAction;
 import org.openmodelica.modelicaml.helper.analyzers.SimulationResultsAnalyzer;
 import org.openmodelica.modelicaml.helper.dialogs.AnalyseSimulationResulstOptionsDialog;
-import org.openmodelica.modelicaml.helper.dialogs.AutomaticScenarioBasedVerificationReportDialog;
+import org.openmodelica.modelicaml.helper.dialogs.ScenarioBasedVerificationReportDialog;
 import org.openmodelica.modelicaml.helper.dialogs.SelectScenarioToReqRelationsToCreateDialog;
 import org.openmodelica.modelicaml.helper.simulation.Simulator;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
@@ -37,7 +37,9 @@ import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 
 	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
-	private HashMap<Element,String> simulationResultsFile = new HashMap<Element,String>();
+
+	// map of models and the corresponding simulation result paths (absolute)
+	private HashMap<Element,String> simulationResultsFiles = new HashMap<Element,String>();
 	
 	protected GeneratedModelsData generatedModelsData;
 	
@@ -45,6 +47,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	private boolean simulate = false;
 	private boolean analyzeFiles = false;
 	private String resultsFileFolderPath; 
+		
 	
 	private String projectPath;
 	
@@ -66,17 +69,22 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
-					SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(ModelicaMLServices.getShell(), getGeneratedModelsData());
+					ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
+
+					SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), getSimulationResultsFiles(), false);
 					dialog.open();
 				}
 				else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
-		     		AutomaticScenarioBasedVerificationReportDialog dialog = new AutomaticScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGeneratedModelsData());
+					ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
+
+					ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), getSimulationResultsFiles(), false);
 		     		dialog.open();
 				}
 			}
 		});
 	}
-         
+
+	 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
@@ -96,6 +104,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 			boolean go = setUpProjectData();
 			
 			if (go) {
+				
 				setSimulate(dialog.isSimulate());
 				setOnlyRecordRequirementStatus(dialog.isRecordOnlyRequirements());
 
@@ -105,6 +114,9 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 				generatedModelsData = dialog.getGeneratedModelsData();
 				
 				proceed();
+			}
+			else {
+				MessageDialog.openError(new Shell(), "Simulation Results Analysis Error", "Could not access the ModelicaML model. Please open it in editor.");
 			}
 		}
 		return null;
@@ -138,6 +150,8 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 			            	
 			            	// generate code, simulated
 							final Simulator simulator = new Simulator(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatus());
+							
+							ModelicaMLServices.notify("ModelicaML Simulation", "Simulation is running in background. \nIt does not block the editor. \nYou can continue working ...", 0, 1);
 							simulator.generateCodeAndSimulate();
 							
 							simulator.getSimulationJob().addJobChangeListener(new JobChangeAdapter() {
@@ -152,11 +166,14 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 												if (monitor.isCanceled()){
 													return Status.CANCEL_STATUS;
 												}
-												simulationResultsFile = simulator.getSimulationResultsFile();
+												simulationResultsFiles = simulator.getSimulationResultsFile();
 												notSimulatedModels = simulator.getNotSimulatedModels();
 												generatedModelsData = simulator.getGmd();
 												
-												SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFile, notSimulatedModels, monitor);
+												// set the results folder path used by simulator
+												setResultsFileFolderPath(simulator.getSimulationResultsFolderPath());
+												
+												SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFiles, notSimulatedModels, monitor);
 												analyzer.analyze();
 												
 												return Status.OK_STATUS;
@@ -190,7 +207,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 				String resultFilePath = resultsFileFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) VeM);
 				simulationResultFiles.put(VeM, resultFilePath);
 			}
-			simulationResultsFile = simulationResultFiles;
+			simulationResultsFiles = simulationResultFiles;
 			
 			analysisJob = new Job("Analysing results ...") {
 				
@@ -201,7 +218,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 						return Status.CANCEL_STATUS;
 					}
 					
-					SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFile, notSimulatedModels, monitor);
+					SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFiles, notSimulatedModels, monitor);
 					analyzer.analyze();
 					
 					return Status.OK_STATUS;
@@ -215,6 +232,17 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	}
 	
 	
+	public HashMap<Element, String> getSimulationResultsFiles() {
+		return simulationResultsFiles;
+	}
+
+
+	public void setSimulationResultsFiles(
+			HashMap<Element, String> simulationResultsFiles) {
+		this.simulationResultsFiles = simulationResultsFiles;
+	}
+
+
 	private boolean setUpProjectData(){
 		
 		// get UML model data

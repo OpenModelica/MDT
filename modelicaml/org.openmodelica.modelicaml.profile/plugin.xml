@@ -212,8 +212,8 @@
             allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
-               id="org.openmodelica.modelicaml.toolbar"
-               label="ModelicaML">
+               id="org.openmodelica.modelicaml.toolbar.codegeneration"
+               label="ModelicaML Code Generation">
             <command
                   commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCode"
                   icon="resources/icons/icons16/generate_code.gif"
@@ -259,6 +259,7 @@
                   name="org.openmodelica.modelicaml.profile.separator1"
                   visible="true">
             </separator>
+            <!--
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification"
                   icon="resources/icons/icons16/automaticScenarioBasedVerification.gif"
@@ -342,6 +343,7 @@
                   </with>
                </visibleWhen>
             </command>
+            -->
          </toolbar>
       </menuContribution>
    </extension>

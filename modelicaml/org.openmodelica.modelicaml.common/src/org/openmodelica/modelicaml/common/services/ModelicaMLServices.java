@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +32,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.ui.toolbox.notification.builders.NotificationBuilder;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -43,9 +46,45 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
 
 public class ModelicaMLServices {
 
+	/*
+	 * Papyrus notification popup 
+	 */
+	public static void notify(final String title, final String message, final int messageType, final long displayTimeInSeconds){
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				
+				NotificationBuilder notification = new NotificationBuilder();
+
+				notification.setAsynchronous(true);
+				notification.setTemporary(true);
+				notification.setDelay(displayTimeInSeconds * 1000);
+//				notification.setHTML(true); // does not work :(
+				
+				if (messageType == 0) {
+					notification.setType(org.eclipse.papyrus.ui.toolbox.notification.Type.INFO);
+				}
+				else if (messageType == 1) {
+					notification.setType(org.eclipse.papyrus.ui.toolbox.notification.Type.WARNING);
+				}
+				else if (messageType == 2) {
+					notification.setType(org.eclipse.papyrus.ui.toolbox.notification.Type.ERROR);
+				}
+				
+				notification.setTitle(title);
+				notification.setMessage(message);
+				
+				// set ModelicaML image
+				notification.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/ModelicaML_logo.gif"));
+				
+				// run
+				notification.run();
+			}
+		});
+	}
 	
 	
 	
@@ -67,6 +106,8 @@ public class ModelicaMLServices {
 //			System.err.println("modifiedModelTimeStamp < generatedCodeTimeStamp: " + (modifiedModelTimeStamp < generatedCodeTimeStamp));
 //		}
 		
+//		notify("Checking if code generation is needed ... ", 1);
+		
 		if (generatedCodeTimeStamp != null && modifiedModelTimeStamp != null) {
 			// if code was generated after the model modification -> no need for regenerating code
 			if (modifiedModelTimeStamp < generatedCodeTimeStamp) {
@@ -83,7 +124,24 @@ public class ModelicaMLServices {
 				// if the folder exists -> then skip the cg
 				boolean codeGenDirExists = folder.isDirectory();
 				if (codeGenDirExists) {
-					System.err.println("Skipping code generation ... ");
+					
+//					System.err.println("Skipping Modelica code generation ... ");
+
+					String resourceName = resource.getURI().toPlatformString(true);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+					String lastCodeGeneration = sdf.format(generatedCodeTimeStamp);
+					String lastModification = sdf.format(modifiedModelTimeStamp);
+					
+					notify("ModelicaML Code Generation", 
+							"Code generation was skipped." +
+							"\nThe model '"+resourceName+"' " +
+							"\nhas not changed since the last code generation." +
+							
+							"\n\nLast model modification: "+lastModification + 
+							"\nLast code generation : "+lastCodeGeneration, 
+							-1,
+							2);
+
 					return false;
 				}
 			}

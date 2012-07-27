@@ -124,6 +124,10 @@ public class ModelicaMLValidationAction implements IHandler {
 				public void done(IJobChangeEvent event) {
 		            if (event.getResult().isOK()) {
 			        		try {
+			        			
+			        			ModelicaMLServices.notify("ModelicaML Validation","Validation completed." +
+			        					"\nUpdating markers...",0, 2);
+			        			
 			        			MarkerUtil.updateMarkers(status, Constants.MARKERTYPE_VALIDATION_PROBLEM, new IMarkerConfigurator() {
 									
 									@Override
@@ -142,8 +146,12 @@ public class ModelicaMLValidationAction implements IHandler {
 
 									}
 								});
+			        			
+			        			
+			        			
 			        		} catch (CoreException e) {
 			        			Activator.getDefault().getLog().log(e.getStatus());
+			        			ModelicaMLServices.notify("ModelicaML Validation","Validation could not complete.",2, 2);
 			        		}
 		            	}
 		            }

@@ -36,6 +36,7 @@ package org.openmodelica.modelicaml.simulation.dialogs;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -48,6 +49,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TreeItem;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.simulation.Activator;
 import org.openmodelica.modelicaml.simulation.plot.PlotComposite;
@@ -62,18 +64,20 @@ public class DialogPlot extends Dialog {
 	private Composite Plot;
 	private ReadMatlab4 reader;
 	private String resultsFilePath;
+	private HashSet<String> preSelectedVariablesToPlot;
 	
 	/** Contains a number of simulation results Key: fully qualified name <Key: time, Value: value>. */
 //	private Map<String, Map<String, String>> simulationResultsAsString;
 
 	
-	public DialogPlot(Shell parentShell, String resultsFilePath) {
+	public DialogPlot(Shell parentShell, String resultsFilePath, HashSet<String> variablesToPlot) {
 		super(parentShell);
 		setBlockOnOpen(false);
         //setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM );
 		setShellStyle( SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.SHELL_TRIM );
         this.resultsFilePath = resultsFilePath;
         this.title = getTitle(resultsFilePath);
+        this.preSelectedVariablesToPlot = variablesToPlot;
 
         try {
 			reader = new ReadMatlab4(resultsFilePath);
@@ -139,6 +143,23 @@ public class DialogPlot extends Dialog {
     				GridLayout TreeLayout = new GridLayout();
     				TreeLayout.makeColumnsEqualWidth = true;
     				Tree.setLayout(TreeLayout);
+    				
+    				/*
+    				 * plot preselected vars
+    				 */
+    				if (preSelectedVariablesToPlot != null && preSelectedVariablesToPlot.size() > 0) {
+    					HashSet<TreeItem> foundItems = getAllTreeItems(((VariableTreeComposite)Tree).getTreeModel());
+    					for (String dotPath : preSelectedVariablesToPlot) {
+        					for (TreeItem treeItem : foundItems) {
+        						
+    							if (treeItem.getData() != null && treeItem.getData().equals(dotPath)) {
+    								((VariableTreeComposite)Tree).getTreeModel().select(treeItem);
+    								treeItem.setChecked(true);
+    	        					((PlotComposite)Plot).addValues(dotPath);
+    							}
+    						}
+    					}
+					}
     			}
     			sashForm1.setWeights(new int[] {600, 273});
     		}
@@ -146,19 +167,47 @@ public class DialogPlot extends Dialog {
         return parent;
 	}
 
+	private HashSet<TreeItem> getAllTreeItems(org.eclipse.swt.widgets.Tree tree){
+		HashSet<TreeItem> foundTreeItems = new HashSet<TreeItem>();
+		TreeItem[] items = tree.getItems();
+		for (TreeItem treeItem : items) {
+			foundTreeItems.add(treeItem);
+			foundTreeItems.addAll(getTreeItems(treeItem));
+		}
+		
+		return foundTreeItems;
+	}
+
+	private HashSet<TreeItem> getTreeItems(TreeItem parent){
+		HashSet<TreeItem> foundTreeItems = new HashSet<TreeItem>();
+		TreeItem[] items = parent.getItems();
+		for (TreeItem treeItem : items) {
+			
+			foundTreeItems.add(treeItem);
+			
+			TreeItem[] childItems = treeItem.getItems();
+			for (TreeItem childItem : childItems) {
+				foundTreeItems.add(childItem);
+				foundTreeItems.addAll(getTreeItems(childItem));
+			}
+		}
+		return foundTreeItems;
+	}
+	
+	
+	
 	private String getSimulationModelName(String filePath){
 		String name = filePath;
 		if (filePath != null && filePath.length() != 0) {
 			String[] splitted = filePath.split("/");
 			name = splitted[splitted.length - 1];
-			
-			// if it is .xml file 
-			name = name.replaceFirst("_res.xml", "");
-			// if it is .mat file 
-			name = name.replaceFirst("_res.mat", "");
+
+			name = name.replaceFirst(".mat", "");
 
 			String[] dotSplitted = name.split("\\.");
-			name = dotSplitted[dotSplitted.length - 1];
+			if (dotSplitted.length > 0) {
+				name = dotSplitted[dotSplitted.length - 1];	
+			}
 		}
 		return name;
 	}

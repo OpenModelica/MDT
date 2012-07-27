@@ -23,7 +23,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
@@ -47,21 +49,65 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	public final static String XMLTagName_report 						= "report";
 	public final static String XMLTagName_date 							= "date";
 	
+	// view tag name
 	public final static String XMLTagName_verificationModels 			= "verificationModels";
 	
+	public final static String XMLTagName_notImplementedRequirements	= "notImplementedRequirements";
+	public final static String XMLTagName_violatedRequirements 			= "violatedRequirements";
+	public final static String XMLTagName_notViolatedRequirements 		= "notViolatedRequirements";
+	public final static String XMLTagName_notEvaluatedRequirements 		= "notEvaluatedRequirements";
+	
+	public final static String XMLTagName_notUsedScenarios 				= "notUsedScenarios";
+	public final static String XMLTagName_usedScenarios 				= "usedScenarios";
+
+	public final static String XMLTagName_newPositiveRelations 			= "newPositiveRelations";
+	public final static String XMLTagName_newNegativeRelations 			= "newNegativeRelations";
+	
+	public final static String XMLTagName_simulated 					= "simulatedModels";
+	public final static String XMLTagName_notSimulated 					= "notSimulatedModels";
+
+	// view name 
+	public final static String ViewName_verificationModels 				= "All Verification Models";
+	
+	public final static String ViewName_notImplementedRequirements		= "Not Implemented Requirements";
+	public final static String ViewName_violatedRequirements 			= "Violated Requirements";
+	public final static String ViewName_notViolatedRequirements 		= "Not Violated Requirements";
+	public final static String ViewName_notEvaluatedRequirements 		= "Not Evaluated Requirements";
+	
+	public final static String ViewName_notUsedScenarios 				= "Not Used Scenarios";
+	public final static String ViewName_usedScenarios 					= "Used Scenarios";
+
+	public final static String ViewName_newPositiveRelations 			= "New Positive Relations";
+	public final static String ViewName_newNegativeRelations 			= "New Negative Relations";
+	
+	public final static String ViewName_simulated 						= "Simulated Models";
+	public final static String ViewName_notSimulated 					= "Not Simulated Models";
+
+	
+	// view name 
+	public final static String ViewDescription_verificationModels 				= "All verification models.";
+	
+	public final static String ViewDescription_notImplementedRequirements		= "Not Implemented Requirements.";
+	public final static String ViewDescription_violatedRequirements 			= "Requirements that were evaluated and violated.";
+	public final static String ViewDescription_notViolatedRequirements 			= "Requirements that were evaluated and not violated.";
+	public final static String ViewDescription_notEvaluatedRequirements 		= "Requirements that were not evaluated in any of the verification models.";
+	
+	public final static String ViewDescription_notUsedScenarios 				= "Scenarios that were not used in this verification session because they do not have appropriate providers to stimulate the system model.";
+	public final static String ViewDescription_usedScenarios 					= "Scenarios that were used in this verification session because they have appropriate providers to stimulate the system model.";
+
+	public final static String ViewDescription_newPositiveRelations 			= "New discovered positive relations between scenarios and requirements ("+Constants.stereotypeQName_UsedToVerify+" relation).";
+	public final static String ViewDescription_newNegativeRelations 			= "New discovered negative relations between scenarios and requirements ("+Constants.stereotypeQName_DoNotUseToVerify+" relation).";
+	
+	public final static String ViewDescription_simulated 						= "All models that were simulated and for which simulation result were found.";
+	public final static String ViewDescription_notSimulated 					= "All models for which no simulation result file could be found.";
+	
+	
+	// items
 	public final static String XMLTagName_verificationModel 			= "verificationModel";
 	public final static String XMLTagName_systemModel 					= "systemModel";
 	public final static String XMLTagName_comments 						= "comments";
 	public final static String XMLTagName_comment 						= "comment";
 	public final static String XMLTagName_scenario 						= "scenario";
-	
-	public final static String XMLTagName_notUsedScenarios 				= "notUsedScenarios";
-	public final static String XMLTagName_usedScenarios 				= "usedScenarios";
-	
-	public final static String XMLTagName_notImplementedRequirements	= "notImplementedRequirements";
-	public final static String XMLTagName_violatedRequirements 			= "violatedRequirements";
-	public final static String XMLTagName_notViolatedRequirements 		= "notViolatedRequirements";
-	public final static String XMLTagName_notEvaluatedRequirements 			= "notEvaluatedRequirements";
 	
 	public final static String XMLTagName_requirements 					= "requirements";
 	public final static String XMLTagName_requirement 					= "requirement";
@@ -82,18 +128,16 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	public final static String XMLTagName_qualifiedName 				=  "qualifiedName";
 	public final static String XMLTagName_instanceName 					= "instanceName";
 
-	public final static String XMLTagName_newPositiveRelations 			= "newPositiveRelations";
-	public final static String XMLTagName_newNegativeRelations 			= "newNegativeRelations";
-	
-	public final static String XMLTagName_simulated 					= "simulatedModels";
-	public final static String XMLTagName_notSimulated 					= "notSimulatedModels";
-	
 	public final static String XMLTagName_count 						= "count";
+
+	public final static String XMLTagName_description 					= "description";
+
 	
+	// generated file content
 	private String fileContent;
 	
+	// type of content
 	public static int XMLContent = 0;
-	
 	
 	
 	public XMLReportGenerator(GeneratedModelsData gmd, int contentType) {
@@ -109,12 +153,15 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			IProgressService ps = wb.getProgressService();
 			try {
 				ps.run(false, true, this);
+				
 			} catch (InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MessageDialog.openError(new Shell(), "Report Generation Error", "Could not invode the report generation.");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MessageDialog.openError(new Shell(), "Report Generation Interruption", "Report generation was interrupted.");
 			}
 		}
 	}
@@ -134,7 +181,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		String string = "";
 		string += "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
 		
-		// TODO: XSL tag for translation into HTML 
+		// XSL tag for translation into HTML 
+		string += "<?xml-stylesheet type=\"text/xsl\" href=\"ReportTranslator.xslt\"?>";
 		
 		string += "<"+XMLTagName_report+">";
 		
@@ -177,9 +225,13 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		// all verification models
 		monitor.setTaskName("Collecting Verification Models ...");
 		string += getVeMItems();
-
+		
+		// all simulated models 
+		monitor.setTaskName("Collecting Simulated Models ...");
+		string += getSimulatedModelItems();
+		
 		// not simulated models
-		monitor.setTaskName("Collecting Not Simulated ...");
+		monitor.setTaskName("Collecting Not Simulated Models ...");
 		string += getNotSimulatedModelItems();
 		
 		string += "</"+XMLTagName_report+">";
@@ -191,7 +243,10 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	
 	private String getNotSimulatedModelItems(){
 		String string = "";
-		string += "<"+XMLTagName_notSimulated+">";
+		
+		string += "<"+XMLTagName_notSimulated+" name=\""+ ViewName_notSimulated+"\">";
+		
+		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notSimulated) +  "</"+XMLTagName_description+">";
 		
 		int i = 0;
 		for (Element model : gmd.getNotSimulatedModels()) {
@@ -215,11 +270,50 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		return string;
 	}
 	
+	private String getSimulatedModelItems(){
+		
+		HashSet<Element> notSimulatedModels = gmd.getNotSimulatedModels();
+		HashSet<Element> allModels = gmd.getGeneratedModels();
+		allModels.removeAll(notSimulatedModels);
+		
+		HashSet<Element> simulatedModels = allModels;
+		
+		
+		String string = "";
+		
+		string += "<"+XMLTagName_simulated+" name=\""+ ViewName_simulated+"\">";
+		
+		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_simulated) +  "</"+XMLTagName_description+">";
+		
+		int i = 0;
+		for (Element model : simulatedModels) {
+			
+			// counter
+			i++;
+			
+			string += "<"+XMLTagName_verificationModel+" "+
+						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
+						XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
+			
+			string += 	getAllComments(model);
+			
+			string += "</"+XMLTagName_verificationModel+">";
+		}
+		
+		string += "<"+XMLTagName_count+">" + i + " of " + gmd.getGeneratedModels().size() + "</"+XMLTagName_count+">";
+		
+		string += "</"+XMLTagName_simulated+">";
+		
+		return string;
+	}
+	
 	
 	private String getVeMItems(){
 		String string = "";
 		
-		string += "<"+XMLTagName_verificationModels+">";
+		string += "<"+XMLTagName_verificationModels+" name=\""+ViewName_verificationModels+"\">";
+		
+		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_verificationModels) +  "</"+XMLTagName_description+">";
 		
 		int i = 0;
 		
@@ -271,10 +365,14 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		int i = 0;
 		
 		if (isPositiveRelations) {
-			string += "<"+XMLTagName_newPositiveRelations+">";
+			string += "<"+XMLTagName_newPositiveRelations+" name=\""+ ViewName_newPositiveRelations +"\">";
+			
+			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_newPositiveRelations) +  "</"+XMLTagName_description+">";
 		}
 		else {
-			string += "<"+XMLTagName_newNegativeRelations+">";
+			string += "<"+XMLTagName_newNegativeRelations+" name=\""+ ViewName_newNegativeRelations + "\">";
+			
+			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_newNegativeRelations) +  "</"+XMLTagName_description+">";
 		}
 
 		HashMap<TreeObject, HashSet<TreeObject>> relationsMap;
@@ -485,7 +583,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 						XMLTagName_plotLink +"=\"" + StringEscapeUtils.escapeXml(getPlotLink(VeM, client)) + "\"" +
 								">";
 			
-			string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(client.getFinalModificationRightHand()) + "</"+XMLTagName_binding+">";;
+			string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(client.getFinalModificationRightHand()) + "</"+XMLTagName_binding+">";
 			string += "</"+XMLTagName_client+">";
 		}
 		return string;
@@ -524,7 +622,9 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		
 		HashSet<Element> usedScenarios = gmd.getAllScenarios();
 		
-		string += "<"+XMLTagName_usedScenarios+">";
+		string += "<"+XMLTagName_usedScenarios+" name=\""+ViewName_usedScenarios+"\">";
+		
+		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_usedScenarios) +  "</"+XMLTagName_description+">";
 		
 		for (Element usedScenario : usedScenarios) {
 			
@@ -559,7 +659,26 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				for (TreeObject requirementTreeObject : requirements) {
 					Element type = requirementTreeObject.getComponentType();
 					if (evaluatedRequirement.equals(type)) {
-						modelContains = true; 
+						
+						String statusDotPath = requirementTreeObject.getDotPath().trim() + "." + gmd.requirementStatusPropertyName;
+						String key = gmd.getModelToTreeItemKeyString(VeM, statusDotPath);
+
+						boolean isViolated = gmd.getViolatedRequirements().contains(key);
+						boolean isEvaluated = gmd.getEvaluatedRequirements().contains(key);
+						boolean isNotEvaluated = gmd.getNotEvaluatedRequirements().contains(key);
+						
+						// if only violated requirements should be shown
+						if (onlyViolatedRequirements && isViolated) {
+							modelContains = true;
+						}
+						// if only not violated should be shown
+						else if (onlyNotViolatedRequirements && isEvaluated && !isViolated) {
+							modelContains = true; 
+						}
+						// of only not evaluated should be shown
+						else if (onlyNotEvaluatedRequirements && isNotEvaluated) {
+							modelContains = true; 
+						} 
 					}
 				}
 			}
@@ -580,12 +699,14 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		HashSet<Element> evaluatedRequirements = new HashSet<Element>();
 		if (onlyViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsViolatedInScenarios();
-			string += "<"+XMLTagName_violatedRequirements+">";
+			string += "<"+XMLTagName_violatedRequirements+" name=\""+ViewName_violatedRequirements+"\">";
+			string += "<"+XMLTagName_description+">" + StringEscapeUtils.escapeXml(ViewDescription_violatedRequirements)+  "</"+XMLTagName_description+">";
 
 		}
 		else if (onlyNotViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsNotViolatedInScenarios();
-			string += "<"+XMLTagName_notViolatedRequirements+">";
+			string += "<"+XMLTagName_notViolatedRequirements+" name=\""+ViewName_notViolatedRequirements+"\">";
+			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notViolatedRequirements) +  "</"+XMLTagName_description+">";
 		}
 
 		for (Element evaluatedRequirement : evaluatedRequirements) {
@@ -594,7 +715,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(evaluatedRequirement) +"\"" +
 					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(evaluatedRequirement))+"\" "+
 					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(evaluatedRequirement))+"\">";
-					string += getAllComments(evaluatedRequirement);
+					string += getAllRequirementComments(evaluatedRequirement);
 		
 			// add requirement text
 			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
@@ -624,12 +745,14 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	private String getNotEvaluatedRequirementItems(){
 		String string = "";
 		int i = 0;
-		boolean showOnlyNotEvaluated = true;
 		boolean showOnlyViolated = false;
 		boolean showOnlyNotViolated = false;
+		boolean showOnlyNotEvaluated = true;
 		
-		HashSet<Element> evaluatedRequirements = gmd.getNotEvaluatedRequirements();
-		string += "<"+XMLTagName_notEvaluatedRequirements+">";
+		HashSet<Element> evaluatedRequirements = gmd.getNotEvaluatedRequirementElements();
+		string += "<"+XMLTagName_notEvaluatedRequirements+" name=\""+ViewName_notEvaluatedRequirements+"\">";
+		
+		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notEvaluatedRequirements)+  "</"+XMLTagName_description+">";
 
 
 		for (Element evaluatedRequirement : evaluatedRequirements) {
@@ -638,7 +761,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(evaluatedRequirement) +"\"" +
 					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(evaluatedRequirement))+"\" "+
 					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(evaluatedRequirement))+"\">";
-					string += getAllComments(evaluatedRequirement);
+					string += getAllRequirementComments(evaluatedRequirement);
 		
 			// add requirement text
 			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
@@ -667,7 +790,9 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		
 		HashSet<Element> allNotImplementedRequirements = allFoundRequirements;
 		if (allNotImplementedRequirements != null && allNotImplementedRequirements.size() > 0) {
-			string += "<"+XMLTagName_notImplementedRequirements+">";
+			string += "<"+XMLTagName_notImplementedRequirements+" name=\""+ViewName_notImplementedRequirements+"\">";
+			
+			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notImplementedRequirements) +  "</"+XMLTagName_description+">";
 			
 			for (Element requirement : allNotImplementedRequirements) {
 				
@@ -677,7 +802,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				string += "<"+XMLTagName_requirement+" "+
 							XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(requirement))+"\" "+
 							XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(requirement))+"\">";
-				string += getAllComments(requirement);
+				string += getAllRequirementComments(requirement);
 				string += "</"+XMLTagName_requirement+">";
 			}
 			
@@ -700,7 +825,10 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		
 		HashSet<Element> allNotUsedScenarios = allFoundScenarios;
 		if (allNotUsedScenarios != null && allNotUsedScenarios.size() > 0) {
-			string += "<"+XMLTagName_notUsedScenarios+">";
+			
+			string += "<"+XMLTagName_notUsedScenarios+" name=\""+ViewName_notUsedScenarios+"\">";
+			
+			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notUsedScenarios) +  "</"+XMLTagName_description+">";
 			
 			for (Element scenario : allNotUsedScenarios) {
 				// counter
@@ -761,6 +889,30 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				//counter
 				i++;
 				string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
+			}
+		}
+		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+		string += "</"+XMLTagName_comments+">";
+		return string;
+	}
+	
+	/*
+	 * Additional info 
+	 */
+	private String getAllRequirementComments(Element element) {
+		String string = "";
+		int i = 0;
+		
+		string += "<"+XMLTagName_comments+">";
+		if (element instanceof Element) {
+			for (Comment comment : element.getOwnedComments()) {
+				
+				// requierement text is also a comment. Do not add requirement text as comment
+				if (!comment.getBody().trim().equals(ModelicaMLServices.getRequirementID(element))) {
+					//counter
+					i++;
+					string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
+				}
 			}
 		}
 		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
@@ -880,9 +1032,4 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	public void setFileContent(String fileContent) {
 		this.fileContent = fileContent;
 	}
-
-
-
-
-
 }

@@ -40,35 +40,12 @@ public class Simulator {
 
 	private boolean recordOnlyRequirementStatus;
 	
-//	private JobChangeAdapter simulationJobChangeAdaptor = new JobChangeAdapter() {
-//			public void done(IJobChangeEvent event) {
-//	            if (event.getResult().isOK()) {
-//	            		// open dialog
-//	            		openReport();
-//	            	}
-//	            }
-//	         };
-//    
-    
-	
 	public Simulator(GeneratedModelsData gmd, String projectPath, boolean recordOnlyRequirementStatus) {
 		this.gmd = gmd;
 		this.projectPath = projectPath;
 		this.setRecordOnlyRequirementStatus(recordOnlyRequirementStatus);
 	}
 	
-	
-	
-//	protected void openReport(){
-// 		// Use this to open a Shell in the UI thread
-// 		Display.getDefault().asyncExec(new Runnable() {
-// 			public void run() {
-//				// open report
-//        		AutomaticScenarioBasedVerificationReportDialog dialog = new AutomaticScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGmd());
-//        		dialog.open();
-// 			}
-// 		});
-// 	}
 	
 	public void generateCodeAndSimulate(){
 		
@@ -84,74 +61,13 @@ public class Simulator {
 				// simulate models
 				simulateModels(monitor);
 				
-				//post process the simulation results files and fill conclusion data 
-				// analyzeResults(monitor);
-				
-//				SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(gmd, simulationResultsFile, notSimulatedModels, monitor);
-//				analyzer.analyze();
-				
 				return Status.OK_STATUS;
 			}
 		};
 		
-//		simulationJob.addJobChangeListener(simulationJobChangeAdaptor);
 		simulationJob.setUser(true);
 		simulationJob.schedule();
 		
-		
-//		if (projectPath != null) {
-//			// generate code
-//			GenerateModelicaCodeFromEntireModelicaMLModelAction cgAction = new GenerateModelicaCodeFromEntireModelicaMLModelAction();
-//			try {
-//				
-//				// generate code
-//				/*
-//				 * TODO: set name space for code generation in order to only generate code for the new models
-//				 */
-//				cgAction.execute(null);
-//				/*
-//				 * TODO: reset name space for later code generation
-//				 */
-//				
-//				// when finished start the simulation job
-//				cgAction.getJob().addJobChangeListener(new JobChangeAdapter() {
-//					public void done(IJobChangeEvent event) {
-//			            if (event.getResult().isOK()) {
-//			            	// start simulation job
-//			            	simulationJob = new Job("Simulating") {
-//								
-//								@Override
-//								protected IStatus run(IProgressMonitor monitor) {
-//									
-//									if (monitor.isCanceled()){
-//										return Status.CANCEL_STATUS;
-//									}
-//									
-//									// simulate models
-//									simulateModels(monitor);
-//									
-//									//post process the simulation results files and fill conclusion data 
-//									// analyzeResults(monitor);
-//									
-////									SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(gmd, simulationResultsFile, notSimulatedModels, monitor);
-////									analyzer.analyze();
-//									
-//									return Status.OK_STATUS;
-//								}
-//							};
-//							
-////							simulationJob.addJobChangeListener(simulationJobChangeAdaptor);
-//							simulationJob.setUser(true);
-//							simulationJob.schedule();
-//			            	}
-//			            }
-//			         });
-//				
-//			} catch (ExecutionException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 	}
     
     public Job getSimulationJob() {
@@ -251,8 +167,6 @@ public class Simulator {
 			if (newMatFileInfo.exists()) {
 				//Indicate that OMC generated the files, i.e. the simulation was ok
 				simulationSuccededList.add(modelQName);
-//				simulationResultsFile.add(simulationResultsFolderPath + "/" + newMatFileInfo.toString());
-//				String resultsFilePath = simulationResultsFolderPath + "/" + newMatFileInfo.toString();
 				simulationResultsFile.put(genModel, filePath);
 				
 				addToLog("'"+modelQName+"' was simulated.");

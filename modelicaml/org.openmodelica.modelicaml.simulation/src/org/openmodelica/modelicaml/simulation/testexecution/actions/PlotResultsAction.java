@@ -2,19 +2,17 @@ package org.openmodelica.modelicaml.simulation.testexecution.actions;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
 import org.openmodelica.modelicaml.simulation.dialogs.DialogPlot;
 
 public class PlotResultsAction implements IWorkbenchWindowActionDelegate {
@@ -22,6 +20,7 @@ public class PlotResultsAction implements IWorkbenchWindowActionDelegate {
 	protected String filePath = null;
 //	private DialogPlot dialog;
 	boolean canceled = false;
+	private HashSet<String> preSelectedVariablesToPlot;
 	
 
 	class LongRunningOperation implements IRunnableWithProgress {
@@ -57,7 +56,7 @@ public class PlotResultsAction implements IWorkbenchWindowActionDelegate {
 			filePath = filePath.replaceFirst("file://", "");
 			if (fileExists(this.filePath)) {
 				
-				DialogPlot dialog = new DialogPlot(new Shell(), filePath);
+				DialogPlot dialog = new DialogPlot(new Shell(), filePath, getPreSelectedVariablesToPlot());
 //				dialog.open();
 				
 				try {
@@ -112,6 +111,17 @@ public class PlotResultsAction implements IWorkbenchWindowActionDelegate {
 
 	public void setFilePath(String path){
 		this.filePath = path;
+	}
+
+
+	public HashSet<String> getPreSelectedVariablesToPlot() {
+		return preSelectedVariablesToPlot;
+	}
+
+
+	public void setPreSelectedVariablesToPlot(
+			HashSet<String> preSelectedVariablesToPlot) {
+		this.preSelectedVariablesToPlot = preSelectedVariablesToPlot;
 	}
 
 }

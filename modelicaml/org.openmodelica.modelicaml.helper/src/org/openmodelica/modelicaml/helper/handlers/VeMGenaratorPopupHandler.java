@@ -182,8 +182,7 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 		
 
 		// add a listener to catch the result of bindings generation
-		
-		dialog.getShell().addDisposeListener(listener);
+		dialog.getDialogShell().addDisposeListener(listener);
 		dialog.open();
 	}
 	

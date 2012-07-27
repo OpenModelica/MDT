@@ -85,7 +85,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	/*
 	 * Indicates that there was at least one model for which no correct bindings could be generated.
 	 */
-	private boolean bindingErrorsDetected = false;
+//	private boolean bindingErrorsDetected = false;
 	
 	
 	/*
@@ -97,19 +97,20 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	
 	
 	private String messageVemGen = "This helper will create a package that will contain verification models composed of the selected system model, " +
-			"\r\nscenario (if selected) and requirements that can be verified. " +
-			"Note, the composition of the verification models \r\nis based on value bindings which must to be defined correctly.";
+			"\r\nscenario (if selected) and requirements. Requirements are combined with scenarios based on known " +
+			"\r\nrelations (positive or negative respectively). Note, the composition of the verification models " +
+			"\r\nis based on bindings which must to be defined correctly.";
 
 	private String messageScenarioToReqRelationDiscovery = 
 			"This helper will create a package with models composed of the selected system model, scenario and requirements " +
-			"\r\nthat can be verified, then simulate them, and then analize results in order to determine relations between scenarios " +
-			"\r\nand requirements. Note, the composition of the verification models is based on value bindings which must to be defined correctly.";
+			"\r\nthat can be verified, then simulate and analize results in order to determine new relations between scenarios " +
+			"\r\nand requirements. Note, the composition of the verification models is based on bindings which must to be defined correctly.";
 	
 	private String messageAutomaticScenarioBasedVerification = 
 			"This helper will create a package with models composed of the selected system model, scenarios and requirements " +
-			"\r\nthat can be verified, then simulate them, and then analize results. Note that requierements with positive relations will be " +
-			"\r\nincluded only in corresponding scenarios. Requirements with negative relations will be excluded from corresponding scenarios. " +
-			"\r\nNote, the composition of the verification models is based on value bindings which must to be defined correctly.";
+			"\r\nthat can be verified, then simulate them, and then analize results. Note that if the 'minimize' option is selected requierements " +
+			"\r\nwith positive relations will be combined only with corresponding scenarios. Requirements with negative relations will not be combined " +
+			"\r\nfrom corresponding scenarios. The composition of the verification models is based on bindings which must to be defined correctly.";
 
 	
 	private String dialogMessage = "";
@@ -135,6 +136,15 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	private boolean considerNegativeRequirementsRelations = false;
 	private boolean considerAllUnknownRequirementsRelations = false;
 
+	/*
+	 * If true then the generator will ONLY combine a requirement with a scenario if this 
+	 * scenario explicitly references this requirement (by <<UseToVerify>> relation) or
+	 * if there is no scenario at all that references this requirement either by 
+	 * positive (<<UseToVerify>> relation) or negative (<<DoNotUseToVerify>> relation)
+	 */
+	private boolean minimizeNumberOfRequirementInstantiations = false;
+	
+	
 	// scenario based models generator
 	private GeneratorVeMScenariosBased smg;
 
@@ -183,6 +193,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 			considerPositiveRequirementsRelations = true;
 			considerNegativeRequirementsRelations = false;
 			considerAllUnknownRequirementsRelations = false;
+			minimizeNumberOfRequirementInstantiations = false;
 		}
 		else if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY){
 			dialogMessage = messageScenarioToReqRelationDiscovery;
@@ -190,6 +201,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 			considerPositiveRequirementsRelations = true;
 			considerNegativeRequirementsRelations = true;
 			considerAllUnknownRequirementsRelations = true;
+			minimizeNumberOfRequirementInstantiations = false;
 		}
 		else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 			dialogMessage = messageAutomaticScenarioBasedVerification;
@@ -198,15 +210,21 @@ public class VeMGenerationOptionsDialog extends Dialog {
 			considerPositiveRequirementsRelations = true;
 			considerNegativeRequirementsRelations = true;
 			considerAllUnknownRequirementsRelations = true;
+			minimizeNumberOfRequirementInstantiations = true;
 		}
 		
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
 	}
 
-	@Override
-	public Shell getShell() {
+//	@Override
+//	public Shell getShell() {
+//		return getParentShell();
+//	}
+
+	public Shell getDialogShell() {
 		return getParentShell();
 	}
+
 	
 	@Override
 	protected Control createContents(Composite parent) {
@@ -407,7 +425,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		// Options Group
 		Group grpOptions = new Group(container, SWT.NONE);
 		GridData gd_grpOptions = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
-		gd_grpOptions.heightHint = 135;
+		gd_grpOptions.heightHint = 166;
 		grpOptions.setLayoutData(gd_grpOptions);
 		grpOptions.setText("Options");
 		
@@ -445,7 +463,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 				}
 			}
 		});
-		btnRequirementsBased.setBounds(10, 119, 625, 16);
+		btnRequirementsBased.setBounds(10, 139, 625, 16);
 		btnRequirementsBased.setText("Create only one model containing the selected model and all possible requirements that can be verified");
 		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 			btnRequirementsBased.setEnabled(false); 
@@ -501,6 +519,8 @@ public class VeMGenerationOptionsDialog extends Dialog {
 			btnConsiderNegativeRelations.setEnabled(false); 
 		}
 		
+		
+		
 		final Button btnConsiderAllRequirements = new Button(grpOptions, SWT.CHECK);
 		btnConsiderAllRequirements.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -524,8 +544,31 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		}
 		
 		
+		
+		final Button btnMinimizeNumberOfRequirementInstantiations = new Button(grpOptions, SWT.CHECK);
+		btnMinimizeNumberOfRequirementInstantiations.setBounds(20, 112, 694, 16);
+		btnMinimizeNumberOfRequirementInstantiations.setText("Minimize the number of requirement instantiations");
+		btnMinimizeNumberOfRequirementInstantiations.setSelection(minimizeNumberOfRequirementInstantiations);
+		btnMinimizeNumberOfRequirementInstantiations.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnMinimizeNumberOfRequirementInstantiations.getSelection()) {
+					setMinimizeNumberOfRequirementInstantiations(true);
+				}
+				else {
+					setMinimizeNumberOfRequirementInstantiations(false);
+				}
+			}
+		});
+		if (!(mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION)) {
+			btnMinimizeNumberOfRequirementInstantiations.setEnabled(false); 
+		}
+		
+		
 		// set images for all buttons
 		updateButtonImages();
+		
+		
 		return container;
 	}
 	
@@ -576,6 +619,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 						isConsiderPositiveRequirementsRelations(), 
 						isConsiderNegativeRequirementsRelations(), 
 						isConsiderAllUnknownRequirementsRelations(),
+						isMinimizeNumberOfRequirementInstantiations(),
 						getMode());
 				
 				if (!smg.isTestSimulationModelGenerationCanceled()) {
@@ -1188,5 +1232,14 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	
 	public GeneratorVeMScenariosBased getSmg() {
 		return smg;
+	}
+	
+	public boolean isMinimizeNumberOfRequirementInstantiations() {
+		return minimizeNumberOfRequirementInstantiations;
+	}
+
+	public void setMinimizeNumberOfRequirementInstantiations(
+			boolean minimizeNumberOfRequirementInstantiations) {
+		this.minimizeNumberOfRequirementInstantiations = minimizeNumberOfRequirementInstantiations;
 	}
 }

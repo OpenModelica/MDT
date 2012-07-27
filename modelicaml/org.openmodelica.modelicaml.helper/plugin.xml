@@ -195,5 +195,112 @@
             commandId="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="org.openmodelica.modelicaml.toolbar.helper"
+               label="ModelicaML Verification">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification"
+                  icon="icons/automaticScenarioBasedVerification.gif"
+                  label="Automatic Scenario-Based Verification"
+                  style="push"
+                  tooltip="Automatic Scenario-Based Verification">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations"
+                  icon="icons/correlationset.gif"
+                  label="Discover Relations Between Scenarios and Requirements"
+                  style="push"
+                  tooltip="Discover Relations Between Scenarios and Requirements">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator2"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels"
+                  icon="icons/new_testsuite.gif"
+                  label="Create Design Verification Models"
+                  style="push"
+                  tooltip="Create Design Verification Models">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator3"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults"
+                  icon="icons/runanalysis.gif"
+                  label="Analyze Verification Results"
+                  style="push"
+                  tooltip="Analyze Verification Results">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.runtests"
+                  icon="icons/tscriptrun.gif"
+                  label="Run Design Verification Models"
+                  style="push"
+                  tooltip="Run Design Verification Models">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
 
 </plugin>
