@@ -7,22 +7,36 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.lang.StringEscapeUtils;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
@@ -31,11 +45,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
 public class XMLReportGenerator implements IRunnableWithProgress {
@@ -116,6 +132,16 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	public final static String XMLTagName_isEvaluated 					= "isEvaluated";
 	public final static String XMLTagName_isViolated 					= "isViolated";
 	
+	public final static String XMLTagName_startTime 					= "startTime";
+	public final static String XMLTagName_stopTime 						= "stopTime";
+	public final static String XMLTagName_tolerance  					= "tolerance";
+	public final static String XMLTagName_interval						= "intervals";
+	public final static String XMLTagName_outputFormat					= "outputFormat";
+	
+	public final static String XMLTagName_type							= "type";
+	public final static String XMLTagName_variablity					= "variablity";
+	
+	
 	public final static String XMLTagName_client 						= "client";
 	
 	public final static String XMLTagName_isMandatory 					= "isMandatory";
@@ -127,10 +153,13 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	public final static String XMLTagName_name 							= "name";
 	public final static String XMLTagName_qualifiedName 				=  "qualifiedName";
 	public final static String XMLTagName_instanceName 					= "instanceName";
+	public final static String XMLTagName_clientPath 					= "clientPath";
 
 	public final static String XMLTagName_count 						= "count";
 
 	public final static String XMLTagName_description 					= "description";
+	
+	public final static String XMLTagName_uid 							= "uid";
 
 	
 	// generated file content
@@ -139,6 +168,10 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	// type of content
 	public static int XMLContent = 0;
 	
+	private int uid = 0;
+	
+	
+	private IProgressMonitor monitor;
 	
 	public XMLReportGenerator(GeneratedModelsData gmd, int contentType) {
 		
@@ -175,6 +208,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	
 	
 	public String getXMLReportContent(IProgressMonitor monitor){
+		this.monitor = monitor;
 		
 		monitor.setTaskName("Creating XML Report...");
 		
@@ -249,12 +283,13 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notSimulated) +  "</"+XMLTagName_description+">";
 		
 		int i = 0;
-		for (Element model : gmd.getNotSimulatedModels()) {
+		for (Element model :  ModelicaMLServices.getSortedByName(gmd.getNotSimulatedModels())) {
 			
 			// counter
 			i++;
 			
 			string += "<"+XMLTagName_verificationModel+" "+
+						XMLTagName_uid +"=\""+getUid()+"\" "+
 						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
 						XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
 			
@@ -292,6 +327,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			i++;
 			
 			string += "<"+XMLTagName_verificationModel+" "+
+						XMLTagName_uid +"=\""+getUid()+"\" "+
 						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
 						XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
 			
@@ -311,7 +347,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	private String getVeMItems(){
 		String string = "";
 		
-		string += "<"+XMLTagName_verificationModels+" name=\""+ViewName_verificationModels+"\">";
+		string += "<"+XMLTagName_verificationModels +
+				" " + XMLTagName_name + "=\""+ViewName_verificationModels+"\">";
 		
 		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_verificationModels) +  "</"+XMLTagName_description+">";
 		
@@ -342,6 +379,14 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		String string = "";
 		
 		string += "<"+XMLTagName_verificationModel+" "+
+					XMLTagName_uid +"=\""+getUid()+"\" "+
+					
+					XMLTagName_startTime +"=\""+VerificationExecutionServices.getStartTime(model)+"\" "+
+					XMLTagName_stopTime +"=\""+VerificationExecutionServices.getStopTime(model)+"\" "+
+					XMLTagName_tolerance +"=\""+VerificationExecutionServices.getTolerance(model)+"\" "+
+					XMLTagName_interval +"=\""+VerificationExecutionServices.getInterval(model)+"\" "+
+					XMLTagName_outputFormat +"=\""+VerificationExecutionServices.getOutputFormat(model)+"\" "+
+				
 					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
 					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
 
@@ -365,7 +410,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		int i = 0;
 		
 		if (isPositiveRelations) {
-			string += "<"+XMLTagName_newPositiveRelations+" name=\""+ ViewName_newPositiveRelations +"\">";
+			string += "<"+XMLTagName_newPositiveRelations + 
+					" "+ XMLTagName_name + "=\""+ ViewName_newPositiveRelations +"\" >";
 			
 			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_newPositiveRelations) +  "</"+XMLTagName_description+">";
 		}
@@ -388,6 +434,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			Element scenarioType = scenario.getComponentType();
 			
 			string += "<"+XMLTagName_scenario+" "+
+					XMLTagName_uid +"=\""+getUid()+"\" "+	
 					XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(scenarioType))+"\" " +
 					XMLTagName_instanceName+"=\""+scenario.getDotPath()+"\" "+
 					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(scenarioType))+"\"  "+
@@ -404,8 +451,11 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 					Element requirementType = requirement.getComponentType();
 					
 					string += "<"+XMLTagName_requirement+" "+
+							XMLTagName_uid +"=\""+getUid()+"\" "+	
 							XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(requirementType))+"\" " +
 							XMLTagName_instanceName+"=\""+requirement.getDotPath()+"\" "+
+							XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(requirementType) +"\" " +
+							
 							XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(requirementType))+"\"  "+
 							XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(requirementType))+"\">";
 					string += "</"+XMLTagName_requirement+">";
@@ -442,6 +492,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			if (gmd.getSystemModels().contains(type)) {
 				
 				string += "<"+XMLTagName_systemModel+" "+
+								XMLTagName_uid +"=\""+getUid()+"\" "+			
 								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, treeObject))+"\" " +
 								XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotStatusLink(VeM, treeObject))+"\" " +
 								XMLTagName_instanceName+"=\""+treeObject.getDotPath()+"\" "+
@@ -468,11 +519,12 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		
 		if (VeM != null) {
 			HashSet<TreeObject> scenarios = gmd.getScenarios(VeM);
-			for (TreeObject scenario : scenarios) {
+			for (TreeObject scenario :  scenarios) {
 				
 				Element type = scenario.getComponentType();
 
 				string += "<"+XMLTagName_scenario+" "+
+						XMLTagName_uid +"=\""+getUid()+"\" "+	
 						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, scenario))+"\" " +
 						XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotStatusLink(VeM, scenario))+"\" " +
 						XMLTagName_instanceName+"=\""+scenario.getDotPath()+"\" "+
@@ -542,6 +594,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				// counter 
 				i ++;
 				string += "<"+XMLTagName_requirement+" " +
+						XMLTagName_uid +"=\""+getUid()+"\" "+	
 						XMLTagName_isViolated + "=\""+isViolated+"\" " +
 						XMLTagName_isEvaluated+"=\""+isEvaluated+"\" " +
 						XMLTagName_instanceName+"=\""+requirement.getDotPath()+"\" " +
@@ -549,7 +602,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 						XMLTagName_plotLink+"=\""+getPlotStatusLink(VeM, requirement)+"\" " +
 						XMLTagName_name+"=\""+ModelicaMLServices.getName(type)+"\" " +
 						XMLTagName_qualifiedName + "=\""+ModelicaMLServices.getQualifiedName(type) +"\" " +
-						XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(type) +"\"" +
+						XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(type) +"\" " +
 								">";
 				
 				// add requirement text
@@ -577,13 +630,21 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				isMandatory = "true";
 			}
 			string += "<"+XMLTagName_client+" " +  
+						XMLTagName_uid +"=\""+getUid()+"\" "+		
+						
+						XMLTagName_type +"=\""+StringEscapeUtils.escapeXml(VerificationExecutionServices.getTreeItemTypeName(client))+"\" "+
+						XMLTagName_variablity +"=\""+VerificationExecutionServices.getVariability(client)+"\" "+
+						
 						XMLTagName_instanceName+"=\"" + client.getDotPath() + "\" " + 
-						XMLTagName_isMandatory+"=\"" + isMandatory + "\"" +
+						XMLTagName_clientPath+"=\"" + client.getDotPathWithoutFirstLevelComponent() + "\" " + 
+						XMLTagName_isMandatory+"=\"" + isMandatory + "\" " +
 						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, client))+"\" " +
-						XMLTagName_plotLink +"=\"" + StringEscapeUtils.escapeXml(getPlotLink(VeM, client)) + "\"" +
+						XMLTagName_plotLink +"=\"" + StringEscapeUtils.escapeXml(getPlotLink(VeM, client)) + "\" " +
 								">";
-			
-			string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(client.getFinalModificationRightHand()) + "</"+XMLTagName_binding+">";
+			String binding = client.getFinalModificationRightHand();
+			if (binding != null) {
+				string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(binding) + "</"+XMLTagName_binding+">";
+			}
 			string += "</"+XMLTagName_client+">";
 		}
 		return string;
@@ -596,7 +657,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	private String getVeMforScenario(Element usedScenario){
 		String string = "";
 		// loop over all VeM and see if this requirement is in the 
-		for (Element VeM : gmd.getGeneratedModels()) {
+		for (Element VeM :  ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
 			HashSet<TreeObject> scenarios = gmd.getScenarios(VeM);
 			boolean modelContains  = false;
 			if (scenarios != null) {
@@ -626,14 +687,16 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		
 		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_usedScenarios) +  "</"+XMLTagName_description+">";
 		
-		for (Element usedScenario : usedScenarios) {
+		for (Element usedScenario :  ModelicaMLServices.getSortedByName(usedScenarios)) {
 			
 			// counter
 			i++ ;
 			
 			string += "<"+XMLTagName_scenario+" "+
-					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(usedScenario))+"\" "+
-					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(usedScenario))+"\">";
+						XMLTagName_uid +"=\""+getUid()+"\" "+	
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(usedScenario))+"\" " +
+						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(usedScenario))+"\" "+
+						XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(usedScenario))+"\">";
 			string += getAllComments(usedScenario);
 
 			// loop over all VeM and see if this requirement is in the 
@@ -652,7 +715,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	
 	private String getVeMForRequirement(Element evaluatedRequirement, boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements, boolean onlyNotEvaluatedRequirements){
 		String string = "";
-		for (Element VeM : gmd.getGeneratedModels()) {
+		for (Element VeM :  ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
 			HashSet<TreeObject> requirements = gmd.getRequirements(VeM);
 			boolean modelContains  = false;
 			if (requirements != null) {
@@ -699,20 +762,26 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		HashSet<Element> evaluatedRequirements = new HashSet<Element>();
 		if (onlyViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsViolatedInScenarios();
-			string += "<"+XMLTagName_violatedRequirements+" name=\""+ViewName_violatedRequirements+"\">";
+			string += "<"+XMLTagName_violatedRequirements+" " +  
+						XMLTagName_name + "=\""+ViewName_violatedRequirements+"\">";
+			
 			string += "<"+XMLTagName_description+">" + StringEscapeUtils.escapeXml(ViewDescription_violatedRequirements)+  "</"+XMLTagName_description+">";
 
 		}
 		else if (onlyNotViolatedRequirements) {
 			evaluatedRequirements = gmd.getRequirementsNotViolatedInScenarios();
-			string += "<"+XMLTagName_notViolatedRequirements+" name=\""+ViewName_notViolatedRequirements+"\">";
+			string += "<"+XMLTagName_notViolatedRequirements+" "+ 
+							XMLTagName_name + "=\""+ViewName_notViolatedRequirements+"\">";
+			
 			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notViolatedRequirements) +  "</"+XMLTagName_description+">";
 		}
 
-		for (Element evaluatedRequirement : evaluatedRequirements) {
+		for (Element evaluatedRequirement : ModelicaMLServices.getSortedByRequirementId(evaluatedRequirements)) {
 			i++ ;
 			string += "<"+XMLTagName_requirement+" "+
-					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(evaluatedRequirement) +"\"" +
+					XMLTagName_uid +"=\""+getUid()+"\" "+	
+					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(evaluatedRequirement) +"\" " +
+					XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(evaluatedRequirement))+"\" " +
 					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(evaluatedRequirement))+"\" "+
 					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(evaluatedRequirement))+"\">";
 					string += getAllRequirementComments(evaluatedRequirement);
@@ -749,25 +818,27 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		boolean showOnlyNotViolated = false;
 		boolean showOnlyNotEvaluated = true;
 		
-		HashSet<Element> evaluatedRequirements = gmd.getNotEvaluatedRequirementElements();
+		HashSet<Element> notEvaluatedRequirements = gmd.getNotEvaluatedRequirementElements();
 		string += "<"+XMLTagName_notEvaluatedRequirements+" name=\""+ViewName_notEvaluatedRequirements+"\">";
 		
 		string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notEvaluatedRequirements)+  "</"+XMLTagName_description+">";
 
 
-		for (Element evaluatedRequirement : evaluatedRequirements) {
+		for (Element notEvaluatedRequirement :  ModelicaMLServices.getSortedByRequirementId(notEvaluatedRequirements)) {
 			i++ ;
 			string += "<"+XMLTagName_requirement+" "+
-					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(evaluatedRequirement) +"\"" +
-					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(evaluatedRequirement))+"\" "+
-					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(evaluatedRequirement))+"\">";
-					string += getAllRequirementComments(evaluatedRequirement);
+					XMLTagName_uid +"=\""+getUid()+"\" "+	
+					XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(notEvaluatedRequirement) +"\" " +
+					XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(notEvaluatedRequirement))+"\" " +
+					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(notEvaluatedRequirement))+"\" "+
+					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(notEvaluatedRequirement))+"\">";
+					string += getAllRequirementComments(notEvaluatedRequirement);
 		
 			// add requirement text
-			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
+			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(notEvaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
 
 			// loop over all VeM and see if this requirement is in the 
-			string += getVeMForRequirement(evaluatedRequirement, showOnlyViolated, showOnlyNotViolated, showOnlyNotEvaluated);
+			string += getVeMForRequirement(notEvaluatedRequirement, showOnlyViolated, showOnlyNotViolated, showOnlyNotEvaluated);
 			
 			string += "</"+XMLTagName_requirement+">";
 		}
@@ -789,17 +860,18 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		allFoundRequirements.removeAll(allUsedRequirements);
 		
 		HashSet<Element> allNotImplementedRequirements = allFoundRequirements;
-		if (allNotImplementedRequirements != null && allNotImplementedRequirements.size() > 0) {
+//		if (allNotImplementedRequirements != null && allNotImplementedRequirements.size() > 0) {
 			string += "<"+XMLTagName_notImplementedRequirements+" name=\""+ViewName_notImplementedRequirements+"\">";
 			
 			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notImplementedRequirements) +  "</"+XMLTagName_description+">";
 			
-			for (Element requirement : allNotImplementedRequirements) {
+			for (Element requirement :  ModelicaMLServices.getSortedByRequirementId(allNotImplementedRequirements)) {
 				
 				// counter 
 				i++ ;
 				
 				string += "<"+XMLTagName_requirement+" "+
+							XMLTagName_uid +"=\""+getUid()+"\" "+		
 							XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(requirement))+"\" "+
 							XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(requirement))+"\">";
 				string += getAllRequirementComments(requirement);
@@ -809,7 +881,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundRequirements().size() + "</"+XMLTagName_count+">";
 			
 			string += "</"+XMLTagName_notImplementedRequirements+">";
-		}
+//		}
 		return string;
 	}
 	
@@ -824,17 +896,18 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		allFoundScenarios.removeAll(allUsedScenarios);
 		
 		HashSet<Element> allNotUsedScenarios = allFoundScenarios;
-		if (allNotUsedScenarios != null && allNotUsedScenarios.size() > 0) {
+//		if (allNotUsedScenarios != null && allNotUsedScenarios.size() > 0) {
 			
 			string += "<"+XMLTagName_notUsedScenarios+" name=\""+ViewName_notUsedScenarios+"\">";
 			
 			string += "<"+XMLTagName_description+">" +  StringEscapeUtils.escapeXml(ViewDescription_notUsedScenarios) +  "</"+XMLTagName_description+">";
 			
-			for (Element scenario : allNotUsedScenarios) {
+			for (Element scenario :  ModelicaMLServices.getSortedByName(allNotUsedScenarios)) {
 				// counter
 				i++;
 				
 				string += "<"+XMLTagName_scenario+" "+
+							XMLTagName_uid +"=\""+getUid()+"\" "+	
 							XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(scenario))+"\" "+
 							XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(scenario))+"\">";
 				string += getAllComments(scenario);
@@ -843,7 +916,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			
 			string += "<"+XMLTagName_count+">" + i + " of " + gmd.getAllFoundScenarios().size() + "</"+XMLTagName_count+">";
 			string += "</"+XMLTagName_notUsedScenarios+">";
-		}
+//		}
+			
 		return string;
 	}
 
@@ -891,7 +965,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
 			}
 		}
-		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+//		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
 		string += "</"+XMLTagName_comments+">";
 		return string;
 	}
@@ -908,27 +982,27 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			for (Comment comment : element.getOwnedComments()) {
 				
 				// requierement text is also a comment. Do not add requirement text as comment
-				if (!comment.getBody().trim().equals(ModelicaMLServices.getRequirementID(element))) {
+				if (!comment.getBody().trim().equals(ModelicaMLServices.getRequirementText(element).trim())) {
+					
 					//counter
 					i++;
 					string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
 				}
 			}
 		}
-		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
+//		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
 		string += "</"+XMLTagName_comments+">";
 		return string;
 	}
 	
 	
-	
-	
 	/*
 	 * File handling
 	 */
-	public String createFile(String projectName, String folderName, String fileName, boolean askWhereToStore){
+	public String createFile(String projectName, String folderName, boolean askWhereToStore) throws URISyntaxException, IOException, CoreException{
 		
 		String filePath = null;
+		String xmlFileName = "report.xml";
 		
 		if (askWhereToStore) {
 			// TODO: open file dialog so that the user can select where to store the report
@@ -951,14 +1025,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			// TODO: replace empty spaces in the folderPath
 			
 			if (folder.exists() || folderCreated) {
-				filePath = folderPath + "/" + fileName;
-				boolean ok = storeFile(filePath);
-				if (ok) {
-					return filePath;
-				}
-				else {
-					return null;
-				}
+				filePath = folderPath + "/" + xmlFileName;
+				return  storeFile(folderPath, xmlFileName);
 			}
 		}
 		
@@ -967,49 +1035,117 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	}
 
 	
-	private boolean storeFile(String filePath){
+	private String storeFile(String folderPath, String xmlFileName) throws URISyntaxException, IOException, CoreException{
 		if (fileContent != null) {
-			try {
 
-				/*
-				 * http://docs.oracle.com/javase/1.4.2/docs/api/java/io/BufferedWriter.html
-				 * "In general, a Writer sends its output immediately to the underlying character or byte stream. 
-				 *  Unless prompt output is required, it is advisable 
-				 *  to wrap a BufferedWriter around any Writer whose write() operations may be costly, 
-				 *  such as FileWriters and OutputStreamWriters."
-				 *  
-				 *  Use: new BufferedWriter(new FileWriter("foo.out"));
-				 */
-				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath),"UTF-8"));
-				out.write(fileContent);
-				out.close();
+			// pretty printing
+//          Source xmlInput = new StreamSource(new StringReader(fileContent));
+//	        StreamResult xmlOutput = new StreamResult(new StringWriter());
+	
+//	        // Configure transformer
+//	        Transformer transformer = TransformerFactory.newInstance().newTransformer(); // An identity transformer
+////	    transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "testing.dtd");
+//	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//	        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+//	        transformer.transform(xmlInput, xmlOutput);
+			
+//			String generatedModelPackageName = StringUtls.replaceSpecChar( ((NamedElement)gmd.getGeneratedModelsPackage()).getName()) + "_" + System.currentTimeMillis();
+			String generatedModelPackageName = StringUtls.replaceSpecChar( ((NamedElement)gmd.getGeneratedModelsPackage()).getName()) + "_" + VerificationExecutionServices.getTimeStamp();
+
+			monitor.setTaskName("Creating Copying Report Data ...");
+			
+			// copy folder
+			File folderToCopy = new File(FileLocator.toFileURL(Platform.getBundle("org.openmodelica.modelicaml.helper").getEntry("sources/reportData")).toURI());
+
+			IFileSystem fileSystem = EFS.getLocalFileSystem();
+			IFileStore reportData = fileSystem.getStore(folderToCopy.toURI());
+			IFileStore reportDataCopy = fileSystem.getStore(java.net.URI.create(folderPath + "/" + generatedModelPackageName + "/" + "reportData"));
+			reportData.copy(reportDataCopy, EFS.OVERWRITE, monitor);
+			
+			String xmlPath = folderPath + "/" + generatedModelPackageName + "/" + xmlFileName;
+			String htmlPath = folderPath + "/" + generatedModelPackageName + "/" + xmlFileName + ".html";
+			
+			
+			boolean copySimulationFiles = MessageDialog.openQuestion(new Shell(), "Copy Simulation Files?", "Should all simulation files be copies to the report folder?");
+			if (copySimulationFiles) {
 				
-				// refresh the projects browser
-				ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-				
-				return true;
-//					FileOutputStream fos = new FileOutputStream(filePath); 
-//					OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
-//					out.write(Constants.fileEncoding);
-//					out.close();
-				
-			} catch (UnsupportedEncodingException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				for (Element  VeM : gmd.getSimulationResultsFile().keySet()) {
+					String simFilePath = gmd.getSimulationResultsFile().get(VeM);
+					monitor.setTaskName("Copying file: " + simFilePath);
+					if (simFilePath != null && new File(simFilePath).exists()) {
+						
+						simFilePath = simFilePath.replaceAll("\\\\", "/");
+						String simFileName = new File(simFilePath).getName();
+//						IFileStore simFile = fileSystem.getStore(java.net.URI.create(simFilePath));
+//						IFileStore simFileCopy = fileSystem.getStore(java.net.URI.create(folderPath + "/" + generatedModelPackageName + "/" + simFileName));
+//						simFile.copy(simFileCopy, EFS.OVERWRITE, monitor);
+					}
+				}
 			}
+			
+			/*
+			 * http://docs.oracle.com/javase/1.4.2/docs/api/java/io/BufferedWriter.html
+			 * "In general, a Writer sends its output immediately to the underlying character or byte stream. 
+			 *  Unless prompt output is required, it is advisable 
+			 *  to wrap a BufferedWriter around any Writer whose write() operations may be costly, 
+			 *  such as FileWriters and OutputStreamWriters."
+			 *  
+			 *  Use: new BufferedWriter(new FileWriter("foo.out"));
+			 */
+			
+			// write xml 
+			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlPath),"UTF-8"));
+			out.write(fileContent);
+//			out.write(xmlOutput.toString());
+			out.close();
+			
+			// export to HTML
+			exportToHtml(folderPath, xmlPath, htmlPath);
+			
+			// refresh the projects browser
+			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+			
+			return htmlPath;
+//				FileOutputStream fos = new FileOutputStream(filePath); 
+//				OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+//				out.write(Constants.fileEncoding);
+//				out.close();
+			
+			
 		}
-		return false;
+		return null;
 	}
 
+	
+	private void exportToHtml(String folderPath, String xmlPath, String htmlPath) throws URISyntaxException, IOException, CoreException{
+		
+		// translate
+		monitor.setTaskName("Translating To HTML ...");
+		File xsltPath = new File(FileLocator.toFileURL(Platform.getBundle("org.openmodelica.modelicaml.helper").getEntry("/sources/xslt/reportTranslator.xslt")).toURI());
+
+        Source xmlSource = new StreamSource(xmlPath);
+        Source xsltSource = new StreamSource(xsltPath);
+
+        TransformerFactory transFact = TransformerFactory.newInstance();
+        Transformer trans = null;
+        
+		try {
+			trans = transFact.newTransformer(xsltSource);
+			trans.transform(xmlSource, new StreamResult(new FileOutputStream(htmlPath)));
+
+		} catch (TransformerConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+        System.out.println("Done!");
+	}
 
 
 	public String getLineBreake() {
@@ -1031,5 +1167,16 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 
 	public void setFileContent(String fileContent) {
 		this.fileContent = fileContent;
+	}
+
+	public int getUid() {
+		//increase id by 1 
+		this.uid++;
+		
+		return uid;
+	}
+
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 }

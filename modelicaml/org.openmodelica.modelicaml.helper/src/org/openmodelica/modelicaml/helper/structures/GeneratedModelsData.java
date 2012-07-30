@@ -61,7 +61,8 @@ public class GeneratedModelsData {
 	private HashSet<String> notEvaluatedRequirements = new HashSet<String>();
 
 
-
+	private HashMap<Element,String> simulationResultsFile;
+	
 	// list of model qualified names that could not be simulated (determined by the fact if there is a simulation results file or not)
 	private List<String> simulationFailedList = new ArrayList<String>();
 	
@@ -784,6 +785,14 @@ public class GeneratedModelsData {
 
 	public void setGeneratedModelsPackage(Element generatedModelsPackage) {
 		this.generatedModelsPackage = generatedModelsPackage;
+	}
+
+	public HashMap<Element,String> getSimulationResultsFile() {
+		return simulationResultsFile;
+	}
+
+	public void setSimulationResultsFile(HashMap<Element,String> simulationResultsFile) {
+		this.simulationResultsFile = simulationResultsFile;
 	}
 
 }

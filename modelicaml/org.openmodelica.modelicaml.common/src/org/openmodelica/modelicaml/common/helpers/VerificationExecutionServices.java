@@ -61,6 +61,15 @@ public class VerificationExecutionServices {
 		return sdf.format(date);
 	}
 	
+	public static String getTime(){
+		Calendar c1 = Calendar.getInstance(); // today
+		Date date = c1.getTime();
+		VerificationExecutionServices.date = date;
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+		return sdf.format(date);
+	}
+	
 	public static String getTimeStamp(String timeStamp){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 //		if (date == null) {
@@ -70,6 +79,13 @@ public class VerificationExecutionServices {
 		return sdf.format(date);
 	}
 	
+	public static String getTimeStamp(){
+		Calendar c1 = Calendar.getInstance(); // today
+		Date date = c1.getTime();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		return sdf.format(date);
+	}
 	
 	
 	
@@ -296,7 +312,7 @@ public class VerificationExecutionServices {
 		return "0.0001";
 	}
 	
-	public static String getNumberOfIntervals(Element elt){
+	public static String getInterval(Element elt){
 		if (elt instanceof NamedElement) {
 			Stereotype s = elt.getAppliedStereotype(Constants.stereotypeQName_Simulation);
 			if ( s != null ) {
@@ -493,17 +509,16 @@ public class VerificationExecutionServices {
 		HashSet<TreeObject> collectedItem_temp = new HashSet<TreeObject>();
 		collectedItem_temp.addAll(collectedItems);
 		
-		if (treeItem != null & treeItem instanceof TreeParent && ((TreeParent)treeItem).hasChildren()) {
+		if (treeItem != null && treeItem instanceof TreeParent && ((TreeParent)treeItem).hasChildren()) {
 			TreeObject[] children =  ((TreeParent)treeItem).getChildren();
 			for (int i = 0; i < children.length; i++) {
 				TreeObject treeObject = children[i];
 				if (!collectedItem_temp.contains(treeObject) && treeObject.isValueClient_required()) {
 					collectedItem_temp.add(treeObject);
-					
-					// recursive call
-					if (treeObject instanceof TreeParent) {
-						collectedItem_temp.addAll(getRequiredClientsTreeItems(treeObject, collectedItem_temp));
-					}
+				}
+				// recursive call
+				if (treeObject instanceof TreeParent) {
+					collectedItem_temp.addAll(getRequiredClientsTreeItems(treeObject, collectedItem_temp));
 				}
 			}
 		}
@@ -514,20 +529,21 @@ public class VerificationExecutionServices {
 	}
 	
 	public static List<TreeObject> getClientsTreeItems(TreeObject treeItem, HashSet<TreeObject> collectedItems) {
+		
 		HashSet<TreeObject> collectedItem_temp = new HashSet<TreeObject>();
 		collectedItem_temp.addAll(collectedItems);
 		
-		if (treeItem != null & treeItem instanceof TreeParent && ((TreeParent)treeItem).hasChildren()) {
+		if (treeItem != null && treeItem instanceof TreeParent && ((TreeParent)treeItem).hasChildren()) {
 			TreeObject[] children =  ((TreeParent)treeItem).getChildren();
 			for (int i = 0; i < children.length; i++) {
 				TreeObject treeObject = children[i];
 				if (!collectedItem_temp.contains(treeObject) && treeObject.isValueClient()) {
 					collectedItem_temp.add(treeObject);
-					
-					// recursive call
-					if (treeObject instanceof TreeParent) {
-						collectedItem_temp.addAll(getRequiredClientsTreeItems(treeObject, collectedItem_temp));
-					}
+				}
+				
+				// recursive call
+				if (treeObject instanceof TreeParent) {
+					collectedItem_temp.addAll(getClientsTreeItems(treeObject, collectedItem_temp));
 				}
 			}
 		}

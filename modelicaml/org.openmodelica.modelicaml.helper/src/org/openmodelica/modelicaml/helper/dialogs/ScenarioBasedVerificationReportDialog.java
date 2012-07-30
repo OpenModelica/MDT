@@ -1,10 +1,13 @@
 package org.openmodelica.modelicaml.helper.dialogs;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -104,6 +107,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		setShellStyle(SWT.SHELL_TRIM);
 		
 		this.setGmd(gmd);
+		this.getGmd().setSimulationResultsFile(simulationResultsFiles);
 		this.setSimulationResultsFiles(simulationResultsFiles);
 		this.setOpenedFromNewRelationsDialog(openedFromNewRelationsDialog);
 		
@@ -370,11 +374,25 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 					
 					// set folder name and file name
 					String folderName = Constants.folderName_automaticScenarioBasedDesignVerificationDiscovery;
-					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
+//					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
+//					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
 					
 					// create report
 					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
-					String filePath = reportGenerator.createFile(projectName, folderName, fileName, false);
+					String filePath = null;
+					try {
+						filePath = reportGenerator.createFile(projectName, folderName, false);
+					} catch (URISyntaxException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (CoreException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
 					
 					if (filePath != null) {
 						String message = "The file was stored: \n"+filePath+"";

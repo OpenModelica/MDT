@@ -375,6 +375,39 @@ public class ResourceManager extends SWTResourceManager {
 		// no such resource
 		return null;
 	}
+	
+//	public static URL getPluginResourceURL(String symbolicName, String path) {
+//		// try runtime plugins
+//		{
+//			Bundle bundle = Platform.getBundle(symbolicName);
+//			if (bundle != null) {
+//				return bundle.getEntry(path);
+//			}
+//		}
+//		// try design time provider
+//		if (m_designTimePluginResourceProvider != null) {
+//			return m_designTimePluginResourceProvider.getEntry(symbolicName, path);
+//		}
+//		// no such resource
+//		return null;
+//	}
+	
+	public static String getPluginResourceURL(String symbolicName, String path) {
+		// try runtime plugins
+		{
+			Bundle bundle = Platform.getBundle(symbolicName);
+			if (bundle != null) {
+				return bundle.getEntry(path).getPath();
+			}
+		}
+		// try design time provider
+		if (m_designTimePluginResourceProvider != null) {
+			return m_designTimePluginResourceProvider.getEntry(symbolicName, path).getPath();
+		}
+		// no such resource
+		return null;
+	}
+	
 	/**
 	 * Returns an {@link URL} based on a plugin and file path.
 	 * 

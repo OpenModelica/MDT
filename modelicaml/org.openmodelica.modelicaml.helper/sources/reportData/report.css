@@ -1,0 +1,127 @@
+body{
+   background-color: #F0F0F0;
+   color: #000000;
+   font-size:11px;
+   color:#000000;
+   font-family:Verdana;
+}
+	
+span {
+	line-height:18px;
+}
+	
+	
+.navigation{
+	line-height:24px;
+}
+
+
+.greyBG{
+	background-color:#F0F0F0;
+}
+
+.greyBG2{
+	background-color:#F9F9F9;
+}
+
+hr{
+	border-top:1px #919191 solid;
+	border-bottom:0px;
+}
+h1{
+	font-size:16px;
+}
+h2{
+	font-size:14px;
+}
+h3{
+	font-size:12px;
+}
+h4{
+	font-size:11px;
+}
+
+.box{
+	margin: 5px;
+}
+
+.description{
+	margin:5px;
+}
+
+
+.red{
+	 color:#FF0000;
+}
+
+.green{
+	 color:#32CD32;
+}
+.darkOrange{
+	 color:#FF8C00;
+}
+
+
+.bold{
+	font-weight:bold;
+}
+
+.reportHeader{
+	text-align:left;
+}
+
+.verificationModel{
+	/*position:relative;*/
+	background-color:#F0F0F0; 
+	border:1px #919191 solid;
+	left:20px;
+	top:20px;
+	width:95%;
+	padding:5px;
+	margin-bottom:20px;
+}
+
+.verificationModels{
+	margin-top: 10px;
+	margin-left: 10px;
+	margin-bottom: 10px;
+	
+	-moz-border-radius: 15px;
+	border-radius: 5px;
+}
+
+.qualifiedName{
+	font-size:9px;
+	font-weight:normal;
+}
+
+.simpleLink{
+	font-size:11px;
+	font-weight:normal;
+}
+
+
+.metric{
+	margin:5px;
+	font-size:9px;
+    font-weight:normal;
+}
+
+.expandableLink {
+	margin-top: 5px;
+	margin-left: 0px;
+	margin-bottom: 10px;
+	color:#698B69;
+}
+
+
+.expandable {
+ 	display: none;
+ }
+
+
+
+.navigation{
+	margin-top: 30px;
+	
+}

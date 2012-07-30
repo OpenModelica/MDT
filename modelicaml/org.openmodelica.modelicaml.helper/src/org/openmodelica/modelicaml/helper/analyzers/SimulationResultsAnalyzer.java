@@ -28,6 +28,7 @@ public class SimulationResultsAnalyzer {
 			){
 		
 		this.gmd = gmd;
+		this.gmd.setSimulationResultsFile(simulationResultsFile);
 		this.simulationResultsFile = simulationResultsFile;
 		this.notSimulatedModels = notSimulatedModels;
 		this.monitor = monitor;

@@ -200,7 +200,7 @@ public class SimulationOMCAction extends AbstractHandler {
 				umlElement, 
 				VerificationExecutionServices.getStartTime(umlElement), 
 				VerificationExecutionServices.getStopTime(umlElement), 
-				VerificationExecutionServices.getNumberOfIntervals(umlElement), 
+				VerificationExecutionServices.getInterval(umlElement), 
 				VerificationExecutionServices.getSolver(umlElement), 
 				VerificationExecutionServices.getTolerance(umlElement), 
 				VerificationExecutionServices.getOutputFormat(umlElement));
