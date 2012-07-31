@@ -36,6 +36,7 @@ package org.openmodelica.modelicaml.preferences.impl;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.preferences.Activator;
 
 
@@ -64,17 +65,23 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault("ClearOMCBeforeReloadingCode", true);
 		store.setDefault("RegenerateCodeBeforeEachSimulation", true);
 		store.setDefault("synchronizationWithOMC", "files");
-		//store.setDefault("GenCodeProjectFolder", "code-gen");
 		
 		store.setDefault("linkClassComponentsTreeWithModelExplorer", true);
 		
 		store.setDefault("loadMSLBeforeSynchronizing", true);
 		
 		store.setDefault("modelsToExcludeFromLoadingWhenSynchronizing", "Modelica.UsersGuide, ModelicaServices, Modelica.Fluid");
+		
+		store.setDefault(Constants.propertyName_startTime, "0");
+		store.setDefault(Constants.propertyName_stopTime, "10");
+		store.setDefault(Constants.propertyName_numberOfIntervals, "500");
+		store.setDefault(Constants.propertyName_tolerance, "0.000001");
+		store.setDefault(Constants.propertyName_solver, "dassl");
+		store.setDefault(Constants.propertyName_outputFormat, "mat");
+		
 //		store.setDefault(PreferenceConstants.P_BOOLEAN, true);
 //		store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
-//		store.setDefault(PreferenceConstants.P_STRING,
-//				"Default value");
+//		store.setDefault(PreferenceConstants.P_STRING, "Default value");
 	}
 
 }

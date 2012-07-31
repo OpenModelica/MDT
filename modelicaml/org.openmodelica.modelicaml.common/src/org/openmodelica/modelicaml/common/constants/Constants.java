@@ -206,6 +206,8 @@ public class Constants {
 	public final static String propertyName_stopTime = "stopTime";
 	public final static String propertyName_numberOfIntervals = "numberOfIntervals";
 	public final static String propertyName_tolerance = "tolerance";
+	public final static String propertyName_solver = "solver";
+	public final static String propertyName_outputFormat = "outputFormat";
 	
 	// simulation model generation
 	public final static String simModelsPackageNamePrefix = "GenVeMs for: ";

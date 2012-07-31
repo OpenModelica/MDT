@@ -93,6 +93,7 @@ h4{
 .qualifiedName{
 	font-size:9px;
 	font-weight:normal;
+	color: #999999;
 }
 
 .simpleLink{
@@ -115,13 +116,31 @@ h4{
 }
 
 
-.expandable {
- 	display: none;
- }
 
 
 
 .navigation{
 	margin-top: 30px;
+}
+
+
+.viewContentTitle{
+	display: none;
+}
+
+
+img.expandIcon {
+	margin-right: 3px;
+}
+img.locateIcon {
+	margin-left: 3px;
+	margin-right: 3px;
 	
 }
+img.plotIcon{
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+div.expandable{display:none;}
+

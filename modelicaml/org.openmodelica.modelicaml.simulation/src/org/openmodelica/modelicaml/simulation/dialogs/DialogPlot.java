@@ -148,12 +148,16 @@ public class DialogPlot extends Dialog {
     				 * plot preselected vars
     				 */
     				if (preSelectedVariablesToPlot != null && preSelectedVariablesToPlot.size() > 0) {
-    					HashSet<TreeItem> foundItems = getAllTreeItems(((VariableTreeComposite)Tree).getTreeModel());
+    					HashSet<TreeItem> foundItems = getAllTreeItems(((VariableTreeComposite)Tree).getTreeModel(), preSelectedVariablesToPlot);
     					for (String dotPath : preSelectedVariablesToPlot) {
         					for (TreeItem treeItem : foundItems) {
-        						
+        						/*
+        						 * Note, only for leafs the data is set to be the variable dot path 
+        						 * That is why any non-leaf element is not found and will not be selected in the tree. 
+        						 */
     							if (treeItem.getData() != null && treeItem.getData().equals(dotPath)) {
     								((VariableTreeComposite)Tree).getTreeModel().select(treeItem);
+    								
     								treeItem.setChecked(true);
     	        					((PlotComposite)Plot).addValues(dotPath);
     							}
@@ -167,30 +171,54 @@ public class DialogPlot extends Dialog {
         return parent;
 	}
 
-	private HashSet<TreeItem> getAllTreeItems(org.eclipse.swt.widgets.Tree tree){
+	private HashSet<TreeItem> getAllTreeItems(org.eclipse.swt.widgets.Tree tree, HashSet<String> preSelectedVariablesToPlot){
 		HashSet<TreeItem> foundTreeItems = new HashSet<TreeItem>();
 		TreeItem[] items = tree.getItems();
 		for (TreeItem treeItem : items) {
+			/*
+			 * skip the first level in terms of dot path of variables because the first level is the simulation file
+			 */
 			foundTreeItems.add(treeItem);
-			foundTreeItems.addAll(getTreeItems(treeItem));
+			foundTreeItems.addAll(getTreeItems(tree, treeItem, "", preSelectedVariablesToPlot));
 		}
 		
 		return foundTreeItems;
 	}
 
-	private HashSet<TreeItem> getTreeItems(TreeItem parent){
+	private void preSelectInTree(org.eclipse.swt.widgets.Tree tree, TreeItem treeItem, String dotPath, HashSet<String> preSelectedVariablesToPlot){
+		// preselect variables in tree
+		if (preSelectedVariablesToPlot.contains(dotPath)) {
+			tree.select(treeItem);
+		}
+	}
+	
+	private HashSet<TreeItem> getTreeItems(org.eclipse.swt.widgets.Tree tree, TreeItem parent, String dotPath, HashSet<String> preSelectedVariablesToPlot){
+		
 		HashSet<TreeItem> foundTreeItems = new HashSet<TreeItem>();
+		foundTreeItems.add(parent);
+		// preselect if this is the preselected item
+		preSelectInTree(tree, parent, dotPath, preSelectedVariablesToPlot);
+		
 		TreeItem[] items = parent.getItems();
 		for (TreeItem treeItem : items) {
 			
+			String newDotPath = "";
+			if (!dotPath.equals("")) {
+				newDotPath = dotPath + "." + treeItem.getText();
+			} else {
+				newDotPath = treeItem.getText();
+			}
+			
+			// preselect if this is the preselected item
+			preSelectInTree(tree, treeItem, newDotPath, preSelectedVariablesToPlot);
+			
+			// add to list
 			foundTreeItems.add(treeItem);
 			
-			TreeItem[] childItems = treeItem.getItems();
-			for (TreeItem childItem : childItems) {
-				foundTreeItems.add(childItem);
-				foundTreeItems.addAll(getTreeItems(childItem));
-			}
+			// recursive call
+			foundTreeItems.addAll(getTreeItems(tree, treeItem, newDotPath, preSelectedVariablesToPlot));
 		}
+		
 		return foundTreeItems;
 	}
 	

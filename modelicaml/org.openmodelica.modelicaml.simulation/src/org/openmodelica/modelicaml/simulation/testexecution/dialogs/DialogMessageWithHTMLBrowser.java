@@ -64,6 +64,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsAction;
 
@@ -83,10 +84,14 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
         this.location = location;
 	}
 	
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+	}
+	
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
    		shell.setText(this.title);
-   		shell.setSize(900, 700);
+   		shell.setSize(1000, 700);
     }
 
 	LocationListener locationListener = new LocationAdapter() {
@@ -125,14 +130,30 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			else if (decodedLocation != null &&  decodedLocation.trim().startsWith("plot")) {
 				
 //				String[] splitted = decodedLocation.split("\\?");
-				decodedLocation = decodedLocation.replaceFirst("plot:", "").trim();
+//				decodedLocation = decodedLocation.replaceFirst("plot:", "").trim();
+				String[] splitted = decodedLocation.replaceFirst("plot:", "").split("@-->");
+				decodedLocation = splitted[0];
+				String variablePath = null;
+				if (splitted.length > 1) {
+					variablePath = splitted[1];
+				}
+				/*
+				 * The report contains the model name as parameter. 
+				 * We need to translated them to corresponding result file name 
+				 */
+				decodedLocation  = ModelicaMLServices.getSimulationResultsFileName(decodedLocation);
 				
 				event.doit = false;	// don't change the page
-				String sessionFolderAbsolutePath = getSessionPath();
+				String sessionFolderAbsolutePath = geSimulationFilesFolderPath();
 				if (sessionFolderAbsolutePath != null) {
 					// Dialog for the plotting of variables
 					PlotResultsAction plotAction = new PlotResultsAction();
 					plotAction.setFilePath(sessionFolderAbsolutePath + "/" + decodedLocation);
+					if (variablePath != null) {
+						HashSet<String> preselectedVariables = new HashSet<String>();
+						preselectedVariables.add(variablePath);
+						plotAction.setPreSelectedVariablesToPlot(preselectedVariables);
+					}
 					plotAction.run(null);
 				}
 				else { // TODO: report 
@@ -143,7 +164,7 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 	};
 	
 	
-	private String getSessionPath(){
+	private String geSimulationFilesFolderPath(){
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 //		IFileStore reportFile = fileSystem.getStore(URI.create("file:/" + omcTempWorkingFolder + "/" + model.qualifiedName + ".exe"));
 		String[] splitted = this.location.split("\\?"); // remove the URL get parameters 
@@ -153,16 +174,23 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 		if (reportFileInfo.exists()) {
 			IFileStore reportFolder = reportFile.getParent();
 			if (reportFolder != null) {
-				IFileStore sessionFolder = reportFolder.getParent();
-				if (sessionFolder != null) {
-					String path = sessionFolder.toURI().getPath();
-					if (path.startsWith("\\") || path.startsWith("/")) {
-							return path.substring(1);
-					}
-					else {
-						return path;
-					}
+				String path = reportFolder.toURI().getPath();
+				if (path.startsWith("\\") || path.startsWith("/")) {
+						return path.substring(1);
 				}
+				else {
+					return path;
+				}
+//				IFileStore sessionFolder = reportFolder.getParent();
+//				if (sessionFolder != null) {
+//					String path = sessionFolder.toURI().getPath();
+//					if (path.startsWith("\\") || path.startsWith("/")) {
+//							return path.substring(1);
+//					}
+//					else {
+//						return path;
+//					}
+//				}
 			}
 			
 		}

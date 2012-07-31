@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.omc.OMCProxy;
-import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.simulation.Activator;
 
 public class OpenModelicaCompilerCommunication {

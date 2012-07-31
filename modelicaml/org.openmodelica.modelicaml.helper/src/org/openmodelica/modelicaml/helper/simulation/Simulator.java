@@ -12,13 +12,16 @@ import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
@@ -197,23 +200,52 @@ public class Simulator {
 			}
 			
 			// set default simulation settings
+			if (startTime==null|| startTime.trim().length() == 0) {
+				startTime = "0";
+				startTime = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_startTime, startTime, null);
+			}
+			if (stopTime==null|| stopTime.trim().length() == 0) {
+				stopTime = "10";
+				stopTime = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_stopTime, stopTime, null);
+			}
 			if (numberOfIntervals==null|| numberOfIntervals.trim().length() == 0) {
 				numberOfIntervals = "500";
+				numberOfIntervals = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_numberOfIntervals, numberOfIntervals, null);
 			}
 			if (tolerance == null || tolerance.trim().length() == 0 ) {
 				tolerance = "0.000001";
+				tolerance = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_tolerance, tolerance, null);
 			}
 			if (solver == null || solver.trim().length() == 0 ) {
 				solver = "dassl";
+				solver = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_solver, solver, null);
 			}
 			if (outputFormat == null || outputFormat.trim().length()==0 ) {
 				outputFormat = "mat";
+				outputFormat = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, outputFormat, null);
 			}
 			
-			
 			if (isRecordOnlyRequirementStatus()) {
-				HashSet<TreeObject> requirementItems = gmd.getRequirements(model);
-				variableFilter = getRequirementVariableFilter(requirementItems); 
+//				HashSet<TreeObject> requirementItems = gmd.getRequirements(model);
+				HashSet<TreeObject> clientAndRequirementItems = new HashSet<TreeObject>(); 
+				ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations());
+				for (TreeObject treeObject : ci.getAllTreeObjects()) {
+					if (treeObject.isValueClient()) {
+						clientAndRequirementItems.add(treeObject);
+					}
+					else {
+						Element type = treeObject.getComponentType();
+						if (treeObject instanceof TreeParent && type != null && type.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+							TreeObject[] children = ((TreeParent)treeObject).getChildren();
+							for (TreeObject requirementPropertyTreeItem : children) {
+								if ( requirementPropertyTreeItem.getName().equals(Constants.propertyName_mStatus)) {
+									clientAndRequirementItems.add(requirementPropertyTreeItem);
+								}
+							}
+						}
+					}
+				}
+				variableFilter = getVariablesFilter(clientAndRequirementItems); 
 			}
 			else {
 				// no filter, i.e., all variables should be recorded.
@@ -246,11 +278,12 @@ public class Simulator {
 	}
 	
 	
-	private String getRequirementVariableFilter(HashSet<TreeObject> requirementItems){
+	private String getVariablesFilter(HashSet<TreeObject> requirementItems){
 		String requirementVariableFilter = "";
 		for (TreeObject treeObject : requirementItems) {
 			if (!treeObject.getDotPath().trim().equals("")) {
-				requirementVariableFilter = requirementVariableFilter + "|" + treeObject.getDotPath() + "." + gmd.requirementStatusPropertyName;
+//				requirementVariableFilter = requirementVariableFilter + "|" + treeObject.getDotPath() + "." + gmd.requirementStatusPropertyName;
+				requirementVariableFilter = requirementVariableFilter + "|" + treeObject.getDotPath();
 			}
 		}
 		

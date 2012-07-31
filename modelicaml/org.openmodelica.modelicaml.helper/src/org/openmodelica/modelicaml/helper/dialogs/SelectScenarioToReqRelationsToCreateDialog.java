@@ -400,7 +400,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
 					String filePath = null;
 					try {
-						filePath = reportGenerator.createFile(projectName, folderName,false);
+						filePath = reportGenerator.createReport(projectName, folderName,false);
 					} catch (URISyntaxException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

@@ -60,8 +60,6 @@ import org.eclipse.swt.events.SelectionEvent;
 public class ScenarioBasedVerificationReportDialog extends Dialog {
 
 	private GeneratedModelsData gmd;
-	
-
 
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
@@ -74,7 +72,6 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	private final static String TAB_TITLE_Simulation_Errors =  "Simulation Errors";
 	
 	private TabFolder tabFolder;
-	
 
 	private Tree treeViolatedRequirements;
 	private Tree treeNotViolatedRequirement;
@@ -97,6 +94,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	// map of models and the corresponding simulation result paths (absolute)
 	private HashMap<Element,String> simulationResultsFiles = new HashMap<Element, String>();
 	private Button btnPlot;
+	private Button btnLocate;
 
 	public ScenarioBasedVerificationReportDialog(Shell parentShell, 
 			GeneratedModelsData gmd, 
@@ -146,6 +144,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		treeViolatedRequirements = new Tree(tabFolder, SWT.NONE);
+		treeViolatedRequirements.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setButtonsEnablement();
+			}
+		});
 //		buildTree(treeViolatedRequirements, true, false, false);
 		getEvaluatedRequirementItems(treeViolatedRequirements, true, false, false);
 		tbtmViolatedRequirements.setControl(treeViolatedRequirements);
@@ -160,6 +164,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		treeNotViolatedRequirement = new Tree(tabFolder, SWT.NONE);
+		treeNotViolatedRequirement.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setButtonsEnablement();
+			}
+		});
 //		buildTree(treeNotViolatedRequirement, false, true, false);
 		getEvaluatedRequirementItems(treeNotViolatedRequirement, false, true, false);
 		tbtmNotViolatedRequirements.setControl(treeNotViolatedRequirement);
@@ -174,6 +184,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		treeNotEvaluatedRequirements = new Tree(tabFolder, SWT.NONE);
+		treeNotEvaluatedRequirements.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setButtonsEnablement();
+			}
+		});
 //		buildTree(treeNotEvaluatedRequirements, false, false, true);
 		getNotEvaluatedRequirementItems(treeNotEvaluatedRequirements);
 		tbtmNotEvaluatedRequirements.setControl(treeNotEvaluatedRequirements);
@@ -185,6 +201,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		tbtmNotImplementedRequirements = new TabItem(tabFolder, SWT.NONE);
 		tbtmNotImplementedRequirements.setText("Not Implemented Requirements");
 		treeNotImplementedRequirements = new Tree(tabFolder, SWT.NONE);
+		treeNotImplementedRequirements.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setButtonsEnablement();
+			}
+		});
 //		buildTree(treeNotEvaluatedRequirements, false, false, true);
 		getNotImplementedRequirementItems(treeNotEvaluatedRequirements);
 		tbtmNotImplementedRequirements.setControl(treeNotImplementedRequirements);
@@ -195,6 +217,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		tbtmNotUsedScenarios = new TabItem(tabFolder, SWT.NONE);
 		tbtmNotUsedScenarios.setText("Not Used Scenarios");
 		treeNotUsedScenarios = new Tree(tabFolder, SWT.NONE);
+		treeNotUsedScenarios.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setButtonsEnablement();
+			}
+		});
 //		buildTree(treeNotEvaluatedRequirements, false, false, true);
 		getNotUsedScenarioItems(treeNotUsedScenarios);
 		tbtmNotUsedScenarios.setControl(treeNotUsedScenarios);
@@ -212,6 +240,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 
 		failedSimulationModelsTree = new Tree(tabFolder, SWT.NONE);
+		failedSimulationModelsTree.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setButtonsEnablement();
+			}
+		});
 		createNotSimulatedItems(failedSimulationModelsTree);
 		tbtmNotSimulated.setControl(failedSimulationModelsTree);
 		
@@ -242,7 +276,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		
-		Button btnLocate = new Button(container, SWT.NONE);
+		btnLocate = new Button(container, SWT.NONE);
 		btnLocate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -280,6 +314,8 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		});
 		btnLocate.setText("Locate");
 		btnLocate.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+		// diable by default until a tree item was selected
+		btnLocate.setEnabled(false);
 
 		btnPlot = new Button(container, SWT.NONE);
 		btnPlot.addSelectionListener(new SelectionAdapter() {
@@ -305,6 +341,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 							// a property of the VeM to plot
 							TreeObject treeObject = data.getTreeObject();
 							if (treeObject != null) {
+								
 								if (data.isClientProperty()) {
 									// plot client property
 									dotPath = treeObject.getDotPath();
@@ -316,12 +353,15 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 									
 								}
 								else if (data.isProperty()) {
-									
+
+									// for a requirement plot the status attribute
 									if (data.isRequirement()) {
-										// plot the status attribute
 										dotPath = treeObject.getDotPath() + "." + gmd.requirementStatusPropertyName;
 									}
-									// scenarios or system models properties are not in the tree ...
+									// for other models -> preselect the plot tree
+									else {
+										dotPath = treeObject.getDotPath();
+									}
 									
 									// get the VeM (1 level up)
 									TreeItem VeMItem = treeItem.getParentItem();
@@ -349,10 +389,10 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		btnPlot.setText("Plot");
 		btnPlot.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "/icons/plot.png"));
 		
-		// disable if there are no files
-		if (getSimulationResultsFiles() == null || getSimulationResultsFiles().size() == 0) {
+		// disable until an item is selected
+//		if (getSimulationResultsFiles() == null || getSimulationResultsFiles().size() == 0) {
 			btnPlot.setEnabled(false);
-		}
+//		}
 
 		/*
 		 * Save as File 
@@ -381,7 +421,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
 					String filePath = null;
 					try {
-						filePath = reportGenerator.createFile(projectName, folderName, false);
+						filePath = reportGenerator.createReport(projectName, folderName, false);
 					} catch (URISyntaxException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -413,6 +453,59 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		return area;
 	}
 
+	
+	private void setButtonsEnablement(){
+		Tree activeTree = getActiveTree();
+		
+		if (activeTree != null) {
+			TreeItem[] items = activeTree.getSelection();
+			for (TreeItem treeItem : items) {
+				TreeItemData data = (TreeItemData) treeItem.getData();
+				if (data != null) {
+					
+					btnLocate.setEnabled(true);
+					
+					String filePath= null;
+					
+					// VeM
+					if (data.isVeM()) {
+						Element VeMElement = data.getUMLElement();
+						filePath = getSimulationResultsFiles().get(VeMElement);
+					}
+					
+					// a property of the VeM to plot
+					TreeObject treeObject = data.getTreeObject();
+					if (treeObject != null) {
+						if (data.isClientProperty()) {
+							// get the VeM (2 levels up)
+							TreeItem VeMItem = treeItem.getParentItem().getParentItem();
+							Element VeMElement = ((TreeItemData)VeMItem.getData()).getUMLElement();
+							filePath = getSimulationResultsFiles().get(VeMElement);
+							
+						}
+						else if (data.isProperty()) {
+							// get the VeM (1 level up)
+							TreeItem VeMItem = treeItem.getParentItem();
+							Element VeMElement = ((TreeItemData)VeMItem.getData()).getUMLElement();
+							filePath = getSimulationResultsFiles().get(VeMElement);
+						}
+					}
+					
+					// enable/disable plot button
+					if (filePath != null) {
+						btnPlot.setEnabled(true);
+					}
+					else {
+						btnPlot.setEnabled(false);
+					}
+				}
+				else {
+					btnLocate.setEnabled(true);
+				}
+			}
+		}
+	}
+	
 	
 	private Tree getActiveTree() {
 		TabItem selectedTab = tabFolder.getSelection()[0];
@@ -839,7 +932,11 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			}
 			
 			TreeItem item = new TreeItem(parent, SWT.NONE);
-			String name = "client " + isMandatory  + ": " + client.getDotPath() + " = " + client.getFinalModificationRightHand();
+			String modification = "";
+			if (client.getFinalModificationRightHand() != null) {
+				modification = client.getFinalModificationRightHand();
+			}
+			String name = "client " + isMandatory  + ": " + client.getDotPath() + " = " + modification;
 			item.setText(name);
 			
 			item.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Property.gif"));

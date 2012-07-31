@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Class;
@@ -54,10 +55,6 @@ public class VerificationExecutionServices {
 	
 	public static String getTime(Element elt){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-//		if (date == null) {
-//			Calendar c1 = Calendar.getInstance(); // today
-//			date = c1.getTime();
-//		}
 		return sdf.format(date);
 	}
 	
@@ -72,10 +69,6 @@ public class VerificationExecutionServices {
 	
 	public static String getTimeStamp(String timeStamp){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-//		if (date == null) {
-//			Calendar c1 = Calendar.getInstance(); // today
-//			date = c1.getTime();
-//		}
 		return sdf.format(date);
 	}
 	
@@ -270,6 +263,12 @@ public class VerificationExecutionServices {
 		return "default";
 	}
 	
+	
+	
+	
+	/*
+	 * Simulation settings
+	 */
 	public static String getStartTime(Element elt){
 		if (elt instanceof NamedElement) {
 			Stereotype s = elt.getAppliedStereotype(Constants.stereotypeQName_Simulation);
@@ -280,7 +279,7 @@ public class VerificationExecutionServices {
 				}
 			}
 		}
-		return "0";
+		return Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_startTime, "0", null);
 	}
 	
 	public static String getStopTime(Element elt){
@@ -295,8 +294,10 @@ public class VerificationExecutionServices {
 				}
 			}
 		}
-		return "10";
+		return Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_stopTime, "10", null);
 	}
+	
+	
 	public static String getTolerance(Element elt){
 		if (elt instanceof NamedElement) {
 			Stereotype s = elt.getAppliedStereotype(Constants.stereotypeQName_Simulation);
@@ -309,7 +310,7 @@ public class VerificationExecutionServices {
 				}
 			}
 		}
-		return "0.0001";
+		return Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_tolerance, "0.000001", null);
 	}
 	
 	public static String getInterval(Element elt){
@@ -324,17 +325,23 @@ public class VerificationExecutionServices {
 				}
 			}
 		}
-		return "500";
+		return Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_numberOfIntervals, "500", null);
 	}
 	
 	public static String getOutputFormat(Element elt){
 //		return "plt";
-		return "mat";
+		return Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, "mat", null);
 	}
 	
 	public static String getSolver(Element elt){
-		return "dassl";
+		return Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_solver, "dassl", null);
 	}
+	
+	
+	
+	
+	
+	
 	
 	
 	public static String getRequirementID(TreeObject treeItem){
@@ -406,19 +413,6 @@ public class VerificationExecutionServices {
 		}
 		return "Model";
 	}
-	
-//	private static boolean isRequirement (TreeObject treeItem){
-//		Element element = treeItem.getUmlElement();
-//		if (element instanceof Property) {
-//			Type type = ((Property)element).getType();
-//			if (type != null) {
-//				Stereotype s = type.getAppliedStereotype(Constants.stereotypeQName_Requirement);
-//				if (s != null ) { return true; }
-//			}
-//		}
-//		return false;
-//	}
-	
 	
 	
 	/*
@@ -513,6 +507,13 @@ public class VerificationExecutionServices {
 			TreeObject[] children =  ((TreeParent)treeItem).getChildren();
 			for (int i = 0; i < children.length; i++) {
 				TreeObject treeObject = children[i];
+				
+				/*
+				 * TODO: this is not accurate. If the tree object (the actual client) is referenced in
+				 * client operation then we need to track this and find the actual client instead of#
+				 * taking the client that has the operation...    
+				 */
+				
 				if (!collectedItem_temp.contains(treeObject) && treeObject.isValueClient_required()) {
 					collectedItem_temp.add(treeObject);
 				}
@@ -537,6 +538,13 @@ public class VerificationExecutionServices {
 			TreeObject[] children =  ((TreeParent)treeItem).getChildren();
 			for (int i = 0; i < children.length; i++) {
 				TreeObject treeObject = children[i];
+
+				/*
+				 * TODO: this is not accurate. If the tree object (the actual client) is referenced in
+				 * client operation then we need to track this and find the actual client instead of#
+				 * taking the client that has the operation...    
+				 */
+
 				if (!collectedItem_temp.contains(treeObject) && treeObject.isValueClient()) {
 					collectedItem_temp.add(treeObject);
 				}
@@ -552,6 +560,15 @@ public class VerificationExecutionServices {
 		
 		return sortedList;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -752,8 +769,6 @@ public class VerificationExecutionServices {
 	}
 	
 	
-
-	
 	
 	/*
 	 * JavaScript generation
@@ -813,49 +828,5 @@ public class VerificationExecutionServices {
 		return js;
 	}
 
-	
-	
-	
-
-	
-	
-	
-//	public static String getTestFolderAbsolutePath(Element umlElement){
-////String folderPath = elt.eResource().getURI().toPlatformString(true);
-//projectName = umlElement.getModel().eResource().getURI().segment(1);
-//
-//IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//IWorkspaceRoot root = workspace.getRoot();
-//IProject iProject = root.getProject(projectName);
-//
-//String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-//projectAbsolutePath = projectPath;
-//
-//String folderPath = projectPath+"/"+Constants.folderName_test_gen+"/"+Constants.folderName_test_session+"_"+getTimeStamp("");
-//
-//testFolderAbsolutePath = folderPath;
-//
-//return folderPath;
-//}
-
-
-
-//public static List<Element> getTestModels(Element umlElement){
-//ElementsCollector ec = new ElementsCollector();
-//ec.collectElementsFromModel(umlElement.getModel(), Constants.stereotypeQName_Test);
-//
-//testModels.clear();
-//
-//for (Element element : ec.getElements()) {
-//	if (element instanceof NamedElement) {
-//		testModels.add((NamedElement) element);
-//	}
-//}
-//
-//List<Element> sortedList = ModelicaMLServices.getSortedByName(testModels);
-//
-//return sortedList;
-//}
-	
 	
 }

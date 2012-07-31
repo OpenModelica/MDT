@@ -274,7 +274,7 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 			}
 		});
 		btnRecordOnlyRequirementStatus.setSelection(isRecordOnlyRequirements());
-		btnRecordOnlyRequirementStatus.setText("Record only requirements status");
+		btnRecordOnlyRequirementStatus.setText("Record only clients and requirements status values");
 		
 		grpFilesSelection = new Group(container, SWT.NONE);
 		grpFilesSelection.setLayout(new GridLayout(2, false));
@@ -731,16 +731,6 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 		}
 	}
 
-//	private String getLastSegment(String string, String separator){
-//		if (string != null) {
-//			String[] splitted = string.split(separator);
-//			return splitted[splitted.length - 1];
-//		}
-//		return string;
-//	}
-	
-	
-	
 	
 	/* ************************************************************************************************ */
 	// getter and setter

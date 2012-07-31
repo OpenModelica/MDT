@@ -284,6 +284,7 @@
                   </with>
                </visibleWhen>
             </command>
+            <!--
             <command
                   commandId="org.openmodelica.modelicaml.helper.commands.runtests"
                   icon="icons/tscriptrun.gif"
@@ -299,6 +300,7 @@
                   </with>
                </visibleWhen>
             </command>
+            -->
          </toolbar>
       </menuContribution>
    </extension>

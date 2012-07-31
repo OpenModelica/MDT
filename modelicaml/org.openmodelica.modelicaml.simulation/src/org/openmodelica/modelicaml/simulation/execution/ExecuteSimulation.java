@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
@@ -198,21 +199,48 @@ public class ExecuteSimulation {
 					//return "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
 					result = result + "\n" + "checkModel: " + omcReturnString  + "\nErrorString: " + errorString;
 				}
-			
+				
 				// set default simulation settings
-				if (model.numberOfIntervals.trim().length() == 0) {
+				if (model.start==null|| model.start.trim().length() == 0) {
+					model.start = "0";
+					model.start = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_startTime, model.start, null);
+				}
+				if (model.stop==null || model.stop.trim().length() == 0) {
+					model.stop = "10";
+					model.stop = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_stopTime, model.stop, null);
+				}
+				if (model.numberOfIntervals==null|| model.numberOfIntervals.trim().length() == 0) {
 					model.numberOfIntervals = "500";
+					model.numberOfIntervals = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_numberOfIntervals, model.numberOfIntervals, null);
 				}
-				if (model.tolerance.trim().length() == 0 ) {
+				if (model.tolerance == null || model.tolerance.trim().length() == 0 ) {
 					model.tolerance = "0.000001";
+					model.tolerance = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_tolerance, model.tolerance, null);
 				}
-				if (model.solver.trim().length() == 0 ) {
+				if (model.solver == null || model.solver.trim().length() == 0 ) {
 					model.solver = "dassl";
+					model.solver = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_solver, model.solver, null);
 				}
-				if (model.outputFormat.trim().length()==0 ) {
-//					model.outputFormat = "plt";
+				if (model.outputFormat == null || model.outputFormat.trim().length()==0 ) {
 					model.outputFormat = "mat";
+					model.outputFormat = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, model.outputFormat, null);
 				}
+				
+				
+//				// set default simulation settings
+//				if (model.numberOfIntervals.trim().length() == 0) {
+//					model.numberOfIntervals = "500";
+//				}
+//				if (model.tolerance.trim().length() == 0 ) {
+//					model.tolerance = "0.000001";
+//				}
+//				if (model.solver.trim().length() == 0 ) {
+//					model.solver = "dassl";
+//				}
+//				if (model.outputFormat.trim().length()==0 ) {
+////					model.outputFormat = "plt";
+//					model.outputFormat = "mat";
+//				}
 				
 				//Simulate model
 				String variableFilter = null; // no filter, i.e., all variables should be recorded.

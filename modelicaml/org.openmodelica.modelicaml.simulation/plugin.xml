@@ -161,6 +161,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
+      <!--
       <objectContribution
             adaptable="false"
             id="org.openmodelica.modelicaml.simulation.popup.testsessionxml.object"
@@ -174,6 +175,7 @@
                style="push">
          </action>
       </objectContribution>
+      -->
       <objectContribution
             adaptable="false"
             id="org.openmodelica.modelicaml.simulation.popup.testresultsxml.object"
@@ -187,6 +189,7 @@
                style="push">
          </action>
       </objectContribution>
+      <!--
       <objectContribution
             adaptable="false"
             id="org.openmodelica.modelicaml.simulation.popup.testsessionreportdata.object"
@@ -200,6 +203,7 @@
                style="push">
          </action>
       </objectContribution>
+      -->
       <objectContribution
             adaptable="false"
             id="org.openmodelica.modelicaml.simulation.popup.testsessionreport.object"

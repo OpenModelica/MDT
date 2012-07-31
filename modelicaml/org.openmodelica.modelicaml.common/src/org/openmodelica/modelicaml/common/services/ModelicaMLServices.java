@@ -106,8 +106,6 @@ public class ModelicaMLServices {
 //			System.err.println("modifiedModelTimeStamp < generatedCodeTimeStamp: " + (modifiedModelTimeStamp < generatedCodeTimeStamp));
 //		}
 		
-//		notify("Checking if code generation is needed ... ", 1);
-		
 		if (generatedCodeTimeStamp != null && modifiedModelTimeStamp != null) {
 			// if code was generated after the model modification -> no need for regenerating code
 			if (modifiedModelTimeStamp < generatedCodeTimeStamp) {
@@ -331,51 +329,6 @@ public class ModelicaMLServices {
 	}
 	
 	
-//	public static List<String> getFilesToLoad(String folderAbsolutePath){
-//		
-//		// list of files to be loaded
-//		List<String> list = new ArrayList<String>();
-//
-//		// add "/" at the end if there is none
-//		if (!folderAbsolutePath.trim().endsWith("/")) {
-//			folderAbsolutePath = folderAbsolutePath + "/";
-//		}
-//		
-//		File folder = new File(folderAbsolutePath);
-//		if (folder.isDirectory()) {
-//			/*
-//			 * - get all .mo files add these to the list
-//			 * - get all sub.folders and add sub-folder-name/package.mo to the list
-//			 */
-//			IFileSystem fileSystem = EFS.getLocalFileSystem();
-//			IFileStore folderStore = fileSystem.getStore(URI.create(folderAbsolutePath));
-//			
-//			String[] children;
-//			try {
-//				children = folderStore.childNames(EFS.NONE, null);
-//				for (int i = 0; i < children.length; i++) {
-//					String child = children[i];
-//					
-//					File checkChild = new File(folderAbsolutePath + child);
-//					
-//					if (child.endsWith(".mo")) { // if it is a .mo file
-//						list.add(folderAbsolutePath + child);
-//					}
-//					else if (checkChild.isDirectory()) { // if it is a folder
-//						list.add(folderAbsolutePath + child + "/package.mo");
-//					}
-//					else { // any other files 
-//						
-//					}
-//				}
-//			} catch (CoreException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		return list;
-//	}
-	
 	/*
 	 * OMC handling
 	 */
@@ -464,68 +417,22 @@ public class ModelicaMLServices {
 			
 			monitor.subTask(message + filePath );
 			
-			IFileStore fileToBeDeleted = fileSystem.getStore(java.net.URI.create("file:/"  + filePath ));
-			try {
-				fileToBeDeleted.delete(EFS.NONE, monitor);
-			} catch (CoreException e) {
-//				e.printStackTrace();
-			}
-			
-			if (monitor.isCanceled()){
-				return Status.CANCEL_STATUS;
+			if (!ModelicaMLServices.containsOMCErrorMessage(filePath)) {
+				IFileStore fileToBeDeleted = fileSystem.getStore(java.net.URI.create("file:/"  + filePath ));
+				try {
+					fileToBeDeleted.delete(EFS.NONE, monitor);
+				} catch (CoreException e) {
+//					e.printStackTrace();
+				}
+				
+				if (monitor.isCanceled()){
+					return Status.CANCEL_STATUS;
+				}
 			}
 			
 		}
 		return Status.OK_STATUS;
 	}
-	
-	
-//	public static IStatus deleteOldSimulationFiles(String modelQName, String directory, IProgressMonitor monitor){
-//		
-//		if (monitor.isCanceled()){
-//			return Status.CANCEL_STATUS;
-//		}
-//		
-//		IFileSystem fileSystem = EFS.getLocalFileSystem();
-//		monitor.subTask("Deleting files from OMC tmp folder for '" + modelQName + "'");
-//		IFileStore oldExeFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + ".exe"));
-//		IFileStore oldXMLInitFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_init.xml"));
-//		IFileStore oldPltFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.plt"));
-//		IFileStore oldPltXMLFile = fileSystem.getStore(java.net.URI.create("file:/" + directory + "/" + modelQName + "_res.xml"));
-//		
-//		try {
-//			oldExeFile.delete(EFS.NONE, monitor);
-//			oldXMLInitFile.delete(EFS.NONE, monitor);
-//			oldPltFile.delete(EFS.NONE, monitor);
-//			oldPltXMLFile.delete(EFS.NONE, monitor);
-//			
-//			return Status.OK_STATUS;
-//			
-//		} catch (CoreException e) {
-////			e.printStackTrace();
-//			return null;
-//		}
-//	}
-//	
-//	public static IStatus deleteFile(String path, IProgressMonitor monitor){
-//		
-//		if (monitor.isCanceled()){
-//			return Status.CANCEL_STATUS;
-//		}
-//		
-//		IFileSystem fileSystem = EFS.getLocalFileSystem();
-//		monitor.subTask("Deleting file '" + path + "'");
-//		IFileStore existingFile = fileSystem.getStore(java.net.URI.create("file:/" + path));
-//		
-//		try {
-//			existingFile.delete(EFS.NONE, monitor);
-//			return Status.OK_STATUS;
-//			
-//		} catch (CoreException e) {
-////			e.printStackTrace();
-//			return null;
-//		}
-//	}
 	
 	
 	/*
@@ -608,10 +515,6 @@ public class ModelicaMLServices {
 
 
 	
-	
-	
-	
-	
 	public static String getQualifiedName(Element element) {
 		if (element instanceof NamedElement) {
 			String qName = ((NamedElement)element).getQualifiedName();
@@ -638,35 +541,6 @@ public class ModelicaMLServices {
 	/*
 	 * Model instantiations
 	 */
-	
-	
-//	public static HashMap<Element,TreeParent> getModelInstantiations(HashSet<Element> models, HashMap<Element,TreeParent> preparedInstantiations){
-//		
-//		HashMap<Element,TreeParent> modelToInstantiations = new HashMap<Element, TreeParent>();
-//		
-//		for (Element model : models) {
-//			TreeParent newChild = getModelInstantiation(model, preparedInstantiations);
-//			if (newChild != null) {
-//				modelToInstantiations.put(model, newChild);
-//			}
-//		}
-//		
-//		return modelToInstantiations;
-//	}
-//	
-//	public static TreeParent getModelInstantiation(Element model, HashMap<Element,TreeParent> preparedInstantiations){
-//		TreeParent newChild = null;
-//
-//		// create only if it does not exists already
-//		if (preparedInstantiations.get(model) == null) {
-//			
-//			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
-//			ci_model.createTree();
-//			newChild = ci_model.getTreeRoot();
-//		}
-//		
-//		return newChild;
-//	}
 	
 	
 	public static HashMap<Element,ClassInstantiation> getModelInstantiations(HashSet<Element> models, HashMap<Element,ClassInstantiation> preparedInstantiations){
@@ -778,6 +652,10 @@ public class ModelicaMLServices {
 	
 	public static String getSimulationResultsFileName(NamedElement model){
 		return getModelQName((NamedElement) model) + "_res.mat";
+	}
+	
+	public static String getSimulationResultsFileName(String modelName){
+		return StringUtls.replaceSpecCharExceptThis( modelName, "::").replaceAll("::", ".") + "_res.mat";
 	}
 	
 	public static String getModelQName(NamedElement model) {

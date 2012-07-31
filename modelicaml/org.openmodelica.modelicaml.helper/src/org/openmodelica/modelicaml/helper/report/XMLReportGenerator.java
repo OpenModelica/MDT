@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,6 +26,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.internal.filesystem.local.LocalFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -36,13 +36,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
@@ -54,7 +50,8 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
-public class XMLReportGenerator implements IRunnableWithProgress {
+@SuppressWarnings("restriction")
+public class XMLReportGenerator {
 
 	private GeneratedModelsData gmd;
 	private HashMap<Element, ClassInstantiation> preparedModelInstantiations;
@@ -161,6 +158,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	
 	public final static String XMLTagName_uid 							= "uid";
 
+	// local unique id for any user interface object
+	private int uid = 0;
 	
 	// generated file content
 	private String fileContent;
@@ -168,47 +167,25 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	// type of content
 	public static int XMLContent = 0;
 	
-	private int uid = 0;
-	
+	private int contentType;
 	
 	private IProgressMonitor monitor;
+	private ProgressMonitorDialog progressDialog;
+	
+	private boolean copySimulationFiles = false;
+	
+	
 	
 	public XMLReportGenerator(GeneratedModelsData gmd, int contentType) {
-		
 		this.gmd = gmd;
-		
 		if (gmd.getGenerator() != null) {
 			preparedModelInstantiations = gmd.getGenerator().getPreparedModelInstantiations();
 		}
-		
-		if (contentType == XMLContent) {
-			IWorkbench wb = PlatformUI.getWorkbench();
-			IProgressService ps = wb.getProgressService();
-			try {
-				ps.run(false, true, this);
-				
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				MessageDialog.openError(new Shell(), "Report Generation Error", "Could not invode the report generation.");
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				MessageDialog.openError(new Shell(), "Report Generation Interruption", "Report generation was interrupted.");
-			}
-		}
-	}
-	
-	@Override
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
-		fileContent = getXMLReportContent(monitor);
+		this.contentType = contentType;
 	}
 
 	
-	
-	public String getXMLReportContent(IProgressMonitor monitor){
-		this.monitor = monitor;
+	public String getXMLReportContent(){
 		
 		monitor.setTaskName("Creating XML Report...");
 		
@@ -216,7 +193,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		string += "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
 		
 		// XSL tag for translation into HTML 
-		string += "<?xml-stylesheet type=\"text/xsl\" href=\"ReportTranslator.xslt\"?>";
+//		string += "<?xml-stylesheet type=\"text/xsl\" href=\"ReportTranslator.xslt\"?>";
 		
 		string += "<"+XMLTagName_report+">";
 		
@@ -269,7 +246,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		string += getNotSimulatedModelItems();
 		
 		string += "</"+XMLTagName_report+">";
-		
+
 		return string;
 	}
 	
@@ -387,6 +364,9 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 					XMLTagName_interval +"=\""+VerificationExecutionServices.getInterval(model)+"\" "+
 					XMLTagName_outputFormat +"=\""+VerificationExecutionServices.getOutputFormat(model)+"\" "+
 				
+					XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(model))+"\" " +
+					XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotLink(model))+"\" " +
+					
 					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
 					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
 
@@ -493,8 +473,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				
 				string += "<"+XMLTagName_systemModel+" "+
 								XMLTagName_uid +"=\""+getUid()+"\" "+			
-								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, treeObject))+"\" " +
-								XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotStatusLink(VeM, treeObject))+"\" " +
+								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(treeObject.getUmlElement()))+"\" " +
+								XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotLink(VeM, treeObject))+"\" " +
 								XMLTagName_instanceName+"=\""+treeObject.getDotPath()+"\" "+
 								XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(type))+"\"  "+
 								XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(type))+"\">";
@@ -525,8 +505,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 
 				string += "<"+XMLTagName_scenario+" "+
 						XMLTagName_uid +"=\""+getUid()+"\" "+	
-						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, scenario))+"\" " +
-						XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotStatusLink(VeM, scenario))+"\" " +
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(scenario.getUmlElement()))+"\" " +
+						XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotLink(VeM, scenario))+"\" " +
 						XMLTagName_instanceName+"=\""+scenario.getDotPath()+"\" "+
 						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(type))+"\" "+
 						XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(type))+"\">";
@@ -598,8 +578,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 						XMLTagName_isViolated + "=\""+isViolated+"\" " +
 						XMLTagName_isEvaluated+"=\""+isEvaluated+"\" " +
 						XMLTagName_instanceName+"=\""+requirement.getDotPath()+"\" " +
-						XMLTagName_locateLink+"=\""+getLocateLink(VeM, requirement)+"\" " +
-						XMLTagName_plotLink+"=\""+getPlotStatusLink(VeM, requirement)+"\" " +
+						XMLTagName_locateLink+"=\""+getLocateLink(requirement.getUmlElement())+"\" " +
+						XMLTagName_plotLink+"=\""+getPlotRequirementStatusLink(VeM, requirement)+"\" " +
 						XMLTagName_name+"=\""+ModelicaMLServices.getName(type)+"\" " +
 						XMLTagName_qualifiedName + "=\""+ModelicaMLServices.getQualifiedName(type) +"\" " +
 						XMLTagName_id + "=\""+ModelicaMLServices.getRequirementID(type) +"\" " +
@@ -638,7 +618,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 						XMLTagName_instanceName+"=\"" + client.getDotPath() + "\" " + 
 						XMLTagName_clientPath+"=\"" + client.getDotPathWithoutFirstLevelComponent() + "\" " + 
 						XMLTagName_isMandatory+"=\"" + isMandatory + "\" " +
-						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, client))+"\" " +
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(client.getUmlElement()))+"\" " +
 						XMLTagName_plotLink +"=\"" + StringEscapeUtils.escapeXml(getPlotLink(VeM, client)) + "\" " +
 								">";
 			String binding = client.getFinalModificationRightHand();
@@ -936,13 +916,19 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 		return linkAdress;
 	}
 	
+	private String getPlotLink(Element model){
+		String linkAdress = "";
+		linkAdress = "plot:" + ModelicaMLServices.getQualifiedName(model);
+		return linkAdress;
+	}
+	
 	private String getPlotLink(Element model, TreeObject treeObject){
 		String linkAdress = "";
 		linkAdress = "plot:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
 		return linkAdress;
 	}
 	
-	private String getPlotStatusLink(Element model, TreeObject treeObject){
+	private String getPlotRequirementStatusLink(Element model, TreeObject treeObject){
 		String linkAdress = "";
 		linkAdress = "plot:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
 		return linkAdress + "." + Constants.propertyName_mStatus;
@@ -955,13 +941,13 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	 */
 	private String getAllComments(Element element) {
 		String string = "";
-		int i = 0;
+//		int i = 0;
 		
 		string += "<"+XMLTagName_comments+">";
 		if (element instanceof Element) {
 			for (Comment comment : element.getOwnedComments()) {
 				//counter
-				i++;
+//				i++;
 				string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
 			}
 		}
@@ -975,7 +961,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	 */
 	private String getAllRequirementComments(Element element) {
 		String string = "";
-		int i = 0;
+//		int i = 0;
 		
 		string += "<"+XMLTagName_comments+">";
 		if (element instanceof Element) {
@@ -985,7 +971,7 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 				if (!comment.getBody().trim().equals(ModelicaMLServices.getRequirementText(element).trim())) {
 					
 					//counter
-					i++;
+//					i++;
 					string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
 				}
 			}
@@ -999,42 +985,64 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 	/*
 	 * File handling
 	 */
-	public String createFile(String projectName, String folderName, boolean askWhereToStore) throws URISyntaxException, IOException, CoreException{
-		
+	public String createReport(String projectName, String folderName, boolean askWhereToStore) throws URISyntaxException, IOException, CoreException{
 		String filePath = null;
 		String xmlFileName = "report.xml";
 		
-		if (askWhereToStore) {
-			// TODO: open file dialog so that the user can select where to store the report
-		}
-		else {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-			IProject iProject = root.getProject(projectName);
+		if (contentType == XMLContent) {
 			
-			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-			String folderPath = projectPath + "/" + folderName;
+			// ask for copying sim files 
+			copySimulationFiles = MessageDialog.openQuestion(new Shell(), "Copy Simulation Files?", "Should all simulation files be copies to the report folder?");
 			
-			File folder = new File(folderPath);
+			progressDialog = new ProgressMonitorDialog(new Shell());
+			monitor = progressDialog.getProgressMonitor();
 			
-			boolean folderCreated = false;
-			if (!folder.exists()) {
-				 folderCreated = new File(folderPath).mkdir();
+			// open dialog
+			progressDialog.open();
+			
+			// create report content
+			fileContent = getXMLReportContent();
+			
+			// if selected -> ask user where to store the report files
+			if (askWhereToStore) {
+				// TODO: open file dialog so that the user can select where to store the report
 			}
 			
-			// TODO: replace empty spaces in the folderPath
-			
-			if (folder.exists() || folderCreated) {
-				filePath = folderPath + "/" + xmlFileName;
-				return  storeFile(folderPath, xmlFileName);
+			// store files in specified project 
+			else {
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				IProject iProject = root.getProject(projectName);
+				
+				String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+				String folderPath = projectPath + "/" + folderName;
+				
+				File folder = new File(folderPath);
+				
+				boolean folderCreated = false;
+				if (!folder.exists()) {
+					 folderCreated = new File(folderPath).mkdir();
+				}
+				
+				if (folder.exists() || folderCreated) {
+					
+					filePath = folderPath + "/" + xmlFileName;
+					
+					// correct path if needed
+					filePath = filePath.replaceAll("%20", " ");
+
+					return  storeFile(folderPath, xmlFileName);
+				}
 			}
+			
+			// close progress monitor
+			progressDialog.close();
+
 		}
-		
 		
 		return filePath;
 	}
 
-	
 	private String storeFile(String folderPath, String xmlFileName) throws URISyntaxException, IOException, CoreException{
 		if (fileContent != null) {
 
@@ -1051,8 +1059,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			
 //			String generatedModelPackageName = StringUtls.replaceSpecChar( ((NamedElement)gmd.getGeneratedModelsPackage()).getName()) + "_" + System.currentTimeMillis();
 			String generatedModelPackageName = StringUtls.replaceSpecChar( ((NamedElement)gmd.getGeneratedModelsPackage()).getName()) + "_" + VerificationExecutionServices.getTimeStamp();
-
-			monitor.setTaskName("Creating Copying Report Data ...");
+			
+			monitor.setTaskName("Copying Report Data ...");
 			
 			// copy folder
 			File folderToCopy = new File(FileLocator.toFileURL(Platform.getBundle("org.openmodelica.modelicaml.helper").getEntry("sources/reportData")).toURI());
@@ -1066,16 +1074,22 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			String htmlPath = folderPath + "/" + generatedModelPackageName + "/" + xmlFileName + ".html";
 			
 			
-			boolean copySimulationFiles = MessageDialog.openQuestion(new Shell(), "Copy Simulation Files?", "Should all simulation files be copies to the report folder?");
-			if (copySimulationFiles) {
+			if (isCopySimulationFiles()) {
 				
 				for (Element  VeM : gmd.getSimulationResultsFile().keySet()) {
+					
 					String simFilePath = gmd.getSimulationResultsFile().get(VeM);
 					monitor.setTaskName("Copying file: " + simFilePath);
+					
 					if (simFilePath != null && new File(simFilePath).exists()) {
 						
 						simFilePath = simFilePath.replaceAll("\\\\", "/");
 						String simFileName = new File(simFilePath).getName();
+						
+						//copy file
+						new LocalFile(new File(simFilePath)).copy(new LocalFile(new File(folderPath + "/" + generatedModelPackageName + "/" + simFileName)), EFS.NONE, monitor);
+						
+						// the code below did not work because if source and destination are on different drives (e.g. C: and D:)
 //						IFileStore simFile = fileSystem.getStore(java.net.URI.create(simFilePath));
 //						IFileStore simFileCopy = fileSystem.getStore(java.net.URI.create(folderPath + "/" + generatedModelPackageName + "/" + simFileName));
 //						simFile.copy(simFileCopy, EFS.OVERWRITE, monitor);
@@ -1101,6 +1115,8 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			
 			// export to HTML
 			exportToHtml(folderPath, xmlPath, htmlPath);
+			
+			progressDialog.close();
 			
 			// refresh the projects browser
 			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -1143,8 +1159,6 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-        System.out.println("Done!");
 	}
 
 
@@ -1178,5 +1192,13 @@ public class XMLReportGenerator implements IRunnableWithProgress {
 
 	public void setUid(int uid) {
 		this.uid = uid;
+	}
+
+	public boolean isCopySimulationFiles() {
+		return copySimulationFiles;
+	}
+
+	public void setCopySimulationFiles(boolean copySimulationFiles) {
+		this.copySimulationFiles = copySimulationFiles;
 	}
 }
