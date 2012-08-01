@@ -44,6 +44,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -53,8 +54,6 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -83,8 +82,8 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
 	private final ImageDescriptor infoImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
-	
-	
+	public EObject umlModel = null;
+
 	@Override
 	public void update(ViewerCell cell) {
 		
@@ -628,9 +627,11 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			// markers
 			
 			IProject iProject = null;
-			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-			if (umlModel != null && umlModel.getResource() != null) {
-				String projectName = umlModel.getResource().getURI().segment(1);
+//			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+//			if (umlModel != null && umlModel.getResource() != null) {
+			if (umlModel != null && ((Element)umlModel).eResource() != null) {
+//				String projectName = umlModel.getResource().getURI().segment(1);
+				String projectName = ((Element)umlModel).eResource().getURI().segment(1);
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IWorkspaceRoot root = workspace.getRoot();
 				iProject = root.getProject(projectName);
@@ -797,10 +798,11 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
 	
-//	private boolean allClientsAreRequired(TreeObject treeObject){
-//		if (treeObject.isValueMediator()) {
-//		}
-//		return false;
-//	}
-	
+	public EObject getUmlModel() {
+		return umlModel;
+	}
+
+	public void setUmlModel(EObject umlModel) {
+		this.umlModel = umlModel;
+	}
 }

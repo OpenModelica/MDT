@@ -224,15 +224,10 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 			
 			// collect mediators if they were not provided yet
 			if (allMediators == null || allMediators.size() == 0) {
-				
-//				MediatorsCollector mc = new MediatorsCollector();
-//				mc.collectElementsFromModel(umlRootElement);
-//				allMediators = mc.getValueMediators();
 
 				ElementsCollector ec = new ElementsCollector();
 				ec.collectElementsFromModel(umlRootElement, Constants.stereotypeQName_ValueMediator);
 				allMediators = ec.getElements();
-				
 			}
 			
 			for ( Element object : allMediators ) {

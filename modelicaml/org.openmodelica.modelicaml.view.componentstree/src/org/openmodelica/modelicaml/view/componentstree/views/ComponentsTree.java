@@ -2401,6 +2401,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked(), actionShowPredefinedTypesProperties.isChecked());
 
 				ast.createTree();
+				ast.collectValueClientsAndProvidersFromUmlModel();
 				invisibleRoot = ast.getInvisibleRoot();
 				root = ast.getTreeRoot();
 				

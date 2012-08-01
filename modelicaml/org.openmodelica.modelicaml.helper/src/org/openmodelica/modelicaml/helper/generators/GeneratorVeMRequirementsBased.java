@@ -384,6 +384,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 		// pass pre-collected mediators in order to avoid another search
 		ci.setAllMediators(collector.getAllMediators());
 		ci.createTree();
+		ci.collectValueClientsAndProvidersFromUmlModel();
 		
 		// update all bindings in the created simulation model class
 		CreatorValueBinding vbc = new CreatorValueBinding();

@@ -42,6 +42,7 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.papyrus.resource.NotFoundException;
 import org.eclipse.papyrus.resource.uml.UmlModel;
 import org.eclipse.papyrus.resource.uml.UmlUtils;
@@ -609,22 +610,37 @@ public class TreeBuilder {
 	}
 
 	public void setUmlModel(EObject umlRootElement) {
+		
+		// if the model is unknown -> get it from editor
 		if (umlRootElement == null) {
-			UmlModel papyrusModel = UmlUtils.getUmlModel();
-			if (papyrusModel != null ) {
-				try {
-					setUmlModel(papyrusModel.lookupRoot());
-//					System.err.println(model);
-				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
-//					e.printStackTrace();
+			UmlModel papyrusModel;
+			try {
+				papyrusModel = UmlUtils.getUmlModel();
+				if (papyrusModel != null ) {
+					try {
+						setUmlModel(papyrusModel.lookupRoot());
+					} catch (NotFoundException e) {
+						openModelAccessError();
+					}
 				}
+//				else {
+//					openModelAccessError();
+//				}
+			} catch (Exception e1) {
+//				openModelAccessError();
 			}
 		}
 		else {
 			this.umlModel = umlRootElement;
 		}
 	}
+	
+	private void openModelAccessError(){
+		String errorTitle = "Bindings View Reload Error";
+		String message = "Could not access the ModelicaML model in Papyrus. Please click on a Papyrus diagram and try again.";
+		MessageDialog.openError(ModelicaMLServices.getShell(), errorTitle, message);
+	}
+	
 	
 	@SuppressWarnings({ "unchecked" })
 	private void addToMapList(@SuppressWarnings("rawtypes") HashMap map, Element key, Element value){

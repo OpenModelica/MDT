@@ -196,7 +196,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 			
 			invisibleRoot = new TreeParent("");
 			treeBuilder.buildTreeFromUmlModel(invisibleRoot);
-
+			((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
 		}
 	}
 	
@@ -565,9 +565,11 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 						Object object = ((TreeObject)obj).getAdapter(EObject.class);
 						if (object instanceof EObject) {
 							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-							List<Object> items = new ArrayList<Object>();
-							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-							modelExplorerView.setSelection(new StructuredSelection(items), true);
+							if (modelExplorerView != null) {
+								List<Object> items = new ArrayList<Object>();
+								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+								modelExplorerView.setSelection(new StructuredSelection(items), true);
+							}
 						}
 					}
 				}
@@ -594,9 +596,11 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				
 				if (actionInstantiatedClassMode.isChecked()) {
 					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+					((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
 				}
 				else {
-					treeBuilder.buildTreeFromUmlModel(invisibleRoot);	
+					treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+					((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
 				}
 				viewer.setInput(getViewSite());
 
@@ -645,6 +649,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					if (!treeObject.isReadOnly() && treeObject instanceof TreeParent) {
 						
 						final ValueBindingsValidator validator = new ValueBindingsValidator((TreeParent) treeObject);
+						validator.setUmlModel(treeBuilder.getUmlModel());
 						
 //						Job job = new Job("Value Bindings Operations Validation") {
 //							protected IStatus run(IProgressMonitor monitor) {
@@ -731,6 +736,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 						invisibleRoot.removeChild(children[i]);
 					}
 					treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+					((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+					
 					viewer.setInput(getViewSite());
 					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 				}

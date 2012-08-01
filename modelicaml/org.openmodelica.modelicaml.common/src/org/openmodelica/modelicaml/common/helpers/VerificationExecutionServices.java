@@ -427,6 +427,7 @@ public class VerificationExecutionServices {
 			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false);
 			ci.setUmlModel(element.getModel());
 			ci.createTree();
+			ci.collectValueClientsAndProvidersFromUmlModel();
 
 			if (ci.getTreeRoot().hasChildren()) {
 				TreeObject[] children = ci.getTreeRoot().getChildren();
@@ -456,6 +457,7 @@ public class VerificationExecutionServices {
 			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false);
 			ci.setUmlModel(element.getModel());
 			ci.createTree();
+			ci.collectValueClientsAndProvidersFromUmlModel();
 			
 			if (ci.getTreeRoot().hasChildren()) {
 				TreeObject[] children = ci.getTreeRoot().getChildren();
@@ -499,6 +501,7 @@ public class VerificationExecutionServices {
 		return "Unknown";
 	}
 	
+	@Deprecated
 	public static List<TreeObject> getRequiredClientsTreeItems(TreeObject treeItem, HashSet<TreeObject> collectedItems) {
 		HashSet<TreeObject> collectedItem_temp = new HashSet<TreeObject>();
 		collectedItem_temp.addAll(collectedItems);
@@ -529,7 +532,10 @@ public class VerificationExecutionServices {
 		return sortedList;
 	}
 	
-	public static List<TreeObject> getClientsTreeItems(TreeObject treeItem, HashSet<TreeObject> collectedItems) {
+	
+	
+	
+	public static List<TreeObject> getClientsTreeItems(ClassInstantiation ci, TreeObject treeItem, HashSet<TreeObject> collectedItems, boolean onlyMandatoryClients) {
 		
 		HashSet<TreeObject> collectedItem_temp = new HashSet<TreeObject>();
 		collectedItem_temp.addAll(collectedItems);
@@ -540,18 +546,23 @@ public class VerificationExecutionServices {
 				TreeObject treeObject = children[i];
 
 				/*
-				 * TODO: this is not accurate. If the tree object (the actual client) is referenced in
+				 * If the tree object (the actual client) is referenced in
 				 * client operation then we need to track this and find the actual client instead of#
 				 * taking the client that has the operation...    
 				 */
-
+				
 				if (!collectedItem_temp.contains(treeObject) && treeObject.isValueClient()) {
-					collectedItem_temp.add(treeObject);
+					if (onlyMandatoryClients && treeObject.isValueClient_required()) {
+						collectedItem_temp.addAll(getActualClients(ci, treeObject));
+					}
+					else if (treeObject.isValueClient()) {
+						collectedItem_temp.addAll(getActualClients(ci, treeObject));
+					}
 				}
 				
 				// recursive call
 				if (treeObject instanceof TreeParent) {
-					collectedItem_temp.addAll(getClientsTreeItems(treeObject, collectedItem_temp));
+					collectedItem_temp.addAll(getClientsTreeItems(ci, treeObject, collectedItem_temp, onlyMandatoryClients));
 				}
 			}
 		}
@@ -562,12 +573,72 @@ public class VerificationExecutionServices {
 	}
 	
 	
+	public static HashSet<TreeObject> getActualClients(ClassInstantiation ci, TreeObject upperClientTeeItem){
+
+		Element element = upperClientTeeItem.getProperty();
+		HashSet<String> operations = new HashSet<String>();
+
+		if (element != null) {
+			// add all client operations
+			if (ci.getValueBindingsDataCollector().getReferencedClients().contains(element)) {
+				HashSet<String> clientOperations = ci.getValueBindingsDataCollector().getClientOperations().get(element);
+				if (clientOperations != null) {
+					operations.addAll(clientOperations);
+				}
+			}
+		}
+		
+		HashSet<String> clientPaths = new HashSet<String>();
+		
+		for (String operation : operations) {
+			String[] scriptCodeSplitted = operation.split(";");
+			if ( scriptCodeSplitted.length > 0) { // if there is at least one line that ends with ";"
+				for (int i = 0; i < scriptCodeSplitted.length; i++) { // the next will always overwrite the previous, i.e. the last one is always taken. 
+					
+					if ( !scriptCodeSplitted[i].trim().equals("") ) { // if it is not an empty line 
+						String[] bindingEqationParts = scriptCodeSplitted[i].split("=");
+						if (bindingEqationParts.length == 2 ) {// it is a binding equation with left and right part 
+							
+							// get the left and right parts and trim them
+							String leftHand = bindingEqationParts[0].trim();
+//							String rightHand = bindingEqationParts[1].trim();
+							
+							String expandedLeftHand = leftHand.replaceFirst(Constants.MACRO_clientPath, upperClientTeeItem.getDotPath()).trim();
+							clientPaths.add(expandedLeftHand);
+						}
+					}
+				}
+			}
+		}
+		
+		HashSet<TreeObject> actualClients = getTreeObjects(ci, clientPaths);
+		
+		if (actualClients.size() > 0) {
+			return actualClients;
+		}
+		else {
+			// return the upper level client passed
+			actualClients = new HashSet<TreeObject>();
+			actualClients.add(upperClientTeeItem);
+		}
+		
+		return actualClients;
+	}
 	
 	
 	
-	
-	
-	
+	/*
+	 * get tree objects by path
+	 */
+	private static HashSet<TreeObject> getTreeObjects(ClassInstantiation ci, HashSet<String> paths){
+		HashSet<TreeObject> treeObjectsFound = new HashSet<TreeObject>();
+		for (TreeObject treeObject : ci.getAllTreeObjects()) {
+			if (paths.contains(treeObject.getDotPath())) {
+				treeObjectsFound.add(treeObject);
+			}
+		}
+		return treeObjectsFound;
+	}
 	
 	
 	

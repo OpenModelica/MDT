@@ -51,9 +51,16 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 public class ModelicaMLServices {
 
 	/*
-	 * Papyrus notification popup 
+	 * Papyrus notification temporary popup.
+	 * @messageType is -1=no icon, 0=info icon, 1=warning icon, 2=error icon
 	 */
-	public static void notify(final String title, final String message, final int messageType, final long displayTimeInSeconds){
+	public static void notify(
+			final String title, 
+			final String message, 
+			final int messageType, 
+			final long displayTimeInSeconds
+			){
+		
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				
@@ -85,8 +92,6 @@ public class ModelicaMLServices {
 			}
 		});
 	}
-	
-	
 	
 	/*
 	 * Regeneration of  code
@@ -130,7 +135,7 @@ public class ModelicaMLServices {
 					String lastCodeGeneration = sdf.format(generatedCodeTimeStamp);
 					String lastModification = sdf.format(modifiedModelTimeStamp);
 					
-					notify("ModelicaML Code Generation", 
+					notify("ModelicaML: Code Generation", 
 							"Code generation was skipped." +
 							"\nThe model '"+resourceName+"' " +
 							"\nhas not changed since the last code generation." +
@@ -149,28 +154,37 @@ public class ModelicaMLServices {
 	
 	
 	public static boolean saveModel(UmlModel umlModel){
-		try {
-//			// get the Papyrus model in order to make sure that the model is not being saved, hence is not dirty anymore.
-//			if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() != null) {
-//				IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-//				PapyrusMultiDiagramEditor papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
-//				
-//				boolean isDirty = papyrusEditor.isDirty();
-//				
-//			}
-			
-			if (umlModel!=null && umlModel.getResource().isModified()) {
+		if (umlModel!=null && umlModel.getResource().isModified()) {
+			try {
+//				// get the Papyrus model in order to make sure that the model is not being saved, hence is not dirty anymore.
+//				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() != null) {
+//					IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+//					PapyrusMultiDiagramEditor papyrusEditor = ((PapyrusMultiDiagramEditor)editorPart);
+//					
+//					boolean isDirty = papyrusEditor.isDirty();
+//					
+//				}
 				umlModel.saveModel();
+				String resourceName = umlModel.getResource().getURI().toPlatformString(true);
+				notify("ModelicaML: Save Model", 
+						"The model '"+resourceName+"' " +
+						"\nwas saved. It will need to be reloaded in editor.",
+						1,
+						2);
 				
-//				System.err.println("Saving "+ umlModel.getResource().getURI());
 				return true;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				notify("ModelicaML: Save Model", 
+						"Failed to save the model.",
+						2,
+						2);
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return false;
 	}
+
 	
 	/*
 	 * Element adoption
@@ -222,6 +236,17 @@ public class ModelicaMLServices {
 		return "";
 	}
 
+	
+	public static boolean hasModelicaMLStereotype(Element element){
+		EList<Stereotype> sList = element.getAppliedStereotypes();
+		for (Stereotype stereotype : sList) {
+			if (stereotype.getQualifiedName().startsWith(Constants.modelingLanguageName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	/*
 	 * Utilities
@@ -568,6 +593,7 @@ public class ModelicaMLServices {
 			
 			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
 			ci_model.createTree();
+			ci_model.collectValueClientsAndProvidersFromUmlModel();
 			
 			newInstantiation = ci_model;
 		}

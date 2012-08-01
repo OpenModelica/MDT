@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.core.utils.BusinessModelResolver;
@@ -469,24 +470,24 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 			VerificationDataCollector verificationDataCollector;
 			try {
 				
+				// collect verification data to be passed
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				dialog.getProgressMonitor().setTaskName("Collecting Verification Data ...");
+				dialog.open();
+				
 				verificationDataCollector = new VerificationDataCollector(umlModel.lookupRoot());
 				setGeneratedModelsData(new GeneratedModelsData(getGeneratedModelsPackage(), verificationDataCollector));
 				
+				dialog.close();
+				
+				
 			} catch (NotFoundException e) {
-				MessageDialog.openError(getParentShell(), "Data Collection Error", "Could not access the root element of the ModelicaML model. Please open the models in editor.");
+				MessageDialog.openError(getParentShell(), "Verification Data Collection Error", "Could not access the root element of the ModelicaML model. " +
+						"Please open the models in editor.");
 			}
 		}
-		
 	}
 	
-	
-//	private String getResultFilesNames(){
-//		String string = "";
-//		for (Element  VeM: getGeneratedModelsData().getGeneratedModels()) {
-//			string += ModelicaMLServices.getSimulationResultsFileName((NamedElement) VeM) + "\r\n";
-//		}
-//		return string;
-//	}
 	
 	protected ISelectionListener selectionListener = new ISelectionListener() {
         public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
@@ -561,16 +562,6 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 		}
 		return eObject;
 	}
-	
-//	private boolean hasModelicaMLStereotype(Element element){
-//		EList<Stereotype> sList = element.getAppliedStereotypes();
-//		for (Stereotype stereotype : sList) {
-//			if (stereotype.getQualifiedName().startsWith(Constants.modelingLanguageName)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
 	
 	private void setSelectionHintMode(boolean isError, String message){
 		if (!isError) { //normal

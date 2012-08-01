@@ -186,6 +186,7 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 		 */
 		ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true, false);
 		ci.createTree();
+		ci.collectValueClientsAndProvidersFromUmlModel();
 		
 		// update all bindings in the created simulation model class
 		CreatorValueBinding vbc = new CreatorValueBinding();

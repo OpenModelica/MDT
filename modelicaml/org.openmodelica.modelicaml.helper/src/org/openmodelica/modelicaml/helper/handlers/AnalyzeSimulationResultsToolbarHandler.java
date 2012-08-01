@@ -43,7 +43,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	
 	protected GeneratedModelsData generatedModelsData;
 	
-	private boolean onlyRecordRequirementStatus = false;
+	private boolean onlyRecordRequirementStatusAndClients = false;
 	private boolean simulate = false;
 	private boolean analyzeFiles = false;
 	private String resultsFileFolderPath; 
@@ -106,7 +106,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 			if (go) {
 				
 				setSimulate(dialog.isSimulate());
-				setOnlyRecordRequirementStatus(dialog.isRecordOnlyRequirements());
+				setOnlyRecordRequirementStatusAndClients(dialog.isRecordOnlyRequirements());
 
 				setAnalyzeFiles(!dialog.isSimulate());
 				setResultsFileFolderPath(dialog.getResultFilesFolderPath());
@@ -149,7 +149,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 			            if (event.getResult().isOK()) {
 			            	
 			            	// generate code, simulated
-							final Simulator simulator = new Simulator(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatus());
+							final Simulator simulator = new Simulator(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatusAndClients());
 							
 							ModelicaMLServices.notify("ModelicaML Simulation", "Simulation is running in background. \nIt does not block the editor. \nYou can continue working ...", 0, 1);
 							simulator.generateCodeAndSimulate();
@@ -320,12 +320,12 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 		this.generatedModelsData = generatedModelsData;
 	}
 
-	public boolean isOnlyRecordRequirementStatus() {
-		return onlyRecordRequirementStatus;
+	public boolean isOnlyRecordRequirementStatusAndClients() {
+		return onlyRecordRequirementStatusAndClients;
 	}
 
-	public void setOnlyRecordRequirementStatus(boolean onlyRecordRequirementStatus) {
-		this.onlyRecordRequirementStatus = onlyRecordRequirementStatus;
+	public void setOnlyRecordRequirementStatusAndClients(boolean onlyRecordRequirementStatusAndClients) {
+		this.onlyRecordRequirementStatusAndClients = onlyRecordRequirementStatusAndClients;
 	}
 
 	public int getMode() {

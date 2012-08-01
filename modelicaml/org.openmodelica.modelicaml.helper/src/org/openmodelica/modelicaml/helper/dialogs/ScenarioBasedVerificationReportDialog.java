@@ -401,9 +401,9 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
 		Button btnSaveasfile = new Button(container, SWT.NONE);
-		btnSaveasfile.addMouseListener(new MouseAdapter() {
+		btnSaveasfile.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
 				if (umlModel != null) {
 					// get project data
@@ -446,6 +446,51 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 				}
 			}
 		});
+//		btnSaveasfile.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseDown(MouseEvent e) {
+//				ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+//				if (umlModel != null) {
+//					// get project data
+//					String projectName = umlModel.getResource().getURI().segment(1);
+////					IWorkspace workspace = ResourcesPlugin.getWorkspace();
+////					IWorkspaceRoot root = workspace.getRoot();
+////					IProject iProject = root.getProject(projectName);
+//					
+//					// set folder name and file name
+//					String folderName = Constants.folderName_automaticScenarioBasedDesignVerificationDiscovery;
+////					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
+////					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
+//					
+//					// create report
+//					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
+//					String filePath = null;
+//					try {
+//						filePath = reportGenerator.createReport(projectName, folderName, false);
+//					} catch (URISyntaxException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					} catch (IOException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					} catch (CoreException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+//
+//					
+//					if (filePath != null) {
+//						String message = "The file was stored: \n"+filePath+"";
+//						DialogMessage dialog = new DialogMessage(new Shell(), "Report Generation", "", message, false);
+//						dialog.open();
+//					}
+//
+//				}
+//				else {
+//					MessageDialog.openError(new Shell(), "Report Generation", "Could not access the ModelicaML model in order to determine the project name. Please open a Papyrus model. ");
+//				}
+//			}
+//		});
 		btnSaveasfile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnSaveasfile.setText("Create Report");
 		btnSaveasfile.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "/icons/report.gif"));
@@ -569,7 +614,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			evaluatedRequirements = gmd.getRequirementsNotViolatedInScenarios();
 		}
 
-		for (Element evaluatedRequirement : evaluatedRequirements) {
+		for (Element evaluatedRequirement : ModelicaMLServices.getSortedByRequirementId(evaluatedRequirements)) {
 			
 			i++ ;
 			
@@ -596,10 +641,10 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		
 		// update the count of the tree tab
 		if (onlyViolatedRequirements) {
-			tbtmViolatedRequirements.setText(tbtmViolatedRequirements.getText() + " ("+i+")");
+			tbtmViolatedRequirements.setText(tbtmViolatedRequirements.getText() + " (" + i + " of " + gmd.getAllFoundRequirements().size() + ")");
 		}
 		else if (onlyNotViolatedRequirements) {
-			tbtmNotViolatedRequirements.setText(tbtmNotViolatedRequirements.getText() + " ("+i+")");
+			tbtmNotViolatedRequirements.setText(tbtmNotViolatedRequirements.getText()  + " (" + i + " of " + gmd.getAllFoundRequirements().size() + ")");
 		}
 	}
 
@@ -613,7 +658,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		
 		HashSet<Element> evaluatedRequirements = gmd.getNotEvaluatedRequirementElements();
 
-		for (Element evaluatedRequirement : evaluatedRequirements) {
+		for (Element evaluatedRequirement : ModelicaMLServices.getSortedByRequirementId(evaluatedRequirements)) {
 			
 			i++ ;
 			
@@ -634,7 +679,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		// update the count of the tree tab
-		tbtmNotEvaluatedRequirements.setText(tbtmNotEvaluatedRequirements.getText() + " ("+i+")");
+		tbtmNotEvaluatedRequirements.setText(tbtmNotEvaluatedRequirements.getText()  + " (" + i + " of " + gmd.getAllFoundRequirements().size() + ")");
 	}
 	
 	
@@ -649,7 +694,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		HashSet<Element> allNotImplementedRequirements = allFoundRequirements;
 		if (allNotImplementedRequirements != null && allNotImplementedRequirements.size() > 0) {
 			
-			for (Element requirement : allNotImplementedRequirements) {
+			for (Element requirement : ModelicaMLServices.getSortedByRequirementId(allNotImplementedRequirements)) {
 				
 				// counter 
 				i++ ;
@@ -668,7 +713,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			}
 			
 			// update the count of the tree tab
-			tbtmNotImplementedRequirements.setText(tbtmNotImplementedRequirements.getText() + " ("+i+")");
+			tbtmNotImplementedRequirements.setText(tbtmNotImplementedRequirements.getText() + " (" + i + " of " + gmd.getAllFoundRequirements().size() + ")");
 		}
 	}
 	
@@ -685,7 +730,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		HashSet<Element> allNotUsedScenarios = allFoundScenarios;
 		if (allNotUsedScenarios != null && allNotUsedScenarios.size() > 0) {
 			
-			for (Element scenario : allNotUsedScenarios) {
+			for (Element scenario : ModelicaMLServices.getSortedByName(allNotUsedScenarios)) {
 				// counter
 				i++;
 				
@@ -704,7 +749,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		// update the count of the tree tab
-		tbtmNotUsedScenarios.setText(tbtmNotUsedScenarios.getText() + " ("+i+")");
+		tbtmNotUsedScenarios.setText(tbtmNotUsedScenarios.getText()  + " (" + i + " of " + gmd.getAllFoundScenarios().size() + ")");
 		
 		return string;
 	}
@@ -713,11 +758,11 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	
 	private void getVeMForRequirement(TreeItem parent, Element evaluatedRequirement, boolean onlyViolatedRequirements, boolean onlyNotViolatedRequirements, boolean onlyNotEvaluatedRequirements){
 		
-		for (Element VeM : gmd.getGeneratedModels()) {
+		for (Element VeM : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
 			HashSet<TreeObject> requirements = gmd.getRequirements(VeM);
 			boolean modelContains  = false;
 			if (requirements != null) {
-				for (TreeObject requirementTreeObject : requirements) {
+				for (TreeObject requirementTreeObject : ModelicaMLServices.getSortedByDotPath(requirements)) {
 					Element type = requirementTreeObject.getComponentType();
 					if (evaluatedRequirement.equals(type)) {
 						
@@ -784,7 +829,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	private void getSystemModelItems(TreeItem parent, ClassInstantiation ci){
 
 		Element VeM = ci.getSelectedClass();
-		for (TreeObject treeObject : ci.getAllTreeObjects()) {
+		for (TreeObject treeObject : ModelicaMLServices.getSortedByDotPath(ci.getAllTreeObjects())) {
 			
 			Element type = treeObject.getComponentType();
 			
@@ -804,7 +849,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 				item.setData(data);
 				
 				// Add clients (isMandatory, binding, plot link)
-				getClientItems(item, VeM, treeObject);
+				getClientItems(ci, item, VeM, treeObject);
 			}
 		}
 	}
@@ -817,7 +862,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		
 		if (VeM != null) {
 			HashSet<TreeObject> scenarios = gmd.getScenarios(VeM);
-			for (TreeObject scenario : scenarios) {
+			for (TreeObject scenario : ModelicaMLServices.getSortedByDotPath(scenarios)) {
 				
 				TreeItem item = new TreeItem(parent, SWT.NONE);
 				String name = scenario.getDotPath() + " ("+ModelicaMLServices.getName(scenario.getComponentType())+")";
@@ -833,7 +878,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 				item.setData(data);
 
 				// Add clients (isMandatory, binding, plot link)
-				getClientItems(item, VeM, scenario);
+				getClientItems(ci, item, VeM, scenario);
 			}
 		}
 	}
@@ -849,7 +894,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	Element VeM = ci.getSelectedClass();
 	HashSet<TreeObject> requirements = gmd.getRequirements(VeM);
 	
-	for (TreeObject requirement : requirements) {
+	for (TreeObject requirement : ModelicaMLServices.getSortedByDotPath(requirements)) {
 		
 		Element type = requirement.getComponentType();
 		String statusDotPath = requirement.getDotPath().trim() + "." + gmd.requirementStatusPropertyName;
@@ -917,18 +962,20 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			item.setData(data);
 
 			// Add clients (isMandatory, binding)
-			getClientItems(item, VeM, requirement);
+			getClientItems(ci, item, VeM, requirement);
 			
 			}
 		}
 	}
 	
-	private void getClientItems(TreeItem parent, Element VeM, TreeObject treeObject){
+	private void getClientItems(ClassInstantiation ci, TreeItem parent, Element VeM, TreeObject treeObject){
 		
-		for (TreeObject client : VerificationExecutionServices.getClientsTreeItems(treeObject, new HashSet<TreeObject>())) {
+		List<TreeObject> actualClients = VerificationExecutionServices.getClientsTreeItems(ci, treeObject, new HashSet<TreeObject>(), false);
+		
+		for (TreeObject client : actualClients) {
 			String isMandatory = "";
 			if (client.isValueClient_required()) {
-				isMandatory = "(mandatory) ";
+				isMandatory = " (!)";
 			}
 			
 			TreeItem item = new TreeItem(parent, SWT.NONE);
@@ -936,7 +983,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			if (client.getFinalModificationRightHand() != null) {
 				modification = client.getFinalModificationRightHand();
 			}
-			String name = "client " + isMandatory  + ": " + client.getDotPath() + " = " + modification;
+			String name = "Client" + isMandatory  + ": " + client.getDotPath() + " = " + modification;
 			item.setText(name);
 			
 			item.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Property.gif"));
@@ -957,7 +1004,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 
 		for (String modelQName : gmd.getSimulationFailedList()) {
 
-			for (Element modelElement : gmd.getGeneratedModels()) {
+			for (Element modelElement : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
 				if (getModelQName((NamedElement) modelElement).equals(modelQName)) {
 					TreeItem failedModelItem = new TreeItem(treeRoot,SWT.NONE);
 					
@@ -970,224 +1017,6 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	private void buildTree(Tree treeRoot, boolean isViolatedRequirementsTree, boolean isNotViolatedRequirementsTree, boolean isNotEvaluatedRequirementsTree){
-//
-//		// if the not evaluated requirements tree should be build 
-//		if (isNotEvaluatedRequirementsTree) {
-//			List<Element> notEvaluatedRequirementsSorted =  ModelicaMLServices.getSortedByName(gmd.getNotEvaluatedRequirementElements());
-//			if (notEvaluatedRequirementsSorted != null && notEvaluatedRequirementsSorted.size() > 0) {
-//				List<Element> packages = getNearestPackages(notEvaluatedRequirementsSorted);
-//				createPkgTreeItems(treeRoot, packages);
-//				for (Element requirement : notEvaluatedRequirementsSorted) {
-//					createNotEvaluatedRequirement(treeRoot, requirement);
-//				}
-//			}
-//			
-//			// stop here, do not create any other nodes.
-//			return;
-//		}
-//		
-//		List<Element> scenariosSorted = new ArrayList<Element>();
-//		
-//		if (isViolatedRequirementsTree) {
-//			// if there are scenarios with not violated requirements at all
-//			if (gmd.getScenariosWithViolatedRequirements().size() > 0) {
-//				scenariosSorted = ModelicaMLServices.getSortedByName(gmd.getScenariosWithViolatedRequirements()); 
-//				
-//				List<Element> packagesOfScenarios = getNearestPackages(scenariosSorted);
-//				createPkgTreeItems(treeRoot, packagesOfScenarios);
-//			}
-//		}
-//		else if (isNotViolatedRequirementsTree) {
-//			// if there are scenarios with not violated requirements at all
-//			if (gmd.getScenariosWithNotViolatedRequirements().size() > 0) {
-//				scenariosSorted = ModelicaMLServices.getSortedByName(gmd.getScenariosWithNotViolatedRequirements());
-//				
-//				List<Element> packagesOfScenarios = getNearestPackages(scenariosSorted);
-//				createPkgTreeItems(treeRoot, packagesOfScenarios);
-//			}
-//		}
-//		
-//		// create scenario nodes
-//		for (Element scenario : scenariosSorted) {
-//			if (scenario instanceof NamedElement) {
-//				createScenarioTreeItem(treeRoot, scenario, isViolatedRequirementsTree, isNotViolatedRequirementsTree, isNotEvaluatedRequirementsTree);
-//			}
-//		}
-//
-//	}
-//
-//	private List<Element> getNearestPackages(List<Element> models){
-//		HashSet<Element> pkgListSet = new HashSet<Element>();
-//		if (models != null ) {
-//			for (Element model : models) {
-//				pkgListSet.add(model.getNearestPackage());
-//			}
-//		}
-//		return ModelicaMLServices.getSortedByName(pkgListSet);
-//	}
-//	
-//	private void createPkgTreeItems(Tree treeRoot, List<Element> pkgElements){
-//		// create package nodes at the 1 level
-//		for (Element pkg : pkgElements) {
-//
-//			TreeItem pkgItem = new TreeItem(treeRoot, 0);
-//			
-//			TreeItemData data = new TreeItemData();
-//			data.setIsPackage(true);
-//			data.setPackageElement(pkg);
-//
-//			pkgItem.setData(data);
-//
-//			pkgItem.setText(getModelName(pkg) + "  ("+getModelQName(pkg)+")");
-//			pkgItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "icons/Package.gif"));
-//		}
-//	}
-//	
-//	
-//	private void createNotEvaluatedRequirement(Tree treeRoot, Element requirement){
-//		
-//		TreeItem pkgItem = getPackageTreeItem(treeRoot, requirement);
-//		TreeItem requirementItem = null;
-//		if (pkgItem != null) {
-//			requirementItem = new TreeItem(pkgItem, 0);	
-//		}
-//		else {
-//			requirementItem = new TreeItem(treeRoot, 0);
-//		}
-//		
-//		TreeItemData data = new TreeItemData();
-//		data.setIsRequirement(true);
-//		data.setRequirementElement(requirement);
-//		
-//		requirementItem.setData(data);
-//		requirementItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif"));
-//		requirementItem.setText(getModelName(requirement));
-//	}
-//	
-//	
-//	private void createNotSimulatedItems(Tree treeRoot){
-//
-//		for (String modelQName : gmd.getSimulationFailedList()) {
-//
-//			for (Element modelElement : gmd.getGeneratedModels()) {
-//				if (getModelQName((NamedElement) modelElement).equals(modelQName)) {
-//					TreeItem failedModelItem = new TreeItem(treeRoot,SWT.NONE);
-//					
-//					failedModelItem.setText(getModelName(modelElement) + "  ("+getModelQName(modelElement)+")");
-//					// decorate with an error overlay
-//					failedModelItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Class.gif")));
-//				}
-//			}
-//		}
-//	}
-//	
-//	private TreeItem getPackageTreeItem(Tree treeRoot, Element testSimulationModel){
-//		
-//		TreeItem pkgItem = null;
-//		// find the right package node at the 1 tree-level.
-//		TreeItem[] pkgItems = treeRoot.getItems();
-//		for (TreeItem treeItem : pkgItems) {
-//			TreeItemData data = (TreeItemData) treeItem.getData();
-//			if (data.isPackage && data.getPackageElement().equals(testSimulationModel.getNearestPackage())) {
-//				return treeItem; 
-//			}
-//		}
-//		return pkgItem;
-//	}
-//	
-//
-//	
-//	private void createScenarioTreeItem(Tree treeRoot, Element scenario, boolean isViolatedRequirementsTree, boolean isNotViolatedRequirementsTree, boolean isNotEvaluatedRequirementsTree){
-//		
-//		// if this tree has requirements 
-//		HashSet<Element> requirements = null;
-//		if (isViolatedRequirementsTree) {
-//			requirements = gmd.getScenarioToViolatedRequirements().get(scenario);
-//		}
-//		else if (isNotViolatedRequirementsTree) {
-//			HashSet<Element> evaluatedRequirements = gmd.getScenarioToEvaluatedRequirements().get(scenario);
-//			HashSet<Element> violatedRequirements = gmd.getScenarioToViolatedRequirements().get(scenario);
-//			HashSet<Element> notViolatedRequirements = new HashSet<Element>();
-//			if (evaluatedRequirements != null) {
-//				notViolatedRequirements.addAll(evaluatedRequirements);
-//				if (violatedRequirements != null) {
-//					notViolatedRequirements.removeAll(violatedRequirements);
-//				}
-//			}
-//			requirements = notViolatedRequirements;
-//		}
-////		else if (isNotEvaluatedRequirementsTree) {
-////			requirements = gmd.getScenarioToNotEvaluatedRequirements().get(scenario);
-////		}
-//			
-//		if (requirements != null && requirements.size() > 0 ) {
-//		
-//			TreeItem pkgItem = getPackageTreeItem(treeRoot, scenario);
-//			TreeItem scenarioItem = null;
-//			if (pkgItem != null) {
-//				scenarioItem = new TreeItem(pkgItem, 0);	
-//			}
-//			else {
-//				scenarioItem = new TreeItem(treeRoot, 0);
-//			}
-//			
-//			TreeItemData data = new TreeItemData();
-//			data.setScenario(true);
-//			data.setScenarioElement(scenario);
-//			
-//			scenarioItem.setData(data);
-//			
-//			scenarioItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/calculationModel.gif"));
-//			scenarioItem.setText(getModelName(scenario));
-//		
-//			// create requirement nodes
-//			for (Element requirement : ModelicaMLServices.getSortedByName(requirements)) {
-//				createRequirementTreeItem(requirement, scenarioItem,  isViolatedRequirementsTree, isNotViolatedRequirementsTree, isNotEvaluatedRequirementsTree);
-//			}
-//		}
-//	}
-//	
-//	
-//	private void createRequirementTreeItem(Element requirement, TreeItem scenarioItem, boolean isViolatedRequirementsTree, boolean isNotViolatedRequirementsTree, boolean isNotEvaluatedRequirementsTree){
-//
-//		TreeItem requirementItem = new TreeItem(scenarioItem, 0);	
-//
-////		TreeItemData scenarioData = (TreeItemData) scenarioItem.getData();
-////		Element scenario = scenarioData.getScenarioElement();
-//
-//		TreeItemData data = new TreeItemData();
-//		data.setIsRequirement(true);
-//		data.setRequirementElement(requirement);
-//		
-//		requirementItem.setData(data);
-//		
-//		requirementItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif"));
-//
-//		String name = getModelName(requirement);
-//		
-//		if (isViolatedRequirementsTree) {
-////			name = "(VIOLATED) " + name;
-////			requirementItem.setImage(decorateWarning(requirementItem.getImage()));
-////			propagateWarning(requirementItem);
-//			
-//			requirementItem.setImage(decorateError(requirementItem.getImage()));
-//			propagateError(requirementItem);
-//		}
-//		
-//		requirementItem.setText(name);
-//	}
 
 	// Utls ************************************************************************ 
 

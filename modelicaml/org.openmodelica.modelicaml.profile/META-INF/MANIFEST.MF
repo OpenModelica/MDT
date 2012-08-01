@@ -32,4 +32,5 @@ Import-Package: org.eclipse.papyrus.diagram.common.actions,
 Bundle-Vendor: OpenModelica Project
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openmodelica.modelicaml.profile.handlers
+Export-Package: org.openmodelica.modelicaml.profile.handlers,
+ org.openmodelica.modelicaml.profile.handlers.special

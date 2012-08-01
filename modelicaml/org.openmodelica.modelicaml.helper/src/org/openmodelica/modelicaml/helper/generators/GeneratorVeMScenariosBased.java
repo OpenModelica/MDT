@@ -363,8 +363,8 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 											for (Element scenario : scenarioCandidates) {
 												candidateNames += "              - " + ModelicaMLServices.getQualifiedName(scenario) + "\n"; 
 											}
-											String message = "DISCARDED: Requirement '" + ModelicaMLServices.getQualifiedName(requirement) + "' was not combined with the scenrio" +
-													"'" + scenarioToBeUsed.getQualifiedName() + "' because it has other candidates: \n" + candidateNames ;
+											String message = "DISCARDED: Requirement '" + ModelicaMLServices.getQualifiedName(requirement) + "' was not combined with the scenario " +
+													"'" + scenarioToBeUsed.getQualifiedName() + "' an other scenario will be used (that references this requirement with 'useToVerify' relation): \n" + candidateNames ;
 											addToLog(message);
 										}
 
@@ -530,6 +530,11 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			setTestSimulationModelGenerationCanceled(true); // indicate abort and stop here. 
 		}
 		else {
+			
+			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+			progressDialog.getProgressMonitor().setTaskName("Creating models...");
+			progressDialog.open();
+			
 			// Get the selected test scenarios and requirements from the dialog.  
 			HashMap<Element,HashSet<Element>> userSelectedTestScenariosAndRequirements = dialog.getSelectedTestScenariosWithRequirements();
 			userSelectedTestScenarios.addAll(userSelectedTestScenariosAndRequirements.keySet());
@@ -587,6 +592,9 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						else if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 							simulationModelName = Constants.automaticScenarioBasedVerificationModelsNamePrefix + ((NamedElement)testScenario).getName();
 						}
+						
+						// set progress dialog
+						progressDialog.getProgressMonitor().setTaskName("Creating model: " + simulationModelName);
 
 						// create VeM (verification model which is a simulation model)
 						Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
@@ -807,6 +815,8 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 								if ( requirementsInstatiatedMultipleTimes.contains(component)) {
 									ClassInstantiation requirementInstantiation = new ClassInstantiation((Class) ((Property)component).getType(), true, false);
 									requirementInstantiation.createTree();
+									requirementInstantiation.collectValueClientsAndProvidersFromUmlModel();
+									
 									ci = requirementInstantiation;
 								}
 								
@@ -844,7 +854,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 									ClassInstantiation veMCi = new ClassInstantiation(simulationModel);
 									// pass pre-collected meditors in order to avoid new search
 									veMCi.setAllMediators(verificationScenariosCollector.getAllMediators());
-									
+
 									// DO NOT create tree, we will reused available instantiation trees! 
 									
 									// add the children of the VeM tree node to the instantiation root
@@ -854,6 +864,13 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 									
 									// add all tree objects
 									veMCi.setAllTreeObjects(allTreeObjects);
+									
+									//set the UML model because it will not be accessible while simulation is running in a job.
+									veMCi.setUmlModel(simulationModel.getModel());
+									// pass the pre-collected mediators in order to avoid another search 
+									veMCi.setAllMediators(verificationScenariosCollector.getAllMediators());
+									// collect binding data in order to determine clients, providers, operations, etc.
+									veMCi.collectValueClientsAndProvidersFromUmlModel();
 									
 									// add to map
 									preparedModelInstantiations.put(simulationModel, veMCi);
@@ -900,6 +917,9 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			else {
 				setTestSimulationModelGenerationCanceled(true); // indicate abort and stop here. 
 			}
+			
+			// close progress dialog
+			progressDialog.close();
 		}
 	}
 	

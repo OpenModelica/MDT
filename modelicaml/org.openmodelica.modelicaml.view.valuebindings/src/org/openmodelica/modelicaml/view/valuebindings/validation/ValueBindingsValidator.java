@@ -1,6 +1,5 @@
 package org.openmodelica.modelicaml.view.valuebindings.validation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,20 +10,15 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Dependency;
@@ -59,7 +53,12 @@ public class ValueBindingsValidator {
 	// Composite used temporary for instantiating editors that are never shown ...
 	private Composite tempComposite = new Composite(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.NONE);
 	
-	private ExtendedUmlModel umlModel;
+//	private ExtendedUmlModel umlModel;
+	private EObject umlModel;
+
+
+
+
 	private IProject iProject;
 	
 	private Element storeLocation = null;
@@ -70,12 +69,15 @@ public class ValueBindingsValidator {
 		// collect client, mediator and provider tree nodes
 		collectItems(parent);
 		
-		// set up marker data
-		umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-		String projectName = umlModel.getResource().getURI().segment(1);
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		iProject = root.getProject(projectName);
+		if (getUmlModel() != null) {
+			// set up marker data
+//			umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+//			String projectName = umlModel.getResource().getURI().segment(1);
+			String projectName = getUmlModel().eResource().getURI().segment(1);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			iProject = root.getProject(projectName);
+		}
 	}
 	
 	public void validate(){
@@ -377,6 +379,15 @@ public class ValueBindingsValidator {
 		return mediators;
 	}
 
+	
+	public EObject getUmlModel() {
+		return umlModel;
+	}
+
+	public void setUmlModel(EObject umlModel) {
+		this.umlModel = umlModel;
+	}
+	
 	
 //	// Progress monitor ****************************************
 //	

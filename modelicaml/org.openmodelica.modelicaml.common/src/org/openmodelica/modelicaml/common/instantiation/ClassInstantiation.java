@@ -125,10 +125,7 @@ public class ClassInstantiation {
 //		allElements.add(selectedClass);
 		allTreeObjects.add(treeRoot);
 		addToElementToInstantiationTreeObjectMap(selectedClass, treeRoot);
-		
 	}
-	
-	
 	
 	
 	
@@ -168,8 +165,12 @@ public class ClassInstantiation {
 			// build tree starting from the selected class node.
 			buildNextTreeLevel(this.selectedClass, null, treeRoot , "");
 
+			/*
+			 * Note, clients should call this method explicitly in order to 
+			 * make sure that this data is only collected when required.
+			 */
 			// Get value bindings data and create tree nodes for predefined properties if they are used as clients or providers
-			collectValueClientsAndProvidersFromUmlModel();
+//			collectValueClientsAndProvidersFromUmlModel();
 
 			// indicate the size of the tree
 			int numberOfTreeNodes = getAllTreeObjects().size();
@@ -723,8 +724,14 @@ public class ClassInstantiation {
 								TreeObject actualClient = getTreeObject(actualClientDotPath);
 								
 								if (actualClient != null) {
-									// if the client is is a primitive variable 
-									if (isPrimitiveType(actualClient.getProperty()) && actualClient instanceof TreeParent) {
+									/*
+									 * If the client is a primitive variable 
+									 * AND if it does not have such a child yet.
+									 * This is important because collectBindingData operation may be called several time 
+									 * and will lead to the creation of multiple predefined property tree objects for the same
+									 * property.  
+									 */
+									if (isPrimitiveType(actualClient.getProperty()) && actualClient instanceof TreeParent && !hasChild((TreeParent) actualClient, predefinedPropertyName)) {
 										
 										// create only a tree node for the referenced predefined properties
 										TreeObject createdTreeObject = createPredefinedTypeProperties(actualClient.getProperty(), upperClientTeeItem.getFirstLevelComponent(), (TreeParent) actualClient, actualClientDotPath, predefinedPropertyName);
@@ -743,6 +750,16 @@ public class ClassInstantiation {
 		}
 	}
 
+	private boolean hasChild(TreeParent parent, String name){
+		TreeObject[] children = parent.getChildren();
+		for (TreeObject child : children) {
+			if (child.getName().trim().equals(name.trim())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	private List<String> getDotPathWithoutPredefinedPropertyName(String dotPath){
 		List<String> reply = new ArrayList<String>();
@@ -807,7 +824,7 @@ public class ClassInstantiation {
 	}
 
 	
-	private void collectValueClientsAndProvidersFromUmlModel(){
+	public void collectValueClientsAndProvidersFromUmlModel(){
 		
 		UmlModel papyrusModel = null;
 		Element valueMediatorsPackage = null;
@@ -827,7 +844,7 @@ public class ClassInstantiation {
 				}
 			}
 			else {
-//				System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
+				System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
 			}
 		}
 
@@ -844,6 +861,10 @@ public class ClassInstantiation {
 //			referencedRequiredClients.addAll(valueBindingsDataCollector.getReferencedRequiredClients());
 			
 			setValueClientOrProviderIndicator(treeRoot);
+			
+			// update the size of the tree
+			int numberOfTreeNodes = getAllTreeObjects().size();
+			treeRoot.setName(treeRoot.getName() + " (" + numberOfTreeNodes + " nodes)");
 		}
 		else {
 //			System.err.println("Component Tree View: Cannot access the root model in Papyrus in order to collect value bindings data.");
@@ -920,9 +941,18 @@ public class ClassInstantiation {
 		return allTreeObjects;
 	}
 
-
+	/*
+	 * Note, this method is used by clients that construct the tree by pieces
+	 * instead of using the createTree() method of this class.
+	 * Here we need to collect UML elements from the tree objects set.
+	 */
 	public void setAllTreeObjects(HashSet<TreeObject> allTreeObjects) {
+		
 		this.allTreeObjects = allTreeObjects;
+		// collect UML elements 
+		for (TreeObject treeObject : allTreeObjects) {
+			addToElementToInstantiationTreeObjectMap(treeObject.getUmlElement(), treeObject);
+		}
 	}
 	
 	public ValueBindingsDataCollector getValueBindingsDataCollector() {

@@ -141,6 +141,8 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 				// instantiate class 
 				ClassInstantiation ci = new ClassInstantiation(selectedClass, false, false);
 				ci.createTree();
+				ci.collectValueClientsAndProvidersFromUmlModel();
+				
 				TreeParent treeRoot = ci.getTreeRoot();
 				
 				// collect all requirements instances and create maps

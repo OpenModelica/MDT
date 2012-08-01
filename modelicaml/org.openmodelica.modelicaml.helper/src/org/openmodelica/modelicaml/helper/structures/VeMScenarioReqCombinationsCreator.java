@@ -197,6 +197,7 @@ public class VeMScenarioReqCombinationsCreator {
 				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false);
 				ci_model.setAllMediators(collector.getAllMediators());
 				ci_model.createTree();
+				ci_model.collectValueClientsAndProvidersFromUmlModel();
 				sourceElementInstantiated = ci_model.getTreeRoot();
 				
 				// add to model -> its instantiation map
@@ -323,6 +324,7 @@ public class VeMScenarioReqCombinationsCreator {
 					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
 					ci_model.setAllMediators(collector.getAllMediators());
 					ci_model.createTree();
+					ci_model.collectValueClientsAndProvidersFromUmlModel();
 					
 					newChild = ci_model.getTreeRoot();
 					

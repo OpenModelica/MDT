@@ -19,6 +19,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -41,12 +42,12 @@ public class Simulator {
 	private String log;
 	private Job simulationJob;
 
-	private boolean recordOnlyRequirementStatus;
+	private boolean recordOnlyRequirementStatusAndClients;
 	
-	public Simulator(GeneratedModelsData gmd, String projectPath, boolean recordOnlyRequirementStatus) {
+	public Simulator(GeneratedModelsData gmd, String projectPath, boolean recordOnlyRequirementStatusAndClients) {
 		this.gmd = gmd;
 		this.projectPath = projectPath;
-		this.setRecordOnlyRequirementStatus(recordOnlyRequirementStatus);
+		this.setRecordOnlyRequirementStatusAndClients(recordOnlyRequirementStatusAndClients);
 	}
 	
 	
@@ -225,15 +226,41 @@ public class Simulator {
 				outputFormat = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, outputFormat, null);
 			}
 			
-			if (isRecordOnlyRequirementStatus()) {
-//				HashSet<TreeObject> requirementItems = gmd.getRequirements(model);
+			if (isRecordOnlyRequirementStatusAndClients()) {
+				
 				HashSet<TreeObject> clientAndRequirementItems = new HashSet<TreeObject>(); 
 				ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations());
+				
+				/*
+				 * In case the simulation action was started not immediately after the models generation
+				 * and there are no prepared model instantiations then VeM to be simulated 
+				 * will need to be instantiated. However, if the simulation is running in 
+				 * a Job the Papyrus model will not be accessible. In this case we need to set 
+				 * the UML model and recollect bindings data. 
+				 */
+				
+				if (ci.getValueBindingsDataCollector() != null && ci.getValueBindingsDataCollector().getReferencedClients() != null && ci.getValueBindingsDataCollector().getReferencedClients().size() > 0) {
+					// OK, skip the re-collection of binding data
+				}
+				else { // collect binding data
+					//set the UML model because it will not be accessible while simulation is running in a job.
+					ci.setUmlModel(gmd.getGeneratedModelsPackage().getModel());
+					// pass the pre-collected mediators in order to avoid another search 
+					ci.setAllMediators(gmd.getAllFoundMediators());
+					// collect binding data in order to determine clients, providers, operations, etc.
+					ci.collectValueClientsAndProvidersFromUmlModel();
+				}
+				
 				for (TreeObject treeObject : ci.getAllTreeObjects()) {
+					
+					// if this is a client
 					if (treeObject.isValueClient()) {
-						clientAndRequirementItems.add(treeObject);
+//						clientAndRequirementItems.add(treeObject);
+						HashSet<TreeObject> actualClients = VerificationExecutionServices.getActualClients(ci, treeObject);
+						clientAndRequirementItems.addAll(actualClients);
 					}
 					else {
+						// look for a requirement status variable
 						Element type = treeObject.getComponentType();
 						if (treeObject instanceof TreeParent && type != null && type.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
 							TreeObject[] children = ((TreeParent)treeObject).getChildren();
@@ -436,13 +463,13 @@ public class Simulator {
 
 
 
-	public boolean isRecordOnlyRequirementStatus() {
-		return recordOnlyRequirementStatus;
+	public boolean isRecordOnlyRequirementStatusAndClients() {
+		return recordOnlyRequirementStatusAndClients;
 	}
 
 
 
-	public void setRecordOnlyRequirementStatus(boolean recordOnlyRequirementStatus) {
-		this.recordOnlyRequirementStatus = recordOnlyRequirementStatus;
+	public void setRecordOnlyRequirementStatusAndClients(boolean recordOnlyRequirementStatus) {
+		this.recordOnlyRequirementStatusAndClients = recordOnlyRequirementStatus;
 	}
 }

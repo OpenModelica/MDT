@@ -1374,6 +1374,31 @@
                </with>
             </visibleWhen>
          </menu>
+         <command
+               commandId="org.openmodelica.modelicaml.commands.deleteTopLevelModelPackage"
+               icon="resources/icons/icons16/delete.gif"
+               label="ModelicaML: Delete Top-Level Model"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <adapt
+                           type="org.eclipse.emf.ecore.EObject">
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Model">
+                        </instanceof>
+                     </adapt>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -3178,6 +3203,20 @@
             language="modelicaml"
             name="ModelicaML template incl. Requirements, Desing and Simulation Packages">
       </template>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.openmodelica.modelicaml.commands.deleteTopLevelModelPackage"
+            name="ModelicaML: Delete Top-Level Model">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.openmodelica.modelicaml.profile.handlers.special.DeleteTopLevelModelPackage"
+            commandId="org.openmodelica.modelicaml.commands.deleteTopLevelModelPackage">
+      </handler>
    </extension>
 
 </plugin>

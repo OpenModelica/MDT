@@ -105,6 +105,7 @@ public class InstantiatorRequirements {
 		ClassInstantiation ast = new ClassInstantiation(containingClass, true, false);
 		ast.setAllMediators(preCollectedMediators);
 		ast.createTree();
+		ast.collectValueClientsAndProvidersFromUmlModel();
 		TreeParent treeRoot = ast.getTreeRoot();
 		
 		// find the instantiation class tree items based on the created UML properties
@@ -245,6 +246,7 @@ public class InstantiatorRequirements {
 		ClassInstantiation ast = new ClassInstantiation(containingClass, true, false);
 		ast.setAllMediators(preCollectedMediators);
 		ast.createTree();
+		ast.collectValueClientsAndProvidersFromUmlModel();
 		TreeParent astRoot = ast.getTreeRoot();
 		
 		ValueBindingsDataCollector dc = new ValueBindingsDataCollector();

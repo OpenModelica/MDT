@@ -423,7 +423,7 @@ public class XMLReportGenerator {
 			HashSet<TreeObject> requirements = relationsMap.get(scenario);
 			
 			if (requirements != null) {
-				for (TreeObject requirement : requirements) {
+				for (TreeObject requirement : ModelicaMLServices.getSortedByDotPath(requirements)) {
 					
 					// counter
 					i++;
@@ -483,7 +483,7 @@ public class XMLReportGenerator {
 				string += 	getAllComments(type);
 
 				// Add clients (isMandatory, binding, plot link)
-				string += getClientItems(VeM, treeObject);
+				string += getClientItems(ci, VeM, treeObject);
 
 				string += "</"+XMLTagName_systemModel+">";
 			}
@@ -499,7 +499,7 @@ public class XMLReportGenerator {
 		
 		if (VeM != null) {
 			HashSet<TreeObject> scenarios = gmd.getScenarios(VeM);
-			for (TreeObject scenario :  scenarios) {
+			for (TreeObject scenario :  ModelicaMLServices.getSortedByDotPath(scenarios)) {
 				
 				Element type = scenario.getComponentType();
 
@@ -513,7 +513,7 @@ public class XMLReportGenerator {
 				string += getAllComments(type);
 
 				// Add clients (isMandatory, binding, plot link)
-				string += getClientItems(VeM, scenario);
+				string += getClientItems(ci, VeM, scenario);
  
 				string += "</"+XMLTagName_scenario+">";
 			}
@@ -589,7 +589,7 @@ public class XMLReportGenerator {
 				string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(type)) + "</"+XMLTagName_requirementText+">"; 
 
 				// Add clients (isMandatory, binding, plot link)
-				string += getClientItems(VeM, requirement);
+				string += getClientItems(ci, VeM, requirement);
 
 				string += "</"+XMLTagName_requirement+">";
 			}
@@ -602,9 +602,9 @@ public class XMLReportGenerator {
 		return string;
 	}
 	
-	private String getClientItems(Element VeM, TreeObject treeObject){
+	private String getClientItems(ClassInstantiation ci, Element VeM, TreeObject treeObject){
 		String string = "";
-		for (TreeObject client : VerificationExecutionServices.getClientsTreeItems(treeObject, new HashSet<TreeObject>())) {
+		for (TreeObject client : VerificationExecutionServices.getClientsTreeItems(ci, treeObject, new HashSet<TreeObject>(), false)) {
 			String isMandatory = "false";
 			if (client.isValueClient_required()) {
 				isMandatory = "true";
@@ -910,11 +910,11 @@ public class XMLReportGenerator {
 		return linkAdress;
 	}
 	
-	private String getLocateLink(Element model, TreeObject treeObject){
-		String linkAdress = "";
-		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
-		return linkAdress;
-	}
+//	private String getLocateLink(Element model, TreeObject treeObject){
+//		String linkAdress = "";
+//		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
+//		return linkAdress;
+//	}
 	
 	private String getPlotLink(Element model){
 		String linkAdress = "";
