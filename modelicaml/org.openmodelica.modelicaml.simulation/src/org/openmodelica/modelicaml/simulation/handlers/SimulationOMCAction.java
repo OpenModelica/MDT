@@ -168,6 +168,8 @@ public class SimulationOMCAction extends AbstractHandler {
 			 */
 			ClassInstantiation ci = new ClassInstantiation((Class) umlElement, true, false);
 			ci.createTree();
+			ci.collectValueClientsAndProvidersFromUmlModel();
+			
 			TreeParent treeRoot = ci.getTreeRoot();
 			HashSet<Element> allTypes = TreeUtls.getAllTreeItemsClasses(treeRoot);
 			
