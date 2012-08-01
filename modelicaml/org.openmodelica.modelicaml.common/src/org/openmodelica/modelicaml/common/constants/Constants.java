@@ -209,7 +209,16 @@ public class Constants {
 	public final static String propertyName_solver = "solver";
 	public final static String propertyName_outputFormat = "outputFormat";
 	
-	// simulation model generation
+	
+	public final static String DEFAULT_startTime = "0";
+	public final static String DEFAULT_stopTime = "10";
+	public final static String DEFAULT_numberOfIntervals = "500";
+	public final static String DEFAULT_tolerance = "0.000001";
+	public final static String DEFAULT_solver = "dassl";
+	public final static String DEFAULT_outputFormat = "dassl";
+	
+	
+	// simulation and model generation
 	public final static String simModelsPackageNamePrefix = "GenVeMs for: ";
 	
 	public final static String automaticScenarioBasedVerificationPackageNamePrefix = "aGenVeMs for: ";

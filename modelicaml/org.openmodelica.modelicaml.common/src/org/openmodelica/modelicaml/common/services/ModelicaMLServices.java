@@ -419,7 +419,7 @@ public class ModelicaMLServices {
 	}
 	
 	
-	private static String formatPath(String path){
+	public static String formatPath(String path){
 		while(path.contains("\\")){
 			path = path.replace('\\', '/');
 		}

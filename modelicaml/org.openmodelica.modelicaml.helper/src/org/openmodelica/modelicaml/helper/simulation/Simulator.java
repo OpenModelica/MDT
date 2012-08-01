@@ -202,27 +202,27 @@ public class Simulator {
 			
 			// set default simulation settings
 			if (startTime==null|| startTime.trim().length() == 0) {
-				startTime = "0";
+				startTime = Constants.DEFAULT_startTime;
 				startTime = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_startTime, startTime, null);
 			}
 			if (stopTime==null|| stopTime.trim().length() == 0) {
-				stopTime = "10";
+				stopTime = Constants.DEFAULT_stopTime;
 				stopTime = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_stopTime, stopTime, null);
 			}
 			if (numberOfIntervals==null|| numberOfIntervals.trim().length() == 0) {
-				numberOfIntervals = "500";
+				numberOfIntervals = Constants.DEFAULT_numberOfIntervals;
 				numberOfIntervals = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_numberOfIntervals, numberOfIntervals, null);
 			}
 			if (tolerance == null || tolerance.trim().length() == 0 ) {
-				tolerance = "0.000001";
+				tolerance = Constants.DEFAULT_tolerance;
 				tolerance = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_tolerance, tolerance, null);
 			}
 			if (solver == null || solver.trim().length() == 0 ) {
-				solver = "dassl";
+				solver = Constants.DEFAULT_solver;
 				solver = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_solver, solver, null);
 			}
 			if (outputFormat == null || outputFormat.trim().length()==0 ) {
-				outputFormat = "mat";
+				outputFormat = Constants.DEFAULT_outputFormat;
 				outputFormat = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, outputFormat, null);
 			}
 			

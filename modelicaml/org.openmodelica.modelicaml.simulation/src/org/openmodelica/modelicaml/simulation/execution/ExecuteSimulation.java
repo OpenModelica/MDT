@@ -20,7 +20,6 @@ public class ExecuteSimulation {
 	 * @return the omc return string, if the string is empty there was no error otherwise the error string is included
 	 */
 	
-//	private static OpenModelicaCompilerCommunication omcc;
 	private static String omcTempDirectoryPath;
 	
 	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj, boolean loadMSL){
@@ -55,6 +54,7 @@ public class ExecuteSimulation {
 		
 		String simulateResult = check_and_simulate(monitor, omcc, testSessionObj, omcReturnString);
 		
+		// DO NOT quit! 
 //		omcc.quit();
 
 		omcReturnString = "\n\n" + loadResult + "\n" + simulateResult + "\n"; 
@@ -84,101 +84,11 @@ public class ExecuteSimulation {
 			// load all files 
 			for (String string : filesToLoad) {
 				String reply = omcc.loadFile(string);
-//				omcReturnString = omcReturnString + "\n" + "Loading '" + string + "' -> " + reply;
 			}
-			
-//			
-//			/*
-//			 * Load first code from code-sync folder.
-//			 * Note, if there is no such folder or a package.mo OMC will return false. This does not affect the remaining procedure.
-//			 */
-//			
-//			
-//			String codeSyncPath = sessionFolder + "/" + Constants.folderName_code_sync;
-//			while(codeSyncPath.contains("\\")){
-//				codeSyncPath = codeSyncPath.replace('\\', '/');
-//			}
-//			omcReturnString = omcc.loadFile(codeSyncPath.replaceAll("%20", " ") + "/package.mo"); //If the file is a directory the whole contained model will be loaded
-//			
-//			/*
-//			 * Load code from code-gen folder
-//			 */
-//			String packageMO = sessionFolder + "/" + testSessionObj.packageFileRelativePath;
-////			System.out.println("packageMO: "+packageMO);
-//			while(packageMO.contains("\\")){
-//				packageMO = packageMO.replace('\\', '/');
-//			}
-//			
-//			if(new File(packageMO).isDirectory()){
-//				omcReturnString = omcc.loadFile(packageMO.replaceAll("%20", " ") + "/package.mo"); //If the file is a directory the whole contained model will be loaded
-//				if(omcReturnString.toLowerCase().contains("false") || omcReturnString.toLowerCase().contains("error")){
-//					String errorString = omcc.getErrorString();
-//					omcc.quit();
-//					return "loadFile: " + omcReturnString + "\nErrorString: " + errorString;
-//				}
-//			}
-//			else if(new File(packageMO).isFile()){
-//				omcReturnString = omcc.loadFile(packageMO);
-//				if(omcReturnString.toLowerCase().contains("false") || omcReturnString.toLowerCase().contains("error")){
-//					String errorString = omcc.getErrorString();
-//					omcc.quit();
-//					return "loadFile: " + omcReturnString + "\nErrorString: " + errorString;
-//				}
-//			}
 		}
-//		return omcReturnString = "";
+
 		return omcReturnString;
 	}
-
-	
-//	private static List<String> getFilesToLoad(String folderPath){
-//		List<String> list = new ArrayList<String>();
-//
-//		File folder = new File(folderPath);
-//		
-//		if (folder.exists() && folder.isDirectory()) {
-//			
-//			// 1.Level
-//			
-//			// load all .mo files that are not pacakge.mo
-//			File[] files1Level = folder.listFiles();
-//			for (File file : files1Level) {
-//				if (file.isFile() && !file.getName().equals("package.mo")) {
-//					list.add(formatPath(folderPath + "/" + file.getName()));
-//				}
-//			}
-//			
-//			// load a package.mo at 1.level 
-//			File packageMo = new File(folderPath + "/" + "pacakge.mo");
-//			if ( packageMo.exists()) {
-//				list.add(formatPath(folderPath + "/" + "pacakge.mo"));
-//			}
-//			// if there is no package.mo at 1.Level -> look into sub-folders and find package.mo files there
-//			else {
-//				// 2.Level
-//				File[] files2Level = folder.listFiles();
-//				for (File file : files2Level) {
-//					if (file.isDirectory()) {
-//						String subFolderPackageMoPath = folderPath + "/" + file.getName() + "/package.mo";
-//						File subFolderPackageMo = new File(subFolderPackageMoPath);
-//						if (subFolderPackageMo.exists()) {
-//							list.add(formatPath(subFolderPackageMoPath));
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return list;
-//	}
-	
-	
-//	private static String formatPath(String path){
-//		while(path.contains("\\")){
-//			path = path.replace('\\', '/');
-//		}
-//		path = path.replaceAll("%20", " ");
-//		return path;
-//	}
 
 	
 	private static String check_and_simulate(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {
@@ -202,45 +112,29 @@ public class ExecuteSimulation {
 				
 				// set default simulation settings
 				if (model.start==null|| model.start.trim().length() == 0) {
-					model.start = "0";
+					model.start = Constants.DEFAULT_startTime;
 					model.start = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_startTime, model.start, null);
 				}
 				if (model.stop==null || model.stop.trim().length() == 0) {
-					model.stop = "10";
+					model.stop = Constants.DEFAULT_stopTime;
 					model.stop = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_stopTime, model.stop, null);
 				}
 				if (model.numberOfIntervals==null|| model.numberOfIntervals.trim().length() == 0) {
-					model.numberOfIntervals = "500";
+					model.numberOfIntervals =  Constants.DEFAULT_numberOfIntervals;
 					model.numberOfIntervals = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_numberOfIntervals, model.numberOfIntervals, null);
 				}
 				if (model.tolerance == null || model.tolerance.trim().length() == 0 ) {
-					model.tolerance = "0.000001";
+					model.tolerance = Constants.DEFAULT_tolerance;
 					model.tolerance = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_tolerance, model.tolerance, null);
 				}
 				if (model.solver == null || model.solver.trim().length() == 0 ) {
-					model.solver = "dassl";
+					model.solver = Constants.DEFAULT_solver;
 					model.solver = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_solver, model.solver, null);
 				}
 				if (model.outputFormat == null || model.outputFormat.trim().length()==0 ) {
-					model.outputFormat = "mat";
+					model.outputFormat = Constants.DEFAULT_outputFormat;
 					model.outputFormat = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, model.outputFormat, null);
 				}
-				
-				
-//				// set default simulation settings
-//				if (model.numberOfIntervals.trim().length() == 0) {
-//					model.numberOfIntervals = "500";
-//				}
-//				if (model.tolerance.trim().length() == 0 ) {
-//					model.tolerance = "0.000001";
-//				}
-//				if (model.solver.trim().length() == 0 ) {
-//					model.solver = "dassl";
-//				}
-//				if (model.outputFormat.trim().length()==0 ) {
-////					model.outputFormat = "plt";
-//					model.outputFormat = "mat";
-//				}
 				
 				//Simulate model
 				String variableFilter = null; // no filter, i.e., all variables should be recorded.
