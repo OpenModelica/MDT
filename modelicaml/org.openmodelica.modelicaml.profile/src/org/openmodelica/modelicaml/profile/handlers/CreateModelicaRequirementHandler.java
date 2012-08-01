@@ -209,10 +209,18 @@ private EObject selectedElement = null;
 			Type integerType = element.getModel().getAppliedProfile("ModelicaML::ModelicaPredefinedTypes").getOwnedType("ModelicaInteger");
 			
 			Property statusAttribute = element.getOwnedAttribute(Constants.propertyName_mStatus, integerType, true, UMLPackage.Literals.PROPERTY, true);
-			Stereotype violatedAttributeStereotype = statusAttribute.getApplicableStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
-			if (statusAttribute.getAppliedStereotype(violatedAttributeStereotype.getQualifiedName()) == null) {
-				statusAttribute.applyStereotype(violatedAttributeStereotype);
-				statusAttribute.setValue(violatedAttributeStereotype, "causality", "output");
+			Stereotype statusAttributeStereotype = statusAttribute.getApplicableStereotype(Constants.stereotypeQName_Variable);
+			if (statusAttribute.getAppliedStereotype(statusAttributeStereotype.getQualifiedName()) == null) {
+				statusAttribute.applyStereotype(statusAttributeStereotype);
+				statusAttribute.setValue(statusAttributeStereotype, Constants.propertyName_causality, Constants.propertyName_output);
+				
+				
+				// add default solver settings
+				List<String> modification = new ArrayList<String>(); // new modification value
+				modification.add("start=0");
+				modification.add("fixed=true");
+				
+				statusAttribute.setValue(statusAttributeStereotype, Constants.propertyName_modification, modification);
 			}
 			
 			Comment comment = statusAttribute.createOwnedComment();
