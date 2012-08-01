@@ -172,9 +172,9 @@ public class ClassInstantiation {
 			// Get value bindings data and create tree nodes for predefined properties if they are used as clients or providers
 //			collectValueClientsAndProvidersFromUmlModel();
 
-			// indicate the size of the tree
-			int numberOfTreeNodes = getAllTreeObjects().size();
-			treeRoot.setName(treeRoot.getName() + " (" + numberOfTreeNodes + " nodes)");
+//			// indicate the size of the tree
+//			int numberOfTreeNodes = getAllTreeObjects().size();
+//			treeRoot.setName(treeRoot.getName() + " (" + numberOfTreeNodes + " nodes)");
 		}
 	}
 	

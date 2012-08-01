@@ -237,7 +237,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 							// create tree item
 							ClassItem item = new ClassItem(className);
-
+							
 							treeParent.addChild(item);
 							treeItems.add(item);
 							
@@ -249,6 +249,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 							
 							// add to the return list
 							createdItems.add(item);
+							
+//							System.err.println("Loading: " + item + " (" + item.getQName() + ")");
 							
 							if (recursive) {
 								// recursive call
