@@ -47,7 +47,6 @@ See the full OSMC Public License conditions for more details.
 
    <requires>
       <import plugin="org.eclipse.xtext"/>
-      <import plugin="org.eclipse.papyrus.core"/>
       <import plugin="org.antlr.runtime"/>
       <import feature="fr.obeo.acceleo" version="2.8.0.201102021515"/>
    </requires>
