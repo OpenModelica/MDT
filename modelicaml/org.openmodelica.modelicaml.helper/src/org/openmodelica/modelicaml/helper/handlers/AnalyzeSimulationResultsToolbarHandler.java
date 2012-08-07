@@ -1,7 +1,6 @@
 package org.openmodelica.modelicaml.helper.handlers;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -18,17 +17,18 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.gen.modelica.popupactions.GenerateModelicaCodeFromEntireModelicaMLModelAction;
 import org.openmodelica.modelicaml.helper.analyzers.SimulationResultsAnalyzer;
-import org.openmodelica.modelicaml.helper.dialogs.AnalyseSimulationResulstOptionsDialog;
+import org.openmodelica.modelicaml.helper.dialogs.AnalyseSimulationResultsOptionsDialog;
 import org.openmodelica.modelicaml.helper.dialogs.ScenarioBasedVerificationReportDialog;
 import org.openmodelica.modelicaml.helper.dialogs.SelectScenarioToReqRelationsToCreateDialog;
 import org.openmodelica.modelicaml.helper.simulation.Simulator;
@@ -36,10 +36,10 @@ import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
 public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 
-	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
+//	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
 
 	// map of models and the corresponding simulation result paths (absolute)
-	private HashMap<Element,String> simulationResultsFiles = new HashMap<Element,String>();
+//	private HashMap<Element,String> simulationResultsFiles = new HashMap<Element,String>();
 	
 	protected GeneratedModelsData generatedModelsData;
 	
@@ -68,17 +68,24 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 		// Use this to open a Shell in the UI thread
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
-					ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
+				if (getGeneratedModelsData() != null && getGeneratedModelsData().getSimulatedModels().size() > 0) {
+					if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
+						ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
 
-					SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), getSimulationResultsFiles(), false);
-					dialog.open();
+						SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), false);
+						dialog.open();
+					}
+					else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+						ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
+
+						ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), false);
+			     		dialog.open();
+					}
 				}
-				else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
-					ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
-
-					ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), getSimulationResultsFiles(), false);
-		     		dialog.open();
+				else {
+					DialogMessage dialog = new DialogMessage(ModelicaMLServices.getShell(), "Simulation Errors", null, "No models were simulated. The report is empty."
+							+ "\n\nSimulation Log:\n" + getGeneratedModelsData().getLog(), true);
+					dialog.open();
 				}
 			}
 		});
@@ -94,7 +101,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 			generatedModelsPackage = getGeneratedModelsData().getGeneratedModelsPackage();
 		}
 		
-		AnalyseSimulationResulstOptionsDialog dialog = new AnalyseSimulationResulstOptionsDialog(new Shell(), generatedModelsPackage);
+		AnalyseSimulationResultsOptionsDialog dialog = new AnalyseSimulationResultsOptionsDialog(new Shell(), generatedModelsPackage);
 		// pass the data object in order to avoid new search of elements
 		dialog.setGeneratedModelsData(getGeneratedModelsData());
 		dialog.open();
@@ -166,14 +173,15 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 												if (monitor.isCanceled()){
 													return Status.CANCEL_STATUS;
 												}
-												simulationResultsFiles = simulator.getSimulationResultsFile();
-												notSimulatedModels = simulator.getNotSimulatedModels();
+//												simulationResultsFiles = simulator.getSimulationResultsFile();
+//												notSimulatedModels = simulator.getNotSimulatedModels();
+												
 												generatedModelsData = simulator.getGmd();
 												
 												// set the results folder path used by simulator
 												setResultsFileFolderPath(simulator.getSimulationResultsFolderPath());
 												
-												SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFiles, notSimulatedModels, monitor);
+												SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, monitor);
 												analyzer.analyze();
 												
 												return Status.OK_STATUS;
@@ -207,7 +215,8 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 				String resultFilePath = resultsFileFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) VeM);
 				simulationResultFiles.put(VeM, resultFilePath);
 			}
-			simulationResultsFiles = simulationResultFiles;
+//			simulationResultsFiles = simulationResultFiles;
+			generatedModelsData.setSimulationResultsFile(simulationResultFiles);
 			
 			analysisJob = new Job("Analysing results ...") {
 				
@@ -218,7 +227,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 						return Status.CANCEL_STATUS;
 					}
 					
-					SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, simulationResultsFiles, notSimulatedModels, monitor);
+					SimulationResultsAnalyzer analyzer = new SimulationResultsAnalyzer(generatedModelsData, monitor);
 					analyzer.analyze();
 					
 					return Status.OK_STATUS;
@@ -232,15 +241,15 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	}
 	
 	
-	public HashMap<Element, String> getSimulationResultsFiles() {
-		return simulationResultsFiles;
-	}
-
-
-	public void setSimulationResultsFiles(
-			HashMap<Element, String> simulationResultsFiles) {
-		this.simulationResultsFiles = simulationResultsFiles;
-	}
+//	public HashMap<Element, String> getSimulationResultsFiles() {
+//		return simulationResultsFiles;
+//	}
+//
+//
+//	public void setSimulationResultsFiles(
+//			HashMap<Element, String> simulationResultsFiles) {
+//		this.simulationResultsFiles = simulationResultsFiles;
+//	}
 
 
 	private boolean setUpProjectData(){

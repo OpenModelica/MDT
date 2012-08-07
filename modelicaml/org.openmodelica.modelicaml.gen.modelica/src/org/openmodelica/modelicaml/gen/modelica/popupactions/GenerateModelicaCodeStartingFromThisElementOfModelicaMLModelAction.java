@@ -55,17 +55,14 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.papyrus.editor.PapyrusMultiDiagramEditor;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.State;
-import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.CGConfigurationManager;
@@ -135,9 +132,7 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 		
 		
 		EObject selectedElement = ModelicaMLServices.adaptSelectedElement(input);
-        if (selectedElement instanceof State) {
-        	umlElement = (Element)selectedElement;
-		}
+		umlElement = (Element)selectedElement;
         
 //		
 //		if (input instanceof ModelElementItem) {
@@ -235,20 +230,30 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 	 */
 	public void runchain(IProgressMonitor monitor) {
 		try {
-			if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
-				
-				// stamp before generating code 
-				Long timeStamp = System.currentTimeMillis();
-				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
+			/*
+			 * Do not skip the generation of code because here the user wants 
+			 * to generate code!
+			 */
+			
+			myChain.launch(filter, monitor, LaunchManager.create("run", true));
 
-				// same the model in order to make sure that the code is generated from the latest version
-//				ModelicaMLServices.saveModel(umlModel);
-
-				myChain.launch(filter, monitor, LaunchManager.create("run", true));
-
-				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
-				ModelicaMLServices.generatePackageEncodingFile(project);
-			}
+			// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+			ModelicaMLServices.generatePackageEncodingFile(project);
+//			
+//			if (ModelicaMLServices.regenerateCode(umlModel.getResource())) {
+//				
+//				// stamp before generating code 
+//				Long timeStamp = System.currentTimeMillis();
+//				ModelicaMLServices.codeGenerationStamp.put(umlModel.getResource(), timeStamp);
+//
+//				// same the model in order to make sure that the code is generated from the latest version
+////				ModelicaMLServices.saveModel(umlModel);
+//
+//				myChain.launch(filter, monitor, LaunchManager.create("run", true));
+//
+//				// TODO: remove this when file encoding for generated code files is enforced to UTF-8
+//				ModelicaMLServices.generatePackageEncodingFile(project);
+//			}
 
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

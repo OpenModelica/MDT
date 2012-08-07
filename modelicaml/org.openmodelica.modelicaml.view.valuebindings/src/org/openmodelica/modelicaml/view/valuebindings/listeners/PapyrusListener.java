@@ -35,7 +35,7 @@
 package org.openmodelica.modelicaml.view.valuebindings.listeners;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.papyrus.core.listenerservice.IPapyrusListener;
+import org.eclipse.papyrus.infra.core.listenerservice.IPapyrusListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Dependency;
@@ -77,7 +77,6 @@ public class PapyrusListener implements IPapyrusListener {
 						
 						if (myView != null) {
 							TreeUtls.removeTreeItem(((NamedElement)notification.getOldValue()), myView.getTreeRoot(), myView.getViewer());
-//							myView.removeTreeItem(((NamedElement)notification.getOldValue()));
 							myView.getViewer().refresh(); // refresh the entire viewer
 //							System.err.println("REMOVED: " + ((NamedElement)notification.getOldValue()).getName());
 						}

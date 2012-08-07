@@ -34,13 +34,13 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.papyrus.core.services.ServiceException;
-import org.eclipse.papyrus.core.services.ServicesRegistry;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.ServiceUtils;
-import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
+import org.eclipse.papyrus.infra.core.services.ServiceException;
+import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -689,10 +689,12 @@ public class TraceabilityView extends ViewPart {
 						if (object instanceof EObject) {
 							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 							List<Object> items = new ArrayList<Object>();
-							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+//							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+							items.add((EObject) object);
+							ModelExplorerView.reveal(items, modelExplorerView);
 							
 							modelExplorerView.getControl().setFocus();
-							modelExplorerView.setSelection(new StructuredSelection(items), true);
+//							modelExplorerView.setSelection(new StructuredSelection(items), true);
 						}
 					}
 				}
@@ -700,7 +702,7 @@ public class TraceabilityView extends ViewPart {
 		};
 		actionLocateInPapyrusModelExplorer.setText("Locate in Model Explorer");
 		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Model Explorer");
-		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
+		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
 		
 		
 		doubleClickAction = new Action() {

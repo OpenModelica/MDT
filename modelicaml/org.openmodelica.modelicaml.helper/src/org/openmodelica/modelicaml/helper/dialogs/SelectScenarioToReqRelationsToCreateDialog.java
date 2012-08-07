@@ -19,10 +19,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
-import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -85,8 +85,8 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	private List<TreeItem> treeItemsPositiveRelations = new ArrayList<TreeItem>();
 	private List<TreeItem> treeItemsNegativeRelations = new ArrayList<TreeItem>();
 	
-	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
-	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+	private final ImageDescriptor warningImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/warning_ovr.gif");
+	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
 
 	private final static String TAB_TITLE_POSITIVE_RELATIONS = "New Positive Relations";
 	private final static String TAB_TITLE_NEGATIVE_RELATIONS = "New Negative Relations";
@@ -113,13 +113,12 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	 */
 	public SelectScenarioToReqRelationsToCreateDialog(Shell parentShell, 
 			GeneratedModelsData gmd,
-			HashMap<Element,String> simulationResultsFiles,
 			boolean openedFromReportDialog) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
 		this.setGmd(gmd);
-		this.setSimulationResultsFiles(simulationResultsFiles);
+		this.setSimulationResultsFiles(gmd.getSimulationResultsFile());
 		this.setOpenedFromReportDialog(openedFromReportDialog);
 	}
 
@@ -351,23 +350,25 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 						List<Object> items = new ArrayList<Object>();
 						for (Object object2 : selectedObjects) {
 							if (object2 instanceof EObject) {
-								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject) object2));
+//								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject) object2));
+								items.add((EObject) object2);
+								ModelExplorerView.reveal(items, modelExplorerView);
 							}
 						}
-						modelExplorerView.setSelection(new StructuredSelection(items), true);
+//						modelExplorerView.setSelection(new StructuredSelection(items), true);
 					}
 				}
 			}
 		});
 		btnLocate.setText("Locate");
-		btnLocate.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+		btnLocate.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
 
 		
 		Button btnReadReport = new Button(container, SWT.NONE);
 		btnReadReport.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(getShell(), gmd, getSimulationResultsFiles(), true);
+				ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(getShell(), gmd, true);
 				dialog.open();
 			}
 		});
@@ -571,10 +572,10 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				storeDependencies(positiveRelationsToCreate, Constants.stereotypeQName_UsedToVerify);
+				storeDependencies(positiveRelationsToCreate, Constants.stereotypeQName_UseToVerify);
 				storeDependencies(negativeRelationsToCreate, Constants.stereotypeQName_DoNotUseToVerify);
 				
-				removeDependencies(positiveRelationsToDelete, Constants.stereotypeQName_UsedToVerify);
+				removeDependencies(positiveRelationsToDelete, Constants.stereotypeQName_UseToVerify);
 				removeDependencies(negativeRelationsToDelete, Constants.stereotypeQName_DoNotUseToVerify);
 			}
 		};

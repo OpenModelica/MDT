@@ -53,8 +53,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -187,7 +186,7 @@ private Class createElement(String name){
 		Stereotype stereotype = null;
 		
 		if (selectedElement instanceof Class) {
-			element = (Class) ((org.eclipse.uml2.uml.Class)selectedElement).createNestedClassifier(name, UMLPackage.Literals.CLASS);
+			element = (Class) ((Class)selectedElement).createNestedClassifier(name, UMLPackage.Literals.CLASS);
 		}
 		else if (selectedElement instanceof Model) {
 			element = ((Model)selectedElement).createOwnedClass(name, false);

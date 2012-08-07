@@ -44,8 +44,7 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.umlutils.OpaqueBehaviorUtil;
+import org.eclipse.papyrus.uml.tools.utils.OpaqueBehaviorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -70,6 +69,7 @@ import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.editor.xtext.algorithm.ui.internal.AlgorithmsectionActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
+
 
 import com.google.inject.Injector;
 

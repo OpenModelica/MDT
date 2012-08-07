@@ -78,6 +78,11 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 	 */
 	private HashSet<TreeObject> allClientsWithPossibleBindingCodeDerivation = new HashSet<TreeObject>();
 	
+	/* All tree items that are clients and for which it is (potentially) possible to derive binding code for, and 
+	 * for which a user interaction is necessary in order to select one mediator or provider from multiple choices.  
+	 */
+	private HashSet<TreeObject> allClientsWithUserDecisionRequiredForCodeDerivation = new HashSet<TreeObject>();
+	
 	/*
 	 * All clients that have isRequired checked to indicate that they always need a bindings
 	 * even if the default value is set in its declaration.
@@ -237,39 +242,15 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 					}
 				}
 				
-//				if (deriveCodeHelper.getMediatorElement() != null ) {
-//					EList<Dependency> clientDep = org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls.
-//											getMediatorDependency((NamedElement)deriveCodeHelper.getMediatorElement(), 
-//													(NamedElement)deriveCodeHelper.getClientElement(), 
-//													Constants.stereotypeQName_ProvidesValueFor);
-//					if (clientDep.size() == 1) { // only one dependency is allowed.
-//						Dependency dep = (Dependency)clientDep.get(0);
-//						Stereotype sProvidesValueFor = dep.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor);
-//						if (sProvidesValueFor != null) {
-//							Object isRequired = dep.getValue(sProvidesValueFor, Constants.propertyName_isRequired);
-//							if (isRequired != null && isRequired instanceof Boolean && (Boolean)isRequired) {
-//								allRequiredClientsFound.add(item);
-//								
-//								if (code == null) {
-//									// Generate marker 
-//									String message = "No binding code could be generated for the required client '"+ item.getDotPath() + "'."; 
-//									// delete the marker if there was one from previous actions.
-//									ModelicaMLMarkerSupport.deleteMarker(message, item.getFirstLevelComponent());
-//									// generate new marker
-//									ModelicaMLMarkerSupport.generateMarker(message, "error", item.getFirstLevelComponent());
-//								}
-//							}
-//						}
-//					}
-//				}
-				
 				// if code could be derive -> add to possible code derivation clients
 				if (code != null ) {
 					allClientsWithPossibleBindingCodeDerivation.add(item);
 				}
 				// if NO code could be derived because a user interaction is required -> add to "possible" and generate a marker
 				else if (code == null && deriveCodeHelper.isUserSelectionRequired()) {
+					
 					allClientsWithPossibleBindingCodeDerivation.add(item);
+					allClientsWithUserDecisionRequiredForCodeDerivation.add(item);
 					
 					if (!onlySimulate) {
 						// Generate marker 
@@ -402,5 +383,14 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 
 	public void setAllMediators(HashSet<Element> allMediators) {
 		this.allMediators = allMediators;
+	}
+
+	public HashSet<TreeObject> getAllClientsWithUserDecisionRequiredForCodeDerivation() {
+		return allClientsWithUserDecisionRequiredForCodeDerivation;
+	}
+
+	public void setAllClientsWithUserDecisionRequiredForCodeDerivation(
+			HashSet<TreeObject> allClientsWithUserDecisionRequiredForCodeDerivation) {
+		this.allClientsWithUserDecisionRequiredForCodeDerivation = allClientsWithUserDecisionRequiredForCodeDerivation;
 	}
 }

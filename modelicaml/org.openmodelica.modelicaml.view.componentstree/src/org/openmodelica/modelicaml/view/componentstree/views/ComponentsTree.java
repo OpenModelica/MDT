@@ -71,9 +71,9 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -1149,7 +1149,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		actionLocate = new Action(){
 			public void run() {
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -1164,8 +1164,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						if (object instanceof EObject) {
 							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 							List<Object> items = new ArrayList<Object>();
-							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-							modelExplorerView.setSelection(new StructuredSelection(items), true);
+//							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+							items.add((EObject) object);
+							ModelExplorerView.reveal(items, modelExplorerView);
+							
+//							modelExplorerView.setSelection(new StructuredSelection(items), true);
 						}
 					}
 				}
@@ -1173,13 +1176,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		};	
 		actionLocate.setText("Locate component");
 		actionLocate.setToolTipText("Locate component in Papyrus Model Explorer");
-		actionLocate.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
+		actionLocate.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
 //		actionLocate.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 //		
 		actionLocateType = new Action(){
 			public void run() {
 				
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -1199,8 +1202,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 								if (object instanceof EObject) {
 									CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 									List<Object> items = new ArrayList<Object>();
-									items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-									modelExplorerView.setSelection(new StructuredSelection(items), true);
+//									items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+									items.add((EObject) object);
+									ModelExplorerView.reveal(items, modelExplorerView);
+									
+//									modelExplorerView.setSelection(new StructuredSelection(items), true);
 								}
 							}
 							else {
@@ -1219,7 +1225,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		};	
 		actionLocateType.setText("Locate the component type");
 		actionLocateType.setToolTipText("Locate in Papyrus Model Explorer");
-		actionLocateType.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
+		actionLocateType.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
 //		actionLocateType.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 		
 		
@@ -2208,7 +2214,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		// Only listen to the Papyrus Model Explorer selection
 		if (sourcepart != null && sourcepart.getSite() != null 
 				&& sourcepart.getSite().getId()!= null 
-				&& sourcepart.getSite().getId().equals("org.eclipse.papyrus.modelexplorer.modelexplorer")) {
+				&& sourcepart.getSite().getId().equals(Constants.VIEW_PAPYRUS_MODELEXPLORER)) {
 			
 			// set new input from the selection.
 			viewer.setInput(getViewSite());

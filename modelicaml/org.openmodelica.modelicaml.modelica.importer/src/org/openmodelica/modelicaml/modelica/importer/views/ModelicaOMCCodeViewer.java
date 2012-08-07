@@ -43,23 +43,22 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.papyrus.core.listenerservice.IPapyrusListener;
-import org.eclipse.papyrus.core.services.ServiceException;
-import org.eclipse.papyrus.core.services.ServicesRegistry;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.ServiceUtils;
-import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
-import org.eclipse.papyrus.resource.NotFoundException;
-import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.listenerservice.IPapyrusListener;
+import org.eclipse.papyrus.infra.core.resource.NotFoundException;
+import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.services.ServiceException;
+import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
@@ -147,7 +146,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	// Listeners
 	private ISelectionListener selectionListener = new ISelectionListener() {
 		 public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-			 if (actionLinkWithEditor.isChecked() && sourcepart != ModelicaOMCCodeViewer.this && selection instanceof IStructuredSelection) {
+			 if (actionLinkWithEditor != null && actionLinkWithEditor.isChecked() && sourcepart != ModelicaOMCCodeViewer.this && selection instanceof IStructuredSelection) {
 	        	EObject selectedElement = null;
 	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
 					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
@@ -319,7 +318,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		
 
 //		// get Papyrus Model Explorer
-//		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+//		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 //
 //		ModelExplorerPageBookView modelExplorerPageBookView = null;
 //		if (view instanceof ModelExplorerPageBookView) {
@@ -1303,10 +1302,12 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 						if (object instanceof EObject) {
 							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 							List<Object> items = new ArrayList<Object>();
-							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+//							items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+							items.add((EObject) object);
+							ModelExplorerView.reveal(items, modelExplorerView);
 							
 							modelExplorerView.getControl().setFocus();
-							modelExplorerView.setSelection(new StructuredSelection(items), true);
+//							modelExplorerView.setSelection(new StructuredSelection(items), true);
 						}
 					}
 				}
@@ -1314,7 +1315,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		};
 		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus");
 		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Papyrus Model Explorer");
-		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
+		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
 		
 		
 		actionLinkWithEditor = new Action("actionLinkWithEditor", 2) { //obviously a check box style

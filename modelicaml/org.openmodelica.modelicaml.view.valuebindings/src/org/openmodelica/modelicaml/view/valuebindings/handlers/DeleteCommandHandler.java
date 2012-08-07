@@ -51,12 +51,12 @@ import org.eclipse.gmf.runtime.common.core.command.ICommand;
 import org.eclipse.gmf.runtime.emf.type.core.requests.DestroyElementRequest;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.services.ServiceException;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.GMFtoEMFCommandWrapper;
-import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
-import org.eclipse.papyrus.service.edit.service.ElementEditServiceUtils;
-import org.eclipse.papyrus.service.edit.service.IElementEditService;
+import org.eclipse.papyrus.commands.wrappers.GMFtoEMFCommandWrapper;
+import org.eclipse.papyrus.infra.core.services.ServiceException;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.papyrus.infra.services.edit.service.ElementEditServiceUtils;
+import org.eclipse.papyrus.infra.services.edit.service.IElementEditService;
 import org.eclipse.ui.PlatformUI;
 
 /**

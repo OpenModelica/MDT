@@ -34,15 +34,16 @@
  */
 package org.openmodelica.modelicaml.common.listeners;
 
-import java.util.HashMap;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.papyrus.core.listenerservice.IPapyrusListener;
-import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.listenerservice.IPapyrusListener;
+import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+//import org.eclipse.papyrus.core.listenerservice.IPapyrusListener;
+//import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
+//import org.eclipse.papyrus.resource.uml.UmlUtils;
 
 // TODO: Auto-generated Javadoc
 /**

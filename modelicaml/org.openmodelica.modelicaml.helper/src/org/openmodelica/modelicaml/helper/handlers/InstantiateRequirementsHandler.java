@@ -51,9 +51,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
@@ -63,8 +61,8 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
-import org.openmodelica.modelicaml.helper.generators.InstantiatorRequirements;
 import org.openmodelica.modelicaml.helper.generators.CreatorVerificationVerdictElements;
+import org.openmodelica.modelicaml.helper.generators.InstantiatorRequirements;
 
 
 
@@ -92,7 +90,7 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 				HashSet<Class> itemsFound = new HashSet<Class>();
 				
 				VerificationScenariosCollector tsc = new VerificationScenariosCollector();
-				for (Element element : tsc.collectRequirementsForScenario(testCaseClass, Constants.stereotypeQName_UsedToVerify)) {
+				for (Element element : tsc.collectRequirementsForScenario(testCaseClass, Constants.stereotypeQName_UseToVerify)) {
 					if (element instanceof Class) {
 						itemsFound.add((Class) element);
 					}

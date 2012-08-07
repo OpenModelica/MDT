@@ -35,16 +35,17 @@
 package org.openmodelica.modelicaml.tabbedproperties.editors.filters;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.papyrus.profile.utils.UmlElementFilter;
+import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.uml2.uml.ControlFlow;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+//import org.eclipse.papyrus.profile.utils.UmlElementFilter;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ActivityEdgeGuardCodePropertySectionEditorFilter.
  */
-public class ActivityEdgeGuardCodePropertySectionEditorFilter extends UmlElementFilter {
+public class ActivityEdgeGuardCodePropertySectionEditorFilter implements IFilter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.papyrus.profile.utils.UmlElementFilter#select(java.lang.Object)

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Composite xmlns:x="http://www.eclipse.org/xwt" xmlns="http://www.eclipse.org/xwt/presentation"
+	xmlns:j="clr-namespace:java.lang" xmlns:ppel="clr-namespace:org.eclipse.papyrus.properties.widgets.layout"
+	xmlns:ppe="clr-namespace:org.eclipse.papyrus.properties.widgets">
+	<Composite.layout>
+		<ppel:PropertiesLayout></ppel:PropertiesLayout>
+	</Composite.layout>
+	<Composite text="General">
+		<Composite.layout>
+			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
+		</Composite.layout>
+		<ppe:StringEditor input="{Binding}" property="UML:NamedElement:name"
+			customLabel="Name"></ppe:StringEditor>
+		<ppe:ReferenceDialog input="{Binding}" property="UML:TypedElement:type"
+			customLabel="type"></ppe:ReferenceDialog>
+	</Composite>
+	<Composite>
+		<Composite.layout>
+			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
+		</Composite.layout>
+		<ppe:EnumRadio input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:FunctionArgument:variability"></ppe:EnumRadio>
+		<ppe:EnumRadio input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:FunctionArgument:causality"></ppe:EnumRadio>
+		<ppe:EnumRadio input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:FunctionArgument:scope"></ppe:EnumRadio>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:InstanceOfAClass:replaceable"></ppe:BooleanRadio>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:InstanceOfAClass:final"></ppe:BooleanRadio>
+	</Composite>
+</Composite>

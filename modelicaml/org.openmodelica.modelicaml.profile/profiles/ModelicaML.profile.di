@@ -29,6 +29,9 @@
     <availablePage>
       <emfPageIdentifier href="ModelicaML.profile.notation#_6qsuYGFfEeG6JbLdsYaDDQ"/>
     </availablePage>
+    <availablePage>
+      <emfPageIdentifier href="ModelicaML.profile.notation#_tms_4OCQEeGn-bDI4pMcpA"/>
+    </availablePage>
   </pageList>
   <sashModel currentSelection="//@sashModel/@windows.0/@children.0">
     <windows>
@@ -40,7 +43,16 @@
           <emfPageIdentifier href="ModelicaML.profile.notation#_6qsuYGFfEeG6JbLdsYaDDQ"/>
         </children>
         <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_doV4kHyIEeCz14mjmAfPTw"/>
+        </children>
+        <children>
           <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_tms_4OCQEeGn-bDI4pMcpA"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_Sq6n8Kx7EeC2GJQ4iCzxPg"/>
         </children>
       </children>
     </windows>

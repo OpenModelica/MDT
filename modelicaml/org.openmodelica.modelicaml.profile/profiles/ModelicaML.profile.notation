@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML">
   <notation:Diagram xmi:id="_hwBQEHfcEeC8VcOgJ0vxlw" type="PapyrusUMLProfileDiagram" name="ProfileDiagram" measurementUnit="Pixel">
     <children xmi:type="notation:Shape" xmi:id="_wlEYwHfcEeC8VcOgJ0vxlw" type="1026" fontHeight="8" lineColor="0">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wlEYwnfcEeC8VcOgJ0vxlw" source="ShadowFigure">
@@ -721,7 +721,7 @@
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hym5nXyIEeCz14mjmAfPTw"/>
       </children>
       <element xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_yg9GcEsVEeCLrv7S0OCHfw"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hydIlHyIEeCz14mjmAfPTw" x="405" y="140"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hydIlHyIEeCz14mjmAfPTw" x="395" y="140"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_hywDgHyIEeCz14mjmAfPTw" type="1031" fontHeight="8" lineColor="0">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_hywDgnyIEeCz14mjmAfPTw" source="ShadowFigure">
@@ -767,7 +767,7 @@
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wQ0PoHyIEeCz14mjmAfPTw"/>
       </children>
       <element xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_L9m_YEu4EeCvhJzzW5F_Ew"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wQ0PkXyIEeCz14mjmAfPTw" x="670" y="140"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wQ0PkXyIEeCz14mjmAfPTw" x="660" y="140"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_xMt3IHyIEeCz14mjmAfPTw" type="1031" fontHeight="8" lineColor="0">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_xMt3InyIEeCz14mjmAfPTw" source="ShadowFigure">
@@ -914,7 +914,7 @@
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_8WR4R60qEeCRXd3mzS9MqQ"/>
       </children>
       <element xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_8VZHcK0qEeCRXd3mzS9MqQ"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_8WIuUa0qEeCRXd3mzS9MqQ" x="665" y="190"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_8WIuUa0qEeCRXd3mzS9MqQ" x="615" y="195"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_4KUNQMQXEeC6UZUtnVcSgg" type="1026" fontHeight="8" lineColor="0">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_4KUNQsQXEeC6UZUtnVcSgg" source="ShadowFigure">
@@ -1272,6 +1272,32 @@
     </edges>
   </notation:Diagram>
   <notation:Diagram xmi:id="_Sq6n8Kx7EeC2GJQ4iCzxPg" type="PapyrusUMLProfileDiagram" name="ProfileDiagram" measurementUnit="Pixel">
+    <children xmi:type="notation:Shape" xmi:id="_vRWj0OCQEeGn-bDI4pMcpA" type="1026" fontName="Segoe UI" lineColor="0">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_vRXK4OCQEeGn-bDI4pMcpA" source="ShadowFigure">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_vRXK4eCQEeGn-bDI4pMcpA" key="ShadowFigure_Value" value="false"/>
+      </eAnnotations>
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_vRXK4uCQEeGn-bDI4pMcpA" source="displayNameLabelIcon">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_vRXK4-CQEeGn-bDI4pMcpA" key="displayNameLabelIcon_value" value="false"/>
+      </eAnnotations>
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_vRXx8OCQEeGn-bDI4pMcpA" source="QualifiedName">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_vRXx8eCQEeGn-bDI4pMcpA" key="QualifiedNameDepth" value="1000"/>
+      </eAnnotations>
+      <children xmi:type="notation:DecorationNode" xmi:id="_vRXx8uCQEeGn-bDI4pMcpA" type="1034"/>
+      <children xmi:type="notation:BasicCompartment" xmi:id="_vRXx8-CQEeGn-bDI4pMcpA" type="1071">
+        <styles xmi:type="notation:TitleStyle" xmi:id="_vRXx9OCQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:SortingStyle" xmi:id="_vRXx9eCQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:FilteringStyle" xmi:id="_vRXx9uCQEeGn-bDI4pMcpA"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_vRXx9-CQEeGn-bDI4pMcpA"/>
+      </children>
+      <children xmi:type="notation:BasicCompartment" xmi:id="_vRXx-OCQEeGn-bDI4pMcpA" visible="false" type="1019">
+        <styles xmi:type="notation:TitleStyle" xmi:id="_vRXx-eCQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:SortingStyle" xmi:id="_vRXx-uCQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:FilteringStyle" xmi:id="_vRXx--CQEeGn-bDI4pMcpA"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_vRXx_OCQEeGn-bDI4pMcpA"/>
+      </children>
+      <element xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_bks90FsREd6lR6a_09Qo9g"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_vRWj0eCQEeGn-bDI4pMcpA" x="147" y="145"/>
+    </children>
     <styles xmi:type="notation:DiagramStyle" xmi:id="_Sq6n8ax7EeC2GJQ4iCzxPg"/>
     <element xmi:type="uml:Profile" href="ModelicaML.profile.uml#_GnDQYGC9Ed6v450MT6BnSw"/>
   </notation:Diagram>
@@ -1669,5 +1695,35 @@
     </children>
     <styles xmi:type="notation:DiagramStyle" xmi:id="_6qsuYWFfEeG6JbLdsYaDDQ"/>
     <element xmi:type="uml:Profile" href="ModelicaML.profile.uml#_LT6BEGC9Ed6v450MT6BnSw"/>
+  </notation:Diagram>
+  <notation:Diagram xmi:id="_tms_4OCQEeGn-bDI4pMcpA" type="PapyrusUMLProfileDiagram" name="ProfileDiagram" measurementUnit="Pixel">
+    <children xmi:type="notation:Shape" xmi:id="_t7iAYOCQEeGn-bDI4pMcpA" type="1026" fontName="Segoe UI" lineColor="0">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_t7mR0OCQEeGn-bDI4pMcpA" source="ShadowFigure">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_t7m44OCQEeGn-bDI4pMcpA" key="ShadowFigure_Value" value="false"/>
+      </eAnnotations>
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_t7m44eCQEeGn-bDI4pMcpA" source="displayNameLabelIcon">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_t7m44uCQEeGn-bDI4pMcpA" key="displayNameLabelIcon_value" value="false"/>
+      </eAnnotations>
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_t7nf8OCQEeGn-bDI4pMcpA" source="QualifiedName">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_t7nf8eCQEeGn-bDI4pMcpA" key="QualifiedNameDepth" value="1000"/>
+      </eAnnotations>
+      <children xmi:type="notation:DecorationNode" xmi:id="_t7nf8uCQEeGn-bDI4pMcpA" type="1034"/>
+      <children xmi:type="notation:BasicCompartment" xmi:id="_t7oHAOCQEeGn-bDI4pMcpA" type="1071">
+        <styles xmi:type="notation:TitleStyle" xmi:id="_t7oHAeCQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:SortingStyle" xmi:id="_t7oHAuCQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:FilteringStyle" xmi:id="_t7oHA-CQEeGn-bDI4pMcpA"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t7oHBOCQEeGn-bDI4pMcpA"/>
+      </children>
+      <children xmi:type="notation:BasicCompartment" xmi:id="_t7oHBeCQEeGn-bDI4pMcpA" visible="false" type="1019">
+        <styles xmi:type="notation:TitleStyle" xmi:id="_t7oHBuCQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:SortingStyle" xmi:id="_t7oHB-CQEeGn-bDI4pMcpA"/>
+        <styles xmi:type="notation:FilteringStyle" xmi:id="_t7oHCOCQEeGn-bDI4pMcpA"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t7oHCeCQEeGn-bDI4pMcpA"/>
+      </children>
+      <element xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_7eXtcGvNEd65MZ8o9QNr-w"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t7iAYeCQEeGn-bDI4pMcpA" x="232" y="205"/>
+    </children>
+    <styles xmi:type="notation:DiagramStyle" xmi:id="_tms_4eCQEeGn-bDI4pMcpA"/>
+    <element xmi:type="uml:Profile" href="ModelicaML.profile.uml#_zPJyIGC9Ed6v450MT6BnSw"/>
   </notation:Diagram>
 </xmi:XMI>

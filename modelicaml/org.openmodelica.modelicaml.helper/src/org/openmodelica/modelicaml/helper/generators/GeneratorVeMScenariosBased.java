@@ -12,9 +12,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
@@ -128,10 +125,8 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	 * positive (<<UseToVerify>> relation) or negative (<<DoNotUseToVerify>> relation)
 	 */
 	private boolean minimizeNumberOfRequirementInstantiations = false;
-
 	
-	// indicates if there was at at least one model for which bindings could not be generated 
-	private boolean bindingErrorsDetected = false;
+	// model for which bindings could not be generated 
 	private HashSet<Element> modelsWithBindingErrors = new HashSet<Element>();
 	
 	// indicates if this generator is used for discovery of relations or verification models generation
@@ -217,7 +212,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			 * explicitly defined relation (i.e. <<UseToVerify>> relations) to this requirement.
 			 */
 			for (Element scenario : verificationScenariosCollector.getAllScenarios()) {
-				HashSet<Element> reqWithPositiveRelations = getRequirements(scenario, Constants.stereotypeQName_UsedToVerify);
+				HashSet<Element> reqWithPositiveRelations = getRequirements(scenario, Constants.stereotypeQName_UseToVerify);
 				for (Element requirement : reqWithPositiveRelations) {
 					addToMap(requirementToScenarioCandidate, requirement, scenario);
 				}
@@ -289,7 +284,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 
 
 					// get requirements according to the requirements selection options settings
-					HashSet<Element> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UsedToVerify);
+					HashSet<Element> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UseToVerify);
 					HashSet<Element> reqWithNegativeRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_DoNotUseToVerify);
 					HashSet<Element> reqAll = getAllRequirements();
 
@@ -566,9 +561,9 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 				 * Any other combination that was prepared in advance is discarded.
 				 */
 				List<Element> userSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(userSelectedTestScenarios);
-				
-				// reset the indication of if bindings could not be generated
-				setBindingErrorsDetected(false);
+
+				// counter for monitor
+				int counter = 0;
 				
 				/*
 				 * iterate over scenarios and generate for each valid combination a model
@@ -595,6 +590,8 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						
 						// set progress dialog
 						progressDialog.getProgressMonitor().setTaskName("Creating model: " + simulationModelName);
+						progressDialog.getProgressMonitor().internalWorked( (userSelectedTestScenariosSorted.size() - counter)/100);
+						progressDialog.getProgressMonitor().worked(counter);
 
 						// create VeM (verification model which is a simulation model)
 						Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
@@ -899,10 +896,11 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						 * Determine if there were models for which no correct bindings could be generated
 						 */
 						HashSet<TreeObject> allMandClients = vbc.getAllRequiredClientsFound();
-						HashSet<TreeObject> allMandClientsWithPossibleBindins = vbc.getAllClientsWithPossibleBindingCodeDerivation();
+						HashSet<TreeObject> allMandClientsWithPossibleBindings = vbc.getAllClientsWithPossibleBindingCodeDerivation();
+						HashSet<TreeObject> allMandClientsWithUserDecisionRequired = vbc.getAllClientsWithUserDecisionRequiredForCodeDerivation();
 						
-						if (!allMandClientsWithPossibleBindins.containsAll(allMandClients)) {
-							setBindingErrorsDetected(true);
+						
+						if (!allMandClientsWithPossibleBindings.containsAll(allMandClients) || allMandClientsWithUserDecisionRequired.size() > 0) {
 							modelsWithBindingErrors.add(simulationModel);
 						}
 						
@@ -910,7 +908,9 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						 * Create verdict code
 						 */
 						CreatorVerificationVerdictElements.createVerificationVerdictElements(simulationModel);
-						
+			
+						// increase counter 
+						counter++;
 					}
 				}
 			}
@@ -1201,16 +1201,6 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		this.scenarioToVerificationModelCombination = scenarioToVerificationModelCombination;
 	}
 	
-
-	public boolean isBindingErrorsDetected() {
-		return bindingErrorsDetected;
-	}
-
-
-	public void setBindingErrorsDetected(boolean bindingErrorsDetected) {
-		this.bindingErrorsDetected = bindingErrorsDetected;
-	}
-
 
 	public HashSet<Element> getGeneratedPackages() {
 		return generatedPackages;

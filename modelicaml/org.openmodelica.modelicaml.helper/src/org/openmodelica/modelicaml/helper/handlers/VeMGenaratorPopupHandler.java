@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.helper.handlers;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -44,10 +45,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.resource.NotFoundException;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.NotFoundException;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
@@ -78,7 +79,8 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 	protected int mode = Constants.MODE_VEM_GENERATION;
 	
 	// indicates if there was at at least one model for which bindings could not be generated 
-	private boolean bindingErrorsDetected = false;
+//	private boolean bindingErrorsDetected = false;
+	private HashSet<Element> modelsWithBindingErrors;
 	
 	// models generator
 	protected GeneratorVeMScenariosBased smg;
@@ -160,7 +162,7 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 		public void widgetDisposed(DisposeEvent e) {
 			// set the indication if there was an error during bindings generation
 			smg = dialog.getSmg();
-			setBindingErrorsDetected(smg.isBindingErrorsDetected());
+			setModelsWithBindingErrors(smg.getModelsWithBindingErrors());
 			
 			// proceed after asking user
 			proceed();
@@ -277,13 +279,21 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 		this.mode = mode;
 	}
 
-	public boolean isBindingErrorsDetected() {
-		return bindingErrorsDetected;
+	public HashSet<Element> getModelsWithBindingErrors() {
+		return modelsWithBindingErrors;
 	}
 
-	public void setBindingErrorsDetected(boolean bindingErrorsDetected) {
-		this.bindingErrorsDetected = bindingErrorsDetected;
+	public void setModelsWithBindingErrors(HashSet<Element> modelsWithBindingErrors) {
+		this.modelsWithBindingErrors = modelsWithBindingErrors;
 	}
+
+//	public boolean isBindingErrorsDetected() {
+//		return bindingErrorsDetected;
+//	}
+//
+//	public void setBindingErrorsDetected(boolean bindingErrorsDetected) {
+//		this.bindingErrorsDetected = bindingErrorsDetected;
+//	}
 
 
 }

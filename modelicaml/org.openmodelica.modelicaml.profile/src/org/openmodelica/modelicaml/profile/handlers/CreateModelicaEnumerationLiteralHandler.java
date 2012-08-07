@@ -35,6 +35,7 @@
 package org.openmodelica.modelicaml.profile.handlers;
 
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -48,11 +49,9 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 

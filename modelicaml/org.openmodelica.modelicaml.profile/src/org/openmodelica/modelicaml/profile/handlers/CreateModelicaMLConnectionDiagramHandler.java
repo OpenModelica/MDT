@@ -35,7 +35,7 @@
 package org.openmodelica.modelicaml.profile.handlers;
 
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.papyrus.diagram.composite.CreateCompositeDiagramCommand;
+import org.eclipse.papyrus.uml.diagram.composite.CreateCompositeDiagramCommand;
 
 /**
  * The Class CreateModelicaMLConnectionDiagramHandler.

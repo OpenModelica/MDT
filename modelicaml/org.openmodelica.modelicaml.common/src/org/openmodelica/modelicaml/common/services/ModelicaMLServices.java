@@ -30,9 +30,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.ui.toolbox.notification.builders.NotificationBuilder;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.infra.widgets.toolbox.notification.Type;
+import org.eclipse.papyrus.infra.widgets.toolbox.notification.builders.NotificationBuilder;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
@@ -47,6 +48,9 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
+//import org.eclipse.papyrus.core.utils.BusinessModelResolver;
+//import org.eclipse.papyrus.resource.uml.UmlModel;
+//import org.eclipse.papyrus.ui.toolbox.notification.builders.NotificationBuilder;
 
 public class ModelicaMLServices {
 
@@ -72,13 +76,13 @@ public class ModelicaMLServices {
 //				notification.setHTML(true); // does not work :(
 				
 				if (messageType == 0) {
-					notification.setType(org.eclipse.papyrus.ui.toolbox.notification.Type.INFO);
+					notification.setType(Type.INFO);
 				}
 				else if (messageType == 1) {
-					notification.setType(org.eclipse.papyrus.ui.toolbox.notification.Type.WARNING);
+					notification.setType(Type.WARNING);
 				}
 				else if (messageType == 2) {
-					notification.setType(org.eclipse.papyrus.ui.toolbox.notification.Type.ERROR);
+					notification.setType(Type.ERROR);
 				}
 				
 				notification.setTitle(title);

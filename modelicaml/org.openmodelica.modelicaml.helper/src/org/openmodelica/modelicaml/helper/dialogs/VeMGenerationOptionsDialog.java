@@ -15,11 +15,11 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.services.ServiceException;
-import org.eclipse.papyrus.core.services.ServicesRegistry;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.ServiceUtils;
-import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.papyrus.infra.core.services.ServiceException;
+import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -276,7 +276,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		lblSelectionHint.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
 		lblSelectionHint.setBounds(67, 10, 410, 41);
 		lblSelectionHint.setText(selectionHintMessage);
-		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
 		lblSelectionHint.setVisible(false);
 		
 		/*
@@ -488,7 +488,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		});
 		btnConsiderPositiveRelations.setSelection(considerPositiveRequirementsRelations);
 		btnConsiderPositiveRelations.setBounds(20, 46, 615, 16);
-		btnConsiderPositiveRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_UsedToVerify, "::")+">> relation");
+		btnConsiderPositiveRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_UseToVerify, "::")+">> relation");
 //		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 //			btnConsiderPositiveRelations.setEnabled(false); 
 //		}
@@ -580,9 +580,22 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		super.configureShell(newShell);
 //		super.configureShell(new Shell(getParentShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP | SWT.SHELL_TRIM));
 		
-		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/new_testsuite.gif"));
-		newShell.setText("Simulation Models Generation");
-		
+		if (getMode()== Constants.MODE_VEM_GENERATION) {
+			newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper","icons/new_testsuite.gif"));
+			newShell.setText("Verirication Models Generation Options");
+		}
+		else if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY){
+			newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper","icons/discoverRelations2.gif"));
+			newShell.setText("Discovery of Scenarios to Requirements Relations: Models Generation Options");
+		}
+		else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper","icons/automaticScenarioBasedVerification.gif"));
+			newShell.setText("Automatic Scenario-Based Verification: Models Generation Options");
+		}
+//		else {
+//			newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper","icons/new_testsuite.gif"));
+//			newShell.setText("Simulation Models Generation");
+//		}
 	}
 	
 	
@@ -873,7 +886,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	private void setSelectionHintMode(boolean isError, String message){
 		if (!isError) { //normal
 			lblSelectionHint.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
 			lblSelectionHint.setText(message);
 		}
 		if (isError) { // error

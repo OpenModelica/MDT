@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;

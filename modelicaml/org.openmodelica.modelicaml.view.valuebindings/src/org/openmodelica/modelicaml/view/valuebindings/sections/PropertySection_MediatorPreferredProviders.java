@@ -36,7 +36,7 @@ package org.openmodelica.modelicaml.view.valuebindings.sections;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.profile.ImageManager;
+import org.eclipse.papyrus.uml.profile.ImageManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;

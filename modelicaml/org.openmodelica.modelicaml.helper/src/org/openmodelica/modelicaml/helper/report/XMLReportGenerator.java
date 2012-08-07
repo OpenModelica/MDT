@@ -108,7 +108,7 @@ public class XMLReportGenerator {
 	public final static String ViewDescription_notUsedScenarios 				= "Scenarios that were not used in this verification session because they do not have appropriate providers to stimulate the system model.";
 	public final static String ViewDescription_usedScenarios 					= "Scenarios that were used in this verification session because they have appropriate providers to stimulate the system model.";
 
-	public final static String ViewDescription_newPositiveRelations 			= "New discovered positive relations between scenarios and requirements ("+Constants.stereotypeQName_UsedToVerify+" relation).";
+	public final static String ViewDescription_newPositiveRelations 			= "New discovered positive relations between scenarios and requirements ("+Constants.stereotypeQName_UseToVerify+" relation).";
 	public final static String ViewDescription_newNegativeRelations 			= "New discovered negative relations between scenarios and requirements ("+Constants.stereotypeQName_DoNotUseToVerify+" relation).";
 	
 	public final static String ViewDescription_simulated 						= "All models that were simulated and for which simulation result were found.";

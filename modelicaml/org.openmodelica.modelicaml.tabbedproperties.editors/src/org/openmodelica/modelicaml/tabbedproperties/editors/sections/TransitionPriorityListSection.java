@@ -48,8 +48,7 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.profile.ImageManager;
+import org.eclipse.papyrus.uml.profile.ImageManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.MouseEvent;
@@ -70,6 +69,8 @@ import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.Vertex;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
+//import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
+//import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 // TODO: Auto-generated Javadoc
 /**

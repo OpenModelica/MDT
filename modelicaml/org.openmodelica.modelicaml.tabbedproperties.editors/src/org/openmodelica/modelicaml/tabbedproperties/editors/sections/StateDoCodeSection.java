@@ -44,7 +44,6 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.umlutils.OpaqueBehaviorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -73,6 +72,8 @@ import org.openmodelica.modelicaml.editor.xtext.algorithm.ui.internal.Algorithms
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
 
 import com.google.inject.Injector;
+
+import org.eclipse.papyrus.uml.tools.utils.OpaqueBehaviorUtil; 
 
 
 // TODO: Auto-generated Javadoc

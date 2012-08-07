@@ -52,13 +52,6 @@
             file="contexts.xml">
       </contexts>
    </extension>
-   <extension
-         point="org.eclipse.papyrus.core.modelListener">
-      <listener
-            name="org.openmodelica.modelicaml.view.valuebindings.listener1"
-            realization="org.openmodelica.modelicaml.view.valuebindings.listeners.PapyrusListener">
-      </listener>
-   </extension>
    
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
@@ -154,6 +147,13 @@
             </input>
          </propertySection>
       </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.core.modelListener">
+      <listener
+            name="org.openmodelica.modelicaml.view.valuebindings.listener1"
+            realization="org.openmodelica.modelicaml.view.valuebindings.listeners.PapyrusListener">
+      </listener>
    </extension>
 
 </plugin>

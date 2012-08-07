@@ -36,15 +36,15 @@ package org.openmodelica.modelicaml.properties;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.papyrus.core.services.ServiceException;
-import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.editor.PapyrusMultiDiagramEditor;
-import org.eclipse.papyrus.resource.NotFoundException;
-import org.eclipse.papyrus.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.NotFoundException;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Profile;
+import org.eclipse.uml2.uml.Package;
+import org.osgi.framework.ServiceException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -102,18 +102,23 @@ public class ModelicaMLSectionTester extends PropertyTester {
 
 		try {
 			ServiceUtilsForActionHandlers serviceUtils = new ServiceUtilsForActionHandlers();
-			UmlModel openedModel = (UmlModel)serviceUtils.getModelSet().getModel(UmlModel.MODEL_ID);
-			if(openedModel != null) {
+			UmlModel openedModel;
+			try {
+				openedModel = (UmlModel)serviceUtils.getModelSet().getModel(UmlModel.MODEL_ID);
+				if(openedModel != null) {
 
-				EObject root = openedModel.lookupRoot();
-				if(root instanceof Package) {
-					Profile proteus = ((Package)root).getAppliedProfile(MODELICAML_ID);
-					if(proteus != null) {
-						isProteusModel = true;
+					EObject root = openedModel.lookupRoot();
+					if(root instanceof Package) {
+						Profile proteus = ((Package)root).getAppliedProfile(MODELICAML_ID);
+						if(proteus != null) {
+							isProteusModel = true;
+						}
 					}
 				}
+			} catch (org.eclipse.papyrus.infra.core.services.ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-
 		} catch (ServiceException e) {
 			//Activator.log.error(e);
 		} catch (NotFoundException e) {

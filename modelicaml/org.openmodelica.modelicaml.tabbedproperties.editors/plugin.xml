@@ -337,7 +337,7 @@
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
             contributorId="TreeOutlinePage"
-            labelProvider="org.eclipse.papyrus.properties.tabbed.core.provider.EMFObjectLabelProvider">
+            labelProvider="org.eclipse.papyrus.infra.emf.providers.EMFLabelProvider">
          <propertyCategory
                category="org.eclipse.papyrus.modelicaml">
          </propertyCategory>

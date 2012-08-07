@@ -42,7 +42,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.uml2.uml.Activity;
 import org.eclipse.uml2.uml.ActivityEdge;

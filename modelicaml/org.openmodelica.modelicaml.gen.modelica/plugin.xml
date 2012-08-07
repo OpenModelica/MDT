@@ -193,7 +193,7 @@
                   <with
                         variable="activeEditorId">
                      <equals
-                           value="org.eclipse.papyrus.core.papyrusEditor">
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
                      </equals>
                   </with>
                </visibleWhen>
@@ -208,7 +208,7 @@
                   <with
                         variable="activeEditorId">
                      <equals
-                           value="org.eclipse.papyrus.core.papyrusEditor">
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
                      </equals>
                   </with>
                </visibleWhen>
@@ -279,17 +279,17 @@
       </handler>
    </extension>
    <extension
-         point="org.eclipse.papyrus.core.modelListener">
-      <listener
-            name="org.openmodelica.modelicaml.gen.modelica.listeners.ModelicaCodeRegenerationListener"
-            realization="org.openmodelica.modelicaml.gen.modelica.listeners.PapyrusListener">
-      </listener>
-   </extension>
-   <extension
          point="fr.obeo.acceleo.chain.postGeneration">
       <post
             class="org.openmodelica.modelicaml.gen.modelica.postactions.PostGenerationForAutomaticBuild">
       </post>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.core.modelListener">
+      <listener
+            name="org.openmodelica.modelicaml.gen.modelica.listeners.ModelicaCodeRegenerationListener"
+            realization="org.openmodelica.modelicaml.gen.modelica.listeners.PapyrusListener">
+      </listener>
    </extension>
 
 </plugin>

@@ -44,9 +44,9 @@ import java.util.Set;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.papyrus.resource.NotFoundException;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.NotFoundException;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
@@ -62,6 +62,9 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
+//import org.eclipse.papyrus.resource.NotFoundException;
+//import org.eclipse.papyrus.resource.uml.UmlModel;
+//import org.eclipse.papyrus.resource.uml.UmlUtils;
 
 
 public class ClassInstantiation {
@@ -838,13 +841,12 @@ public class ClassInstantiation {
 				try {
 					valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
 				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
 //					e.printStackTrace();
-					System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
+//					System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
 				}
 			}
 			else {
-				System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
+//				System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
 			}
 		}
 

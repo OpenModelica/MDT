@@ -2,9 +2,11 @@ Manifest-Version: 1.0
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.200",
- org.eclipse.papyrus.properties;bundle-version="0.8.1",
- org.eclipse.papyrus.properties.tabbed.core;bundle-version="0.8.1",
- org.eclipse.papyrus.properties.runtime;bundle-version="0.8.1"
+ org.eclipse.papyrus.customization.properties;bundle-version="0.9.0",
+ org.eclipse.papyrus.customization.paletteconfiguration;bundle-version="0.9.0",
+ org.eclipse.papyrus.customization.properties.generation;bundle-version="0.9.0",
+ org.eclipse.papyrus.customization.properties.model.xwt;bundle-version="0.9.0",
+ org.eclipse.papyrus.views.properties;bundle-version="0.9.0"
 Bundle-Vendor: OpenModelica Project
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 0.0.1.qualifier

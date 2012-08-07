@@ -36,7 +36,7 @@
       </attribute>
    </extension>
    <extension
-         point="org.eclipse.papyrus.core.modelListener">
+         point="org.eclipse.papyrus.infra.core.modelListener">
       <listener
             name="org.openmodelica.modelicaml.listeners.umlModelChanged"
             realization="org.openmodelica.modelicaml.common.listeners.PapyrusListener">

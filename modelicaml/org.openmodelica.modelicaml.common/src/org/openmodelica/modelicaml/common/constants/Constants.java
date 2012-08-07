@@ -50,8 +50,12 @@ public class Constants {
 	public static final String stereotypeQName_Connector 		= "ModelicaML::ModelicaClassConstructs::Connector";
 	public static final String stereotypeQName_Record 			= "ModelicaML::ModelicaClassConstructs::Record";
 	
-	public static final String stereotypeQName_Algorithm 		= "ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)";
-	public static final String stereotypeQName_Equations		= "ModelicaML::ModelicaBehaviorConstructs::Equations(Code)";
+	public static final String stereotypeQName_Algorithm 					= "ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)";
+	public static final String stereotypeQName_ConditionalAlgorithm 		= "ModelicaML::ModelicaBehaviorConstructs::ConditionalAlgorithm(Diagram)";
+	
+	public static final String stereotypeQName_Equations				= "ModelicaML::ModelicaBehaviorConstructs::Equations(Code)";
+	public static final String stereotypeQName_ConditionalEquations		= "ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)";
+	
 	public static final String propertyName_initial				= "initial";
 	
 	public static final String stereotypeQName_ModelicaMLStateMachine 		= "ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine";
@@ -78,7 +82,8 @@ public class Constants {
 	
 	public static final String stereotypeQName_VerificationScenario 		= "ModelicaML::Verification::VerificationScenario";
 	public static final String stereotypeQName_VerificationModel 			= "ModelicaML::Verification::VerificationModel";
-	public static final String stereotypeQName_UsedToVerify 				= "ModelicaML::Verification::UsedToVerify";
+	public static final String stereotypeQName_UseToVerify 					= "ModelicaML::Verification::UseToVerify";
+	@Deprecated
 	public static final String propertyName_usedToVerify 					= "usedToVerify"; // DEPRECATED
 	public static final String stereotypeQName_DoNotUseToVerify 			= "ModelicaML::Verification::DoNotUseToVerify";
 	
@@ -162,7 +167,7 @@ public class Constants {
 	
 	public static final String propertyName_operation 				= "operation";
 	public static final String propertyName_preferredProviders 		= "preferredProviders";
-	public static final String preferredProvidersAssignmentSeparator	= " --> ";
+	public static final String preferredProvidersAssignmentSeparator	= "##Q##";
 	
 	public static final String valueClientsNodeName 				= "Clients";
 	public static final String potentialClientsNodeName 			= "Potential Clients";
@@ -312,7 +317,12 @@ public class Constants {
 	public final static Integer numberOfItemsInCreateNewElementsDiologs = 5;
 	public final static String MODELICAML_PROFILE_URI = "pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"; //$NON-NLS-1$
 	
-	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.modelexplorer.modelexplorer";
+	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.views.modelexplorer.modelexplorer";
+	public final static String VIEW_COMPONENT_TREE_VIEW = "org.openmodelica.modelicaml.view.componentstree";
+	
+	/** The Constant ID_VALIDATION_VIEW. */
+	public final static String VIEW_VALIDATION = "org.openmodelica.modelicaml.gen.modelica.validation";
+	
 	
 	/*
 	 * Encoding format for generated files
@@ -327,7 +337,7 @@ public class Constants {
 	
 	public static final String UKNOWN_NAME 		= "UKNONWN";
 	
-	public final static String linkDelimiter = "@-->";
+	public final static String linkDelimiter = "#@#";
 	
 }
 

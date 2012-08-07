@@ -67,6 +67,7 @@ public class GeneratedModelsData {
 	private List<String> simulationFailedList = new ArrayList<String>();
 	
 	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
+	private HashSet<Element> simulatedModels = new HashSet<Element>();
 	
 	// maps with scenarios and their requirements
 	private HashMap<Element, HashSet<Element>> scenarioToEvaluatedRequirements = new HashMap<Element, HashSet<Element>>();
@@ -83,6 +84,9 @@ public class GeneratedModelsData {
 
 	// negative scenario to requirements relations, i.e., scenario was used to stimulate the system mode and did NOT lead to an evaluation of the requirements
 	private HashMap<TreeObject, HashSet<TreeObject>> newNegativeRelations = new HashMap<TreeObject, HashSet<TreeObject>>();
+	
+	
+	private String log = "";
 	
 
 	/*
@@ -155,20 +159,20 @@ public class GeneratedModelsData {
 		
 //		for (Element genPackage : generatedPackages) {
 		
-			Element genPackage = generatedPackage;
-			
-			Iterator<EObject> i = genPackage.eAllContents(); // only elements that are in the name space of this element 
-			while (i.hasNext()) {
-				EObject object = i.next() ;
-				if (object instanceof Class) {
-	
-					Element element  = (Element)object;
-					
-					if (element.getAppliedStereotype(Constants.stereotypeQName_VerificationModel) != null) {
-						generatedModels.add(element);
+			if (generatedPackage != null) {
+				Iterator<EObject> i = generatedPackage.eAllContents(); // only elements that are in the name space of this element 
+				while (i.hasNext()) {
+					EObject object = i.next() ;
+					if (object instanceof Class) {
+		
+						Element element  = (Element)object;
 						
-						// sort VeM to system models
-						setVemToSystemModel(element);
+						if (element.getAppliedStereotype(Constants.stereotypeQName_VerificationModel) != null) {
+							generatedModels.add(element);
+							
+							// sort VeM to system models
+							setVemToSystemModel(element);
+						}
 					}
 				}
 			}
@@ -268,7 +272,7 @@ public class GeneratedModelsData {
 					 */
 						
 					if (type.getAppliedStereotype(Constants.stereotypeQName_Requirement) == null 
-							&& type.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario) == null 
+							&& type.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario) == null
 							&& !verificationDataCollector.getAllAdditionalModels().contains(type)
 							
 							&& !property.getName().startsWith(Constants.propertyName_requirementsVerificationVerdict)) {
@@ -793,6 +797,22 @@ public class GeneratedModelsData {
 
 	public void setSimulationResultsFile(HashMap<Element,String> simulationResultsFile) {
 		this.simulationResultsFile = simulationResultsFile;
+	}
+
+	public HashSet<Element> getSimulatedModels() {
+		return simulatedModels;
+	}
+
+	public void setSimulatedModels(HashSet<Element> simulatedModels) {
+		this.simulatedModels = simulatedModels;
+	}
+
+	public String getLog() {
+		return log;
+	}
+
+	public void setLog(String log) {
+		this.log = log;
 	}
 
 }

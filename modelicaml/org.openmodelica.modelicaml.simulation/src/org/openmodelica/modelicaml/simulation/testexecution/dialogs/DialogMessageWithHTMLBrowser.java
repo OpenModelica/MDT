@@ -46,9 +46,9 @@ import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.papyrus.resource.NotFoundException;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.NotFoundException;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -64,6 +64,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsAction;
@@ -110,7 +111,7 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				event.doit = false;	// don't change the page
 				
 				//String[] splitted = decodedLocation.replaceFirst("locate:", "").split("#");
-				String[] splitted = decodedLocation.replaceFirst("locate:", "").split("@-->");
+				String[] splitted = decodedLocation.replaceFirst("locate:", "").split(Constants.linkDelimiter);
 				
 				String elementQName = splitted[0];
 				if (elementQName != null) {
@@ -131,7 +132,7 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				
 //				String[] splitted = decodedLocation.split("\\?");
 //				decodedLocation = decodedLocation.replaceFirst("plot:", "").trim();
-				String[] splitted = decodedLocation.replaceFirst("plot:", "").split("@-->");
+				String[] splitted = decodedLocation.replaceFirst("plot:", "").split(Constants.linkDelimiter);
 				decodedLocation = splitted[0];
 				String variablePath = null;
 				if (splitted.length > 1) {

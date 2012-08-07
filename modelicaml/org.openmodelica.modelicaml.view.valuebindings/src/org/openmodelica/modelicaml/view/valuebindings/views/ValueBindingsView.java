@@ -72,9 +72,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -567,8 +567,11 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 							CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 							if (modelExplorerView != null) {
 								List<Object> items = new ArrayList<Object>();
-								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-								modelExplorerView.setSelection(new StructuredSelection(items), true);
+//								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+								items.add((EObject) object);
+								ModelExplorerView.reveal(items, modelExplorerView);
+								
+//								modelExplorerView.setSelection(new StructuredSelection(items), true);
 							}
 						}
 					}
@@ -578,7 +581,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 //		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus Model Explorer");
 		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus");
 		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Papyrus Model Explorer");
-		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif")));
+		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
 		
 		
 		actionReload = new Action("actionReload") {
@@ -1025,9 +1028,34 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 						DeleteCommandHandler h = new DeleteCommandHandler();
 						try {
 							// delete from the Papyrus UML model
-							// Note: this will lead to the deletion in the tree because of the a listener that reacts to the changes of Papyrus Model.
+							// Note: this should lead to the deletion in the tree because of the listener that reacts to the changes of Papyrus model.
 							h.execute(null);
-//							}
+							
+							// remove from tree
+							/*
+							 * Note: This is necessary if the actual bindings model is imported in another model.
+							 * Then the Papyrus listener obviously is not notified and does not delete the tree item. 
+							 * So we need to delete the tree item manually.
+							 */
+							if (obj != null) {
+								
+								if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
+									// get the value bindings view
+									IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView");
+									ValueBindingsView myView = null;
+									
+									if (view instanceof ValueBindingsView) {
+									    myView = (ValueBindingsView)view;			
+									}
+									
+									if (myView != null) {
+										TreeUtls.removeTreeItem(((TreeObject) obj).getUmlElement(), myView.getTreeRoot(), myView.getViewer());
+										myView.getViewer().refresh(); // refresh the entire viewer
+//										System.err.println("REMOVED: " + ((NamedElement)notification.getOldValue()).getName());
+									}
+								}
+							}
+
 						} catch (ExecutionException e) {
 							e.printStackTrace();
 							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Could not delete the element '" + name + "'.");

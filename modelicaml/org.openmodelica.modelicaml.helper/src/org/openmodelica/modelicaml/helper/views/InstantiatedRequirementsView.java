@@ -42,10 +42,8 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-//import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.StyledText;
@@ -68,6 +66,7 @@ import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
+//import org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem;
 
 
 public class InstantiatedRequirementsView extends ViewPart implements ISelectionListener {

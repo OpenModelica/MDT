@@ -18,13 +18,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.resource.NotFoundException;
-import org.eclipse.papyrus.resource.uml.UmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.NotFoundException;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -57,15 +59,15 @@ import org.openmodelica.modelicaml.helper.datacollection.VerificationDataCollect
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
-public class AnalyseSimulationResulstOptionsDialog extends Dialog {
+public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 
 	private Element generatedModelsPackage;
-	private String generatedModelsPackagePackgeNamePrefix = "Package containing the generated models: ";
+	private String generatedModelsPackagePackgeNamePrefix = "Package containing VeMs: ";
 	
-	private String targetPackgeSelectionMessage = "Click on an package, that contains the generated models, " +
+	private String targetPackgeSelectionMessage = "Click on an package, that contains VeMs, " +
 			"\r\nin the model explorer.";
 	
-	private String message = "This helper will simulate selected models (or skip the simulation if results files are provided) \r\nand analyze the resut files.";
+	private String message = "This helper will simulate selected models (or skip the simulation if results files are provided) \r\nand analyze the result files.";
 	
 	private String dialogMessage = "";
 	
@@ -92,6 +94,9 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 	
 	private HashSet<String> filesFound = new HashSet<String>();
 
+	private UmlModel umlModel;
+	private VerificationDataCollector verificationDataCollector;
+	
 	
 //	// only for debugging
 //	public static void main(String[] args) {
@@ -100,7 +105,7 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 //	}
 	
 	
-	public AnalyseSimulationResulstOptionsDialog(Shell parentShell, Element generatedModelsPackage) {
+	public AnalyseSimulationResultsOptionsDialog(Shell parentShell, Element generatedModelsPackage) {
 
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP );
@@ -163,7 +168,7 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 		lblSelectionHint.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
 		lblSelectionHint.setBounds(53, 22, 410, 41);
 		lblSelectionHint.setText(selectionHintMessage);
-		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
 		lblSelectionHint.setVisible(false);
 		
 		/*
@@ -323,7 +328,7 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 					folderPath.setText(path);
 					folderPath.setForeground(new Color(null, 0, 0, 0));
 					
-					updateTreeItems();
+					updateSimulationResultFileTreeItems();
 					
 					setOKButtonEnablement();
 				}
@@ -352,6 +357,16 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 		grpFilesSelection.setEnabled(!isSimulate());
 		
 		resultsFilesTree = new Tree(grpFilesSelection, SWT.BORDER);
+		resultsFilesTree.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				TreeItem[] selectedItems = resultsFilesTree.getSelection();
+				for (TreeItem treeItem : selectedItems) {
+					DialogMessage dialog = new DialogMessage(getShell(), "File Path Information", "File path:", treeItem.getText(), false);
+					dialog.open();
+				}
+			}
+		});
 		resultsFilesTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		new Label(grpFilesSelection, SWT.NONE);
 		
@@ -359,7 +374,7 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 		new Label(grpFilesSelection, SWT.NONE);
 		
 		// add tree items if possible
-		updateTreeItems();
+		updateSimulationResultFileTreeItems();
 		
 		// set images for all buttons
 		updateButtonImages();
@@ -391,7 +406,7 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 		return null;
 	}
 	
-	private void updateTreeItems(){
+	private void updateSimulationResultFileTreeItems(){
 		
 		resultsFilesTree.removeAll();
 		
@@ -465,33 +480,49 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 		
 		if (getGeneratedModelsPackage() != null) {
 			
-			UmlModel umlModel = UmlUtils.getUmlModel();
+			// collect verification data to be passed
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+			final String title = "Collecting Verification Data";
+			dialog.getProgressMonitor().setTaskName(title + "...");
+			dialog.open();
 			
-			VerificationDataCollector verificationDataCollector;
+			// get the UML model
+			umlModel = UmlUtils.getUmlModel();
+			EObject rootElement = null;
+			
 			try {
-				
-				// collect verification data to be passed
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				dialog.getProgressMonitor().setTaskName("Collecting Verification Data ...");
-				dialog.open();
-				
-				verificationDataCollector = new VerificationDataCollector(umlModel.lookupRoot());
-				setGeneratedModelsData(new GeneratedModelsData(getGeneratedModelsPackage(), verificationDataCollector));
-				
-				dialog.close();
-				
-				
+				rootElement = umlModel.lookupRoot();
 			} catch (NotFoundException e) {
-				MessageDialog.openError(getParentShell(), "Verification Data Collection Error", "Could not access the root element of the ModelicaML model. " +
-						"Please open the models in editor.");
+				e.printStackTrace();
 			}
+			
+			// collect verification data
+			if (rootElement instanceof Package) {
+				verificationDataCollector = new VerificationDataCollector(rootElement);
+			}
+			else {
+				MessageDialog.openError(getParentShell(), title + " Error", "Could not access the ModelicaML model. Please open it in editor.");
+			}
+			
+//				dialog.run(false, true, new IRunnableWithProgress() {
+//					@Override
+//					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+//						try {
+//							verificationDataCollector = new VerificationDataCollector(umlModel.lookupRoot());
+//						} catch (NotFoundException e) {
+//							e.printStackTrace();
+//							MessageDialog.openError(getParentShell(), title + " Error", "Could not access the ModelicaML model. Please open it in editor.");
+//						}
+//					}
+//				});
+			dialog.close();
 		}
 	}
 	
 	
 	protected ISelectionListener selectionListener = new ISelectionListener() {
         public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-        if (sourcepart != AnalyseSimulationResulstOptionsDialog.this && selection instanceof IStructuredSelection) {
+        if (sourcepart != AnalyseSimulationResultsOptionsDialog.this && selection instanceof IStructuredSelection) {
 
         	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
         		EObject selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
@@ -502,15 +533,32 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
       					
     					// Update data and button 
             			if (selectedElement instanceof Package) {
-            				setGeneratedModelsPackage((Element) selectedElement);
-            				button.setSelection(false);
-            				updateButton(button);
-            				
+
             				/*
             				 * If a new package was selected -> collect all verification models and verification related data (e.g. all requirements, all scenarios, etc. )
             				 */
+            				setGeneratedModelsPackage((Element) selectedElement);
             				collect();
-            				updateTreeItems();
+            				
+            				if (verificationDataCollector != null) {
+                				GeneratedModelsData modelsData = new GeneratedModelsData(getGeneratedModelsPackage(), verificationDataCollector);
+            					
+            					// check if this package contains VeMs
+            					if (modelsData.getGeneratedModels() != null && modelsData.getGeneratedModels().size() > 0 ) {
+            						
+                    				button.setSelection(false);
+                    				updateButton(button);
+            						
+        							setGeneratedModelsData(modelsData);
+                    				updateSimulationResultFileTreeItems();
+    							}
+            					else {
+            						setSelectionHintMode(true, "No verification models were found in '"+ModelicaMLServices.getName((Element) selectedElement)+"'");
+            					}
+							}
+            				else {
+            					// do nothing
+            				}
     					}
             			else {
             				setSelectionHintMode(true, notValidString + "Only packages are allowed.");
@@ -566,7 +614,7 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 	private void setSelectionHintMode(boolean isError, String message){
 		if (!isError) { //normal
 			lblSelectionHint.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
 			lblSelectionHint.setText(message);
 		}
 		if (isError) { // error
@@ -778,5 +826,21 @@ public class AnalyseSimulationResulstOptionsDialog extends Dialog {
 
 	public void setFilesFound(HashSet<String> filesFound) {
 		this.filesFound = filesFound;
+	}
+
+	public UmlModel getUmlModel() {
+		return umlModel;
+	}
+
+	public void setUmlModel(UmlModel umlModel) {
+		this.umlModel = umlModel;
+	}
+
+	public VerificationDataCollector getVerificationDataCollector() {
+		return verificationDataCollector;
+	}
+
+	public void setVerificationDataCollector(VerificationDataCollector verificationDataCollector) {
+		this.verificationDataCollector = verificationDataCollector;
 	}
 }

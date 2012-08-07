@@ -34,12 +34,13 @@ public class Simulator {
 	private String simulationResultsFolderPath;
 	private boolean loadMSL = true;
 	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
+	private HashSet<Element> simulatedModels = new HashSet<Element>();
 	private List<String> simulationFailedList;
 	private List<String> simulationSuccededList;
 	
 	private HashMap<Element,String> simulationResultsFile = new HashMap<Element,String>();
 	protected GeneratedModelsData gmd;
-	private String log;
+	private String log = "";
 	private Job simulationJob;
 
 	private boolean recordOnlyRequirementStatusAndClients;
@@ -107,7 +108,7 @@ public class Simulator {
 		// if selected, load the standard library in advance
 		if (loadMSL) {
 			String reply = omcc.loadModel(Constants.actionLanguageName);
-			String message = "Loading MSL: " + reply;
+			String message = "Loading MSL: " + " \n reply: " + reply;
 			System.err.println(message);
 			addToLog(message);
 		}
@@ -170,16 +171,17 @@ public class Simulator {
 			
 			if (newMatFileInfo.exists()) {
 				//Indicate that OMC generated the files, i.e. the simulation was ok
+				simulatedModels.add(genModel);
 				simulationSuccededList.add(modelQName);
 				simulationResultsFile.put(genModel, filePath);
 				
-				addToLog("'"+modelQName+"' was simulated.");
+				addToLog("'"+modelQName+"' was simulated.\n\n");
 			}
 			else {
 				notSimulatedModels.add(genModel);
 				simulationFailedList.add(modelQName);
 				
-				addToLog("'"+modelQName+"' was NOT simulated.");
+				addToLog("'"+modelQName+"' was NOT simulated.\n\n");
 			}	
 		}
 	}
@@ -292,9 +294,10 @@ public class Simulator {
 			
 			System.err.println(omcReturnString);
 			
-			if(omcReturnString.contains("{\"\",\"\"}") || omcReturnString.contains("Error")){
-				String errorString = omcc.getErrorString();
-				result = result + "\n" + "buildModel: " + omcReturnString  + "\nErrorString: " + errorString;
+			addToLog(omcReturnString);
+			
+			if(ModelicaMLServices.containsOMCErrorMessage(omcReturnString)){
+//				String errorString = omcc.getErrorString();
 			}
 		}
 		return result;
@@ -442,6 +445,13 @@ public class Simulator {
 	}
 
 	public GeneratedModelsData getGmd() {
+		
+		gmd.setSimulatedModels(getSimulatedModels());
+		gmd.setNotSimulatedModels(getNotSimulatedModels());
+		gmd.setSimulationResultsFile(getSimulationResultsFile());
+		gmd.setSimulationFailedList(getSimulationFailedList());
+		gmd.setLog(getLog());
+		
 		return gmd;
 	}
 
@@ -471,5 +481,15 @@ public class Simulator {
 
 	public void setRecordOnlyRequirementStatusAndClients(boolean recordOnlyRequirementStatus) {
 		this.recordOnlyRequirementStatusAndClients = recordOnlyRequirementStatus;
+	}
+
+
+	public HashSet<Element> getSimulatedModels() {
+		return simulatedModels;
+	}
+
+
+	public void setSimulatedModels(HashSet<Element> simulatedModels) {
+		this.simulatedModels = simulatedModels;
 	}
 }

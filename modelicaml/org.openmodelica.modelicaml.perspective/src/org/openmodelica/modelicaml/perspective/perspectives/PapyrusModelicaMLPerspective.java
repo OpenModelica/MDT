@@ -34,11 +34,12 @@
  */
 package org.openmodelica.modelicaml.perspective.perspectives;
 
-import org.eclipse.papyrus.wizards.CreateModelWizard;
-import org.eclipse.papyrus.wizards.NewPapyrusProjectWizard;
+import org.eclipse.papyrus.uml.diagram.wizards.CreateModelWizard;
+import org.eclipse.papyrus.uml.diagram.wizards.NewPapyrusProjectWizard;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 
 // TODO: Auto-generated Javadoc
@@ -53,21 +54,21 @@ import org.eclipse.ui.IPerspectiveFactory;
 public class PapyrusModelicaMLPerspective implements IPerspectiveFactory {
 
 	/** The Constant ID_MODELEXPLORER. */
-	protected static final String ID_MODELEXPLORER = "org.eclipse.papyrus.modelexplorer.modelexplorer";
+	protected static final String ID_MODELEXPLORER = Constants.VIEW_PAPYRUS_MODELEXPLORER;
 	
 	/** The Constant ID_COMPONENT_TREE_VIEW. */
-	protected static final String ID_COMPONENT_TREE_VIEW = "org.openmodelica.modelicaml.view.componentstree";
+	protected static final String ID_COMPONENT_TREE_VIEW = Constants.VIEW_COMPONENT_TREE_VIEW;
 	
 	/** The Constant ID_VALIDATION_VIEW. */
-	protected static final String ID_VALIDATION_VIEW = "org.openmodelica.modelicaml.gen.modelica.validation";
+	protected static final String ID_VALIDATION_VIEW = Constants.VIEW_VALIDATION;
 	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
 	 */
 	public void createInitialLayout(IPageLayout layout) {
-		defineActions(layout);
-		defineLayout(layout);
+//		defineActions(layout);
+//		defineLayout(layout);
 	}
 	
 	/**

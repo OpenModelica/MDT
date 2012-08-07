@@ -3,10 +3,11 @@
 <plugin>
    <extension
          point="org.eclipse.ui.menus">
+<!--
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
-         <!--
+ 
          <command
                commandId="org.openmodelica.modelicaml.validation.subtree"
                icon="icons/validate.gif"
@@ -36,8 +37,9 @@
                </with>
             </visibleWhen>
          </command>
-         -->
       </menuContribution>
+-->
+      
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -57,7 +59,7 @@
                   <with
                         variable="activeEditorId">
                      <equals
-                           value="org.eclipse.papyrus.core.papyrusEditor">
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
                      </equals>
                   </with>
                </visibleWhen>

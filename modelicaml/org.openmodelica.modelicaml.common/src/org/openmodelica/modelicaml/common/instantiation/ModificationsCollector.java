@@ -35,26 +35,14 @@
 package org.openmodelica.modelicaml.common.instantiation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.FunctionBehavior;
-import org.eclipse.uml2.uml.Generalization;
-import org.eclipse.uml2.uml.Model;
-import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
-import org.eclipse.uml2.uml.Stereotype;
-import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-//import org.openmodelica.modelicaml.view.componentstree.utls.UmlServices;
 import org.openmodelica.modelicaml.common.services.UmlServices;
+//import org.openmodelica.modelicaml.view.componentstree.utls.UmlServices;
 
 
 // TODO: Auto-generated Javadoc

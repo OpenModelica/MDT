@@ -167,7 +167,7 @@ public class VerificationScenariosCollector {
 			
 			// // collect all requirements that are referenced by <<UseToVerify>> relation
 //			HashSet<Element> linkedReqList = collectRequirementsForTestCase(testScenario);
-			HashSet<Element> linkedReqList = collectRequirementsForScenario(testScenario, Constants.stereotypeQName_UsedToVerify);
+			HashSet<Element> linkedReqList = collectRequirementsForScenario(testScenario, Constants.stereotypeQName_UseToVerify);
 
 			// fill data
 			if (linkedReqList.size() > 0) {

@@ -82,7 +82,7 @@
                   <with
                         variable="activeEditorId">
                      <equals
-                           value="org.eclipse.papyrus.core.papyrusEditor">
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
                      </equals>
                   </with>
                </visibleWhen>

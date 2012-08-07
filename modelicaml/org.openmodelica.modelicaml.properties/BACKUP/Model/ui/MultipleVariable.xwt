@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Composite xmlns:j="clr-namespace:java.lang"
+	xmlns:ppe="clr-namespace:org.eclipse.papyrus.properties.widgets"
+	xmlns:ppel="clr-namespace:org.eclipse.papyrus.properties.widgets.layout"
+	xmlns:x="http://www.eclipse.org/xwt" xmlns="http://www.eclipse.org/xwt/presentation">
+	<Composite.layout>
+		<ppel:PropertiesLayout></ppel:PropertiesLayout>
+	</Composite.layout>
+	<Composite>
+		<Composite.layout>
+			<ppel:PropertiesLayout numColumns="2"></ppel:PropertiesLayout>
+		</Composite.layout>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:InstanceOfAClass:replaceable"></ppe:BooleanRadio>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:InstanceOfAClass:final"></ppe:BooleanRadio>
+	</Composite>
+	<Composite>
+		<Composite.layout>
+			<ppel:PropertiesLayout numColumns="2"></ppel:PropertiesLayout>
+		</Composite.layout>
+		<ppe:EnumCombo input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:Variable:flowFlag"></ppe:EnumCombo>
+		<ppe:EnumCombo input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:Variable:causality"></ppe:EnumCombo>
+		<ppe:EnumCombo input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:Variable:scope"></ppe:EnumCombo>
+		<ppe:EnumCombo input="{Binding}"
+			property="ModelicaML:ModelicaCompositeConstructs:Variable:variability"></ppe:EnumCombo>
+	</Composite>
+</Composite>

@@ -27,16 +27,18 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 		
 		boolean go = true;
 		
-		if (isBindingErrorsDetected()) {
-			NamedElement targetPackage = (NamedElement) smg.getTargetPackage();
-			go = MessageDialog.openQuestion(getShell(), "Model Generation Error", 
-					"For some of the generated model no bindings could be generated, see models and markers in " +
-					"\n'"+targetPackage.getName()+"'" +
+		if (getModelsWithBindingErrors() != null && getModelsWithBindingErrors().size() > 0 ) {
+			
+			NamedElement generatedPackage = (NamedElement) smg.getGeneratedPackages().toArray()[0];
+			
+			go = MessageDialog.openQuestion(getShell(), "Model Generation Binding Errors", 
+					"For some of the generated model no bindings could be generated, " +
+					"\nsee models and markers in " + "'"+generatedPackage.getName()+"'" +
 					
-					"\n\nIt is recommended to first correct the bindings defintion before proceeding with relations discovery. " +
-					"\n\nNote, that you can store manual providers selection by adding the selected provider to 'preferred providers'." +
+					"\n\nIt is recommended to first correct the bindings before proceeding. " +
+					"You can store providers selection by adding the selected provider to 'preferred providers'." +
 
-					"\n\nDo you want to proceed with relations discovery anyway? ");
+					"\n\nDo you want to proceed anyway? ");
 		}
 		
 		if (go && !smg.isTestSimulationModelGenerationCanceled()) {
@@ -63,5 +65,4 @@ public class ScenariosToRequirementsRelationsDiscoveryToolbarHandler extends VeM
 			}
 		}
 	}
-
 }

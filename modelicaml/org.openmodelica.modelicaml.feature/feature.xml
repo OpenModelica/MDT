@@ -49,6 +49,10 @@ See the full OSMC Public License conditions for more details.
       <import plugin="org.eclipse.xtext"/>
       <import plugin="org.antlr.runtime"/>
       <import feature="fr.obeo.acceleo" version="2.8.0.201102021515"/>
+      <import feature="org.eclipse.papyrus.editor.feature" version="0.9.0.v201206131215"/>
+      <import plugin="org.modelica.mdt.core"/>
+      <import plugin="org.modelica.mdt.omc"/>
+      <import plugin="org.modelica.mdt.ui"/>
    </requires>
 
    <plugin
@@ -339,6 +343,13 @@ See the full OSMC Public License conditions for more details.
 
    <plugin
          id="org.openmodelica.modelicaml.validation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.product"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -53,8 +53,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -69,7 +68,6 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.profile.Activator;
 import org.openmodelica.modelicaml.profile.dialogs.OneOrTwoColumnWithTextAndOptionalComboDialog;
-
 
 // TODO: Auto-generated Javadoc
 /**

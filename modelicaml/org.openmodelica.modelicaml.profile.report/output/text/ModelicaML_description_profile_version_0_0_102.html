@@ -495,7 +495,7 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 				
 				<br /><br />
 			<a name="ModelicaRequirementConstructs.Traceability"></a><h3>Stereotype: <span>&#171;Traceability&#187;</span> </h3>
-				<em>Description:</em> This stereotype can be applied to any model element. <br />It has properties that can be used for setting up the traceability between requirements and design artifacts.
+				<em>Description:</em> This stereotype can be applied to any model element. <br />It has properties that can be used for setting up a descriptive traceability between requirements and design artifacts.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>NamedElement</strong></span><br />				<br />
 				
@@ -510,11 +510,11 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<br />
 				
-						<span>Property:</span> <strong>startTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural. 
+						<span>Property:</span> <strong>startTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
 						<br />
-						<span>Property:</span> <strong>stopTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> UnlimitedNatural. 
+						<span>Property:</span> <strong>stopTime</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
 						<br />
-						<span>Property:</span> <strong>numberOfIntervals</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> Integer. 
+						<span>Property:</span> <strong>numberOfIntervals</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
 						<br />
 						<span>Property:</span> <strong>tolerance</strong> <span>(multiplicity of entries: 0..1)</span>, <span> type:</span> String. 
 						<br />
@@ -589,7 +589,7 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 						<br />
 				<br /><br />
 			<a name="ModelicaAnnotationConstructs.Annotation"></a><h3>Stereotype: <span>&#171;Annotation&#187;</span> </h3>
-				<em>Description:</em> Annotations are intended for storing extra information about a model, such as graphics, documentation or versioning, etc. A Modelica tool is free to define and use other annotations, in addition to those defined here, according to section 14.1. of the Modelica specification. <br />The only requirement is that any tool shall save files with all annotations from this chapter and all vendor-specific annotations intact. To ensure this, annotations must be represented with constructs according to the Modelica grammar. The specification in this document defines the semantic meaning if a tool implements any of these annotations.
+				<em>Description:</em> Annotations are intended for storing extra information about a model, such as graphics, documentation or versioning, etc. A Modelica tool is free to define and use other annotations, in addition to those defined here, according to section 14.1. of the Modelica specification. The only requirement is that any tool shall save files with all annotations from this chapter and all vendor-specific annotations intact. To ensure this, annotations must be represented with constructs according to the Modelica grammar. The specification in this document defines the semantic meaning if a tool implements any of these annotations.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Comment</strong></span><br />				<br />
 				
@@ -599,8 +599,14 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.Verification"></a>
 	<h2>Verification</h2>
+			<a name="Verification.DoNotUseToVerify"></a><h3>Stereotype: <span>&#171;DoNotUseToVerify&#187;</span> </h3>
+				<em>Description:</em> This relation indicates that the scenario, it points from, should not be used to verify the requirement it points to.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
+				
+				<br /><br />
 			<a name="Verification.RequiredFor"></a><h3>Stereotype: <span>&#171;RequiredFor&#187;</span> </h3>
-				<em>Description:</em> This stereotype is the opposite of the "requires" stereotype. The two stereotypes are mutually exclusive and should be used depending on the desired direction of the dependency and the resulting modification of the dependency client.
+				<em>Description:</em> This stereotype is the opposite of the "Requires" stereotype. <br />The two stereotypes are mutually exclusive and should be used depending on the desired direction of the dependency and the resulting modification of the dependency client.
 				<br /><br />
 				<em>Inherits from the Stereotype:</em> 
 				<span>&#171;<strong>Requires</strong>&#187;</span>
@@ -618,20 +624,20 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 						<span>Property:</span> <strong>always</strong> <span>(multiplicity of entries: 1..1)</span>, <span> type:</span> Boolean. <em>Property description:</em> This property means that the target model shall always be instantiated together with the dependency client model.<br />
 						<br />
 				<br /><br />
-			<a name="Verification.UsedToVerify"></a><h3>Stereotype: <span>&#171;UsedToVerify&#187;</span> </h3>
-				<em>Description:</em> This relation indicates that the test scenario, it points from, can be used to verify the requirements it points to.
+			<a name="Verification.UseToVerify"></a><h3>Stereotype: <span>&#171;UseToVerify&#187;</span> </h3>
+				<em>Description:</em> This relation indicates that the scenario, it points from, can be used to verify the requirement it points to.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<br />
 				
 				<br /><br />
 			<a name="Verification.VerificationModel"></a><h3>Stereotype: <span>&#171;VerificationModel&#187;</span> </h3>
-				<em>Description:</em> A Test model typically includes one system model that is to be verified against requirements models by means of one test scenario model.
+				<em>Description:</em> A Verification Model (VeM) includes one system model that is to be verified against s set of requirements models by means of one scenario model.<br />Some additional models requirered by any of the mentioned components may be included in VeM also. 
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<br />
 				
 				<br /><br />
 			<a name="Verification.VerificationScenario"></a><h3>Stereotype: <span>&#171;VerificationScenario&#187;</span> </h3>
-				<em>Description:</em> Test scenario a step by step description of action that stimulate the system under test. Usually a test scenario also includes the initialization of the system under test in order to ensure the required pre-condition are met. Test scenario may used to verify system design against system requirements. 
+				<em>Description:</em> Scenario is a step by step description of action that stimulate the system model. <br />Usually a test scenario also includes the initialization of the system in order to ensure the required pre-condition are met. 
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<em>Inherits from the Stereotype:</em> 
 				<span>&#171;<strong>Simulation</strong>&#187;</span>
@@ -645,7 +651,7 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<a name="ModelicaML.ValueBinding"></a>
 	<h2>ValueBinding</h2>
 			<a name="ValueBinding.ObtainsValueFrom"></a><h3>Stereotype: <span>&#171;ObtainsValueFrom&#187;</span> </h3>
-				<em>Description:</em> 
+				<em>Description:</em> Specifies that the referenced mediator obtains value from the referenced provider.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<em>Inherits from the Stereotype:</em> 
 				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
@@ -654,7 +660,7 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 				
 				<br /><br />
 			<a name="ValueBinding.ProvidesValueFor"></a><h3>Stereotype: <span>&#171;ProvidesValueFor&#187;</span> </h3>
-				<em>Description:</em> 
+				<em>Description:</em> Specifies that the referenced mediator provides value to the referenced client.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Dependency</strong></span><br />				<em>Inherits from the Stereotype:</em> 
 				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
@@ -665,7 +671,7 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 						<br />
 				<br /><br />
 			<a name="ValueBinding.ValueClient"></a><h3>Stereotype: <span>&#171;ValueClient&#187;</span> </h3>
-				<em>Description:</em> 
+				<em>Description:</em> A client represents the need for information that shall be provided by an another component.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Property</strong></span><br />				<em>Inherits from the Stereotype:</em> 
 				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
@@ -676,7 +682,7 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 						<br />
 				<br /><br />
 			<a name="ValueBinding.ValueComputation"></a><h3>Stereotype: <span>&#171;ValueComputation&#187;</span> <span>(is abstract)</span> </h3>
-				<em>Description:</em> 
+				<em>Description:</em> Clients, mediators and providers can have operations associated for manipulating values provided.
 				<br /><br />
 				<br />
 				
@@ -684,7 +690,7 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 						<br />
 				<br /><br />
 			<a name="ValueBinding.ValueMediator"></a><h3>Stereotype: <span>&#171;ValueMediator&#187;</span> </h3>
-				<em>Description:</em> 
+				<em>Description:</em> A mediator enables bindings code generation for clients.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Property</strong></span><br />				<em>Inherits from the Stereotype:</em> 
 				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
@@ -697,13 +703,13 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 						<br />
 				<br /><br />
 			<a name="ValueBinding.ValueMediatorsContainer"></a><h3>Stereotype: <span>&#171;ValueMediatorsContainer&#187;</span> </h3>
-				<em>Description:</em> 
+				<em>Description:</em> A container that groups mediators.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Class</strong></span><br />				<br />
 				
 				<br /><br />
 			<a name="ValueBinding.ValueProvider"></a><h3>Stereotype: <span>&#171;ValueProvider&#187;</span> </h3>
-				<em>Description:</em> 
+				<em>Description:</em> A provider provides values for clients.
 				<br /><br />
 <em>Extends the UML meta-class:</em> <span><strong>Property, State</strong></span><br />				<em>Inherits from the Stereotype:</em> 
 				<span>&#171;<strong>ValueComputation</strong>&#187;</span>
@@ -716,10 +722,16 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.ModelReferences"></a>
 	<h2>ModelReferences</h2>
+			<a name="ModelReferences.InstalledLibrary"></a><h3>Stereotype: <span>&#171;InstalledLibrary&#187;</span> </h3>
+				<em>Description:</em> This stereotype indicates the this is a library that is available and can be imported.
+				<br /><br />
+<em>Extends the UML meta-class:</em> <span><strong>Model</strong></span><br />				<br />
+				
+				<br /><br />
 			<a name="ModelReferences.ModelicaModelProxy"></a><h3>Stereotype: <span>&#171;ModelicaModelProxy&#187;</span> </h3>
 				<em>Description:</em> This stereotype represents an existing Modelica model. It reflects all information of that model that is needed for its usage.
 				<br /><br />
-<em>Extends the UML meta-class:</em> <span><strong>NamedElement</strong></span><br />				<br />
+<em>Extends the UML meta-class:</em> <span><strong>Element</strong></span><br />				<br />
 				
 				<br /><br />
 			<a name="ModelReferences.ModelicaModelReference"></a><h3>Stereotype: <span>&#171;ModelicaModelReference&#187;</span> </h3>

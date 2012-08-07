@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
-<contexts:Context xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:contexts="http://www.eclipse.org/papyrus/properties/contexts" name="ModelicaML">
-  <dependencies href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#/"/>
+<contexts:Context xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:contexts="http://www.eclipse.org/papyrus/properties/contexts/0.9"
+	xmlns:constraints="http://www.eclipse.org/papyrus/constraints/0.9" name="ModelicaML">
+  <dependencies href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#/"/>
   <tabs label="ModelicaML" id="org.openmodelica.modelicaml.properties.main" category="org.eclipse.papyrus" priority="1">
     <sections name="Single Simulation" sectionFile="ui/SingleSimulation.xwt">
       <widget href="ui/SingleSimulation.xwt#/"/>
@@ -475,503 +476,503 @@
     </sections>
   </tabs>
   <views name="Single Simulation" sections="//@tabs.0/@sections.0" automaticContext="true" datacontexts="//@dataContexts.0/@elements.8/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleSimulation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaSimulationConstructs::Simulation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleSimulation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaSimulationConstructs::Simulation"/>
     </constraints>
   </views>
   <views name="Single UserInteractive" sections="//@tabs.0/@sections.2" automaticContext="true" datacontexts="//@dataContexts.0/@elements.8/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleUserInteractive">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaSimulationConstructs::UserInteractive"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleUserInteractive">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaSimulationConstructs::UserInteractive"/>
     </constraints>
   </views>
   <views name="Single TypeRelation" sections="//@tabs.0/@sections.4" automaticContext="true" datacontexts="//@dataContexts.0/@elements.9/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleTypeRelation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::TypeRelation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleTypeRelation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::TypeRelation"/>
     </constraints>
   </views>
   <views name="Single ConstrainedByRelation" sections="//@tabs.0/@sections.6" automaticContext="true" datacontexts="//@dataContexts.0/@elements.9/@elements.5">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleConstrainedByRelation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleConstrainedByRelation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation"/>
     </constraints>
   </views>
   <views name="Single ExtendsRelation" sections="//@tabs.0/@sections.8" automaticContext="true" datacontexts="//@dataContexts.0/@elements.9/@elements.3">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleExtendsRelation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::ExtendsRelation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleExtendsRelation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::ExtendsRelation"/>
     </constraints>
   </views>
   <views name="Single RedeclareRelation" sections="//@tabs.0/@sections.10" automaticContext="true" datacontexts="//@dataContexts.0/@elements.9/@elements.2">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleRedeclareRelation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::RedeclareRelation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleRedeclareRelation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::RedeclareRelation"/>
     </constraints>
   </views>
   <views name="Single Import" sections="//@tabs.0/@sections.12" automaticContext="true" datacontexts="//@dataContexts.0/@elements.9/@elements.4">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleImport">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::Import"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleImport">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::Import"/>
     </constraints>
   </views>
   <views name="Single PartialDerivativeOfFunctionRelation" sections="//@tabs.0/@sections.14" automaticContext="true" datacontexts="//@dataContexts.0/@elements.9/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSinglePartialDerivativeOfFunctionRelation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSinglePartialDerivativeOfFunctionRelation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation"/>
     </constraints>
   </views>
   <views name="Single CalculatedProperty" sections="//@tabs.0/@sections.16" automaticContext="true" datacontexts="//@dataContexts.0/@elements.3/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleCalculatedProperty">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::CalculatedProperty"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleCalculatedProperty">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::CalculatedProperty"/>
     </constraints>
   </views>
   <views name="Single Component" sections="//@tabs.0/@sections.18" automaticContext="true" datacontexts="//@dataContexts.0/@elements.3/@elements.6">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleComponent">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::Component"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleComponent">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::Component"/>
     </constraints>
   </views>
   <views name="Single FunctionArgument" sections="//@tabs.0/@sections.22" automaticContext="true" datacontexts="//@dataContexts.0/@elements.3/@elements.5">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleFunctionArgument">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::FunctionArgument"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleFunctionArgument">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::FunctionArgument"/>
     </constraints>
   </views>
   <views name="Single Variable" sections="//@tabs.0/@sections.24" automaticContext="true" datacontexts="//@dataContexts.0/@elements.3/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleVariable">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::Variable"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleVariable">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::Variable"/>
     </constraints>
   </views>
   <views name="Single ConnectionPort" sections="//@tabs.0/@sections.26" automaticContext="true" datacontexts="//@dataContexts.0/@elements.3/@elements.4">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleConnectionPort">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::ConnectionPort"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleConnectionPort">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::ConnectionPort"/>
     </constraints>
   </views>
   <views name="Single Connection" sections="//@tabs.0/@sections.28" automaticContext="true" datacontexts="//@dataContexts.0/@elements.3/@elements.3">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleConnection">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::Connection"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleConnection">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaCompositeConstructs::Connection"/>
     </constraints>
   </views>
   <views name="Single RequirementInstance" sections="//@tabs.0/@sections.30" automaticContext="true" datacontexts="//@dataContexts.0/@elements.0/@elements.2">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleRequirementInstance">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRequirementConstructs::RequirementInstance"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleRequirementInstance">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRequirementConstructs::RequirementInstance"/>
     </constraints>
   </views>
   <views name="Single Requirement" sections="//@tabs.0/@sections.32" automaticContext="true" datacontexts="//@dataContexts.0/@elements.0/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleRequirement">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRequirementConstructs::Requirement"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleRequirement">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRequirementConstructs::Requirement"/>
     </constraints>
   </views>
   <views name="Single ModelicaPackage" sections="//@tabs.0/@sections.34" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.7">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelicaPackage">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaPackage"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelicaPackage">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaPackage"/>
     </constraints>
   </views>
   <views name="Single Type" sections="//@tabs.0/@sections.36" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.8">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleType">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Type"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleType">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Type"/>
     </constraints>
   </views>
   <views name="Single ModelicaConnector" sections="//@tabs.0/@sections.38" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.2">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleConnector">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Connector"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleConnector">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Connector"/>
     </constraints>
   </views>
   <views name="Single Record" sections="//@tabs.0/@sections.40" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.3">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleRecord">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Record"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleRecord">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Record"/>
     </constraints>
   </views>
   <views name="Single Model" sections="//@tabs.0/@sections.42" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.10">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModel">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Model"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModel">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Model"/>
     </constraints>
   </views>
   <views name="Single Function" sections="//@tabs.0/@sections.44" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleFunction">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Function"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleFunction">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Function"/>
     </constraints>
   </views>
   <views name="Single Block" sections="//@tabs.0/@sections.46" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.6">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleBlock">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Block"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleBlock">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Block"/>
     </constraints>
   </views>
   <views name="Single ModelicaEnumeration" sections="//@tabs.0/@sections.48" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.4">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelicaEnumeration">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaEnumeration"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelicaEnumeration">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaEnumeration"/>
     </constraints>
   </views>
   <views name="Single CalculationModel" sections="//@tabs.0/@sections.50" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.11">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleCalculationModel">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::CalculationModel"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleCalculationModel">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::CalculationModel"/>
     </constraints>
   </views>
   <views name="Single Operator" sections="//@tabs.0/@sections.52" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleOperator">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Operator"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleOperator">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::Operator"/>
     </constraints>
   </views>
   <views name="Single ModelicaClass" sections="//@tabs.0/@sections.54" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.5">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelicaClass">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaClass"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelicaClass">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaClass"/>
     </constraints>
   </views>
   <views name="Single ModelicaClassDefinition" sections="//@tabs.0/@sections.56" automaticContext="true" datacontexts="//@dataContexts.0/@elements.7/@elements.9">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelicaClassDefinition">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaClassDefinition"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelicaClassDefinition">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaClassConstructs::ModelicaClassDefinition"/>
     </constraints>
   </views>
   <views name="Single Traceability" sections="//@tabs.0/@sections.58" automaticContext="true" datacontexts="//@dataContexts.0/@elements.0/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleTraceability">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRequirementConstructs::Traceability"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleTraceability">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaRequirementConstructs::Traceability"/>
     </constraints>
   </views>
   <views name="Single ExcludeFromCGIfUserInteractive" sections="//@tabs.0/@sections.60" automaticContext="true" datacontexts="//@dataContexts.0/@elements.12/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleExcludeFromCGIfUserInteractive">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::CodeGeneration::ExcludeFromCGIfUserInteractive"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleExcludeFromCGIfUserInteractive">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::CodeGeneration::ExcludeFromCGIfUserInteractive"/>
     </constraints>
   </views>
   <views name="Single CodeGenerationSpecification" sections="//@tabs.0/@sections.62" automaticContext="true" datacontexts="//@dataContexts.0/@elements.12/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleCodeGenerationSpecification">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::CodeGeneration::CodeGenerationSpecification"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleCodeGenerationSpecification">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::CodeGeneration::CodeGenerationSpecification"/>
     </constraints>
   </views>
   <views name="Single InstalledLibrary" sections="//@tabs.0/@sections.64" automaticContext="true" datacontexts="//@dataContexts.0/@elements.10/@elements.2">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleInstalledLibrary">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelReferences::InstalledLibrary"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleInstalledLibrary">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelReferences::InstalledLibrary"/>
     </constraints>
   </views>
   <views name="Single ModelicaModelProxy" sections="//@tabs.0/@sections.66" automaticContext="true" datacontexts="//@dataContexts.0/@elements.10/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelicaModelProxy">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelReferences::ModelicaModelProxy"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelicaModelProxy">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelReferences::ModelicaModelProxy"/>
     </constraints>
   </views>
   <views name="Single ModelicaModelReference" sections="//@tabs.0/@sections.68" automaticContext="true" datacontexts="//@dataContexts.0/@elements.10/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelicaModelReference">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelReferences::ModelicaModelReference"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelicaModelReference">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelReferences::ModelicaModelReference"/>
     </constraints>
   </views>
   <views name="Single VerificationModel" sections="//@tabs.0/@sections.70" automaticContext="true" datacontexts="//@dataContexts.0/@elements.4/@elements.2">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleVerificationModel">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::VerificationModel"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleVerificationModel">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::VerificationModel"/>
     </constraints>
   </views>
   <views name="Single Requires" sections="//@tabs.0/@sections.72" automaticContext="true" datacontexts="//@dataContexts.0/@elements.4/@elements.3">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleRequires">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::Requires"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleRequires">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::Requires"/>
     </constraints>
   </views>
   <views name="Single UsedToVerify" sections="//@tabs.0/@sections.74" automaticContext="true" datacontexts="//@dataContexts.0/@elements.4/@elements.4">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleUsedToVerify">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::UsedToVerify"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleUsedToVerify">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::UsedToVerify"/>
     </constraints>
   </views>
   <views name="Single RequiredFor" sections="//@tabs.0/@sections.76" automaticContext="true" datacontexts="//@dataContexts.0/@elements.4/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleRequiredFor">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::RequiredFor"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleRequiredFor">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::RequiredFor"/>
     </constraints>
   </views>
   <views name="Single VerificationScenario" sections="//@tabs.0/@sections.78" automaticContext="true" datacontexts="//@dataContexts.0/@elements.4/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleVerificationScenario">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::VerificationScenario"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleVerificationScenario">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::Verification::VerificationScenario"/>
     </constraints>
   </views>
   <views name="Single Annotation" sections="//@tabs.0/@sections.80" automaticContext="true" datacontexts="//@dataContexts.0/@elements.2/@elements.4">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAnnotation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAnnotation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation"/>
     </constraints>
   </views>
   <views name="Single Annotation(SimulationExperiment)" sections="//@tabs.0/@sections.82" automaticContext="true" datacontexts="//@dataContexts.0/@elements.2/@elements.2">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAnnotation(SimulationExperiment)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(SimulationExperiment)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAnnotation(SimulationExperiment)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(SimulationExperiment)"/>
     </constraints>
   </views>
   <views name="Single Annotation(VersionHandling)" sections="//@tabs.0/@sections.84" automaticContext="true" datacontexts="//@dataContexts.0/@elements.2/@elements.3">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAnnotation(VersionHandling)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(VersionHandling)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAnnotation(VersionHandling)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(VersionHandling)"/>
     </constraints>
   </views>
   <views name="Single Annotation(Icon)" sections="//@tabs.0/@sections.86" automaticContext="true" datacontexts="//@dataContexts.0/@elements.2/@elements.5">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAnnotation(Icon)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(Icon)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAnnotation(Icon)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(Icon)"/>
     </constraints>
   </views>
   <views name="Single Annotation(Documentation)" sections="//@tabs.0/@sections.88" automaticContext="true" datacontexts="//@dataContexts.0/@elements.2/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAnnotation(Documentation)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(Documentation)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAnnotation(Documentation)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(Documentation)"/>
     </constraints>
   </views>
   <views name="Single Annotation(CodeGeneration)" sections="//@tabs.0/@sections.90" automaticContext="true" datacontexts="//@dataContexts.0/@elements.2/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAnnotation(CodeGeneration)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(CodeGeneration)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAnnotation(CodeGeneration)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaAnnotationConstructs::Annotation(CodeGeneration)"/>
     </constraints>
   </views>
   <views name="Single ValueProvider" sections="//@tabs.0/@sections.92" automaticContext="true" datacontexts="//@dataContexts.0/@elements.6/@elements.6">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleValueProvider">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueProvider"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleValueProvider">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueProvider"/>
     </constraints>
   </views>
   <views name="Single ValueMediator" sections="//@tabs.0/@sections.94" automaticContext="true" datacontexts="//@dataContexts.0/@elements.6/@elements.4">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleValueMediator">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueMediator"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleValueMediator">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueMediator"/>
     </constraints>
   </views>
   <views name="Single ValueComputation" sections="//@tabs.0/@sections.96" automaticContext="true" datacontexts="//@dataContexts.0/@elements.6/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleValueComputation">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueComputation"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleValueComputation">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueComputation"/>
     </constraints>
   </views>
   <views name="Single ProvidesValueFor" sections="//@tabs.0/@sections.98" automaticContext="true" datacontexts="//@dataContexts.0/@elements.6/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleProvidesValueFor">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ProvidesValueFor"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleProvidesValueFor">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ProvidesValueFor"/>
     </constraints>
   </views>
   <views name="Single ValueClient" sections="//@tabs.0/@sections.100" automaticContext="true" datacontexts="//@dataContexts.0/@elements.6/@elements.5">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleValueClient">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueClient"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleValueClient">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueClient"/>
     </constraints>
   </views>
   <views name="Single ObtainsValueFrom" sections="//@tabs.0/@sections.102" automaticContext="true" datacontexts="//@dataContexts.0/@elements.6/@elements.2">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleObtainsValueFrom">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ObtainsValueFrom"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleObtainsValueFrom">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ObtainsValueFrom"/>
     </constraints>
   </views>
   <views name="Single ValueMediatorsContainer" sections="//@tabs.0/@sections.104" automaticContext="true" datacontexts="//@dataContexts.0/@elements.6/@elements.3">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleValueMediatorsContainer">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueMediatorsContainer"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleValueMediatorsContainer">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ValueBinding::ValueMediatorsContainer"/>
     </constraints>
   </views>
   <views name="Single Equations(CodeInDiagram)" sections="//@tabs.0/@sections.108" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.1">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleEquations(CodeInDiagram)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Equations(CodeInDiagram)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleEquations(CodeInDiagram)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Equations(CodeInDiagram)"/>
     </constraints>
   </views>
   <views name="Single EquationsLoopProperties" sections="//@tabs.0/@sections.110" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.12">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleEquationsLoopProperties">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::EquationsLoopProperties"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleEquationsLoopProperties">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::EquationsLoopProperties"/>
     </constraints>
   </views>
   <views name="Single ConditionalAlgorithm(Diagram)" sections="//@tabs.0/@sections.112" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.16">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleConditionalAlgorithm(Diagram)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::ConditionalAlgorithm(Diagram)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleConditionalAlgorithm(Diagram)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::ConditionalAlgorithm(Diagram)"/>
     </constraints>
   </views>
   <views name="Single AlgorithmLoopProperties" sections="//@tabs.0/@sections.114" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.0">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAlgorithmLoopProperties">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::AlgorithmLoopProperties"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAlgorithmLoopProperties">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::AlgorithmLoopProperties"/>
     </constraints>
   </views>
   <views name="Single ConditionalEquations(Diagram)" sections="//@tabs.0/@sections.116" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.8">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleConditionalEquations(Diagram)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleConditionalEquations(Diagram)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)"/>
     </constraints>
   </views>
   <views name="Single StateSpecification" sections="//@tabs.0/@sections.118" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.3">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleStateSpecification">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::StateSpecification"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleStateSpecification">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::StateSpecification"/>
     </constraints>
   </views>
   <views name="Single StateTransitionSpecification" sections="//@tabs.0/@sections.120" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.5">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleStateTransitionSpecification">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::StateTransitionSpecification"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleStateTransitionSpecification">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::StateTransitionSpecification"/>
     </constraints>
   </views>
   <views name="Single Assert" sections="//@tabs.0/@sections.122" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.15">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAssert">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Assert"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAssert">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Assert"/>
     </constraints>
   </views>
   <views name="Single Equations(Code)" sections="//@tabs.0/@sections.124" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.13">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleEquations(Code)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Equations(Code)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleEquations(Code)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Equations(Code)"/>
     </constraints>
   </views>
   <views name="Single Algorithm(Code)" sections="//@tabs.0/@sections.126" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.9">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAlgorithm(Code)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAlgorithm(Code)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)"/>
     </constraints>
   </views>
   <views name="Single StateDependency" sections="//@tabs.0/@sections.128" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.4">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleStateDependency">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::StateDependency"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleStateDependency">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::StateDependency"/>
     </constraints>
   </views>
   <views name="Single If" sections="//@tabs.0/@sections.130" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.6">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleIf">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::If"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleIf">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::If"/>
     </constraints>
   </views>
   <views name="Single AlgorithmStatements(CodeInDiagram)" sections="//@tabs.0/@sections.132" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.14">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAlgorithmStatements(CodeInDiagram)">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::AlgorithmStatements(CodeInDiagram)"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAlgorithmStatements(CodeInDiagram)">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::AlgorithmStatements(CodeInDiagram)"/>
     </constraints>
   </views>
   <views name="Single ModelicaMLStateMachine" sections="//@tabs.0/@sections.134" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.7">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelicaMLStateMachine">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelicaMLStateMachine">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine"/>
     </constraints>
   </views>
   <views name="Single When" sections="//@tabs.0/@sections.136" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.11">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleWhen">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::When"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleWhen">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::When"/>
     </constraints>
   </views>
   <views name="Single AdditionalIncludes" sections="//@tabs.0/@sections.138" automaticContext="true" datacontexts="//@dataContexts.0/@elements.1/@elements.10">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleAdditionalIncludes">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.1"/>
-      <properties xsi:type="contexts:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::AdditionalIncludes"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleAdditionalIncludes">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.1"/>
+      <properties xsi:type="constraints:ValueProperty" name="stereotypeName" value="ModelicaML::ModelicaBehaviorConstructs::AdditionalIncludes"/>
     </constraints>
   </views>
   <views name="Single Package" sections="//@tabs.0/@sections.140">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSinglePackage">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="className" value="Package"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="Package"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSinglePackage">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="className" value="Package"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="Package"/>
     </constraints>
   </views>
   <views name="Single Model Package" sections="//@tabs.0/@sections.140">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleModelPackage">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="className" value="Package"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="Model"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleModelPackage">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="className" value="Package"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="Model"/>
     </constraints>
   </views>
   <views name="Single State" sections="//@tabs.0/@sections.141">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleState">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="State"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleState">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="State"/>
     </constraints>
   </views>
   <views name="Single State Transition" sections="//@tabs.0/@sections.142">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleTransition">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="Transition"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleTransition">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="Transition"/>
     </constraints>
   </views>
   <views name="Single Activity ControlFlow" sections="//@tabs.0/@sections.143">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleActivityControlFlow">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="ControlFlow"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleActivityControlFlow">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="ControlFlow"/>
     </constraints>
   </views>
   <views name="Single Actrivity CallBehaviorAction" sections="//@tabs.0/@sections.144">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleCallBehaviorAction">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="CallBehaviorAction"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleCallBehaviorAction">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="CallBehaviorAction"/>
     </constraints>
   </views>
   <views name="Single Activity DecisionNode" sections="//@tabs.0/@sections.145">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleActivityDecisionNode">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="DecisionNode"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleActivityDecisionNode">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="DecisionNode"/>
     </constraints>
   </views>
   <views name="Single Activity MergeNode" sections="//@tabs.0/@sections.146">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleActivityMergeNode">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="MergeNode"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleActivityMergeNode">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="MergeNode"/>
     </constraints>
   </views>
   <views name="Single State Region" sections="//@tabs.0/@sections.147">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleStateRegion">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="Region"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleStateRegion">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="Region"/>
     </constraints>
   </views>
   <views name="Single State ConnectionPointReference" sections="//@tabs.0/@sections.148">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleStateConnectionPointReference">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="ConnectionPointReference"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleStateConnectionPointReference">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="ConnectionPointReference"/>
     </constraints>
   </views>
   <views name="Single State FinalState" sections="//@tabs.0/@sections.149">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleSateFinalState">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="FinalState"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleSateFinalState">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="FinalState"/>
     </constraints>
   </views>
   <views name="Single Activity InitialNode" sections="//@tabs.0/@sections.150">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleActivityInitialNode">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="InitialNode"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleActivityInitialNode">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="InitialNode"/>
     </constraints>
   </views>
   <views name="Single _ActivityFinalNode" sections="//@tabs.0/@sections.151">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingle_ActivityFinalNode">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="ActivityFinalNode"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingle_ActivityFinalNode">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="ActivityFinalNode"/>
     </constraints>
   </views>
   <views name="Single Activity OpaqueAction" sections="//@tabs.0/@sections.153">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isSingleActivityOpaqueAction">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="OpaqueAction"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isSingleActivityOpaqueAction">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="OpaqueAction"/>
     </constraints>
   </views>
   <views name="Single OpaqueBehavior" sections="//@tabs.0/@sections.155">
-    <constraints xsi:type="contexts:SimpleConstraint" name="isOpaqueBehavior">
-      <constraintType href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@constraintTypes.0"/>
-      <properties xsi:type="contexts:ValueProperty" name="umlClassName" value="OpaqueBehavior"/>
+    <constraints xsi:type="constraints:SimpleConstraint" name="isOpaqueBehavior">
+      <constraintType href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@constraintTypes.0"/>
+      <properties xsi:type="constraints:ValueProperty" name="umlClassName" value="OpaqueBehavior"/>
     </constraints>
   </views>
   <dataContexts name="ModelicaML" label="ModelicaML">
@@ -981,12 +982,12 @@
         <properties name="id"/>
         <properties name="text"/>
         <properties name="specifiesType" type="Reference"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="Traceability">
         <properties name="specifiedByRequirement" type="Reference"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.4"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.4"/>
       </elements>
       <elements name="RequirementInstance" supertypes="//@dataContexts.0/@elements.3/@elements.6"/>
     </elements>
@@ -998,54 +999,54 @@
       </elements>
       <elements name="Equations(CodeInDiagram)">
         <supertypes href="#//@dataContexts.0/@elements.1/@elements.12"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.104"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.104"/>
       </elements>
       <elements name="ExecutionOrderPriority">
         <properties name="priority" type="Integer"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.53"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.127"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.55"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.53"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.127"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.55"/>
       </elements>
       <elements name="StateSpecification">
         <properties name="freezeExpression"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.59"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.59"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
       </elements>
       <elements name="StateDependency">
         <properties name="isInState" type="Reference"/>
         <properties name="logicalOperator" type="Enumeration"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.127"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.55"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.127"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.55"/>
       </elements>
       <elements name="StateTransitionSpecification">
         <properties name="suppressExitActions" type="Boolean"/>
         <properties name="suppressEntryActions" type="Boolean"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.55"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.55"/>
       </elements>
       <elements name="If">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.167"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.167"/>
       </elements>
       <elements name="ModelicaMLStateMachine">
         <properties name="samplingExpression"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
       </elements>
       <elements name="ConditionalEquations(Diagram)">
         <properties name="initial" type="Boolean"/>
         <properties name="isSubActivity" type="Boolean"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.110"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.110"/>
         <supertypes href="#//@dataContexts.0/@elements.1/@elements.12"/>
       </elements>
       <elements name="Algorithm(Code)">
         <properties name="initial" type="Boolean"/>
         <supertypes href="#//@dataContexts.0/@elements.1/@elements.0"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.102"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.102"/>
       </elements>
       <elements name="AdditionalIncludes">
         <properties name="additionalActionCode"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
       </elements>
       <elements name="When">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.167"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.167"/>
       </elements>
       <elements name="EquationsLoopProperties">
         <properties name="forIndices"/>
@@ -1054,30 +1055,30 @@
       <elements name="Equations(Code)">
         <properties name="initial" type="Boolean"/>
         <supertypes href="#//@dataContexts.0/@elements.1/@elements.12"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.102"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.102"/>
       </elements>
       <elements name="AlgorithmStatements(CodeInDiagram)">
         <supertypes href="#//@dataContexts.0/@elements.1/@elements.0"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.104"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.104"/>
       </elements>
       <elements name="Assert">
         <properties name="level" type="Enumeration"/>
         <properties name="condition"/>
         <properties name="message"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.11"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.11"/>
       </elements>
       <elements name="ConditionalAlgorithm(Diagram)">
         <properties name="initial" type="Boolean"/>
         <properties name="isSubActivity" type="Boolean"/>
         <supertypes href="#//@dataContexts.0/@elements.1/@elements.0"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.110"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.110"/>
       </elements>
     </elements>
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaAnnotationConstructs">
       <elements name="Annotation(Documentation)">
         <properties name="info"/>
         <properties name="revisions"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
       </elements>
       <elements name="Annotation(CodeGeneration)">
         <properties name="Evaluate" type="Boolean"/>
@@ -1085,27 +1086,27 @@
         <properties name="smoothOrder" type="Integer"/>
         <properties name="Inline" type="Boolean"/>
         <properties name="HideResult" type="Boolean"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
       </elements>
       <elements name="Annotation(SimulationExperiment)">
         <properties name="Tolerance"/>
         <properties name="StartTime"/>
         <properties name="StopTime"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
       </elements>
       <elements name="Annotation(VersionHandling)">
         <properties name="version"/>
         <properties name="conversion"/>
         <properties name="uses"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
       </elements>
       <elements name="Annotation">
         <properties name="fullAnnotationString"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
       </elements>
       <elements name="Annotation(Icon)">
         <properties name="iconAnnotationString"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.0"/>
       </elements>
     </elements>
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaCompositeConstructs">
@@ -1116,7 +1117,7 @@
         <properties name="causality" type="Enumeration"/>
         <properties name="scope" type="Enumeration"/>
         <properties name="variability" type="Enumeration"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
         <supertypes href="#//@dataContexts.0/@elements.3/@elements.2"/>
       </elements>
       <elements name="InstanceOfAClass">
@@ -1129,12 +1130,12 @@
       </elements>
       <elements name="Connection">
         <properties name="explicitConnectionEnds"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.65"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.65"/>
       </elements>
       <elements name="ConnectionPort">
         <properties name="causality" type="Enumeration"/>
         <supertypes href="#//@dataContexts.0/@elements.3/@elements.2"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.58"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.58"/>
       </elements>
       <elements name="FunctionArgument">
         <properties name="declarationEquationOrAssignment"/>
@@ -1143,10 +1144,10 @@
         <properties name="scope" type="Enumeration"/>
         <properties name="causality" type="Enumeration"/>
         <supertypes href="#//@dataContexts.0/@elements.3/@elements.2"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.31"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.31"/>
       </elements>
       <elements name="Component">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
         <supertypes href="#//@dataContexts.0/@elements.3/@elements.2"/>
       </elements>
     </elements>
@@ -1155,53 +1156,53 @@
       <elements name="VerificationScenario">
         <properties name="usedToVerify" type="Reference"/>
         <supertypes href="#//@dataContexts.0/@elements.8/@elements.0"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
       </elements>
       <elements name="VerificationModel">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
       </elements>
       <elements name="Requires">
         <properties name="always" type="Boolean"/>
         <properties name="onlyInCombinationWith" type="Reference"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
       </elements>
       <elements name="UsedToVerify">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
       </elements>
     </elements>
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaPredefinedTypes"/>
     <elements xsi:type="contexts:DataContextPackage" name="ValueBinding">
       <elements name="ProvidesValueFor">
         <properties name="isRequired" type="Boolean"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
         <supertypes href="#//@dataContexts.0/@elements.6/@elements.1"/>
       </elements>
       <elements name="ValueComputation">
         <properties name="operation"/>
       </elements>
       <elements name="ObtainsValueFrom">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
         <supertypes href="#//@dataContexts.0/@elements.6/@elements.1"/>
       </elements>
       <elements name="ValueMediatorsContainer">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
       </elements>
       <elements name="ValueMediator">
         <properties name="preferredProviders"/>
         <properties name="variability" type="Enumeration"/>
         <supertypes href="#//@dataContexts.0/@elements.6/@elements.1"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
       </elements>
       <elements name="ValueClient">
         <properties name="obtainsValueFrom" type="Reference"/>
         <supertypes href="#//@dataContexts.0/@elements.6/@elements.1"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
       </elements>
       <elements name="ValueProvider">
         <properties name="providesValueFor" type="Reference"/>
         <supertypes href="#//@dataContexts.0/@elements.6/@elements.1"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.59"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.59"/>
       </elements>
     </elements>
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaClassConstructs">
@@ -1211,40 +1212,40 @@
         <properties name="externalAnnotation"/>
         <properties name="externalLanguageSpecification"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.103"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.103"/>
       </elements>
       <elements name="Operator">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="Connector">
         <properties name="expandable" type="Boolean"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="Record">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="ModelicaEnumeration">
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.90"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.90"/>
       </elements>
       <elements name="ModelicaClass">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="Block">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="ModelicaPackage">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="Type">
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.94"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.94"/>
       </elements>
       <elements name="ModelicaClassDefinition">
         <properties name="replaceable" type="Boolean"/>
@@ -1254,7 +1255,7 @@
         <properties name="iconImagePath"/>
       </elements>
       <elements name="Model">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
         <supertypes href="#//@dataContexts.0/@elements.7/@elements.9"/>
       </elements>
       <elements name="CalculationModel" supertypes="//@dataContexts.0/@elements.7/@elements.10"/>
@@ -1265,65 +1266,65 @@
         <properties name="numberOfIntervals"/>
         <properties name="tolerance"/>
         <properties name="stopTime"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
       </elements>
       <elements name="UserInteractive">
         <properties name="declaration"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.35"/>
       </elements>
     </elements>
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaRelationsConstructs">
       <elements name="PartialDerivativeOfFunctionRelation">
         <properties name="arguments"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
       </elements>
       <elements name="TypeRelation">
         <properties name="modification"/>
         <properties name="arraySize"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.24"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.24"/>
       </elements>
       <elements name="RedeclareRelation">
         <properties name="modification"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
       </elements>
       <elements name="ExtendsRelation">
         <properties name="modification"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.24"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.24"/>
       </elements>
       <elements name="Import">
         <properties name="alias"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
       </elements>
       <elements name="ConstrainedByRelation">
         <properties name="modification"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.5"/>
       </elements>
     </elements>
     <elements xsi:type="contexts:DataContextPackage" name="ModelReferences">
       <elements name="ModelicaModelProxy">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.1"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.1"/>
       </elements>
       <elements name="ModelicaModelReference">
         <properties name="modelPath"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.45"/>
       </elements>
       <elements name="InstalledLibrary">
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.71"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.71"/>
       </elements>
     </elements>
     <elements xsi:type="contexts:DataContextPackage" name="ModelicaPredefinedEnumerations"/>
     <elements xsi:type="contexts:DataContextPackage" name="CodeGeneration">
       <elements name="CodeGenerationSpecification">
         <properties name="excludeFromCG" type="Boolean"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.1"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.1"/>
       </elements>
       <elements name="ExcludeFromCGIfUserInteractive">
         <properties name="variableReference" type="Reference"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.110"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
-        <supertypes href="ppe:/context/org.eclipse.papyrus.properties.uml/Model/UML/UML.ctx#//@dataContexts.0/@elements.102"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.110"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.52"/>
+        <supertypes href="ppe:/context/org.eclipse.papyrus.uml.properties/Model/UML/UML.ctx#//@dataContexts.0/@elements.102"/>
       </elements>
     </elements>
-    <modelElementFactory href="ppe:/environment/org.eclipse.papyrus.properties.uml/Model/Environment.xmi#//@modelElementFactories.2"/>
+    <modelElementFactory href="ppe:/environment/org.eclipse.papyrus.uml.properties/Model/Environment.xmi#//@modelElementFactories.2"/>
   </dataContexts>
 </contexts:Context>

@@ -19,18 +19,16 @@ public class SimulationResultsAnalyzer {
 	private HashMap<Element,String> simulationResultsFile;
 
 	private HashSet<Element> notSimulatedModels;
+	private HashSet<Element> simulatedModels;
 	private IProgressMonitor monitor;
 
-	public SimulationResultsAnalyzer(GeneratedModelsData gmd, 
-			HashMap<Element,String> simulationResultsFile,
-			HashSet<Element> notSimulatedModels,
-			IProgressMonitor monitor
-			){
+	public SimulationResultsAnalyzer(GeneratedModelsData gmd, IProgressMonitor monitor){
 		
 		this.gmd = gmd;
-		this.gmd.setSimulationResultsFile(simulationResultsFile);
-		this.simulationResultsFile = simulationResultsFile;
-		this.notSimulatedModels = notSimulatedModels;
+		this.simulationResultsFile = gmd.getSimulationResultsFile();
+		this.notSimulatedModels = gmd.getNotSimulatedModels();
+		this.simulatedModels = gmd.getSimulatedModels();
+		
 		this.monitor = monitor;
 		
 	}
@@ -83,7 +81,7 @@ public class SimulationResultsAnalyzer {
 								for (TreeObject scenario : scenarios) {
 
 									// new POSITIVE relation
-									if (gmd.isNewRelation(scenario, requirement, Constants.stereotypeQName_UsedToVerify)) {
+									if (gmd.isNewRelation(scenario, requirement, Constants.stereotypeQName_UseToVerify)) {
 										gmd.addToPositiveRelations(scenario, requirement);
 
 										// add to new relations between scenario UML element and requirement UML Element
@@ -170,5 +168,13 @@ public class SimulationResultsAnalyzer {
 
 	public void setNotSimulatedModels(HashSet<Element> notSimulatedModels) {
 		this.notSimulatedModels = notSimulatedModels;
+	}
+
+	public HashSet<Element> getSimulatedModels() {
+		return simulatedModels;
+	}
+
+	public void setSimulatedModels(HashSet<Element> simulatedModels) {
+		this.simulatedModels = simulatedModels;
 	}
 }

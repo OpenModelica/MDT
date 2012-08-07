@@ -7,16 +7,18 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.papyrus.core.services.ServiceException;
-import org.eclipse.papyrus.core.services.ServicesRegistry;
-import org.eclipse.papyrus.core.utils.ServiceUtils;
-import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
+import org.eclipse.papyrus.infra.core.services.ServiceException;
+import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
+
 
 public class PapyrusServices {
 
@@ -37,7 +39,7 @@ public class PapyrusServices {
 	
 	
 	public static CommonViewer getModelExplorerView(){
-		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 
 		ModelExplorerPageBookView modelExplorerPageBookView = null;
 		if (view instanceof ModelExplorerPageBookView) {
@@ -50,7 +52,7 @@ public class PapyrusServices {
 	
 	
 	public static boolean isVisiblePapyrusModelExplorerView(){
-		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 
 		ModelExplorerPageBookView modelExplorerPageBookView = null;
 		if (view instanceof ModelExplorerPageBookView) {
@@ -73,7 +75,7 @@ public class PapyrusServices {
 //	public static void locate(Object object){
 //		if (object instanceof EObject) {
 //			
-//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 //
 //			ModelExplorerPageBookView modelExplorerPageBookView = null;
 //			if (view instanceof ModelExplorerPageBookView) {
@@ -95,26 +97,29 @@ public class PapyrusServices {
 	public static void locateInModelExplorer(Object object, boolean reselectFirst){
 		if (object instanceof EObject) {
 			
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 
 			ModelExplorerPageBookView modelExplorerPageBookView = null;
 			if (view instanceof ModelExplorerPageBookView) {
 				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
 			}
 			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-			List<Object> items = new ArrayList<Object>();
-			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+			List<EObject> items = new ArrayList<EObject>();
+//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+			items.add((EObject) object);
+			
+			ModelExplorerView.reveal(items, modelExplorerView);
 
 			// set focus
 			modelExplorerView.getControl().setFocus();
 			
-			if (reselectFirst) {
-				// reset the selection so that the components tree can instantiate the selected class again
-				modelExplorerView.setSelection(new StructuredSelection(), true);
-			}
-			
-			// set new selection
-			modelExplorerView.setSelection(new StructuredSelection(items), true);
+//			if (reselectFirst) {
+//				// reset the selection so that the components tree can instantiate the selected class again
+//				modelExplorerView.setSelection(new StructuredSelection(), true);
+//			}
+//			
+//			// set new selection
+//			modelExplorerView.setSelection(new StructuredSelection(items), true);
       	}
 	}
 	
@@ -126,7 +131,7 @@ public class PapyrusServices {
 //	public static void locateWithReselection(Object object){
 //		if (object instanceof EObject) {
 //			
-//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 //
 //			ModelExplorerPageBookView modelExplorerPageBookView = null;
 //			if (view instanceof ModelExplorerPageBookView) {

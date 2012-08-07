@@ -55,8 +55,8 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -78,6 +78,7 @@ import org.eclipse.uml2.uml.TypedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
@@ -102,8 +103,9 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	/** The Constant requirementInstanceStereotypeQName. */
 	private static final String requirementInstanceStereotypeQName = Constants.stereotypeQName_RequirementInstance;
 	
-	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
-	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+	private final ImageDescriptor warningImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/warning_ovr.gif");
+//	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
+	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
 
 	
 	public String getText(Object obj) {
@@ -531,9 +533,6 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		}
 		return false;
 	}
-	
-	
-	
 	
 	
 	public Image decorateImage(Object element, String imagePath) {

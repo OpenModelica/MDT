@@ -15,13 +15,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
-import org.eclipse.papyrus.resource.uml.ExtendedUmlModel;
-import org.eclipse.papyrus.resource.uml.UmlUtils;
+import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -53,16 +55,14 @@ import org.openmodelica.modelicaml.helper.Activator;
 import org.openmodelica.modelicaml.helper.report.XMLReportGenerator;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsFileAction;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 
 public class ScenarioBasedVerificationReportDialog extends Dialog {
 
 	private GeneratedModelsData gmd;
 
-	private final ImageDescriptor warningImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
-	private final ImageDescriptor errorImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+	private final ImageDescriptor warningImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/warning_ovr.gif");
+	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
 	private final ImageDescriptor okStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/success_ovr.gif");
 	private final ImageDescriptor questionStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/question_ov.gif");
 	
@@ -98,15 +98,13 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 
 	public ScenarioBasedVerificationReportDialog(Shell parentShell, 
 			GeneratedModelsData gmd, 
-			HashMap<Element,String> simulationResultsFiles,
 			boolean openedFromNewRelationsDialog) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
 		
 		this.setGmd(gmd);
-		this.getGmd().setSimulationResultsFile(simulationResultsFiles);
-		this.setSimulationResultsFiles(simulationResultsFiles);
+		this.setSimulationResultsFiles(gmd.getSimulationResultsFile());
 		this.setOpenedFromNewRelationsDialog(openedFromNewRelationsDialog);
 		
 	}
@@ -258,7 +256,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		btnNewRelations.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(new Shell(), gmd, getSimulationResultsFiles(), true);
+				SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(new Shell(), gmd, true);
 				dialog.open();
 			}
 		});
@@ -304,16 +302,18 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 						List<Object> items = new ArrayList<Object>();
 						for (Object object2 : selectedObjects) {
 							if (object2 instanceof EObject) {
-								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject) object2));
+//								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject) object2));
+								items.add((EObject) object2);
+								ModelExplorerView.reveal(items, modelExplorerView);
 							}
 						}
-						modelExplorerView.setSelection(new StructuredSelection(items), true);
+//						modelExplorerView.setSelection(new StructuredSelection(items), true);
 					}
 				}
 			}
 		});
 		btnLocate.setText("Locate");
-		btnLocate.setImage(ResourceManager.getPluginImage("org.eclipse.papyrus.modelexplorer", "/icons/ModelExplorer.gif"));
+		btnLocate.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
 		// diable by default until a tree item was selected
 		btnLocate.setEnabled(false);
 
@@ -907,10 +907,10 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		
 		String isViolatedString = "";
 		if (isViolated) {
-			isViolatedString = "VIOLATED";
+			isViolatedString = "!";
 		}
 		
-		String isEvaluatedString = " NOT EVALUATED";
+		String isEvaluatedString = " NOT EVAL.";
 		if (isEvaluated) {
 			isEvaluatedString = "";
 		}

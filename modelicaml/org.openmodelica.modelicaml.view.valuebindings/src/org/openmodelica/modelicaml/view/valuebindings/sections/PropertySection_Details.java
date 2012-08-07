@@ -49,13 +49,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.papyrus.core.services.ServiceException;
-import org.eclipse.papyrus.core.services.ServicesRegistry;
-import org.eclipse.papyrus.core.utils.EditorUtils;
-import org.eclipse.papyrus.core.utils.ServiceUtils;
-import org.eclipse.papyrus.core.utils.ServiceUtilsForActionHandlers;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.modelexplorer.ModelExplorerView;
+
+import org.eclipse.papyrus.infra.core.services.ServiceException;
+import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
+import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
+import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -396,7 +396,7 @@ public class PropertySection_Details extends AbstractPropertySection {
     private void locate(Object object){
 		if (object instanceof EObject) {
 			
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.papyrus.modelexplorer.modelexplorer");
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
 
 			ModelExplorerPageBookView modelExplorerPageBookView = null;
 			if (view instanceof ModelExplorerPageBookView) {
@@ -404,8 +404,11 @@ public class PropertySection_Details extends AbstractPropertySection {
 			}
 			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
 			List<Object> items = new ArrayList<Object>();
-			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-			modelExplorerView.setSelection(new StructuredSelection(items), true);
+//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
+			items.add((EObject) object);
+			ModelExplorerView.reveal(items, modelExplorerView);
+			
+//			modelExplorerView.setSelection(new StructuredSelection(items), true);
       	}
 	}
 

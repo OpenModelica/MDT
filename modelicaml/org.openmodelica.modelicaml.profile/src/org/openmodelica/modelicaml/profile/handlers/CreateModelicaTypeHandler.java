@@ -50,15 +50,14 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-import org.eclipse.papyrus.core.utils.EditorUtils;
+import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Package;
-import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Stereotype;
+import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.services.PapyrusServices;
 import org.openmodelica.modelicaml.profile.Activator;
@@ -118,7 +117,7 @@ private EObject selectedElement = null;
 //### START: adapt it for a new command handler
 				if (selectedElement instanceof Class) {
 					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
-					pt = (PrimitiveType) ((org.eclipse.uml2.uml.Class)selectedElement).createNestedClassifier(stereotyepName, UMLPackage.Literals.PRIMITIVE_TYPE);
+					pt = (PrimitiveType) ((Class)selectedElement).createNestedClassifier(stereotyepName, UMLPackage.Literals.PRIMITIVE_TYPE);
 					stereotype = pt.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
 				}
 				else if (selectedElement instanceof Package) {

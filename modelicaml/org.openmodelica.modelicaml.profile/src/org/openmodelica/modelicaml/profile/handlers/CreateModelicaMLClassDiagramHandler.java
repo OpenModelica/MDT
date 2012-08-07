@@ -35,7 +35,7 @@
 package org.openmodelica.modelicaml.profile.handlers;
 
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.papyrus.diagram.clazz.CreateClassDiagramCommand;
+import org.eclipse.papyrus.uml.diagram.clazz.CreateClassDiagramCommand;
 
 /**
  * The Class CreateModelicaMLClassDiagramHandler.

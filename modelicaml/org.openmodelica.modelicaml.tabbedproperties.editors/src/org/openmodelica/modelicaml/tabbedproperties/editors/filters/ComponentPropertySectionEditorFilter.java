@@ -35,7 +35,7 @@
 package org.openmodelica.modelicaml.tabbedproperties.editors.filters;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.papyrus.profile.utils.UmlElementFilter;
+import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.TypedElement;
@@ -45,7 +45,7 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 /**
  * The Class ComponentPropertySectionEditorFilter.
  */
-public class ComponentPropertySectionEditorFilter extends UmlElementFilter {
+public class ComponentPropertySectionEditorFilter implements IFilter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.papyrus.profile.utils.UmlElementFilter#select(java.lang.Object)
