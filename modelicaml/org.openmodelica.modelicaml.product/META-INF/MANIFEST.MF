@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ModelicaML Product
+Bundle-SymbolicName: org.openmodelica.modelicaml.product;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: OpenModelica Project
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.ui.intro
