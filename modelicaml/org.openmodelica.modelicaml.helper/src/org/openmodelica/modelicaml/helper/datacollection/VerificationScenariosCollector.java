@@ -134,13 +134,15 @@ public class VerificationScenariosCollector {
 		clearAll();
 
 		if ( rootPackage != null ) {
-			VerificationDataCollector ec = new VerificationDataCollector((EObject) rootPackage);
+			verificationDataCollector = new VerificationDataCollector((EObject) rootPackage);
 
-			this.allScenarios.addAll(ec.getAllScenarios());
-			this.alwaysInclude.addAll(ec.getAlwaysInclude());
-			this.modelToItsAdditionalModels.putAll(ec.getModelToItsRequiredModels());
+			this.allScenarios.addAll(verificationDataCollector.getAllScenarios());
+			this.alwaysInclude.addAll(verificationDataCollector.getAlwaysInclude());
+			this.modelToItsAdditionalModels.putAll(verificationDataCollector.getModelToItsRequiredModels());
 			
-			this.allRequirements.addAll(ec.getAllRequirements());
+			this.allRequirements.addAll(verificationDataCollector.getAllRequirements());
+			
+			this.allMediators.addAll(verificationDataCollector.getAllMediators());
 			
 			// sort data (i.e. fill other sets and maps)
 			if (sortData) { sortData();}
@@ -165,8 +167,7 @@ public class VerificationScenariosCollector {
 			// add the owner to map
 			addToPkgToTSMap(testScenario.getOwner(), testScenario);
 			
-			// // collect all requirements that are referenced by <<UseToVerify>> relation
-//			HashSet<Element> linkedReqList = collectRequirementsForTestCase(testScenario);
+			// collect all requirements that are referenced by <<UseToVerify>> relation
 			HashSet<Element> linkedReqList = collectRequirementsForScenario(testScenario, Constants.stereotypeQName_UseToVerify);
 
 			// fill data
@@ -223,85 +224,6 @@ public class VerificationScenariosCollector {
 			}
 		}
 	}
-	
-	
-//	public HashSet<Element> collectRequirementsForTestCase(Element testCase) {
-//		
-//		HashSet<Element> requirmentsFound = new HashSet<Element>();
-//
-//		if (testCase instanceof NamedElement) {
-//			
-//			// DEPRECATED
-//			// collect from stereotype property
-//			Stereotype s_ts = ((NamedElement)testCase).getAppliedStereotype(Constants.stereotypeQName_VerificationScenario); 
-//			HashSet<Element> itemsFoundThroughStereotypeProperty = new HashSet<Element>();
-//			if ( s_ts != null ) {
-//				// get the list of referenced requirements
-//				Object o = ((NamedElement)testCase).getValue(s_ts, Constants.propertyName_usedToVerify);
-//				if (o instanceof EList) {
-//					@SuppressWarnings("unchecked")
-//					EList<EObject> list = (EList<EObject>) o;
-//					for (EObject req : list) {
-//						Element umlElement = UMLUtil.getBaseElement(req);
-//						if (umlElement instanceof Class && ((Class)umlElement).getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
-//							itemsFoundThroughStereotypeProperty.add(umlElement);
-////							System.err.println(((NamedElement) umlElement).getQualifiedName() );
-//						}
-//						// collect requirements from referenced elements
-//						// NOTE: no deep search is performed, only the directly linked requirements are collected.
-//						else {
-//							if (umlElement instanceof NamedElement) {
-//								for (Dependency dependency : ((NamedElement)umlElement).getClientDependencies()) {
-//									for (Element target : dependency.getTargets()) {
-//										if (target instanceof Class && target.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
-//											itemsFoundThroughStereotypeProperty.add( target);
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//			
-//			// collect from dependencies
-//			EList<Dependency> depList = ((NamedElement)testCase).getClientDependencies();
-//			HashSet<Element> itemsFoundThroughDependencies = new HashSet<Element>();
-//			for (Dependency dependency : depList) {
-//				
-//				// Check if the dependency has a stereotype <<UsedToVerify>>
-//				if (dependency.getAppliedStereotype(Constants.stereotypeQName_UsedToVerify) != null) {
-//				
-//					for (Element target : dependency.getTargets()) {
-//						if (target instanceof Class && target.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
-//							itemsFoundThroughDependencies.add( (Class) target);
-//						}
-//						
-////						// TODO: what is that (see below) for?
-////						// collect requirements from referenced elements
-////						// NOTE: no deep search is performed, only the directly linked requirements are collected.
-////						else {
-////							if (target instanceof NamedElement) {
-////								for (Dependency targetDependency : ((NamedElement)target).getClientDependencies()) {
-////									for (Element targetDependencyTarget : targetDependency.getTargets()) {
-////										if (targetDependencyTarget.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
-////											itemsFoundThroughDependencies.add( targetDependencyTarget);
-////										}
-////									}
-////								}
-////							}
-////						}
-//					}
-//				}
-//			}
-//			
-//			// merge all items found
-//			requirmentsFound.addAll(itemsFoundThroughStereotypeProperty);
-//			requirmentsFound.addAll(itemsFoundThroughDependencies);
-//		}
-//		return requirmentsFound;		
-//	}
-	
 	
 	
 	public HashSet<Element> collectRequirementsForScenario(Element scenario, String dependencyStereotypeQName) {

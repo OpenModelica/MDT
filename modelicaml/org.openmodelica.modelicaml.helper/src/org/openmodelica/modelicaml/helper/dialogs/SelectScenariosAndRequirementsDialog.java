@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -1274,7 +1273,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	
 	// GETTER/SETTER ************************************************************************
 
-	public HashMap<Element, HashSet<Element>> getSelectedTestScenariosWithRequirements() {
+	public HashMap<Element, HashSet<Element>> getSelectedScenariosWithRequirements() {
 		
 		// MODE: DISCOVERY of relation between scenarios and requirements 
 		if (this.mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {

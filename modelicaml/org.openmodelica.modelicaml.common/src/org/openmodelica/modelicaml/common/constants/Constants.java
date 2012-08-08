@@ -41,14 +41,14 @@ public class Constants {
 	public static final String ModelicaStandardLibraryModelName 	= "Modelica";
 	
 	// class constructs
-	public static final String stereotypeQName_ModelicaPackage 	= "ModelicaML::ModelicaClassConstructs::ModelicaPackage";
-	public static final String stereotypeQName_Operator 		= "ModelicaML::ModelicaClassConstructs::Operator";
+	public static final String stereotypeQName_ModelicaPackage 		= "ModelicaML::ModelicaClassConstructs::ModelicaPackage";
+	public static final String stereotypeQName_Operator 			= "ModelicaML::ModelicaClassConstructs::Operator";
 	
-	public static final String stereotypeQName_ModelicaClass 	= "ModelicaML::ModelicaClassConstructs::ModelicaClass";
-	public static final String stereotypeQName_Model 			= "ModelicaML::ModelicaClassConstructs::Model";
-	public static final String stereotypeQName_Block 			= "ModelicaML::ModelicaClassConstructs::Block";
-	public static final String stereotypeQName_Connector 		= "ModelicaML::ModelicaClassConstructs::Connector";
-	public static final String stereotypeQName_Record 			= "ModelicaML::ModelicaClassConstructs::Record";
+	public static final String stereotypeQName_ModelicaClass 		= "ModelicaML::ModelicaClassConstructs::ModelicaClass";
+	public static final String stereotypeQName_Model 				= "ModelicaML::ModelicaClassConstructs::Model";
+	public static final String stereotypeQName_Block 				= "ModelicaML::ModelicaClassConstructs::Block";
+	public static final String stereotypeQName_Connector 			= "ModelicaML::ModelicaClassConstructs::Connector";
+	public static final String stereotypeQName_Record 				= "ModelicaML::ModelicaClassConstructs::Record";
 	
 	public static final String stereotypeQName_Algorithm 					= "ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)";
 	public static final String stereotypeQName_ConditionalAlgorithm 		= "ModelicaML::ModelicaBehaviorConstructs::ConditionalAlgorithm(Diagram)";
@@ -56,7 +56,7 @@ public class Constants {
 	public static final String stereotypeQName_Equations				= "ModelicaML::ModelicaBehaviorConstructs::Equations(Code)";
 	public static final String stereotypeQName_ConditionalEquations		= "ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)";
 	
-	public static final String propertyName_initial				= "initial";
+	public static final String propertyName_initial					= "initial";
 	
 	public static final String stereotypeQName_ModelicaMLStateMachine 		= "ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine";
 
@@ -117,22 +117,23 @@ public class Constants {
 	public static final String stereotypeQName_RedeclareRelation= "ModelicaML::ModelicaRelationsConstructs::RedeclareRelation";
 	public static final String stereotypeQName_PartialDerivativeOfFunctionRelation = "ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation";
 	
-	
 	public static final String propertyName_alias				= "alias";
-	
+
 	
 	// stereotype properties 
 	public static final String propertyName_id 					= "id";
 	public static final String propertyName_text	 			= "text";
 	public final static String propertyName_evaluated 			= "evaluated";
 	public final static String propertyName_violated 			= "violated";
-	public final static String propertyName_mStatus 			= "status"; 	/* Monitoring status: The value meaning depends on the application.
-																					For a requirement 0 =not evaluated, 1=evaluated and not violated, 2=evaluated and violated
-																			 	*/
 	
+	/*
+	 * Monitoring status: The value meaning depends on the application.
+	 * For a requirement 0 =not evaluated, 1=evaluated and not violated, 2=evaluated and violated
+	 */
+	public final static String propertyName_mStatus 			= "status"; 
+
 	public static final String propertyName_encapsulated 		= "encapsulated";
 	public static final String propertyName_expandable 			= "expandable";
-	
 	
 	public static final String propertyName_partial 			= "partial";
 	
@@ -167,6 +168,8 @@ public class Constants {
 	
 	public static final String propertyName_operation 				= "operation";
 	public static final String propertyName_preferredProviders 		= "preferredProviders";
+
+	// used for preferredProviders definition: E.g. "clientPath.x.var1 ##Q## preferredProviderPath.x.var" 
 	public static final String preferredProvidersAssignmentSeparator	= "##Q##";
 	
 	public static final String valueClientsNodeName 				= "Clients";
@@ -313,14 +316,13 @@ public class Constants {
 
 	
 	
-	/** The Constant numberOfItemsInCreateNewElementsDiologs. */
 	public final static Integer numberOfItemsInCreateNewElementsDiologs = 5;
 	public final static String MODELICAML_PROFILE_URI = "pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"; //$NON-NLS-1$
 	
 	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.views.modelexplorer.modelexplorer";
+
 	public final static String VIEW_COMPONENT_TREE_VIEW = "org.openmodelica.modelicaml.view.componentstree";
-	
-	/** The Constant ID_VALIDATION_VIEW. */
+	public final static String VIEW_COMPONENT_VALUE_BINDINGS = "org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView";
 	public final static String VIEW_VALIDATION = "org.openmodelica.modelicaml.gen.modelica.validation";
 	
 	
@@ -337,6 +339,7 @@ public class Constants {
 	
 	public static final String UKNOWN_NAME 		= "UKNONWN";
 	
+	// used for in HTML report
 	public final static String linkDelimiter = "#@#";
 	
 }

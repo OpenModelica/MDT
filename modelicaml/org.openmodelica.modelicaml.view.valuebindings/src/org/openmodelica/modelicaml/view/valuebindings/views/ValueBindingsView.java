@@ -97,12 +97,14 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorHandler;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorsContainerHandler;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.ElementSelectionDialog;
+import org.openmodelica.modelicaml.view.valuebindings.dialogs.SearchDialog;
 import org.openmodelica.modelicaml.view.valuebindings.display.ViewLabelProviderStyledCell;
 import org.openmodelica.modelicaml.view.valuebindings.handlers.DeleteCommandHandler;
 import org.openmodelica.modelicaml.view.valuebindings.listeners.DropListener;
@@ -154,6 +156,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private Action actionShowRequiredClients;
 
 	private Action actionClear;
+
+	private Action actionFind;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
@@ -413,6 +417,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
+		
+		manager.add(actionFind);
+		manager.add(new Separator());
 		manager.add(actionClear);
 		manager.add(new Separator());
 		manager.add(actionReload);
@@ -641,6 +648,20 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionClear.setToolTipText("Clear");
 		actionClear.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
+		
+		
+		
+		
+		
+		actionFind = new Action("actionFind") {
+			public void run() {
+				SearchDialog searchDialog = new SearchDialog(ModelicaMLServices.getShell(), viewer, invisibleRoot, actionShowClientPerspective.isChecked(), actionShowProviderPerspective.isChecked());
+				searchDialog.open();
+			}
+		};
+		actionFind.setText("Clear");
+		actionFind.setToolTipText("Clear");
+		actionFind.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/find.png"));
 		
 		
 		
@@ -949,59 +970,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 							viewer.remove((TreeObject)obj);
 							viewer.refresh();
 						}
-						
-						
-//						// START Removed: Old approach using stereotype properties for linking ...
-//						final TreeParent valueMediator = getValueMediator((TreeObject)obj);
-//						if (valueMediator != null) {
-//							final EObject valueMediatorSteretypeApplication = valueMediator.getUmlElement().getStereotypeApplication(valueMediator.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueMediator));
-//							
-//							TreeObject itemToBeDeleted = (TreeObject)obj;
-//							Stereotype itemToBeDeletedStereotype = null;
-//							String itemToBeDeletedStereotypePropertyName = null;
-//
-//							if ( itemToBeDeleted.isValueClient() ) {
-//								itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueClient);
-//								itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueClient_obtainsValueFrom;
-//							} else if ( itemToBeDeleted.isValueProvider() ) {
-//								itemToBeDeletedStereotype = itemToBeDeleted.getUmlElement().getAppliedStereotype(Constants.stereotypeQName_ValueProvider);
-//								itemToBeDeletedStereotypePropertyName = Constants.stereotypeQName_ValueProvider_providesValueFor;
-//							}
-//							
-//							if ( itemToBeDeletedStereotype != null && itemToBeDeletedStereotypePropertyName != null) {
-//								final Object exisitngList = itemToBeDeleted.getUmlElement().getValue(itemToBeDeletedStereotype, itemToBeDeletedStereotypePropertyName);
-//								
-//								if (exisitngList instanceof EList && containsObject((EList) exisitngList, valueMediator.getUmlElement())) {
-////									########## storing start
-//									TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-//									CompoundCommand cc = new CompoundCommand("Delete value mediator reference");
-//									Command command = new RecordingCommand(editingDomain) {
-//										@Override
-//										protected void doExecute() {
-//												// Important: use the getStereotypeApplication to get an EObject! 
-//												DynamicEObjectImpl eObject =(DynamicEObjectImpl)valueMediatorSteretypeApplication;
-//												
-//												// add value to the list
-//												((EList)exisitngList).remove(eObject);
-//										}
-//									};
-//									cc.append(command);
-//									editingDomain.getCommandStack().execute(cc);
-//								}
-//							}
-//							
-//							TreeParent parent = itemToBeDeleted.getParent();
-//							if (parent != null ) {
-//								parent.removeChild(itemToBeDeleted);
-//							}
-//							viewer.remove(itemToBeDeleted);
-//							viewer.refresh();
-//						}
-//						// END Removed: Old approach using stereotype properties for linking ...
 					}
 				}
-
-				
 			}
 		};
 		actionDeleteReference.setText("Delete this reference");
@@ -1041,7 +1011,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 								
 								if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
 									// get the value bindings view
-									IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView");
+									IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_COMPONENT_VALUE_BINDINGS);
 									ValueBindingsView myView = null;
 									
 									if (view instanceof ValueBindingsView) {

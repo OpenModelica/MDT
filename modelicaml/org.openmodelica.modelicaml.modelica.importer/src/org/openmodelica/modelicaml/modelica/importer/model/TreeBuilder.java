@@ -1114,7 +1114,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 						
 						if (root instanceof NamedElement) {
 							ModelicaModelProxiesCollector pc = new ModelicaModelProxiesCollector();
-							pc.collectElementsFromModel(root, Constants.stereotypeQName_ModelicaModelProxy);
+							pc.setStereotypeQName(Constants.stereotypeQName_ModelicaModelProxy);
+//							pc.collectElementsFromModel(root, Constants.stereotypeQName_ModelicaModelProxy);
+							pc.collectElementsFromModel(root);
 		//					proxies = pc.getElements();
 							proxies.addAll(pc.getElements());
 							

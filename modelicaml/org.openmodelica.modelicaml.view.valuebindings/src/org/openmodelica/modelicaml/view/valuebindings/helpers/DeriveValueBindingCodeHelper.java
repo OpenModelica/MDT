@@ -514,18 +514,6 @@ public class DeriveValueBindingCodeHelper {
 		// Get provider elements for mediator 
 		HashSet<Element> mediatorsForClient = null;
 		
-//		// selectedClientElement is used to call this method without a previous search of the client.
-//		if (selectedClientElement != null ) { 
-//			mediatorsForClient = dataCollection.getClientToMediators().get(selectedClientElement);
-//		}
-
-//		if (clientElement == selectedTreeItem.getUmlElement()) {
-//			mediatorsForClient = dataCollection.getClientToMediators().get(clientElement);
-//		}
-//		else {
-//			mediatorsForClient = mediatorsContainingClientOperationScript;
-//		}
-		
 		// if a search for the client was done before and there is an upper level client was found that has references to the mediators
 		// -> use this list of mediators, otherwise get the mediators from the client UML element.
 		if (mediatorsContainingClientOperationScript.size() == 0) { 

@@ -274,7 +274,7 @@ public class TraceabilityView extends ViewPart {
 		ISelection selection = viewer.getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
 		if (obj instanceof ScenarioItem || (obj instanceof RequirementItem && !treeBuilder.hasScenarios((TreeObject) obj))) {
-			manager.add(actionCreateVerificationModel);
+			manager.add(actionCreateVerificationModel); // TODO: does not work, needs to be debugged. 
 		}
 		
 		manager.add(new Separator());
@@ -430,7 +430,10 @@ public class TraceabilityView extends ViewPart {
 									
 									mg.setTargetPackage(treeBuilder.getTargetPackage());
 									
-									mg.createSimulationModels(treeBuilder.getSelectedElement());
+									// Note, this is important! We generated models based on known relations between scenario and requierments
+									mg.setMode(Constants.MODE_VEM_GENERATION);
+									
+									mg.generateSimulationModels(treeBuilder.getSelectedElement());
 								}
 							};
 							cc.append(command);
@@ -467,9 +470,9 @@ public class TraceabilityView extends ViewPart {
 							// prepare instantiation so that it can be reused for other iterations
 							HashMap<Element, ClassInstantiation> preparedModelInstantiations = new HashMap<Element, ClassInstantiation>();
 							// prepare the system model
-							preparedModelInstantiations.put(treeBuilder.getSelectedElement(), ModelicaMLServices.getModelInstantiation(treeBuilder.getSelectedElement(), preparedModelInstantiations));
-							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllRequirements(), preparedModelInstantiations));
-							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllScenarios(), preparedModelInstantiations));
+							preparedModelInstantiations.put(treeBuilder.getSelectedElement(), ModelicaMLServices.getModelInstantiation(treeBuilder.getSelectedElement(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators()));
+							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllRequirements(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators()));
+							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllScenarios(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators()));
 							
 							final VerModelForRequirementsWithoutScenarioCreator mc = new VerModelForRequirementsWithoutScenarioCreator(
 									treeBuilder.getSelectedElement(), 

@@ -55,7 +55,7 @@ import org.openmodelica.modelicaml.common.services.ElementsCollector;
 public class ValueBindingsDataCollector implements IRunnableWithProgress {
 
 	// all mediators found
-	private HashSet<Element> allMediators = new HashSet<Element>();
+	private HashSet<Element> allMediators;
 
 	// all mediators that are used in the selected instantiated class hierarchy
 	private HashSet<Element> usedMediators = new HashSet<Element>();
@@ -222,11 +222,13 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 	public void collectMeditorsDataFromUmlModel(EObject umlRootElement, Set<Element> umlElementsInInstantiationTree){
 		if (umlRootElement instanceof NamedElement) {
 			
-			// collect mediators if they were not provided yet
-			if (allMediators == null || allMediators.size() == 0) {
+			// collect mediators if they were not collected yet
+			if (allMediators == null) {
 
 				ElementsCollector ec = new ElementsCollector();
-				ec.collectElementsFromModel(umlRootElement, Constants.stereotypeQName_ValueMediator);
+				ec.setStereotypeQName(Constants.stereotypeQName_ValueMediator);
+				ec.collectElementsFromModel(umlRootElement);
+//				ec.collectElementsFromModel(umlRootElement, Constants.stereotypeQName_ValueMediator);
 				allMediators = ec.getElements();
 			}
 			
@@ -358,11 +360,11 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 	
 	
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-	    monitor.beginTask("Value Bindings data collecting is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
+	    monitor.beginTask("Bindings data collecting is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
 	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
 	      Thread.sleep(INCREMENT);
 	      monitor.worked(INCREMENT);
-	      if (total == TOTAL_TIME / 8) monitor.subTask("Searching for Value Mediators ...");
+	      if (total == TOTAL_TIME / 8) monitor.subTask("Searching for Mediators ...");
 	      if (total == TOTAL_TIME / 4) monitor.subTask("Analyzing the instantiation tree ...");
 	      if (total == TOTAL_TIME / 2) monitor.subTask("Sorting data ...");
 	    }

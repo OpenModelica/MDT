@@ -14,12 +14,13 @@ public class ElementFinder extends ElementsCollector {
 		
 		if (umlRootElement != null) {
 			// collect elements
-			collectElementsFromModel(umlRootElement, null);
+//			collectElementsFromModel(umlRootElement, null);
+			collectElementsFromModel(umlRootElement);
 		}
 	}
 	
 	@Override
-	protected void collectElement(Element element, boolean isImported) {
+	protected void collect(Element element, boolean isImported) {
 		
 		// collect elements
 		if (element instanceof NamedElement 
@@ -30,7 +31,7 @@ public class ElementFinder extends ElementsCollector {
 			elements.add(element) ;
 			
 			if (isImported) {
-				importedElements.add(element);
+				importedPackages.add(element);
 			}
 		}
 	}

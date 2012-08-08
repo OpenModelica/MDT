@@ -88,9 +88,6 @@ public class VeMScenarioReqCombinationsCreator {
 	// All models and their instantiation graphs
 	private HashMap<Element, ClassInstantiation> modelToItsInstantiation = new HashMap<Element, ClassInstantiation>();
 	
-	// prepared instantiations that were passed
-//	private HashMap<Element, TreeParent> preparedModelsToInstantiations;
-
 	// Virtual instantiation root. Its direct children are the instantiation roots of all models provided and collected. 
 	private TreeParent virtualInstantiationTreeRoot;
 
@@ -170,7 +167,7 @@ public class VeMScenarioReqCombinationsCreator {
 		instantiateAll(allModels);
 		
 		// validate this combination (checks only the system model and the verification scenario)
-		validateCombination();
+		validateCombinationScenarioAndSystem();
 		
 		// validate requirements 
 		validateRequirementsConsistency();
@@ -247,40 +244,6 @@ public class VeMScenarioReqCombinationsCreator {
 							}
 						}
 					}
-					
-//					for (Element dep : ((NamedElement)element).getClientDependencies()) {
-//						Stereotype s = dep.getAppliedStereotype(Constants.stereotypeQName_Requires);
-//						if (s != null) {
-////							Object list = dep.getValue(s, Constants.propertyName_onlyIncombinationWith);
-//							Object isAlways = dep.getValue(s, Constants.propertyName_always);
-//
-//							Element modelFound = ((Dependency)dep).getTargets().get(0);
-//							
-//							// check if this model should be discarded.
-//							if (initialSetOfModels.contains(modelFound)) {
-//								if (modelFound instanceof NamedElement) {
-//									
-//									String message = "DISCARDED (01): " +
-//											"The additional model search found '"+((NamedElement)modelFound).getQualifiedName()
-//											+ "'\n referenced by '"+((NamedElement)element).getQualifiedName()+"'.\n"
-//											+ "This model was already found once. This reference is discarded.";
-//									
-//									addToLog(message);
-//								}
-//							}
-//							else {
-//								// add to the collected additional models 
-//								collectedAdditionalModels.add(modelFound );
-//								
-//								// add to the overall list of collected additional models
-//								allCollectedAdditionalModels.add( modelFound );
-//								
-//								if (isAlways instanceof Boolean && (Boolean)isAlways) {
-//									alwaysInclude.add(modelFound);
-//								}
-//							}
-//						}
-//					}
 				}
 			}
 			
@@ -302,11 +265,6 @@ public class VeMScenarioReqCombinationsCreator {
 			virtualInstantiationTreeRoot.removeChild(instantiatedModel);
 		}
 
-		// clear the list
-//		allModelInstantiations.clear();
-//		modelToItsInstantiation.clear();
-//		modelToItsInstantiation.putAll(preparedModelsToInstantiations);
-		
 		// new instantiations
 		for (Element model : models) {
 			if (model instanceof Class) {
@@ -332,25 +290,20 @@ public class VeMScenarioReqCombinationsCreator {
 					modelToItsInstantiation.put(model, ci_model);
 				}
 				
-				// instantiate model
-//				ClassInstantiation ci_model = new ClassInstantiation((Class) model, true);
-//				ci_model.createTree();
-				
 				// add the instantiated model to the root
 				virtualInstantiationTreeRoot.addChild(newChild);
 				
 				// add  the instantiation object to the map. 
 				allModelInstantiations.add(newChild);
 				
-				// add to model -> its instantiation map
-//				modelToItsInstantiation.put(model, newChild);
 			}
 		}
 	}
 	
-	private void validateCombination(){
+	private void validateCombinationScenarioAndSystem(){
+//		System.err.println("Starting the validation of combination of scenario and system model combination...");
+
 		// Note, isDiscarded is false by default. There is no need to set it to false.
-		
 		TreeParent systemModelInstantiationTreeRoot = modelToItsInstantiation.get(this.systemModel).getTreeRoot();
 		TreeParent testScenarioInstantiationTreeRoot = modelToItsInstantiation.get(this.testScenario).getTreeRoot();
 		
@@ -383,9 +336,14 @@ public class VeMScenarioReqCombinationsCreator {
 			setDiscarded(true);
 			setError(true);
 		}
+	
+//		System.err.println("Completed the validation of combination of scenario and system model combination.");
 	}
 	
+	
 	private void validateRequirementsConsistency(){
+//		System.err.println("Starting the validation of system model, scenario and requirements.");
+		
 		for (Element requirement : requirements) {
 			TreeParent requirementInstantiationTreeRootItem = modelToItsInstantiation.get(requirement).getTreeRoot();
 			if (requirementInstantiationTreeRootItem != null) {
@@ -402,7 +360,10 @@ public class VeMScenarioReqCombinationsCreator {
 				}
 			}
 		}
+		
+//		System.err.println("Completed the validation of system model, scenario and requirements.");
 	}
+	
 	
 	private boolean isAtLeastOneProviderUsed(TreeParent virtualInstantiationTreeRoot, TreeParent treeParentToStartTheCheckOn){
 		
@@ -453,10 +414,8 @@ public class VeMScenarioReqCombinationsCreator {
 		 */
 		boolean allRequiredClientsAreSatisfied = true;
 		
-		// TODO: this leads to strange arbitrary results! 
+		// TODO: check the performance 
 		vbc.updateAllBindings(valueMediatorsPackage, null, treeParentToStartTheCheckOn, virtualInstantiationTreeRoot, false, true, false, true);
-		// this seams to work ...
-//		vbc.updateAllBindings(valueMediatorsPackage, null, null, null, treeParentToStartTheCheckOn, virtualInstantiationTreeRoot, false, true, false, true);
 		
 		if ( vbc.getAllRequiredClientsFound().size() > 0 
 				&& !vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllRequiredClientsFound())) {

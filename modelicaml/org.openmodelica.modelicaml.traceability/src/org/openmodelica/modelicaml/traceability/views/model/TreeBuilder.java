@@ -248,14 +248,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 		requirementsAll.addAll(vsc.getAllRequirements());
 
-		preparedModelInstantiations.put(selectedElement, ModelicaMLServices.getModelInstantiation(selectedElement, preparedModelInstantiations));
+		preparedModelInstantiations.put(selectedElement, ModelicaMLServices.getModelInstantiation(selectedElement, preparedModelInstantiations, getVsc().getAllMediators()));
 		
 		for (Element scenario : vsc.getAllScenarios() ) {
 			
 			if (scenario instanceof Class) {
 				
 				Class scenarioToBeUsed = (Class) scenario;
-				preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations));
+				preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations, getVsc().getAllMediators()));
 
 				// get requirements
 				HashSet<Element> reqList = vsc.getScenarioToReq().get(scenarioToBeUsed);
@@ -278,8 +278,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 				}
 				
 				
-				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations));
-				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(vsc.getAlwaysInclude(), preparedModelInstantiations));
+				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations, getVsc().getAllMediators()));
+				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(vsc.getAlwaysInclude(), preparedModelInstantiations, getVsc().getAllMediators()));
 				
 				VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator((Class) selectedElement, 
 						scenarioToBeUsed, 
@@ -293,7 +293,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 				// add to map
 				scenarioToVerificationModelCombination.put(scenarioToBeUsed, tsmc);
 				
-				// add to selected or discarded test scenarios
+				// add to selected or discarded scenarios
 				if (!tsmc.isDiscarded()) {
 					scenariosValid.add(scenarioToBeUsed);
 				}

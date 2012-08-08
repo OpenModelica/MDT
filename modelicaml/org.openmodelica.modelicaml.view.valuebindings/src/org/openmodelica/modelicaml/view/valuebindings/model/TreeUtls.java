@@ -290,7 +290,7 @@ public class TreeUtls {
 				}
 			}
 			else {
-				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Invalid mediator reference for " + dependencyTargetItem.getName());
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Invalid Mediator reference for " + dependencyTargetItem.getName());
 				return false;
 			}
 		}

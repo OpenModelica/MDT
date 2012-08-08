@@ -269,7 +269,9 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 	
 	public boolean setTestModels(Element rootModel){
 		ElementsCollector ec = new ElementsCollector();
-		ec.collectElementsFromModel(rootModel, Constants.stereotypeQName_VerificationModel);
+		ec.setStereotypeQName(Constants.stereotypeQName_VerificationModel);
+//		ec.collectElementsFromModel(rootModel, Constants.stereotypeQName_VerificationModel);
+		ec.collectElementsFromModel(rootModel);
 		
 		SelectSimulationModelsToExecuteDialog dialog = new SelectSimulationModelsToExecuteDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), ec.getElements());
 		dialog.open();

@@ -10,7 +10,7 @@ public class ModelicaModelProxiesCollector extends ElementsCollector {
 	 *  This method can be overridden for specific collections
 	 */
 	@Override
-	protected void collectElement(Element element, boolean isImported){
+	protected void collect(Element element, boolean isImported){
 		
 		// collect elements
 		// avoid duplicates that can occur due to the multiple imports of the same elements
@@ -19,7 +19,7 @@ public class ModelicaModelProxiesCollector extends ElementsCollector {
 			elements.add(element);
 			
 			if (isImported) {
-				importedElements.add(element);
+				importedPackages.add(element);
 			}
 			
 		}

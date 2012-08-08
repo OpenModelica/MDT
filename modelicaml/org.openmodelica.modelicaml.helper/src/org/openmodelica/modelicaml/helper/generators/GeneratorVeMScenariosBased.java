@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Observable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -36,7 +36,8 @@ import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCo
 import org.openmodelica.modelicaml.helper.dialogs.SelectScenariosAndRequirementsDialog;
 import org.openmodelica.modelicaml.helper.structures.VeMScenarioReqCombinationsCreator;
 
-public class GeneratorVeMScenariosBased extends Observable implements IRunnableWithProgress {
+
+public class GeneratorVeMScenariosBased {
 	
 	/*
 	 * Possible combinations, each containing an initial set (1 system model, 1 scenario and n requirements) and 
@@ -78,7 +79,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	private HashSet<Element> allRequirements = new HashSet<Element>();
 	// all scenarios that were collected from the specified test scenarios package
 	private HashSet<Element> allTestScenarios = new HashSet<Element>();
-	
+
 	// all test scenarios that were selected for the selected system model
 	private HashSet<Element> testScenariosToBeInstantiated = new HashSet<Element>();
 	// all test scenarios that discarded because they cannot be used for stimulating the selected system model.
@@ -87,9 +88,8 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	// the set of test scenario after user selection
 	private HashSet<Element> userSelectedTestScenarios = new HashSet<Element>();
 	
-	
-	// For each requirement: All scenarios that have positive (<<UseToVerify>>) relations to the requirement
 	/*
+	 * For each requirement: All scenarios that have positive (<<UseToVerify>>) relations to the requirement
 	 * This information is used in the "automatic mode" to check if a requirement has scenario candidates 
 	 * and does not need to be considered with other scenarios
 	 */
@@ -131,9 +131,10 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	
 	// indicates if this generator is used for discovery of relations or verification models generation
 	private int mode;
+
+	private ProgressMonitorDialog progressDialog;
+	private IProgressMonitor progressMonitor;
 	
-	
-	// Constructor ****************************************************************************************************************
 	
 	
 	public GeneratorVeMScenariosBased(
@@ -149,9 +150,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			boolean includeRequirementsWitnUnknownRelations,
 			boolean minimizeNumberOfRequirementInstantiations,
 			int mode) {
-		
-		super();
-		
+
 		this.rootPackage = rootPackage;
 		
 		this.systemModels = sourceModels;
@@ -169,24 +168,28 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
 		this.minimizeNumberOfRequirementInstantiations = minimizeNumberOfRequirementInstantiations;
 		
+		/*
+		 * Pre-collect requirements, scenarios and mediators in order 
+		 * to avoid new search for each class instantiation.
+		 */
 		collectRequirementsAndScenarios();
 	}
 	
 	
 
 	public GeneratorVeMScenariosBased() {
-		
-		super();
+		/*
+		 * Pre-collect requirements, scenarios and mediators in order 
+		 * to avoid new search for each class instantiation.
+		 */
 		
 		collectRequirementsAndScenarios();
 	}
 	
 	
 	
-
-
-	// Combination Generation *******************************************************************************************
 	
+	// Data collection *******************************************************************************************
 	private void collectRequirementsAndScenarios(){
 
 		// collect scenarios and requirements
@@ -207,7 +210,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			/*
 			 * Get all requirements and fill the requirements -> scenario candidate map
 			 * This information is used in the "automatic mode" to check if a requirement has scenario candidates 
-			 * and does not need to be considered with other scenarios. It implies that a requirement is only included
+			 * and does not need to be combined with other scenarios. It implies that a requirement is only included
 			 * into a model with a certain scenario if and only if this scenario has an 
 			 * explicitly defined relation (i.e. <<UseToVerify>> relations) to this requirement.
 			 */
@@ -219,9 +222,10 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			}
 		}
 	}
-	
-	
-	
+
+
+	// Generation *******************************************************************************************
+		
 	public void generate(){
 		
 		if (systemModels != null) {
@@ -230,58 +234,72 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			 * instantiate all possible combinations of test scenarios and requirements that 
 			 * can be tested using the given test scenario.
 			 */
-			for (Element systemModel : systemModels) {
+			for (final Element systemModel : systemModels) {
 
 				// clear all lists because the translation for each source model is individual.
 				clearAllLists();
 				
-				Shell shell = ModelicaMLServices.getShell();
 				
+				// create combinations
+				progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+				progressMonitor = progressDialog.getProgressMonitor();
 				try {
-					new ProgressMonitorDialog(shell).run(true, true, this);
-
-					// create combinations
-					createCombinationsForSimulationModels(systemModel);
-
+					progressDialog.run(false, true, new IRunnableWithProgress() {
+						
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							
+							// create combinations
+							createCombinationsForSimulationModels(systemModel);
+					        
+							monitor.done();
+						}
+					});
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					MessageDialog.openError(shell, "Simulation Models Generation Process Error", "It was not possible to invoke the generation of models.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoce the generator. Please try it again.");
 				} catch (InterruptedException e) {
-					e.printStackTrace();
-					MessageDialog.openError(shell, "Simulation Models Generation Process Abort", "The generation of models was canceled.");
+					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
 				}
-				
-				// generate simulation models for the source model 
-				generateSimulationModels(systemModel);
 
+				
+				// generate simulation models for the selected system model 
+				generateSimulationModels(systemModel);
 			}
 		}
 	}
 	
 
-	
+	// Combination *******************************************************************************************
+
 	private void createCombinationsForSimulationModels(Element systemeModel){
 		
-		monitorText1 = "Collecting data ...";
-		monitorText2 = "Instantiating models and analyzing combinations ...";
+		progressMonitor.beginTask("Creating combinations of system model, scenarios and requirements ...", verificationScenariosCollector.getAllScenarios().size());
 		
 		if (systemeModel instanceof Class) {
 			
 			Class systemModel = (Class) systemeModel;
+			progressMonitor.subTask("Instantiating: " + ModelicaMLServices.getName(systemModel));
 			// prepare instantiation so that it can be reused for other iterations
-			preparedModelInstantiations.put(systemModel, ModelicaMLServices.getModelInstantiation(systemModel, preparedModelInstantiations));
+			preparedModelInstantiations.put(systemModel, ModelicaMLServices.getModelInstantiation(systemModel, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
+			
+			int counter = 0;
 			
 			/*
 			 * Sort scenarios in order to make generation be deterministic (at least in terms of scenario names and associated combinations of requirements)
 			 */
-			for (Element testScenario : ModelicaMLServices.getSortedByName(verificationScenariosCollector.getAllScenarios())) {
+			for (Element scenario : ModelicaMLServices.getSortedByName(verificationScenariosCollector.getAllScenarios())) {
 				
-				if (testScenario instanceof Class) {
+				// progress counter
+				progressMonitor.setTaskName("Creating combination " + counter + " of " + verificationScenariosCollector.getAllScenarios().size());
+				progressMonitor.worked(counter);
+				counter ++;
+				
+				if (scenario instanceof Class) {
 					
-					Class scenarioToBeUsed = (Class) testScenario;
+					Class scenarioToBeUsed = (Class) scenario;
+					progressMonitor.subTask("Instantiating: " + ModelicaMLServices.getName(scenarioToBeUsed));
 					// prepare instantiation so that it can be reused for other iterations
-					preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations));
-
+					preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
 
 					// get requirements according to the requirements selection options settings
 					HashSet<Element> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UseToVerify);
@@ -355,8 +373,8 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 										 */
 										else if (scenarioCandidates.size() > 0 && isMinimizeNumberOfRequirementInstantiations()) {
 											String candidateNames = "";
-											for (Element scenario : scenarioCandidates) {
-												candidateNames += "              - " + ModelicaMLServices.getQualifiedName(scenario) + "\n"; 
+											for (Element scenarioCandidate : scenarioCandidates) {
+												candidateNames += "              - " + ModelicaMLServices.getQualifiedName(scenarioCandidate) + "\n"; 
 											}
 											String message = "DISCARDED: Requirement '" + ModelicaMLServices.getQualifiedName(requirement) + "' was not combined with the scenario " +
 													"'" + scenarioToBeUsed.getQualifiedName() + "' an other scenario will be used (that references this requirement with 'useToVerify' relation): \n" + candidateNames ;
@@ -401,18 +419,20 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						addToLog(message);
 					}
 					
-					
+					progressMonitor.subTask("Instantiating requirements ...");
 					// prepare requirement instantiations to be reused for 
-					preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations));
+					preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
 
 					// prepare all additional models instantiations
 					HashSet<Element> addidtionalModels = new HashSet<Element>();
 					for (Element addModel : verificationScenariosCollector.getModelToItsAdditionalModels().keySet()) {
 						addidtionalModels.addAll(verificationScenariosCollector.getModelToItsAdditionalModels().get(addModel));
 					}
-					preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(addidtionalModels, preparedModelInstantiations));
+					progressMonitor.subTask("Instantiating additional models ...");
+					preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(addidtionalModels, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
 
-					
+					progressMonitor.subTask("Validating the combination of: " + ModelicaMLServices.getName(systemModel) + ", " + ModelicaMLServices.getName(scenarioToBeUsed)
+							+ ", requirements and all additional models ...");
 					// validate the combination
 					VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator(systemModel, 
 							scenarioToBeUsed, 
@@ -422,6 +442,11 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 							verificationScenariosCollector.getModelToItsAdditionalModels(),
 							preparedModelInstantiations,
 							verificationScenariosCollector);
+					
+					
+					progressMonitor.subTask("Post-processing the combination of: " + ModelicaMLServices.getName(systemModel) + ", " + ModelicaMLServices.getName(scenarioToBeUsed)
+							+ ", requirements and all additional models ...");
+					
 					
 					// add all instantiations in order to avoid new instantiations 
 					preparedModelInstantiations.putAll(tsmc.getModelToItsInstantiation());
@@ -450,6 +475,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 
 					// add log messages
 					addToLog(tsmc.getLog().trim());
+					
 				}
 				else {
 					String message = "NOT VALID: Scenario '" + systemeModel.toString() + "' is not a UML::Class.";
@@ -466,10 +492,9 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	
 	
 
+	// Models Generation *******************************************************************************************
 
-
-
-	private void generateSimulationModels(Element sourceModel){
+	public void generateSimulationModels(final Element sourceModel){
 		
 		String errorTitle = "Verification Models Generation Helper";
 		String errorMessage = "No scenarios were found that can be used to stimulate the model " +
@@ -478,8 +503,56 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		if (verificationScenariosCollector.getAllScenarios().size() > 0) {
 			if (testScenariosToBeInstantiated.size() > 0) {
 				
-				// Create test simulation models
-				createSimulationModels(sourceModel);
+				
+				/* GUI to show the collected and discarded test scenarios and requirements.
+				 * It should enable a selection of test scenarios and requirements to be finally instantiated. 
+				 */
+		
+				Shell shell = ModelicaMLServices.getShell();
+		
+				final SelectScenariosAndRequirementsDialog dialog = new SelectScenariosAndRequirementsDialog(
+						shell, 
+						testScenariosToBeInstantiated, 
+						testScenariosDiscarded, 
+						requirementsToBeInstantiated, 
+						requirementsDiscarded, 
+						sourceModel,
+						verificationScenariosCollector,
+						getLog(),
+						scenarioToVerificationModelCombination,
+						includeRequirementsWithPositiveRelations,
+						includeRequirementsWithNegativeRelations,
+						includeRequirementsWitnUnknownRelations,
+						mode);
+				
+				dialog.open();
+				
+				if (dialog.getReturnCode() == IDialogConstants.CANCEL_ID) { // Cancel return code
+					setTestSimulationModelGenerationCanceled(true); // indicate abort and stop here. 
+				}
+				else {
+					
+					// generate models
+					progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+					progressMonitor = progressDialog.getProgressMonitor();
+					try {
+						progressDialog.run(false, true, new IRunnableWithProgress() {
+							
+							@Override
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								
+								// Create simulation models
+								createSimulationModels(sourceModel, dialog.getSelectedScenariosWithRequirements());
+								
+								monitor.done();
+							}
+						});
+					} catch (InvocationTargetException e) {
+						MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoce the generator. Please try it again.");
+					} catch (InterruptedException e) {
+						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
+					}
+				}
 			}
 			else {
 				reportError(errorTitle, errorMessage);
@@ -490,58 +563,22 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		}
 	}
 	
-	
-	
-	/*
-	 * Models Creation *********************************************************************************************************
-	 */
-	
-	public void createSimulationModels(Element sourceModel){
-		
-		/* GUI to show the collected and discarded test scenarios and requirements.
-		 * It should enable a selection of test scenarios and requirements to be finally instantiated. 
-		 */
 
-		Shell shell = ModelicaMLServices.getShell();
+	private void createSimulationModels(Element sourceModel, HashMap<Element, HashSet<Element>> userSelectedScenariosAndRequirements){
 
-		SelectScenariosAndRequirementsDialog dialog = new SelectScenariosAndRequirementsDialog(
-				shell, 
-				testScenariosToBeInstantiated, 
-				testScenariosDiscarded, 
-				requirementsToBeInstantiated, 
-				requirementsDiscarded, 
-				sourceModel,
-				verificationScenariosCollector,
-				getLog(),
-				scenarioToVerificationModelCombination,
-				includeRequirementsWithPositiveRelations,
-				includeRequirementsWithNegativeRelations,
-				includeRequirementsWitnUnknownRelations,
-				mode);
-		
-		dialog.open();
-		
-		if (dialog.getReturnCode() == 1) { // Cancel return code
-			setTestSimulationModelGenerationCanceled(true); // indicate abort and stop here. 
-		}
-		else {
+		if (!isTestSimulationModelGenerationCanceled()) {
 			
-			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
-			progressDialog.getProgressMonitor().setTaskName("Creating models...");
-			progressDialog.open();
+			// Get the selected scenarios and requirements
+			userSelectedTestScenarios.addAll(userSelectedScenariosAndRequirements.keySet());
 			
-			// Get the selected test scenarios and requirements from the dialog.  
-			HashMap<Element,HashSet<Element>> userSelectedTestScenariosAndRequirements = dialog.getSelectedTestScenariosWithRequirements();
-			userSelectedTestScenarios.addAll(userSelectedTestScenariosAndRequirements.keySet());
+			progressMonitor.beginTask("Creating models...", userSelectedTestScenarios.size());
 			
 			if (userSelectedTestScenarios.size() > 0) {
+				
 				// clear log. the tsmc objects still have all logs stored...
-				// create a new (final) log using addToLog(). 
+				// TODO: create a new (final) log using addToLog(). 
 				clearLog();
 				
-				monitorText1 = "Preparing models to be created ...";
-				monitorText2 = "Creating models...";
-
 				String pkgName = Constants.simModelsPackageNamePrefix + ((NamedElement)sourceModel).getName();
 				
 				if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
@@ -571,7 +608,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 				for (Element testScenario : userSelectedTestScenariosSorted) {
 					
 					boolean scenarioHasRequirements = false;
-					HashSet<Element> scenarioRequirements = userSelectedTestScenariosAndRequirements.get(testScenario);
+					HashSet<Element> scenarioRequirements = userSelectedScenariosAndRequirements.get(testScenario);
 					if (scenarioRequirements != null && scenarioRequirements.size() > 0) {
 						scenarioHasRequirements = true;
 					}
@@ -589,9 +626,9 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						}
 						
 						// set progress dialog
-						progressDialog.getProgressMonitor().setTaskName("Creating model: " + simulationModelName);
-						progressDialog.getProgressMonitor().internalWorked( (userSelectedTestScenariosSorted.size() - counter)/100);
-						progressDialog.getProgressMonitor().worked(counter);
+						progressMonitor.worked(counter);
+						progressMonitor.setTaskName("Creating model " + counter + " of " + userSelectedTestScenarios.size());
+						progressMonitor.subTask("Creating: " + simulationModelName);
 
 						// create VeM (verification model which is a simulation model)
 						Class simulationModel = ((Package)simulationModelsPackage).createOwnedClass(simulationModelName, false);
@@ -636,9 +673,9 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						
 						//************************************************************************************
 						// Remove requirements that were unselected
-						if (userSelectedTestScenariosAndRequirements.get(testScenario) != null) {
+						if (userSelectedScenariosAndRequirements.get(testScenario) != null) {
 							// remove all that were unselected by user
-							tsmc.removeNotUsedRequirements(userSelectedTestScenariosAndRequirements.get(testScenario));
+							tsmc.removeNotUsedRequirements(userSelectedScenariosAndRequirements.get(testScenario));
 						}
 						else {
 							// remove all requirements
@@ -803,7 +840,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 								
 								String componentName = StringUtls.replaceSpecChar(ModelicaMLServices.getName(component));
 
-								ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(((Property)component).getType(), preparedModelInstantiationsCopy);
+								ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(((Property)component).getType(), preparedModelInstantiationsCopy, getVerificationScenariosCollector().getAllMediators());
 								
 								/*
 								 * Special case for requirements which are instantiated multiple times in this VeM.
@@ -909,7 +946,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 						 */
 						CreatorVerificationVerdictElements.createVerificationVerdictElements(simulationModel);
 			
-						// increase counter 
+						// increase created models counter 
 						counter++;
 					}
 				}
@@ -917,9 +954,6 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			else {
 				setTestSimulationModelGenerationCanceled(true); // indicate abort and stop here. 
 			}
-			
-			// close progress dialog
-			progressDialog.close();
 		}
 	}
 	
@@ -1003,9 +1037,6 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	
 	
 	
-	
-	
-	
 	private HashSet<Element> getRequirements(Element scenario, String stereotypeQName){
 		HashSet<Element> requirements = new HashSet<Element>();
 		
@@ -1028,8 +1059,7 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	}
 
 	private void reportError(String title, String message){
-		Shell shell = ModelicaMLServices.getShell();
-		MessageDialog.openError(shell, title, message);
+		MessageDialog.openError(ModelicaMLServices.getShell(), title, message);
 	}
 
 	
@@ -1044,7 +1074,6 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 	
 	
 	private void addToLog(String msg){
-//		this.log = this.log + "\n" + msg;
 		this.log = this.log + msg + "\n";
 	}
 
@@ -1069,44 +1098,6 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 		}
 	}
 
-	
-	
-	// The total sleep time
-	private static final int TOTAL_TIME = 100;
-	// The increment sleep time
-	private static final int INCREMENT = 10;
-	// process time´is unknown
-	private boolean indeterminate = true; 
-	
-	private String progressMonitorTitle = "Scenario-Based Models Generator ";
-	private String monitorText1 = "Collecting data ...";
-	private String monitorText2 = "Analyzing combinations ...";
-	
-	@Override
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		
-		if (!this.isTestSimulationModelGenerationCanceled()) {
-			monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
-			
-		    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
-		      Thread.sleep(INCREMENT);
-		      monitor.worked(INCREMENT);
-		      if (total == TOTAL_TIME / 4) monitor.subTask(monitorText1);
-		      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText2);
-		      
-//		      if (total == TOTAL_TIME / 8) monitor.subTask("Collecting data ...");
-//		      if (total == TOTAL_TIME / 4) monitor.subTask("Preparing simulation models to be created ...");
-//		      if (total == TOTAL_TIME / 2) monitor.subTask("Creating models ...");
-		    }
-		    monitor.done();
-		    if (monitor.isCanceled()){
-		    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
-		    }   
-		}
-	}
-	
-	
-	
 	
 	// GETTERS ############################################
 	
@@ -1249,5 +1240,13 @@ public class GeneratorVeMScenariosBased extends Observable implements IRunnableW
 			boolean minimizeNumberOfRequirementInstantiations) {
 		this.minimizeNumberOfRequirementInstantiations = minimizeNumberOfRequirementInstantiations;
 	}
+	
+	public int getMode() {
+		return mode;
+	}
 
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+	
 }

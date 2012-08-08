@@ -9,10 +9,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
@@ -50,7 +46,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 		
 		this.sourceModels = sourceModels;
 		this.targetPackage = targetPackage;
-		this.requirementsPackage = requirementsPackage;
+//		this.requirementsPackage = requirementsPackage;
 		this.valueBindingsPackage = valueMediatorsPackage;
 		this.superClass = superClass;
 	}
@@ -67,7 +63,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 	private Element targetPackage = null;
 	
 	// the package to containing the requirements to be used
-	private Element requirementsPackage = null;
+//	private Element requirementsPackage = null;
 
 	// the package to containing the value mediators to be used
 	private Element valueBindingsPackage = null;
@@ -108,10 +104,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 			/* Collect all requirements in order to be able to determine 
 			 * which are not covered by simulation models.
 			 */
-//			ElementsCollector ec = new ElementsCollector();
-//			ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
-//			allRequirements.addAll(ec.getElements());
-			
+
 			collector = new VerificationDataCollector(ModelicaMLServices.getCommonRootModel(sourceModels));
 			allRequirements.addAll(collector.getAllRequirements());
 			
@@ -123,19 +116,17 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 				// clear all lists because the translation for each source model is individual.
 				clearAllLists();
 				
-				// TODO: create a sub-progress monitor.
-				Shell shell = getShell();
 				try {
 					// create combinations
-					new ProgressMonitorDialog(shell).run(true, true, this);
+					new ProgressMonitorDialog(ModelicaMLServices.getShell()).run(true, true, this);
 					createCombinationsForSimulationModels();
 
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					MessageDialog.openError(shell, "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					MessageDialog.openError(shell, "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
 				}
 				
 				// generate simulation models for the source model 
@@ -144,35 +135,6 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 		}
 	}
 	
-	
-//	private Model getRootModel(HashSet<Element> selectedModels){
-//		/*
-//		 * TODO: how handle that if multiple design models are selected?
-//		 */
-//		Model rootModel = null;
-//		for (Element selectedModel : selectedModels) {
-//			Element root = selectedModel.getModel();
-//			if (root != null) {
-//				rootModel = selectedModel.getModel();
-//			}
-//		}
-//		return rootModel;
-//	}
-	
-	private Shell getShell(){
-		Shell shell = null;
-		IWorkbench wb = PlatformUI.getWorkbench();
-		if (wb != null) {
-			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-			if (win != null) {
-				shell = win.getShell();
-			}
-		}
-		if (shell == null) {
-			shell = new Shell();
-		}
-		return shell;
-	}
 	
 	private void clearAllLists(){
 		requirementsToBeInstantiated.clear();
@@ -189,8 +151,6 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 				
 				Class systemModel = (Class) sourceModel;
 				
-//				rc = new RequirementsCollector();
-//				rc.collectRequirementsFromPackage((Package) requirementsPackage);
 				if (collector.getAllRequirements().size() == 0) {
 					String message = "INFO: No requirements were found.";
 					addToLog(message);
@@ -253,8 +213,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 	}
 	
 	private void reportError(String title, String message){
-		Shell shell = getShell();
-		MessageDialog.openError(shell, title, message);
+		MessageDialog.openError(ModelicaMLServices.getShell(), title, message);
 	}
 	
 	public void createSimulationModels(Element systemModel){
@@ -447,73 +406,10 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 			}
 		}
 	}
-	
-//	private void copySimulationSettings(Classifier testScenarioModel, Classifier simulationModel){
-//		Stereotype sTestScenario = testScenarioModel.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario);
-//		Stereotype sSimulation = simulationModel.getAppliedStereotype(Constants.stereotypeQName_Simulation);
-//		
-//		if (sTestScenario != null && sSimulation != null) {
-//			Object startTime = testScenarioModel.getValue(sTestScenario, Constants.propertyName_startTime);
-//			simulationModel.setValue(sSimulation, Constants.propertyName_startTime, startTime);
-//			Object stopTime = testScenarioModel.getValue(sTestScenario, Constants.propertyName_stopTime);
-//			simulationModel.setValue(sSimulation, Constants.propertyName_stopTime, stopTime);
-//			Object numberOfIntervals = testScenarioModel.getValue(sTestScenario, Constants.propertyName_numberOfIntervals);
-//			simulationModel.setValue(sSimulation, Constants.propertyName_numberOfIntervals, numberOfIntervals);
-//			Object tolerance = testScenarioModel.getValue(sTestScenario, Constants.propertyName_tolerance);
-//			simulationModel.setValue(sSimulation, Constants.propertyName_tolerance, tolerance);
-//			
-//			Comment annotationExperimentComment = simulationModel.createOwnedComment();
-//			Stereotype annotationStereotype = annotationExperimentComment.getApplicableStereotype(Constants.stereotypeQName_Annotation);
-//			if (annotationStereotype != null) {
-//				
-//				// apply stereotype
-//				annotationExperimentComment.applyStereotype(annotationStereotype);
-//				
-//				// Example of a Modelica annotation string: annotation(experiment(StartTime = 0.0, StopTime = 150));
-//				
-//				String annotationString = "experiment(";
-//				
-//				if (startTime!= null) {annotationString = annotationString + "StartTime=" + startTime.toString(); }
-//				if (stopTime!= null) {annotationString = annotationString + ", StopTime=" + stopTime.toString(); }
-//				//if (numberOfIntervals!= null) {annotationString = annotationString + ", Output=" + numberOfIntervals.toString(); }
-//				if (tolerance!= null) {annotationString = annotationString + ", Tolerance=" + tolerance.toString(); }
-//				
-//				annotationString = annotationString + ")";
-//				annotationExperimentComment.setBody(annotationString);
-//				annotationExperimentComment.setValue(annotationStereotype, Constants.propertyName_fullAnnotationString, (Object)annotationString);
-//			}
-//			else {
-////				System.err.println("Could not access the annotation stereotype");
-//			}
-//		}
-//	}
-//	
-//	private HashSet<Class> getRequirements(Element scenario, String stereotypeQName){
-//		HashSet<Class> requirements = new HashSet<Class>();
-//		
-//		// collect from dependencies
-//		EList<Dependency> depList = ((NamedElement)scenario).getClientDependencies();
-//		for (Dependency dependency : depList) {
-//			
-//			// Check if the dependency has the specified stereotype
-//			if (dependency.getAppliedStereotype(stereotypeQName) != null) {
-//			
-//				for (Element target : dependency.getTargets()) {
-//					// check if this is a requirement
-//					if (target instanceof Class && target.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
-//						requirements.add( (Class) target);
-//					}
-//				}
-//			}
-//		}
-//		return requirements;
-//	}
 
 	
 	
-	
 	private void addToLog(String msg){
-//		this.log = this.log + "\n" + msg;
 		this.log = this.log + msg + "\n";
 	}
 
@@ -534,31 +430,6 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 	public void setAllRequirements(HashSet<Element> allRequirements) {
 		this.allRequirements = allRequirements;
 	}
-
-//	public HashSet<Element> getAllTestScenarios() {
-//		return allTestScenarios;
-//	}
-//
-//	public void setAllTestScenarios(HashSet<Element> allTestScenarios) {
-//		this.allTestScenarios = allTestScenarios;
-//	}
-//
-//	public HashSet<Element> getTestScenariosToBeInstantiated() {
-//		return testScenariosToBeInstantiated;
-//	}
-//
-//	public void setTestScenariosToBeInstantiated(
-//			HashSet<Element> testScenariosToBeInstantiated) {
-//		this.testScenariosToBeInstantiated = testScenariosToBeInstantiated;
-//	}
-//
-//	public HashSet<Element> getTestScenariosDiscarded() {
-//		return testScenariosDiscarded;
-//	}
-//
-//	public void setTestScenariosDiscarded(HashSet<Element> testScenariosDiscarded) {
-//		this.testScenariosDiscarded = testScenariosDiscarded;
-//	}
 
 	public HashSet<Element> getRequirementsToBeInstantiated() {
 		return requirementsToBeInstantiated;
@@ -584,18 +455,6 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 	public boolean isTestSimulationModelGenerationCanceled() {
 		return canceled;
 	}
-
-//	public HashSet<Element> getUserSelectedTestScenarios() {
-//		return userSelectedTestScenarios;
-//	}
-	
-//	public RequirementsCollector getVsc() {
-//		return rc;
-//	}
-//
-//	public void setVsc(RequirementsCollector vsc) {
-//		this.rc = vsc;
-//	}
 	
 	public Element getTargetPackage() {
 		return targetPackage;
@@ -604,16 +463,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 	public void setTargetPackage(Element targetPackage) {
 		this.targetPackage = targetPackage;
 	}
-	
-//	public HashMap<Element, VerificationModelComponentsCombination> getScenarioToVerificationModelCombination() {
-//		return scenarioToVerificationModelCombination;
-//	}
-//
-//	public void setScenarioToVerificationModelCombination(
-//			HashMap<Element, VerificationModelComponentsCombination> scenarioToVerificationModelCombination) {
-//		this.scenarioToVerificationModelCombination = scenarioToVerificationModelCombination;
-//	}
-//	
+
 	
 	// The total sleep time
 	private static final int TOTAL_TIME = 100;
@@ -636,10 +486,6 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 		      monitor.worked(INCREMENT);
 		      if (total == TOTAL_TIME / 4) monitor.subTask(monitorText1);
 		      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText2);
-		      
-//		      if (total == TOTAL_TIME / 8) monitor.subTask("Collecting data ...");
-//		      if (total == TOTAL_TIME / 4) monitor.subTask("Preparing simulation models to be created ...");
-//		      if (total == TOTAL_TIME / 2) monitor.subTask("Creating models ...");
 		    }
 		    monitor.done();
 		    if (monitor.isCanceled()){

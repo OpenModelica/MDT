@@ -231,7 +231,7 @@ public class Simulator {
 			if (isRecordOnlyRequirementStatusAndClients()) {
 				
 				HashSet<TreeObject> clientAndRequirementItems = new HashSet<TreeObject>(); 
-				ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations());
+				ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations(),gmd.getAllFoundMediators());
 				
 				/*
 				 * In case the simulation action was started not immediately after the models generation

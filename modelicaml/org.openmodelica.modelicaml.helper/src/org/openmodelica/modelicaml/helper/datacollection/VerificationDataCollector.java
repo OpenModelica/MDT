@@ -81,7 +81,7 @@ public class VerificationDataCollector extends ElementsCollector {
 			bindingsPackageQName = ModelicaMLServices.getQualifiedName(this.bindingsPackage);
 			
 			// collect elements
-			collectElementsFromModel(this.rootElement, null);
+			collectElementsFromModel(this.rootElement);
 		}
 	}
 	
@@ -105,16 +105,17 @@ public class VerificationDataCollector extends ElementsCollector {
 			bindingsPackageQName = ModelicaMLServices.getQualifiedName(bindingsPackage);
 			
 			// collect elements
-			collectElementsFromModel(umlRootElement, null);
+//			collectElementsFromModel(umlRootElement, null);
+			collectElementsFromModel(umlRootElement);
 		}
 	}	
 	
 	
 	@Override
-	protected void collectElement(Element element, boolean isImported) {
+	protected void collect(Element element, boolean isImported) {
 		
 		// collect elements, avoid duplicates that can occur due to the multiple imports of the same elements
-		if ( element instanceof Classifier &&  !elements.contains(element) ) {
+		if ( element instanceof Classifier ) {
 
 			// Add to the overall elements list in order to enable loop detection for imported elements
 			getElements().add(element);
@@ -141,6 +142,9 @@ public class VerificationDataCollector extends ElementsCollector {
 				&& ModelicaMLServices.getQualifiedName(element).contains(bindingsPackageQName)
 				) {
 			
+			// Add to the overall elements list in order to enable loop detection for imported elements
+			getElements().add(element);
+			
 			allMediators.add(element);
 		}
 		
@@ -150,6 +154,9 @@ public class VerificationDataCollector extends ElementsCollector {
 		 */
 		
 		else if (element instanceof Dependency) {
+
+			// Add to the overall elements list in order to enable loop detection for imported elements
+			getElements().add(element);
 			
 			Dependency dep = (Dependency)element;
 			
@@ -197,60 +204,11 @@ public class VerificationDataCollector extends ElementsCollector {
 		}
 		
 		if (isImported) {
-			importedElements.add(element);
+			importedPackages.add(element);
 		}
 	}
+
 	
-	
-	/*
-	 * This is an alternative for collecting dependencies for additional models by checking 
-	 * the models its self and the dependencies found
-	 */
-	
-//	private void collectAdditionalModel(NamedElement model){
-//		
-//		// see if this model has dependencies with the stereotype <<Requires>> or <<RequiredFor>>
-//
-//		for (Dependency depenedency : model.getClientDependencies()) {
-//			// collect from the requires stereotype -> from the model to its additionally required model
-//			if ( depenedency.getAppliedStereotype(requiresStereotypeQName) != null )  {
-//				Stereotype s = depenedency.getAppliedStereotype(requiresStereotypeQName);
-//				if (s != null) {
-//					Object isAlways = depenedency.getValue(s, Constants.propertyName_always);
-//					for (Element target : depenedency.getTargets()) {
-//						// add to map
-//						for (Element client : depenedency.getClients()) {
-//							addToModelToItsRequiredModelsMap(client, target);
-//							
-//							// add to always include set
-//							if (isAlways instanceof Boolean && (Boolean)isAlways) {
-//								alwaysInclude.add(target);
-//							}
-//						}
-//					}
-//				}
-//			}
-//			
-//			// collect from the requiredFor stereotype -> from the additionally required model to the model it is required for
-//			else if (depenedency.getAppliedStereotype(requiredForStereotypeQName) != null ) {
-//				Stereotype s = depenedency.getAppliedStereotype(requiredForStereotypeQName);
-//				if (s != null) {
-//					Object isAlways = depenedency.getValue(s, Constants.propertyName_always);
-//					for (Element client : depenedency.getClients()) {
-//						// add to map
-//						for (Element target : depenedency.getTargets()) {
-//							addToModelToItsRequiredModelsMap(target, client);
-//							
-//							// add to always include set
-//							if (isAlways instanceof Boolean && (Boolean)isAlways) {
-//								alwaysInclude.add(client);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
 	
 	// Utls ************************************************************************
 	

@@ -74,18 +74,12 @@ public class ClassInstantiation {
 	private TreeParent invisibleRoot;
 	private TreeParent treeRoot;
 	
-//	private HashSet<Element> allElements = new HashSet<Element>();
 	private HashSet<TreeObject> allTreeObjects = new HashSet<TreeObject>();
 
 	private HashMap<Element,HashSet<TreeObject>> elementToInstantiationTreeObjects = new HashMap<Element,HashSet<TreeObject>>();
 	
-//	private HashSet<Element> referencedClients = new HashSet<Element>();
-//	private HashSet<Element> referencedRequiredClients = new HashSet<Element>();
-	
 	// all mediators that were pre-collected
 	private HashSet<Element> allMediators = new HashSet<Element>();
-	
-//	private HashSet<Element> referencedProviders = new HashSet<Element>();
 	
 	/** The action show state machines. */
 	private boolean includeStateMachines;
@@ -192,6 +186,7 @@ public class ClassInstantiation {
 	 * @return the all inherited attributes
 	 */
 	public EList<Property> getAllInheritedAttributes(Classifier aClass, EList<Property> passedAList) {
+		
 		// TODO: verify if this works correctly for Modelica inheritance concept.
 		HashSet<Property> mergedSet = new HashSet<Property>();
 		mergedSet.addAll(passedAList);
@@ -855,13 +850,9 @@ public class ClassInstantiation {
 			
 			// pass all pre-collected mediators in order to avoid another search
 			valueBindingsDataCollector.setAllMediators(getAllMediators());
-			
-//			dc.collectAll(valueMediatorsPackage, treeRoot);
+			// collect, in case no mediators were passed
 			valueBindingsDataCollector.collectAll(valueMediatorsPackage, this, treeRoot);
-//			referencedClients.addAll(valueBindingsDataCollector.getReferencedClients());
-//			referencedProviders.addAll(valueBindingsDataCollector.getReferencedProviders());
-//			referencedRequiredClients.addAll(valueBindingsDataCollector.getReferencedRequiredClients());
-			
+
 			setValueClientOrProviderIndicator(treeRoot);
 			
 			// update the size of the tree
@@ -903,16 +894,6 @@ public class ClassInstantiation {
 	public void setUmlModel(Element model) {
 		this.umlModel = model;
 	}
-
-
-//	public HashSet<Element> getAllElements() {
-//		return allElements;
-//	}
-
-
-//	public void setAllElements(HashSet<Element> allElements) {
-//		this.allElements = allElements;
-//	}
 	
 	public HashMap<Element, HashSet<TreeObject>> getElementToInstantiationTreeObjects() {
 		return elementToInstantiationTreeObjects;

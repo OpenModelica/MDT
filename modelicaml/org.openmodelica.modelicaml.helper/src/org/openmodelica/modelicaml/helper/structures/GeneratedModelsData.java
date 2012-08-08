@@ -118,11 +118,12 @@ public class GeneratedModelsData {
 		this.setGenerator(generator);
 		// set the most common package that contains all generated packages
 		Element generatedModelsPackage = null;
+		
 		if (generator.getGeneratedPackages().size() > 1) {
 			// TODO: we assume here that all packages have the same owner. Will that lead to an issue? 
 			generatedModelsPackage = ((Element) generator.getGeneratedPackages().toArray()[0]).getNearestPackage();
 		}
-		else {
+		else if (generator.getGeneratedPackages().size() == 1) {
 			generatedModelsPackage = (Element) generator.getGeneratedPackages().toArray()[0];
 		}
 		this.setGeneratedModelsPackage(generatedModelsPackage);
@@ -141,7 +142,7 @@ public class GeneratedModelsData {
 
 		for (Element genModel : this.generatedModels) {
 			// get model instantiation
-			ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(genModel, getPreparedInstantiations());
+			ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(genModel, getPreparedInstantiations(), getAllFoundMediators());
 			
 			// pass pre-collected mediators in order to avoid another search
 			ci.setAllMediators(getAllFoundMediators());
