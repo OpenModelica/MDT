@@ -2,7 +2,7 @@
 <feature
       id="org.openmodelica.modelicaml.feature"
       label="ModelicaML - Papyrus Customization, Modelica Code Generation, Simulation with OMC"
-      version="1.8.9.qualifier"
+      version="1.9.0.qualifier"
       provider-name="OpenModelica Project">
 
    <description url="http://www.openmodelica.org/modelicaml">
