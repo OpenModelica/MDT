@@ -9,8 +9,10 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -330,6 +332,14 @@ public class ModelicaMLServices {
 		return listSorted;
 	}
 	
+	public static String getTimeStamp(){
+		Calendar c1 = Calendar.getInstance(); // today
+		Date date = c1.getTime();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		return sdf.format(date);
+	}
+	
 	
 	public static String getNamePostFix(NamedElement owner, String name){
 		String postfix = "_";
@@ -441,17 +451,23 @@ public class ModelicaMLServices {
 			return Status.CANCEL_STATUS;
 		}
 
-		IFileSystem fileSystem = EFS.getLocalFileSystem();
+//		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		for (String filePath : filesToBeDeleted) {
 			
 			monitor.subTask(message + filePath );
 			
 			if (!ModelicaMLServices.containsOMCErrorMessage(filePath)) {
-				IFileStore fileToBeDeleted = fileSystem.getStore(java.net.URI.create("file:/"  + filePath ));
-				try {
-					fileToBeDeleted.delete(EFS.NONE, monitor);
-				} catch (CoreException e) {
-//					e.printStackTrace();
+
+				File file = new File(filePath);
+				
+				if (file.exists()) {
+					file.delete();
+//					IFileStore fileToBeDeleted = fileSystem.getStore(java.net.URI.create("file:/"  + filePath ));
+//					try {
+//						fileToBeDeleted.delete(EFS.NONE, monitor);
+//					} catch (CoreException e) {
+////						e.printStackTrace();
+//					}
 				}
 				
 				if (monitor.isCanceled()){

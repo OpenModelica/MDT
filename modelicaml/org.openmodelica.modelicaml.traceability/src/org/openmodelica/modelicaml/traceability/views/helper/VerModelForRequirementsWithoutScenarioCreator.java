@@ -80,7 +80,8 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 		VerificationDataCollector collector = new VerificationDataCollector(systemModel.getModel());
 		
 		String pkgName = Constants.simModelsPackageNamePrefix + ((NamedElement)systemModel).getName();
-		String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
+//		String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
+		String postFix = "_" + ModelicaMLServices.getTimeStamp();
 		PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 
 		// create the verification (simulation) model class

@@ -90,17 +90,18 @@ public class Simulator {
 	private void simulateModels(IProgressMonitor monitor){
 		
 		clearLists();
-		
+
 		// create compiler communication
 		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+		
+		//clear compiler
+		omcc.clear();
+		
 		simulationResultsFolderPath =  omcc.getTempDirectoryPath();
 		// correct the path
 		while(simulationResultsFolderPath.contains("\\")){
 			simulationResultsFolderPath = simulationResultsFolderPath.replace('\\', '/');
 		}
-
-		//clear compiler
-		omcc.clear();
 		
 		// change to temp. folder
 		omcc.cd(simulationResultsFolderPath);
@@ -125,14 +126,12 @@ public class Simulator {
 			addToLog(message);
 		}
 		
-		// simulate each model
-		for (Element genModel : gmd.getGeneratedModels()) {
-			
-			// stop if user canceled the simulation monitor
-			if (monitor.isCanceled()){
-				return;
-			}
-			
+		
+		/*
+		 *  First delete old files in order to avoid that in case the simulation was 
+		 *  aborted old result files are used for post-processing
+		 */
+		for (Element genModel : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
 			// determine the qualified name of the model
 			String modelQName = getModelQName((NamedElement)genModel);
 			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) genModel);
@@ -153,6 +152,38 @@ public class Simulator {
 			List<String> filesToBeDeleted = new ArrayList<String>();
 			filesToBeDeleted.add(filePath);
 			ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
+		}
+		
+		
+		// simulate each model
+		for (Element genModel : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
+			
+			// stop if user canceled the simulation monitor
+			if (monitor.isCanceled()){
+				return;
+			}
+			
+			// determine the qualified name of the model
+			String modelQName = getModelQName((NamedElement)genModel);
+			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) genModel);
+			String message = "";
+			
+//			/*
+//			 * First delete old files from the tmp directory.
+//			 * This is necessary in case the same models should be simulated and the new simulation fails.
+//			 * Old files needs to be deleted so that the simulation results will not get confused with older simulations.
+//			 */
+//			message = "Deleting old files for '" + modelQName + "'";
+//			monitor.beginTask(message, 100);
+//			addToLog(message);
+//			
+//			/*
+//			 * Delete the old file for the case when this model could not be simulated
+//			 * but an old file still exists.
+//			 */
+//			List<String> filesToBeDeleted = new ArrayList<String>();
+//			filesToBeDeleted.add(filePath);
+//			ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
 			
 			// simulate
 			message = "Simulating '" + modelQName + "'";

@@ -11,6 +11,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -151,11 +152,33 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		
 	}
 
+	public int getMode() {
+		return mode;
+	}
+
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/new_testsuite.gif"));
-		newShell.setText("Simulation Models Generation");
+		
+		if (getMode()== Constants.MODE_VEM_GENERATION) {
+			newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper","icons/new_testsuite.gif"));
+			newShell.setText("Verirication Models Generation Options");
+		}
+		else if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY){
+			newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper","icons/discoverRelations2.gif"));
+			newShell.setText("Discovery of Scenarios to Requirements Relations: Models Generation Options");
+		}
+		else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
+			newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper","icons/automaticScenarioBasedVerification.gif"));
+			newShell.setText("Automatic Scenario-Based Verification: Models Generation Options");
+		}
+		
+//		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile","resources/icons/icons16/new_testsuite.gif"));
+//		newShell.setText("Simulation Models Generation");
 	}
 	
 	/**
@@ -176,13 +199,15 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		gd_container.widthHint = 500;
 		gd_container.heightHint = 400;
 		container.setLayoutData(gd_container);
-
-		final TabFolder tabFolder = new TabFolder(container, SWT.NONE);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		gd_tabFolder.heightHint = 284;
-		gd_tabFolder.widthHint = 711;
-		tabFolder.setLayoutData(gd_tabFolder);
-
+		String metricDiscarded  = "("+discardedTestScenarios.size()+" of " + tsc.getAllScenarios().size() + ")";
+		
+		SashForm sashForm = new SashForm(container, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		sashForm.setSashWidth(2);
+		
+		final TabFolder tabFolder = new TabFolder(sashForm, SWT.NONE);
+		tabFolder.setSize(712, 111);
+		
 		// TAB: Pre-selected test scenarios
 		TabItem tbtmPreSelectedTestScenarios = new TabItem(tabFolder, SWT.NONE);
 //		tbtmTestScenarios.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/elcl16/close_view.gif"));
@@ -212,29 +237,11 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		
 		// TAB: Discarded test scenarios
 		TabItem tbtmDiscardedTestScenarios = new TabItem(tabFolder, SWT.NONE);
-		String metricDiscarded  = "("+discardedTestScenarios.size()+" of " + tsc.getAllScenarios().size() + ")";
 		tbtmDiscardedTestScenarios.setText(TAB_TITLE_Discarded_Scenarios + " " + metricDiscarded);
 		
 		final Tree treeDiscardedTestScenarios = new Tree(tabFolder, SWT.CHECK);
 		buildTree(treeDiscardedTestScenarios, true);
 		
-		// Add listeners
-		treeDiscardedTestScenarios.addSelectionListener(new CheckboxTreeSelectionListener());
-		treeDiscardedTestScenarios.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setDescriptionText(treeDiscardedTestScenarios.getSelection()[0]);
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		tbtmDiscardedTestScenarios.setControl(treeDiscardedTestScenarios);
 		
 		/*
 		 * If we are going to discover relations between scenarios and requirements
@@ -268,24 +275,38 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 			tbtmAllRequirements.setControl(treeRequirements);
 		}
 		
-		descriptionText = new StyledText(container, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-		GridData gd_descriptionText = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_descriptionText.heightHint = 98;
-		descriptionText.setLayoutData(gd_descriptionText);
+		
+		// Add listeners
+		treeDiscardedTestScenarios.addSelectionListener(new CheckboxTreeSelectionListener());
+		treeDiscardedTestScenarios.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setDescriptionText(treeDiscardedTestScenarios.getSelection()[0]);
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		tbtmDiscardedTestScenarios.setControl(treeDiscardedTestScenarios);
+		
+		descriptionText = new StyledText(sashForm, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		descriptionText.setSize(712, 111);
 		descriptionText.setBottomMargin(3);
 		descriptionText.setTopMargin(3);
 		descriptionText.setRightMargin(3);
 		descriptionText.setLeftMargin(3);
 		
-		Composite buttonsBar = new Composite(container, SWT.NONE);
-		GridData gd_buttonsBar = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_buttonsBar.widthHint = 338;
-		buttonsBar.setLayoutData(gd_buttonsBar);
-		buttonsBar.setBounds(0, 0, 64, 64);
+		Composite buttonsBar = new Composite(sashForm, SWT.NONE);
+		buttonsBar.setBounds(0, 0, 712, 111);
+		buttonsBar.setLayout(new GridLayout(4, false));
 		
 
 		Button btnSelectAll = new Button(buttonsBar, SWT.NONE);
-		btnSelectAll.setBounds(0, 0, 60, 25);
 		btnSelectAll.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -333,12 +354,10 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		btnSelectAll.setText("Select All");
 		
 		Button btnDeselectAll = new Button(buttonsBar, SWT.NONE);
-		btnDeselectAll.setBounds(69, 0, 73, 25);
 		btnDeselectAll.setEnabled(true);
 		btnDeselectAll.setText("Deselect All");
 		
 		Button btnRestore = new Button(buttonsBar, SWT.NONE);
-		btnRestore.setBounds(150, -1, 75, 26);
 		btnRestore.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -362,7 +381,6 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		btnRestore.setText("Restore");
 		
 		Button btnSeeLog = new Button(buttonsBar, SWT.NONE);
-		btnSeeLog.setBounds(231, -1, 56, 26);
 		btnSeeLog.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -373,6 +391,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 		});
 		btnSeeLog.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/log.png"));
 		btnSeeLog.setText("Log");
+		sashForm.setWeights(new int[] {278, 129, 39});
 		
 		
 		btnDeselectAll.addMouseListener(new MouseAdapter() {
@@ -522,25 +541,6 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 			}
 		}
 	}
-	
-	
-//	private HashSet<Element> getAllRequirementsReferencedBy(String dependencyStereotypeQName){
-//		HashSet<Element> reqList = new HashSet<Element>();
-//		
-//		// positive relations
-//		if (dependencyStereotypeQName.equals(Constants.stereotypeQName_UsedToVerify)) {
-//			for (Element scenario : tsc.getScenarioToReq().keySet()) {
-//				reqList.addAll(tsc.getScenarioToReq().get(scenario));
-//			}
-//		}
-//		// negative relations
-//		else if (dependencyStereotypeQName.equals(Constants.stereotypeQName_DoNotUseToVerify)){
-//			for (Element scenario : tsc.getScenariosWithNegativeRelationsToReq().keySet()) {
-//				reqList.addAll(tsc.getScenariosWithNegativeRelationsToReq().get(scenario));
-//			}
-//		}
-//		return reqList;
-//	}
 	
 	private void buildTree(Tree treeRoot, boolean isDiscardedTree){
 		

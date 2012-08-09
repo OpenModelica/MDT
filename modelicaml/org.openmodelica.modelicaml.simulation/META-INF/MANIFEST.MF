@@ -30,6 +30,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openmodelica.modelicaml.simulation.handlers,
  org.openmodelica.modelicaml.simulation.omc,
+ org.openmodelica.modelicaml.simulation.plot,
  org.openmodelica.modelicaml.simulation.simresults,
  org.openmodelica.modelicaml.simulation.testexecution.actions
 Import-Package: org.eclipse.papyrus.editor,

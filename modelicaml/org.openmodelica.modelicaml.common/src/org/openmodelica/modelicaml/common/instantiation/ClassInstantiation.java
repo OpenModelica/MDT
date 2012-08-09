@@ -79,7 +79,8 @@ public class ClassInstantiation {
 	private HashMap<Element,HashSet<TreeObject>> elementToInstantiationTreeObjects = new HashMap<Element,HashSet<TreeObject>>();
 	
 	// all mediators that were pre-collected
-	private HashSet<Element> allMediators = new HashSet<Element>();
+//	private HashSet<Element> allMediators = new HashSet<Element>();
+	private HashSet<Element> allMediators;
 	
 	/** The action show state machines. */
 	private boolean includeStateMachines;

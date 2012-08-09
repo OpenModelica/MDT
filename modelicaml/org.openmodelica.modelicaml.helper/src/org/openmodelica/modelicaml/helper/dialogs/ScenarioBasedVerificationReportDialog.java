@@ -11,10 +11,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
@@ -24,8 +24,10 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,12 +39,12 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.jfree.data.xy.XYSeries;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
@@ -54,6 +56,7 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.Activator;
 import org.openmodelica.modelicaml.helper.report.XMLReportGenerator;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
+import org.openmodelica.modelicaml.simulation.simresults.ReadMatlab4;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsFileAction;
 
 
@@ -66,10 +69,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	private final ImageDescriptor okStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/success_ovr.gif");
 	private final ImageDescriptor questionStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/question_ov.gif");
 	
-	private final static String TAB_TITLE_Violated_Requirements = "Violated Requirements";
-	private final static String TAB_TITLE_Not_Violated_Requirements = "Not Violated Requirements";
-	private final static String TAB_TITLE_Not_Evaluated_Requirement =  "Not Evaluated Requirements";
-	private final static String TAB_TITLE_Simulation_Errors =  "Simulation Errors";
+	private final static String TAB_TITLE_Violated_Requirements = "Violated";
+	private final static String TAB_TITLE_Not_Violated_Requirements = "Not Violated";
+	private final static String TAB_TITLE_Not_Evaluated_Requirement =  "Not Evaluated";
+	private final static String TAB_TITLE_Not_Implemented_Requirements =  "Not Implemented";
+	private final static String TAB_TITLE_Not_Used_Scenarios =  "Not Used";
+	private final static String TAB_TITLE_Simulation_Errors =  "Not Simulated";
 	
 	private TabFolder tabFolder;
 
@@ -95,7 +100,14 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	private HashMap<Element,String> simulationResultsFiles = new HashMap<Element, String>();
 	private Button btnPlot;
 	private Button btnLocate;
+//	private Button btnQuickPlot;
+	
+	private QuickPlotDialog quickPlotDialog = new QuickPlotDialog(getShell());
 
+	// variables that are on the quick plot
+	private HashSet<String> quickPlottedVariables = new HashSet<String>();
+
+	
 	public ScenarioBasedVerificationReportDialog(Shell parentShell, 
 			GeneratedModelsData gmd, 
 			boolean openedFromNewRelationsDialog) {
@@ -106,7 +118,6 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		this.setGmd(gmd);
 		this.setSimulationResultsFiles(gmd.getSimulationResultsFile());
 		this.setOpenedFromNewRelationsDialog(openedFromNewRelationsDialog);
-		
 	}
 
 	@Override
@@ -124,11 +135,11 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
-		container.setLayout(new GridLayout(6, false));
+		container.setLayout(new GridLayout(7, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		tabFolder = new TabFolder(container, SWT.NONE);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 7, 1);
 		gd_tabFolder.widthHint = 626;
 		tabFolder.setLayoutData(gd_tabFolder);
 
@@ -142,6 +153,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		treeViolatedRequirements = new Tree(tabFolder, SWT.NONE);
+		treeViolatedRequirements.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				manageQuickPlot();
+			}
+		});
 		treeViolatedRequirements.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -162,6 +179,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		treeNotViolatedRequirement = new Tree(tabFolder, SWT.NONE);
+		treeNotViolatedRequirement.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				manageQuickPlot();
+			}
+		});
 		treeNotViolatedRequirement.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -182,6 +205,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		treeNotEvaluatedRequirements = new Tree(tabFolder, SWT.NONE);
+		treeNotEvaluatedRequirements.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				manageQuickPlot();
+			}
+		});
 		treeNotEvaluatedRequirements.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -197,7 +226,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		 * TAB: Not implemented requirements 
 		 */
 		tbtmNotImplementedRequirements = new TabItem(tabFolder, SWT.NONE);
-		tbtmNotImplementedRequirements.setText("Not Implemented Requirements");
+		tbtmNotImplementedRequirements.setText(TAB_TITLE_Not_Implemented_Requirements);
 		treeNotImplementedRequirements = new Tree(tabFolder, SWT.NONE);
 		treeNotImplementedRequirements.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -213,7 +242,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		 * TAB: Not used scenarios
 		 */
 		tbtmNotUsedScenarios = new TabItem(tabFolder, SWT.NONE);
-		tbtmNotUsedScenarios.setText("Not Used Scenarios");
+		tbtmNotUsedScenarios.setText(TAB_TITLE_Not_Used_Scenarios);
 		treeNotUsedScenarios = new Tree(tabFolder, SWT.NONE);
 		treeNotUsedScenarios.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -314,15 +343,35 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		});
 		btnLocate.setText("Locate");
 		btnLocate.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
-		// diable by default until a tree item was selected
+		// disable by default until a tree item was selected
 		btnLocate.setEnabled(false);
 
 		btnPlot = new Button(container, SWT.NONE);
 		btnPlot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+//				String filePath= null;
+//				String dotPath= null;
+//				
+//				List<String> fileAndVariableData = getFilePathAndDotPath();
+//				if (fileAndVariableData != null && fileAndVariableData.size()==2) {
+//					filePath = fileAndVariableData.get(0);
+//					dotPath = fileAndVariableData.get(1);
+//					
+//					if (filePath != null) {
+//						// plot
+//						PlotResultsFileAction plotAction = new PlotResultsFileAction();
+//						plotAction.setFilePath(filePath);
+//						HashSet<String> preselectedVariablesToPlot = new HashSet<String>();
+//						preselectedVariablesToPlot.add(dotPath);
+//						if (dotPath != null) {
+//							plotAction.setPreSelectedVariablesToPlot(preselectedVariablesToPlot);
+//						}
+//						plotAction.run(null);
+//					}
+//				}
+				
 				Tree activeTree = getActiveTree();
-//				HashSet<Object> selectedObjects = new HashSet<Object>();
 				
 				if (activeTree != null) {
 					TreeItem[] items = activeTree.getSelection();
@@ -390,10 +439,32 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		btnPlot.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "/icons/plot.png"));
 		
 		// disable until an item is selected
-//		if (getSimulationResultsFiles() == null || getSimulationResultsFiles().size() == 0) {
-			btnPlot.setEnabled(false);
-//		}
+		btnPlot.setEnabled(false);
 
+		
+			
+//		btnQuickPlot = new Button(container, SWT.TOGGLE);
+//		GridData gd_btnQuickPlot = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+//		gd_btnQuickPlot.widthHint = 28;
+//		btnQuickPlot.setLayoutData(gd_btnQuickPlot);
+//		btnQuickPlot.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				if (btnQuickPlot.getSelection()) {
+//					// show quick plot view 
+//					quickPlotDialog.open();
+//					
+//				}
+//				else {
+//					// hide quick plot view
+//					quickPlotDialog.close();
+//				}
+//			}
+//		});
+//		btnQuickPlot.setText("");
+//		btnQuickPlot.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "/icons/plot.png"));
+////		btnQuickPlot.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "/icons/quickassist.gif"));
+		
 		/*
 		 * Save as File 
 		 */
@@ -414,8 +485,6 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 					
 					// set folder name and file name
 					String folderName = Constants.folderName_automaticScenarioBasedDesignVerificationDiscovery;
-//					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
-//					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
 					
 					// create report
 					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
@@ -446,60 +515,36 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 				}
 			}
 		});
-//		btnSaveasfile.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseDown(MouseEvent e) {
-//				ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-//				if (umlModel != null) {
-//					// get project data
-//					String projectName = umlModel.getResource().getURI().segment(1);
-////					IWorkspace workspace = ResourcesPlugin.getWorkspace();
-////					IWorkspaceRoot root = workspace.getRoot();
-////					IProject iProject = root.getProject(projectName);
-//					
-//					// set folder name and file name
-//					String folderName = Constants.folderName_automaticScenarioBasedDesignVerificationDiscovery;
-////					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
-////					String fileName = Constants.fileName_automaticScenarioBasedDesignVerification + "_" + System.currentTimeMillis() + ".xml";
-//					
-//					// create report
-//					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
-//					String filePath = null;
-//					try {
-//						filePath = reportGenerator.createReport(projectName, folderName, false);
-//					} catch (URISyntaxException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					} catch (IOException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					} catch (CoreException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-//
-//					
-//					if (filePath != null) {
-//						String message = "The file was stored: \n"+filePath+"";
-//						DialogMessage dialog = new DialogMessage(new Shell(), "Report Generation", "", message, false);
-//						dialog.open();
-//					}
-//
-//				}
-//				else {
-//					MessageDialog.openError(new Shell(), "Report Generation", "Could not access the ModelicaML model in order to determine the project name. Please open a Papyrus model. ");
-//				}
-//			}
-//		});
 		btnSaveasfile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnSaveasfile.setText("Create Report");
 		btnSaveasfile.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.helper", "/icons/report.gif"));
+		new Label(container, SWT.NONE);
 
 		return area;
 	}
 
 	
 	private void setButtonsEnablement(){
+//		String filePath= null;
+////		String dotPath= null;
+//		
+//		List<String> fileAndVariableData = getFilePathAndDotPath();
+//		if (fileAndVariableData != null && fileAndVariableData.size() > 0 ) {
+//			filePath = fileAndVariableData.get(0);
+////			dotPath = fileAndVariableData.get(1);
+//			
+//			// enable/disable plot button
+//			if (filePath != null) {
+//				btnPlot.setEnabled(true);
+//			}
+//			else {
+//				btnPlot.setEnabled(false);
+//			}
+//		}
+//		
+//		// locate button
+//		btnLocate.setEnabled(true);
+		
 		Tree activeTree = getActiveTree();
 		
 		if (activeTree != null) {
@@ -552,6 +597,208 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	}
 	
 	
+	private void manageQuickPlot(){
+
+		String filePath= null;
+		String dotPath= null;
+		String modelName = null;
+		
+		TreeItem selectedItem = getSelectedItem()[0];
+		
+		List<String> fileAndVariableData = getFilePathAndDotPath();
+		if ( fileAndVariableData != null && fileAndVariableData.size() == 3 ) {
+			filePath = fileAndVariableData.get(0);
+			dotPath = fileAndVariableData.get(1);
+			modelName = fileAndVariableData.get(2);
+			
+			if (filePath != null && dotPath != null && modelName != null) {
+				String key = modelName + " - " + dotPath;
+				
+				ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(getShell());
+				progressMonitorDialog.getProgressMonitor().setTaskName("Reading file: " + filePath);
+				progressMonitorDialog.open();
+
+				ReadMatlab4 reader = null;
+				try {
+					reader = new ReadMatlab4(filePath);
+				} catch (Exception e2) {
+					MessageDialog.openError(new Shell(), "Plotting Error", "Cannot read the file: "+filePath+"");
+				}
+				
+				XYSeries series = null;
+
+				if (reader != null) {
+					double[] time;
+					double[] values;
+					try {
+						time = reader.getTimeValues();
+						values = reader.getValues(dotPath);
+
+						series = getSerie(time, values, key);
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+						MessageDialog.openError(new Shell(), "Plotting Error", "Cannot read the values for '"+dotPath+"'");
+					}
+					
+					try {
+						// close the file
+						reader.releaseFile();
+					} catch (IOException e) {
+						MessageDialog.openError(new Shell(), "Plotting Error", "Could not release the file: '"+filePath+"'");
+					}
+				}
+				
+				progressMonitorDialog.close();
+				
+				// if the values are on plot -> remove series
+				if (quickPlottedVariables.contains(key)) {
+					quickPlottedVariables.remove(key);
+
+//					getQuickPlotDialog().getShell().setBounds(selectedItem.getBounds().x, selectedItem.getBounds().y, 400, 300);
+					if (series != null) {
+						getQuickPlotDialog().getPlot().removeValues(series);
+						selectedItem.setForeground(new Color(null, new RGB(0,0,0)));
+						getQuickPlotDialog().getShell().setFocus();
+					}
+				}
+				
+				// plot variable 
+				else {
+					quickPlottedVariables.add(key);
+					if (series != null) {
+						getQuickPlotDialog().getPlot().addValues(series);
+						selectedItem.setForeground(new Color(null, new RGB(255,0,0)));
+						getQuickPlotDialog().getShell().setFocus();
+					}
+				}
+			}
+			else {
+				if ( (filePath == null && dotPath == null) || (filePath != null && dotPath == null)) {
+					MessageDialog.openError(getShell(), "Plotting Error", "You can only plot variables.");
+				}
+				else if (filePath == null) {
+					MessageDialog.openError(getShell(), "Plotting Error", "Cannot open the file '" + filePath + "'");
+				}
+			}
+		}
+	}
+	
+	
+	private QuickPlotDialog getQuickPlotDialog(){
+		if (quickPlotDialog != null) {
+			quickPlotDialog.open();
+		}
+		else {
+			quickPlotDialog = new QuickPlotDialog(getShell());
+			quickPlotDialog.open();
+			quickPlotDialog.getShell().setFocus();
+		}
+		return quickPlotDialog;
+	}
+	
+	private XYSeries getSerie(double[] time, double[] values, String key){
+		XYSeries series = null;
+		series = new XYSeries(key);
+		
+		if (time != null && values != null) {
+			for (int i = 0; i < time.length; i++) {
+				double t = time[i];
+				series.add(t, values[i]);
+			}
+		}
+		return series;
+	}
+	
+	
+	
+	
+	private TreeItem[] getSelectedItem(){
+		Tree activeTree = getActiveTree();
+		TreeItem[] items = null;
+		if (activeTree != null) {
+			items = activeTree.getSelection();
+		}
+		return items;
+	}
+	
+	private List<String> getFilePathAndDotPath(){
+		List<String> fileAndVariableData = new ArrayList<String>();
+		
+		Tree activeTree = getActiveTree();
+		
+		if (activeTree != null) {
+			TreeItem[] items = activeTree.getSelection();
+			for (TreeItem treeItem : items) {
+				TreeItemData data = (TreeItemData) treeItem.getData();
+				if (data != null) {
+					
+					String filePath= null;
+					String dotPath= null;
+					String modelName = null;
+					
+					// VeM
+					if (data.isVeM()) {
+						Element VeMElement = data.getUMLElement();
+						filePath = getSimulationResultsFiles().get(VeMElement);
+					}
+					
+					// a property of the VeM to plot
+					TreeObject treeObject = data.getTreeObject();
+					if (treeObject != null) {
+						
+						if (data.isClientProperty()) {
+							// plot client property
+							dotPath = treeObject.getDotPath();
+							
+							// get the VeM (2 levels up)
+							TreeItem VeMItem = treeItem.getParentItem().getParentItem();
+							Element VeMElement = ((TreeItemData)VeMItem.getData()).getUMLElement();
+							modelName = ModelicaMLServices.getName(VeMElement);
+							
+							filePath = getSimulationResultsFiles().get(VeMElement);
+							
+						}
+						else if (data.isProperty()) {
+
+							// for a requirement plot the status attribute
+							if (data.isRequirement()) {
+								dotPath = treeObject.getDotPath() + "." + gmd.requirementStatusPropertyName;
+							}
+							// for other models -> preselect the plot tree
+							else {
+								dotPath = treeObject.getDotPath();
+							}
+							
+							// get the VeM (1 level up)
+							TreeItem VeMItem = treeItem.getParentItem();
+							Element VeMElement = ((TreeItemData)VeMItem.getData()).getUMLElement();
+							modelName = ModelicaMLServices.getName(VeMElement);
+							
+							filePath = getSimulationResultsFiles().get(VeMElement);
+						}
+					}
+					
+					if (filePath != null) {
+						fileAndVariableData.add(filePath);
+						
+						HashSet<String> preselectedVariablesToPlot = new HashSet<String>();
+						preselectedVariablesToPlot.add(dotPath);
+						if (dotPath != null) {
+							fileAndVariableData.add(dotPath);
+						}
+						
+						if (modelName != null) {
+							fileAndVariableData.add(modelName);
+						}
+					}
+				}
+			}
+		}
+		
+		return fileAndVariableData;
+	}
+	
 	private Tree getActiveTree() {
 		TabItem selectedTab = tabFolder.getSelection()[0];
 		if (selectedTab != null) {
@@ -570,6 +817,15 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		return null;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 	/**
@@ -593,6 +849,28 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		return new Point(797, 509);
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -680,11 +958,12 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		
 		// update the count of the tree tab
 		tbtmNotEvaluatedRequirements.setText(tbtmNotEvaluatedRequirements.getText()  + " (" + i + " of " + gmd.getAllFoundRequirements().size() + ")");
+
 	}
 	
 	
 	private void getNotImplementedRequirementItems(Tree parent){
-		int i = 0;
+		int counter = 0;
 		
 		HashSet<Element> allFoundRequirements = gmd.getAllFoundRequirements();
 		HashSet<Element> allUsedRequirements= gmd.getAllUsedRequirements();
@@ -697,7 +976,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			for (Element requirement : ModelicaMLServices.getSortedByRequirementId(allNotImplementedRequirements)) {
 				
 				// counter 
-				i++ ;
+				counter++ ;
 				
 				TreeItem item = new TreeItem(parent, SWT.NONE);
 				String name = ModelicaMLServices.getRequirementID(requirement) + " " +  ModelicaMLServices.getName(requirement);
@@ -713,14 +992,18 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			}
 			
 			// update the count of the tree tab
-			tbtmNotImplementedRequirements.setText(tbtmNotImplementedRequirements.getText() + " (" + i + " of " + gmd.getAllFoundRequirements().size() + ")");
+			tbtmNotImplementedRequirements.setText(tbtmNotImplementedRequirements.getText() + " (" + counter + " of " + gmd.getAllFoundRequirements().size() + ")");
 		}
+		if (counter > 0) {
+			tbtmNotImplementedRequirements.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif"));
+		}
+
 	}
 	
 	
 	private String getNotUsedScenarioItems(Tree parent){
 		String string = "";
-		int i = 0;
+		int counter = 0;
 		
 		HashSet<Element> allFoundScenarios = gmd.getAllFoundScenarios();
 		HashSet<Element> allUsedScenarios = gmd.getAllScenarios();
@@ -732,7 +1015,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			
 			for (Element scenario : ModelicaMLServices.getSortedByName(allNotUsedScenarios)) {
 				// counter
-				i++;
+				counter++;
 				
 				TreeItem item = new TreeItem(parent, SWT.NONE);
 				String name = ModelicaMLServices.getName(scenario);
@@ -749,7 +1032,10 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		}
 		
 		// update the count of the tree tab
-		tbtmNotUsedScenarios.setText(tbtmNotUsedScenarios.getText()  + " (" + i + " of " + gmd.getAllFoundScenarios().size() + ")");
+		tbtmNotUsedScenarios.setText(tbtmNotUsedScenarios.getText()  + " (" + counter + " of " + gmd.getAllFoundScenarios().size() + ")");
+		if (counter > 0) {
+			tbtmNotUsedScenarios.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Class.gif"));
+		}
 		
 		return string;
 	}
@@ -1002,17 +1288,26 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	
 	private void createNotSimulatedItems(Tree treeRoot){
 
-		for (String modelQName : gmd.getSimulationFailedList()) {
-
-			for (Element modelElement : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
-				if (getModelQName((NamedElement) modelElement).equals(modelQName)) {
-					TreeItem failedModelItem = new TreeItem(treeRoot,SWT.NONE);
-					
-					failedModelItem.setText(getModelName(modelElement) + "  ("+getModelQName(modelElement)+")");
-					// decorate with an error overlay
-					failedModelItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Class.gif")));
-				}
+		int count = 0;
+		for (Element modelElement : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
+			if (!gmd.getSimulationResultsFile().keySet().contains(modelElement)) {
+				
+				count ++; 
+				TreeItem failedModelItem = new TreeItem(treeRoot,SWT.NONE);
+				
+				failedModelItem.setText(getModelName(modelElement) + "  ("+getModelQName(modelElement)+")");
+				// decorate with an error overlay
+				failedModelItem.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Class.gif")));
+				TreeItemData data = new TreeItemData();
+				data.setIsVeM(true);
+				data.setVeMElement(modelElement);
+				data.setUMLElement(modelElement);
+				failedModelItem.setData(data);
 			}
+		}
+		tbtmNotSimulated.setText(tbtmNotSimulated.getText() + " (" + count + " of " + gmd.getGeneratedModels().size());
+		if (count > 0 ) {
+			tbtmNotSimulated.setImage(decorateError(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "icons/Class.gif")));
 		}
 	}
 	
@@ -1214,5 +1509,6 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	public void setGmd(GeneratedModelsData gmd) {
 		this.gmd = gmd;
 	}
+
 }
 

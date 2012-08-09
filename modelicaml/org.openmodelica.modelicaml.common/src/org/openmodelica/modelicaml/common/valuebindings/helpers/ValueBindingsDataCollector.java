@@ -228,7 +228,6 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 				ElementsCollector ec = new ElementsCollector();
 				ec.setStereotypeQName(Constants.stereotypeQName_ValueMediator);
 				ec.collectElementsFromModel(umlRootElement);
-//				ec.collectElementsFromModel(umlRootElement, Constants.stereotypeQName_ValueMediator);
 				allMediators = ec.getElements();
 			}
 			

@@ -588,7 +588,8 @@ public class GeneratorVeMScenariosBased {
 					pkgName = Constants.automaticScenarioBasedVerificationPackageNamePrefix + ((NamedElement)sourceModel).getName();
 				}
 				
-				String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
+//				String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
+				String postFix = "_" + ModelicaMLServices.getTimeStamp();
 				PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 			
 				generatedPackages.add(simulationModelsPackage);
@@ -796,7 +797,7 @@ public class GeneratorVeMScenariosBased {
 						// update all bindings in the created simulation model class
 						CreatorValueBinding vbc = new CreatorValueBinding();
 						// pass the mediators that were already collected
-						vbc.setAllMediators(verificationScenariosCollector.getAllMediators());
+						vbc.setAllMediators(getVerificationScenariosCollector().getAllMediators());
 						
 
 						//Alternative 1: rather slow because each VeM is instantiated ********************************************************************************************
@@ -830,6 +831,7 @@ public class GeneratorVeMScenariosBased {
 						 */
 
 						@SuppressWarnings("unchecked")
+						// TODO: check if this is an issues that clone() does not clone keys and values ...
 						HashMap<Element, ClassInstantiation> preparedModelInstantiationsCopy = (HashMap<Element, ClassInstantiation>) preparedModelInstantiations.clone();
 						HashSet<TreeObject> allTreeObjects = new HashSet<TreeObject>();
 						
@@ -849,6 +851,10 @@ public class GeneratorVeMScenariosBased {
 								if ( requirementsInstatiatedMultipleTimes.contains(component)) {
 									ClassInstantiation requirementInstantiation = new ClassInstantiation((Class) ((Property)component).getType(), true, false);
 									requirementInstantiation.createTree();
+									
+									// pass pre-collected mediators in order to avoid additional search
+									requirementInstantiation.setAllMediators(getVerificationScenariosCollector().getAllMediators());
+									
 									requirementInstantiation.collectValueClientsAndProvidersFromUmlModel();
 									
 									ci = requirementInstantiation;
@@ -886,8 +892,6 @@ public class GeneratorVeMScenariosBased {
 									
 									// add the instantiated class to the prepared instantiation for reuse
 									ClassInstantiation veMCi = new ClassInstantiation(simulationModel);
-									// pass pre-collected meditors in order to avoid new search
-									veMCi.setAllMediators(verificationScenariosCollector.getAllMediators());
 
 									// DO NOT create tree, we will reused available instantiation trees! 
 									
@@ -902,7 +906,7 @@ public class GeneratorVeMScenariosBased {
 									//set the UML model because it will not be accessible while simulation is running in a job.
 									veMCi.setUmlModel(simulationModel.getModel());
 									// pass the pre-collected mediators in order to avoid another search 
-									veMCi.setAllMediators(verificationScenariosCollector.getAllMediators());
+									veMCi.setAllMediators(getVerificationScenariosCollector().getAllMediators());
 									// collect binding data in order to determine clients, providers, operations, etc.
 									veMCi.collectValueClientsAndProvidersFromUmlModel();
 									

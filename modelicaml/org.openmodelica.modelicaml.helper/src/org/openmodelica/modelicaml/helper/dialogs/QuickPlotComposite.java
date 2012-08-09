@@ -1,11 +1,9 @@
-package org.openmodelica.modelicaml.simulation.plot;
+package org.openmodelica.modelicaml.helper.dialogs;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -13,24 +11,16 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.experimental.chart.swt.ChartComposite;
-import org.openmodelica.modelicaml.simulation.simresults.ReadMatlab4;
 
-public class PlotComposite extends org.eclipse.swt.widgets.Composite {
+public class QuickPlotComposite extends org.eclipse.swt.widgets.Composite {
 
 	private XYSeriesCollection dataset;
 	private JFreeChart chart;
 	private XYPlot plot;
-	
-	private ReadMatlab4 reader;
 	public static final String timeName = "time";
+
 	
-	public PlotComposite(org.eclipse.swt.widgets.Composite parent, int style, ReadMatlab4 reader) {
-		super(parent, style);
-		this.reader = reader;
-		initGUI();
-	}
-	
-	public PlotComposite(org.eclipse.swt.widgets.Composite parent, int style) {
+	public QuickPlotComposite(org.eclipse.swt.widgets.Composite parent, int style) {
 		super(parent, style);
 		initGUI();
 	}
@@ -62,12 +52,11 @@ public class PlotComposite extends org.eclipse.swt.widgets.Composite {
 		final ChartComposite frame = new ChartComposite(parent, SWT.NONE, chart, true);
 	}
 	
-	public void addValues(final String varPath) {
+	public void addValues(final XYSeries series) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				
-				XYSeries series = getSerie(varPath);
 				if (series != null) {
 					dataset.addSeries(series);
 				}
@@ -75,56 +64,15 @@ public class PlotComposite extends org.eclipse.swt.widgets.Composite {
 		});
 	}
 	
-	public void removeValues(final String varPath) {
+	public void removeValues(final XYSeries series) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 
-				XYSeries series = getSerie(varPath);
 				if (series != null) {
 					dataset.removeSeries(series);
 				}
 			}
 		});
-	}
-	
-	private XYSeries getSerie(String varPath){
-		XYSeries series = null;
-		if (reader != null) {
-			double[] time;
-			double[] values;
-			try {
-//				time = reader.read_vals(timeName);
-				time = reader.getTimeValues();
-				values = reader.getValues(varPath);
-
-				series = new XYSeries(varPath);
-				
-				if (time != null && values != null) {
-					for (int i = 0; i < time.length; i++) {
-						double t = time[i];
-						series.add(t, values[i]);
-					}
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				MessageDialog.openError(new Shell(), "Plotting Error", "Cannot read the values for '"+varPath+"'");
-			}
-		}
-		else {
-			MessageDialog.openError(new Shell(), "Plotting Error", "Cannot read the simulation file for '"+varPath+"'");
-		}
-		return series;
-	}
-
-	
-	// Getter and Setter
-	public ReadMatlab4 getReader() {
-		return reader;
-	}
-
-	public void setReader(ReadMatlab4 reader) {
-		this.reader = reader;
 	}
 }

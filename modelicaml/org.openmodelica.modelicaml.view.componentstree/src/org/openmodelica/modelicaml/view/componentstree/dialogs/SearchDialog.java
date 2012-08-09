@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.view.valuebindings.dialogs;
+package org.openmodelica.modelicaml.view.componentstree.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,11 +30,11 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
+import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
-import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
-import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 public class SearchDialog extends Dialog {
 	private Tree tree;
@@ -43,9 +43,6 @@ public class SearchDialog extends Dialog {
 	
 	private TreeViewer viewer;
 	private TreeParent root;
-	
-	private boolean isShowClientPerspective = false;
-	private boolean isShowProviderPerspective = false;
 	
 	private HashSet<String> keywords = new HashSet<String>();
 	private Button btnOr;
@@ -56,15 +53,13 @@ public class SearchDialog extends Dialog {
 	private boolean searchInTypeName = true;
 	private boolean searchInTypeComments = false;
 
-	public SearchDialog(Shell parentShell, TreeViewer viewer, TreeParent root, boolean isShowClientPerspective, boolean isShowProviderPerspective) {
+	public SearchDialog(Shell parentShell, TreeViewer viewer, TreeParent root) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
 		
 		this.root = root;
 		this.viewer = viewer;
-		this.isShowClientPerspective = isShowClientPerspective;
-		this.isShowProviderPerspective = isShowProviderPerspective;
 	}
 
 	
@@ -87,7 +82,7 @@ public class SearchDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings","icons/find.png"));
-		newShell.setText("Search in " + root.getName());
+		newShell.setText("Search in " + root.getName());		
 	}
 	
 	@Override
@@ -138,43 +133,16 @@ public class SearchDialog extends Dialog {
 					if (foundItems != null) {
 						for (TreeObject treeObject : foundItems) {
 							
-							if ( (treeObject.isValueClient() || treeObject.isValueProvider()) && treeObject.getParent() != null && treeObject.getParent().getParent() != null) {
-
-								TreeParent mediator = treeObject.getParent().getParent();
-								
-								if (mediator.isValueMediator()) {
-									TreeItem mediatorItem = new TreeItem(tree, SWT.NONE);
-									mediatorItem.setData(mediator);
-									mediatorItem.setText(mediator.getName());
-									mediatorItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/valueMediator.png"));
-									
-									// create client or provider
-									TreeItem treeItem = new TreeItem(mediatorItem, SWT.NONE);
-									treeItem.setData(treeObject);
-									treeItem.setText(treeObject.getName());
-									if (treeObject.isValueClient()) {
-										treeItem.setText("Client " + treeItem.getText());
-									}
-									else if (treeObject.isValueProvider()) {
-										treeItem.setText("Provider " + treeItem.getText());
-									}
-									treeItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/Property.gif"));	
-								}
+							TreeItem treeItem = new TreeItem(tree, SWT.NONE);
+							treeItem.setData(treeObject);
+//							treeItem.setText(treeObject.getName());
+							treeItem.setText(treeObject.getDotPath());
+							
+							if (treeObject.isRoot()) {
+								treeItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.componentstree", "icons/Class.gif"));							
 							}
 							else {
-
-								TreeItem treeItem = new TreeItem(tree, SWT.NONE);
-								treeItem.setData(treeObject);
-								treeItem.setText(treeObject.getName());
-								if (treeObject.isValueClient() || treeObject.isValueProvider() ) {
-									treeItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/Property.gif"));							
-								}
-								else if (treeObject.isValueMediator()) {
-									treeItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/valueMediator.png"));
-								}
-								else if (treeObject.isValueMediatorContainer()) {
-									treeItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "icons/valueMediatorsContainer.png"));
-								}
+								treeItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.componentstree", "icons/Property.gif"));
 							}
 						}
 					}
@@ -202,7 +170,7 @@ public class SearchDialog extends Dialog {
 			public void mouseDoubleClick(MouseEvent e) {
 				TreeItem[] selectedItems = tree.getSelection();
 				for (TreeItem selectedItem : selectedItems) {
-					HashSet<Object> objects = TreeUtls.findTreeItems((TreeObject) selectedItem.getData(), root, new HashSet<Object>());
+					HashSet<Object> objects = TreeUtls.findTreeItems( ((TreeObject) selectedItem.getData()).getDotPath(), root, new HashSet<Object>());
 					List<Object> newSelectionItems = new ArrayList<Object>();
 					newSelectionItems.addAll(objects);
 					viewer.setSelection(new StructuredSelection(newSelectionItems), true);
@@ -236,74 +204,60 @@ public class SearchDialog extends Dialog {
 		HashSet<TreeObject> foundItems = new HashSet<TreeObject>();
 		
 		for (TreeObject treeObject: getAllTreeItems(root)) {
-			if (treeObject.isValueClient() || treeObject.isValueProvider() || treeObject.isValueMediator() || treeObject.isValueMediatorContainer()) {
+			String string = "";
+			// search in tree object name, uml element qualified name, type qualified name, all comments 
+			
+			if (isSearchInName()) {
+				string += treeObject.getName();
+			}
+			
+			if (treeObject.getUmlElement() != null ){
 				
-				if ((isShowClientPerspective) && !treeObject.isReadOnly() ) {
-					// skip
+				if (isSearchInName()) {
+					string += ModelicaMLServices.getQualifiedName(treeObject.getUmlElement());
 				}
-				else if ((isShowProviderPerspective) && !treeObject.isReadOnly() ) {
-					// skip
+				if (isSearchInComments()) {
+					string += treeObject.getUmlElement().getOwnedComments().toString();							
 				}
-				else if (!(isShowClientPerspective | isShowProviderPerspective) && treeObject.isReadOnly()){
-					// skip
-				}
-				else {
-					String string = "";
-					// search in tree object name, uml element qualified name, type qualified name, all comments 
-					
-					if (isSearchInName()) {
-						string += treeObject.getName();
-					}
-					
-					if (treeObject.getUmlElement() != null ){
-						
-						if (isSearchInName()) {
-							string += ModelicaMLServices.getQualifiedName(treeObject.getUmlElement());
-						}
-						if (isSearchInComments()) {
-							string += treeObject.getUmlElement().getOwnedComments().toString();							
-						}
 
-						if (treeObject.getUmlElement() instanceof Property) {
-							Type type = ((Property)treeObject.getUmlElement()).getType();
-							if (isSearchInTypeName()) {
-								string +=  ModelicaMLServices.getQualifiedName(type);
-							}
-							if (isSearchInTypeComments()) {
-								string += type.getOwnedComments().toString();
-							}
-						}
+				if (treeObject.getUmlElement() instanceof Property) {
+					Type type = ((Property)treeObject.getUmlElement()).getType();
+					if (isSearchInTypeName()) {
+						string +=  ModelicaMLServices.getQualifiedName(type);
 					}
-					
-					// OR search 
-					if (btnOr.getSelection()) {
-						for (String keyword : keywords) {
-							// collect matches
-							if (string.toLowerCase().contains(keyword.toLowerCase())) {
-								foundItems.add(treeObject);
-							}
-						}
+					if (isSearchInTypeComments()) {
+						string += type.getOwnedComments().toString();
 					}
-					// AND search
-					else if (btnAnd.getSelection()) {
-						boolean matchedAlways = true;
-//						boolean matched = false;
-						for (String keyword : keywords) {
-							// collect matches
-							if (string.toLowerCase().contains(keyword.toLowerCase())) {
-//								matched = true;
-							}
-							else {
-//								matched = false;
-								matchedAlways = false;
-							}
-						}
-						if (matchedAlways) {
-							foundItems.add(treeObject);
-						}
-					} 	
 				}
 			}
+			
+			// OR search 
+			if (btnOr.getSelection()) {
+				for (String keyword : keywords) {
+					// collect matches
+					if (string.toLowerCase().contains(keyword.toLowerCase())) {
+						foundItems.add(treeObject);
+					}
+				}
+			}
+			// AND search
+			else if (btnAnd.getSelection()) {
+				boolean matchedAlways = true;
+//				boolean matched = false;
+				for (String keyword : keywords) {
+					// collect matches
+					if (string.toLowerCase().contains(keyword.toLowerCase())) {
+//						matched = true;
+					}
+					else {
+//						matched = false;
+						matchedAlways = false;
+					}
+				}
+				if (matchedAlways) {
+					foundItems.add(treeObject);
+				}
+			} 	
 		}
 		
 		return foundItems;

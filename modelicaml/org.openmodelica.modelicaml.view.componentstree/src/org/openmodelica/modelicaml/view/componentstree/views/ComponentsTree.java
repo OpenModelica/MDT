@@ -110,6 +110,7 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
@@ -121,6 +122,7 @@ import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandle
 import org.openmodelica.modelicaml.simulation.handlers.SimulationOMCAction2;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
+import org.openmodelica.modelicaml.view.componentstree.dialogs.SearchDialog;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
 import org.openmodelica.modelicaml.view.componentstree.display.NameSorter;
 import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
@@ -158,7 +160,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	TreeParent visualizedTree = null;
 	
 	/** The root. */
-	TreeParent root = null;
+	private TreeParent root = null;
+	
+	/** The invisible root. */
+	private TreeParent invisibleRoot;
 	
 	/** The tree root. */
 	public static TreeParent treeRoot;
@@ -253,6 +258,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	private Action actionSimulate;
 
 	private Action actionShowPredefinedTypesProperties;
+
+	private Action actionFind;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
@@ -587,6 +594,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 *            the manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(actionFind);
+		manager.add(new Separator());
 		manager.add(actionReload);
 		manager.add(new Separator());
 		manager.add(actionValidate);
@@ -734,6 +743,19 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionAllDeleteModifications.setText("Delete all modifications");
 		actionAllDeleteModifications.setToolTipText("Delete all modifications");
 		actionAllDeleteModifications.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
+		
+		
+		
+		actionFind = new Action("actionFind") {
+			public void run() {
+				SearchDialog searchDialog = new SearchDialog(ModelicaMLServices.getShell(), viewer, root);
+				searchDialog.open();
+			}
+		};
+		actionFind.setText("Clear");
+		actionFind.setToolTipText("Clear");
+		actionFind.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/find.png"));
+		
 		
 		
 		actionReload = new Action("actionReload") {
@@ -2140,27 +2162,28 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		viewer.getControl().setFocus();
 	}
 
-//	/** The pagebook. */
-//	private PageBook pagebook;
-//	
-//	/** The tableviewer. */
-//	private TableViewer tableviewer;
-//	
-//	/** The textviewer. */
-//	private TextViewer textviewer;
-
-	// the listener we register with the selection service
-	/** The listener. */
+	
 	
 	private ISelectionListener listener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-			// we ignore our own selections
-			if (sourcepart != ComponentsTree.this) {
+			
+			// we ignore our own selections and only listen to Papyrus Model Explorer
+			if (sourcepart != ComponentsTree.this && 
+					sourcepart != null 
+					&& sourcepart.getSite() != null
+					&& sourcepart.getSite().getId()!= null
+					&& sourcepart.getSite().getId().equals(Constants.VIEW_PAPYRUS_MODELEXPLORER)) {
+				
 				EObject selectedElement = null;
 	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
 					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 				}
-				if (selectedElement instanceof Element) {
+	        	
+	        	/*
+	        	 * avoid the case the the view provides its own selection and re-builds the tree again.
+	        	 */
+
+	        	if (selectedElement instanceof Element && !selectedElement.equals(selectedClass)) {
 					if (actionLinkWithEditor.isChecked()) {
 						showSelection(sourcepart, selection);
 						viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
@@ -2170,10 +2193,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		}
 	};
 
-	
-	
-//	private TreeObject lastSelectedItem = null;
-//	private String lastSelectedDotPath = null;
 	
 	private void hookSelectionChangedAction() {
 //		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -2207,38 +2226,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		Object[] expandedElements = viewer.getExpandedElements();
 		TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 		
-//		// remember the last selected item
-//		IStructuredSelection viewerSelection = (IStructuredSelection) viewer.getSelection();
-//		TreeObject obj = (TreeObject) viewerSelection.getFirstElement();
+		// build new tree
+		createTree();
 		
-		// Only listen to the Papyrus Model Explorer selection
-		if (sourcepart != null && sourcepart.getSite() != null 
-				&& sourcepart.getSite().getId()!= null 
-				&& sourcepart.getSite().getId().equals(Constants.VIEW_PAPYRUS_MODELEXPLORER)) {
-			
-			// set new input from the selection.
-			viewer.setInput(getViewSite());
-			
-		}
+		// set new input from the selection.
+		viewer.setInput(getViewSite());
 
 		viewer.setExpandedElements(expandedElements);
 		viewer.setExpandedTreePaths(expandedTreePaths);
-		
-		// select the item again in view
-//		TreeUtls.selectInView(obj, root, viewer);			
-////		viewer.setSelection(new StructuredSelection(viewerSelection)); // does not work
-//		viewer.expandToLevel(ComponentsTree.DEFAULT_EXPAND_LEVEL);
 	}
-	
-//	private void showItems(Object[] items) {
-//		tableviewer.setInput(items);
-//		pagebook.showPage(tableviewer.getControl());
-//	}
-//
-//	private void showText(String text) {
-//		textviewer.setDocument(new Document(text));
-//		pagebook.showPage(textviewer.getControl());
-//	}
 
 	/*
 	 * public void setFocus() { pagebook.setFocus(); }
@@ -2259,8 +2255,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 */
 	class ViewContentProvider implements IStructuredContentProvider,ITreeContentProvider {
 		
-		/** The invisible root. */
-		private TreeParent invisibleRoot;
+		
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -2274,18 +2269,29 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		public void dispose(){
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object parent){
+		
+		public Object[] getElements(Object parent) {
 			if (parent.equals(getViewSite())) {
-				invisibleRoot = null;
-				initialize();
+				if (invisibleRoot==null) initialize();
 				return getChildren(invisibleRoot);
 			}
 			return getChildren(parent);
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+//		public Object[] getElements(Object parent){
+//			if (parent.equals(getViewSite())) {
+//				invisibleRoot = null;
+//				initialize();
+//				return getChildren(invisibleRoot);
+//			}
+//			return getChildren(parent);
+//		}
 
+		
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
@@ -2322,103 +2328,70 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			// add the selection listener
 			getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 			
-			if (sel != null) {
-				// disable action by default until the selection is a class.
-				
-				if (sel instanceof IStructuredSelection) {
-//					Object first = ((IStructuredSelection) sel).getFirstElement();
-					EObject selectedElement = null;
-		        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
-						selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
-					}
-					
-//					if (first instanceof Property) {
-//						Type type = ((Property)first).getType();
-//						if ( type != null) {
-//							if (type instanceof Class) {
-//								selectedClass = (Class) type;
-//							}
-//						}
-//					}
-					
-//					if (selectedElement instanceof StateMachine){
-//						BehavioredClassifier owner = ((StateMachine)selectedElement).getContext();
-//						if (owner != null) {
-//							if (owner instanceof Class) {
-//								selectedClass = (Class)owner;
-//							}								
-//						}
-//					}
-//					else if (selectedElement instanceof State) {
-//						Element region = ((State)selectedElement).getOwner();
-//						if (region != null) {
-//							if (region instanceof Region) {
-//								StateMachine sm = ((Region)region).getStateMachine();
-//								if (sm != null) {
-//									BehavioredClassifier owner = sm.getContext();
-//									if (owner != null) {
-//										if (owner instanceof Class) {
-//											selectedClass = (Class)owner;
-//										}								
-//									}
-//								}
-//							}
-//						}
-//						
-//					}
-					//else if (selectedElement instanceof Class ) {
-					if (selectedElement instanceof Class ) {
-						selectedClass = (Class) selectedElement;
-						
-						if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
-							actionSimulate.setEnabled(true);
-							actionValidate.setEnabled(true);
-							actionReload.setEnabled(true);
-							actionCollapseAll.setEnabled(true);
-							
-//							createTree(selectedClass); // build the entire tree
-						}
-						else {
-							actionSimulate.setEnabled(false);
-							actionValidate.setEnabled(false);
-							actionReload.setEnabled(false);
-							actionCollapseAll.setEnabled(false);
-						}
-					}
-
-					createTree(selectedClass); // build the entire tree
-				}
-			}
-		}
-	
-		
-		/**
-		 * Creates the tree.
-		 * 
-		 * @param selectedClass
-		 *            the selected class
-		 */
-		public void createTree(Class selectedClass){
-			// reset
-//			org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = null;
-			
-			if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
-				
-				ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked(), actionShowPredefinedTypesProperties.isChecked());
-
-				ast.createTree();
-				ast.collectValueClientsAndProvidersFromUmlModel();
-				invisibleRoot = ast.getInvisibleRoot();
-				root = ast.getTreeRoot();
-				
-				// set the static variable to be used by other plugins. This is done in order to avoid cyclic plugin dependecies
-				org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation = ast;
-				org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = root;
-				org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeViewer = viewer;
-			}
+			createTree();
 		}
 	}
 
+	
+	/**
+	 * Creates the tree.
+	 * 
+	 * @param selectedClass
+	 *            the selected class
+	 */
+	private void createClassTree(Class selectedClass){
+		// reset
+//		org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = null;
+		
+		if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
+			
+			ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked(), actionShowPredefinedTypesProperties.isChecked());
+
+			ast.createTree();
+			ast.collectValueClientsAndProvidersFromUmlModel();
+			invisibleRoot = ast.getInvisibleRoot();
+			root = ast.getTreeRoot();
+			
+			// set the static variable to be used by other plugins. This is done in order to avoid cyclic plugin dependecies
+			org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation = ast;
+			org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = root;
+			org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeViewer = viewer;
+		}
+	}
+	
+	
+	public void createTree(){
+		
+		if (sel instanceof IStructuredSelection) {
+			EObject selectedElement = null;
+        
+			if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+				selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+			}
+			
+			if (selectedElement instanceof Class ) {
+				selectedClass = (Class) selectedElement;
+				
+				if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
+					actionSimulate.setEnabled(true);
+					actionValidate.setEnabled(true);
+					actionReload.setEnabled(true);
+					actionCollapseAll.setEnabled(true);
+					
+					createClassTree(selectedClass); // build the entire tree
+				}
+				else {
+					actionSimulate.setEnabled(false);
+					actionValidate.setEnabled(false);
+					actionReload.setEnabled(false);
+					actionCollapseAll.setEnabled(false);
+				}
+			}
+
+//			createTree(selectedClass); // build the entire tree
+		}
+	}
+	
 	private boolean isValid(Class aClass){
 		if (aClass.getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null) { return true; }
 		if (aClass.getAppliedStereotype(Constants.stereotypeQName_Model) != null) { return true; }

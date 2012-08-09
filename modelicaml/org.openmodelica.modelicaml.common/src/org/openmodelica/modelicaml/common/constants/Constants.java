@@ -227,17 +227,18 @@ public class Constants {
 	
 	
 	// simulation and model generation
-	public final static String simModelsPackageNamePrefix = "GenVeMs for: ";
+	public final static String simModelsPackageNamePrefix = "VeMs: ";
+	public final static String simModelsNamePrefix = "VeM: ";
 	
-	public final static String automaticScenarioBasedVerificationPackageNamePrefix = "aGenVeMs for: ";
-	public final static String automaticScenarioBasedVerificationModelsNamePrefix = "aVeM for: ";
+	public final static String automaticScenarioBasedVerificationPackageNamePrefix = "aVeMs: ";
+	public final static String automaticScenarioBasedVerificationModelsNamePrefix = "aVeM: ";
 	
-	public final static String relationDiscoveryModelsPackageNamePrefix = "Temp_RelDiscovery using: ";
-	public final static String relationDiscoveryModelsNamePrefix = "Temp_RelDiscovery for: ";
-	public final static String relationDiscoveryDependeciesPackageName = "GenDiscoveredRelationsDependencies";
+	public final static String relationDiscoveryModelsPackageNamePrefix = "ReD using: ";
+	public final static String relationDiscoveryModelsNamePrefix = "ReD for: ";
+	
+	public final static String relationDiscoveryDependeciesPackageName = "DiscoveredRelations-gen";
+	
 
-	
-	public final static String simModelsNamePrefix = "VeM for: ";
 	public final static String systemModelPropertyNamePrefix = "sm_";
 	public final static String additionalModelPrefix = "add_";
 	public final static String verificationScenarioPropertyNamePrefix = "vs_";

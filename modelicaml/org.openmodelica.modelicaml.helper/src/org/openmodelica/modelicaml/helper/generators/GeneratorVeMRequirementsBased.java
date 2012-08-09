@@ -224,7 +224,8 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 		monitorText2 = "Creating models...";
 
 		String pkgName = Constants.simModelsPackageNamePrefix + ((NamedElement)systemModel).getName();
-		String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
+//		String postFix = ModelicaMLServices.getNamePostFix((Package)targetPackage, pkgName);
+		String postFix = "_" + ModelicaMLServices.getTimeStamp();
 		PackageableElement simulationModelsPackage = ((Package)targetPackage).createPackagedElement(pkgName + postFix,UMLPackage.Literals.PACKAGE);
 
 				
