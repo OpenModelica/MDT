@@ -192,6 +192,7 @@ constrainedby <%target.filter("NamedElement").qualifiedName.replaceSpecCharExcep
 <%-- 	############################################################# 	--%>
 <%script type="uml.Package" name="package_code" file="<%file_name%>"%>
 <%add_inc_top_file%><%add_inc_validation%><%-- NOTE: Not part of the Modelica grammar. --%>
+<%within%>
 package <%name.replaceSpecChar()%>
 <%add_inc_top_annotation%>
 <%for (ownedElement.filter("Class")[isModelicaRestrictedClass == "true" && isStoredDefinition == "false"]){%>

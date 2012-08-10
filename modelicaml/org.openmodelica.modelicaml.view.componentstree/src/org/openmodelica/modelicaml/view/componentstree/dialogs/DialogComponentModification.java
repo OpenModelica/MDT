@@ -40,12 +40,9 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -59,7 +56,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.uml2.uml.Class;
-import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
@@ -78,8 +74,6 @@ import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.Prope
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.DialogDerivedCode;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
-
-import sun.security.util.DerEncoder;
 
 import com.google.inject.Injector;
 

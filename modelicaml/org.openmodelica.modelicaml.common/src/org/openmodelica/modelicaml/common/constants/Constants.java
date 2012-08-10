@@ -114,7 +114,8 @@ public class Constants {
 	public static final String stereotypeQName_ExtendsRelation 	= "ModelicaML::ModelicaRelationsConstructs::ExtendsRelation";
 	public static final String stereotypeQName_TypeRelation 	= "ModelicaML::ModelicaRelationsConstructs::TypeRelation";
 	public static final String stereotypeQName_ImportRelation	= "ModelicaML::ModelicaRelationsConstructs::Import";
-	public static final String stereotypeQName_RedeclareRelation= "ModelicaML::ModelicaRelationsConstructs::RedeclareRelation";
+	public static final String stereotypeQName_RedeclareRelation = "ModelicaML::ModelicaRelationsConstructs::RedeclareRelation";
+	public static final String stereotypeQName_ConstrainedByRelation = "ModelicaML::ModelicaRelationsConstructs::ConstrainedByRelation";
 	public static final String stereotypeQName_PartialDerivativeOfFunctionRelation = "ModelicaML::ModelicaRelationsConstructs::PartialDerivativeOfFunctionRelation";
 	
 	public static final String propertyName_alias				= "alias";

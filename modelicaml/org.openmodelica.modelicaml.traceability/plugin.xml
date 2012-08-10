@@ -7,7 +7,7 @@
       <view
             name="Bindings Traceability"
             icon="icons/links_view.gif"
-            category="org.openmodelica.modelicaml.gen.modelica.category1"
+            category="org.openmodelica.modelicaml.category"
             class="org.openmodelica.modelicaml.traceability.views.TraceabilityView"
             id="org.openmodelica.modelicaml.traceability.views.TraceabilityView">
       </view>

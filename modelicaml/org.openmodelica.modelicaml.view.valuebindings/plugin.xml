@@ -23,11 +23,11 @@
       <category
             id="org.openmodelica.modelicaml.view.valuebindings"
             name="Value Bindings"
-            parentCategory="org.openmodelica.modelicaml.gen.modelica.category1">
+            parentCategory="org.openmodelica.modelicaml.category">
       </category>
       <view
             allowMultiple="false"
-            category="org.openmodelica.modelicaml.gen.modelica.category1"
+            category="org.openmodelica.modelicaml.category"
             class="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView"
             icon="icons/valueMediator.png"
             id="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView"

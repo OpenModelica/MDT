@@ -78,13 +78,14 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <category
+      <!--<category
             id="org.openmodelica.modelicaml.validation.views.category1"
             name="ModelicaML Validation">
       </category>
+      -->
       <view
             allowMultiple="false"
-            category="org.openmodelica.modelicaml.validation.views.category1"
+            category="org.openmodelica.modelicaml.category"
             class="org.openmodelica.modelicaml.validation.views.ModelicaMLValidationView"
             icon="icons/validate.gif"
             id="org.openmodelica.modelicaml.validation.view"

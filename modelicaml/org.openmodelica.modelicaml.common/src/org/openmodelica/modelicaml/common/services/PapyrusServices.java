@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.papyrus.infra.core.services.ServiceException;
 import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
@@ -68,32 +69,6 @@ public class PapyrusServices {
 		return false;
 	}
 	
-//	@Deprecated
-//	/*
-//	 * use locateInModelExplorer(Object object, boolean reselectFirst) instead
-//	 */
-//	public static void locate(Object object){
-//		if (object instanceof EObject) {
-//			
-//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
-//
-//			ModelExplorerPageBookView modelExplorerPageBookView = null;
-//			if (view instanceof ModelExplorerPageBookView) {
-//				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
-//			}
-//			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-//			List<Object> items = new ArrayList<Object>();
-//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-//			
-//			// set focus
-//			modelExplorerView.getControl().setFocus();
-//
-//			// set new selection
-//			modelExplorerView.setSelection(new StructuredSelection(items), true);
-//			
-//     	}
-//	}
-	
 	public static void locateInModelExplorer(Object object, boolean reselectFirst){
 		if (object instanceof EObject) {
 			
@@ -103,54 +78,29 @@ public class PapyrusServices {
 			if (view instanceof ModelExplorerPageBookView) {
 				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
 			}
-			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-			List<EObject> items = new ArrayList<EObject>();
-//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-			items.add((EObject) object);
-			
-			ModelExplorerView.reveal(items, modelExplorerView);
+			if (modelExplorerPageBookView.getAdapter(ModelExplorerView.class) != null) {
+				CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
+				List<EObject> items = new ArrayList<EObject>();
+				items.add((EObject) object);
+				
+//				ModelExplorerView.reveal(items, modelExplorerView);
 
-			// set focus
-			modelExplorerView.getControl().setFocus();
-			
-//			if (reselectFirst) {
-//				// reset the selection so that the components tree can instantiate the selected class again
-//				modelExplorerView.setSelection(new StructuredSelection(), true);
-//			}
-//			
-//			// set new selection
-//			modelExplorerView.setSelection(new StructuredSelection(items), true);
+				// set focus
+				modelExplorerView.getControl().setFocus();
+				
+				if (reselectFirst) {
+					// reset the selection so that the components tree can instantiate the selected class again
+					ModelExplorerView.reveal(new ArrayList<EObject>(), modelExplorerView);
+				}
+				
+				// set new selection
+				ModelExplorerView.reveal(items, modelExplorerView);
+			}
+			else {
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Locate in Papyrus Error", "Could not access the Model Explorer. Please click on a Papyrus diagram in order to active the Model Explorer and try again.");
+			}
       	}
 	}
-	
-	
-//	@Deprecated
-//	/*
-//	 * use locateInModelExplorer(Object object, boolean reselectFirst) instead
-//	 */
-//	public static void locateWithReselection(Object object){
-//		if (object instanceof EObject) {
-//			
-//			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
-//
-//			ModelExplorerPageBookView modelExplorerPageBookView = null;
-//			if (view instanceof ModelExplorerPageBookView) {
-//				modelExplorerPageBookView = (ModelExplorerPageBookView)view;
-//			}
-//			CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-//			List<Object> items = new ArrayList<Object>();
-//			items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject)object));
-//
-//			// set focus
-//			modelExplorerView.getControl().setFocus();
-//			
-//			// reset the selection so that the components tree can instantiate the selected class again
-//			modelExplorerView.setSelection(new StructuredSelection(), true);
-//			
-//			// set new selection
-//			modelExplorerView.setSelection(new StructuredSelection(items), true);
-//      	}
-//	}
 	
 	
 	public static void locateInComponentsTreeView(Object object){

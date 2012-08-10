@@ -42,5 +42,12 @@
             realization="org.openmodelica.modelicaml.common.listeners.PapyrusListener">
       </listener>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.openmodelica.modelicaml.category"
+            name="ModelicaML">
+      </category>
+   </extension>
 
 </plugin>

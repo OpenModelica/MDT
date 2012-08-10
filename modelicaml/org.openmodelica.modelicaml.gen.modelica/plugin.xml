@@ -26,10 +26,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
+      <!--
       <category
             id="org.openmodelica.modelicaml.gen.modelica.category1"
             name="ModelicaML">
       </category>
+      -->
       <!--
       <view
             allowMultiple="false"
@@ -53,6 +55,7 @@
         name="generatedBy">
   </attribute>
 </extension>
+    <!--
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerContentGenerator
@@ -100,7 +103,7 @@
          </markerTypeReference>
       </markerContentGenerator>
    </extension>
-   <!--<extension
+ <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"

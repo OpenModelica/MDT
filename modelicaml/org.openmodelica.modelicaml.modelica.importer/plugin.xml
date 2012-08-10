@@ -7,7 +7,7 @@
       <view
             name="Modelica Models Synchronization"
             icon="icons/code.png"
-            category="org.openmodelica.modelicaml.gen.modelica.category1"
+            category="org.openmodelica.modelicaml.category"
             class="org.openmodelica.modelicaml.modelica.importer.views.ModelicaOMCCodeViewer"
             id="org.openmodelica.modelicaml.modelica.importer.views.ModelicaOMCCodeViewer">
       </view>

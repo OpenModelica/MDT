@@ -567,7 +567,11 @@ public class ModelicaMLServices {
 				return qName; 
 			}
 		}
-		return Constants.UKNOWN_NAME + "  -> " + element.toString();
+		if (element != null) {
+			return Constants.UKNOWN_NAME + "  -> " + element.toString();
+		}
+		
+		return Constants.UKNOWN_NAME;
 	}
 	
 	public static String getName(Element element) {
@@ -577,7 +581,12 @@ public class ModelicaMLServices {
 				return name; 
 			}
 		}
-		return Constants.UKNOWN_NAME + "  -> " + element.toString();
+		if (element != null) {
+			return Constants.UKNOWN_NAME + "  -> " + element.toString();	
+		}
+		
+		return Constants.UKNOWN_NAME;
+		
 	}
 	
 	
