@@ -47,6 +47,7 @@ import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -223,7 +224,13 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 		if (umlRootElement instanceof NamedElement) {
 			
 			// collect mediators if they were not collected yet
-			if (allMediators == null) {
+//			if (allMediators == null) {
+			
+			/*
+			 * TODO: this is a workaround in order to avoid new searches of mediators if the model does not contain any. 
+			 * It is set and reset by each invocation of a generator.
+			 */
+			if (allMediators == null && VerificationServices.modelContainsMediators) {
 
 				ElementsCollector ec = new ElementsCollector();
 				ec.setStereotypeQName(Constants.stereotypeQName_ValueMediator);
@@ -231,6 +238,10 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 				allMediators = ec.getElements();
 			}
 			
+			// stop here if no mediators were found.
+			if (allMediators ==  null) {
+				return;
+			}
 			for ( Element object : allMediators ) {
 				if (object instanceof NamedElement 
 						&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {

@@ -24,9 +24,17 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
 
-public class VerificationExecutionServices {
+public class VerificationServices {
+	
+	/*
+	 * TODO: This is a a workaround. It is used to avoid new searches of mediators 
+	 * when generating combinations or models.   
+	 */
+	public static boolean modelContainsMediators = true;
+	
 	
 	private static Date date = null;
+	 
 	
 	// Papyrus ModelicaML project verification session folder path
 	public static String verificationSessionFolderAbsolutePath = "";
@@ -50,7 +58,7 @@ public class VerificationExecutionServices {
 	public static void setDate() {
 		Calendar c1 = Calendar.getInstance(); // today
 		Date date = c1.getTime();
-		VerificationExecutionServices.date = date;
+		VerificationServices.date = date;
 	}
 	
 	public static String getTime(Element elt){
@@ -61,7 +69,7 @@ public class VerificationExecutionServices {
 	public static String getTime(){
 		Calendar c1 = Calendar.getInstance(); // today
 		Date date = c1.getTime();
-		VerificationExecutionServices.date = date;
+		VerificationServices.date = date;
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 		return sdf.format(date);
@@ -132,7 +140,7 @@ public class VerificationExecutionServices {
 	
 
 	public static String getLinkDelimiterString(Element elt) {
-		return VerificationExecutionServices.linkDelimiter;
+		return VerificationServices.linkDelimiter;
 	}
 	
 	

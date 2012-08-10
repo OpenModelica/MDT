@@ -82,7 +82,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
-import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
+import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
@@ -200,12 +200,12 @@ public class SimulationOMCAction extends AbstractHandler {
 		DialogSimulationSettings dialog = new DialogSimulationSettings(shell, 
 				"Simulation Settings", 
 				umlElement, 
-				VerificationExecutionServices.getStartTime(umlElement), 
-				VerificationExecutionServices.getStopTime(umlElement), 
-				VerificationExecutionServices.getInterval(umlElement), 
-				VerificationExecutionServices.getSolver(umlElement), 
-				VerificationExecutionServices.getTolerance(umlElement), 
-				VerificationExecutionServices.getOutputFormat(umlElement));
+				VerificationServices.getStartTime(umlElement), 
+				VerificationServices.getStopTime(umlElement), 
+				VerificationServices.getInterval(umlElement), 
+				VerificationServices.getSolver(umlElement), 
+				VerificationServices.getTolerance(umlElement), 
+				VerificationServices.getOutputFormat(umlElement));
 		
 		dialog.setLoadModelicaLibChecked(isMSLUsed);
 		

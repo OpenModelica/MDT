@@ -27,6 +27,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -256,8 +257,10 @@ public class GeneratorVeMScenariosBased {
 						}
 					});
 				} catch (InvocationTargetException e) {
+					e.printStackTrace();
 					MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoce the generator. Please try it again.");
 				} catch (InterruptedException e) {
+					e.printStackTrace();
 					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
 				}
 
@@ -272,6 +275,16 @@ public class GeneratorVeMScenariosBased {
 	// Combination *******************************************************************************************
 
 	private void createCombinationsForSimulationModels(Element systemeModel){
+		
+		/*
+		 * TODO: This is a workaround. Here we signal that there are no mediators in this model
+		 * and there is no need to search for them again and again. This must be reset after each generation of combinations or models. 
+		 */
+		if (getVerificationScenariosCollector().getAllMediators() == null || getVerificationScenariosCollector().getAllMediators().size() == 0) {
+			VerificationServices.modelContainsMediators = false;
+		}
+		
+		
 		
 		progressMonitor.beginTask("Creating combinations of system model, scenarios and requirements ...", verificationScenariosCollector.getAllScenarios().size());
 		
@@ -487,6 +500,10 @@ public class GeneratorVeMScenariosBased {
 			String message = "NOT VALID: System model '" + systemeModel.toString() + "' is not a UML::Class.";
 			addToLog(message);
 		}
+		
+		
+		// TODO: Reset the indicator in order to enable new searches
+		VerificationServices.modelContainsMediators = true;
 	}
 	
 	
@@ -495,6 +512,15 @@ public class GeneratorVeMScenariosBased {
 	// Models Generation *******************************************************************************************
 
 	public void generateSimulationModels(final Element sourceModel){
+		
+		/*
+		 * TODO: This is a workaround. Here we signal that there are no mediators in this model
+		 * and there is no need to search for them again and again. This must be reset after each generation of combinations or models. 
+		 */
+		if (getVerificationScenariosCollector().getAllMediators() == null || getVerificationScenariosCollector().getAllMediators().size() == 0) {
+			VerificationServices.modelContainsMediators = false;
+		}
+		
 		
 		String errorTitle = "Verification Models Generation Helper";
 		String errorMessage = "No scenarios were found that can be used to stimulate the model " +
@@ -561,6 +587,9 @@ public class GeneratorVeMScenariosBased {
 		else {
 			reportError(errorTitle, errorMessage);
 		}
+		
+		// TODO: Reset the indicator in order to enable new searches
+		VerificationServices.modelContainsMediators = true;
 	}
 	
 

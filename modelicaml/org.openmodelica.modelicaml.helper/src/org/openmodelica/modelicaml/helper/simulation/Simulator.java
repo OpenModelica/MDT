@@ -19,7 +19,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
+import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -289,7 +289,7 @@ public class Simulator {
 					// if this is a client
 					if (treeObject.isValueClient()) {
 //						clientAndRequirementItems.add(treeObject);
-						HashSet<TreeObject> actualClients = VerificationExecutionServices.getActualClients(ci, treeObject);
+						HashSet<TreeObject> actualClients = VerificationServices.getActualClients(ci, treeObject);
 						clientAndRequirementItems.addAll(actualClients);
 					}
 					else {

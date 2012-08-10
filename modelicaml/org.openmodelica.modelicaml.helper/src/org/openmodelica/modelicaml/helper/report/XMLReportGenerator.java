@@ -43,7 +43,7 @@ import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
+import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
@@ -358,11 +358,11 @@ public class XMLReportGenerator {
 		string += "<"+XMLTagName_verificationModel+" "+
 					XMLTagName_uid +"=\""+getUid()+"\" "+
 					
-					XMLTagName_startTime +"=\""+VerificationExecutionServices.getStartTime(model)+"\" "+
-					XMLTagName_stopTime +"=\""+VerificationExecutionServices.getStopTime(model)+"\" "+
-					XMLTagName_tolerance +"=\""+VerificationExecutionServices.getTolerance(model)+"\" "+
-					XMLTagName_interval +"=\""+VerificationExecutionServices.getInterval(model)+"\" "+
-					XMLTagName_outputFormat +"=\""+VerificationExecutionServices.getOutputFormat(model)+"\" "+
+					XMLTagName_startTime +"=\""+VerificationServices.getStartTime(model)+"\" "+
+					XMLTagName_stopTime +"=\""+VerificationServices.getStopTime(model)+"\" "+
+					XMLTagName_tolerance +"=\""+VerificationServices.getTolerance(model)+"\" "+
+					XMLTagName_interval +"=\""+VerificationServices.getInterval(model)+"\" "+
+					XMLTagName_outputFormat +"=\""+VerificationServices.getOutputFormat(model)+"\" "+
 				
 					XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(model))+"\" " +
 					XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotLink(model))+"\" " +
@@ -604,7 +604,7 @@ public class XMLReportGenerator {
 	
 	private String getClientItems(ClassInstantiation ci, Element VeM, TreeObject treeObject){
 		String string = "";
-		for (TreeObject client : VerificationExecutionServices.getClientsTreeItems(ci, treeObject, new HashSet<TreeObject>(), false)) {
+		for (TreeObject client : VerificationServices.getClientsTreeItems(ci, treeObject, new HashSet<TreeObject>(), false)) {
 			String isMandatory = "false";
 			if (client.isValueClient_required()) {
 				isMandatory = "true";
@@ -612,8 +612,8 @@ public class XMLReportGenerator {
 			string += "<"+XMLTagName_client+" " +  
 						XMLTagName_uid +"=\""+getUid()+"\" "+		
 						
-						XMLTagName_type +"=\""+StringEscapeUtils.escapeXml(VerificationExecutionServices.getTreeItemTypeName(client))+"\" "+
-						XMLTagName_variablity +"=\""+VerificationExecutionServices.getVariability(client)+"\" "+
+						XMLTagName_type +"=\""+StringEscapeUtils.escapeXml(VerificationServices.getTreeItemTypeName(client))+"\" "+
+						XMLTagName_variablity +"=\""+VerificationServices.getVariability(client)+"\" "+
 						
 						XMLTagName_instanceName+"=\"" + client.getDotPath() + "\" " + 
 						XMLTagName_clientPath+"=\"" + client.getDotPathWithoutFirstLevelComponent() + "\" " + 
@@ -1058,7 +1058,7 @@ public class XMLReportGenerator {
 //	        transformer.transform(xmlInput, xmlOutput);
 			
 //			String generatedModelPackageName = StringUtls.replaceSpecChar( ((NamedElement)gmd.getGeneratedModelsPackage()).getName()) + "_" + System.currentTimeMillis();
-			String generatedModelPackageName = StringUtls.replaceSpecChar( ((NamedElement)gmd.getGeneratedModelsPackage()).getName()) + "_" + VerificationExecutionServices.getTimeStamp();
+			String generatedModelPackageName = StringUtls.replaceSpecChar( ((NamedElement)gmd.getGeneratedModelsPackage()).getName()) + "_" + VerificationServices.getTimeStamp();
 			
 			monitor.setTaskName("Copying Report Data ...");
 			

@@ -81,7 +81,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
+import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.ExecuteTestsAction;
@@ -151,18 +151,18 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		projectName = umlModel.getResource().getURI().segment(1);
 		
 		// Set a time stamp that is used for names
-		VerificationExecutionServices.setDate();
+		VerificationServices.setDate();
 		
 		// Set the folder paths 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject iProject = root.getProject(projectName);
 		projectAbsolutePath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-		testSessionFolderAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_verification_gen+"/"+Constants.folderName_verification_session+"_"+VerificationExecutionServices.getTimeStamp("");
+		testSessionFolderAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_verification_gen+"/"+Constants.folderName_verification_session+"_"+VerificationServices.getTimeStamp("");
 		
-		VerificationExecutionServices.setTestSessionFolderAbsolutePath(testSessionFolderAbsolutePath);
-		VerificationExecutionServices.setProjectFolderAbsolutePath(projectAbsolutePath);
-		VerificationExecutionServices.setProjectName(projectName);
+		VerificationServices.setTestSessionFolderAbsolutePath(testSessionFolderAbsolutePath);
+		VerificationServices.setProjectFolderAbsolutePath(projectAbsolutePath);
+		VerificationServices.setProjectName(projectName);
 		
 		// set the list of simulation models to be executed.
 		EObject rootModel = null;
@@ -177,7 +177,7 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			e.printStackTrace();
 		}
 		
-		if (someModelsSelected && rootModel != null && VerificationExecutionServices.verificationModels != null && VerificationExecutionServices.verificationModels.size() > 0) {
+		if (someModelsSelected && rootModel != null && VerificationServices.verificationModels != null && VerificationServices.verificationModels.size() > 0) {
 			
 			// prepare the chain
 			org.eclipse.emf.common.util.URI chainURI = null;
@@ -278,11 +278,11 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 		
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) {
 			
-			VerificationExecutionServices.verificationModels.clear();
+			VerificationServices.verificationModels.clear();
 			
 			for (Element element : dialog.getUserSelectedTestSimulationModels()) {
 				if (element instanceof NamedElement) {
-					VerificationExecutionServices.verificationModels.add((NamedElement) element);
+					VerificationServices.verificationModels.add((NamedElement) element);
 				}
 			}
 			
@@ -370,8 +370,8 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			// so that the user can open this dialog by selecting the report.html.
 			
 			IFileSystem fileSystem = EFS.getLocalFileSystem();
-			IFileStore codeGenDir = fileSystem.getStore(URI.create(VerificationExecutionServices.projectAbsolutePath + "/" + Constants.folderName_code_gen));
-			IFileStore testSessionCodeGenDir = fileSystem.getStore(URI.create(VerificationExecutionServices.verificationSessionFolderAbsolutePath + "/" + Constants.folderName_code_gen));
+			IFileStore codeGenDir = fileSystem.getStore(URI.create(VerificationServices.projectAbsolutePath + "/" + Constants.folderName_code_gen));
+			IFileStore testSessionCodeGenDir = fileSystem.getStore(URI.create(VerificationServices.verificationSessionFolderAbsolutePath + "/" + Constants.folderName_code_gen));
 			
 //			if (codeGenDir != null ) {
 //				System.err.println("code-gen directory at: " + codeGenDir);
@@ -385,8 +385,8 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 			/*
 			 * copy also the code-sync folder if it exists
 			 */
-			IFileStore codeSyncDir = fileSystem.getStore(URI.create(VerificationExecutionServices.projectAbsolutePath + "/" + Constants.folderName_code_sync));
-			IFileStore testSessionCodeSyncDir = fileSystem.getStore(URI.create(VerificationExecutionServices.verificationSessionFolderAbsolutePath + "/" + Constants.folderName_code_sync));
+			IFileStore codeSyncDir = fileSystem.getStore(URI.create(VerificationServices.projectAbsolutePath + "/" + Constants.folderName_code_sync));
+			IFileStore testSessionCodeSyncDir = fileSystem.getStore(URI.create(VerificationServices.verificationSessionFolderAbsolutePath + "/" + Constants.folderName_code_sync));
 			if (codeSyncDir.fetchInfo().exists()) {
 				codeSyncDir.copy(testSessionCodeSyncDir, EFS.NONE, null);
 			}

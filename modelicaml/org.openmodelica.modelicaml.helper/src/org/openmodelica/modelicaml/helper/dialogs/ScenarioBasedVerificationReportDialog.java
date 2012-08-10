@@ -47,7 +47,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.jfree.data.xy.XYSeries;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
-import org.openmodelica.modelicaml.common.helpers.VerificationExecutionServices;
+import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
@@ -1256,7 +1256,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	
 	private void getClientItems(ClassInstantiation ci, TreeItem parent, Element VeM, TreeObject treeObject){
 		
-		List<TreeObject> actualClients = VerificationExecutionServices.getClientsTreeItems(ci, treeObject, new HashSet<TreeObject>(), false);
+		List<TreeObject> actualClients = VerificationServices.getClientsTreeItems(ci, treeObject, new HashSet<TreeObject>(), false);
 		
 		for (TreeObject client : actualClients) {
 			String isMandatory = "";
